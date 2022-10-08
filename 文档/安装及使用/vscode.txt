@@ -1,0 +1,16 @@
+解压安装包
+    tar -xvf code-stable-x64-1654690355.tar.gz
+移动到指定目录
+    mv /server/VSCode-linux-x64 /server/tool/VSCode
+创建桌面快捷方式
+    vi /usr/share/applications/VSCode.desktop
+写入
+[Desktop Entry]
+Name=Visual Studio Code
+Comment=Multi-platform code editor for Linux
+Exec=/server/tool/VSCode/code  --no-sandbox
+Icon=/server/tool/VSCode/resources/app/resources/linux/code.png
+Type=Application
+StartupNotify=true
+Categories=TextEditor;Development;Utility;
+MimeType=text/plain;

@@ -1,0 +1,6 @@
+.git/
+.vscode/
+.env
+/ssl/
+/view/
+/favicon.ico

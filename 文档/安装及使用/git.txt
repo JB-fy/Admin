@@ -1,0 +1,24 @@
+编译安装方式
+    解压安装包
+        tar -xvf git-2.37.3.tar.gz
+    进入解压目录编译
+        ./configure --prefix=/server/tool/git-2.37.3
+        make && make install
+    设置环境变量增加以下目录（参考linux学习文件）
+        /server/tool/git-2.37.3/bin
+
+
+
+/**----------------Git常用命令 开始----------------**/
+git config --global user.name '账号'		//设置全局账号
+git config --global user.email '邮箱'	//设置全局邮箱
+git config --global --unset user.name	//删除全局账号
+git config --global --unset user.email	//删除全局邮箱
+
+git init	//初始化本地仓库
+git add ./	//添加文件到本地仓库
+git commit -m "初始化"	//提交到本地仓库
+git remote add origin https://gitee.com/feng_yi/qyct.git	//绑定远程仓库
+git push -u origin "master"	//推送到远程仓库
+git pull origin "master"	//拉取远程仓库到本地
+/**----------------Git常用命令 结束----------------**/

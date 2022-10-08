@@ -1,0 +1,90 @@
+解压安装方式
+    解压安装包
+        tar -xvf node-v16.17.1-linux-x64.tar.xz
+    移动到指定目录
+        mv /server/node-v16.17.1-linux-x64 /server/tool/node-16.17.1
+
+编译安装方式
+    解压安装包
+        tar -xvf node-v16.17.1.tar.gz
+    进入解压目录编译
+        ./configure --prefix=/server/tool/node-16.17.1
+        make && make install
+
+        
+    设置环境变量增加以下目录（参考linux学习文件）
+        /server/tool/node-16.17.1/bin
+
+
+
+
+/**----------------npm相关命令 结束----------------**/
+#检查包是否已经过时
+	npm outdated
+#安装包（-g表示全局，没有表示局部）
+	npm install 包名
+#更新包
+	npm update 包名@版本号 --save
+#卸载包
+ 	npm uninstall 包名
+#清除未被使用到的包
+	npm prune
+#查看帮助命令
+	npm help
+#清除缓存
+	npm cache clean --force
+#查看包（没有包名查看全部，--depth=0显示层级）
+	npm list 包名 --depth=0
+#查看包信息（可选命令在下面）
+	npm view 包名 可选命令
+		dependencies	查看依赖关系
+		repository.url	查看源文件地址
+		engines			查看依赖包的最低版本号
+		version			查看当前版本号
+		versions		查看历史版本和当前版本
+/**----------------npm相关命令 结束----------------**/
+
+
+
+
+
+/**----------------创建vue3项目 开始----------------**/
+#全局安装vue/cli命令
+	npm install @vue/cli -g
+#查看vue/cli版本
+	vue --version
+#创建vue项目
+	vue create 项目名
+#运行项目
+	npm run serve
+#运行项目以下错误时
+	错误：Error: ENOSPC: System limit for number of file watchers reached。
+		需更改系统对文件监控的数量限制
+			vi /etc/sysctl.conf
+		最下面添加
+			fs.inotify.max_user_watches=524288
+		执行生效
+			sysctl -p
+
+#以下是一些插件安装命令
+#安装md5加密
+	npm install js-md5
+/**----------------创建vue3项目 结束----------------**/
+
+
+
+
+/**----------------vue项目注意事项 开始----------------**/
+@路径css和html中使用：
+	css中使用要加~前缀
+		#id {
+		    background:url(~@/assets/bg.jpg);
+		}
+	html中使用
+		第三方组件中使用需要require
+			<el-image :src="require('@/assets/404.jpg')" />
+		src属性可直接用@或者~@
+			<img src="@/assets/bg.jpg">
+		background属性使用无效需用require包裹
+			<div :style="{background: 'url(' + require('@/assets/bg.jpg') + ')' }">
+/**----------------vue项目注意事项 结束----------------**/

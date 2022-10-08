@@ -1,0 +1,59 @@
+功能：进程管理。这里主要用来做swoole进程崩溃时，自动重启
+    安装依赖包python（本身有则不用）
+        yum install python39
+    解压supervisor安装
+        tar -xvf supervisor-4.2.4.tar.gz
+        进入解压目录安装（python3根据自己系统版本）
+        python3 setup.py install
+    生成配置文件
+        echo_supervisord_conf > /server/tool/supervisor/supervisord.conf
+    启动
+        supervisord -c /server/tool/supervisor/supervisord.conf
+    设置开机自启动
+        systenctl start supervisord.service
+        systenctl enable supervisord.service
+    打开配置文件
+        vim /server/tool/supervisor/supervisord.conf
+    在配置文件底部，配置include（追加配置目录，自定义）
+[include]
+files = /server/tool/supervisor/phpswoole/*.conf
+
+#*/
+    新增配置文件
+        vi /server/tool/supervisor/phpswoole/sy1.conf
+#进程名
+[program:sy1]
+#启动命令
+command=php think swoole
+#执行脚本目录
+directory=/server/web/sy1/
+#守护进程启动时是否同时启动
+autorestart=true
+#启动多少秒后状态判定
+startsecs=3
+#启动失败尝试次数
+startretries=3
+#日志输出
+stdout_logfile=/server/tool/supervisor/log/sy1.out.log
+stderr_logfile=/server/tool/supervisor/log/sy1.err.log
+#日志文件大小
+stdout_logfile_maxbytes=2MB
+stderr_logfile_maxbytes=2MB
+#启动用户
+user=root
+#进程优先级值越小优先级越大,取值范围:999-1
+priority=999
+#同时启动多少个进程
+numprocs=1
+#进程名
+process_name=%(program_name)s_%(process_num)02d
+
+
+
+相关命令
+supervisorctl update            //更新配置
+supervisorctl reload            //重新启动所有进程
+supervisorctl status 进程名    //查看进程
+supervisorctl start 进程名     //启动进程
+supervisorctl stop 进程名      //停止进程
+supervisorctl restart 进程名   //重启进程

@@ -1,0 +1,6 @@
+    SQL语法顺序：select->from->where->group by->having->order by->limit
+    SQL执行顺序：from->where->group by->having->select->order by->limit
+
+框架使用规范：
+    对象获取与创建强制使用container方法，使用该方法需要特别注意对象是否含有状态。
+    所有数据库操作必须使用app\module\db\table文件夹内的类

@@ -1,0 +1,42 @@
+依赖：yum install gcc gcc-c++ make
+	1、创建安装目录
+		mkdir -p /server/tool/redis-7.0.5
+	2、解压php安装
+		tar -xvf redis-7.0.5.tar.gz
+		进入解压目录编译
+		//报这个错误时，jemalloc/jemalloc.h：没有那个文件或目录。使用make MALLOC=libc编译
+		make
+		编译完进入src目录安装
+		make install PREFIX=/server/tool/redis-7.0.5
+	3、拷贝配置文件
+        mkdir -p /server/tool/redis-7.0.5/etc
+		cp /server/redis-7.0.5/redis.conf /server/tool/redis-7.0.5/etc
+	4、启用redis
+		/server/tool/redis-7.0.5/bin/redis-server /server/tool/redis-7.0.5/etc/redis.conf
+	5、修改redis配置文件
+        requirepass可以设置密码
+        port可以设置端口
+        daemonize设置为yes允许redis后台运行
+        注释掉bind 127.0.0.1 允许远程访问
+        protected-mode设置为no 开启远程访问
+		vi /server/tool/redis-7.0.5/etc/redis.conf
+	6、编辑自启动文件
+		vi /etc/systemd/system/redis-7.0.5.service
+[Unit]
+Description=redis
+After=network.target
+[Service]
+Type=forking
+ExecStart=/server/tool/redis-7.0.5/bin/redis-server /server/tool/redis-7.0.5/etc/redis.conf
+ExecReload=/server/tool/redis-7.0.5/bin/redis-server -s reload
+ExecStop=/server/tool/redis-7.0.5/bin/redis-server -s stop
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+    7、设置自启动
+        systemctl enable redis-7.0.5
+	8、客户端连接测试
+		/server/tool/redis-7.0.5/bin/redis-cli
+	9、如果是单独一台redis服务器，需要开放redis设置的端口号（默认6379）
+		firewall-cmd --zone=public --add-port=6379/tcp --permanent
+		systemctl restart firewalld

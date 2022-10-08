@@ -1,0 +1,72 @@
+依赖：yum install gcc gcc-c++ make pcre-devel openssl-devel
+    1、创建安装目录
+        mkdir -p /server/tool/nginx-1.22.0
+    2、解压nginx安装
+        tar -xvf nginx-1.22.0.tar.gz
+
+        //创建用户组，用户并改变文件所属用户组和用户
+        groupadd nginx
+        useradd -r -g nginx -s /bin/false nginx
+        chown -R nginx:nginx /server/tool/nginx-1.22.0
+
+        进入解压目录运行
+        ./configure --prefix=/server/tool/nginx-1.22.0 --user=nginx --group=nginx --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_realip_module --with-stream --with-stream_ssl_module --with-stream_realip_module --with-http_flv_module --with-http_stub_status_module --with-pcre --with-pcre-jit
+
+        make && make install //安装
+        //运行测试（远程不能连接时需关闭防火墙）
+        /server/tool/nginx-1.22.0/sbin/nginx
+    3、域名配置
+        编辑文件 vi /server/tool/nginx-1.22.0/conf/nginx.conf 写入
+#user nginx nginx;  #启动Ngnix工作进程的用户和组
+worker_processes auto;  #启动的工作进程数，默认1，可设置自动auto
+#error_log  logs/error.log error;   #错误日志配置，可选值：debug、info、notice、wam、error、crit、alert、emerg
+#pid        logs/nginx.pid; #pid文件保存路径
+#work_priority 0;           #工作进程的优先级 -20~19
+#work_rlimit_nofile 65536;  #工作进程最大打开文件数
+#daemon on;             #前台运行nginx用于测试，docker等环境，默认为on
+#master_process off;        #是否开启master-woker工作模式，关闭则不会产生worker子进程处理请求，而是以master主进程自身处理请求
+events {
+    worker_connections 1024;    #设置单个nginx工作进程可以接爱的最大并发连接数据。在nginx作为http服务器的时候，最大连接数为worker_processes * worker_connctions；在nginx作为反向代理服务器的时候，最大连接数为worker_processes * worker_connections / 2 
+    #use epoll;         #使用epoll事件驱动，Nginx支持众多的事件驱动，可选值：select、poll、epoll
+    #accept_mutex on;       #优化同一时刻只有一个请求而避免多个睡眠进程被唤醒的设置，on为防止被同时唤醒，默认为off，全部唤醒的过程也成为"惊群"，因此nginx刚安装完以后要进行适当的优化
+    #multi_accept on;       #Nginx服务器的每个工作进程可以同时接受多个新的网络连接，但是需要在配置文件中配置，此指令默认为关闭，即默认为一个工作进程只能一次接受一个新的网络连接，打开后几个同时接受多个  
+}
+http {
+    include mime.types; #导入支持的文件类型
+    default_type application/octet-stream;  #设置默认的类型，会提示下载不匹配的类型文件
+    #日志配置部分
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+    #access_log  logs/access.log  main;
+    sendfile        on; #指定是否使用sendfile系统调用来传输文件
+    #tcp_nopush     on; #在开启了sendfile的情况下，合并请求后统一发送给客户端
+    #tcp_nodelay    off;    #开启了keepalived模式下的连接受此影响，当为off时，延迟0.2s发送，默认为on，不延迟发送，立即发送用户相应报文
+    keepalive_timeout   65; #设置会话保持时间，单位是秒
+    gzip    on;         #开启文件压缩
+    client_max_body_size 1024m; #最大上传文件大小，php也得设置，以双方最小值为准  
+    include /server/tool/nginx-1.22.0/conf/web/*.conf;   #导入其他路径的配置文件
+}
+
+        创建目录 mkdir -p /server/tool/nginx-1.22.0/conf/web
+        在该目录下创建各个域名的配置文件
+        编辑文件 vi /server/tool/nginx-1.22.0/conf/web/域名.conf 写入
+
+    4、编辑自启动文件
+        vi /etc/systemd/system/nginx-1.22.0.service
+[Unit]
+Description=nginx
+After=network.target
+[Service]
+Type=forking
+PIDFile=/server/tool/nginx-1.22.0/logs/nginx.pid
+ExecStart=/server/tool/nginx-1.22.0/sbin/nginx
+ExecReload=/server/tool/nginx-1.22.0/sbin/nginx -s reload
+ExecStop=/server/tool/nginx-1.22.0/sbin/nginx -s quit
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+    5、设置自启动
+        systemctl enable nginx-1.22.0
+    6、设置环境变量增加以下目录（参考linux学习文件）
+        /server/tool/nginx-1.22.0/sbin

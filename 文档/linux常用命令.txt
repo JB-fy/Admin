@@ -1,0 +1,115 @@
+//yum相关命令
+mv /etc/yum.repos.d/CentOS-Linux-BaseOS.repo /etc/yum.repos.d/CentOS-Linux-BaseOS.repo.backup	//Centos8更换yum源之前备份
+wget -O /etc/yum.repos.d/CentOS-Linux-BaseOS.repo http://mirrors.aliyun.com/repo/Centos-vault-8.5.2111.repo	//Centos8更换阿里云yum源
+yum -y install epel-release		//更新yum源
+yum install 包名		//安装
+yum localinstall rpm包名 //本地安装
+yum remove 包名		//删除
+yum update 包名		//更新
+yum clean all		//清空缓存
+yum list 包名		//查询可安装软件包
+yum search 关键字 	//查看相关软件包
+yum info 包名 		//查询详细信息
+
+//yum报错没安装包时处理
+//CentOS8于2021年12月31日，将yum源软件包转移到https://vault.centos.org
+sed -i -e "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-*
+sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
+
+passwd //修改密码
+mkdir -p 目录名	//创建目录
+mv 前文件名 后文件名	//移动并重命名文件或目录
+cp 前文件名 后文件名	//复制并重命名文件或目录
+rm -rf 文件名	//删除文件
+find 路径 -name 文件名	//查找文件
+ln -s 源文件 目标文件	//创建软链接
+chown -R 用户组:用户名 路径	//设置文件所属组和用户，-R表示递归设置
+chmod -R 755 路径	//设置文件权限，-R表示递归设置
+lsattr 文件名 	//查看文件属性
+chattr -ia 文件名 //修改文件属性(有些文件不能删除就需要修改这个属性)
+
+xz -d 压缩文件	//.xz压缩文件先解压成tar文件再进行tar解压
+tar -xvf 压缩文件 -C 解压后目录//解压
+unzip 压缩文件//解压
+
+ps -auxf | grep 进程名称	//查看进程
+netstat -ntlp	//查看端口使用情况,没有该命令安装yum install net-tools
+lsof -i:端口号	//查看端口使用情况
+nmcli networking on	//激活网络
+nmcli connection up ens33	//连接网络
+
+/**--------Centos9网络配置 开始--------**/
+vi /etc/NetworkManager/system-connections/ens33.nmconnection
+/**--------Centos9网络配置 结束--------**/
+
+/**--------时区设置 开始--------**/
+timedatectl //查看时区设置
+timedatectl list-timezones	//列出所有可用时区
+timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
+/**--------时区设置 结束--------**/
+
+/**--------设置环境变量 开始--------**/
+修改配置文件 /etc/profile 在最下面追加目录（多路径用冒号分开）
+vi /etc/profile
+PATH=$PATH:/server/tool/nginx-1.22.0/sbin:/server/tool/php-8.1.11/bin:/server/tool/node-16.17.1/bin:/server/tool/composer:/server/tool/git-2.37.3/bin
+PATH=$PATH:/server/tool/mysql-8.0.30/bin
+source /etc/profile	//马上生效
+/**--------设置环境变量 结束--------**/
+
+/**--------设置自启动 开始--------**/
+//一定要做，否则会造成权限不通过无法自启动。
+修改selinux的配置文件/etc/selinux/config将SELINUX的值改为disabled
+vi /etc/selinux/config
+
+//systemctl方式设置开机自启动
+systemctl status 服务名		//查看服务状态
+systemctl start 服务名		//开启服务
+systemctl stop 服务名		//关闭服务
+systemctl restart 服务名		//重启服务
+systemctl disable 服务名		//禁止开机自启动
+systemctl enable 服务名		//开启开机自启动
+systemctl list-units --type=service //查看所有自启动服务
+/**--------设置自启动 结束--------**/
+
+/**--------端口开放关闭（需要重启防火墙生效） 开始--------**/
+firewall-cmd --zone=public --add-port=0-65535/tcp --permanent	//开放全部端口
+firewall-cmd --zone=public --add-port=80/tcp --permanent		//开放指定端口
+firewall-cmd --zone=public --remove-port=80/tcp --permanent		//关闭端口
+firewall-cmd --zone=public --list-ports							//查看所有开放的端口
+firewall-cmd --reload											//配置立即生效
+/**--------端口开放关闭（需要重启防火墙生效） 结束--------**/
+
+/**--------生成ssl证书 开始--------**/
+生成RSA私钥（des3算法，长度2048位）
+	openssl genrsa -des3 -out ssl.key 2048
+创建CSR文件（Common Name必须是域名，否则会引起浏览器警告）
+	openssl req -new -key ssl.key -out ssl.csr
+删除私钥中的密码（第一步中的密码会导致每次Apache启动Web服务器时，都会要求输入密码）
+	cp ssl.key ssl.key.org
+	openssl rsa -in ssl.key.org -out ssl.key
+生成自签名证书
+	openssl x509 -req -days 365 -in ssl.csr -signkey ssl.key -out ssl.crt
+/**--------生成ssl证书 结束--------**/
+
+
+/**--------curl使用 开始--------**/
+使用
+	-H 'token: 11111'//可以追加请求头
+	curl get请求地址
+	curl -d 'a=1&b=2' -X POST post请求地址
+	curl -d '{}' -H 'Content-Type: application/json' post请求地址
+/**--------curl使用 结束--------**/
+
+/**--------压测工具ab安装与使用 开始--------**/
+安装
+	yum install httpd-tools
+查看版本
+	ab -V
+查看帮助
+	ab -h
+使用
+	-H 'token: 11111'//可以追加请求头
+	ab -n 10000 -c 100 get请求地址
+	ab -n 10000 -c 100 -p 请求参数文件地址post.txt -T application/json -H 'Content-Type: application/json' post请求地址
+	ab -n 10000 -c 100 -p 请求参数文件地址post.txt -T application/x-www-form-urlencoded post请求地址
+/**--------压测工具ab安装与使用 结束--------**/
