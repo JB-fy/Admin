@@ -56,7 +56,15 @@ class Test extends AbstractController
         } else {
             throwSuccessJson(['count' => '2', 'list' => []]);
         } */
-        /*--------测试状态污染 开始--------*/
+        /*--------测试状态污染 结束--------*/
+
+        /*--------容器生成的对象代码提示测试 开始--------*/
+        /* (new SystemAdmin())->getTable();
+        container(SystemAdmin::class, true)->getTable();
+        \support\Container::get(SystemAdmin::class)->getTable();
+        \support\Container::get(SystemAdmin::class)->getTable();
+        (new \DI\Container())->get(SystemAdmin::class)->getTable(); */
+        /*--------容器生成的对象代码提示测试 结束--------*/
         return response('hello webman');
     }
 }
