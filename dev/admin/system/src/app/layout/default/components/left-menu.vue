@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import leftMenuItem from './left-menu-item'
+import leftMenuItem from './left-menu-item/index.vue'
 
 export default {
     components: {
