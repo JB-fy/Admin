@@ -15,7 +15,7 @@ abstract class AbstractCache
 
     final public function __construct(array $connectionSelectData = [])
     {
-        $this->parseConnection($connectionSelectData);
+        $this->connection($connectionSelectData);
     }
 
     /**
@@ -24,7 +24,7 @@ abstract class AbstractCache
      * @param array $connectionSelectData
      * @return void
      */
-    public function parseConnection(array $connectionSelectData)
+    public function connection(array $connectionSelectData)
     {
         //选择逻辑
         //$this->connection = ''; //设置当前使用的连接

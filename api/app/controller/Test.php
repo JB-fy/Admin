@@ -22,7 +22,7 @@ class Test extends AbstractController
             'order' => ['id' => 'asc']
         ];
         $tableSystemAdmin = container(SystemAdmin::class, true);
-        $tableSystemAdmin->parseWhere($data['where']);
+        $tableSystemAdmin->where($data['where']);
         if ($tableSystemAdmin->isJoin()) {
             $count = $tableSystemAdmin->getBuilder()->distinct()->count($tableSystemAdmin->getTableAlias() . '.' . $tableSystemAdmin->getPrimaryKey());
         } else {
@@ -30,9 +30,9 @@ class Test extends AbstractController
         }
         $list = [];
         if ($count > 0) {
-            $tableSystemAdmin->parseField($data['field'])->parseOrder($data['order']);
+            $tableSystemAdmin->field($data['field'])->order($data['order']);
             if ($tableSystemAdmin->isJoin()) {
-                $tableSystemAdmin->parseGroup(['id']);
+                $tableSystemAdmin->group(['id']);
             }
             $list = $tableSystemAdmin->getBuilder()->offset(0)->limit(10)->get()->toArray();
         }

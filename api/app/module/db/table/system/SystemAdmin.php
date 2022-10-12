@@ -18,37 +18,30 @@ class SystemAdmin extends AbstractTable
     protected $model;
 
     /**
-     * 解析field
+     * 解析field（独有的）
      *
-     * @param array $field  格式：['字段',...]
+     * @param string $key
      * @return self
      */
-    public function parseField(array $field): self
+    protected function fieldOfAlone(string $key): self
     {
-        $defaultField = ['id', '*', ...$this->getAllColumn()];
-        $intersectField = array_intersect($field, $defaultField);
-        parent::parseField($intersectField);    //默认字段交由父类方法处理
-
-        $diffField = array_diff($field, $defaultField);
-        foreach ($diffField as $v) {
-            $this->parseJoin($v);
-            switch ($v) {
-                case 'roleName':
-                    $this->field['select'][] = container(AuthRole::class, true)->getTableAlias() . '.' . $v;
-                    break;
-            }
+        switch ($key) {
+            case 'roleName':
+                $this->joinOfAlone($key);
+                $this->field['select'][] = container(AuthRole::class, true)->getTableAlias() . '.' . $key;
+                break;
         }
         return $this;
     }
 
     /**
-     * 解析join
+     * 解析join（独有的）
      *
      * @param string $key   键，用于确定关联表
      * @param [type] $value 值，用于确定关联表
-     * @return void
+     * @return self
      */
-    public function parseJoin(string $key, $value = null)
+    protected function joinOfAlone(string $key, $value = null): self
     {
         switch ($key) {
             case 'roleName':
@@ -80,5 +73,6 @@ class SystemAdmin extends AbstractTable
                 }
                 break;
         }
+        return $this;
     }
 }

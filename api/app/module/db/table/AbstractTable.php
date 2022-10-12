@@ -22,12 +22,15 @@ abstract class AbstractTable
     protected $model;   //模型
     protected $builder; //构造器
 
-    /* protected string $modelClass = '';   //创建模型需要的类
-    final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
+    protected array $fieldOfCommon = ['id', '*'];   //公共的field
+    protected array $whereOfCommon = ['id', 'excId'];   //公共的where
+    protected array $groupOfCommon = ['id'];   //公共的group
+    protected array $havingOfCommon = ['id'];  //公共的having
+    protected array $orderOfCommon = ['id'];   //公共的order
+
+    /* final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
     {
-        $this->model = container($this->modelClass);
-        $this->parseConnection($connectionSelectData)
-            ->parseTable($tableSelectData);
+        $this->connection($connectionSelectData)->table($tableSelectData);
     } */
 
     /**
@@ -87,7 +90,7 @@ abstract class AbstractTable
      * @param array $connectionSelectData   分库情况下，用于确定使用哪个连接
      * @return self
      */
-    public function parseConnection(array $connectionSelectData = []): self
+    public function connection(array $connectionSelectData = []): self
     {
         //选择逻辑
         //$this->connection = ''; //设置当前使用的连接
@@ -100,7 +103,7 @@ abstract class AbstractTable
      * @param array $tableSelectData    分表情况下，用于确定使用哪个表
      * @return self
      */
-    public function parseTable(array $tableSelectData = []): self
+    public function table(array $tableSelectData = []): self
     {
         //选择逻辑
         //$this->table = ''; //设置当前使用的表名
@@ -113,7 +116,7 @@ abstract class AbstractTable
      * @param string $tableRaw  表的原生表达式。当需要强制索引等特殊情况时使用。示例：'__TABLE__ FORCE INDEX (索引)')。
      * @return self
      */
-    public function parseTableRaw(string $tableRaw = ''): self
+    public function tableRaw(string $tableRaw = ''): self
     {
         if (!empty($tableRaw)) {
             if (strpos($tableRaw, '__TABLE__') !== false) {
@@ -125,127 +128,277 @@ abstract class AbstractTable
     }
 
     /**
-     * 解析field
+     * 解析field（入口）
      *
      * @param array $field  格式：['字段',...]
      * @return self
      */
-    public function parseField(array $field): self
+    final public function field(array $field): self
     {
+        $this->fieldOfCommon = [...$this->fieldOfCommon, ...$this->getAllColumn()];
         foreach ($field as $v) {
-            //$this->parseJoin($v);   //父类会处理默认字段，不会联表。子类如需对某些字段特殊处理会重新定义该方法，但对默认字段的处理调用父类这个方法。
-            switch ($v) {
-                case 'id':
-                    $this->field['select'][] = $this->getTableAlias() . '.' . $this->getPrimaryKey();
-                    break;
-                default:
-                    $this->field['select'][] = $this->getTableAlias() . '.' . $v;
-                    //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ' . $v];
-                    break;
+            if (in_array($v, $this->fieldOfCommon)) {
+                $this->fieldOfCommon($v);
+            } else {
+                $this->fieldOfAlone($v);
             }
         }
         return $this;
     }
 
     /**
-     * 解析where
+     * 解析where（入口）
      *
      * @param array $where  格式：['字段' => '值',...]
      * @return self
      */
-    public function parseWhere(array $where): self
+    final public function where(array $where): self
     {
+        $this->whereOfCommon = [...$this->whereOfCommon, ...$this->getAllColumn()];
         foreach ($where as $k => $v) {
-            //$this->parseJoin($k, $v);   //父类会处理默认字段，不会联表。子类如需对某些字段特殊处理会重新定义该方法，但对默认字段的处理调用父类这个方法。
-            switch ($k) {
-                case 'id':
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '=', $v]];
-                    break;
-                default:
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $k, '=', $v]];
-                    //$this->where[] = ['method' => 'whereRaw', 'param' => ['age > :age', ['age' => $v], 'and']];
-                    break;
+            if (in_array($k, $this->whereOfCommon)) {
+                $this->whereOfCommon($k, $v);
+            } else {
+                $this->whereOfAlone($k, $v);
             }
         }
         return $this;
     }
 
     /**
-     * 解析group
+     * 解析group（入口）
      *
      * @param array $group  格式：['字段',...]
      * @return self
      */
-    public function parseGroup(array $group): self
+    final public function group(array $group): self
     {
+        $this->groupOfCommon = [...$this->groupOfCommon, ...$this->getAllColumn()];
         foreach ($group as $v) {
-            switch ($v) {
-                case 'id':
-                    $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey()]];
-                    break;
-                default:
-                    $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $v]];
-                    //$this->group[] = ['method'=>'groupByRaw', 'param'=>[':xxxx', ['xxxx' => 'xxxx']]];
-                    break;
+            if (in_array($v, $this->groupOfCommon)) {
+                $this->groupOfCommon($v);
+            } else {
+                $this->groupOfAlone($v);
             }
         }
         return $this;
     }
 
     /**
-     * 解析having
+     * 解析having（入口）
      *
      * @param array $having 格式：['字段' => '值',...]
      * @return self
      */
-    public function parseHaving(array $having): self
+    final public function having(array $having): self
     {
+        $this->havingOfCommon = [...$this->havingOfCommon, ...$this->getAllColumn()];
         foreach ($having as $k => $v) {
-            switch ($k) {
-                case 'id':
-                    $this->having['having'][] = [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '=', $v];
-                    break;
-                default:
-                    $this->having['having'][] = [$k, '=', $v];
-                    //$this->having['havingRaw'][] = ['age > :age', ['age' => $v], 'and'];
-                    break;
+            if (in_array($k, $this->havingOfCommon)) {
+                $this->havingOfCommon($k, $v);
+            } else {
+                $this->havingOfAlone($k, $v);
             }
         }
         return $this;
     }
 
     /**
-     * 解析order
+     * 解析order（入口）
      *
      * @param array $order  格式：['字段' => 'asc或desc',...]
      * @return self
      */
-    public function parseOrder(array $order): self
+    final public function order(array $order): self
     {
+        $this->orderOfCommon = [...$this->orderOfCommon, ...$this->getAllColumn()];
         foreach ($order as $k => $v) {
-            //$this->parseJoin($k);   //父类会处理默认字段，不会联表。子类如需对某些字段特殊处理会重新定义该方法，但对默认字段的处理调用父类这个方法。
-            switch ($k) {
-                case 'id':
-                    $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), $v]];
-                    break;
-                default:
-                    $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $k, $v]];
-                    //$this->order[] = ['method'=>'orderByRaw', 'param'=>[':time ' . $v, ['time' => time()]]];
-                    break;
+            if (in_array($k, $this->orderOfCommon)) {
+                $this->orderOfCommon($k, $v);
+            } else {
+                $this->orderOfAlone($k, $v);
             }
         }
         return $this;
     }
 
     /**
-     * 解析join
+     * 解析field（公共的）
+     *
+     * @param string $key
+     * @return self
+     */
+    final protected function fieldOfCommon(string $key): self
+    {
+        switch ($key) {
+            case '*':
+                $this->field['select'][] = $key;
+                break;
+            case 'id':
+                $this->field['select'][] = $this->getTableAlias() . '.' . $this->getPrimaryKey();
+                break;
+            default:
+                $this->field['select'][] = $this->getTableAlias() . '.' . $key;
+                //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ' . $key];
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * 解析where（公共的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return self
+     */
+    final protected function whereOfCommon(string $key, $value): self
+    {
+        switch ($key) {
+            case 'id':
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '=', $value]];
+                break;
+            case 'excId':
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '<>', $value]];
+                break;
+            default:
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $key, '=', $value]];
+                //$this->where[] = ['method' => 'whereRaw', 'param' => ['age > :age', ['age' => $v], 'and']];
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * 解析group（公共的）
+     *
+     * @param string $key
+     * @return self
+     */
+    final protected function groupOfCommon(string $key): self
+    {
+        switch ($key) {
+            case 'id':
+                $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey()]];
+                break;
+            default:
+                $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $key]];
+                //$this->group[] = ['method'=>'groupByRaw', 'param'=>[':xxxx', ['xxxx' => 'xxxx']]];
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * 解析having（公共的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return self
+     */
+    final protected function havingOfCommon(string $key, $value): self
+    {
+        switch ($key) {
+            case 'id':
+                $this->having['having'][] = [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '=', $value];
+                break;
+            default:
+                $this->having['having'][] = [$key, '=', $value];
+                //$this->having['havingRaw'][] = ['age > :age', ['age' => $value], 'and'];
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * 解析order（公共的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return self
+     */
+    final protected function orderOfCommon(string $key, $value): self
+    {
+        switch ($key) {
+            case 'id':
+                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), $value]];
+                break;
+            default:
+                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $key, $value]];
+                //$this->order[] = ['method'=>'orderByRaw', 'param'=>[':time ' . $value, ['time' => time()]]];
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * 解析field（独有的）
+     *
+     * @param string $key
+     * @return self
+     */
+    protected function fieldOfAlone(string $key): self
+    {
+        return $this;
+    }
+
+    /**
+     * 解析where（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return self
+     */
+    protected function whereOfAlone(string $key, $value): self
+    {
+        return $this;
+    }
+
+    /**
+     * 解析group（独有的）
+     *
+     * @param string $key
+     * @return self
+     */
+    protected function groupOfAlone(string $key): self
+    {
+        return $this;
+    }
+
+    /**
+     * 解析having（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return self
+     */
+    protected function havingOfAlone(string $key, $value): self
+    {
+        return $this;
+    }
+
+    /**
+     * 解析order（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return self
+     */
+    protected function orderOfAlone(string $key, $value): self
+    {
+        return $this;
+    }
+
+    /**
+     * 解析join（独有的）
      *
      * @param string $key   键，用于确定关联表
      * @param [type] $value 值，用于确定关联表
-     * @return void
+     * @return self
      */
-    public function parseJoin(string $key, $value = null)
+    protected function joinOfAlone(string $key, $value = null): self
     {
+        return $this;
     }
 
     /**

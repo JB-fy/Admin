@@ -37,9 +37,9 @@ class Login extends AbstractService
             case 'systemAdmin':
                 /**--------验证账号密码 开始--------**/
                 if (is_numeric($account)) {
-                    $info = container(SystemAdmin::class, true)->parseWhere(['phone' => $account])->getBuilder()->first();
+                    $info = container(SystemAdmin::class, true)->where(['phone' => $account])->getBuilder()->first();
                 } else {
-                    $info = container(SystemAdmin::class, true)->parseWhere(['account' => $account])->getBuilder()->first();
+                    $info = container(SystemAdmin::class, true)->where(['account' => $account])->getBuilder()->first();
                 }
                 if (empty($info)) {
                     throwFailJson('001010');
@@ -102,8 +102,8 @@ class Login extends AbstractService
 
                 /**--------获取登录用户信息并验证 开始--------**/
                 $info = container(SystemAdmin::class, true)
-                    ->parseField(['adminId', 'nickname', 'isStop'])
-                    ->parseWhere(['adminId' => $payload['id']])
+                    ->field(['adminId', 'nickname', 'isStop'])
+                    ->where(['adminId' => $payload['id']])
                     ->getBuilder()
                     ->first();
                 if (empty($info)) {

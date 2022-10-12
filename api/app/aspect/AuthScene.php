@@ -37,7 +37,7 @@ class AuthScene extends AbstractAspect
         if (empty($request->authScene)) {
             throwFailJson('001001');
         }
-        if (!container(TableAuthScene::class, true)->parseWhere(['sceneCode' => $request->authScene])->getBuilder()->exists()) {
+        if (!container(TableAuthScene::class, true)->where(['sceneCode' => $request->authScene])->getBuilder()->exists()) {
             throwFailJson('001001');
         }
         try {
