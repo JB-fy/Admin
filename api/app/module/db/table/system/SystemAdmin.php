@@ -30,6 +30,9 @@ class SystemAdmin extends AbstractTable
                 $this->joinOfAlone($key);
                 $this->field['select'][] = container(AuthRole::class, true)->getTableAlias() . '.' . $key;
                 break;
+            default:
+                $this->field['select'][] = $key;
+                break;
         }
         return $this;
     }
