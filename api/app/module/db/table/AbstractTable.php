@@ -431,7 +431,7 @@ abstract class AbstractTable
      *
      * @return boolean
      */
-    public function isJoin(): bool
+    final public function isJoin(): bool
     {
         return !empty($this->join);
     }
