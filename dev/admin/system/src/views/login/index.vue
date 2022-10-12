@@ -1,5 +1,5 @@
 <template>
-    <vue-particles class="particles" :particlesNumber="200" />
+    <div class="particles" :particlesNumber="200" />
     <el-tag id="login-container">
         <el-divider>
             <div style="font-size: 25px;">登录</div>
@@ -86,7 +86,7 @@ export default {
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background-image: url(~@/assets/login-bg.jpg);
+    background-image: url(@/assets/login-bg.jpg);
     background-position: center center;
     background-size: cover;
 }
