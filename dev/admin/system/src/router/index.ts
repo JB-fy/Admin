@@ -12,12 +12,48 @@ const initRoutes = [
         replace: true,
         children: [
             {
+                path: '/authAction',
+                component: () => import('@/views/auth/action/Index.vue'),
+                meta: { title: '操作列表', icon: 'vant-manager-o' }
+            },
+            {
+                path: '/authMenu',
+                component: () => import('@/views/auth/menu/Index.vue'),
+                meta: { title: '菜单列表', icon: 'vant-manager-o' }
+            },
+            {
+                path: '/authRole',
+                component: () => import('@/views/auth/role/Index.vue'),
+                meta: { title: '角色列表', icon: 'vant-manager-o' }
+            },
+            {
+                path: '/authScene',
+                component: () => import('@/views/auth/scene/Index.vue'),
+                meta: { title: '场景列表', icon: 'vant-manager-o' }
+            },
+            {
+                path: '/systemAdmin',
+                component: () => import('@/views/system/admin/Index.vue'),
+                meta: { title: '系统管理员', icon: 'vant-manager-o' }
+            },
+            {
+                path: '/systemConfig',
+                component: () => import('@/views/system/config/Index.vue'),
+                meta: { title: '系统配置', icon: 'vant-manager-o' }
+            },
+            {
+                path: '/systemLogOfRequest',
+                component: () => import('@/views/system/logOfRequest/Index.vue'),
+                meta: { title: '系统管理员', icon: 'vant-manager-o' }
+            },
+            {
                 path: '/profile',
-                component: async () => {
-                    let component = await import('@/views/profile/Index.vue')
+                component: () => import('@/views/profile/index.vue'),
+                /* component: async () => {
+                    let component = await import('@/views/profile/index.vue')
                     component.default.name = '/profile'    //动态设置页面组件名称，方便清理缓存
                     return component
-                },
+                }, */
                 meta: { title: '个人中心', icon: 'vant-manager-o' }
             },
         ]
