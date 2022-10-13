@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import layout from '@/app/layout/default/index.vue';
+import layout from '@/app/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
 
 const initRoutes = [
@@ -14,7 +14,7 @@ const initRoutes = [
             {
                 path: '/profile',
                 component: async () => {
-                    let component = await import('@/views/profile/index.vue')
+                    let component = await import('@/views/profile/Index.vue')
                     component.default.name = '/profile'    //动态设置页面组件名称，方便清理缓存
                     return component
                 },
@@ -24,12 +24,12 @@ const initRoutes = [
     },
     {
         path: '/login',
-        component: () => import('@/views/login/index.vue'),
+        component: () => import('@/views/login/Index.vue'),
         meta: { title: '登录' }
     },
     {
         path: '/:pathMatch(.*)*',
-        component: () => import('@/views/404/index.vue'),
+        component: () => import('@/views/404/Index.vue'),
     },
 ]
 

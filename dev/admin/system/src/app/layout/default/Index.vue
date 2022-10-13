@@ -1,15 +1,11 @@
 <script setup lang="ts">
+import AppContainer from './AppContainer.vue';
+import LeftMenu from './LeftMenu.vue';
+import RightHeader from './RightHeader.vue';
+import RightFooter from './RightFooter.vue';
 import { useSettingStore } from '@/stores/setting';
 
 const settingStore = useSettingStore()
-</script>
-
-<script lang="ts">
-export default {
-    components: {
-        ...getImportComponents(import.meta.globEager('@/app/layout/default/components/*.vue'))
-    }
-}
 </script>
 
 <template>

@@ -61,133 +61,131 @@ export default {
 </script>
 
 <template>
-    <el-row>
-        <el-col :span="12">
-            <el-space :size="20" style="height: 100%; margin-left: 20px;">
-                <el-link :underline="false" @click="leftMenuFold">
-                    <autoicon-ep-fold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
-                </el-link>
-                <el-breadcrumb separator=">">
-                    <el-breadcrumb-item v-for="(item, key) in $route.meta.pMenuList" :key="key">
-                        <el-space :size="0">
-                            <icon-dynamic :icon="item.icon" />
+    <ElRow>
+        <ElCol :span="12">
+            <ElSpace :size="20" style="height: 100%; margin-left: 20px;">
+                <ElLink :underline="false" @click="leftMenuFold">
+                    <AutoiconEpFold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
+                </ElLink>
+                <ElBreadcrumb separator=">">
+                    <ElBreadcrumbItem v-for="(item, key) in $route.meta.pMenuList" :key="key">
+                        <ElSpace :size="0">
+                            <IconDynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
-                        </el-space>
-                    </el-breadcrumb-item>
-                    <el-breadcrumb-item>
-                        <el-space :size="0">
-                            <icon-dynamic :icon="$route.meta.icon" />
+                        </ElSpace>
+                    </ElBreadcrumbItem>
+                    <ElBreadcrumbItem>
+                        <ElSpace :size="0">
+                            <IconDynamic :icon="$route.meta.icon" />
                             <span>{{ $route.meta.title }}</span>
-                        </el-space>
-                    </el-breadcrumb-item>
-                </el-breadcrumb>
-            </el-space>
-        </el-col>
-        <el-col :span="12" style="text-align: right;">
-            <el-space :size="20" style="height: 100%;">
-                <el-link :underline="false">
-                    <autoicon-ep-lock />
-                </el-link>
-                <el-link :underline="false">
-                    <autoicon-ep-search />
-                </el-link>
-                <el-link :underline="false">
-                    <autoicon-ep-bell />
-                </el-link>
-                <el-link :underline="false" @click="userStore.refreshMenuTab($route.path)">
-                    <autoicon-ep-refresh />
-                </el-link>
-                <el-dropdown @visible-change="userDropdown.visibleChange">
-                    <el-link :underline="false">
-                        <el-avatar :src="userStore.info.avatar" :size="40">
-                            <autoicon-ep-user-filled />
-                        </el-avatar>
+                        </ElSpace>
+                    </ElBreadcrumbItem>
+                </ElBreadcrumb>
+            </ElSpace>
+        </ElCol>
+        <ElCol :span="12" style="text-align: right;">
+            <ElSpace :size="20" style="height: 100%;">
+                <ElLink :underline="false">
+                    <AutoiconEpLock />
+                </ElLink>
+                <ElLink :underline="false">
+                    <AutoiconEpSearch />
+                </ElLink>
+                <ElLink :underline="false">
+                    <AutoiconEpBell />
+                </ElLink>
+                <ElLink :underline="false" @click="userStore.refreshMenuTab($route.path)">
+                    <AutoiconEpRefresh />
+                </ElLink>
+                <ElDropdown @visible-change="userDropdown.visibleChange">
+                    <ElLink :underline="false">
+                        <ElAvatar :src="userStore.info.avatar" :size="40">
+                            <AutoiconEpUserFilled />
+                        </ElAvatar>
                         <span>{{ userStore.info.nickname }}</span>
-                        <autoicon-ep-arrow-down
-                            :class="{ 'dropdown-icon': true, 'is-dropdown': userDropdown.status }" />
-                    </el-link>
+                        <AutoiconEpArrowDown :class="{ 'dropdown-icon': true, 'is-dropdown': userDropdown.status }" />
+                    </ElLink>
                     <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item>
-                                <router-link to="/profile" :custom="true" v-slot="{ href, navigate, route }">
-                                    <el-link :href="href" @click="navigate" :underline="false">
+                        <ElDropdownMenu>
+                            <ElDropdownItem>
+                                <RouterLink to="/profile" :custom="true" v-slot="{ href, navigate, route }">
+                                    <ElLink :href="href" @click="navigate" :underline="false">
                                         {{ route.meta.title }}
-                                    </el-link>
-                                </router-link>
-                            </el-dropdown-item>
-                            <el-dropdown-item @click="userStore.logout()">
+                                    </ElLink>
+                                </RouterLink>
+                            </ElDropdownItem>
+                            <ElDropdownItem @click="userStore.logout()">
                                 退出登录
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
+                            </ElDropdownItem>
+                        </ElDropdownMenu>
                     </template>
-                </el-dropdown>
-            </el-space>
-        </el-col>
-        <el-col :span="24">
-            <el-tabs class="menu-tabs" type="card" :model-value="$route.path" @tab-change="menuTab.change"
+                </ElDropdown>
+            </ElSpace>
+        </ElCol>
+        <ElCol :span="24">
+            <ElTabs class="menu-tabs" type="card" :model-value="$route.path" @tab-change="menuTab.change"
                 @tab-remove="menuTab.remove">
                 <template v-for="(item, key) in userStore.menuTabList" :key="key">
-                    <el-tab-pane :name="item.path" :closable="item.closable">
+                    <ElTabPane :name="item.path" :closable="item.closable">
                         <template #label>
-                            <el-dropdown :ref="(el) => { menuTab.refList[item.path] = el }" trigger="contextmenu"
+                            <ElDropdown :ref="(el) => { menuTab.refList[item.path] = el }" trigger="contextmenu"
                                 @visible-change="(status) => { menuTab.visibleChange(status, item.path) }"
                                 style="height: 100%;">
-                                <el-space :size="0">
-                                    <icon-dynamic :icon="item.icon" />
+                                <ElSpace :size="0">
+                                    <IconDynamic :icon="item.icon" />
                                     <span>{{ item.title }}</span>
-                                </el-space>
+                                </ElSpace>
                                 <template #dropdown>
-                                    <el-dropdown-menu>
-                                        <el-dropdown-item @click="userStore.refreshMenuTab(item.path)">
+                                    <ElDropdownMenu>
+                                        <ElDropdownItem @click="userStore.refreshMenuTab(item.path)">
                                             刷新
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click="userStore.closeOtherMenuTab(item.path)">
+                                        </ElDropdownItem>
+                                        <ElDropdownItem @click="userStore.closeOtherMenuTab(item.path)">
                                             关闭其他
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click="userStore.closeLeftMenuTab(item.path)">
+                                        </ElDropdownItem>
+                                        <ElDropdownItem @click="userStore.closeLeftMenuTab(item.path)">
                                             关闭左侧
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click="userStore.closeRightMenuTab(item.path)">
+                                        </ElDropdownItem>
+                                        <ElDropdownItem @click="userStore.closeRightMenuTab(item.path)">
                                             关闭右侧
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click="userStore.closeAllMenuTab()">
+                                        </ElDropdownItem>
+                                        <ElDropdownItem @click="userStore.closeAllMenuTab()">
                                             关闭全部
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
+                                        </ElDropdownItem>
+                                    </ElDropdownMenu>
                                 </template>
-                            </el-dropdown>
+                            </ElDropdown>
                         </template>
-                    </el-tab-pane>
+                    </ElTabPane>
                 </template>
-            </el-tabs>
+            </ElTabs>
 
-            <el-dropdown class="menu-tabs-button" @visible-change="menuTab.buttonDropdown.visibleChange">
-                <el-link :underline="false">
-                    <autoicon-ep-menu
-                        :class="{ 'dropdown-icon': true, 'is-dropdown': menuTab.buttonDropdown.status }" />
-                </el-link>
+            <ElDropdown class="menu-tabs-button" @visible-change="menuTab.buttonDropdown.visibleChange">
+                <ElLink :underline="false">
+                    <AutoiconEpMenu :class="{ 'dropdown-icon': true, 'is-dropdown': menuTab.buttonDropdown.status }" />
+                </ElLink>
                 <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item @click="userStore.refreshMenuTab($route.path)">
+                    <ElDropdownMenu>
+                        <ElDropdownItem @click="userStore.refreshMenuTab($route.path)">
                             刷新
-                        </el-dropdown-item>
-                        <el-dropdown-item @click="userStore.closeOtherMenuTab($route.path)">
+                        </ElDropdownItem>
+                        <ElDropdownItem @click="userStore.closeOtherMenuTab($route.path)">
                             关闭其他
-                        </el-dropdown-item>
-                        <el-dropdown-item @click="userStore.closeLeftMenuTab($route.path)">
+                        </ElDropdownItem>
+                        <ElDropdownItem @click="userStore.closeLeftMenuTab($route.path)">
                             关闭左侧
-                        </el-dropdown-item>
-                        <el-dropdown-item @click="userStore.closeRightMenuTab($route.path)">
+                        </ElDropdownItem>
+                        <ElDropdownItem @click="userStore.closeRightMenuTab($route.path)">
                             关闭右侧
-                        </el-dropdown-item>
-                        <el-dropdown-item @click="userStore.closeAllMenuTab()">
+                        </ElDropdownItem>
+                        <ElDropdownItem @click="userStore.closeAllMenuTab()">
                             关闭全部
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
+                        </ElDropdownItem>
+                    </ElDropdownMenu>
                 </template>
-            </el-dropdown>
-        </el-col>
-    </el-row>
+            </ElDropdown>
+        </ElCol>
+    </ElRow>
 </template>
 
 <style scoped>

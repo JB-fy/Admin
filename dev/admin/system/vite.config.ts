@@ -54,12 +54,12 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         imports: [  //加载包
           'vue',
           'vue-router',
-          { //自定义
-            '@/app/config/index.ts': [
-              'config',
-              //['config', 'getConfig'],
-            ]
-          }
+          // { //自定义
+          //   '@/app/app/basic/functions.ts': [
+          //     'config',
+          //     //['config', 'getConfig'],
+          //   ]
+          // }
         ],
         dirs: [ //目录加载，递归加载则后面加上'/**'，例：src/app/basic/**
           'src/app/basic',
@@ -82,9 +82,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 
       /*--------按需导入组件 开始--------*/
       Components({
-        dirs: [
-          'src/app/components',
-        ],
+        // dirs: [
+        //   'src/app/components',
+        // ],
         resolvers: [
           ElementPlusResolver(),
           VantResolver(),

@@ -2,8 +2,10 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const ElMessage: typeof import('element-plus/es')['ElMessage']
+  const autoImport: typeof import('./src/app/basic/functions')['autoImport']
   const computed: typeof import('vue')['computed']
-  const config: typeof import('@/app/config/index.ts')['config']
+  const config: typeof import('./src/app/basic/functions')['config']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
@@ -12,10 +14,9 @@ declare global {
   const errorHandle: typeof import('./src/app/basic/errorHandle')['errorHandle']
   const getAccessToken: typeof import('./src/app/basic/accessToken')['getAccessToken']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
-  const getCurrentPath: typeof import('./src/app/basic/common')['getCurrentPath']
+  const getCurrentPath: typeof import('./src/app/basic/functions')['getCurrentPath']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getHttp: typeof import('./src/app/basic/http')['getHttp']
-  const getImportComponents: typeof import('./src/app/basic/common')['getImportComponents']
   const h: typeof import('vue')['h']
   const http: typeof import('./src/app/basic/http')['default']
   const inject: typeof import('vue')['inject']

@@ -1,10 +1,10 @@
 <template>
-    <el-icon v-if="icon">
-        <van-icon v-if="prefix === 'vant'" :name="iconCode" />
+    <ElIcon v-if="icon">
+        <VanIcon v-if="prefix === 'vant'" :name="iconCode" />
         <component v-else :is="iconCode" />
         <!-- <component v-else-if="icon.indexOf('ep-') === 0" :is="iconCode" />
         <component v-else-if="icon.indexOf('autoicon-') === 0" :is="iconCode" /> -->
-    </el-icon>
+    </ElIcon>
 </template>
 
 <script>
