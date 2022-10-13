@@ -11,6 +11,13 @@ const userStore = useUserStore()
                 :max="userStore.cacheRoute.max">
                 <component v-if="userStore.cacheRoute.exclude.indexOf(route.path) === -1" :is="Component"
                     :key="route.path" />
+                <!-- <suspense>
+                    <template #default>
+                        <component v-if="userStore.cacheRoute.exclude.indexOf(route.path) === -1" :is="Component"
+                            :key="route.path" />
+                    </template>
+                    <template #fallback> Loading... </template>
+                </suspense> -->
             </keep-alive>
         </transition>
     </router-view>
