@@ -1,29 +1,10 @@
-<template>
-    <el-container id="layout-container">
-        <el-aside :class="{ 'is-fold': $store.state.setting.leftMenuFold }">
-            <left-menu />
-        </el-aside>
-        <el-container>
-            <el-header>
-                <right-header />
-            </el-header>
+<script setup lang="ts">
+import { useSettingStore } from '@/stores/setting';
 
-            <el-main class="main-container">
-                <app-container />
-                <el-backtop target=".main-container" :right="16" :bottom="60">
-                    <span style="font-size: 14px;">置顶</span>
-                    <!-- <autoicon-ep-top /> -->
-                </el-backtop>
-            </el-main>
+const settingStore = useSettingStore()
+</script>
 
-            <el-footer>
-                <right-footer />
-            </el-footer>
-        </el-container>
-    </el-container>
-</template>
-
-<script>
+<script lang="ts">
 export default {
     components: {
         ...getImportComponents(import.meta.globEager('@/app/layout/default/components/*.vue'))
@@ -31,6 +12,30 @@ export default {
 }
 </script>
 
+<template>
+    <ElContainer id="layout-container">
+        <ElAside :class="{ 'is-fold': settingStore.leftMenuFold }">
+            <LeftMenu />
+        </ElAside>
+        <ElContainer>
+            <ElHeader>
+                <RightHeader />
+            </ElHeader>
+
+            <ElMain class="main-container">
+                <AppContainer />
+                <ElBacktop target=".main-container" :right="16" :bottom="60">
+                    <span style="font-size: 14px;">置顶</span>
+                    <!-- <AutoiconEpTop /> -->
+                </ElBacktop>
+            </ElMain>
+
+            <ElFooter>
+                <RightFooter />
+            </ElFooter>
+        </ElContainer>
+    </ElContainer>
+</template>
 
 <style scoped>
 #layout-container {

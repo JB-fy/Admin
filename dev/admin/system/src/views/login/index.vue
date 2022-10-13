@@ -1,32 +1,32 @@
 <template>
     <div class="particles" :particlesNumber="200" />
-    <el-tag id="login-container">
-        <el-divider>
+    <ElTag id="login-container">
+        <ElDivider>
             <div style="font-size: 25px;">登录</div>
-        </el-divider>
-        <el-form :ref="(el) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules">
-            <el-form-item prop="account">
-                <el-input v-model="form.login.data.account" placeholder="账号">
+        </ElDivider>
+        <ElForm :ref="(el) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules">
+            <ElFormItem prop="account">
+                <ElInput v-model="form.login.data.account" placeholder="账号">
                     <template #prefix>
-                        <autoicon-ep-user />
+                        <AutoiconEpUser />
                     </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-                <el-input v-model="form.login.data.password" type="password" placeholder="密码" :show-password="true"
+                </ElInput>
+            </ElFormItem>
+            <ElFormItem prop="password">
+                <ElInput v-model="form.login.data.password" type="password" placeholder="密码" :show-password="true"
                     @keyup.enter="form.login.submit">
                     <template #prefix>
-                        <autoicon-ep-lock />
+                        <AutoiconEpLock />
                     </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button :loading="form.login.loading" type="primary" @click="form.login.submit" style="width:100%;">
+                </ElInput>
+            </ElFormItem>
+            <ElFormItem>
+                <ElButton :loading="form.login.loading" type="primary" @click="form.login.submit" style="width:100%;">
                     登录
-                </el-button>
-            </el-form-item>
-        </el-form>
-    </el-tag>
+                </ElButton>
+            </ElFormItem>
+        </ElForm>
+    </ElTag>
 </template>
 
 <script>

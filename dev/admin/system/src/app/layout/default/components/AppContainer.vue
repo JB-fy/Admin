@@ -1,9 +1,15 @@
+<script setup lang="ts">
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore()
+</script>
+
 <template>
     <router-view v-slot="{ Component, route }">
         <transition mode="out-in" name="transform">
-            <keep-alive :include="$store.getters['user/cacheRouteInclude']"
-                :exclude="$store.state.user.cacheRoute.exclude" :max="$store.state.user.cacheRoute.max">
-                <component v-if="$store.state.user.cacheRoute.exclude.indexOf(route.path) === -1" :is="Component"
+            <keep-alive :include="userStore.cacheRouteInclude" :exclude="userStore.cacheRoute.exclude"
+                :max="userStore.cacheRoute.max">
+                <component v-if="userStore.cacheRoute.exclude.indexOf(route.path) === -1" :is="Component"
                     :key="route.path" />
             </keep-alive>
         </transition>

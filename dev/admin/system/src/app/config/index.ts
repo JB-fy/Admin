@@ -5,7 +5,7 @@ const allConfig = getImportComponents(import.meta.globEager('@/app/config/autolo
  * @param {*} defaultValue  默认值
  * @returns 
  */
-export function config(key, defaultValue = null) {
+export function config(key: string, defaultValue: any = null) {
     let keyArr = key.split('.')
     let value = allConfig
     for (let i = 0; i < keyArr.length; i++) {

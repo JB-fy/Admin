@@ -20,9 +20,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
   } */
   const env = loadEnv(mode, process.cwd(), ''); //设置第三个参数为 '' 来加载所有环境变量，而不管是否有 `VITE_` 前缀。
   return {
-    define: {
-      'process.env': env
-    },
+    // define: {
+    //   'process.env': env
+    // },
     base: env.VITE_BASE_PATH, //URL部署时的目录。打包时给所有静态资源路径加上该前缀,
     build: {
       outDir: '../../..' + env.VITE_BASE_PATH, //构建文件的输出目录
@@ -68,7 +68,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           ElementPlusResolver(),  //ElementPlus
           VantResolver(), //Vant
           IconsResolver({ //图标（格式：前缀-集合名-图标名。例：<i-ep-lock />）
-            prefix: 'autoicon',  //标签前缀。默认前缀"i"，false取消前缀。（一定要设置且是唯一字符串，即除了图标用到，代码中其他地方不能以字符串开头。否则容易冲突报错。例：自定义组件right-header被认定为图标ri/ght-header；false被认定为图标fa/lse。）
+            prefix: 'Autoicon',  //标签前缀。默认前缀"i"，false取消前缀。（一定要设置且是唯一字符串，即除了图标用到，代码中其他地方不能以字符串开头。否则容易冲突报错。例：自定义组件right-header被认定为图标ri/ght-header；false被认定为图标fa/lse。）
             /* enabledCollections: ['ep'], //启用哪个图标集合，默认启用全部。全部可选集合：https://icones.js.org/
             alias: { //一些复杂的集合名称设置别名
               //别名: '集合名',

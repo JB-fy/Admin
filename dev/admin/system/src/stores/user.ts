@@ -255,21 +255,21 @@ export const useUserStore = defineStore('user', {
               leftMenuTree[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
               pMenuList.pop()
             } else {
-              router.addRoute(layoutName, {
-                path: menuTree[i].menuUrl,
-                name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
-                component: async () => {
-                  //let component = await import('@/views' + menuTree[i].menuUrl + '.vue')
-                  let component = await import('@/views' + menuTree[i].menuUrl)
-                  component.default.name = menuTree[i].menuUrl    //动态设置页面组件名称，方便清理缓存
-                  return component
-                },
-                meta: {
-                  title: menuTree[i].menuName,
-                  icon: menuTree[i].menuIcon,
-                  pMenuList: Object.assign({}, pMenuList) //面包屑需要
-                }
-              })
+              // router.addRoute(layoutName, {
+              //   path: menuTree[i].menuUrl,
+              //   name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
+              //   component: async () => {
+              //     //let component = await import('@/views' + menuTree[i].menuUrl + '.vue')
+              //     let component = await import('@/views' + menuTree[i].menuUrl)
+              //     component.default.name = menuTree[i].menuUrl    //动态设置页面组件名称，方便清理缓存
+              //     return component
+              //   },
+              //   meta: {
+              //     title: menuTree[i].menuName,
+              //     icon: menuTree[i].menuIcon,
+              //     pMenuList: Object.assign({}, pMenuList) //面包屑需要
+              //   }
+              // })
             }
           }
           return leftMenuTree

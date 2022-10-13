@@ -5,7 +5,6 @@
  * @returns 
  */
 export const getImportComponents = (requireComponents, prefix = '') => {
-    console.log(requireComponents)
     prefix = prefix ? prefix + '-' : '';
     let importComponents = {}
     let componentName;
@@ -14,7 +13,6 @@ export const getImportComponents = (requireComponents, prefix = '') => {
         importComponents[prefix + componentName] = requireComponents[fileName].default
         //importComponents[prefix + componentName] = requireComponents[fileName]().default
     })
-    console.log(importComponents)
     return importComponents
 }
 
@@ -25,10 +23,10 @@ export const getImportComponents = (requireComponents, prefix = '') => {
  * @returns 
  */
 /* export const env = (key, def = '') => {
-    if (!(key in process.env)) {
+    if (!(key in import.meta.env)) {
         return def
     }
-    let value = process.env[key]
+    let value = import.meta.env[key]
     switch (value) {
         case 'true':
             return true
