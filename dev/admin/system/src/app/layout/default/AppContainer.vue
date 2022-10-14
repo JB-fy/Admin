@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/user';
+import { useKeepAliveStore } from '@/stores/keepAlive';
 
-const userStore = useUserStore()
+const keepAliveStore = useKeepAliveStore()
 </script>
 
 <template>
     <RouterView v-slot="{ Component, route }">
         <Transition mode="out-in" name="transform">
-            <KeepAlive :include="userStore.cacheRouteInclude" :exclude="userStore.cacheRoute.exclude"
-                :max="userStore.cacheRoute.max">
-                <component v-if="userStore.cacheRoute.exclude.indexOf(route.path) === -1" :is="Component"
+            <KeepAlive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude"
+                :max="keepAliveStore.appContainerMax">
+                <component v-if="keepAliveStore.appContainerExclude.indexOf(route.path) === -1" :is="Component"
                     :key="route.path" />
             </KeepAlive>
         </Transition>

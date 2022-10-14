@@ -1,63 +1,58 @@
-<script lang="ts">
+<script setup lang="ts">
+import { useKeepAliveStore } from '@/stores/keepAlive';
 import { useSettingStore } from '@/stores/setting';
 import { useUserStore } from '@/stores/user';
 
-export default {
-    setup: () => {
-        const settingStore = useSettingStore()
-        const userStore = useUserStore()
-        const route = useRoute()
-        const router = useRouter()
-        const state = reactive({
-            leftMenuFold: () => {
-                settingStore.leftMenuFold = !settingStore.leftMenuFold
-            },
-            userDropdown: {
-                status: false,
-                visibleChange: (status) => {
-                    state.userDropdown.status = status
-                },
-            },
-            menuTab: {
-                refList: {},
-                visibleChange: (status, path) => {
-                    if (status) {
-                        for (let key in state.menuTab.refList) {
-                            if (!state.menuTab.refList[key]) {
-                                delete state.menuTab.refList[key]
-                                continue
-                            }
-                            if (key !== path) {
-                                state.menuTab.refList[key].handleClose()
-                            }
-                        }
-                    }
-                },
-                change: (path) => {
-                    if (path === route.path) {  //左侧菜单点击会触发这个函数，故判断路由是否相同，相同不再跳转
-                        return false
-                    }
-                    router.push(path)
-                },
-                remove: (path) => {
-                    userStore.closeSelfMenuTab(path)
-                },
-                buttonDropdown: {
-                    status: false,
-                    visibleChange: (status) => {
-                        state.menuTab.buttonDropdown.status = status
-                        state.menuTab.visibleChange(status, '')
-                    },
-                },
-            }
-        })
-        return {
-            ...toRefs(state),
-            settingStore,
-            userStore
-        }
-    }
+const keepAliveStore = useKeepAliveStore()
+const settingStore = useSettingStore()
+const userStore = useUserStore()
+
+const route = useRoute()
+const router = useRouter()
+
+const leftMenuFold = () => {
+    settingStore.leftMenuFold = !settingStore.leftMenuFold
 }
+
+const userDropdown = reactive({
+    status: false,
+    visibleChange: (status: boolean) => {
+        userDropdown.status = status
+    },
+})
+
+const menuTab = reactive({
+    refList: {},
+    visibleChange: (status: boolean, path: string) => {
+        if (status) {
+            for (let key in menuTab.refList) {
+                if (!menuTab.refList[key]) {
+                    delete menuTab.refList[key]
+                    continue
+                }
+                if (key !== path) {
+                    menuTab.refList[key].handleClose()
+                }
+            }
+        }
+    },
+    change: (path: string) => {
+        if (path === route.path) {  //左侧菜单点击会触发这个函数，故判断路由是否相同，相同不再跳转
+            return false
+        }
+        router.push(path)
+    },
+    remove: (path: string) => {
+        userStore.closeSelfMenuTab(path)
+    },
+    buttonDropdown: {
+        status: false,
+        visibleChange: (status: boolean) => {
+            menuTab.buttonDropdown.status = status
+            menuTab.visibleChange(status, '')
+        },
+    },
+})
 </script>
 
 <template>
@@ -94,7 +89,7 @@ export default {
                 <ElLink :underline="false">
                     <AutoiconEpBell />
                 </ElLink>
-                <ElLink :underline="false" @click="userStore.refreshMenuTab($route.path)">
+                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab($route.path)">
                     <AutoiconEpRefresh />
                 </ElLink>
                 <ElDropdown @visible-change="userDropdown.visibleChange">
@@ -137,7 +132,7 @@ export default {
                                 </ElSpace>
                                 <template #dropdown>
                                     <ElDropdownMenu>
-                                        <ElDropdownItem @click="userStore.refreshMenuTab(item.path)">
+                                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.path)">
                                             刷新
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="userStore.closeOtherMenuTab(item.path)">
@@ -166,7 +161,7 @@ export default {
                 </ElLink>
                 <template #dropdown>
                     <ElDropdownMenu>
-                        <ElDropdownItem @click="userStore.refreshMenuTab($route.path)">
+                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab($route.path)">
                             刷新
                         </ElDropdownItem>
                         <ElDropdownItem @click="userStore.closeOtherMenuTab($route.path)">

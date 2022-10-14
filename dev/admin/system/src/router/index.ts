@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import layout from '@/app/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
+import { useKeepAliveStore } from '@/stores/keepAlive';
 
 const initRoutes = [
     {
@@ -13,48 +14,77 @@ const initRoutes = [
         children: [
             {
                 path: '/authAction',
-                component: () => import('@/views/auth/action/Index.vue'),
-                meta: { title: '操作列表', icon: 'vant-manager-o' }
+                component: async () => {
+                    //let componentPath='../views/auth/action/Index.vue'
+                    //const component = await import(componentPath)
+                    const component = await import('@/views/auth/action/Index.vue')
+                    component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '操作列表', keepAlive: true }
             },
             {
                 path: '/authMenu',
-                component: () => import('@/views/auth/menu/Index.vue'),
-                meta: { title: '菜单列表', icon: 'vant-manager-o' }
+                component: async () => {
+                    const component = await import('@/views/auth/menu/Index.vue')
+                    component.default.name = '/authMenu'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '菜单列表', keepAlive: true }
             },
             {
                 path: '/authRole',
-                component: () => import('@/views/auth/role/Index.vue'),
-                meta: { title: '角色列表', icon: 'vant-manager-o' }
+                component: async () => {
+                    const component = await import('@/views/auth/role/Index.vue')
+                    component.default.name = '/authRole'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '角色列表', keepAlive: true }
             },
             {
                 path: '/authScene',
-                component: () => import('@/views/auth/scene/Index.vue'),
-                meta: { title: '场景列表', icon: 'vant-manager-o' }
+                component: async () => {
+                    const component = await import('@/views/auth/scene/Index.vue')
+                    component.default.name = '/authScene'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '场景列表', keepAlive: true }
             },
             {
                 path: '/systemAdmin',
-                component: () => import('@/views/system/admin/Index.vue'),
-                meta: { title: '系统管理员', icon: 'vant-manager-o' }
+                component: async () => {
+                    const component = await import('@/views/system/admin/Index.vue')
+                    component.default.name = '/systemAdmin'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '系统管理员', keepAlive: true }
             },
             {
                 path: '/systemConfig',
-                component: () => import('@/views/system/config/Index.vue'),
-                meta: { title: '系统配置', icon: 'vant-manager-o' }
+                component: async () => {
+                    const component = await import('@/views/system/config/Index.vue')
+                    component.default.name = '/systemConfig'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '系统配置', keepAlive: true }
             },
             {
                 path: '/systemLogOfRequest',
-                component: () => import('@/views/system/logOfRequest/Index.vue'),
-                meta: { title: '系统管理员', icon: 'vant-manager-o' }
+                component: async () => {
+                    const component = await import('@/views/system/logOfRequest/Index.vue')
+                    component.default.name = '/systemLogOfRequest'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '系统管理员', keepAlive: true }
             },
             {
                 path: '/profile',
-                component: () => import('@/views/profile/index.vue'),
-                /* component: async () => {
-                    let component = await import('@/views/profile/index.vue')
-                    component.default.name = '/profile'    //动态设置页面组件名称，方便清理缓存
+                component: async () => {
+                    const component = await import('@/views/profile/Index.vue')
+                    component.default.name = '/profile'    //设置页面组件name为path，方便清理缓存
                     return component
-                }, */
-                meta: { title: '个人中心', icon: 'vant-manager-o' }
+                },
+                meta: { title: '个人中心', keepAlive: true }
             },
         ]
     },
@@ -70,6 +100,7 @@ const initRoutes = [
 ]
 
 const router = createRouter({
+    //history: createWebHistory(import.meta.env.BASE_URL),
     history: createWebHistory(config('app.router.basePath')),
     routes: initRoutes
 })
@@ -130,8 +161,7 @@ router.beforeEach(async (to) => {
 })
 
 router.afterEach((to) => {
-    const userStore = useUserStore();
-    userStore.removeCacheRouteExclude(to.path)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
+    useKeepAliveStore().removeAppContainerExclude(to.path)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
 })
 
 export default router

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
-import router from '@/router'
 import { getInfo, getLoginToken, getMenuTree, login } from '@/app/api/login'
 
 export const useUserStore = defineStore('user', {
@@ -8,13 +7,7 @@ export const useUserStore = defineStore('user', {
     return {
       info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像, rawInfo: 原始信息（后台传过来的原始数据）}
       leftMenuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, path: 路径, icon: 图标, children: [子集]}
-      constRoutePathList: [], //固定路由路径列表，即注册动态路由前存在的固定路由。用于删除动态路由
       menuTabList: [], //菜单标签列表（打开标签即是允许缓存的组件）
-      cacheRoute: {
-        //include: [],    //可以通过getters/cacheRouteInclude计算得出，且菜单标签变动会自动删除对应缓存组件
-        exclude: [], //不允许缓存的路由路径列表，这里主要用于实现缓存刷新（动态设置页面组件名称name时，用路径命名，故这里面填写路径）
-        max: config('app.router.cacheRoute.max')   //缓存组件最大数量
-      }
     }
   },
   getters: {
@@ -23,39 +16,9 @@ export const useUserStore = defineStore('user', {
     },
     menuTabListLength: (state) => {
       return state.menuTabList.length
-    },
-    cacheRouteInclude: (state) => {
-      const include = []
-      const cacheRouteConstExclude = config('app.router.cacheRoute.constExclude')
-      for (let i = 0; i < state.menuTabList.length; i++) {
-        if (cacheRouteConstExclude.indexOf(state.menuTabList[i].path) === -1) {
-          include.push(state.menuTabList[i].path)
-        }
-      }
-      return include
     }
   },
   actions: {
-    /**
-         * 设置固定路由路径列表（必须在注册动态路由前调用，建议直接在main.js中调用）
-         */
-    setConstRoutePathList() {
-      const constRoutePathList = []
-      const constRoutes = router.getRoutes()
-      for (let i = 0; i < constRoutes.length; i++) {
-        constRoutePathList.push(constRoutes[i].path)
-      }
-      this.constRoutePathList = constRoutePathList
-    },
-    /**
-     * 删除不允许缓存的路由组件
-     * @param {*} path  路由路径
-     */
-    removeCacheRouteExclude(path) {
-      this.cacheRoute.exclude = this.cacheRoute.exclude.filter((item) => {
-        return item !== path
-      })
-    },
     /**
      * 推入菜单标签列表
      * @param {*} routeTo  将要打开的路由
@@ -74,21 +37,6 @@ export const useUserStore = defineStore('user', {
       }
     },
     /**
-     * 刷新菜单标签
-     *      实现流程：
-     *          1：app-container.vue文件内component标签加上判断是否允许缓存，允许才显示界面（v-if="$store.this.user.cacheRoute.exclude.indexOf(route.path) === -1"）
-     *          2：设置路由不允许缓存，不显示页面
-     *          3：打开路由，路由后置守卫afterEach中重新设置成允许缓存，显示页面
-     * @param {*} path  菜单标签的路由路径
-     */
-    refreshMenuTab(path) {
-      this.cacheRoute.exclude.push(path)
-      const currentPath = getCurrentPath()
-      if (path === currentPath) {
-        router.push(path)
-      }
-    },
-    /**
      * 关闭自身菜单标签
      * @param {*} path  菜单标签的路由路径
      */
@@ -98,7 +46,7 @@ export const useUserStore = defineStore('user', {
       })
       const currentPath = getCurrentPath()
       if (path === currentPath) {
-        router.push(this.menuTabList[this.menuTabList.length - 1].path)
+        useRouter().push(this.menuTabList[this.menuTabList.length - 1].path)
       }
     },
     /**
@@ -111,7 +59,7 @@ export const useUserStore = defineStore('user', {
       })
       const currentPath = getCurrentPath()
       if (path !== currentPath) {
-        router.push(path)
+        useRouter().push(path)
       }
     },
     /**
@@ -131,7 +79,7 @@ export const useUserStore = defineStore('user', {
           return item.path === currentPath
         })
         if (currentLeftIndex === -1) {
-          router.push(path)
+          useRouter().push(path)
         }
       }
     },
@@ -152,7 +100,7 @@ export const useUserStore = defineStore('user', {
           return item.path === currentPath
         })
         if (currentRightIndex === -1) {
-          router.push(path)
+          useRouter().push(path)
         }
       }
     },
@@ -163,19 +111,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable
       })
-      router.push(this.menuTabList[this.menuTabList.length - 1].path)
-    },
-
-    /**
-     * 重置路由
-     */
-    resetRoute() {
-      const allRoutes = router.getRoutes()
-      for (let i = 0; i < allRoutes.length; i++) {
-        if (this.constRoutePathList.indexOf(allRoutes[i].path) === -1) {
-          router.removeRoute(allRoutes[i].path)
-        }
-      }
+      useRouter().push(this.menuTabList[this.menuTabList.length - 1].path)
     },
     /**
      * 登录
@@ -197,8 +133,6 @@ export const useUserStore = defineStore('user', {
         //在logout退出登录操作中也可以清理，但在登录操作这里处理，应变能力更好。不用考虑有多少种情况需及时清理脏数据，如：accessToken失效、切换用户等
         //this.info = {}; //清空用户信息
         this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
-
-        this.resetRoute();  //重置路由
 
         //this.leftMenuTree = []  //清空用户左侧菜单
         this.setLeftMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
@@ -255,7 +189,7 @@ export const useUserStore = defineStore('user', {
               leftMenuTree[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
               pMenuList.pop()
             } else {
-              // router.addRoute(layoutName, {
+              // useRouter().addRoute(layoutName, {
               //   path: menuTree[i].menuUrl,
               //   name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
               //   component: async () => {
@@ -291,9 +225,9 @@ export const useUserStore = defineStore('user', {
       await removeAccessToken()
       const whiteList = config('app.router.whiteList')
       if (whiteList.indexOf(toPath) === -1) {
-        await router.push('/login?redirect=' + toPath)
+        await useRouter().push('/login?redirect=' + toPath)
       } else {
-        await router.push(toPath)
+        await useRouter().push(toPath)
       }
     }
   },
