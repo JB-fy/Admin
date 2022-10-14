@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
 import { getInfo, getEncryptStr, getMenuTree, login } from '@/app/api/login'
+import router from '@/router'
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -46,7 +47,7 @@ export const useUserStore = defineStore('user', {
       })
       const currentPath = getCurrentPath()
       if (path === currentPath) {
-        useRouter().push(this.menuTabList[this.menuTabList.length - 1].path)
+        router.push(this.menuTabList[this.menuTabList.length - 1].path)
       }
     },
     /**
@@ -59,7 +60,7 @@ export const useUserStore = defineStore('user', {
       })
       const currentPath = getCurrentPath()
       if (path !== currentPath) {
-        useRouter().push(path)
+        router.push(path)
       }
     },
     /**
@@ -79,7 +80,7 @@ export const useUserStore = defineStore('user', {
           return item.path === currentPath
         })
         if (currentLeftIndex === -1) {
-          useRouter().push(path)
+          router.push(path)
         }
       }
     },
@@ -100,7 +101,7 @@ export const useUserStore = defineStore('user', {
           return item.path === currentPath
         })
         if (currentRightIndex === -1) {
-          useRouter().push(path)
+          router.push(path)
         }
       }
     },
@@ -111,7 +112,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable
       })
-      useRouter().push(this.menuTabList[this.menuTabList.length - 1].path)
+      router.push(this.menuTabList[this.menuTabList.length - 1].path)
     },
     /**
      * 登录
@@ -190,7 +191,7 @@ export const useUserStore = defineStore('user', {
               leftMenuTree[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
               pMenuList.pop()
             } else {
-              // useRouter().addRoute(layoutName, {
+              // router.addRoute(layoutName, {
               //   path: menuTree[i].menuUrl,
               //   name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
               //   component: async () => {
@@ -224,12 +225,12 @@ export const useUserStore = defineStore('user', {
      */
     async logout(toPath = '/login') {
       await removeAccessToken()
-      const whiteList = config('app.router.whiteList')
-      if (whiteList.indexOf(toPath) === -1) {
-        await useRouter().push('/login?redirect=' + toPath)
+      await router.push(toPath)
+      /* if (toPath === '/login') {
+        await router.push(toPath)
       } else {
-        await useRouter().push(toPath)
-      }
+        await router.push('/login?redirect=' + toPath)
+      } */
     }
   },
 })
