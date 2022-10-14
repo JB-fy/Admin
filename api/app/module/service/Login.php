@@ -56,12 +56,13 @@ class Login extends AbstractService
                 $payload = [
                     'id' => $info->adminId
                 ];
-                $token = container($type . 'Jwt')->createToken($payload);
+                $systemAdminJwt = container($type . 'Jwt');
+                $token = $systemAdminJwt->createToken($payload);
 
                 //缓存token（选做。限制多地登录，多设备登录等情况下可用）
                 $cacheLogin = container(CacheLogin::class, true);
                 $cacheLogin->setTokenKey($payload['id'], $type);
-                $cacheLogin->setToken($token, $type);
+                $cacheLogin->setToken($token, $systemAdminJwt->getConfig()['expireTime']);
 
                 throwSuccessJson(['token' => $token]);
                 break;

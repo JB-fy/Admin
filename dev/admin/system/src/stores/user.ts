@@ -172,40 +172,25 @@ export const useUserStore = defineStore('user', {
       try {
         const res = await getMenuTree()
         /**--------注册动态路由 开始--------**/
-        const layoutName = config('app.router.layoutName')
         const handleMenuTree = (menuTree, pMenuList = []) => {
           const leftMenuTree = []
+          let tmpExtendData = {};
           for (let i = 0; i < menuTree.length; i++) {
+            tmpExtendData = JSON.parse(menuTree[i].extendData);
             leftMenuTree[i] = {
-              title: menuTree[i].menuName,
-              path: menuTree[i].menuUrl,
-              icon: menuTree[i].menuIcon,
+              title: tmpExtendData.title,
+              path: tmpExtendData.url,
+              icon: tmpExtendData.icon,
               children: [],
             }
             if (menuTree[i].children.length) {
               pMenuList.push({
-                title: menuTree[i].menuName,
-                path: menuTree[i].menuUrl,
-                icon: menuTree[i].menuIcon,
+                title: tmpExtendData.title,
+                path: tmpExtendData.url,
+                icon: tmpExtendData.icon,
               })
               leftMenuTree[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
               pMenuList.pop()
-            } else {
-              // router.addRoute(layoutName, {
-              //   path: menuTree[i].menuUrl,
-              //   name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
-              //   component: async () => {
-              //     //let component = await import('@/views' + menuTree[i].menuUrl + '.vue')
-              //     let component = await import('@/views' + menuTree[i].menuUrl)
-              //     component.default.name = menuTree[i].menuUrl    //动态设置页面组件名称，方便清理缓存
-              //     return component
-              //   },
-              //   meta: {
-              //     title: menuTree[i].menuName,
-              //     icon: menuTree[i].menuIcon,
-              //     pMenuList: Object.assign({}, pMenuList) //面包屑需要
-              //   }
-              // })
             }
           }
           return leftMenuTree

@@ -14,6 +14,16 @@ class Jwt
     }
 
     /**
+     * 获取配置参数
+     * 
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
      * 生成token
      * 
      * @param array $payload

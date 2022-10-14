@@ -44,7 +44,7 @@ class Login extends AbstractCache
         return $encryptStr;
     }
 
-
+    /*----------------token相关 开始----------------*/
     protected string $tokenKey;
 
     /**
@@ -63,12 +63,12 @@ class Login extends AbstractCache
      * 缓存token
      *
      * @param string $token
-     * @param string $type
+     * @param int $timeout
      * @return boolean
      */
-    public function setToken(string $token, string $type): bool
+    public function setToken(string $token, int $timeout = 7200): bool
     {
-        return $this->cache->setEx($this->tokenKey, config('custom.auth.' . $type . '.expireTime'), $token);
+        return $this->cache->setEx($this->tokenKey, $timeout, $token);
     }
 
     /**
@@ -80,4 +80,5 @@ class Login extends AbstractCache
     {
         return $this->cache->get($this->tokenKey);
     }
+    /*----------------token相关 结束----------------*/
 }

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import router from '@/router'
 
 export const useKeepAliveStore = defineStore('keepAlive', {
   state: () => {
@@ -10,7 +11,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
   getters: {
     appContainerInclude: (state): string[] => {
       const include: string[] = []
-      useRouter().getRoutes().forEach((item) => {
+      router.getRoutes().forEach((item) => {
         if (item.meta.keepAlive) {
           //include.push(item.components.default.name)
           include.push(item.path)
@@ -41,7 +42,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
       this.appContainerExclude.push(path)
       const currentPath = getCurrentPath()
       if (path === currentPath) {
-        useRouter().push(path)
+        router.push(path)
       }
     },
   }

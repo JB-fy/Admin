@@ -13,11 +13,13 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+use app\module\db\table\auth\AuthScene;
 use Psr\Container\ContainerInterface;
 
 return [
-    //'systemAdminJwt' => container(app\plugin\Jwt::class, true, ['config' => config('custom.auth.systemAdmin')])
     'systemAdminJwt' => function (ContainerInterface $container) {
-        return $container->make(app\plugin\Jwt::class, ['config' => config('custom.auth.systemAdmin')]);
+        $config = container(AuthScene::class, true)->where(['sceneCode' => 'systemAdmin'])->getBuilder()->value('sceneConfig');
+        $config = json_decode($config, true);
+        return $container->make(app\plugin\Jwt::class, ['config' => $config]);
     },
 ];

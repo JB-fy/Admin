@@ -31,7 +31,7 @@ export function updateInfo(data) {
 
 export function getMenuTree() {
   return http({
-    url: '/authMenu/getSelfTree',
+    url: '/login/getMenuTree',
     method: 'post'
   })
 }
