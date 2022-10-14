@@ -3,25 +3,32 @@ import layout from '@/app/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
 import { useKeepAliveStore } from '@/stores/keepAlive';
 
-const initRoutes = [
+const initRouteList = [
     {
         path: '/',  //必须设置，否则默认为'/'。在多个路由没有设置该参数时，则首页会以最后一个路由为准，会出现首页错误问题
         component: layout,
-        meta: { title: '首页' },
-        name: config('app.router.layoutName'),
-        redirect: config('app.router.indexRedirect'),
+        redirect: '/index',
         replace: true,
         children: [
             {
+                path: '/index',
+                component: async () => {
+                    //let componentPath='../views/index/Index.vue'
+                    //const component = await import(componentPath)
+                    const component = await import('@/views/index/Index.vue')
+                    component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
+                    return component
+                },
+                meta: { title: '主页', keepAlive: true, isAuth: true }
+            },
+            {
                 path: '/authAction',
                 component: async () => {
-                    //let componentPath='../views/auth/action/Index.vue'
-                    //const component = await import(componentPath)
                     const component = await import('@/views/auth/action/Index.vue')
                     component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '操作列表', keepAlive: true }
+                meta: { title: '操作列表', keepAlive: true, isAuth: true }
             },
             {
                 path: '/authMenu',
@@ -30,7 +37,7 @@ const initRoutes = [
                     component.default.name = '/authMenu'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '菜单列表', keepAlive: true }
+                meta: { title: '菜单列表', keepAlive: true, isAuth: true }
             },
             {
                 path: '/authRole',
@@ -39,7 +46,7 @@ const initRoutes = [
                     component.default.name = '/authRole'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '角色列表', keepAlive: true }
+                meta: { title: '角色列表', keepAlive: true, isAuth: true }
             },
             {
                 path: '/authScene',
@@ -48,7 +55,7 @@ const initRoutes = [
                     component.default.name = '/authScene'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '场景列表', keepAlive: true }
+                meta: { title: '场景列表', keepAlive: true, isAuth: true }
             },
             {
                 path: '/systemAdmin',
@@ -57,7 +64,7 @@ const initRoutes = [
                     component.default.name = '/systemAdmin'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '系统管理员', keepAlive: true }
+                meta: { title: '系统管理员', keepAlive: true, isAuth: true }
             },
             {
                 path: '/systemConfig',
@@ -66,7 +73,7 @@ const initRoutes = [
                     component.default.name = '/systemConfig'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '系统配置', keepAlive: true }
+                meta: { title: '系统配置', keepAlive: true, isAuth: true }
             },
             {
                 path: '/systemLogOfRequest',
@@ -75,7 +82,7 @@ const initRoutes = [
                     component.default.name = '/systemLogOfRequest'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '系统管理员', keepAlive: true }
+                meta: { title: '系统管理员', keepAlive: true, isAuth: true }
             },
             {
                 path: '/profile',
@@ -84,7 +91,7 @@ const initRoutes = [
                     component.default.name = '/profile'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '个人中心', keepAlive: true }
+                meta: { title: '个人中心', keepAlive: true, isAuth: true }
             },
         ]
     },
@@ -100,9 +107,9 @@ const initRoutes = [
 ]
 
 const router = createRouter({
-    //history: createWebHistory(import.meta.env.BASE_URL),
-    history: createWebHistory(config('app.router.basePath')),
-    routes: initRoutes
+    //history: createWebHistory(import.meta.env.VITE_BASE_PATH),
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: initRouteList
 })
 
 router.beforeEach(async (to) => {
@@ -117,8 +124,7 @@ router.beforeEach(async (to) => {
     /**--------判断登录状态 开始--------**/
     const accessToken = getAccessToken()
     if (!accessToken) {
-        const whiteList = config('app.router.whiteList')
-        if (whiteList.indexOf(to.path) === -1) {
+        if(to.meta.isAuth){
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
             await userStore.logout(to.path)
             return false */
@@ -148,9 +154,9 @@ router.beforeEach(async (to) => {
 
     /**--------设置菜单标签 开始--------**/
     if (userStore.menuTabListLength === 0) {
-        const routes = router.getRoutes()
-        const initRouteTo = routes.find((item) => {
-            return item.path === initRoutes[0].redirect
+        const routeList = router.getRoutes()
+        const initRouteTo = routeList.find((item) => {
+            return item.path === initRouteList[0].redirect
         })
         userStore.pushMenuTabList(Object.assign({ closable: false }, initRouteTo))
     }

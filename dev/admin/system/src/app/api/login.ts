@@ -1,6 +1,6 @@
-export function getLoginToken(data) {
+export function getEncryptStr(data) {
   return http({
-    url: '/admin/login/getLoginToken',
+    url: '/login/getEncryptStr',
     method: 'post',
     data: data
   })
@@ -8,7 +8,7 @@ export function getLoginToken(data) {
 
 export function login(data) {
   return http({
-    url: '/admin/login/index',
+    url: '/login',
     method: 'post',
     data: data
   })
@@ -16,14 +16,14 @@ export function login(data) {
 
 export function getInfo() {
   return http({
-    url: '/admin/login/getInfo',
+    url: '/login/getInfo',
     method: 'post'
   })
 }
 
 export function updateInfo(data) {
   return http({
-    url: '/admin/login/updateInfo',
+    url: '/login/updateInfo',
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function updateInfo(data) {
 
 export function getMenuTree() {
   return http({
-    url: '/admin/authMenu/getSelfTree',
+    url: '/authMenu/getSelfTree',
     method: 'post'
   })
 }

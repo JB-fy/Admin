@@ -17,7 +17,7 @@ class Login extends AbstractService
      * @param string $type 类型。值唯一，否则容易出错。例如：数据库两个不同表，用户表和管理员表，可能存在同样的账号名，同时登录时可能会登录失败
      * @return void
      */
-    public function encryptStr(string $account, string $type)
+    public function getEncryptStr(string $account, string $type)
     {
         $encryptStr = container(LogicLogin::class)->createEncryptStr($account, $type);
         throwSuccessJson(['encryptStr' => $encryptStr]);

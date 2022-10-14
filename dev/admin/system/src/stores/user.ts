@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
-import { getInfo, getLoginToken, getMenuTree, login } from '@/app/api/login'
+import { getInfo, getEncryptStr, getMenuTree, login } from '@/app/api/login'
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -121,7 +121,7 @@ export const useUserStore = defineStore('user', {
      */
     async login(account, password) {
       try {
-        let res = await getLoginToken({
+        let res = await getEncryptStr({
           account: account
         })
         res = await login({

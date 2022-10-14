@@ -1,16 +1,5 @@
 export default readonly({
     webTitle: import.meta.env.VITE_WEB_TITLE,   //网站标题
-    router: {
-        basePath: import.meta.env.VITE_BASE_PATH,    //设置路由基础路径
-        whiteList: ['/login'],    //设置路由白名单，不用验证登录
-        indexRedirect: '/index/index',    //首页'/'路由的跳转路径
-        layoutName: '/',    //首页'/'路由的名称，用于动态从后台注册新路由
-        cacheRoute: {   //缓存路由组件设置，即页面缓存
-            constExclude: [],    //固定不做缓存的路由路径（对应的页面将永远不做缓存）
-            //constExclude: ['/profile'],
-            max: 10,    //缓存组件最大数量
-        },
-    },
     apiScene: {
         name: import.meta.env.VITE_API_SCENE_NAME,  //场景名称。作用：设置http的请求头
         code: import.meta.env.VITE_API_SCENE_CODE,  //场景标识。与后台代码配合使用，多后台情况下，复制一份前端代码，更改这个参数，可方便开发。

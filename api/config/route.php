@@ -24,7 +24,7 @@ Route::get('/test', [\app\controller\Test::class, 'index']);
 Route::get('/', [\app\controller\Index::class, 'index']);
 
 Route::group('/login', function () {
-    Route::add(['GET', 'POST', 'OPTIONS'], '/encryptStr', [\app\controller\Login::class, 'encryptStr']);
+    Route::add(['GET', 'POST', 'OPTIONS'], '/getEncryptStr', [\app\controller\Login::class, 'getEncryptStr']);
     Route::add(['GET', 'POST', 'OPTIONS'], '', [\app\controller\Login::class, 'login']);
     Route::add(['GET', 'POST', 'OPTIONS'], '/getInfo', [\app\controller\Login::class, 'getInfo']);
     // Route::add(['GET', 'POST', 'OPTIONS'], '/updateInfo', [\app\controller\Login::class, 'updateInfo']);

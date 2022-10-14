@@ -35,8 +35,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       //open: true, //启动后打开默认浏览器
       //proxy: env.VITE_DEV_SERVER_PROXY,
       proxy: {
-        //'.*': env.VITE_DEV_SERVER_PROXY,
-        '.*': {
+        //'/.*': env.VITE_DEV_SERVER_PROXY,
+        //'/login/getEncryptStr': env.VITE_DEV_SERVER_PROXY,
+        '/.*': {
           target: env.VITE_DEV_SERVER_PROXY,
           changeOrigin: true,
         }

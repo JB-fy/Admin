@@ -16,7 +16,7 @@ class Login extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function encryptStr(Request $request)
+    public function getEncryptStr(Request $request)
     {
         switch ($request->authScene) {
             case 'system':
@@ -25,7 +25,7 @@ class Login extends AbstractController
                 container(ValidateLogin::class, true)->scene('encryptStr')->check($data);
                 /**--------验证参数 结束--------**/
 
-                container(ServiceLogin::class)->encryptStr($data['account'], 'systemAdmin');
+                container(ServiceLogin::class)->getEncryptStr($data['account'], 'systemAdmin');
                 break;
             default:
                 throwFailJson('001001');
