@@ -119,14 +119,15 @@ export const useUserStore = defineStore('user', {
      * @param {*} password  密码
      * @returns 
      */
-    async login(account, password) {
+    async login(account: string, password: string) {
+      //this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
       try {
         let res = await getEncryptStr({
           account: account
         })
         res = await login({
           account: account,
-          password: md5(md5(password) + res.data.loginToken)
+          password: md5(md5(password) + res.data.encryptStr)
         })
         setAccessToken(res.data.token)
         /**--------初始化数据（可有效清理上一个登录用户的脏数据） 开始--------**/

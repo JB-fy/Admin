@@ -26,20 +26,20 @@ export const getHttp = (option = {}) => {
             return config
         },
         (error) => {
-            error.message = JSON.stringify({ code: 9999, msg: error.message, data: {} })
+            error.message = JSON.stringify({ code: '999999', msg: error.message, data: {} })
             return Promise.reject(error)
         }
     )
 
     http.interceptors.response.use(
         (response) => {
-            if (response.data.code === 0) {
+            if (response.data.code === '000000') {
                 return response.data
             }
             return Promise.reject(new Error(JSON.stringify(response.data)))
         },
         (error) => {
-            error.message = JSON.stringify({ code: 9999, msg: error.message, data: {} })
+            error.message = JSON.stringify({ code: '999999', msg: error.message, data: {} })
             return Promise.reject(error)
         }
     )

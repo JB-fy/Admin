@@ -9,7 +9,7 @@ export const errorHandle = async (err) => {
         const errMsg = JSON.parse(err.message)
         if (typeof errMsg.code !== 'undefined') {
             switch (errMsg.code) {
-                case 4000:
+                case '000400':
                     /* ElMessageBox.alert(errMsg.msg, '确认登出', {
                         confirmButtonText: '重新登录',
                         type: 'warning'
