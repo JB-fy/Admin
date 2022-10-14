@@ -28,6 +28,7 @@ Route::group('/login', function () {
     Route::add(['GET', 'POST', 'OPTIONS'], '', [\app\controller\Login::class, 'login']);
     Route::add(['GET', 'POST', 'OPTIONS'], '/getInfo', [\app\controller\Login::class, 'getInfo']);
     // Route::add(['GET', 'POST', 'OPTIONS'], '/updateInfo', [\app\controller\Login::class, 'updateInfo']);
+    Route::add(['GET', 'POST', 'OPTIONS'], '/getMenuTree', [\app\controller\Login::class, 'getMenuTree']);
 });
 
 //当找不到路由时，处理方法

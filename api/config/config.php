@@ -22,6 +22,6 @@ return [
         \app\aspect\Language::class,
         \app\aspect\LogOfRequest::class,
         \app\aspect\AuthScene::class,
-        \app\aspect\AuthSceneOfSystem::class,
+        \app\aspect\AuthSceneOfSystemAdmin::class,
     ]
 ];

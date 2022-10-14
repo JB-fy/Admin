@@ -33,13 +33,17 @@ class AuthScene extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $request = request();
-        $request->authScene = $request->header('AuthScene');
-        if (empty($request->authScene)) {
+        $sceneCode = $request->header('AuthScene');
+        //$request->authScene = $request->header('AuthScene');
+        if (empty($sceneCode)) {
             throwFailJson('001001');
         }
-        if (!container(TableAuthScene::class, true)->where(['sceneCode' => $request->authScene])->getBuilder()->exists()) {
+        $authSceneInfo = (array)container(TableAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getBuilder()->first();
+        if (empty($authSceneInfo)) {
             throwFailJson('001001');
         }
+        $authSceneInfo['sceneConfig'] = $authSceneInfo['sceneConfig'] ? json_decode($authSceneInfo['sceneConfig'], true) : [];
+        $request->authSceneInfo = $authSceneInfo;
         try {
             $response = $proceedingJoinPoint->process();
             return $response;

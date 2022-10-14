@@ -7,7 +7,7 @@ namespace app\aspect;
 use app\module\service\Login;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-class AuthSceneOfSystem extends AbstractAspect
+class AuthSceneOfSystemAdmin extends AbstractAspect
 {
     /**
      * 执行优先级（大值优先）
@@ -23,6 +23,7 @@ class AuthSceneOfSystem extends AbstractAspect
      */
     public $classes = [
         \app\controller\Login::class . '::getInfo',
+        \app\controller\Login::class . '::getMenuTree',
     ];
 
     /**
@@ -33,7 +34,7 @@ class AuthSceneOfSystem extends AbstractAspect
     {
         $request = request();
         try {
-            if ($request->authScene == 'system') {
+            if ($request->authSceneInfo['sceneCode'] == 'systemAdmin') {
                 container(Login::class)->verifyToken('systemAdmin');
             }
             $response = $proceedingJoinPoint->process();

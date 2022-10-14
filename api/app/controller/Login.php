@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace app\controller;
 
+use app\module\service\auth\AuthMenu as ServiceAuthMenu;
 use app\module\service\Login as ServiceLogin;
 use app\module\validate\Login as ValidateLogin;
 use support\Request;
@@ -18,8 +19,8 @@ class Login extends AbstractController
      */
     public function getEncryptStr(Request $request)
     {
-        switch ($request->authScene) {
-            case 'system':
+        switch ($request->authSceneInfo['sceneCode']) {
+            case 'systemAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $request->all();
                 container(ValidateLogin::class, true)->scene('encryptStr')->check($data);
@@ -41,8 +42,8 @@ class Login extends AbstractController
      */
     public function login(Request $request)
     {
-        switch ($request->authScene) {
-            case 'system':
+        switch ($request->authSceneInfo['sceneCode']) {
+            case 'systemAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $request->all();
                 container(ValidateLogin::class, true)->check($data);
@@ -64,11 +65,11 @@ class Login extends AbstractController
      */
     public function getInfo(Request $request)
     {
-        switch ($request->authScene) {
-            case 'system':
-                $info = $request->systemAdminInfo;
+        switch ($request->authSceneInfo['sceneCode']) {
+            case 'systemAdmin':
+                $loginInfo = $request->systemAdminInfo;
 
-                throwSuccessJson(['info' => $info]);
+                throwSuccessJson(['info' => $loginInfo]);
                 break;
             default:
                 throwFailJson('001001');
@@ -84,9 +85,9 @@ class Login extends AbstractController
      */
     // public function updateInfo(Request $request)
     // {
-    //     switch ($request->authScene) {
-    //         case 'system':
-    //             $info = $request->systemAdminInfo;
+    //     switch ($request->authSceneInfo['sceneCode']) {
+    //         case 'systemAdmin':
+    //             $loginInfo = $request->systemAdminInfo;
     //             /**--------验证参数 开始--------**/
     //             $data = $request->all();
     //             container(ValidateLogin::class, true)->scene('encryptStr')->check($data);
@@ -121,4 +122,43 @@ class Login extends AbstractController
     //             break;
     //     }
     // }
+
+    /**
+     * 获取后台用户菜单树
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getMenuTree(Request $request)
+    {
+        switch ($request->authSceneInfo['sceneCode']) {
+            case 'systemAdmin':
+                /* if ($request->systemAdminInfo['id'] == 1) {
+                    $where = [
+                        'sceneId' => $request->authSceneInfo['sceneId'],
+                        'isStop' => 0
+                    ];
+                } else {
+                    $where = [
+                        'systemAdminId' => $request->systemAdminInfo['id'],
+                        'isStop' => 0
+                    ];
+                } */
+                $where = [
+                    'sceneId' => 1,
+                    'isStop' => 0
+                ];
+                $field = [
+                    'menuId',
+                    'pid',
+                    'menuName',
+                    'extendData'
+                ];
+                container(ServiceAuthMenu::class)->getTree($field, $where);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
 }
