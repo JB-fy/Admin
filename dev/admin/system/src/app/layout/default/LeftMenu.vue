@@ -33,7 +33,7 @@ const menuClose = () => {
         <ElMenu :default-active="$route.path" :collapse="settingStore.leftMenuFold" :router="false"
             :unique-opened="true" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b"
             @select="menuSelect" @open="menuOpen" @close="menuClose">
-            <LeftMenuItem :tree="userStore.leftMenuTree" />
+            <LeftMenuItem :tree="userStore.menuTree" />
         </ElMenu>
     </ElScrollbar>
 </template>

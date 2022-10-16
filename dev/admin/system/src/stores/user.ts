@@ -6,9 +6,9 @@ import router from '@/router'
 export const useUserStore = defineStore('user', {
   state: () => {
     return {
-      info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像, rawInfo: 原始信息（后台传过来的原始数据）}
-      leftMenuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, path: 路径, icon: 图标, children: [子集]}
-      menuTabList: [], //菜单标签列表（打开标签即是允许缓存的组件）
+      info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
+      menuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
+      menuTabList: [], //菜单标签列表
     }
   },
   getters: {
@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', {
      * 关闭自身菜单标签
      * @param {*} path  菜单标签的路由路径
      */
-    closeSelfMenuTab(path) {
+    closeSelfMenuTab(path: string) {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path !== path
       })
@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', {
      * 关闭其他菜单标签
      * @param {*} path  菜单标签的路由路径
      */
-    closeOtherMenuTab(path) {
+    closeOtherMenuTab(path: string) {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path === path
       })
@@ -67,7 +67,7 @@ export const useUserStore = defineStore('user', {
      * 关闭左侧菜单标签
      * @param {*} path  菜单标签的路由路径
      */
-    closeLeftMenuTab(path) {
+    closeLeftMenuTab(path: string) {
       const leftIndex = this.menuTabList.findIndex((item) => {
         return item.path === path
       })
@@ -88,7 +88,7 @@ export const useUserStore = defineStore('user', {
      * 关闭右侧菜单标签
      * @param {*} path  菜单标签的路由路径
      */
-    closeRightMenuTab(path) {
+    closeRightMenuTab(path: string) {
       const rightIndex = this.menuTabList.findIndex((item) => {
         return item.path === path
       })
@@ -136,8 +136,8 @@ export const useUserStore = defineStore('user', {
         //this.info = {}; //清空用户信息
         this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
 
-        //this.leftMenuTree = []  //清空用户左侧菜单
-        this.setLeftMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
+        //this.menuTree = []  //清空用户左侧菜单
+        this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
 
         this.menuTabList = [] //清空菜单标签列表
         //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
@@ -154,11 +154,7 @@ export const useUserStore = defineStore('user', {
     async setInfo() {
       try {
         const res = await getInfo()
-        this.info = {
-          nickname: res.data.info.nickname ? res.data.info.nickname : res.data.info.account,
-          avatar: res.data.info.avatar,
-          rawInfo: res.data.info,
-        }
+        this.info = res.data.info
         return true
       } catch (err) {
         await errorHandle(err)
@@ -168,35 +164,35 @@ export const useUserStore = defineStore('user', {
     /**
      * 设置左侧菜单（包含注册动态路由）
      */
-    async setLeftMenuTree() {
+    async setMenuTree() {
       try {
         const res = await getMenuTree()
         /**--------注册动态路由 开始--------**/
         const handleMenuTree = (menuTree, pMenuList = []) => {
-          const leftMenuTree = []
+          const menuTreeTmp = []
           let tmpExtendData = {};
           for (let i = 0; i < menuTree.length; i++) {
             tmpExtendData = JSON.parse(menuTree[i].extendData);
-            leftMenuTree[i] = {
+            menuTreeTmp[i] = {
               title: tmpExtendData.title,
-              path: tmpExtendData.url,
+              url: tmpExtendData.url,
               icon: tmpExtendData.icon,
               children: [],
             }
             if (menuTree[i].children.length) {
               pMenuList.push({
                 title: tmpExtendData.title,
-                path: tmpExtendData.url,
+                url: tmpExtendData.url,
                 icon: tmpExtendData.icon,
               })
-              leftMenuTree[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
+              menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
               pMenuList.pop()
             }
           }
-          return leftMenuTree
+          return menuTreeTmp
         }
-        const leftMenuTree = handleMenuTree(res.data.tree)
-        this.leftMenuTree = leftMenuTree
+        const menuTreeTmp = handleMenuTree(res.data.tree)
+        this.menuTree = menuTreeTmp
         /**--------注册动态路由 结束--------**/
         return true
       } catch (err) {
@@ -208,14 +204,14 @@ export const useUserStore = defineStore('user', {
      * 退出登录
      * @param {*} toPath  跳转路径
      */
-    async logout(toPath = '/login') {
+    async logout(toPath: string = '/login') {
       await removeAccessToken()
-      await router.push(toPath)
-      /* if (toPath === '/login') {
+      //await router.push(toPath)
+      if (toPath === '/login') {
         await router.push(toPath)
       } else {
         await router.push('/login?redirect=' + toPath)
-      } */
+      }
     }
   },
 })

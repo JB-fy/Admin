@@ -34,16 +34,14 @@ class AuthScene extends AbstractAspect
     {
         $request = request();
         $sceneCode = $request->header('AuthScene');
-        //$request->authScene = $request->header('AuthScene');
         if (empty($sceneCode)) {
             throwFailJson('001001');
         }
-        $authSceneInfo = (array)container(TableAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getBuilder()->first();
-        if (empty($authSceneInfo)) {
+        $request->authSceneInfo = container(TableAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getBuilder()->first();
+        if (empty($request->authSceneInfo)) {
             throwFailJson('001001');
         }
-        $authSceneInfo['sceneConfig'] = $authSceneInfo['sceneConfig'] ? json_decode($authSceneInfo['sceneConfig'], true) : [];
-        $request->authSceneInfo = $authSceneInfo;
+        $request->authSceneInfo->sceneConfig = json_decode($request->authSceneInfo->sceneConfig, true);
         try {
             $response = $proceedingJoinPoint->process();
             return $response;

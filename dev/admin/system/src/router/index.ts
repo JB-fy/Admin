@@ -142,7 +142,7 @@ router.beforeEach(async (to) => {
             if (!result) {
                 return false
             }
-            result = await userStore.setLeftMenuTree()  //设置左侧菜单（包含注册动态路由）
+            result = await userStore.setMenuTree()  //设置左侧菜单（包含注册动态路由）
             if (!result) {
                 return false
             }
@@ -177,6 +177,7 @@ export default router
 route.path
 route.query
 route.params.lotteryId
+route.fulPath
 
 const router = useRouter()
 router.push(url) 

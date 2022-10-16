@@ -102,17 +102,20 @@ class Login extends AbstractService
                 /**--------选做。限制多地登录，多设备登录等情况下可用（前提必须在登录时做过token缓存） 结束--------**/
 
                 /**--------获取登录用户信息并验证 开始--------**/
-                $info = container(SystemAdmin::class, true)
-                    ->field(['adminId', 'nickname', 'isStop'])
+                //用户信息保存在请求对象内
+                $request->systemAdminInfo = container(SystemAdmin::class, true)
+                    //->field(['adminId', 'nickname', 'avatar', 'isStop'])
                     ->where(['adminId' => $payload['id']])
                     ->getBuilder()
                     ->first();
-                if (empty($info)) {
+                if (empty($request->systemAdminInfo)) {
                     throwFailJson('001403');
                 }
-                if ($info->isStop) {
+                if ($request->systemAdminInfo->isStop) {
                     throwFailJson('001404');
                 }
+                unset($request->systemAdminInfo->password);
+                unset($request->systemAdminInfo->isStop);
                 /**--------获取用户信息并验证 结束--------**/
 
                 /**--------选做。如果token即将过期，刷新token 开始--------**/
@@ -125,12 +128,6 @@ class Login extends AbstractService
                     $request->systemAdminToken = $refreshToken;
                 } */
                 /**--------选做。如果token即将过期，刷新token 结束--------**/
-
-                //用户信息保存在请求对象内
-                $request->systemAdminInfo = [
-                    'id' => $info->adminId,
-                    'nickname' => $info->nickname
-                ];
                 break;
             default:
                 throwFailJson('001004');

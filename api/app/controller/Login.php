@@ -19,7 +19,7 @@ class Login extends AbstractController
      */
     public function getEncryptStr(Request $request)
     {
-        switch ($request->authSceneInfo['sceneCode']) {
+        switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $request->all();
@@ -42,7 +42,7 @@ class Login extends AbstractController
      */
     public function login(Request $request)
     {
-        switch ($request->authSceneInfo['sceneCode']) {
+        switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $request->all();
@@ -65,11 +65,9 @@ class Login extends AbstractController
      */
     public function getInfo(Request $request)
     {
-        switch ($request->authSceneInfo['sceneCode']) {
+        switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
-                $loginInfo = $request->systemAdminInfo;
-
-                throwSuccessJson(['info' => $loginInfo]);
+                throwSuccessJson(['info' => $request->systemAdminInfo]);
                 break;
             default:
                 throwFailJson('001001');
@@ -85,9 +83,8 @@ class Login extends AbstractController
      */
     // public function updateInfo(Request $request)
     // {
-    //     switch ($request->authSceneInfo['sceneCode']) {
+    //     switch ($request->authSceneInfo->sceneCode) {
     //         case 'systemAdmin':
-    //             $loginInfo = $request->systemAdminInfo;
     //             /**--------验证参数 开始--------**/
     //             $data = $request->all();
     //             container(ValidateLogin::class, true)->scene('encryptStr')->check($data);
@@ -115,7 +112,7 @@ class Login extends AbstractController
     //             }
     //             /**--------验证参数 结束--------**/
 
-    //             container(AdminService::class)->update($data, $request->systemAdminInfo['id']);
+    //             container(AdminService::class)->update($data, $request->systemAdminInfo->adminId);
     //             break;
     //         default:
     //             throwFailJson('001001');
@@ -131,16 +128,16 @@ class Login extends AbstractController
      */
     public function getMenuTree(Request $request)
     {
-        switch ($request->authSceneInfo['sceneCode']) {
+        switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
-                /* if ($request->systemAdminInfo['id'] == 1) {
+                /* if ($request->systemAdminInfoo->adminId == 1) {
                     $where = [
-                        'sceneId' => $request->authSceneInfo['sceneId'],
+                        'sceneId' => $request->authSceneInfo->sceneId,
                         'isStop' => 0
                     ];
                 } else {
                     $where = [
-                        'systemAdminId' => $request->systemAdminInfo['id'],
+                        'systemAdminId' => $request->systemAdminInfoo->adminId,
                         'isStop' => 0
                     ];
                 } */

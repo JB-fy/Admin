@@ -34,7 +34,7 @@ class AuthSceneOfSystemAdmin extends AbstractAspect
     {
         $request = request();
         try {
-            if ($request->authSceneInfo['sceneCode'] == 'systemAdmin') {
+            if ($request->authSceneInfo->sceneCode == 'systemAdmin') {
                 container(Login::class)->verifyToken('systemAdmin');
             }
             $response = $proceedingJoinPoint->process();

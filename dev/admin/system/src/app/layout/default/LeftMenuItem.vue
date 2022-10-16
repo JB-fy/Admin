@@ -23,7 +23,7 @@ export default {
             </template>
             <LeftMenuItem :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + key" />
         </ElSubMenu>
-        <ElMenuItem v-else :index="item.path">
+        <ElMenuItem v-else :index="item.url">
             <IconDynamic :icon="item.icon" />
             <template #title>
                 <span>{{ item.title }}</span>
