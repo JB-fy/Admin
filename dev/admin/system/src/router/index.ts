@@ -5,13 +5,13 @@ import { useKeepAliveStore } from '@/stores/keepAlive';
 
 const initRouteList = [
     {
-        path: '/',  //必须设置，否则默认为'/'。在多个路由没有设置该参数时，则首页会以最后一个路由为准，会出现首页错误问题
+        path: '/layout',  //必须设置，否则默认为'/'。在多个路由没有设置该参数时，则首页会以最后一个路由为准，会出现首页错误问题
         component: layout,
-        redirect: '/index',
-        replace: true,
+        /* redirect: '/',
+        replace: true, */
         children: [
             {
-                path: '/index',
+                path: '/',
                 component: async () => {
                     //let componentPath='../views/index/Index.vue'
                     //const component = await import(componentPath)
@@ -82,7 +82,7 @@ const initRouteList = [
                     component.default.name = '/systemLogOfRequest'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '系统管理员', keepAlive: true, isAuth: true }
+                meta: { title: '请求日志', keepAlive: true, isAuth: true }
             },
             {
                 path: '/profile',
@@ -124,7 +124,7 @@ router.beforeEach(async (to) => {
     /**--------判断登录状态 开始--------**/
     const accessToken = getAccessToken()
     if (!accessToken) {
-        if(to.meta.isAuth){
+        if (to.meta.isAuth) {
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
             await userStore.logout(to.path)
             return false */
@@ -156,7 +156,7 @@ router.beforeEach(async (to) => {
     if (userStore.menuTabListLength === 0) {
         const routeList = router.getRoutes()
         const initRouteTo = routeList.find((item) => {
-            return item.path === initRouteList[0].redirect
+            return item.path === '/'
         })
         userStore.pushMenuTabList(Object.assign({ closable: false }, initRouteTo))
     }

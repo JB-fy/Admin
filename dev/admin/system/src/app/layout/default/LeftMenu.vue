@@ -17,7 +17,11 @@ const subMenuTitle = async () => {
 const router = useRouter()
 const menuSelect = (path: string) => {
     subMenuTitle()    //菜单激活也会导致bug。:router="true"会使这里无效，虽有执行，但不能去除css属性。可能路由跳转后才追加css属性
-    router.push(path)
+    if (path.indexOf('http') === 0) {
+        window.open(path, '_blank')
+    } else {
+        router.push(path)
+    }
 }
 const menuOpen = () => {
     subMenuTitle()

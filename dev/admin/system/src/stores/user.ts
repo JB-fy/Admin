@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', {
     },
     menuTabListLength: (state) => {
       return state.menuTabList.length
-    }
+    },
   },
   actions: {
     /**
@@ -39,7 +39,8 @@ export const useUserStore = defineStore('user', {
     },
     /**
      * 关闭自身菜单标签
-     * @param {*} path  菜单标签的路由路径
+     * 
+     * @param path 
      */
     closeSelfMenuTab(path: string) {
       this.menuTabList = this.menuTabList.filter((item) => {
