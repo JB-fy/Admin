@@ -80,7 +80,7 @@ import router from '@/router'
  * 获取当前路由路径（需在路由稳定时使用。路由切换时不能使用，此时得到的是上一个页面的路由路径，如：浏览器刷新页面；各路由对应的.vue文件内在export default之前调用。）
  * @returns 
  */
-export const getCurrentPath = () => {
+export const getCurrentPath = (): string => {
     //return useRouter().currentRoute.value.path
     return router.currentRoute.value.path
 }

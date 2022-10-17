@@ -15,9 +15,9 @@ export const errorHandle = async (err) => {
                         confirmButtonText: '重新登录',
                         type: 'warning'
                     }).then(async () => {
-                        await store.dispatch('user/logout')
+                        await useUserStore().logout()
                     }).catch(async () => {
-                        await store.dispatch('user/logout')
+                        await useUserStore().logout()
                     }) */
                     useUserStore().logout(getCurrentPath())
                     ElMessage.error(errMsg.msg)

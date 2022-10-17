@@ -124,8 +124,8 @@ const menuTab = reactive({
                     <ElTabPane :name="item.path" :closable="item.closable">
                         <template #label>
                             <ElDropdown :ref="(el) => { menuTab.refList[item.path] = el }" trigger="contextmenu"
-                                @visible-change="(status) => { menuTab.visibleChange(status, item.path) }"
-                                style="height: 100%;">
+                                @visible-change="(status:boolean) => { menuTab.visibleChange(status, item.path) }"
+                                style="height: 100%;" :key="item.path">
                                 <ElSpace :size="0">
                                     <IconDynamic :icon="item.icon" />
                                     <span>{{ item.title }}</span>

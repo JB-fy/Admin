@@ -8,32 +8,40 @@ export const useUserStore = defineStore('user', {
     return {
       info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
       menuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
-      menuTabList: [], //菜单标签列表
+      menuTabList: (() => {
+        const indexRoute = router.getRoutes().find((item) => {
+          return item.path == '/'
+        })
+        /* router.getRoutes().forEach((item) => {
+          item.meta.icon = 'autoicon-ep-lock'
+        }) */
+        return [{
+          title: indexRoute.meta.title ?? '',
+          path: indexRoute.path,
+          icon: indexRoute.meta.icon ?? '',
+          closable: false,
+        }]
+      })(), //菜单标签列表
     }
   },
   getters: {
     infoIsExist: (state) => {
       return Object.keys(state.info).length ? true : false
-    },
-    menuTabListLength: (state) => {
-      return state.menuTabList.length
-    },
+    }
   },
   actions: {
     /**
      * 推入菜单标签列表
-     * @param {*} routeTo  将要打开的路由
+     * @param menuTab 
      */
-    pushMenuTabList(routeTo) {
+    pushMenuTabList(menuTab: { title: string, path: string, icon: string }) {
       let result = this.menuTabList.findIndex((item) => {
-        return item.path === routeTo.path
+        return item.path === menuTab.path
       })
       if (result === -1) {
         this.menuTabList.push({
-          title: routeTo.meta.title,
-          path: routeTo.path,
-          icon: routeTo.meta.icon,
-          closable: routeTo.closable === false ? false : true,
+          closable: true,
+          ...menuTab
         })
       }
     },
@@ -113,6 +121,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable
       })
+      //router.push('/')
       router.push(this.menuTabList[this.menuTabList.length - 1].path)
     },
     /**
@@ -188,12 +197,28 @@ export const useUserStore = defineStore('user', {
               })
               menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
               pMenuList.pop()
-            }
+            }/*  else {
+              router.addRoute(layoutName, {
+                path: menuTree[i].menuUrl,
+                name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
+                //component: () => import('@/views' + menuTree[i].menuUrl),
+                component: async () => {
+                  //let component = await import('@/views' + menuTree[i].menuUrl + '.vue'),
+                  let component = await import('@/views' + menuTree[i].menuUrl)
+                  component.default.name = menuTree[i].menuUrl    //动态设置页面组件名称，方便清理缓存
+                  return component
+                },
+                meta: {
+                  title: menuTree[i].menuName,
+                  icon: menuTree[i].menuIcon,
+                  pMenuList: Object.assign({}, pMenuList) //面包屑需要
+                }
+              })
+            } */
           }
           return menuTreeTmp
         }
-        const menuTreeTmp = handleMenuTree(res.data.tree)
-        this.menuTree = menuTreeTmp
+        this.menuTree = handleMenuTree(res.data.tree)
         /**--------注册动态路由 结束--------**/
         return true
       } catch (err) {

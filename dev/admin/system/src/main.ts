@@ -5,16 +5,14 @@ import "./assets/main.css";
 
 const app = createApp(App);
 
+import router from './router';
+app.use(router);
+
 import { createPinia } from 'pinia';
 const pinia = createPinia();
 app.use(pinia);
 
-import router from './router';
-app.use(router);
-
 app.mount('#app');
-/* import { useUserStore } from '@/stores/user';
-useUserStore().setConstRoutePathList(); //记录固定路由，方便删除动态路由 */
 
 /*-------- 动态加载图标 开始 --------*/
 //app.component('autoiconEpLollipop', autoiconEpLollipop)

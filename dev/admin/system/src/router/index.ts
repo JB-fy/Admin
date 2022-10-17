@@ -3,12 +3,19 @@ import layout from '@/app/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
 import { useKeepAliveStore } from '@/stores/keepAlive';
 
+
+/*
+meta说明：
+    title: '主页',  //标题
+    keepAlive: true,    //是否可以缓存
+    isAuth: true,   //是否需要权限验证
+ */
 const initRouteList = [
     {
         path: '/layout',  //必须设置，否则默认为'/'。在多个路由没有设置该参数时，则首页会以最后一个路由为准，会出现首页错误问题
         component: layout,
-        /* redirect: '/',
-        replace: true, */
+        redirect: '/',
+        replace: true,
         children: [
             {
                 path: '/',
@@ -19,7 +26,7 @@ const initRouteList = [
                     component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '主页', keepAlive: true, isAuth: true }
+                meta: { title: '主页', keepAlive: true, isAuth: true, isIndexMenuTab: true }
             },
             {
                 path: '/authAction',
@@ -153,14 +160,11 @@ router.beforeEach(async (to) => {
     /**--------判断登录状态 结束--------**/
 
     /**--------设置菜单标签 开始--------**/
-    if (userStore.menuTabListLength === 0) {
-        const routeList = router.getRoutes()
-        const initRouteTo = routeList.find((item) => {
-            return item.path === '/'
-        })
-        userStore.pushMenuTabList(Object.assign({ closable: false }, initRouteTo))
-    }
-    userStore.pushMenuTabList(to)
+    userStore.pushMenuTabList({
+        title: <string>to.meta.title ?? '',
+        path: to.path,
+        icon: <string>to.meta.icon ?? ''
+    })
     /**--------设置菜单标签 结束--------**/
 
     return true
