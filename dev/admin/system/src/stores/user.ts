@@ -9,7 +9,6 @@ export const useUserStore = defineStore('user', {
       info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
       menuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
       menuTabList: (() => {
-        console.log(router.getRoutes())
         const indexRoute = router.getRoutes().find((item) => {
           return item.path == '/'
         })
