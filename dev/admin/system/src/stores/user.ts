@@ -9,6 +9,7 @@ export const useUserStore = defineStore('user', {
       info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
       menuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
       menuTabList: (() => {
+        console.log(router.getRoutes())
         const indexRoute = router.getRoutes().find((item) => {
           return item.path == '/'
         })
@@ -16,9 +17,9 @@ export const useUserStore = defineStore('user', {
           item.meta.icon = 'autoicon-ep-lock'
         }) */
         return [{
-          title: indexRoute.meta.title ?? '',
-          path: indexRoute.path,
-          icon: indexRoute.meta.icon ?? '',
+          title: (<any>indexRoute).meta.title ?? '',
+          path: (<any>indexRoute).path,
+          icon: (<any>indexRoute).meta.icon ?? '',
           closable: false,
         }]
       })(), //菜单标签列表
@@ -178,9 +179,9 @@ export const useUserStore = defineStore('user', {
       try {
         const res = await getMenuTree()
         /**--------注册动态路由 开始--------**/
-        const handleMenuTree = (menuTree, pMenuList = []) => {
-          const menuTreeTmp = []
-          let tmpExtendData = {};
+        const handleMenuTree = (menuTree: any, pMenuList: any = []) => {
+          const menuTreeTmp: any = []
+          let tmpExtendData: any = {};
           for (let i = 0; i < menuTree.length; i++) {
             tmpExtendData = JSON.parse(menuTree[i].extendData);
             menuTreeTmp[i] = {

@@ -17,9 +17,9 @@
  */
 return [
     // Default language
-    'locale' => 'zh_CN',
+    'locale' => 'zh-cn',
     // Fallback language
-    'fallback_locale' => ['zh_CN', 'en'],
+    'fallback_locale' => ['zh-cn', 'en'],
     // Folder where language files are stored
     'path' => base_path() . '/app/language',
 ];

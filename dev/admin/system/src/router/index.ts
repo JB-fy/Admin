@@ -3,7 +3,6 @@ import layout from '@/app/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
 import { useKeepAliveStore } from '@/stores/keepAlive';
 
-
 /*
 meta说明：
     title: '主页',  //标题

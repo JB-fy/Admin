@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+//import { createI18n } from 'vue-i18n/dist/vue-i18n.cjs.js'  //可以解决控制台警告（也可以在vite.config.ts中设置别名解决）：You are running the esm-bundler build of vue-i18n. It is recommended to configure your bundler to explicitly replace feature flag globals with boolean literals to get proper tree-shaking in the final bundle.
 
 export const getLanguage = () => {
     const language = localStorage.getItem('language')
@@ -22,7 +23,7 @@ for (const path in messageList) {
     if (!messages[language]) {
         messages[language] = {}
     }
-    messages[language][languageKey] = messageList[path].default
+    messages[language][languageKey] = (<any>messageList[path]).default
 }
 
 const i18n = createI18n({

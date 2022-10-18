@@ -11,10 +11,10 @@ declare module '*.vue' {
 //   const component: DefineComponent<{}, {}, any>
 //   export default component
 // }
-// interface ImportMetaEnv {
-//   readonly VITE_TITLE: string
-//   readonly VITE_API_URL: string
-// }
-// interface ImportMeta {
-//   readonly env: ImportMetaEnv
-// }
+/* interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+interface ImportMetaEnv {
+  readonly VITE_WEB_TITLE: string
+  readonly VITE_HTTP_TIMEOUT: number
+} */

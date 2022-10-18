@@ -19,7 +19,7 @@ export const getAccessToken = () => {
  * 设置accessToken
  * @param {*} token 
  */
-export const setAccessToken = (token) => {
+export const setAccessToken = (token: string) => {
     if (activeTimeout > 0) {
         let nowTime = new Date().getTime().toString()
         storage.setItem(activeTimeName, nowTime)

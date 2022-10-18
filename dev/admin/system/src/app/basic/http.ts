@@ -1,7 +1,9 @@
 import axios from 'axios'
+import { getLanguage } from '@/i18n'
 
 const defaultOption = {
     apiSceneName: config('app.apiScene.name'),
+    languageName: import.meta.env.VITE_HTTP_LANGUAGE_NAME,
     apiSceneCode: config('app.apiScene.code'),
     accessTokenName: config('app.accessToken.name'),
     baseURL: config('app.http.host'),
@@ -18,11 +20,8 @@ export const getHttp = (option = {}) => {
     http.interceptors.request.use(
         (config) => {
             config.headers[option.apiSceneName] = option.apiSceneCode
-
-            let accessToken = getAccessToken()
-            if (accessToken) {
-                config.headers[option.accessTokenName] = accessToken
-            }
+            config.headers[option.languageName] = getLanguage()
+            config.headers[option.accessTokenName] = getAccessToken()
             return config
         },
         (error) => {

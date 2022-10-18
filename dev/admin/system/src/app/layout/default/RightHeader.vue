@@ -123,8 +123,8 @@ const menuTab = reactive({
                 <template v-for="(item, key) in userStore.menuTabList" :key="key">
                     <ElTabPane :name="item.path" :closable="item.closable">
                         <template #label>
-                            <ElDropdown :ref="(el) => { menuTab.refList[item.path] = el }" trigger="contextmenu"
-                                @visible-change="(status:boolean) => { menuTab.visibleChange(status, item.path) }"
+                            <ElDropdown :ref="(el: any) => { menuTab.refList[item.path] = el }" trigger="contextmenu"
+                                @visible-change="(status: boolean) => { menuTab.visibleChange(status, item.path) }"
                                 style="height: 100%;" :key="item.path">
                                 <ElSpace :size="0">
                                     <IconDynamic :icon="item.icon" />
