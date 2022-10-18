@@ -20,6 +20,10 @@ const initRouteList = [
             {
                 path: '/',
                 component: async () => {
+                    /*  import说明
+                            参数为静态（无变量）时，可以使用任意方式导入。即能使用@路径
+                            参数为动态（有变量）时，必须是相对路径或绝对路径方式，其他方式不允许。（查看文档绝对路径也不允许，但实际可以使用）
+                    */
                     //let componentPath='../views/index/Index.vue'
                     //const component = await import(componentPath)
                     const component = await import('@/views/index/Index.vue')

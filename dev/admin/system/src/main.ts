@@ -9,8 +9,10 @@ import router from './router';
 app.use(router);
 
 import { createPinia } from 'pinia';
-const pinia = createPinia();
-app.use(pinia);
+app.use(createPinia());
+
+import i18n from './i18n';
+app.use(i18n);
 
 app.mount('#app');
 

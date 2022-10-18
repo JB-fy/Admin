@@ -1,5 +1,24 @@
+<script setup lang="ts">
+import { useLanguageStore } from '@/stores/language';
+
+const languageStore = useLanguageStore()
+</script>
+
 <template>
-  <RouterView />
+  <!-- <RouterView /> -->
+  <!-- <Suspense></Suspense> -->
+  <ElConfigProvider :locale="languageStore.elementPlusLocale">
+    <el-table mb-1 :data="[]" />
+    <el-pagination :total="100" />
+    {{ $t('config.webTitle') }}
+    <div @click="languageStore.changeLanguage('zh-cn')">
+      中文
+    </div>
+    <div @click="languageStore.changeLanguage('en')">
+      英文
+    </div>
+    <RouterView />
+  </ElConfigProvider>
 </template>
 
 <style scoped>
@@ -18,5 +37,6 @@
 body {
   margin: 0 !important;
 }
+
 /*--------解决用户代理样式表（浏览器提供的默认样式）设置的margin: 8px; 结束--------*/
 </style>
