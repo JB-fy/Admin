@@ -41,11 +41,6 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(env.VITE_BASE_PATH + env.VITE_HTTP_HOST, '')
         },
-        '[env.VITE_BASE_PATH + env.VITE_HTTP_HOST]': {
-          target: env.VITE_DEV_SERVER_PROXY,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(env.VITE_BASE_PATH + env.VITE_HTTP_HOST, '')
-        }
       }
     },
     resolve: {

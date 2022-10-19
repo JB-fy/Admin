@@ -3,7 +3,8 @@ export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
-  const autoImport: typeof import('./src/app/basic/functions')['autoImport']
+  const batchImport1: typeof import('./src/app/basic/functions')['batchImport1']
+  const batchImport: typeof import('./src/app/basic/functions')['batchImport']
   const computed: typeof import('vue')['computed']
   const config: typeof import('./src/app/basic/functions')['config']
   const createApp: typeof import('vue')['createApp']

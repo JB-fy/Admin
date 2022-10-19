@@ -28,6 +28,9 @@ export const useLanguageStore = defineStore('language', {
   },
   actions: {
     changeLanguage(language: string) {
+      if (localStorage.getItem('language') == language) {
+        return
+      }
       localStorage.setItem('language', language)
       //this.language = language
       //i18n.global.locale = language

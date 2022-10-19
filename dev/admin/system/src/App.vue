@@ -8,8 +8,7 @@ const languageStore = useLanguageStore()
   <!-- <RouterView /> -->
   <!-- <Suspense></Suspense> -->
   <ElConfigProvider :locale="languageStore.elementPlusLocale">
-    <el-table mb-1 :data="[]" />
-    <el-pagination :total="100" />
+    <ElPagination :total="100" />
     {{ $t('config.webTitle') }}
     <div @click="languageStore.changeLanguage('zh-cn')">
       中文

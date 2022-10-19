@@ -14,16 +14,16 @@ const messages: any = {
     'en': {}
 }
 const messageList = import.meta.globEager('@/i18n/language/**/*.ts')
-let result: string[], language: string, languageKey: string;
+let keyList: string[], key1: string, key2: string;
 for (const path in messageList) {
-    //const result = path.match(/.*\/(.+)\/(.+).ts$/);
-    result = path.split('/')
-    language = result[result.length - 2]
-    languageKey = result[result.length - 1].split('.')[0]
-    if (!messages[language]) {
-        messages[language] = {}
+    //keyList = path.match(/.*\/(.+)\/(.+).ts$/);
+    keyList = path.slice(0, path.lastIndexOf('.')).split('/')
+    key1 = keyList[keyList.length - 2]
+    key2 = keyList[keyList.length - 1]
+    if (!messages[key1]) {
+        messages[key1] = {}
     }
-    messages[language][languageKey] = (<any>messageList[path]).default
+    messages[key1][key2] = (<any>messageList[path]).default
 }
 
 const i18n = createI18n({

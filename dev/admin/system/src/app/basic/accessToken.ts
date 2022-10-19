@@ -43,7 +43,8 @@ export const removeAccessToken = () => {
 export const isActiveAccessToken = () => {
     if (activeTimeout > 0) {
         let activeTime = storage.getItem(activeTimeName)
-        let nowTime = new Date().getTime().toString()
+        //let nowTime = new Date().getTime().toString()
+        let nowTime: number = new Date().getTime()
         if (nowTime - activeTime > activeTimeout) {
             return false
         }
