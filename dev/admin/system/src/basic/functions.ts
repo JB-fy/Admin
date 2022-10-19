@@ -125,7 +125,6 @@ export const batchImport = (rawImportList: any, level: number = 1) => {
     }
 } */
 
-const allConfig = batchImport(import.meta.globEager('@/config/*.ts')) //放外面，不用每次调用getConfig都要加载这个目录
 /**
  * 获取配置参数
  * @param {*} key   键名。以'.'分隔，格式：文件名.key1.key2...
@@ -133,6 +132,7 @@ const allConfig = batchImport(import.meta.globEager('@/config/*.ts')) //放外�
  * @returns 
  */
 export const config = (key: string, defaultValue: any = null) => {
+    const allConfig = batchImport(import.meta.globEager('@/config/*.ts')) //放外面，不用每次调用getConfig都要加载这个目录
     let keyArr = key.split('.')
     let value = allConfig
     for (let i = 0; i < keyArr.length; i++) {

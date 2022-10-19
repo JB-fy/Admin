@@ -1,12 +1,10 @@
-const storage = config('app.accessToken.storage')
-const accessTokenName = config('app.accessToken.name')
-const activeTimeName = config('app.accessToken.activeTimeName')
-const activeTimeout = config('app.accessToken.activeTimeout')
-
 /**
  * 获取accessToken
  */
 export const getAccessToken = () => {
+    const storage = config('app.accessToken.storage')
+    const accessTokenName = config('app.accessToken.name')
+
     let accessToken = storage.getItem(accessTokenName)
     if (accessToken && !isActiveAccessToken()) {
         removeAccessToken()
@@ -20,6 +18,10 @@ export const getAccessToken = () => {
  * @param {*} token 
  */
 export const setAccessToken = (token: string) => {
+    const storage = config('app.accessToken.storage')
+    const accessTokenName = config('app.accessToken.name')
+    const activeTimeName = config('app.accessToken.activeTimeName')
+    const activeTimeout = config('app.accessToken.activeTimeout')
     if (activeTimeout > 0) {
         let nowTime = new Date().getTime().toString()
         storage.setItem(activeTimeName, nowTime)
@@ -31,6 +33,10 @@ export const setAccessToken = (token: string) => {
  * 删除accessToken
  */
 export const removeAccessToken = () => {
+    const storage = config('app.accessToken.storage')
+    const accessTokenName = config('app.accessToken.name')
+    const activeTimeName = config('app.accessToken.activeTimeName')
+    const activeTimeout = config('app.accessToken.activeTimeout')
     if (activeTimeout > 0) {
         storage.removeItem(activeTimeName)
     }
@@ -41,6 +47,9 @@ export const removeAccessToken = () => {
  * 判断accessToken是否活跃（调用getAccessToken函数的地方需要马上使用这个函数验证）
  */
 export const isActiveAccessToken = () => {
+    const storage = config('app.accessToken.storage')
+    const activeTimeName = config('app.accessToken.activeTimeName')
+    const activeTimeout = config('app.accessToken.activeTimeout')
     if (activeTimeout > 0) {
         let activeTime = storage.getItem(activeTimeName)
         //let nowTime = new Date().getTime().toString()

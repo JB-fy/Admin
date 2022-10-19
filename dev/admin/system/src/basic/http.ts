@@ -10,7 +10,7 @@ const defaultOption = {
     timeout: config('app.http.timeout'),
 }
 
-export const getHttp = (option = {}) => {
+export const getHttp = (option: any = {}) => {
     option = Object.assign({}, defaultOption, option)
     const http = axios.create({
         baseURL: option.baseURL,
@@ -18,7 +18,7 @@ export const getHttp = (option = {}) => {
     })
 
     http.interceptors.request.use(
-        (config) => {
+        (config: any) => {
             config.headers[option.apiSceneName] = option.apiSceneCode
             config.headers[option.languageName] = getLanguage()
             config.headers[option.accessTokenName] = getAccessToken()
