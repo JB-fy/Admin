@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import layout from '@/app/layout/default/Index.vue';
+import layout from '@/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
 import { useKeepAliveStore } from '@/stores/keepAlive';
 

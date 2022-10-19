@@ -56,15 +56,17 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         imports: [  //加载包
           'vue',
           'vue-router',
-          // { //自定义
-          //   '@/app/app/basic/functions.ts': [
-          //     'config',
-          //     //['config', 'getConfig'],
-          //   ]
-          // }
+          /* { //自定义
+            '@/basic/functions.ts': [
+              'config',
+              //['config', 'getConfig'],
+            ]
+          } */
         ],
-        dirs: [ //目录加载，递归加载则后面加上'/**'，例：src/app/basic/**
-          'src/app/basic',
+        dirs: [ //目录加载，递归加载则后面加上'/**'，例：src/basic/**
+          'src/api',
+          'src/basic',
+          'src/config',
         ],
         resolvers: [
           ElementPlusResolver(),  //ElementPlus

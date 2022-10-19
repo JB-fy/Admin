@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { index } from '@/app/api'
+import { index } from '@/api'
 
 onMounted(async () => {
     try {

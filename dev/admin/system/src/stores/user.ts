@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
-import { getInfo, getEncryptStr, getMenuTree, login } from '@/app/api/login'
+import { getInfo, getEncryptStr, getMenuTree, login } from '@/api/login'
 import router from '@/router'
 
 export const useUserStore = defineStore('user', {

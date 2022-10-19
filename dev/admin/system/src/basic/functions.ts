@@ -63,8 +63,8 @@ export const batchImport1 = async (rawImportList: any, level: number = 1, isPare
     }
     return importList
 }
-console.log(await batchImport1(import.meta.globEager('@/app/config/*.ts'), 2, false, 1))
-console.log(await batchImport1(import.meta.glob('@/app/config/*.ts'), 2, false, 2))
+console.log(await batchImport1(import.meta.globEager('@/config/*.ts'), 2, false, 1))
+console.log(await batchImport1(import.meta.glob('@/config/*.ts'), 2, false, 2))
 // const messages: any = batchImport1(import.meta.globEager('@/i18n/language/**/*.ts'), 2)
 // console.log(messages)
 
@@ -123,7 +123,7 @@ export const batchImport = (rawImportList: any, level: number = 1) => {
     }
 } */
 
-const allConfig = batchImport(import.meta.globEager('@/app/config/*.ts')) //放外面，不用每次调用getConfig都要加载这个目录
+const allConfig = batchImport(import.meta.globEager('@/config/*.ts')) //放外面，不用每次调用getConfig都要加载这个目录
 /**
  * 获取配置参数
  * @param {*} key   键名。以'.'分隔，格式：文件名.key1.key2...
