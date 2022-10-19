@@ -56,6 +56,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         imports: [  //加载包
           'vue',
           'vue-router',
+          'vue-i18n',
           /* { //自定义
             '@/basic/functions.ts': [
               'config',

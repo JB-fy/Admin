@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import VueParticles from 'vue-particles/src/vue-particles/vue-particles.vue'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
+
 const form = reactive({
     login: {
         ref: null,
@@ -13,15 +15,15 @@ const form = reactive({
         },
         rules: {
             account: [
-                { type: 'string', required: true, min: 4, max: 30, trigger: 'blur', message: '长度在4到30个字符之间' }
+                { type: 'string', required: true, min: 4, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 4, max: 30 }) }
             ],
             password: [
-                { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: '长度在6到30个字符之间' }
+                { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
             ]
         },
         loading: false,
         submit: () => {
-            form.login.ref.validate(async (valid) => {
+            (<any>form.login.ref).validate(async (valid: boolean) => {
                 if (!valid) {
                     return false
                 }
@@ -29,7 +31,7 @@ const form = reactive({
                 let result = await useUserStore().login(form.login.data.account, form.login.data.password)
                 form.login.loading = false
                 if (result) {
-                    router.replace(route.query.redirect ? route.query.redirect : '/')
+                    router.replace(<string>(route.query.redirect ? route.query.redirect : '/'))
                 }
             })
         }
@@ -41,19 +43,19 @@ const form = reactive({
     <div class="particles" :particlesNumber="200" />
     <ElTag id="login-container">
         <ElDivider>
-            <div style="font-size: 25px;">登录</div>
+            <div style="font-size: 25px;">{{ t('common.login') }}</div>
         </ElDivider>
-        <ElForm :ref="(el) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules">
+        <ElForm :ref="(el:any) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules">
             <ElFormItem prop="account">
-                <ElInput v-model="form.login.data.account" placeholder="账号">
+                <ElInput v-model="form.login.data.account" :placeholder="t('common.account')">
                     <template #prefix>
                         <AutoiconEpUser />
                     </template>
                 </ElInput>
             </ElFormItem>
             <ElFormItem prop="password">
-                <ElInput v-model="form.login.data.password" type="password" placeholder="密码" :show-password="true"
-                    @keyup.enter="form.login.submit">
+                <ElInput v-model="form.login.data.password" type="password" :placeholder="t('common.password')"
+                    :show-password="true" @keyup.enter="form.login.submit">
                     <template #prefix>
                         <AutoiconEpLock />
                     </template>
@@ -61,7 +63,7 @@ const form = reactive({
             </ElFormItem>
             <ElFormItem>
                 <ElButton :loading="form.login.loading" type="primary" @click="form.login.submit" style="width:100%;">
-                    登录
+                    {{ t('common.login') }}
                 </ElButton>
             </ElFormItem>
         </ElForm>

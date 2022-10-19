@@ -27,6 +27,7 @@ for (const path in messageList) {
 }
 
 const i18n = createI18n({
+    legacy: false,  //解决报错：Uncaught SyntaxError: Not available in legacy mode
     //locale: 'zh-cn',
     locale: getLanguage(),
     fallbackLocale: ['zh-cn', 'en'],
@@ -34,3 +35,23 @@ const i18n = createI18n({
 })
 
 export default i18n
+
+
+/*--------使用方式 开始--------*/
+/* i18n.global.locale
+i18n.global.t('common.login')
+
+useI18n().locale
+useI18n().t('common.login')
+
+{{ $t('common.login') }}
+
+hello: '你好，{name}！'
+useI18n().t('hello', { name: '名字' })
+
+hello: '你好，{0}！'
+useI18n().t('hello', ['名字'])
+
+hello: 'hello <br> world'
+<p v-html="$t('hello')"></p> */
+/*--------使用方式 结束--------*/

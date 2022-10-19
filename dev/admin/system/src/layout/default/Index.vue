@@ -5,6 +5,7 @@ import RightHeader from './RightHeader.vue';
 import RightFooter from './RightFooter.vue';
 import { useSettingStore } from '@/stores/setting';
 
+const { t } = useI18n()
 const settingStore = useSettingStore()
 </script>
 
@@ -21,7 +22,7 @@ const settingStore = useSettingStore()
             <ElMain class="main-container">
                 <AppContainer />
                 <ElBacktop target=".main-container" :right="16" :bottom="60">
-                    <span style="font-size: 14px;">置顶</span>
+                    <span style="font-size: 14px;">{{ t('common.upTop') }}</span>
                     <!-- <AutoiconEpTop /> -->
                 </ElBacktop>
             </ElMain>

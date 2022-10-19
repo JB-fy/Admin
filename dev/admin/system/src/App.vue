@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useLanguageStore } from '@/stores/language';
 
+const { t } = useI18n()
 const languageStore = useLanguageStore()
 </script>
 
@@ -8,14 +9,12 @@ const languageStore = useLanguageStore()
   <!-- <RouterView /> -->
   <!-- <Suspense></Suspense> -->
   <ElConfigProvider :locale="languageStore.elementPlusLocale">
-    <ElPagination :total="100" />
-    {{ $t('config.webTitle') }}
-    <div @click="languageStore.changeLanguage('zh-cn')">
-      中文
-    </div>
-    <div @click="languageStore.changeLanguage('en')">
-      英文
-    </div>
+    <span @click="languageStore.changeLanguage('zh-cn')">
+      {{ t('config.language.zh-cn') }}
+    </span>
+    <span @click="languageStore.changeLanguage('en')">
+      {{ t('config.language.en') }}
+    </span>
     <RouterView />
   </ElConfigProvider>
 </template>

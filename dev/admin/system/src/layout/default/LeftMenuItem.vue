@@ -1,17 +1,15 @@
-<script lang="ts">
-export default {
-    name: 'LeftMenuItem',
-    props: {
-        tree: {
-            type: Array,
-            required: true
-        },
-        subMenuIndexPrefix: {
-            type: String,
-            default: ''
-        },
-    }
-}
+<script setup lang="ts">
+defineProps({
+    tree: {
+        //type: Array as PropType<{ title: string, url: string, icon: string, children: [] }[]>,
+        type: Array as any,
+        required: true
+    },
+    subMenuIndexPrefix: {
+        type: String,
+        default: ''
+    },
+})
 </script>
 
 <template>

@@ -7,7 +7,7 @@ const keepAliveStore = useKeepAliveStore()
 const settingStore = useSettingStore()
 const userStore = useUserStore()
 
-const route = useRoute()
+const route: any = useRoute()
 const router = useRouter()
 
 const leftMenuFold = () => {
@@ -22,7 +22,7 @@ const userDropdown = reactive({
 })
 
 const menuTab = reactive({
-    refList: {},
+    refList: {} as { [propName: string]: any },
     visibleChange: (status: boolean, path: string) => {
         if (status) {
             for (let key in menuTab.refList) {
@@ -63,7 +63,7 @@ const menuTab = reactive({
                     <AutoiconEpFold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
                 </ElLink>
                 <ElBreadcrumb separator=">">
-                    <ElBreadcrumbItem v-for="(item, key) in $route.meta.pMenuList" :key="key">
+                    <ElBreadcrumbItem v-for="(item, key) in route.meta.pMenuList" :key="key">
                         <ElSpace :size="0">
                             <IconDynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
@@ -71,8 +71,8 @@ const menuTab = reactive({
                     </ElBreadcrumbItem>
                     <ElBreadcrumbItem>
                         <ElSpace :size="0">
-                            <IconDynamic :icon="$route.meta.icon" />
-                            <span>{{ $route.meta.title }}</span>
+                            <IconDynamic :icon="route.meta.icon" />
+                            <span>{{ route.meta.title }}</span>
                         </ElSpace>
                     </ElBreadcrumbItem>
                 </ElBreadcrumb>
@@ -89,7 +89,7 @@ const menuTab = reactive({
                 <ElLink :underline="false">
                     <AutoiconEpBell />
                 </ElLink>
-                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab($route.path)">
+                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.path)">
                     <AutoiconEpRefresh />
                 </ElLink>
                 <ElDropdown @visible-change="userDropdown.visibleChange">
@@ -118,7 +118,7 @@ const menuTab = reactive({
             </ElSpace>
         </ElCol>
         <ElCol :span="24">
-            <ElTabs class="menu-tabs" type="card" :model-value="$route.path" @tab-change="menuTab.change"
+            <ElTabs class="menu-tabs" type="card" :model-value="route.path" @tab-change="menuTab.change"
                 @tab-remove="menuTab.remove">
                 <template v-for="(item, key) in userStore.menuTabList" :key="key">
                     <ElTabPane :name="item.path" :closable="item.closable">
@@ -161,16 +161,16 @@ const menuTab = reactive({
                 </ElLink>
                 <template #dropdown>
                     <ElDropdownMenu>
-                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab($route.path)">
+                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.path)">
                             刷新
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeOtherMenuTab($route.path)">
+                        <ElDropdownItem @click="userStore.closeOtherMenuTab(route.path)">
                             关闭其他
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeLeftMenuTab($route.path)">
+                        <ElDropdownItem @click="userStore.closeLeftMenuTab(route.path)">
                             关闭左侧
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeRightMenuTab($route.path)">
+                        <ElDropdownItem @click="userStore.closeRightMenuTab(route.path)">
                             关闭右侧
                         </ElDropdownItem>
                         <ElDropdownItem @click="userStore.closeAllMenuTab()">

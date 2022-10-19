@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 
 import "./assets/main.css";
+import { config } from "@/basic/functions";
 
 const app = createApp(App);
 

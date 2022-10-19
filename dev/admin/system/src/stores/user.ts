@@ -6,8 +6,8 @@ import router from '@/router'
 export const useUserStore = defineStore('user', {
   state: () => {
     return {
-      info: {}, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
-      menuTree: [],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
+      info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
+      menuTree: [] as { title: string, url: string, icon: string, children: {}[] }[],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
       menuTabList: (() => {
         const indexRoute = router.getRoutes().find((item) => {
           return item.path == '/'

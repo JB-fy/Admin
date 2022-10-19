@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/user'
  * 错误处理
  * @param {*} err 错误信息。格式：JSON；包含字段：{ code: 9999, msg: '失败', data: {} }
  */
-export const errorHandle = async (err: Error) => {
+export const errorHandle = async (err: any) => {
     try {
         const errMsg = JSON.parse(err.message)
         if (typeof errMsg.code !== 'undefined') {
