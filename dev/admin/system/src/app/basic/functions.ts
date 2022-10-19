@@ -1,9 +1,9 @@
 /**
  * 批量导入
- * @param {*} rawImportList  导入列表（调用import.meta.globEager或import.meta.glob方法返回的数据）
- * @param {*} level    命名层次。特别注意：如果有不同层次文件时，与最深层相差大于等于level的所有浅层文件将不返回（默认以所有文件中的最深层文件为基准开始计算）
- * @param {*} isParentName    是否以父级文件夹命名。特别注意：此时命名层次以父级文件夹开始计算
- * @param {*} type    类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；11：多维对象（键名保持原样）；12：多维对象（键名小驼峰法）；13：多维对象（键名大驼峰法）；
+ * @param rawImportList 导入列表（调用import.meta.globEager或import.meta.glob方法返回的数据）
+ * @param level 命名层次。特别注意：如果有不同层次文件时，与最深层相差大于等于level的所有浅层文件将不返回（默认以所有文件中的最深层文件为基准开始计算）
+ * @param isParentName  是否以父级文件夹命名。特别注意：此时命名层次以父级文件夹开始计算
+ * @param type  类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；11：多维对象（键名保持原样）；12：多维对象（键名小驼峰法）；13：多维对象（键名大驼峰法）；
  * @returns 
  */
 export const batchImport1 = async (rawImportList: any, level: number = 1, isParentName: boolean = false, type: number = 0) => {
