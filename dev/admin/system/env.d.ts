@@ -15,6 +15,5 @@ declare module '*.vue' {
   readonly env: ImportMetaEnv
 }
 interface ImportMetaEnv {
-  readonly VITE_WEB_TITLE: string
   readonly VITE_HTTP_TIMEOUT: number
 } */

@@ -2,7 +2,6 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
-  const ElMessage: typeof import('element-plus/es')['ElMessage']
   const batchImport: typeof import('./src/basic/functions')['batchImport']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']
@@ -15,6 +14,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentPath: typeof import('./src/basic/functions')['getCurrentPath']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getLanguage: typeof import('./src/basic/language')['getLanguage']
   const h: typeof import('vue')['h']
   const http: typeof import('./src/basic/http')['default']
   const inject: typeof import('vue')['inject']
@@ -45,6 +45,7 @@ declare global {
   const removeAccessToken: typeof import('./src/basic/accessToken')['removeAccessToken']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const setAccessToken: typeof import('./src/basic/accessToken')['setAccessToken']
+  const setLanguage: typeof import('./src/basic/language')['setLanguage']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']

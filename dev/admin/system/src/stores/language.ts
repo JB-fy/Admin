@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { getLanguage, default as i18n } from '@/i18n'
 import router from '@/router'
 //import i18n from '@/i18n'
 
@@ -28,10 +27,10 @@ export const useLanguageStore = defineStore('language', {
   },
   actions: {
     changeLanguage(language: string) {
-      if (localStorage.getItem('language') == language) {
+      if (getLanguage() == language) {
         return
       }
-      localStorage.setItem('language', language)
+      setLanguage(language)
       //this.language = language
       //i18n.global.locale = language
       router.go(0)  //直接刷新页面。接口数据也要刷新

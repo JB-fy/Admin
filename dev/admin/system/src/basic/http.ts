@@ -1,10 +1,9 @@
 import axios from 'axios'
-import { getLanguage } from '@/i18n'
 
 const option = {
-    apiSceneName: import.meta.env.VITE_API_SCENE_NAME,
-    apiSceneCode: import.meta.env.VITE_API_SCENE_CODE,
-    languageName: import.meta.env.VITE_HTTP_LANGUAGE_NAME,
+    apiSceneName: import.meta.env.VITE_AUTH_SCENE_NAME,
+    apiSceneCode: import.meta.env.VITE_AUTH_SCENE_CODE,
+    languageName: import.meta.env.VITE_LANGUAGE_NAME,
     accessTokenName: import.meta.env.VITE_ACCESS_TOKEN_NAME,
     baseURL: import.meta.env.VITE_HTTP_HOST,
     timeout: parseInt(import.meta.env.VITE_HTTP_TIMEOUT),
