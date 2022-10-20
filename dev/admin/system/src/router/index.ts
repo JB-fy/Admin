@@ -137,7 +137,7 @@ router.beforeEach(async (to) => {
     if (!accessToken) {
         if (to.meta.isAuth) {
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
-            await userStore.logout(to.path)
+            userStore.logout(to.path)
             return false */
             return '/login?redirect=' + to.path
         }
@@ -146,22 +146,21 @@ router.beforeEach(async (to) => {
     if (to.path === '/login') {
         //已登录且链接是登录页面时，则跳到首页
         return '/'
-    } else {
-        /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 开始--------**/
-        if (!userStore.infoIsExist) {
-            let result = await userStore.setInfo()  //记录用户信息
-            if (!result) {
-                return false
-            }
-            result = await userStore.setMenuTree()  //设置左侧菜单（包含注册动态路由）
-            if (!result) {
-                return false
-            }
-            return to.path  //由于这个路由之前不存在，会报404。此时才注册成功，需要跳转自身
-        }
-        /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 结束--------**/
     }
     /**--------判断登录状态 结束--------**/
+    
+    /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 开始--------**/
+    if (!userStore.infoIsExist) {
+        let result = await userStore.setInfo()  //记录用户信息
+        if (!result) {
+            return false
+        }
+        result = await userStore.setMenuTree()  //设置左侧菜单
+        if (!result) {
+            return false
+        }
+    }
+    /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 结束--------**/
 
     /**--------设置菜单标签 开始--------**/
     userStore.pushMenuTabList({

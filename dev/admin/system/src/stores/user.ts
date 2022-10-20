@@ -225,13 +225,13 @@ export const useUserStore = defineStore('user', {
      * 退出登录
      * @param {*} toPath  跳转路径
      */
-    async logout(toPath: string = '/login') {
-      await removeAccessToken()
-      //await router.push(toPath)
+    logout(toPath: string = '/login') {
+      removeAccessToken()
+      //router.push(toPath)
       if (toPath === '/login') {
-        await router.push(toPath)
+        router.push(toPath)
       } else {
-        await router.push('/login?redirect=' + toPath)
+        router.push('/login?redirect=' + toPath)
       }
     }
   },

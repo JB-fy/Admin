@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { useKeepAliveStore } from '@/stores/keepAlive';
+import { useLanguageStore } from '@/stores/language';
 import { useSettingStore } from '@/stores/setting';
 import { useUserStore } from '@/stores/user';
 
 const keepAliveStore = useKeepAliveStore()
+const languageStore = useLanguageStore()
 const settingStore = useSettingStore()
 const userStore = useUserStore()
+
+const { tm } = useI18n()
 
 const route: any = useRoute()
 const router = useRouter()
@@ -80,6 +84,10 @@ const menuTab = reactive({
         </ElCol>
         <ElCol :span="12" style="text-align: right;">
             <ElSpace :size="20" style="height: 100%;">
+                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.path)">
+                    <AutoiconEpRefresh />
+                </ElLink>
+                
                 <ElLink :underline="false">
                     <AutoiconEpLock />
                 </ElLink>
@@ -89,9 +97,20 @@ const menuTab = reactive({
                 <ElLink :underline="false">
                     <AutoiconEpBell />
                 </ElLink>
-                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.path)">
-                    <AutoiconEpRefresh />
-                </ElLink>
+
+                <ElDropdown>
+                    <ElLink :underline="false">
+                        <AutoiconEpSwitch />
+                    </ElLink>
+                    <template #dropdown>
+                        <ElDropdownMenu v-for="(item, index) in tm('config.language')" :key="index">
+                            <ElDropdownItem @click="languageStore.changeLanguage(index)">
+                                {{ item }}
+                            </ElDropdownItem>
+                        </ElDropdownMenu>
+                    </template>
+                </ElDropdown>
+
                 <ElDropdown @visible-change="userDropdown.visibleChange">
                     <ElLink :underline="false">
                         <ElAvatar :src="userStore.info.avatar" :size="40">

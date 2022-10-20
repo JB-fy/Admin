@@ -11,13 +11,15 @@ export const errorHandle = async (err: any) => {
             switch (errMsg.code) {
                 //case '000404':
                 case '001400':
+                case '001401':
+                case '001402':
                     /* ElMessageBox.alert(errMsg.msg, '确认登出', {
                         confirmButtonText: '重新登录',
                         type: 'warning'
                     }).then(async () => {
-                        await useUserStore().logout()
+                        useUserStore().logout()
                     }).catch(async () => {
-                        await useUserStore().logout()
+                        useUserStore().logout()
                     }) */
                     useUserStore().logout(getCurrentPath())
                     ElMessage.error(errMsg.msg)
