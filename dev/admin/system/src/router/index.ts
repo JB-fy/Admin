@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import layout from '@/layout/default/Index.vue';
 import { useUserStore } from '@/stores/user';
 import { useKeepAliveStore } from '@/stores/keepAlive';
+import i18n from '@/i18n';
 
 /*
 meta说明：
@@ -123,14 +124,14 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-    const userStore = useUserStore();
-    const webTitle = config('app.webTitle')
+    const webTitle = i18n.global.t('config.webTitle')
     if (to.meta.title) {
         document.title = webTitle + '-' + to.meta.title
     } else {
         document.title = webTitle
     }
 
+    const userStore = useUserStore();
     /**--------判断登录状态 开始--------**/
     const accessToken = getAccessToken()
     if (!accessToken) {

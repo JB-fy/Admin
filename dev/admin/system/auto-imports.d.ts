@@ -3,10 +3,8 @@ export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
-  const batchImport1: typeof import('./src/basic/functions')['batchImport1']
   const batchImport: typeof import('./src/basic/functions')['batchImport']
   const computed: typeof import('vue')['computed']
-  const config: typeof import('./src/basic/functions')['config']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
@@ -17,7 +15,6 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentPath: typeof import('./src/basic/functions')['getCurrentPath']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
-  const getHttp: typeof import('./src/basic/http')['getHttp']
   const h: typeof import('vue')['h']
   const http: typeof import('./src/basic/http')['default']
   const inject: typeof import('vue')['inject']

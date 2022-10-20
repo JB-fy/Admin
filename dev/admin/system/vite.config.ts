@@ -92,7 +92,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           ElementPlusResolver(),
           VantResolver(),
           IconsResolver({
-            prefix: 'autoicon'
+            prefix: 'Autoicon'
           }),
         ],
       }),

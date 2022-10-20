@@ -140,18 +140,13 @@ export const useUserStore = defineStore('user', {
           account: account,
           password: md5(md5(password) + res.data.encryptStr)
         })
-        setAccessToken(res.data.token)
-        /**--------初始化数据（可有效清理上一个登录用户的脏数据） 开始--------**/
-        //在logout退出登录操作中也可以清理，但在登录操作这里处理，应变能力更好。不用考虑有多少种情况需及时清理脏数据，如：accessToken失效、切换用户等
-        //this.info = {}; //清空用户信息
-        this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
-
-        //this.menuTree = []  //清空用户左侧菜单
-        this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
-
-        this.menuTabList = [] //清空菜单标签列表
+        this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
         //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
-        /**--------初始化数据（可有效清理上一个登录用户的脏数据） 结束--------**/
+        //useKeepAliveStore().$reset()
+
+        setAccessToken(res.data.token)
+        this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
+        this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
         return true
       } catch (err) {
         await errorHandle(err)

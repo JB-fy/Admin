@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import VueParticles from 'vue-particles/src/vue-particles/vue-particles.vue'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -40,7 +39,7 @@ const form = reactive({
 </script>
 
 <template>
-    <div class="particles" :particlesNumber="200" />
+    <div class="particles"></div>
     <ElTag id="login-container">
         <ElDivider>
             <div style="font-size: 25px;">{{ t('common.login') }}</div>

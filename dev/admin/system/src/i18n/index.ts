@@ -9,22 +9,7 @@ export const getLanguage = () => {
     return (navigator.language || 'zh-cn').toLowerCase()
 }
 
-const messages: any = {
-    'zh-cn': {},
-    'en': {}
-}
-const messageList = import.meta.globEager('@/i18n/language/**/*.ts')
-let keyList: string[], key1: string, key2: string;
-for (const path in messageList) {
-    //keyList = path.match(/.*\/(.+)\/(.+).ts$/);
-    keyList = path.slice(0, path.lastIndexOf('.')).split('/')
-    key1 = keyList[keyList.length - 2]
-    key2 = keyList[keyList.length - 1]
-    if (!messages[key1]) {
-        messages[key1] = {}
-    }
-    messages[key1][key2] = (<any>messageList[path]).default
-}
+const messages: { [propName: string]: {} } = batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10, false)
 
 const i18n = createI18n({
     legacy: false,  //解决报错：Uncaught SyntaxError: Not available in legacy mode
@@ -38,9 +23,12 @@ export default i18n
 
 
 /*--------使用方式 开始--------*/
-/* i18n.global.locale
+/* import i18n from '@/i18n';
+i18n.global.locale
 i18n.global.t('common.login')
 
+import { useI18n } from 'vue-i18n';
+const { locale, t } = useI18n()
 useI18n().locale
 useI18n().t('common.login')
 
@@ -53,5 +41,5 @@ hello: '你好，{0}！'
 useI18n().t('hello', ['名字'])
 
 hello: 'hello <br> world'
-<p v-html="$t('hello')"></p> */
+< p v-html="$t('hello')"></p> */
 /*--------使用方式 结束--------*/
