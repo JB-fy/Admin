@@ -145,12 +145,16 @@ router.beforeEach(async (to) => {
     }
     if (to.path === '/login') {
         //已登录且链接是登录页面时，则跳到首页
+        if (to.query.redirect) {
+            return to.query.redirect
+        }
         return '/'
     }
     /**--------判断登录状态 结束--------**/
-    
+
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 开始--------**/
     if (!userStore.infoIsExist) {
+        //throw new Error('1111')
         let result = await userStore.setInfo()  //记录用户信息
         if (!result) {
             return false

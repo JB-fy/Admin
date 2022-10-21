@@ -2,7 +2,11 @@
 import { index } from '@/api'
 
 onMounted(async () => {
-    await index()
+    try {
+        await index()
+    } catch (err) {
+        errorHandle(err)
+    }
 })
 let input = ref('')
 </script>
