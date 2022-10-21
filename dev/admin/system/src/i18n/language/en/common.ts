@@ -3,4 +3,5 @@ export default {
     account: 'account',
     password: 'password',
     upTop: 'upTop',
+    loading: 'Loading...',
 }

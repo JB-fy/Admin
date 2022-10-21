@@ -9,7 +9,7 @@ const languageStore = useLanguageStore()
 const settingStore = useSettingStore()
 const userStore = useUserStore()
 
-const { tm } = useI18n()
+const { t, tm } = useI18n()
 
 const route: any = useRoute()
 const router = useRouter()
@@ -87,7 +87,7 @@ const menuTab = reactive({
                 <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.path)">
                     <AutoiconEpRefresh />
                 </ElLink>
-                
+
                 <ElLink :underline="false">
                     <AutoiconEpLock />
                 </ElLink>
@@ -129,7 +129,7 @@ const menuTab = reactive({
                                 </RouterLink>
                             </ElDropdownItem>
                             <ElDropdownItem @click="userStore.logout()">
-                                退出登录
+                                {{ t('common.logout') }}
                             </ElDropdownItem>
                         </ElDropdownMenu>
                     </template>
@@ -152,19 +152,19 @@ const menuTab = reactive({
                                 <template #dropdown>
                                     <ElDropdownMenu>
                                         <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.path)">
-                                            刷新
+                                            {{ t('common.refresh') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="userStore.closeOtherMenuTab(item.path)">
-                                            关闭其他
+                                            {{ t('common.closeOther') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="userStore.closeLeftMenuTab(item.path)">
-                                            关闭左侧
+                                            {{ t('common.closeLeft') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="userStore.closeRightMenuTab(item.path)">
-                                            关闭右侧
+                                            {{ t('common.closeRight') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="userStore.closeAllMenuTab()">
-                                            关闭全部
+                                            {{ t('common.closeAll') }}
                                         </ElDropdownItem>
                                     </ElDropdownMenu>
                                 </template>
@@ -181,19 +181,19 @@ const menuTab = reactive({
                 <template #dropdown>
                     <ElDropdownMenu>
                         <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.path)">
-                            刷新
+                            {{ t('common.refresh') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="userStore.closeOtherMenuTab(route.path)">
-                            关闭其他
+                            {{ t('common.closeOther') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="userStore.closeLeftMenuTab(route.path)">
-                            关闭左侧
+                            {{ t('common.closeLeft') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="userStore.closeRightMenuTab(route.path)">
-                            关闭右侧
+                            {{ t('common.closeRight') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="userStore.closeAllMenuTab()">
-                            关闭全部
+                            {{ t('common.closeAll') }}
                         </ElDropdownItem>
                     </ElDropdownMenu>
                 </template>

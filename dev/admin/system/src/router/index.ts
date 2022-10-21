@@ -27,7 +27,7 @@ const initRouteList = [
                     //let componentPath='../views/index/Index.vue'
                     //const component = await import(componentPath)
                     const component = await import('@/views/index/Index.vue')
-                    component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { title: '主页', keepAlive: true, isAuth: true, isIndexMenuTab: true }

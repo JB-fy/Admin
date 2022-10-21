@@ -14,8 +14,8 @@ export const useKeepAliveStore = defineStore('keepAlive', {
         })
         return include
       })(), */
-      appContainerExclude: <string[]>[], //不允许缓存的路由路径列表，这里主要用于实现缓存刷新（动态设置页面组件名称name时，用路径命名，故这里面填写路径）
-      appContainerMax: <number>10   //缓存组件最大数量
+      appContainerExclude: [] as string[], //不允许缓存的路由路径列表，这里主要用于实现缓存刷新（动态设置页面组件名称name时，用路径命名，故这里面填写路径）
+      appContainerMax: 10 as number   //缓存组件最大数量
     }
   },
   getters: {

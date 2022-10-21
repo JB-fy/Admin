@@ -65,6 +65,7 @@ class Test extends AbstractController
         \support\Container::get(SystemAdmin::class)->getTable();
         (new \DI\Container())->get(SystemAdmin::class)->getTable(); */
         /*--------容器生成的对象代码提示测试 结束--------*/
-        return response('hello webman');
+        //return response('hello webman');
+        throwSuccessJson([]);
     }
 }

@@ -1,6 +1,6 @@
 export function index() {
   return http({
-    url: '/admin/index/index',
+    url: '/test',
     method: 'post'
   })
 }

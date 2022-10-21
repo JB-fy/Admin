@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useKeepAliveStore } from '@/stores/keepAlive';
 
+//const { t } = useI18n()
 const keepAliveStore = useKeepAliveStore()
 </script>
 
@@ -14,13 +15,20 @@ const keepAliveStore = useKeepAliveStore()
             </KeepAlive>
         </Transition>
     </RouterView>
-    <!-- <suspense>
+    <!-- <Suspense>
         <template #default>
-            <component v-if="userStore.cacheRoute.exclude.indexOf(route.path) === -1" :is="Component"
-                :key="route.path" />
+            <RouterView v-slot="{ Component, route }">
+                <Transition mode="out-in" name="transform">
+                    <KeepAlive :include="keepAliveStore.appContainerInclude"
+                        :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
+                        <component v-if="keepAliveStore.appContainerExclude.indexOf(route.path) === -1" :is="Component"
+                            :key="route.path" />
+                    </KeepAlive>
+                </Transition>
+            </RouterView>
         </template>
-        <template #fallback> Loading... </template>
-    </suspense> -->
+        <template #fallback> t('common.loading') </template>
+    </Suspense> -->
 </template>
 
 <style scoped>

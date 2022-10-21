@@ -19,7 +19,7 @@ use Webman\Route;
     return '';
 });*/
 
-Route::get('/test', [\app\controller\Test::class, 'index']);
+Route::add(['GET', 'POST', 'OPTIONS'], '/test', [\app\controller\Test::class, 'index']);
 
 Route::get('/', [\app\controller\Index::class, 'index']);
 

@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     AutoiconEpRefresh: typeof import('~icons/ep/refresh')['default']
     AutoiconEpSearch: typeof import('~icons/ep/search')['default']
     AutoiconEpSwitch: typeof import('~icons/ep/switch')['default']
+    AutoiconEpTop: typeof import('~icons/ep/top')['default']
     AutoiconEpUser: typeof import('~icons/ep/user')['default']
     AutoiconEpUserFilled: typeof import('~icons/ep/user-filled')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
