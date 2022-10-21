@@ -18,6 +18,7 @@ export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean
     } catch (error) {
         if (isErrorHandle) {
             errorHandle(<Error>error)
+            //throw error
             return false
         } else {
             throw error

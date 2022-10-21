@@ -152,13 +152,11 @@ router.beforeEach(async (to) => {
 
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 开始--------**/
     if (!userStore.infoIsExist) {
-        //throw new Error('1111')
-        let result = await userStore.setInfo()  //记录用户信息
-        if (!result) {
-            return false
-        }
-        result = await userStore.setMenuTree()  //设置左侧菜单
-        if (!result) {
+        try {
+            let result = await userStore.setInfo()  //记录用户信息
+            result = await userStore.setMenuTree()  //设置左侧菜单
+        } catch (error) {
+            await errorHandle(<Error>error)
             return false
         }
     }

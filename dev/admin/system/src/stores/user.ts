@@ -130,67 +130,54 @@ export const useUserStore = defineStore('user', {
      * @returns 
      */
     async login(account: string, password: string) {
-      try {
-        let res = await request('login.getEncryptStr', {
-          account: account
-        }, false)
-        res = await request('login.login', {
-          account: account,
-          password: md5(md5(password) + res.data.encryptStr)
-        }, false)
-        this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
-        //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
-        //useKeepAliveStore().$reset()
+      let res = await request('login.getEncryptStr', {
+        account: account
+      }, false)
+      res = await request('login.login', {
+        account: account,
+        password: md5(md5(password) + res.data.encryptStr)
+      }, false)
+      this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
+      //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
+      //useKeepAliveStore().$reset()
 
-        setAccessToken(res.data.token)
-        this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
-        this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
-        return true
-      } catch (error) {
-        await errorHandle(<Error>error)
-        return false
-      }
+      setAccessToken(res.data.token)
+      this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
+      this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
     },
     /**
      * 设置登录用户信息
      */
     async setInfo() {
-      try {
-        const res = await request('login.getInfo', {}, false)
-        this.info = res.data.info
-        return true
-      } catch (error) {
-        await errorHandle(<Error>error)
-        return false
-      }
+      const res = await request('login.getInfo', {}, false)
+      this.info = res.data.info
     },
     /**
      * 设置左侧菜单（包含注册动态路由）
      */
     async setMenuTree() {
-      try {
-        const res = await request('login.getMenuTree', {}, false)
-        /**--------注册动态路由 开始--------**/
-        const handleMenuTree = (menuTree: any, pMenuList: any = []) => {
-          const menuTreeTmp: any = []
-          let tmpExtendData: any = {};
-          for (let i = 0; i < menuTree.length; i++) {
-            tmpExtendData = JSON.parse(menuTree[i].extendData);
-            menuTreeTmp[i] = {
+      const res = await request('login.getMenuTree', {}, false)
+      /**--------注册动态路由 开始--------**/
+      const handleMenuTree = (menuTree: any, pMenuList: any = []) => {
+        const menuTreeTmp: any = []
+        let tmpExtendData: any = {};
+        for (let i = 0; i < menuTree.length; i++) {
+          tmpExtendData = JSON.parse(menuTree[i].extendData);
+          menuTreeTmp[i] = {
+            title: tmpExtendData.title,
+            url: tmpExtendData.url,
+            icon: tmpExtendData.icon,
+            children: [],
+          }
+          if (menuTree[i].children.length) {
+            pMenuList.push({
               title: tmpExtendData.title,
               url: tmpExtendData.url,
               icon: tmpExtendData.icon,
-              children: [],
-            }
-            if (menuTree[i].children.length) {
-              pMenuList.push({
-                title: tmpExtendData.title,
-                url: tmpExtendData.url,
-                icon: tmpExtendData.icon,
-              })
-              menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
-              pMenuList.pop()
-            }/*  else {
+            })
+            menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
+            pMenuList.pop()
+          }/*  else {
               router.addRoute(layoutName, {
                 path: menuTree[i].menuUrl,
                 name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
@@ -208,16 +195,11 @@ export const useUserStore = defineStore('user', {
                 }
               })
             } */
-          }
-          return menuTreeTmp
         }
-        this.menuTree = handleMenuTree(res.data.tree)
-        /**--------注册动态路由 结束--------**/
-        return true
-      } catch (err) {
-        await errorHandle(err)
-        return false
+        return menuTreeTmp
       }
+      this.menuTree = handleMenuTree(res.data.tree)
+      /**--------注册动态路由 结束--------**/
     },
     /**
      * 退出登录

@@ -25,11 +25,19 @@ const form = reactive({
                     return false
                 }
                 form.login.loading = true
-                let result = await useUserStore().login(form.login.data.account, form.login.data.password)
+                try {
+                    await useUserStore().login(form.login.data.account, form.login.data.password)
+                    router.replace(<string>(route.query.redirect ? route.query.redirect : '/'))
+                } catch (error) {
+                    await errorHandle(<Error>error)
+                } finally {
+                    form.login.loading = false
+                }
+                /* let result = await useUserStore().login(form.login.data.account, form.login.data.password)
                 form.login.loading = false
                 if (result) {
                     router.replace(<string>(route.query.redirect ? route.query.redirect : '/'))
-                }
+                } */
             })
         }
     }
