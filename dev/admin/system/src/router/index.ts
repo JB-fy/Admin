@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import layout from '@/layout/default/Index.vue';
-import { useUserStore } from '@/stores/user';
-import { useKeepAliveStore } from '@/stores/keepAlive';
 import i18n from '@/i18n';
 
 /*

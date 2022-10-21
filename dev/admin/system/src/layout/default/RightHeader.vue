@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import { useKeepAliveStore } from '@/stores/keepAlive';
-import { useLanguageStore } from '@/stores/language';
-import { useSettingStore } from '@/stores/setting';
-import { useUserStore } from '@/stores/user';
-
 const keepAliveStore = useKeepAliveStore()
 const languageStore = useLanguageStore()
 const settingStore = useSettingStore()

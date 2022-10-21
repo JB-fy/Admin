@@ -1,4 +1,3 @@
-import { useUserStore } from '@/stores/user'
 import router from '@/router'
 
 //自定义错误类

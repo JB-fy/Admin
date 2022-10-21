@@ -65,6 +65,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           } */
         ],
         dirs: [ //目录加载，递归加载则后面加上'/**'，例：src/basic/**
+          'src/error/**',
+          'src/stores/**',
           'src/basic'
         ],
         resolvers: [

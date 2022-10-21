@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useKeepAliveStore } from '@/stores/keepAlive';
-
 //const { t } = useI18n()
 const keepAliveStore = useKeepAliveStore()
 </script>

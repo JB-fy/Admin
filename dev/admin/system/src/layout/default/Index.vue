@@ -3,7 +3,6 @@ import AppContainer from './AppContainer.vue';
 import LeftMenu from './LeftMenu.vue';
 import RightHeader from './RightHeader.vue';
 import RightFooter from './RightFooter.vue';
-import { useSettingStore } from '@/stores/setting';
 
 const { t } = useI18n()
 const settingStore = useSettingStore()

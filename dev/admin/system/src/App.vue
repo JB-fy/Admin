@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useLanguageStore } from '@/stores/language';
-
 const languageStore = useLanguageStore()
 </script>
 

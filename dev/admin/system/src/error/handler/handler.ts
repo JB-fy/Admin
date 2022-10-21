@@ -1,13 +1,4 @@
-import { useUserStore } from '@/stores/user'
 import router from '@/router'
-
-//自定义错误类
-export class ApiError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = "ApiError"
-    }
-}
 
 //错误处理
 export const errorHandle = async (err: Error) => {
