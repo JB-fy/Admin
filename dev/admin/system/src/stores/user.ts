@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path !== path
       })
-      const currentPath = getCurrentPath()
+      const currentPath = router.currentRoute.value.path
       if (path === currentPath) {
         router.push(this.menuTabList[this.menuTabList.length - 1].path)
       }
@@ -67,7 +67,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path === path
       })
-      const currentPath = getCurrentPath()
+      const currentPath = router.currentRoute.value.path
       if (path !== currentPath) {
         router.push(path)
       }
@@ -83,7 +83,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index >= leftIndex
       })
-      const currentPath = getCurrentPath()
+      const currentPath = router.currentRoute.value.path
       if (path !== currentPath) {
         const currentLeftIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath
@@ -104,7 +104,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index <= rightIndex
       })
-      const currentPath = getCurrentPath()
+      const currentPath = router.currentRoute.value.path
       if (path !== currentPath) {
         const currentRightIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath

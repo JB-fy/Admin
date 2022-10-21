@@ -4,9 +4,6 @@ import { index } from '@/api'
 onMounted(async () => {
     await index()
 })
-/* onActivated(async () => {
-    await index()
-}) */
 let input = ref('')
 </script>
 

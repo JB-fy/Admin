@@ -50,7 +50,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
      */
     refreshMenuTab(path: string) {
       this.appContainerExclude.push(path)
-      const currentPath = getCurrentPath()
+      const currentPath = router.currentRoute.value.path
       if (path === currentPath) {
         router.push(path)
       }

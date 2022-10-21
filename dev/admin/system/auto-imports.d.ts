@@ -13,7 +13,6 @@ declare global {
   const errorHandle: typeof import('./src/basic/errorHandle')['errorHandle']
   const getAccessToken: typeof import('./src/basic/accessToken')['getAccessToken']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
-  const getCurrentPath: typeof import('./src/basic/common')['getCurrentPath']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getLanguage: typeof import('./src/basic/language')['getLanguage']
   const h: typeof import('vue')['h']

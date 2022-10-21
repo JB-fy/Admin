@@ -21,7 +21,6 @@ app.mount('#app');
 //import { ApiError } from "@/basic/http";
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus/es'
-import { getCurrentPath } from '@/basic/common'
 app.config.errorHandler = (err: any, instance, info) => {
     //Error是所有错误类的父类。所以(err instanceof Error)一定是true，不能用于识别错误类型
     /* if (err instanceof ApiError) {
@@ -46,7 +45,7 @@ app.config.errorHandler = (err: any, instance, info) => {
                     }).catch(async () => {
                         useUserStore().logout()
                     }) */
-                    useUserStore().logout(getCurrentPath())
+                    useUserStore().logout(router.currentRoute.value.path)
                     ElMessage.error(errMsg.msg)
                     break
                 default:
