@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path !== path
       })
-      const currentPath = router.currentRoute.value.path
+      const currentPath = getCurrentPath()
       if (path === currentPath) {
         router.push(this.menuTabList[this.menuTabList.length - 1].path)
       }
@@ -67,7 +67,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path === path
       })
-      const currentPath = router.currentRoute.value.path
+      const currentPath = getCurrentPath()
       if (path !== currentPath) {
         router.push(path)
       }
@@ -83,7 +83,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index >= leftIndex
       })
-      const currentPath = router.currentRoute.value.path
+      const currentPath = getCurrentPath()
       if (path !== currentPath) {
         const currentLeftIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath
@@ -104,7 +104,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index <= rightIndex
       })
-      const currentPath = router.currentRoute.value.path
+      const currentPath = getCurrentPath()
       if (path !== currentPath) {
         const currentRightIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath
@@ -149,8 +149,7 @@ export const useUserStore = defineStore('user', {
         this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
         return true
       } catch (err) {
-        throw err 
-        //await errorHandle(err)
+        await errorHandle(err)
         return false
       }
     },
@@ -163,7 +162,7 @@ export const useUserStore = defineStore('user', {
         this.info = res.data.info
         return true
       } catch (err) {
-        throw err 
+        await errorHandle(err)
         return false
       }
     },
@@ -218,7 +217,7 @@ export const useUserStore = defineStore('user', {
         /**--------注册动态路由 结束--------**/
         return true
       } catch (err) {
-        throw err 
+        await errorHandle(err)
         return false
       }
     },
