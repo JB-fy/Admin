@@ -3,7 +3,7 @@ export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
-  const batchImport: typeof import('./src/basic/functions')['batchImport']
+  const batchImport: typeof import('./src/basic/common')['batchImport']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']
@@ -13,7 +13,7 @@ declare global {
   const errorHandle: typeof import('./src/basic/errorHandle')['errorHandle']
   const getAccessToken: typeof import('./src/basic/accessToken')['getAccessToken']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
-  const getCurrentPath: typeof import('./src/basic/functions')['getCurrentPath']
+  const getCurrentPath: typeof import('./src/basic/common')['getCurrentPath']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getLanguage: typeof import('./src/basic/language')['getLanguage']
   const h: typeof import('vue')['h']

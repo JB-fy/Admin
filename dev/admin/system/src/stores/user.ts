@@ -149,7 +149,8 @@ export const useUserStore = defineStore('user', {
         this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
         return true
       } catch (err) {
-        await errorHandle(err)
+        throw err 
+        //await errorHandle(err)
         return false
       }
     },
@@ -162,7 +163,7 @@ export const useUserStore = defineStore('user', {
         this.info = res.data.info
         return true
       } catch (err) {
-        await errorHandle(err)
+        throw err 
         return false
       }
     },
@@ -217,7 +218,7 @@ export const useUserStore = defineStore('user', {
         /**--------注册动态路由 结束--------**/
         return true
       } catch (err) {
-        await errorHandle(err)
+        throw err 
         return false
       }
     },

@@ -1,5 +1,12 @@
 import axios from 'axios'
 
+class ApiError extends Error {
+    constructor(message: string) {
+        super(message)
+        this.name = "ApiError"
+    }
+}
+
 const option = {
     apiSceneName: import.meta.env.VITE_AUTH_SCENE_NAME,
     apiSceneCode: import.meta.env.VITE_AUTH_SCENE_CODE,
@@ -22,7 +29,7 @@ http.interceptors.request.use(
         return config
     },
     (error) => {
-        error.message = JSON.stringify({ code: '999999', msg: error.message, data: {} })
+        //error.message = JSON.stringify({ code: '999999', msg: error.message, data: {} })
         return Promise.reject(error)
     }
 )
@@ -32,10 +39,10 @@ http.interceptors.response.use(
         if (response.data.code === '000000') {
             return response.data
         }
-        return Promise.reject(new Error(JSON.stringify(response.data)))
+        return Promise.reject(new ApiError(JSON.stringify(response.data)))
     },
     (error) => {
-        error.message = JSON.stringify({ code: '999999', msg: error.message, data: {} })
+        //error.message = JSON.stringify({ code: '999999', msg: error.message, data: {} })
         return Promise.reject(error)
     }
 )

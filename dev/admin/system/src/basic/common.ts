@@ -21,7 +21,11 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
         } else {
             importArr.push(rawImportList[path].default)
         } */
-        importArr.push(rawImportList[path].default)
+        if (typeof rawImportList[path] === 'object' && rawImportList[path].default) {
+            importArr.push(rawImportList[path].default)
+        } else {
+            importArr.push(rawImportList[path])
+        }
         if (keyArr.length < levelOfMin || levelOfMin == 0) {
             levelOfMin = keyArr.length
         }
@@ -119,6 +123,8 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
     }
     return importList
 }
+
+console.log(batchImport(import.meta.globEager('@/basic/*.ts')))
 
 import router from '@/router'
 /**
