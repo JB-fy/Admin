@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { index } from '@/api'
-
 onMounted(async () => {
-    await index()
+    request('index.index')
 })
 let input = ref('')
 </script>

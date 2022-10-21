@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
-import { getInfo, getEncryptStr, getMenuTree, login } from '@/api/login'
 import router from '@/router'
 
 export const useUserStore = defineStore('user', {
@@ -54,7 +53,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path !== path
       })
-      const currentPath = getCurrentPath()
+      const currentPath = getCurrentRoute().path
       if (path === currentPath) {
         router.push(this.menuTabList[this.menuTabList.length - 1].path)
       }
@@ -67,7 +66,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path === path
       })
-      const currentPath = getCurrentPath()
+      const currentPath = getCurrentRoute().path
       if (path !== currentPath) {
         router.push(path)
       }
@@ -83,7 +82,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index >= leftIndex
       })
-      const currentPath = getCurrentPath()
+      const currentPath = getCurrentRoute().path
       if (path !== currentPath) {
         const currentLeftIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath
@@ -104,7 +103,7 @@ export const useUserStore = defineStore('user', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index <= rightIndex
       })
-      const currentPath = getCurrentPath()
+      const currentPath = getCurrentRoute().path
       if (path !== currentPath) {
         const currentRightIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath
@@ -131,15 +130,14 @@ export const useUserStore = defineStore('user', {
      * @returns 
      */
     async login(account: string, password: string) {
-      //this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
       try {
-        let res = await getEncryptStr({
+        let res = await request('login.getEncryptStr', {
           account: account
-        })
-        res = await login({
+        }, false)
+        res = await request('login.login', {
           account: account,
           password: md5(md5(password) + res.data.encryptStr)
-        })
+        }, false)
         this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
         //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
         //useKeepAliveStore().$reset()
@@ -148,8 +146,8 @@ export const useUserStore = defineStore('user', {
         this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
         this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
         return true
-      } catch (err) {
-        await errorHandle(err)
+      } catch (error) {
+        await errorHandle(<Error>error)
         return false
       }
     },
@@ -158,11 +156,11 @@ export const useUserStore = defineStore('user', {
      */
     async setInfo() {
       try {
-        const res = await getInfo()
+        const res = await request('login.getInfo', {}, false)
         this.info = res.data.info
         return true
-      } catch (err) {
-        await errorHandle(err)
+      } catch (error) {
+        await errorHandle(<Error>error)
         return false
       }
     },
@@ -171,7 +169,7 @@ export const useUserStore = defineStore('user', {
      */
     async setMenuTree() {
       try {
-        const res = await getMenuTree()
+        const res = await request('login.getMenuTree', {}, false)
         /**--------注册动态路由 开始--------**/
         const handleMenuTree = (menuTree: any, pMenuList: any = []) => {
           const menuTreeTmp: any = []

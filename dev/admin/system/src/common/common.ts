@@ -123,3 +123,9 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
     }
     return importList
 }
+
+import router from '@/router'
+//获取当前路由
+export const getCurrentRoute = () => {
+    return router.currentRoute.value
+}

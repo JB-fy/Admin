@@ -9,15 +9,16 @@ const apiList = batchImport(import.meta.globEager('@/api/**/*.ts'))
  */
 export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean = true) => {
     //const apiList = batchImport(import.meta.globEager('@/api/**/*.ts')) //放外面去。这样每次调用都不要重新加载了
-    const apiMethod: any = apiCode.split('.').reduce((obj, key) => {
+    const apiMethod: Function = <Function>apiCode.split('.').reduce((obj, key) => {
         return obj[key]
     }, apiList)
-    //return apiMethod(data)
+
     try {
         return await apiMethod(data)
     } catch (error) {
         if (isErrorHandle) {
             errorHandle(<Error>error)
+            return false
         } else {
             throw error
         }

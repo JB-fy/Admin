@@ -1,12 +1,6 @@
 <script setup lang="ts">
 onMounted(() => {
-    request('index.index', undefined, false)
-        .then((data) => {
-            console.log(data)
-        })
-        .catch((error) => {
-            errorHandle(<Error>error)
-        })
+    request('index.index')
 })
 let input = ref('')
 </script>

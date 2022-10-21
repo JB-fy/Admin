@@ -190,5 +190,5 @@ route.fulPath
 
 const router = useRouter()
 router.push(url) 
-router.currentRoute.value.path  //当前页面地址 */
+router.currentRoute.value  //当前页面路由 */
 /*--------使用方式 结束--------*/
