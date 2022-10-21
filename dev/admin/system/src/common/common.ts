@@ -123,4 +123,3 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
     }
     return importList
 }
-console.log(batchImport(import.meta.globEager('@/basic/*.ts')))

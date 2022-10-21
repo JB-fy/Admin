@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { index } from '@/api'
-
-onMounted(async () => {
-    try {
-        await index()
-    } catch (err) {
-        errorHandle(err)
-    }
+onMounted(() => {
+    request('index.index', undefined, false)
+        .then((data) => {
+            console.log(data)
+        })
+        .catch((error) => {
+            errorHandle(<Error>error)
+        })
 })
 let input = ref('')
 </script>
