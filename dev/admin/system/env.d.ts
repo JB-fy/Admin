@@ -17,3 +17,4 @@ declare module '*.vue' {
 interface ImportMetaEnv {
   readonly VITE_HTTP_TIMEOUT: number
 } */
+declare module 'js-md5'
