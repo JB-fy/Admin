@@ -1,10 +1,7 @@
 const storage = import.meta.env.VITE_LANGUAGE_STORAGE === 'localStorage' ? localStorage : sessionStorage
 const languageNAME = import.meta.env.VITE_LANGUAGE_NAME
 
-/**
- * 获取语言
- * @returns 
- */
+//获取语言
 export const getLanguage = (): string => {
     const language = storage.getItem(languageNAME)
     if (language) {
@@ -14,9 +11,7 @@ export const getLanguage = (): string => {
     return (navigator.language || 'zh-cn').toLowerCase()
 }
 
-/**
- * 设置语言
- */
+//设置语言
 export const setLanguage = (language: string) => {
     storage.setItem(languageNAME, language)
 }

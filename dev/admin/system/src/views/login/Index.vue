@@ -5,7 +5,7 @@ const { t } = useI18n()
 
 const form = reactive({
     login: {
-        ref: null,
+        ref: null as any,
         data: {
             account: '',
             password: ''
@@ -20,7 +20,7 @@ const form = reactive({
         },
         loading: false,
         submit: () => {
-            (<any>form.login.ref).validate(async (valid: boolean) => {
+            form.login.ref.validate(async (valid: boolean) => {
                 if (!valid) {
                     return false
                 }

@@ -13,6 +13,7 @@ declare global {
   const effectScope: typeof import('vue')['effectScope']
   const errorHandle: typeof import('./src/error/handler/handler')['errorHandle']
   const getAccessToken: typeof import('./src/common/accessToken')['getAccessToken']
+  const getBrowserLanguage: typeof import('./src/common/functions')['getBrowserLanguage']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentRoute: typeof import('./src/common/common')['getCurrentRoute']
   const getCurrentScope: typeof import('vue')['getCurrentScope']

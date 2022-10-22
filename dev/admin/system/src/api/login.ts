@@ -1,4 +1,4 @@
-export function getEncryptStr(data) {
+export function getEncryptStr(data:{}) {
   return http({
     url: '/login/getEncryptStr',
     method: 'post',
@@ -6,7 +6,7 @@ export function getEncryptStr(data) {
   })
 }
 
-export function login(data) {
+export function login(data:{}) {
   return http({
     url: '/login',
     method: 'post',
@@ -21,7 +21,7 @@ export function getInfo() {
   })
 }
 
-export function updateInfo(data) {
+export function updateInfo(data:{}) {
   return http({
     url: '/login/updateInfo',
     method: 'post',
