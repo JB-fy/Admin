@@ -1,11 +1,11 @@
-import i18n from '@/i18n';
+import i18n from '@/i18n'
 const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'))
 
 /**
  * 请求接口
  * @param apiCode   接口标识。apiList内的键用'.'拼接组成。例如：login.getEncryptStr
  * @param data  请求参数
- * @param isErrorHandle 错误处理，默认true。有时调用接口的位置报错需要特殊处理，传false则会抛出错误，可在调用处捕获错误再处理。
+ * @param isErrorHandle 错误处理，默认true。传false则会抛出错误，可在调用处捕获错误进行特殊处理。以下几种情况需要传false：调用接口报错需要特殊处理；多接口调用时，有接口报错，后续接口不再请求。（多接口请求也可以传true，用返回参数是否false判断是否进行后续接口请求）
  * @returns 
  */
 export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean = true) => {
@@ -18,17 +18,14 @@ export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean
         apiMethod = apiMethod[value]
     }
 
-    if (typeof apiMethod !== 'function') {
-        errorHandle(new Error(i18n.global.t('error.apiFunctionNoFind')))
-        return false
-    }
-
     try {
+        if (typeof apiMethod !== 'function') {
+            throw new Error(i18n.global.t('error.apiFunctionNoFind'))
+        }
         return await apiMethod(data)
     } catch (error) {
         if (isErrorHandle) {
             errorHandle(<Error>error)
-            //throw error
             return false
         } else {
             throw error
