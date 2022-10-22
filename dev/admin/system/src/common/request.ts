@@ -1,4 +1,5 @@
-const apiList = batchImport(import.meta.globEager('@/api/**/*.ts'))
+import i18n from '@/i18n';
+const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'))
 
 /**
  * 请求接口
@@ -9,9 +10,18 @@ const apiList = batchImport(import.meta.globEager('@/api/**/*.ts'))
  */
 export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean = true) => {
     //const apiList = batchImport(import.meta.globEager('@/api/**/*.ts')) //放外面去。这样每次调用都不要重新加载了
-    const apiMethod: Function = <Function>apiCode.split('.').reduce((obj, key) => {
-        return obj[key]
-    }, apiList)
+    let apiMethod: any = apiList;
+    for (const value of apiCode.split('.')) {
+        if (!(value in apiMethod)) {
+            break;
+        }
+        apiMethod = apiMethod[value]
+    }
+
+    if (typeof apiMethod !== 'function') {
+        errorHandle(new Error(i18n.global.t('error.apiFunctionNoFind')))
+        return false
+    }
 
     try {
         return await apiMethod(data)
