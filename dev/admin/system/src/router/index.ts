@@ -129,13 +129,13 @@ router.beforeEach(async (to: any) => {
         document.title = webTitle
     }
 
-    const userStore = useUserStore();
+    const adminStore = useAdminStore();
     /**--------判断登录状态 开始--------**/
     const accessToken = getAccessToken()
     if (!accessToken) {
         if (to.meta.isAuth) {
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
-            userStore.logout(to.path)
+            adminStore.logout(to.path)
             return false */
             return '/login?redirect=' + to.path
         }
@@ -151,10 +151,10 @@ router.beforeEach(async (to: any) => {
     /**--------判断登录状态 结束--------**/
 
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 开始--------**/
-    if (!userStore.infoIsExist) {
+    if (!adminStore.infoIsExist) {
         try {
-            let result = await userStore.setInfo()  //记录用户信息
-            result = await userStore.setMenuTree()  //设置左侧菜单
+            let result = await adminStore.setInfo()  //记录用户信息
+            result = await adminStore.setMenuTree()  //设置左侧菜单
         } catch (error) {
             await errorHandle(<Error>error)
             return false
@@ -163,7 +163,7 @@ router.beforeEach(async (to: any) => {
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 结束--------**/
 
     /**--------设置菜单标签 开始--------**/
-    userStore.pushMenuTabList({
+    adminStore.pushMenuTabList({
         title: <string>to.meta.title ?? '',
         path: to.path,
         icon: <string>to.meta.icon ?? ''

@@ -43,7 +43,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
     /**
      * 刷新菜单标签
      *      实现流程：
-     *          1：AppContainer.vue文件内component标签加上判断是否允许缓存，允许才显示界面（v-if="userStore.cacheRoute.exclude.indexOf(route.path) === -1"）
+     *          1：AppContainer.vue文件内component标签加上判断是否允许缓存，允许才显示界面（v-if="keepAliveStore.appContainerExclude.indexOf(route.path) === -1"）
      *          2：设置路由不允许缓存，不显示页面
      *          3：打开路由，路由后置守卫afterEach中重新设置成允许缓存，显示页面
      * @param {*} path  菜单标签的路由路径

@@ -2,7 +2,7 @@
 const keepAliveStore = useKeepAliveStore()
 const languageStore = useLanguageStore()
 const settingStore = useSettingStore()
-const userStore = useUserStore()
+const adminStore = useAdminStore()
 
 const { t, tm } = useI18n()
 
@@ -42,7 +42,7 @@ const menuTab = reactive({
         router.push(path)
     },
     remove: (path: string) => {
-        userStore.closeSelfMenuTab(path)
+        adminStore.closeSelfMenuTab(path)
     },
     buttonDropdown: {
         status: false,
@@ -108,10 +108,10 @@ const menuTab = reactive({
 
                 <ElDropdown @visible-change="userDropdown.visibleChange">
                     <ElLink :underline="false">
-                        <ElAvatar :src="userStore.info.avatar" :size="40">
+                        <ElAvatar :src="adminStore.info.avatar" :size="40">
                             <AutoiconEpUserFilled />
                         </ElAvatar>
-                        <span>{{ userStore.info.nickname }}</span>
+                        <span>{{ adminStore.info.nickname }}</span>
                         <AutoiconEpArrowDown :class="{ 'dropdown-icon': true, 'is-dropdown': userDropdown.status }" />
                     </ElLink>
                     <template #dropdown>
@@ -123,7 +123,7 @@ const menuTab = reactive({
                                     </ElLink>
                                 </RouterLink>
                             </ElDropdownItem>
-                            <ElDropdownItem @click="userStore.logout()">
+                            <ElDropdownItem @click="adminStore.logout()">
                                 {{ t('common.logout') }}
                             </ElDropdownItem>
                         </ElDropdownMenu>
@@ -134,7 +134,7 @@ const menuTab = reactive({
         <ElCol :span="24">
             <ElTabs class="menu-tabs" type="card" :model-value="route.path" @tab-change="menuTab.change"
                 @tab-remove="menuTab.remove">
-                <template v-for="(item, key) in userStore.menuTabList" :key="key">
+                <template v-for="(item, key) in adminStore.menuTabList" :key="key">
                     <ElTabPane :name="item.path" :closable="item.closable">
                         <template #label>
                             <ElDropdown :ref="(el: any) => { menuTab.refList[item.path] = el }" trigger="contextmenu"
@@ -149,16 +149,16 @@ const menuTab = reactive({
                                         <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.path)">
                                             {{ t('common.refresh') }}
                                         </ElDropdownItem>
-                                        <ElDropdownItem @click="userStore.closeOtherMenuTab(item.path)">
+                                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(item.path)">
                                             {{ t('common.closeOther') }}
                                         </ElDropdownItem>
-                                        <ElDropdownItem @click="userStore.closeLeftMenuTab(item.path)">
+                                        <ElDropdownItem @click="adminStore.closeLeftMenuTab(item.path)">
                                             {{ t('common.closeLeft') }}
                                         </ElDropdownItem>
-                                        <ElDropdownItem @click="userStore.closeRightMenuTab(item.path)">
+                                        <ElDropdownItem @click="adminStore.closeRightMenuTab(item.path)">
                                             {{ t('common.closeRight') }}
                                         </ElDropdownItem>
-                                        <ElDropdownItem @click="userStore.closeAllMenuTab()">
+                                        <ElDropdownItem @click="adminStore.closeAllMenuTab()">
                                             {{ t('common.closeAll') }}
                                         </ElDropdownItem>
                                     </ElDropdownMenu>
@@ -178,16 +178,16 @@ const menuTab = reactive({
                         <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.path)">
                             {{ t('common.refresh') }}
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeOtherMenuTab(route.path)">
+                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(route.path)">
                             {{ t('common.closeOther') }}
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeLeftMenuTab(route.path)">
+                        <ElDropdownItem @click="adminStore.closeLeftMenuTab(route.path)">
                             {{ t('common.closeLeft') }}
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeRightMenuTab(route.path)">
+                        <ElDropdownItem @click="adminStore.closeRightMenuTab(route.path)">
                             {{ t('common.closeRight') }}
                         </ElDropdownItem>
-                        <ElDropdownItem @click="userStore.closeAllMenuTab()">
+                        <ElDropdownItem @click="adminStore.closeAllMenuTab()">
                             {{ t('common.closeAll') }}
                         </ElDropdownItem>
                     </ElDropdownMenu>

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import md5 from 'js-md5'
 import router from '@/router'
 
-export const useUserStore = defineStore('user', {
+export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}

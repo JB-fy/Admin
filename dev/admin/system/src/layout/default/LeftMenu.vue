@@ -2,7 +2,7 @@
 import LeftMenuItem from './LeftMenuItem.vue';   //做成组件才能实现无限递归（组件内部无限递归自身）
 
 const settingStore = useSettingStore()
-const userStore = useUserStore()
+const adminStore = useAdminStore()
 
 /**--------bug处理（组件ElMenu设置背景色后，鼠标移动到含有子菜单的菜单上背景色不变） 开始--------**/
 const subMenuTitle = async () => {
@@ -36,7 +36,7 @@ const menuClose = () => {
         <ElMenu :default-active="route.path" :collapse="settingStore.leftMenuFold" :router="false" :unique-opened="true"
             background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" @select="menuSelect"
             @open="menuOpen" @close="menuClose">
-            <LeftMenuItem :tree="userStore.menuTree" />
+            <LeftMenuItem :tree="adminStore.menuTree" />
         </ElMenu>
     </ElScrollbar>
 </template>

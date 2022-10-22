@@ -52,3 +52,11 @@ export const isActiveAccessToken = () => {
     }
     return true
 }
+
+/* const accessToken = {
+    get: getAccessToken,
+    set: setAccessToken,
+    remove: removeAccessToken,
+    isActive: isActiveAccessToken
+}
+export default accessToken */

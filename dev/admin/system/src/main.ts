@@ -20,7 +20,7 @@ app.mount('#app');
 //不好用，很多地方无法触发这个机制。例如：路由router.beforeEach前置导航守护; element plus的表单验证提交formRef.validate((valid) => { throw new Error('你大爷') })
 // import { AxiosError } from "axios"; //这个错误类导入会报错，所以只能用err.name来识别错误类型
 // import { ApiError } from "@/basic/http";
-// import { useUserStore } from '@/stores/user'
+// import { useAdminStore } from '@/stores/admin'
 // import { ElMessage } from 'element-plus';
 // app.config.errorHandler = (err: any, instance, info) => {
 //     //Error是所有错误类的父类。所以(err instanceof Error)一定是true，不能用于识别错误类型
@@ -42,11 +42,11 @@ app.mount('#app');
 //                         confirmButtonText: '重新登录',
 //                         type: 'warning'
 //                     }).then(async () => {
-//                         useUserStore().logout()
+//                         useAdminStore().logout()
 //                     }).catch(async () => {
-//                         useUserStore().logout()
+//                         useAdminStore().logout()
 //                     }) */
-//                     useUserStore().logout(router.currentRoute.value.path)
+//                     useAdminStore().logout(router.currentRoute.value.path)
 //                     ElMessage.error(errMsg.msg)
 //                     break
 //                 default:

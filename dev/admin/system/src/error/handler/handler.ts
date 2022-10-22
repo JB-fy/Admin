@@ -12,11 +12,11 @@ export const errorHandle = async (err: Error) => {
                         confirmButtonText: '重新登录',
                         type: 'warning'
                     }).then(async () => {
-                        useUserStore().logout()
+                        useAdminStore().logout()
                     }).catch(async () => {
-                        useUserStore().logout()
+                        useAdminStore().logout()
                     }) */
-                    useUserStore().logout(getCurrentRoute().path)
+                    useAdminStore().logout(getCurrentRoute().path)
                     ElMessage.error(errMsg.msg)
                     break
                 default:
