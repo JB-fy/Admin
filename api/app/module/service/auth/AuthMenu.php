@@ -71,7 +71,7 @@ class AuthMenu extends AbstractService
      * @param array $where
      * @return void
      */
-    public function getTree(array $field = [], array $where = [])
+    public function tree(array $field = [], array $where = [])
     {
         /* if (!empty($field)) {
             //不为空时,补充一些必须的字段,否则生成树状菜单会报错
@@ -87,12 +87,11 @@ class AuthMenu extends AbstractService
         } catch (\app\exception\Json $e) {
             $list = json_decode($e->getMessage(), true)['data']['list'] ?? [];
         }
-        var_dump($list);
+
         $tree = [];
         if (!empty($list)) {
             $tree = container(LogicAuthMenu::class)->tree($list);
         }
-
         throwSuccessJson(['tree' => $tree]);
     }
 }

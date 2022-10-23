@@ -21,7 +21,6 @@ class Access extends AbstractAspect
      * @var array
      */
     public $classes = [
-        //\app\controller\Index::class . '::getInfo',
         \app\controller\Index::class,
         \app\controller\Login::class
     ];

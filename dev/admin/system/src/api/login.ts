@@ -1,6 +1,6 @@
-export function getEncryptStr(data: any) {
+export function encryptStr(data: any) {
   return http({
-    url: '/login/getEncryptStr',
+    url: '/login/encryptStr',
     method: 'post',
     data: data
   })
@@ -14,24 +14,24 @@ export function login(data: any) {
   })
 }
 
-export function getInfo() {
+export function info() {
   return http({
-    url: '/login/getInfo',
+    url: '/login/info',
     method: 'post'
   })
 }
 
-export function updateInfo(data: any) {
+export function update(data: any) {
   return http({
-    url: '/login/updateInfo',
+    url: '/login/update',
     method: 'post',
     data: data
   })
 }
 
-export function getMenuTree() {
+export function menuTree() {
   return http({
-    url: '/login/getMenuTree',
+    url: '/login/menuTree',
     method: 'post'
   })
 }

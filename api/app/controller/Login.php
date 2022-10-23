@@ -17,7 +17,7 @@ class Login extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function getEncryptStr(Request $request)
+    public function encryptStr(Request $request)
     {
         switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
@@ -26,7 +26,7 @@ class Login extends AbstractController
                 container(ValidateLogin::class, true)->scene('encryptStr')->check($data);
                 /**--------验证参数 结束--------**/
 
-                container(ServiceLogin::class)->getEncryptStr($data['account'], 'systemAdmin');
+                container(ServiceLogin::class)->encryptStr($data['account'], 'systemAdmin');
                 break;
             default:
                 throwFailJson('001001');
@@ -63,7 +63,7 @@ class Login extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function getInfo(Request $request)
+    public function info(Request $request)
     {
         switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
@@ -126,7 +126,7 @@ class Login extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function getMenuTree(Request $request)
+    public function menuTree(Request $request)
     {
         switch ($request->authSceneInfo->sceneCode) {
             case 'systemAdmin':
@@ -152,7 +152,7 @@ class Login extends AbstractController
                     'extendData',
                     'parseExtendData'
                 ];
-                container(ServiceAuthMenu::class)->getTree($field, $where);
+                container(ServiceAuthMenu::class)->tree($field, $where);
                 break;
             default:
                 throwFailJson('001001');

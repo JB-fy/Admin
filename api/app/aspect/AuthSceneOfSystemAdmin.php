@@ -22,8 +22,8 @@ class AuthSceneOfSystemAdmin extends AbstractAspect
      * @var array
      */
     public $classes = [
-        \app\controller\Login::class . '::getInfo',
-        \app\controller\Login::class . '::getMenuTree',
+        \app\controller\Login::class . '::info',
+        \app\controller\Login::class . '::menuTree',
     ];
 
     /**
