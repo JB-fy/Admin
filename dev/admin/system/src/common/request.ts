@@ -20,7 +20,7 @@ export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean
 
     try {
         if (typeof apiMethod !== 'function') {
-            throw new Error(i18n.global.t('error.apiFunctionNoFind') as string)
+            throw new Error((<any>i18n).global.t('error.apiFunctionNoFind'))
         }
         return await apiMethod(data)
     } catch (error) {

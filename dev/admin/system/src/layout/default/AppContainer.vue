@@ -25,7 +25,7 @@ const keepAliveStore = useKeepAliveStore()
                 </Transition>
             </RouterView>
         </template>
-        <template #fallback> t('common.loading') </template>
+        <template #fallback>{{ t('common.loading') }}</template>
     </Suspense> -->
 </template>
 
