@@ -122,7 +122,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to: any) => {
-    const webTitle = (<any>i18n).global.t('config.webTitle')
+    const webTitle = trans('config.webTitle')
     if (to.meta.title) {
         document.title = webTitle + '-' + to.meta.title
     } else {
