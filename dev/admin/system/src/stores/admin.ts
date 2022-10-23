@@ -160,20 +160,18 @@ export const useAdminStore = defineStore('admin', {
       /**--------注册动态路由 开始--------**/
       const handleMenuTree = (menuTree: any, pMenuList: any = []) => {
         const menuTreeTmp: any = []
-        let tmpExtendData: any = {};
         for (let i = 0; i < menuTree.length; i++) {
-          tmpExtendData = JSON.parse(menuTree[i].extendData);
           menuTreeTmp[i] = {
-            title: tmpExtendData.title,
-            url: tmpExtendData.url,
-            icon: tmpExtendData.icon,
+            title: menuTree[i].title,
+            url: menuTree[i].url,
+            icon: menuTree[i].icon,
             children: [],
           }
           if (menuTree[i].children.length) {
             pMenuList.push({
-              title: tmpExtendData.title,
-              url: tmpExtendData.url,
-              icon: tmpExtendData.icon,
+              title: menuTree[i].title,
+              url: menuTree[i].url,
+              icon: menuTree[i].icon,
             })
             menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
             pMenuList.pop()

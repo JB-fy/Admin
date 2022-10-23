@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 18/10/2022 21:58:08
+ Date: 23/10/2022 21:58:47
 */
 
 SET NAMES utf8mb4;
@@ -68,10 +68,10 @@ CREATE TABLE `auth_menu`  (
   `menuId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '权限菜单ID',
   `sceneId` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）',
   `pid` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '父ID',
-  `menuName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称（只在后台操作时作识别之用。前端展示数据建议设置在extendData里面）',
+  `menuName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `pidPath` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '层级路径',
   `level` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '层级',
-  `extendData` json NULL COMMENT '扩展数据（内容自定义。json格式：{\"title\": \"标题（多语言时填写对应的key）\",\"icon\": \"图标\",\"url\": \"链接地址\",...}）',
+  `extendData` json NULL COMMENT '扩展数据。（json格式：{\"title（多语言时设置，未设置以menuName返回）\": {\"语言标识\":\"标题\",...},\"icon\": \"图标\",\"url\": \"链接地址\",...}）',
   `sort` tinyint UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序值（从小到大排序，默认50，范围0-100）',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -84,16 +84,16 @@ CREATE TABLE `auth_menu`  (
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', '', 0, '{\"url\": \"/\", \"icon\": \"autoicon-ep-lock\", \"title\": \"主页\"}', 0, 0, '2022-10-17 22:13:51', '2022-09-17 23:46:20');
-INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": \"权限管理\"}', 100, 0, '2022-10-14 23:04:39', '2022-09-17 23:49:51');
-INSERT INTO `auth_menu` VALUES (3, 1, 2, '管理员', '', 0, '{\"url\": \"/systemAdmin\", \"icon\": \"autoicon-ep-lock\", \"title\": \"管理员\"}', 50, 0, '2022-10-14 23:51:46', '2022-09-17 23:49:53');
-INSERT INTO `auth_menu` VALUES (4, 1, 2, '菜单', '', 0, '{\"url\": \"/authMenu\", \"icon\": \"autoicon-ep-lock\", \"title\": \"权限菜单\"}', 100, 0, '2022-10-14 23:51:56', '2022-09-17 23:49:54');
-INSERT INTO `auth_menu` VALUES (5, 1, 2, '角色', '', 0, '{\"url\": \"/authRole\", \"icon\": \"autoicon-ep-lock\", \"title\": \"角色\"}', 50, 0, '2022-10-14 23:52:04', '2022-09-17 23:49:55');
-INSERT INTO `auth_menu` VALUES (6, 1, 0, '系统管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": \"系统管理\"}', 99, 0, '2022-10-14 23:04:39', '2022-09-17 23:49:56');
-INSERT INTO `auth_menu` VALUES (7, 1, 6, '系统设置', '', 0, '{\"url\": \"/systemConfig\", \"icon\": \"autoicon-ep-lock\", \"title\": \"系统设置\"}', 50, 0, '2022-10-14 23:52:14', '2022-09-17 23:49:57');
-INSERT INTO `auth_menu` VALUES (8, 1, 0, '日志管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": \"日志管理\"}', 95, 0, '2022-10-14 23:04:39', '2022-09-17 23:49:59');
-INSERT INTO `auth_menu` VALUES (9, 1, 8, '请求日志', '', 0, '{\"url\": \"/systemLogOfRequest\", \"icon\": \"autoicon-ep-lock\", \"title\": \"请求日志\"}', 50, 0, '2022-10-14 23:52:22', '2022-09-17 23:50:06');
-INSERT INTO `auth_menu` VALUES (10, 1, 0, '测试', '', 0, '{\"url\": \"https://www.baidu.com/\", \"icon\": \"autoicon-ep-lock\", \"title\": \"测试\"}', 50, 0, '2022-10-17 00:26:10', '2022-10-17 00:25:42');
+INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', '', 0, '{\"url\": \"/\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"homepage\", \"zh-cn\": \"主页\"}}', 0, 0, '2022-10-23 21:10:42', '2022-09-17 23:46:20');
+INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"authManage \", \"zh-cn\": \"权限管理\"}}', 100, 0, '2022-10-23 21:16:41', '2022-09-17 23:49:51');
+INSERT INTO `auth_menu` VALUES (3, 1, 2, '管理员', '', 0, '{\"url\": \"/systemAdmin\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"admin \", \"zh-cn\": \"管理员\"}}', 50, 0, '2022-10-23 21:17:46', '2022-09-17 23:49:53');
+INSERT INTO `auth_menu` VALUES (4, 1, 2, '菜单', '', 0, '{\"url\": \"/authMenu\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"menu \", \"zh-cn\": \"菜单\"}}', 100, 0, '2022-10-23 21:18:52', '2022-09-17 23:49:54');
+INSERT INTO `auth_menu` VALUES (5, 1, 2, '角色', '', 0, '{\"url\": \"/authRole\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"role \", \"zh-cn\": \"角色\"}}', 50, 0, '2022-10-23 21:19:02', '2022-09-17 23:49:55');
+INSERT INTO `auth_menu` VALUES (6, 1, 0, '系统管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"systemManage \", \"zh-cn\": \"系统管理\"}}', 99, 0, '2022-10-23 21:19:29', '2022-09-17 23:49:56');
+INSERT INTO `auth_menu` VALUES (7, 1, 6, '系统配置', '', 0, '{\"url\": \"/systemConfig\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"systemConfig \", \"zh-cn\": \"系统配置\"}}', 50, 0, '2022-10-23 21:19:55', '2022-09-17 23:49:57');
+INSERT INTO `auth_menu` VALUES (8, 1, 0, '日志管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"logManage \", \"zh-cn\": \"日志管理\"}}', 95, 0, '2022-10-23 21:20:13', '2022-09-17 23:49:59');
+INSERT INTO `auth_menu` VALUES (9, 1, 8, '请求日志', '', 0, '{\"url\": \"/systemLogOfRequest\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"requestLog \", \"zh-cn\": \"请求日志\"}}', 50, 0, '2022-10-23 21:20:31', '2022-09-17 23:50:06');
+INSERT INTO `auth_menu` VALUES (10, 1, 0, '测试', '', 0, '{\"url\": \"https://www.baidu.com/\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"test \", \"zh-cn\": \"测试\"}}', 100, 0, '2022-10-23 21:21:03', '2022-10-17 00:25:42');
 
 -- ----------------------------
 -- Table structure for auth_menu_rel_to_action

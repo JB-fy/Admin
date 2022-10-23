@@ -15,13 +15,17 @@ class AuthMenu extends AbstractLogic
      * @param int $menuId
      * @return array
      */
-    public function getTree(array $list, int $menuId = 0): array
+    public function tree(array $list, int $menuId = 0): array
     {
         $tree = [];
         foreach ($list as $k => $v) {
             unset($list[$k]);
-            if ($v->pid == $menuId) {
-                $v->children = $this->getTree($list, $v->menuId);
+            /* if ($v->pid == $menuId) {
+                $v->children = $this->tree($list, $v->menuId);
+                $tree[] = $v;
+            } */
+            if ($v['pid'] == $menuId) {
+                $v['children'] = $this->tree($list, $v['menuId']);
                 $tree[] = $v;
             }
         }

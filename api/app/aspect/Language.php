@@ -31,7 +31,9 @@ class Language extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        locale(request()->header('Language', 'zh-cn'));
+        $request = request();
+        $request->language = $request->header('Language', 'zh-cn');
+        locale($request->language);
 
         try {
             $response = $proceedingJoinPoint->process();

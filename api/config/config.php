@@ -23,6 +23,6 @@ return [
         \app\aspect\LogOfRequest::class,
         \app\aspect\AuthScene::class,
         \app\aspect\AuthSceneOfSystemAdmin::class,
-        \app\aspect\translator\AuthMenu::class,
+        //\app\aspect\translator\AuthMenu::class,
     ]
 ];

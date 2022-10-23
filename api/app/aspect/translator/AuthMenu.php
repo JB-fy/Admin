@@ -34,16 +34,13 @@ class AuthMenu extends AbstractAspect
         try {
             $response = $proceedingJoinPoint->process();
             return $response;
-        } catch (\Throwable $e) {
-            if ($e instanceof \app\exception\Json) {
-                $responseData = json_decode($e->getMessage(), true);
-                throw container(\app\exception\Json::class, true, [
-                    'code' => $responseData['code'],
-                    'data' => $this->trans($responseData['data']),
-                    'msg' => $responseData['msg']
-                ]);
-            }
-            throw $e;
+        } catch (\app\exception\Json $e) {
+            $responseData = json_decode($e->getMessage(), true);
+            throw container(\app\exception\Json::class, true, [
+                'code' => $responseData['code'],
+                'data' => $this->trans($responseData['data']),
+                'msg' => $responseData['msg']
+            ]);
         }
     }
 
