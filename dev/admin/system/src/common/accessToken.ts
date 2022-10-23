@@ -3,23 +3,20 @@ const accessTokenName = import.meta.env.VITE_ACCESS_TOKEN_NAME
 const activeTimeName = import.meta.env.VITE_ACCESS_TOKEN_ACTIVE_TIME_NAME
 const activeTimeout = parseInt(import.meta.env.VITE_ACCESS_TOKEN_ACTIVE_TIMEOUT)
 
-/**
- * 获取accessToken
- */
-export const getAccessToken = () => {
+//获取accessToken
+export const getAccessToken = (): string | false => {
     let accessToken = storage.getItem(accessTokenName)
-    if (accessToken && !isActiveAccessToken()) {
+    if (accessToken) {
+        if (isActiveAccessToken()) {
+            return accessToken
+        }
         removeAccessToken()
-        return null
     }
-    return accessToken
+    return false
 }
 
-/**
- * 设置accessToken
- * @param {*} token 
- */
-export const setAccessToken = (token: string) => {
+//设置accessToken
+export const setAccessToken = (token: string): void => {
     if (activeTimeout > 0) {
         let nowTime = new Date().getTime().toString()
         storage.setItem(activeTimeName, nowTime)
@@ -27,24 +24,19 @@ export const setAccessToken = (token: string) => {
     storage.setItem(accessTokenName, token)
 }
 
-/**
- * 删除accessToken
- */
-export const removeAccessToken = () => {
+//删除accessToken
+export const removeAccessToken = (): void => {
     if (activeTimeout > 0) {
         storage.removeItem(activeTimeName)
     }
     storage.removeItem(accessTokenName)
 }
 
-/**
- * 判断accessToken是否活跃（调用getAccessToken函数的地方需要马上使用这个函数验证）
- */
-export const isActiveAccessToken = () => {
+//判断accessToken是否活跃（调用getAccessToken函数的地方需要马上使用这个函数验证）
+export const isActiveAccessToken = (): boolean => {
     if (activeTimeout > 0) {
         let activeTime: any = storage.getItem(activeTimeName)
         let nowTime: any = new Date().getTime().toString()
-        //let nowTime: number = new Date().getTime()
         if (nowTime - activeTime > activeTimeout) {
             return false
         }

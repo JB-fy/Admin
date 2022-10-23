@@ -12,6 +12,6 @@ export const getLanguage = (): string => {
 }
 
 //设置语言
-export const setLanguage = (language: string) => {
+export const setLanguage = (language: string): void => {
     storage.setItem(languageNAME, language)
 }

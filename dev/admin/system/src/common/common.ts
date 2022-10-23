@@ -6,8 +6,7 @@
  * @param noUseIndex  当文件名是index.*或者Index.*时，放弃该名称，以父级文件夹命名
  * @returns 
  */
-export const batchImport = async (rawImportList: any, level: number = 0, type: number = 0, noUseIndex: boolean = false) => {
-    //export const batchImport = (rawImportList: any, level: number = 0, type: number = 0, noUseIndex: boolean = false) => {
+export const batchImport = async (rawImportList: any, level: number = 0, type: number = 0, noUseIndex: boolean = false): Promise<{ [propName: string]: any }> => {
     let importList: { [propName: string]: any } = {}
     let keyArr: string[] = []
     let keyList: string[][] = []
@@ -73,6 +72,7 @@ export const batchImport = async (rawImportList: any, level: number = 0, type: n
             for (const key in keyList) {
                 keyList[key].slice(start).reduce((importTmp, value, index, arr) => {
                     const keyFinal = value
+
                     if (index == arr.length - 1) {
                         importTmp[keyFinal] = importArr[key]
                     } else {
