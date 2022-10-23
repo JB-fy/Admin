@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LeftMenuItem from './LeftMenuItem.vue';   //做成组件才能实现无限递归（组件内部无限递归自身）
+import LeftMenuItem from './LeftMenuItem.vue'   //做成组件才能实现无限递归（组件内部无限递归自身）
 
 const settingStore = useSettingStore()
 const adminStore = useAdminStore()

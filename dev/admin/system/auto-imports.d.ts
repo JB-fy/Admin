@@ -4,7 +4,6 @@ declare global {
   const ApiError: typeof import('./src/common/error/apiError')['ApiError']
   const EffectScope: typeof import('vue')['EffectScope']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
-  const accessToken: typeof import('./src/common/accessToken')['default']
   const batchImport: typeof import('./src/common/common')['batchImport']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']

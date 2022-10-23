@@ -1,17 +1,17 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import layout from '@/layout/default/Index.vue';
-import i18n from '@/i18n';
+import { createRouter, createWebHistory } from 'vue-router'
+import i18n from '@/i18n'
+import Layout from '@/layout/default/Index.vue'
 
-/*
-meta说明：
-    title: '主页',  //标题
-    keepAlive: true,    //是否可以缓存
-    isAuth: true,   //是否需要权限验证
+/**
+ * meta说明：
+ *      title: '主页',  //标题
+ *      keepAlive: true,    //是否可以缓存
+ *      isAuth: true,   //是否需要权限验证
  */
 const initRouteList = [
     {
         path: '/layout',  //必须设置，否则默认为'/'。在多个路由没有设置该参数时，则首页会以最后一个路由为准，会出现首页错误问题
-        component: layout,
+        component: Layout,
         redirect: '/',
         replace: true,
         children: [

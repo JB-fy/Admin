@@ -74,7 +74,7 @@ const form = reactive({
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background-image: url('@/assets/login-bg.jpg');
+    background-image: url('@/assets//image/login/login-bg.jpg');
     background-position: center center;
     background-size: cover;
 }
