@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import i18n from '@/i18n'
 import Layout from '@/layout/default/Index.vue'
 
 /**
  * meta说明：
- *      title: '主页',  //标题
+ *      title: '主页',  //标题。（当路由在用户菜单中时，以用户菜单中的title来显示）
+ *      icon: '图标',  //图标。（当路由在用户菜单中时，以用户菜单中的icon来显示）
  *      keepAlive: true,    //是否可以缓存
  *      isAuth: true,   //是否需要权限验证
  */
@@ -28,7 +28,7 @@ const initRouteList = [
                     component.default.name = '/'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '主页', keepAlive: true, isAuth: true, isIndexMenuTab: true }
+                meta: { title: trans('view.layout.routeTitle./'), keepAlive: true, isAuth: true, isIndexMenuTab: true }
             },
             {
                 path: '/authAction',

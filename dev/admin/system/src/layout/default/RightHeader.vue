@@ -62,16 +62,10 @@ const menuTab = reactive({
                     <AutoiconEpFold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
                 </ElLink>
                 <ElBreadcrumb separator=">">
-                    <ElBreadcrumbItem v-for="(item, key) in route.meta.pMenuList" :key="key">
+                    <ElBreadcrumbItem v-for="(item, key) in adminStore.menuChain" :key="key">
                         <ElSpace :size="0">
                             <IconDynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
-                        </ElSpace>
-                    </ElBreadcrumbItem>
-                    <ElBreadcrumbItem>
-                        <ElSpace :size="0">
-                            <IconDynamic :icon="route.meta.icon" />
-                            <span>{{ route.meta.title }}</span>
                         </ElSpace>
                     </ElBreadcrumbItem>
                 </ElBreadcrumb>

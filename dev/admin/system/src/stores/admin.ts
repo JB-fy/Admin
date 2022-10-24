@@ -6,7 +6,8 @@ export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
-      menuTree: [] as { title: string, url: string, icon: string, children: {}[] }[],   //左侧菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
+      menuTree: [] as { title: string, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
+      menuList: [] as { title: string, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
       menuTabList: (() => {
         const indexRoute = router.getRoutes().find((item) => {
           return item.path == '/'
@@ -26,6 +27,14 @@ export const useAdminStore = defineStore('admin', {
   getters: {
     infoIsExist: (state) => {
       return Object.keys(state.info).length ? true : false
+    },
+    //获取当前菜单的菜单链
+    menuChain: (state) => {
+      const path = getCurrentRoute().path
+      const menu = state.menuList.find((item) => {
+        return item.url == path
+      })
+      return menu?.menuChain ?? []
     }
   },
   actions: {
@@ -37,12 +46,22 @@ export const useAdminStore = defineStore('admin', {
       let result = this.menuTabList.findIndex((item) => {
         return item.path === menuTab.path
       })
-      if (result === -1) {
-        this.menuTabList.push({
-          closable: true,
-          ...menuTab
-        })
+      if (result !== -1) {
+        return
       }
+      /*--------当前路径在菜单列表中时，以菜单列表中的数据为准 开始--------*/
+      const menu = this.menuList.find((item) => {
+        return item.url == menuTab.path
+      })
+      if (menu) {
+        menuTab.title = menu.title
+        menuTab.icon = menu.icon
+      }
+      /*--------当前路径在菜单列表中时，以菜单列表中的数据为准 开始--------*/
+      this.menuTabList.push({
+        closable: true,
+        ...menuTab
+      })
     },
     /**
      * 关闭自身菜单标签
@@ -158,7 +177,7 @@ export const useAdminStore = defineStore('admin', {
     async setMenuTree() {
       const res = await request('login.menuTree', {}, false)
       /**--------注册动态路由 开始--------**/
-      const handleMenuTree = (menuTree: any, pMenuList: any = []) => {
+      const handleMenuTree = (menuTree: any, menuChain: any = []) => {
         const menuTreeTmp: any = []
         for (let i = 0; i < menuTree.length; i++) {
           menuTreeTmp[i] = {
@@ -168,31 +187,24 @@ export const useAdminStore = defineStore('admin', {
             children: [],
           }
           if (menuTree[i].children.length) {
-            pMenuList.push({
+            menuChain.push({
               title: menuTree[i].title,
               url: menuTree[i].url,
               icon: menuTree[i].icon,
             })
-            menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, Object.assign({}, pMenuList))
-            pMenuList.pop()
-          }/*  else {
-              router.addRoute(layoutName, {
-                path: menuTree[i].menuUrl,
-                name: menuTree[i].menuUrl,  //命名路由，用户退出登录用于删除路由。要保证唯一，故直接用menuUrl即可
-                //component: () => import('@/views' + menuTree[i].menuUrl),
-                component: async () => {
-                  //let component = await import('@/views' + menuTree[i].menuUrl + '.vue'),
-                  let component = await import('@/views' + menuTree[i].menuUrl)
-                  component.default.name = menuTree[i].menuUrl    //动态设置页面组件名称，方便清理缓存
-                  return component
-                },
-                meta: {
-                  title: menuTree[i].menuName,
-                  icon: menuTree[i].menuIcon,
-                  pMenuList: Object.assign({}, pMenuList) //面包屑需要
-                }
-              })
-            } */
+            menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, [...menuChain])
+            menuChain.pop()
+          } else {
+            const menu = {
+              title: menuTree[i].title,
+              url: menuTree[i].url,
+              icon: menuTree[i].icon
+            }
+            this.menuList.push({
+              ...menu,
+              menuChain: [...menuChain, menu]
+            })
+          }
         }
         return menuTreeTmp
       }

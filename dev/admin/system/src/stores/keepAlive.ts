@@ -22,7 +22,10 @@ export const useKeepAliveStore = defineStore('keepAlive', {
     appContainerInclude: (state): string[] => {
       const include: string[] = []
       router.getRoutes().forEach((item) => {
-        if (item.meta.keepAlive) {
+        //菜单允许缓存，且打开菜单才做缓存。打开菜单才做缓存是为在菜单关闭时实现自动清理缓存，否则关闭菜单还得清理缓存
+        if (item.meta.keepAlive && useAdminStore().menuTabList.findIndex((menuTab) => {
+          return menuTab.path === item.path
+        }) !== -1) {
           //include.push(item.components.default.name)
           include.push(item.path)
         }
