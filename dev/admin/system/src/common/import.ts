@@ -18,7 +18,9 @@ export const batchImport = async (rawImportList: any, level: number = 0, type: n
     let levelOfMin: number = 0
     let importOne: { [propName: string]: any } = {}
     for (const path in rawImportList) {
-        keyArr = path.slice(0, path.lastIndexOf('.')).split('/')
+        //keyArr = path.slice(0, path.lastIndexOf('.')).split('/')  //有时.不在最后
+        keyArr = path.split('/')
+        keyArr[keyArr.length - 1] = keyArr[keyArr.length - 1].slice(0, keyArr[keyArr.length - 1].indexOf('.'))
         keyList.push(keyArr)
         if (typeof rawImportList[path] === 'function') {
             importOne = await rawImportList[path]()
@@ -130,3 +132,8 @@ export const batchImport = async (rawImportList: any, level: number = 0, type: n
     }
     return importList
 }
+/*--------使用方式 开始--------*/
+// console.log(await batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10, false))
+// console.log(await batchImport(import.meta.globEager('@/api/**/*.ts')))
+// console.log(await batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')))
+/*--------使用方式 结束--------*/

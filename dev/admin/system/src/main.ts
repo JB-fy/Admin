@@ -1,20 +1,17 @@
-import { createApp } from "vue";
-import App from "./App.vue";
+import { createApp } from "vue"
+import App from "./App.vue"
 
-import "./assets/main.css";
+import "./assets/main.css"
 
-const app = createApp(App);
+import i18n from './i18n'
+import router from './router'
+import { createPinia } from 'pinia'
 
-import router from './router';
-app.use(router);
-
-import { createPinia } from 'pinia';
-app.use(createPinia());
-
-import i18n from './i18n';
-app.use(i18n);
-
-app.mount('#app');
+const app = createApp(App)
+app.use(i18n)
+app.use(router)
+app.use(createPinia())
+app.mount('#app')
 
 /*-------- 动态加载图标 开始 --------*/
 //app.component('autoiconEpLollipop', autoiconEpLollipop)

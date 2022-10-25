@@ -17,6 +17,7 @@ declare global {
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentRoute: typeof import('./src/common/common')['getCurrentRoute']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getI18n: typeof import('./src/common/common')['getI18n']
   const getLanguage: typeof import('./src/common/language')['getLanguage']
   const h: typeof import('vue')['h']
   const http: typeof import('./src/common/utils/http')['default']

@@ -6,6 +6,9 @@ export const getCurrentRoute = () => {
 
 //翻译字符串
 import i18n from '@/i18n'
+export const getI18n = (): any => {
+    return i18n.global
+}
 export const trans = (str: string): any => {
     return (<any>i18n).global.tm(str)
 }
@@ -42,21 +45,21 @@ export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean
             throw error
         }
     }
-    /*--------使用方式 开始--------*/
-    /* request('index.index', data)
-    
-    request('index.index', undefined, false)
-        .then((data) => {
-            console.log(data)
-        })
-        .catch((error) => {
-            errorHandle(<Error>error)
-        })
-    
-    try {
-        await request('index.index', data, false)
-    } catch (error) {
-        errorHandle(<Error>error)
-    } */
-    /*--------使用方式 结束--------*/
 }
+/*--------使用方式 开始--------*/
+/* request('index.index', data)
+
+request('index.index', undefined, false)
+    .then((data) => {
+        console.log(data)
+    })
+    .catch((error) => {
+        errorHandle(<Error>error)
+    })
+
+try {
+    await request('index.index', data, false)
+} catch (error) {
+    errorHandle(<Error>error)
+} */
+/*--------使用方式 结束--------*/
