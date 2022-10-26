@@ -35,7 +35,7 @@
         //8.0版本弃用
         --with-iconv-dir --enable-inline-optimization --with-xmlrpc --enable-maintainer-zts
 ph
-        ./configure --prefix=/server/tool/php-8.1.11 --with-config-file-path=/server/tool/php-8.1.11/etc --with-config-file-scan-dir=/server/tool/php-8.1.11/etc/php.d --enable-fpm --with-fpm-user=php --with-fpm-group=php --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
+        ./configure --prefix=/server/tool/php-8.1.11 --with-config-file-path=/server/tool/php-8.1.11/etc --with-config-file-scan-dir=/server/tool/php-8.1.11/etc/php.d --enable-fpm --with-fpm-user=php --with-fpm-group=php --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
         //安装
         make && make install
     3、拷贝配置文件
