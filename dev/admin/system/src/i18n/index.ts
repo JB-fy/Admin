@@ -12,7 +12,7 @@ export default i18n
 
 /*--------使用方式 开始--------*/
 /* import i18n from '@/i18n';
-i18n.global.locale  //当设置legacy: false后，要使用i18n.global.locale.value
+i18n.global.locale  //当设置legacy: false，要使用i18n.global.locale.value
 i18n.global.t('common.login')
 
 import { useI18n } from 'vue-i18n';

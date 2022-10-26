@@ -4,11 +4,11 @@ import Layout from '@/layout/default/Index.vue'
 
 /**
  * meta说明：（menuName,title,icon三个，当路由在后端数据库菜单表中未记录时必须设置，反之不用设置。例如：个人中心不在用户菜单中，则需要设置）
+ *      keepAlive: true,    //是否可以缓存
+ *      isAuth: true,   //是否需要权限验证     
  *      menuName: '菜单名称', //菜单名称。
  *      title: {'en': 'homepage', 'zh-cn': '主页'},  //标题，多语言时设置，未设置以menuName为准。
  *      icon: '图标',  //图标。
- *      keepAlive: true,    //是否可以缓存
- *      isAuth: true,   //是否需要权限验证
  */
 const initRouteList = [
     {
@@ -30,7 +30,7 @@ const initRouteList = [
                     component.default.name = '/'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true, isIndexMenuTab: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/authAction',
@@ -102,7 +102,7 @@ const initRouteList = [
                     component.default.name = '/profile'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { menuName: '个人中心', title: { 'en': 'profile', 'zh-cn': '个人中心' }, icon: 'autoiconEpUserFilled', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true, menuName: '个人中心', title: { 'en': 'profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' }
             },
         ]
     },
@@ -124,12 +124,13 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to: any) => {
-    const webTitle = i18n.global.t('config.webTitle')
+    document.title = i18n.global.t('config.webTitle')
+    /* const webTitle = i18n.global.t('config.webTitle')
     if (to.meta.title) {
-        document.title = webTitle + '-' + to.meta.title
+        document.title = webTitle + '-' + to.meta?.title?.[i18n.global.locale.value] ?? to.meta.menuName
     } else {
         document.title = webTitle
-    }
+    } */
 
     const adminStore = useAdminStore();
     /**--------判断登录状态 开始--------**/
