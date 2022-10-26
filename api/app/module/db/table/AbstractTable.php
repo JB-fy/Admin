@@ -334,12 +334,12 @@ abstract class AbstractTable
      */
     protected function fieldOfAlone(string $key): self
     {
-        switch ($key) {
+        /* switch ($key) {
             default:
                 $this->field['select'][] = $key;
                 //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ' . $key];
                 break;
-        }
+        } */
         return $this;
     }
 
@@ -352,12 +352,12 @@ abstract class AbstractTable
      */
     protected function whereOfAlone(string $key, $value): self
     {
-        switch ($key) {
+        /* switch ($key) {
             default:
                 $this->where[] = ['method' => 'where', 'param' => [$key, '=', $value]];
                 //$this->where[] = ['method' => 'whereRaw', 'param' => ['age > :age', ['age' => $v], 'and']];
                 break;
-        }
+        } */
         return $this;
     }
 
@@ -369,12 +369,12 @@ abstract class AbstractTable
      */
     protected function groupOfAlone(string $key): self
     {
-        switch ($key) {
+        /* switch ($key) {
             default:
                 $this->group[] = ['method' => 'groupBy', 'param' => [$key]];
                 //$this->group[] = ['method'=>'groupByRaw', 'param'=>[':xxxx', ['xxxx' => 'xxxx']]];
                 break;
-        }
+        } */
         return $this;
     }
 
@@ -387,12 +387,12 @@ abstract class AbstractTable
      */
     protected function havingOfAlone(string $key, $value): self
     {
-        switch ($key) {
+        /* switch ($key) {
             default:
                 $this->having['having'][] = [$key, '=', $value];
                 //$this->having['havingRaw'][] = ['age > :age', ['age' => $value], 'and'];
                 break;
-        }
+        } */
         return $this;
     }
 
@@ -405,12 +405,12 @@ abstract class AbstractTable
      */
     protected function orderOfAlone(string $key, $value): self
     {
-        switch ($key) {
+        /* switch ($key) {
             default:
                 $this->order[] = ['method' => 'orderBy', 'param' => [$key, $value]];
                 //$this->order[] = ['method'=>'orderByRaw', 'param'=>[':time ' . $value, ['time' => time()]]];
                 break;
-        }
+        } */
         return $this;
     }
 

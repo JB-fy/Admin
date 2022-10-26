@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { locale } = useI18n()
 defineProps({
     tree: {
         //type: Array as PropType<{ title: string, url: string, icon: string, children: [] }[]>,
@@ -17,14 +18,14 @@ defineProps({
         <ElSubMenu v-if="item.children.length" :index="subMenuIndexPrefix + '/' + key">
             <template #title>
                 <IconDynamic :icon="item.icon" />
-                <span>{{ item.title }}</span>
+                <span>{{ item?.title?.[locale] ?? item.menuName }}</span>
             </template>
             <LeftMenuItem :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + key" />
         </ElSubMenu>
         <ElMenuItem v-else :index="item.url">
             <IconDynamic :icon="item.icon" />
             <template #title>
-                <span>{{ item.title }}</span>
+                <span>{{ item?.title?.[locale] ?? item.menuName }}</span>
             </template>
         </ElMenuItem>
     </template>

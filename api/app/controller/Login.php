@@ -150,7 +150,7 @@ class Login extends AbstractController
                     'pid',
                     'menuName',
                     'extendData',
-                    'parseExtendData'
+                    'showMenu'
                 ];
                 container(ServiceAuthMenu::class)->tree($field, $where);
                 break;

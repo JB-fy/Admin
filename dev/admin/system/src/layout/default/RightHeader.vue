@@ -4,7 +4,7 @@ const languageStore = useLanguageStore()
 const settingStore = useSettingStore()
 const adminStore = useAdminStore()
 
-const { t, tm } = useI18n()
+const { t, tm, locale } = useI18n()
 
 const route: any = useRoute()
 const router = useRouter()
@@ -62,7 +62,7 @@ const menuTab = reactive({
                     <AutoiconEpFold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
                 </ElLink>
                 <ElBreadcrumb separator=">">
-                    <ElBreadcrumbItem v-for="(item, key) in adminStore.menuChain" :key="key">
+                    <ElBreadcrumbItem v-for="(item, key) in adminStore.getCurrentMenuChain" :key="key">
                         <ElSpace :size="0">
                             <IconDynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
@@ -113,7 +113,7 @@ const menuTab = reactive({
                             <ElDropdownItem>
                                 <RouterLink to="/profile" :custom="true" v-slot="{ href, navigate, route }">
                                     <ElLink :href="href" @click="navigate" :underline="false">
-                                        {{ route.meta.title }}
+                                        {{ route.meta?.title?.[locale] ?? route.meta.menuName }}
                                     </ElLink>
                                 </RouterLink>
                             </ElDropdownItem>
@@ -128,7 +128,7 @@ const menuTab = reactive({
         <ElCol :span="24">
             <ElTabs class="menu-tabs" type="card" :model-value="route.path" @tab-change="menuTab.change"
                 @tab-remove="menuTab.remove">
-                <template v-for="(item, key) in adminStore.menuTabList" :key="key">
+                <template v-for="(item, key) in adminStore.getMenuTabList" :key="key">
                     <ElTabPane :name="item.path" :closable="item.closable">
                         <template #label>
                             <ElDropdown :ref="(el: any) => { menuTab.refList[item.path] = el }" trigger="contextmenu"

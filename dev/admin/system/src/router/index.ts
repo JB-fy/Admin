@@ -3,9 +3,10 @@ import i18n from '@/i18n'
 import Layout from '@/layout/default/Index.vue'
 
 /**
- * meta说明：
- *      title: '主页',  //标题。（当路由在用户菜单中时，以用户菜单中的title来显示）
- *      icon: '图标',  //图标。（当路由在用户菜单中时，以用户菜单中的icon来显示）
+ * meta说明：（menuName,title,icon三个，当路由在后端数据库菜单表中未记录时必须设置，反之不用设置。例如：个人中心不在用户菜单中，则需要设置）
+ *      menuName: '菜单名称', //菜单名称。
+ *      title: {'en': 'homepage', 'zh-cn': '主页'},  //标题，多语言时设置，未设置以menuName为准。
+ *      icon: '图标',  //图标。
  *      keepAlive: true,    //是否可以缓存
  *      isAuth: true,   //是否需要权限验证
  */
@@ -29,7 +30,7 @@ const initRouteList = [
                     component.default.name = '/'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: i18n.global.t('view.layout.routeTitle./'), keepAlive: true, isAuth: true, isIndexMenuTab: true }
+                meta: { keepAlive: true, isAuth: true, isIndexMenuTab: true }
             },
             {
                 path: '/authAction',
@@ -38,7 +39,7 @@ const initRouteList = [
                     component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '操作列表', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/authMenu',
@@ -47,7 +48,7 @@ const initRouteList = [
                     component.default.name = '/authMenu'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '菜单列表', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/authRole',
@@ -56,7 +57,7 @@ const initRouteList = [
                     component.default.name = '/authRole'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '角色列表', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/authScene',
@@ -65,7 +66,7 @@ const initRouteList = [
                     component.default.name = '/authScene'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '场景列表', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/systemAdmin',
@@ -83,7 +84,7 @@ const initRouteList = [
                     component.default.name = '/systemConfig'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '系统配置', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/systemLogOfRequest',
@@ -92,7 +93,7 @@ const initRouteList = [
                     component.default.name = '/systemLogOfRequest'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '请求日志', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/profile',
@@ -101,7 +102,7 @@ const initRouteList = [
                     component.default.name = '/profile'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '个人中心', keepAlive: true, isAuth: true }
+                meta: { menuName: '个人中心', title: { 'en': 'profile', 'zh-cn': '个人中心' }, icon: 'autoiconEpUserFilled', keepAlive: true, isAuth: true }
             },
         ]
     },
@@ -165,9 +166,10 @@ router.beforeEach(async (to: any) => {
 
     /**--------设置菜单标签 开始--------**/
     adminStore.pushMenuTabList({
-        title: <string>to.meta.title ?? '',
+        menuName: to.meta.menuName ?? '',
+        title: to.meta.title ?? {},
         path: to.path,
-        icon: <string>to.meta.icon ?? ''
+        icon: to.meta.icon ?? ''
     })
     /**--------设置菜单标签 结束--------**/
 

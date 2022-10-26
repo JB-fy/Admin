@@ -1,27 +1,15 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
 import router from '@/router'
+import i18n from '@/i18n'
 
 export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
-      menuTree: [] as { title: string, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
-      menuList: [] as { title: string, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
-      menuTabList: (() => {
-        const indexRoute = router.getRoutes().find((item) => {
-          return item.path == '/'
-        })
-        /* router.getRoutes().forEach((item) => {
-          item.meta.icon = 'autoicon-ep-lock'
-        }) */
-        return [{
-          title: (<any>indexRoute).meta.title ?? '',
-          path: (<any>indexRoute).path,
-          icon: (<any>indexRoute).meta.icon ?? '',
-          closable: false,
-        }]
-      })(), //菜单标签列表
+      menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
+      menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
+      menuTabList: [] as { title: string, path: string, icon: string, closable: boolean }[], //菜单标签列表
     }
   },
   getters: {
@@ -29,35 +17,73 @@ export const useAdminStore = defineStore('admin', {
       return Object.keys(state.info).length ? true : false
     },
     //获取当前菜单的菜单链
-    menuChain: (state) => {
-      const path = router.currentRoute.value.path
+    getCurrentMenuChain: (state) => {
+      const currentRoute = router.currentRoute.value
       const menu = state.menuList.find((item) => {
-        return item.url == path
+        return item.url == currentRoute.path
       })
-      return menu?.menuChain ?? []
-    }
+      if (!menu?.menuChain.length) {
+        return [{
+          title: currentRoute.meta?.title?.[i18n.global.locale.value] ?? currentRoute.meta.menuName,
+          path: currentRoute.meta.url,
+          icon: currentRoute.meta.icon,
+        }]
+      }
+      return menu.menuChain.map((item) => {
+        return {
+          title: item?.title?.[i18n.global.locale.value] ?? item.menuName,
+          path: item.url,
+          icon: item.icon,
+        }
+      })
+    },
+    //获取菜单标签列表
+    getMenuTabList: (state) => {
+      const menuTab = state.menuList.find((item) => {
+        return item.url == '/'
+      })
+      const menuTabList = [{
+        menuName: menuTab.menuName,
+        title: menuTab.title,
+        path: menuTab.url,
+        icon: menuTab.icon,
+        closable: false,
+      }, ...state.menuTabList]
+      return menuTabList.map((item) => {
+        return {
+          title: item?.title?.[i18n.global.locale.value] ?? item.menuName,
+          path: item.path,
+          icon: item.icon,
+          closable: item.closable,
+        }
+      })
+    },
   },
   actions: {
     /**
      * 推入菜单标签列表
      * @param menuTab 
      */
-    pushMenuTabList(menuTab: { title: string, path: string, icon: string }) {
+    pushMenuTabList(menuTab: { menuName: string, title: { [propName: string]: string }, path: string, icon: string }) {
+      if (menuTab.path == '/') {
+        return
+      }
       let result = this.menuTabList.findIndex((item) => {
         return item.path === menuTab.path
       })
       if (result !== -1) {
         return
       }
-      /*--------当前路径在菜单列表中时，以菜单列表中的数据为准 开始--------*/
+      /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 开始--------*/
       const menu = this.menuList.find((item) => {
         return item.url == menuTab.path
       })
       if (menu) {
+        menuTab.menuName = menu.menuName
         menuTab.title = menu.title
         menuTab.icon = menu.icon
       }
-      /*--------当前路径在菜单列表中时，以菜单列表中的数据为准 开始--------*/
+      /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 开始--------*/
       this.menuTabList.push({
         closable: true,
         ...menuTab
@@ -74,7 +100,7 @@ export const useAdminStore = defineStore('admin', {
       })
       const currentPath = router.currentRoute.value.path
       if (path === currentPath) {
-        router.push(this.menuTabList[this.menuTabList.length - 1].path)
+        router.push(this.menuTabList?.[this.menuTabList.length - 1]?.path ?? '/')
       }
     },
     /**
@@ -139,8 +165,7 @@ export const useAdminStore = defineStore('admin', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable
       })
-      //router.push('/')
-      router.push(this.menuTabList[this.menuTabList.length - 1].path)
+      router.push(this.menuTabList?.[this.menuTabList.length - 1]?.path ?? '/')
     },
     /**
      * 登录
@@ -181,6 +206,7 @@ export const useAdminStore = defineStore('admin', {
         const menuTreeTmp: any = []
         for (let i = 0; i < menuTree.length; i++) {
           menuTreeTmp[i] = {
+            menuName: menuTree[i].menuName,
             title: menuTree[i].title,
             url: menuTree[i].url,
             icon: menuTree[i].icon,
@@ -188,6 +214,7 @@ export const useAdminStore = defineStore('admin', {
           }
           if (menuTree[i].children.length) {
             menuChain.push({
+              menuName: menuTree[i].menuName,
               title: menuTree[i].title,
               url: menuTree[i].url,
               icon: menuTree[i].icon,
@@ -196,6 +223,7 @@ export const useAdminStore = defineStore('admin', {
             menuChain.pop()
           } else {
             const menu = {
+              menuName: menuTree[i].menuName,
               title: menuTree[i].title,
               url: menuTree[i].url,
               icon: menuTree[i].icon

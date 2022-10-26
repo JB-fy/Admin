@@ -29,10 +29,6 @@ class AuthMenu extends AbstractService
 
         $list = [];
         if ($afterCount || $count > $offset) {
-            $fieldAfter = ['parseExtendData']; //需得到列表后才能处理的字段
-            $fieldAfter = array_intersect($fieldAfter, $field);
-            $field = array_diff($field, $fieldAfter);
-
             $tableAuthMenu->field($field)->order($order);
             if ($tableAuthMenu->isJoin()) {
                 $tableAuthMenu->group(['id']);
@@ -45,14 +41,15 @@ class AuthMenu extends AbstractService
             }
         }
 
+        $fieldAfter = ['showMenu']; //需得到列表后才能处理的字段
+        $fieldAfter = array_intersect($fieldAfter, $field);
         if (!empty($list) && !empty($fieldAfter)) {
             foreach ($fieldAfter as $filedStr) {
                 switch ($filedStr) {
-                    case 'parseExtendData':
-                        $language = request()->language;
+                    case 'showMenu':
                         foreach ($list as &$v) {
                             $tmp = json_decode($v->extendData, true);
-                            $v->title = $tmp['title'][$language] ?? $v->menuName;
+                            $v->title = $tmp['title'] ?? [];
                             $v->icon = $tmp['icon'] ?? '';
                             $v->url = $tmp['url'] ?? '';
                         }
