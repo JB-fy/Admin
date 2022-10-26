@@ -1,17 +1,4 @@
-//获取当前路由
-import router from '@/router'
-export const getCurrentRoute = () => {
-    return router.currentRoute.value
-}
-
-//翻译字符串
 import i18n from '@/i18n'
-export const getI18n = (): any => {
-    return i18n.global
-}
-export const trans = (str: string): any => {
-    return (<any>i18n).global.tm(str)
-}
 
 /**
  * 请求接口
@@ -34,7 +21,7 @@ export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean
 
     try {
         if (typeof apiMethod !== 'function') {
-            throw new Error(trans('error.apiFunctionNoFind'))
+            throw new Error(i18n.global.t('error.apiFunctionNoFind'))
         }
         return await apiMethod(data)
     } catch (error) {

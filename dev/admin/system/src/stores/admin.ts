@@ -30,7 +30,7 @@ export const useAdminStore = defineStore('admin', {
     },
     //获取当前菜单的菜单链
     menuChain: (state) => {
-      const path = getCurrentRoute().path
+      const path = router.currentRoute.value.path
       const menu = state.menuList.find((item) => {
         return item.url == path
       })
@@ -72,7 +72,7 @@ export const useAdminStore = defineStore('admin', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path !== path
       })
-      const currentPath = getCurrentRoute().path
+      const currentPath = router.currentRoute.value.path
       if (path === currentPath) {
         router.push(this.menuTabList[this.menuTabList.length - 1].path)
       }
@@ -85,7 +85,7 @@ export const useAdminStore = defineStore('admin', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable || item.path === path
       })
-      const currentPath = getCurrentRoute().path
+      const currentPath = router.currentRoute.value.path
       if (path !== currentPath) {
         router.push(path)
       }
@@ -101,7 +101,7 @@ export const useAdminStore = defineStore('admin', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index >= leftIndex
       })
-      const currentPath = getCurrentRoute().path
+      const currentPath = router.currentRoute.value.path
       if (path !== currentPath) {
         const currentLeftIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath
@@ -122,7 +122,7 @@ export const useAdminStore = defineStore('admin', {
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index <= rightIndex
       })
-      const currentPath = getCurrentRoute().path
+      const currentPath = router.currentRoute.value.path
       if (path !== currentPath) {
         const currentRightIndex = this.menuTabList.findIndex((item) => {
           return item.path === currentPath

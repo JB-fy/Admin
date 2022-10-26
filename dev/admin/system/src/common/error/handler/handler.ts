@@ -1,3 +1,5 @@
+import router from '@/router'
+
 //错误处理
 export const errorHandle = async (err: Error) => {
     switch (err.name) {
@@ -16,7 +18,7 @@ export const errorHandle = async (err: Error) => {
                     }).catch(async () => {
                         useAdminStore().logout()
                     }) */
-                    useAdminStore().logout(getCurrentRoute().path)
+                    useAdminStore().logout(router.currentRoute.value.path)
                     ElMessage.error(errMsg.msg)
                     break
                 default:

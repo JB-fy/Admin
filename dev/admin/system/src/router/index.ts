@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import i18n from '@/i18n'
 import Layout from '@/layout/default/Index.vue'
 
 /**
@@ -28,7 +29,7 @@ const initRouteList = [
                     component.default.name = '/'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: trans('view.layout.routeTitle./'), keepAlive: true, isAuth: true, isIndexMenuTab: true }
+                meta: { title: i18n.global.t('view.layout.routeTitle./'), keepAlive: true, isAuth: true, isIndexMenuTab: true }
             },
             {
                 path: '/authAction',
@@ -122,7 +123,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to: any) => {
-    const webTitle = trans('config.webTitle')
+    const webTitle = i18n.global.t('config.webTitle')
     if (to.meta.title) {
         document.title = webTitle + '-' + to.meta.title
     } else {

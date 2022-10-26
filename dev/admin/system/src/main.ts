@@ -52,7 +52,7 @@ for (let [key, component] of Object.entries(epIconList)) {
 //                     }).catch(async () => {
 //                         useAdminStore().logout()
 //                     }) */
-//                     useAdminStore().logout(getCurrentRoute().path)
+//                     useAdminStore().logout(router.currentRoute.value.path)
 //                     ElMessage.error(errMsg.msg)
 //                     break
 //                 default:

@@ -3,7 +3,6 @@ import { createI18n } from 'vue-i18n'
 
 const i18n = createI18n({
     legacy: false,  //会导致不能动态刷新，需强制刷新页面。但可解决以下报错。当使用useI18n()时会报错：Uncaught SyntaxError: Not available in legacy mode。也可以自定义一个getI18n函数替代useI18n。
-    //locale: 'zh-cn',
     locale: getLanguage(),
     fallbackLocale: ['zh-cn', 'en'],
     messages: await batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10, false),
