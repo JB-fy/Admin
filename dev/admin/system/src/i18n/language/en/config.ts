@@ -1,5 +1,5 @@
 export default {
-    webTitle: 'systemAdmin',
+    webTitle: 'SystemAdmin',
     language: {
         'zh-cn': 'Chinese',
         'en': 'English',

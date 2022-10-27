@@ -113,7 +113,7 @@ const menuTab = reactive({
                             <ElDropdownItem>
                                 <RouterLink to="/profile" :custom="true" v-slot="{ href, navigate, route }">
                                     <ElLink :href="href" @click="navigate" :underline="false">
-                                        {{ route.meta?.title?.[locale] ?? route.meta.menuName }}
+                                        {{ languageStore.getMenuTitle(route?.meta?.menu) }}
                                     </ElLink>
                                 </RouterLink>
                             </ElDropdownItem>

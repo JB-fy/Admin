@@ -29,6 +29,7 @@ export const useLanguageStore = defineStore('language', {
     }
   },
   actions: {
+    //改变语言
     changeLanguage(language: string) {
       if (getLanguage() == language) {
         return
@@ -37,12 +38,39 @@ export const useLanguageStore = defineStore('language', {
       this.language = language
       //i18n.global.locale = language //当i18n设置legacy: false，要使用i18n.global.locale.value
       i18n.global.locale.value = language
+
+      document.title = this.getWebTitle(router.currentRoute.value.path)
       /**
        * 下面这几种情况，需要使用router.go(0)，强制刷新页面
        *    路由设置标题时，不能动态刷新
        *    部分接口，不能动态刷新
        */
       //router.go(0)
+    },
+    //获取页面标题
+    getMenuTitle(menu: any) {
+      if (menu) {
+        return menu?.title?.[i18n.global.locale.value] ?? menu.menuName
+      }
+      return ''
+    },
+    //获取页面标题
+    getPageTitle(path: string) {
+      const menu = useAdminStore().menuList.find((item) => {
+        return item.url == path
+      }) ?? (<any>router).getRoutes().find((item: any) => {
+        return item.path == path
+      })?.meta?.menu
+      return this.getMenuTitle(menu)
+    },
+    //获取网站标题
+    getWebTitle(path: string) {
+      let webTitle = i18n.global.t('config.webTitle')
+      const title = this.getPageTitle(path)
+      if (title) {
+        webTitle += '-' + title
+      }
+      return webTitle
     },
   },
 })

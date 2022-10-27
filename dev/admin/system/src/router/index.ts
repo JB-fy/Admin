@@ -5,10 +5,11 @@ import Layout from '@/layout/default/Index.vue'
 /**
  * meta说明：（menuName,title,icon三个，当路由在后端数据库菜单表中未记录时必须设置，反之不用设置。例如：个人中心不在用户菜单中，则需要设置）
  *      keepAlive: true,    //是否可以缓存
- *      isAuth: true,   //是否需要权限验证     
- *      menuName: '菜单名称', //菜单名称。
- *      title: {'en': 'homepage', 'zh-cn': '主页'},  //标题，多语言时设置，未设置以menuName为准。
- *      icon: '图标',  //图标。
+ *      isAuth: true,   //是否需要权限验证  
+ *      menu: { menuName: '菜单名称', title: {'en': 'homepage', 'zh-cn': '主页',...}, icon:'图标'}，    //菜单配置
+ *          menuName: '菜单名称', //菜单名称。
+ *          title: {'en': 'homepage', 'zh-cn': '主页'},  //标题，多语言时设置，未设置以menuName为准。
+ *          icon: '图标',  //图标。
  */
 const initRouteList = [
     {
@@ -75,7 +76,7 @@ const initRouteList = [
                     component.default.name = '/systemAdmin'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { title: '系统管理员', keepAlive: true, isAuth: true }
+                meta: { keepAlive: true, isAuth: true }
             },
             {
                 path: '/systemConfig',
@@ -102,18 +103,19 @@ const initRouteList = [
                     component.default.name = '/profile'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true, menuName: '个人中心', title: { 'en': 'profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' }
+                meta: { keepAlive: true, isAuth: true, menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
             },
         ]
     },
     {
         path: '/login',
         component: () => import('@/views/login/Index.vue'),
-        meta: { title: '登录' }
+        meta: { keepAlive: false, isAuth: false, menu: { menuName: '登录', title: { 'en': 'Login', 'zh-cn': '登录' } } }
     },
     {
         path: '/:pathMatch(.*)*',
         component: () => import('@/views/404/Index.vue'),
+        meta: { keepAlive: false, isAuth: false, menu: { menuName: '404', title: { 'en': '404', 'zh-cn': '404' } } }
     },
 ]
 
@@ -124,15 +126,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to: any) => {
-    document.title = i18n.global.t('config.webTitle')
-    /* const webTitle = i18n.global.t('config.webTitle')
-    if (to.meta.title) {
-        document.title = webTitle + '-' + to.meta?.title?.[i18n.global.locale.value] ?? to.meta.menuName
-    } else {
-        document.title = webTitle
-    } */
-
-    const adminStore = useAdminStore();
+    const adminStore = useAdminStore()
     /**--------判断登录状态 开始--------**/
     const accessToken = getAccessToken()
     if (!accessToken) {
@@ -142,6 +136,7 @@ router.beforeEach(async (to: any) => {
             return false */
             return '/login?redirect=' + to.path
         }
+        document.title = useLanguageStore().getWebTitle(to.path)
         return true
     }
     if (to.path === '/login') {
@@ -166,14 +161,16 @@ router.beforeEach(async (to: any) => {
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 结束--------**/
 
     /**--------设置菜单标签 开始--------**/
-    adminStore.pushMenuTabList({
-        menuName: to.meta.menuName ?? '',
-        title: to.meta.title ?? {},
-        path: to.path,
-        icon: to.meta.icon ?? ''
-    })
+    //404不放入菜单标签中
+    if (to.meta.isAuth) {
+        adminStore.pushMenuTabList({
+            ...to.meta?.menu,
+            path: to.path,
+        })
+    }
     /**--------设置菜单标签 结束--------**/
 
+    document.title = useLanguageStore().getWebTitle(to.path)
     return true
 })
 

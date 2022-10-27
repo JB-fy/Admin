@@ -9,7 +9,7 @@ export const useAdminStore = defineStore('admin', {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
       menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
       menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
-      menuTabList: [] as { title: string, path: string, icon: string, closable: boolean }[], //菜单标签列表
+      menuTabList: [] as { menuName: string, title: { [propName: string]: string }, path: string, icon: string, closable: boolean }[], //菜单标签列表
     }
   },
   getters: {
@@ -22,16 +22,17 @@ export const useAdminStore = defineStore('admin', {
       const menu = state.menuList.find((item) => {
         return item.url == currentRoute.path
       })
-      if (!menu?.menuChain.length) {
+      //菜单中没有，就直接返回路由中的数据。例如：个人中心页面
+      if (!menu?.menuChain) {
         return [{
-          title: currentRoute.meta?.title?.[i18n.global.locale.value] ?? currentRoute.meta.menuName,
-          path: currentRoute.meta.url,
-          icon: currentRoute.meta.icon,
+          title: useLanguageStore().getMenuTitle(currentRoute.meta?.menu),
+          path: currentRoute.path,
+          icon: currentRoute.meta?.menu?.icon,
         }]
       }
       return menu.menuChain.map((item) => {
         return {
-          title: item?.title?.[i18n.global.locale.value] ?? item.menuName,
+          title: useLanguageStore().getMenuTitle(item),
           path: item.url,
           icon: item.icon,
         }
@@ -39,19 +40,21 @@ export const useAdminStore = defineStore('admin', {
     },
     //获取菜单标签列表
     getMenuTabList: (state) => {
-      const menuTab = state.menuList.find((item) => {
+      let menu = state.menuList.find((item) => {
         return item.url == '/'
-      })
-      const menuTabList = [{
-        menuName: menuTab.menuName,
-        title: menuTab.title,
-        path: menuTab.url,
-        icon: menuTab.icon,
+      }) ?? (<any>router).getRoutes().find((item: any) => {
+        return item.path == '/'
+      }).meta
+      const menuTabList = menu ? [{
+        menuName: menu.menuName,
+        title: menu.title,
+        path: menu.url,
+        icon: menu.icon,
         closable: false,
-      }, ...state.menuTabList]
+      }, ...state.menuTabList] : [...state.menuTabList]
       return menuTabList.map((item) => {
         return {
-          title: item?.title?.[i18n.global.locale.value] ?? item.menuName,
+          title: useLanguageStore().getMenuTitle(item),
           path: item.path,
           icon: item.icon,
           closable: item.closable,
@@ -85,8 +88,8 @@ export const useAdminStore = defineStore('admin', {
       }
       /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 开始--------*/
       this.menuTabList.push({
+        ...menuTab,
         closable: true,
-        ...menuTab
       })
     },
     /**
@@ -197,7 +200,7 @@ export const useAdminStore = defineStore('admin', {
       this.info = res.data.info
     },
     /**
-     * 设置左侧菜单（包含注册动态路由）
+     * 设置左侧菜单（包含更新路由meta数据）
      */
     async setMenuTree() {
       const res = await request('login.menuTree', {}, false)
