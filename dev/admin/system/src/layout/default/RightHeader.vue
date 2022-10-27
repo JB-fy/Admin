@@ -4,7 +4,7 @@ const languageStore = useLanguageStore()
 const settingStore = useSettingStore()
 const adminStore = useAdminStore()
 
-const { t, tm, locale } = useI18n()
+const { t, tm } = useI18n()
 
 const route: any = useRoute()
 const router = useRouter()

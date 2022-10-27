@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import i18n from '@/i18n'
 import Layout from '@/layout/default/Index.vue'
 
 /**
@@ -151,8 +150,8 @@ router.beforeEach(async (to: any) => {
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致vuex数据全部重置） 开始--------**/
     if (!adminStore.infoIsExist) {
         try {
-            let result = await adminStore.setInfo()  //记录用户信息
-            result = await adminStore.setMenuTree()  //设置左侧菜单
+            await adminStore.setInfo()  //记录用户信息
+            await adminStore.setMenuTree()  //设置左侧菜单
         } catch (error) {
             await errorHandle(<Error>error)
             return false

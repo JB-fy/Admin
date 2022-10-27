@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import md5 from 'js-md5'
 import router from '@/router'
-import i18n from '@/i18n'
 
 export const useAdminStore = defineStore('admin', {
   state: () => {
