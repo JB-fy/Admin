@@ -22,12 +22,6 @@ abstract class AbstractTable
     protected $model;   //模型
     protected $builder; //构造器
 
-    protected array $fieldOfCommon = ['id', '*'];   //公共的field
-    protected array $whereOfCommon = ['id', 'excId'];   //公共的where
-    protected array $groupOfCommon = ['id'];   //公共的group
-    protected array $havingOfCommon = ['id'];  //公共的having
-    protected array $orderOfCommon = ['id'];   //公共的order
-
     /* final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
     {
         $this->connection($connectionSelectData)->table($tableSelectData);
@@ -83,7 +77,6 @@ abstract class AbstractTable
         return $this->model->allColumn;
     }
 
-
     /**
      * 解析连接
      *
@@ -119,9 +112,7 @@ abstract class AbstractTable
     public function tableRaw(string $tableRaw = ''): self
     {
         if (!empty($tableRaw)) {
-            if (strpos($tableRaw, '__TABLE__') !== false) {
-                $tableRaw = str_replace('__TABLE__', $this->getTable() . ' AS ' . $this->getTableAlias(), $tableRaw);
-            }
+            $tableRaw = str_replace('__TABLE__', $this->getTable() . ' AS ' . $this->getTableAlias(), $tableRaw);
             $this->tableRaw = Db::raw($tableRaw);
         }
         return $this;
@@ -135,12 +126,9 @@ abstract class AbstractTable
      */
     final public function field(array $field): self
     {
-        $this->fieldOfCommon = [...$this->fieldOfCommon, ...$this->getAllColumn()];
         foreach ($field as $v) {
-            if (in_array($v, $this->fieldOfCommon)) {
+            if (!$this->fieldOfAlone($v)) {
                 $this->fieldOfCommon($v);
-            } else {
-                $this->fieldOfAlone($v);
             }
         }
         return $this;
@@ -149,17 +137,20 @@ abstract class AbstractTable
     /**
      * 解析where（入口）
      *
-     * @param array $where  格式：['字段' => '值',...]
+     * @param array $where  两种格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
     final public function where(array $where): self
     {
-        $this->whereOfCommon = [...$this->whereOfCommon, ...$this->getAllColumn()];
         foreach ($where as $k => $v) {
-            if (in_array($k, $this->whereOfCommon)) {
-                $this->whereOfCommon($k, $v);
+            if (is_numeric($k) && is_array($v)) {
+                if (!$this->whereOfAlone(...$v)) {
+                    $this->whereOfCommon(...$v);
+                }
             } else {
-                $this->whereOfAlone($k, $v);
+                if (!$this->whereOfAlone($k, null, $v)) {
+                    $this->whereOfCommon($k, null, $v);
+                }
             }
         }
         return $this;
@@ -173,12 +164,9 @@ abstract class AbstractTable
      */
     final public function group(array $group): self
     {
-        $this->groupOfCommon = [...$this->groupOfCommon, ...$this->getAllColumn()];
         foreach ($group as $v) {
-            if (in_array($v, $this->groupOfCommon)) {
+            if (!$this->groupOfAlone($v)) {
                 $this->groupOfCommon($v);
-            } else {
-                $this->groupOfAlone($v);
             }
         }
         return $this;
@@ -187,17 +175,20 @@ abstract class AbstractTable
     /**
      * 解析having（入口）
      *
-     * @param array $having 格式：['字段' => '值',...]
+     * @param array $having 两种格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
     final public function having(array $having): self
     {
-        $this->havingOfCommon = [...$this->havingOfCommon, ...$this->getAllColumn()];
         foreach ($having as $k => $v) {
-            if (in_array($k, $this->havingOfCommon)) {
-                $this->havingOfCommon($k, $v);
+            if (is_numeric($k) && is_array($v)) {
+                if (!$this->havingOfAlone(...$v)) {
+                    $this->havingOfCommon(...$v);
+                }
             } else {
-                $this->havingOfAlone($k, $v);
+                if (!$this->havingOfAlone($k, null, $v)) {
+                    $this->havingOfCommon($k, null, $v);
+                }
             }
         }
         return $this;
@@ -211,12 +202,9 @@ abstract class AbstractTable
      */
     final public function order(array $order): self
     {
-        $this->orderOfCommon = [...$this->orderOfCommon, ...$this->getAllColumn()];
         foreach ($order as $k => $v) {
-            if (in_array($k, $this->orderOfCommon)) {
+            if (!$this->orderOfAlone($k, $v)) {
                 $this->orderOfCommon($k, $v);
-            } else {
-                $this->orderOfAlone($k, $v);
             }
         }
         return $this;
@@ -226,64 +214,78 @@ abstract class AbstractTable
      * 解析field（公共的）
      *
      * @param string $key
-     * @return self
+     * @return boolean
      */
-    final protected function fieldOfCommon(string $key): self
+    final protected function fieldOfCommon(string $key): bool
     {
         switch ($key) {
             case '*':
                 $this->field['select'][] = $key;
-                break;
+                return true;
             case 'id':
                 $this->field['select'][] = $this->getTableAlias() . '.' . $this->getPrimaryKey();
-                break;
+                return true;
             default:
-                $this->field['select'][] = $this->getTableAlias() . '.' . $key;
-                break;
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->field['select'][] = $this->getTableAlias() . '.' . $key;
+                } else {
+                    $this->field['select'][] = $key;
+                }
+                return true;
         }
-        return $this;
+        return false;
     }
 
     /**
      * 解析where（公共的）
      *
      * @param string $key
+     * @param string|null $operator
      * @param [type] $value
-     * @return self
+     * @param string|null $boolean
+     * @return boolean
      */
-    final protected function whereOfCommon(string $key, $value): self
+    final protected function whereOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'id':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '=', $value]];
-                break;
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), $operator ?? '=', $value, $boolean ?? 'and']];
+                return true;
             case 'excId':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '<>', $value]];
-                break;
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
+                return true;
             default:
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $key, '=', $value]];
-                break;
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->where[] = ['method' => 'where', 'param' => [$this->getTableAlias() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                } else {
+                    $this->where[] = ['method' => 'where', 'param' => [$key, $operator ?? '=', $value, $boolean ?? 'and']];
+                }
+                return true;
         }
-        return $this;
+        return false;
     }
 
     /**
      * 解析group（公共的）
      *
      * @param string $key
-     * @return self
+     * @return boolean
      */
-    final protected function groupOfCommon(string $key): self
+    final protected function groupOfCommon(string $key): bool
     {
         switch ($key) {
             case 'id':
                 $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey()]];
-                break;
+                return true;
             default:
-                $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $key]];
-                break;
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTableAlias() . '.' . $key]];
+                } else {
+                    $this->group[] = ['method' => 'groupBy', 'param' => [$key]];
+                }
+                return true;
         }
-        return $this;
+        return false;
     }
 
     /**
@@ -291,19 +293,23 @@ abstract class AbstractTable
      *
      * @param string $key
      * @param [type] $value
-     * @return self
+     * @return boolean
      */
-    final protected function havingOfCommon(string $key, $value): self
+    final protected function havingOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'id':
-                $this->having['having'][] = [$this->getTableAlias() . '.' . $this->getPrimaryKey(), '=', $value];
-                break;
+                $this->having['having'][] = [$this->getTableAlias() . '.' . $this->getPrimaryKey(), $operator ?? '=', $value, $boolean ?? 'and'];
+                return true;
             default:
-                $this->having['having'][] = [$this->getTableAlias() . '.' . $key, '=', $value];
-                break;
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->having['having'][] = [$this->getTableAlias() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and'];
+                } else {
+                    $this->having['having'][] = [$key, $operator ?? '=', $value, $boolean ?? 'and'];
+                }
+                return true;
         }
-        return $this;
+        return false;
     }
 
     /**
@@ -311,19 +317,23 @@ abstract class AbstractTable
      *
      * @param string $key
      * @param [type] $value
-     * @return self
+     * @return boolean
      */
-    final protected function orderOfCommon(string $key, $value): self
+    final protected function orderOfCommon(string $key, $value): bool
     {
         switch ($key) {
             case 'id':
                 $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $this->getPrimaryKey(), $value]];
-                break;
+                return true;
             default:
-                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $key, $value]];
-                break;
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTableAlias() . '.' . $key, $value]];
+                } else {
+                    $this->order[] = ['method' => 'orderBy', 'param' => [$key, $value]];
+                }
+                return true;
         }
-        return $this;
+        return false;
     }
 
     /**
@@ -332,68 +342,73 @@ abstract class AbstractTable
      * @param string $key
      * @return self
      */
-    protected function fieldOfAlone(string $key): self
+    protected function fieldOfAlone(string $key): bool
     {
         /* switch ($key) {
-            default:
+            case 'xxxx':
                 $this->field['select'][] = $key;
-                //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ' . $key];
-                break;
+                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extendData, "$.' . $key . '")) AS ' . $key);    //不能防sql注入
+                //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ?', [$key]];  //能防sql注入
+                return true;
         } */
-        return $this;
+        return false;
     }
 
     /**
      * 解析where（独有的）
      *
      * @param string $key
+     * @param string|null $operator
      * @param [type] $value
-     * @return self
+     * @param string|null $boolean
+     * @return boolean
      */
-    protected function whereOfAlone(string $key, $value): self
+    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         /* switch ($key) {
-            default:
-                $this->where[] = ['method' => 'where', 'param' => [$key, '=', $value]];
-                //$this->where[] = ['method' => 'whereRaw', 'param' => ['age > :age', ['age' => $v], 'and']];
-                break;
+            case 'xxxx':
+                $this->where[] = ['method' => 'where', 'param' => [$key, $operator ?? '=', $value, $boolean ?? 'and']];
+                //$this->where[] = ['method' => 'whereRaw', 'param' => [':key > :value', ['key' => $key, 'value' => $value], $boolean ?? 'and']];
+                return true;
         } */
-        return $this;
+        return false;
     }
 
     /**
      * 解析group（独有的）
      *
      * @param string $key
-     * @return self
+     * @return boolean
      */
-    protected function groupOfAlone(string $key): self
+    protected function groupOfAlone(string $key): bool
     {
         /* switch ($key) {
-            default:
+            case 'xxxx':
                 $this->group[] = ['method' => 'groupBy', 'param' => [$key]];
-                //$this->group[] = ['method'=>'groupByRaw', 'param'=>[':xxxx', ['xxxx' => 'xxxx']]];
-                break;
+                //$this->group[] = ['method'=>'groupByRaw', 'param'=>[':key', ['key' => $key]]];
+                return true;
         } */
-        return $this;
+        return false;
     }
 
     /**
      * 解析having（独有的）
      *
      * @param string $key
+     * @param string|null $operator
      * @param [type] $value
-     * @return self
+     * @param string|null $boolean
+     * @return boolean
      */
-    protected function havingOfAlone(string $key, $value): self
+    protected function havingOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         /* switch ($key) {
-            default:
+            case 'xxxx':
                 $this->having['having'][] = [$key, '=', $value];
-                //$this->having['havingRaw'][] = ['age > :age', ['age' => $value], 'and'];
-                break;
+                //$this->having['havingRaw'][] = [':key > :value', ['key' => $key, 'value' => $value], 'and'];
+                return true;
         } */
-        return $this;
+        return false;
     }
 
     /**
@@ -401,17 +416,17 @@ abstract class AbstractTable
      *
      * @param string $key
      * @param [type] $value
-     * @return self
+     * @return boolean
      */
-    protected function orderOfAlone(string $key, $value): self
+    protected function orderOfAlone(string $key, $value): bool
     {
         /* switch ($key) {
-            default:
+            case 'xxxx':
                 $this->order[] = ['method' => 'orderBy', 'param' => [$key, $value]];
-                //$this->order[] = ['method'=>'orderByRaw', 'param'=>[':time ' . $value, ['time' => time()]]];
-                break;
+                //$this->order[] = ['method'=>'orderByRaw', 'param'=>[':key ' . $value, ['key' => $key]]];
+                return true;
         } */
-        return $this;
+        return false;
     }
 
     /**
@@ -419,11 +434,11 @@ abstract class AbstractTable
      *
      * @param string $key   键，用于确定关联表
      * @param [type] $value 值，用于确定关联表
-     * @return self
+     * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): self
+    protected function joinOfAlone(string $key, $value = null): bool
     {
-        return $this;
+        return false;
     }
 
     /**

@@ -21,20 +21,17 @@ class SystemAdmin extends AbstractTable
      * 解析field（独有的）
      *
      * @param string $key
-     * @return self
+     * @return boolean
      */
-    protected function fieldOfAlone(string $key): self
+    protected function fieldOfAlone(string $key): bool
     {
         switch ($key) {
             case 'roleName':
                 $this->joinOfAlone($key);
                 $this->field['select'][] = container(AuthRole::class, true)->getTableAlias() . '.' . $key;
-                break;
-            default:
-                $this->field['select'][] = $key;
-                break;
+                return true;
         }
-        return $this;
+        return false;
     }
 
     /**
@@ -42,9 +39,9 @@ class SystemAdmin extends AbstractTable
      *
      * @param string $key   键，用于确定关联表
      * @param [type] $value 值，用于确定关联表
-     * @return self
+     * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): self
+    protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'roleName':
@@ -74,8 +71,8 @@ class SystemAdmin extends AbstractTable
                         ]
                     ];
                 }
-                break;
+                return true;
         }
-        return $this;
+        return false;
     }
 }
