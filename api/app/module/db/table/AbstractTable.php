@@ -11,7 +11,10 @@ abstract class AbstractTable
 {
     protected string $connection = '';  //分库情况下，解析后所确定的连接
     protected string $table = '';   //分表情况下，解析后所确定的表
+
     protected string $tableRaw = '';    //表的原生表达式。当需要强制索引等特殊情况时使用。示例：Db::raw('table AS alias FORCE INDEX (索引)')。
+    protected array $insert = [];   //解析后的insert。格式：[['字段' => '值',...],...]。无顺序要求
+    protected array $update = [];   //解析后的update。格式：['字段' => '值',...]。无顺序要求
     protected array $field = [];   //解析后的field。格式：['select' => [字段,...], 'selectRaw' => [[字段（填selectRaw方法所需参数）],...]]。无顺序要求
     protected array $where = [];   //解析后的where。格式：[['method'=>'where', 'param'=>[参数]],...]。有顺序要求，必须与原来一致，改变顺序可能造成索引使用不同
     protected array $group = [];   //解析后的group。格式：[['method'=>'groupBy', 'param'=>[参数]],...]。有顺序要求，必须与原来一致，改变顺序会造成分组结果不同
@@ -119,6 +122,48 @@ abstract class AbstractTable
     }
 
     /**
+     * 解析insert（入口）
+     *
+     * @param array $insert 格式：['字段' => '值',...] 或 [['字段' => '值',...],...]
+     * @return self
+     */
+    final public function insert(array $insert): self
+    {
+        if (isset($insert[0]) && is_array($insert[0])) {
+            foreach ($insert as $k => $v) {
+                foreach ($v as $k1 => $v1) {
+                    if (!$this->insertOfAlone($k1, $v1, $k)) {
+                        $this->insertOfCommon($k1, $v1, $k);
+                    }
+                }
+            }
+        } else {
+            foreach ($insert as $k => $v) {
+                if (!$this->insertOfAlone($k, $v)) {
+                    $this->insertOfCommon($k, $v);
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 解析update（入口）
+     *
+     * @param array $update 格式：['字段' => '值',...]
+     * @return self
+     */
+    final public function update(array $update): self
+    {
+        foreach ($update as $k => $v) {
+            if (!$this->updateOfAlone($k, $v)) {
+                $this->updateOfCommon($k, $v);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * 解析field（入口）
      *
      * @param array $field  格式：['字段',...]
@@ -137,7 +182,7 @@ abstract class AbstractTable
     /**
      * 解析where（入口）
      *
-     * @param array $where  两种格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
+     * @param array $where  格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
     final public function where(array $where): self
@@ -175,7 +220,7 @@ abstract class AbstractTable
     /**
      * 解析having（入口）
      *
-     * @param array $having 两种格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
+     * @param array $having 格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
     final public function having(array $having): self
@@ -208,6 +253,55 @@ abstract class AbstractTable
             }
         }
         return $this;
+    }
+
+    /**
+     * 解析insert（公共的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @param integer $index
+     * @return boolean
+     */
+    final protected function insertOfCommon(string $key, $value, int $index = 0): bool
+    {
+        switch ($key) {
+            case 'id':
+                $this->insert[$index][$this->getPrimaryKey()] = $value;
+                return true;
+            default:
+                //数据库不存在的字段过滤掉
+                if (in_array($key, $this->getAllColumn())) {
+                    //$this->insert[$index][$this->getTableAlias() . '.' . $key] = $value;
+                    $this->insert[$index][$key] = $value;
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    /**
+     * 解析update（公共的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return boolean
+     */
+    final protected function updateOfCommon(string $key, $value): bool
+    {
+        switch ($key) {
+            case 'id':
+                $this->update[$this->getPrimaryKey()] = $value;
+                return true;
+            default:
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->update[$this->getTableAlias() . '.' . $key] = $value;
+                } else {
+                    $this->update[$key] = $value;
+                }
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -333,6 +427,41 @@ abstract class AbstractTable
                 }
                 return true;
         }
+        return false;
+    }
+
+    /**
+     * 解析insert（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @param integer $index
+     * @return boolean
+     */
+    protected function insertOfAlone(string $key, $value, int $index = 0): bool
+    {
+        /* switch ($key) {
+            case 'xxxx':
+                $this->insert[$index][$key] = $value;
+                return true;
+        } */
+        return false;
+    }
+
+    /**
+     * 解析update（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return boolean
+     */
+    final protected function updateOfAlone(string $key, $value): bool
+    {
+        /* switch ($key) {
+            case 'xxxx':
+                $this->update[$key] = $value;
+                return true;
+        } */
         return false;
     }
 
