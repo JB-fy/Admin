@@ -815,7 +815,7 @@ abstract class AbstractTable
     }
 
     /**
-     * 处理limit（limit不常用，不放在getBuilder方法中处理）
+     * 处理limit（limit不算常用，故不做解析，也不做解析后处理，即不在getBuilder方法中处理）
      *
      * @return self
      */
