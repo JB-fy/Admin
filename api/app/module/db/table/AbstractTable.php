@@ -731,7 +731,7 @@ abstract class AbstractTable
      *
      * @param integer $offset
      * @param integer $limit
-     * @return int
+     * @return integer
      */
     final public function saveUpdate(int $offset = 0, int $limit = 0): int
     {
@@ -770,16 +770,30 @@ abstract class AbstractTable
         if ($isUseWriter) {
             $this->builder->useWritePdo();
         }
-
         $this->handleLimit($offset, $limit);
         $list = $this->builder->get()->toArray();
-
         if (!empty($this->fieldAfter)) {
             foreach ($list as &$v) {
                 $v = $this->handleFieldAfter($v);
             }
         }
         return $list;
+    }
+
+    /**
+     * 删除
+     *
+     * @return integer
+     */
+    final public function delete(): int
+    {
+        $this->getBuilder();
+        if ($this->model->isSoftDelete) {
+            return $this->builder->update([
+                $this->model->fieldSoftDelete => 1
+            ]);
+        }
+        return $this->builder->delete();
     }
 
     /**

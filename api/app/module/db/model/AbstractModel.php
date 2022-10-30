@@ -15,6 +15,9 @@ abstract class AbstractModel
     protected string $table;   //默认表名
     protected string $primaryKey = '';   //主键名
 
+    protected bool $isSoftDelete = false;   //是否软删除
+    protected string $fieldSoftDelete = 'isDelete';   //软删除字段。当isSoftDelete为true时才有效
+
     protected array $allColumn = [];   //全部列（正常都是固定的，分库分表也都一样）
 
     final public function __construct()
