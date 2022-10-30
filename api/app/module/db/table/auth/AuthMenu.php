@@ -48,22 +48,20 @@ class AuthMenu extends AbstractTable
     /**
      * 获取数据库数据后，再做处理的字段
      *
-     * @param [type] $list
-     * @return array
+     * @param object $info
+     * @return object
      */
-    public function handleFieldAfter($list): array
+    public function handleFieldAfter(object $info): object
     {
-        foreach ($list as &$v) {
-            foreach ($this->fieldAfter as $field) {
-                switch ($field) {
-                    case 'showMenu':
-                        $v->title = $v->title ? json_decode($v->title, true) : [];
-                        $v->icon = $v->icon ?? '';
-                        $v->url = $v->url ?? '';
-                        break;
-                }
+        foreach ($this->fieldAfter as $field) {
+            switch ($field) {
+                case 'showMenu':
+                    $info->title = $info->title ? json_decode($info->title, true) : [];
+                    $info->icon = $info->icon ?? '';
+                    $info->url = $info->url ?? '';
+                    break;
             }
         }
-        return $list;
+        return $info;
     }
 }

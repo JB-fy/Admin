@@ -72,6 +72,7 @@ abstract class AbstractTable
         return $this->model->allColumn;
     }
 
+    /*----------------解析 开始----------------*/
     /**
      * 解析连接
      *
@@ -571,14 +572,15 @@ abstract class AbstractTable
     {
         return !empty($this->join);
     }
+    /*----------------解析 结束----------------*/
 
+    /*----------------解析后处理（builder生成） 开始----------------*/
     /**
      * 获取Db构造器
      *
-     * @param boolean $isUseWriter  读写分离时，是否使用写库读（因读写分离有延迟，有些时候需要使用写库读取）
      * @return Builder
      */
-    final public function getBuilder(bool $isUseWriter = false): Builder
+    final public function getBuilder(): Builder
     {
         if (empty($this->tableRaw)) {
             $this->builder = Db::table($this->getTable(), null, $this->getConnection());
@@ -602,9 +604,6 @@ abstract class AbstractTable
         }
         if (!empty($this->join)) {
             $this->handleJoin();
-        }
-        if ($isUseWriter) {
-            $this->builder->useWritePdo();
         }
         return $this->builder;
     }
@@ -709,26 +708,52 @@ abstract class AbstractTable
         }
         return $this;
     }
+    /*----------------解析后处理（builder生成） 结束----------------*/
 
+    /*----------------封装部分方法方便使用 开始----------------*/
+    /**
+     * 保存插入
+     *
+     * @param boolean $isGetId
+     * @return boolean|integer
+     */
+    final public function saveInsert(bool $isGetId = true): bool|int
+    {
+        $this->getBuilder();
+        if ((isset($this->insert[0]) && is_array($this->insert[0])) || !$isGetId) {
+            return $this->builder->insert($this->insert);
+        }
+        return $this->builder->insertGetId($this->insert);
+    }
 
     /**
-     * 获取数据库数据后，再做处理的字段
+     * 保存更新
      *
-     * @param [type] $list
-     * @return array
+     * @param integer $offset
+     * @param integer $limit
+     * @return int
      */
-    public function handleFieldAfter($list): array
+    final public function saveUpdate(int $offset = 0, int $limit = 0): int
     {
-        /* foreach ($list as $k => &$v) {
-            foreach ($this->fieldAfter as $field) {
-                switch ($field) {
-                    case 'xxxx':
-                        $v['xxxx'] = 'xxxx';
-                        break;
-                }
-            }
-        } */
-        return $list;
+        $this->getBuilder();
+        $this->handleLimit($offset, $limit);
+        return $this->builder->update($this->update);
+    }
+
+    /**
+     * 获取信息
+     *
+     * @param boolean $isUseWriter
+     * @return object
+     */
+    final public function getInfo(bool $isUseWriter = false): object
+    {
+        $this->getBuilder();
+        if ($isUseWriter) {
+            $this->builder->useWritePdo();
+        }
+        $info = $this->builder->first();
+        return $this->handleFieldAfter($info);
     }
 
     /**
@@ -736,16 +761,58 @@ abstract class AbstractTable
      *
      * @param integer $offset
      * @param integer $limit
-     * @param boolean $isUseWriter
+     * @param boolean $isUseWriter  读写分离时，是否使用写库读（因读写分离有延迟，有些时候需要使用写库读取）
      * @return array
      */
-    final public function list(int $offset = 0, int $limit = 0, bool $isUseWriter = false): array
+    final public function getList(int $offset = 0, int $limit = 0, bool $isUseWriter = false): array
+    {
+        $this->getBuilder();
+        if ($isUseWriter) {
+            $this->builder->useWritePdo();
+        }
+
+        $this->handleLimit($offset, $limit);
+        $list = $this->builder->get()->toArray();
+
+        if (!empty($this->fieldAfter)) {
+            foreach ($list as &$v) {
+                $v = $this->handleFieldAfter($v);
+            }
+        }
+        return $list;
+    }
+
+    /**
+     * 获取数据库数据后，再做处理的字段
+     *
+     * @param object $info
+     * @return object
+     */
+    protected function handleFieldAfter(object $info): object
+    {
+        /* foreach ($this->fieldAfter as $field) {
+            switch ($field) {
+                case 'xxxx':
+                    $info->xxxx = 'xxxx';
+                    break;
+            }
+        } */
+        return $info;
+    }
+
+    /**
+     * 处理limit（limit不常用，不放在getBuilder方法中处理）
+     *
+     * @return self
+     */
+    final protected function handleLimit(int $offset, int $limit): self
     {
         if ($limit > 0) {
-            $list = $this->getBuilder($isUseWriter)->offset($offset)->limit($limit)->get()->toArray();
-        } else {
-            $list = $this->getBuilder($isUseWriter)->get()->toArray();
+            $this->builder->offset($offset)->limit($limit);
+        } elseif ($offset > 0) {    //当offset>0，limit==0时表示取剩下全部数据。需要limit足够大，这里写99999999，这样还不够的话，服务器也抗不住了
+            $this->builder->offset($offset)->limit(99999999);
         }
-        return $this->handleFieldAfter($list);
+        return $this;
     }
+    /*----------------封装部分方法方便使用 结束----------------*/
 }

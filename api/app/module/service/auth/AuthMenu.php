@@ -33,7 +33,7 @@ class AuthMenu extends AbstractService
             if ($tableAuthMenu->isJoin()) {
                 $tableAuthMenu->group(['id']);
             }
-            $list = $tableAuthMenu->list($offset, $limit);
+            $list = $tableAuthMenu->getList($offset, $limit);
             if ($countAfter) {
                 $count = count($list);
             }
@@ -52,7 +52,7 @@ class AuthMenu extends AbstractService
     public function tree(array $field = [], array $where = [])
     {
         $tableAuthMenu = container(TableAuthMenu::class, true);
-        $list = $tableAuthMenu->field($field)->where($where)->list();
+        $list = $tableAuthMenu->field($field)->where($where)->getList();
 
         $tree = container(LogicAuthMenu::class)->tree($list);
         throwSuccessJson(['tree' => $tree]);

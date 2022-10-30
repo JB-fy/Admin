@@ -37,7 +37,7 @@ class AuthScene extends AbstractAspect
         if (empty($sceneCode)) {
             throwFailJson('001001');
         }
-        $request->authSceneInfo = container(TableAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getBuilder()->first();
+        $request->authSceneInfo = container(TableAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getInfo();
         if (empty($request->authSceneInfo)) {
             throwFailJson('001001');
         }
