@@ -24,7 +24,7 @@ class Test extends AbstractController
         $tableSystemAdmin = container(SystemAdmin::class, true);
         $tableSystemAdmin->where($data['where']);
         if ($tableSystemAdmin->isJoin()) {
-            $count = $tableSystemAdmin->getBuilder()->distinct()->count($tableSystemAdmin->getTableAlias() . '.' . $tableSystemAdmin->getPrimaryKey());
+            $count = $tableSystemAdmin->getBuilder()->distinct()->count($tableSystemAdmin->getTable() . '.' . $tableSystemAdmin->getPrimaryKey());
         } else {
             $count = $tableSystemAdmin->getBuilder()->count();
         }

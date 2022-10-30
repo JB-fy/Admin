@@ -20,14 +20,14 @@ class AuthMenu extends AbstractLogic
         $tree = [];
         foreach ($list as $k => $v) {
             unset($list[$k]);
-            /* if ($v->pid == $menuId) {
+            if ($v->pid == $menuId) {
                 $v->children = $this->tree($list, $v->menuId);
                 $tree[] = $v;
-            } */
-            if ($v['pid'] == $menuId) {
+            }
+            /* if ($v['pid'] == $menuId) {
                 $v['children'] = $this->tree($list, $v['menuId']);
                 $tree[] = $v;
-            }
+            } */
         }
         return $tree;
     }

@@ -28,7 +28,7 @@ class SystemAdmin extends AbstractTable
         switch ($key) {
             case 'roleName':
                 $this->joinOfAlone($key);
-                $this->field['select'][] = container(AuthRole::class, true)->getTableAlias() . '.' . $key;
+                $this->field['select'][] = container(AuthRole::class, true)->getTable() . '.' . $key;
                 return true;
         }
         return false;
@@ -46,28 +46,28 @@ class SystemAdmin extends AbstractTable
         switch ($key) {
             case 'roleName':
                 $tableAuthRoleRelOfSystemAdmin = container(AuthRoleRelOfSystemAdmin::class, true);
-                $tableAuthRoleRelOfSystemAdminAlias = $tableAuthRoleRelOfSystemAdmin->getTableAlias();
-                if (!isset($this->join[$tableAuthRoleRelOfSystemAdminAlias])) {
-                    $this->join[$tableAuthRoleRelOfSystemAdminAlias] = [
+                $tableAuthRoleRelOfSystemAdminName = $tableAuthRoleRelOfSystemAdmin->getTable();
+                if (!isset($this->join[$tableAuthRoleRelOfSystemAdminName])) {
+                    $this->join[$tableAuthRoleRelOfSystemAdminName] = [
                         'method' => 'leftJoin',
                         'param' => [
-                            $tableAuthRoleRelOfSystemAdmin->getTable() . ' AS ' . $tableAuthRoleRelOfSystemAdminAlias,
-                            $tableAuthRoleRelOfSystemAdminAlias . '.adminId',
+                            $tableAuthRoleRelOfSystemAdminName,
+                            $tableAuthRoleRelOfSystemAdminName . '.adminId',
                             '=',
-                            $this->getTableAlias() . '.' . $this->getPrimaryKey()
+                            $this->getTable() . '.' . $this->getPrimaryKey()
                         ]
                     ];
                 }
                 $tableAuthRole = container(AuthRole::class, true);
-                $tableAuthRoleAlias = $tableAuthRole->getTableAlias();
-                if (!isset($this->join[$tableAuthRoleAlias])) {
-                    $this->join[$tableAuthRoleAlias] = [
+                $tableAuthRoleName = $tableAuthRole->getTable();
+                if (!isset($this->join[$tableAuthRoleName])) {
+                    $this->join[$tableAuthRoleName] = [
                         'method' => 'leftJoin',
                         'param' => [
-                            $tableAuthRole->getTable() . ' AS ' . $tableAuthRoleAlias,
-                            $tableAuthRoleAlias . '.roleId',
+                            $tableAuthRoleName,
+                            $tableAuthRoleName . '.roleId',
                             '=',
-                            $tableAuthRoleRelOfSystemAdminAlias . '.roleId'
+                            $tableAuthRoleRelOfSystemAdminName . '.roleId'
                         ]
                     ];
                 }

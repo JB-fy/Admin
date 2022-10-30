@@ -6,7 +6,6 @@ namespace app\module\db\table\auth;
 
 use app\module\db\table\AbstractTable;
 use DI\Annotation\Inject;
-use support\Db;
 
 class AuthMenu extends AbstractTable
 {
@@ -25,14 +24,46 @@ class AuthMenu extends AbstractTable
     protected function fieldOfAlone(string $key): bool
     {
         switch ($key) {
-            case 'showMenu':
-                $this->field['select'][] = 'extendData';
-                /* $this->field['select'][] = 'extendData->title AS title';
+            case 'menuTree':    //树状需要以下字段和排序方式
+                $this->field['select'][] = 'menuId';
+                $this->field['select'][] = 'pid';
+
+                $this->order[] = ['method' => 'orderBy', 'param' => ['pid', 'asc']];
+                $this->order[] = ['method' => 'orderBy', 'param' => ['sort', 'asc']];
+                $this->order[] = ['method' => 'orderBy', 'param' => ['menuId', 'asc']];
+                return true;
+            case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
+                $this->fieldAfter[] = 'showMenu';   //需做后续处理
+
+                $this->field['select'][] = 'menuName';
+                $this->field['select'][] = 'extendData->title AS title';
                 //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extendData, "$.title")) AS title'); //不知道怎么直接转成对象返回
                 $this->field['select'][] = 'extendData->url AS url';
-                $this->field['select'][] = 'extendData->icon AS icon'; */
+                $this->field['select'][] = 'extendData->icon AS icon';
                 return true;
         }
         return false;
+    }
+
+    /**
+     * 获取数据库数据后，再做处理的字段
+     *
+     * @param [type] $list
+     * @return array
+     */
+    public function handleFieldAfter($list): array
+    {
+        foreach ($list as &$v) {
+            foreach ($this->fieldAfter as $field) {
+                switch ($field) {
+                    case 'showMenu':
+                        $v->title = $v->title ? json_decode($v->title, true) : [];
+                        $v->icon = $v->icon ?? '';
+                        $v->url = $v->url ?? '';
+                        break;
+                }
+            }
+        }
+        return $list;
     }
 }

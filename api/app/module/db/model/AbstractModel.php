@@ -13,16 +13,12 @@ abstract class AbstractModel
 {
     protected string $connection = '';  //默认连接
     protected string $table;   //默认表名
-    protected string $tableAlias = '';   //表别名。分表情况下，表名不固定。强制使用别名用于解析数据，再生成的SQL语句，通用性好
     protected string $primaryKey = '';   //主键名
 
     protected array $allColumn = [];   //全部列（正常都是固定的，分库分表也都一样）
 
     final public function __construct()
     {
-        if (empty($this->tableAlias)) {
-            $this->tableAlias = $this->table;   //默认设置成默认表名
-        }
         $this->allColumn = Db::connection($this->connection)->getSchemaBuilder()->getColumnListing($this->table);
     }
 
@@ -39,7 +35,6 @@ abstract class AbstractModel extends Model
 {
     protected string $connection = '';  //默认连接
     protected string $table;   //默认表名
-    protected string $alias;   //表别名。分表情况下，表名不固定。强制使用别名用于解析数据，再生成的SQL语句，通用性好
     protected string $primaryKey = '';   //主键名
 
     protected array $column = [];   //全部列（正常都是固定的，分库分表也都一样）

@@ -146,13 +146,8 @@ class Login extends AbstractController
                     'isStop' => 0
                 ];
                 $field = [
-                    'menuId',
-                    'pid',
-                    'menuName',
-                    'showMenu',
-                    /* 'extendData->title AS title',
-                    'extendData->url AS url',
-                    'extendData->icon AS icon', */
+                    'menuTree',
+                    'showMenu'
                 ];
                 container(ServiceAuthMenu::class)->tree($field, $where);
                 break;
