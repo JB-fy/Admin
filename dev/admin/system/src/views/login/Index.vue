@@ -44,7 +44,8 @@ const form = reactive({
         <ElDivider>
             <div style="font-size: 25px;">{{ t('common.login') }}</div>
         </ElDivider>
-        <ElForm :ref="(el:any) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules">
+        <ElForm :ref="(el: any) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules"
+            @keyup.enter="form.login.submit">
             <ElFormItem prop="account">
                 <ElInput v-model="form.login.data.account" :placeholder="t('common.account')">
                     <template #prefix>
@@ -54,7 +55,7 @@ const form = reactive({
             </ElFormItem>
             <ElFormItem prop="password">
                 <ElInput v-model="form.login.data.password" type="password" :placeholder="t('common.password')"
-                    :show-password="true" @keyup.enter="form.login.submit">
+                    :show-password="true">
                     <template #prefix>
                         <AutoiconEpLock />
                     </template>

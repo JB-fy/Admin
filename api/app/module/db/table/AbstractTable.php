@@ -578,7 +578,7 @@ abstract class AbstractTable
      *
      * @return self
      */
-    final public function resetStatus(): self
+    final public function resetParseData(): self
     {
         $this->tableRaw = '';
         $this->insert = [];
@@ -608,7 +608,6 @@ abstract class AbstractTable
     /*----------------解析 结束----------------*/
 
     /*----------------解析后处理（builder生成） 开始----------------*/
-
     /**
      * 获取Db构造器
      *
