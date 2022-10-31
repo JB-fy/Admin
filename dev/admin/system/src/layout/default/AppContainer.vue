@@ -5,7 +5,7 @@ const keepAliveStore = useKeepAliveStore()
 
 <template>
     <RouterView v-slot="{ Component, route }">
-        <Transition mode="out-in" name="transform">
+        <Transition mode="out-in" name="el-zoom-in-center">
             <KeepAlive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude"
                 :max="keepAliveStore.appContainerMax">
                 <component v-if="keepAliveStore.appContainerExclude.indexOf(route.path) === -1" :is="Component"
@@ -29,7 +29,7 @@ const keepAliveStore = useKeepAliveStore()
     </Suspense> -->
 </template>
 
-<style scoped>
+<!-- <style scoped>
 .transform-enter-active,
 .transform-leave-active {
     transition: opacity 0.3s ease;
@@ -40,4 +40,4 @@ const keepAliveStore = useKeepAliveStore()
 .transform-leave-to {
     opacity: 0;
 }
-</style>
+</style> -->
