@@ -605,6 +605,9 @@ abstract class AbstractTable
         if (!empty($this->join)) {
             $this->handleJoin();
         }
+        if ($this->model->isSoftDelete) {
+            $this->builder->where($this->getTable() . '.' . $this->model->fieldSoftDelete, '=', 0);
+        }
         return $this->builder;
     }
 
@@ -790,7 +793,7 @@ abstract class AbstractTable
         $this->getBuilder();
         if ($this->model->isSoftDelete) {
             return $this->builder->update([
-                $this->model->fieldSoftDelete => 1
+                $this->getTable() . '.' . $this->model->fieldSoftDelete => 1
             ]);
         }
         return $this->builder->delete();
