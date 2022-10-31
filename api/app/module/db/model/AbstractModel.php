@@ -13,7 +13,7 @@ abstract class AbstractModel
 {
     protected string $connection = '';  //默认连接
     protected string $table;   //默认表名
-    protected string $primaryKey = '';   //主键名
+    protected string $key = '';   //主键名
 
     protected bool $isSoftDelete = false;   //是否软删除
     protected string $fieldSoftDelete = 'isDelete';   //软删除字段。当isSoftDelete为true时才有效
@@ -38,7 +38,7 @@ abstract class AbstractModel extends Model
 {
     protected string $connection = '';  //默认连接
     protected string $table;   //默认表名
-    protected string $primaryKey = '';   //主键名
+    protected string $key = '';   //主键名
 
     protected array $column = [];   //全部列（正常都是固定的，分库分表也都一样）
 

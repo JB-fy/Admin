@@ -54,7 +54,7 @@ class SystemAdmin extends AbstractTable
                             $tableAuthRoleRelOfSystemAdminName,
                             $tableAuthRoleRelOfSystemAdminName . '.adminId',
                             '=',
-                            $this->getTable() . '.' . $this->getPrimaryKey()
+                            $this->getTable() . '.' . $this->getKey()
                         ]
                     ];
                 }

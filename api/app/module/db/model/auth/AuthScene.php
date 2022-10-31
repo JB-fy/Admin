@@ -9,5 +9,5 @@ use app\module\db\model\AbstractModel;
 class AuthScene extends AbstractModel
 {
     protected string $table = 'auth_scene';
-    protected string $primaryKey = 'sceneId';
+    protected string $key = 'sceneId';
 }

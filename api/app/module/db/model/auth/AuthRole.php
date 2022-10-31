@@ -9,5 +9,5 @@ use app\module\db\model\AbstractModel;
 class AuthRole extends AbstractModel
 {
     protected string $table = 'auth_role';
-    protected string $primaryKey = 'roleId';
+    protected string $key = 'roleId';
 }

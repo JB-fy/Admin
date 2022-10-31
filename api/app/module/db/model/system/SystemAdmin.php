@@ -9,5 +9,5 @@ use app\module\db\model\AbstractModel;
 class SystemAdmin extends AbstractModel
 {
     protected string $table = 'system_admin';
-    protected string $primaryKey = 'adminId';
+    protected string $key = 'adminId';
 }

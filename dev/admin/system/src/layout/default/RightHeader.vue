@@ -89,7 +89,7 @@ const menuTab = reactive({
 
                 <ElDropdown>
                     <ElLink :underline="false">
-                        <AutoiconEpSwitch />
+                        <AutoiconEpPlace />
                     </ElLink>
                     <template #dropdown>
                         <ElDropdownMenu v-for="(item, index) in <{}>tm('config.language')" :key="index">

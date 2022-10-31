@@ -9,5 +9,5 @@ use app\module\db\model\AbstractModel;
 class AuthAction extends AbstractModel
 {
     protected string $table = 'auth_action';
-    protected string $primaryKey = 'actionId';
+    protected string $key = 'actionId';
 }

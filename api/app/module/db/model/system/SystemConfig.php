@@ -9,5 +9,5 @@ use app\module\db\model\AbstractModel;
 class SystemConfig extends AbstractModel
 {
     protected string $table = 'system_config';
-    protected string $primaryKey = 'configId';
+    protected string $key = 'configId';
 }

@@ -29,7 +29,7 @@ abstract class AbstractTable
 
     /* final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
     {
-        $this->connection($connectionSelectData)->table($tableSelectData);
+        //$this->connection($connectionSelectData)->table($tableSelectData);
     } */
 
     /**
@@ -57,9 +57,9 @@ abstract class AbstractTable
      *
      * @return string
      */
-    final public function getPrimaryKey(): string
+    final public function getKey(): string
     {
-        return $this->model->primaryKey;
+        return $this->model->key;
     }
 
     /**
@@ -260,7 +260,7 @@ abstract class AbstractTable
     {
         switch ($key) {
             case 'id':
-                $this->insert[$index][$this->getPrimaryKey()] = $value;
+                $this->insert[$index][$this->getKey()] = $value;
                 return true;
             default:
                 //数据库不存在的字段过滤掉
@@ -284,7 +284,7 @@ abstract class AbstractTable
     {
         switch ($key) {
             case 'id':
-                $this->update[$this->getPrimaryKey()] = $value;
+                $this->update[$this->getKey()] = $value;
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -310,7 +310,7 @@ abstract class AbstractTable
                 $this->field['select'][] = $key;
                 return true;
             case 'id':
-                $this->field['select'][] = $this->getTable() . '.' . $this->getPrimaryKey();
+                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -336,10 +336,10 @@ abstract class AbstractTable
     {
         switch ($key) {
             case 'id':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getPrimaryKey(), $operator ?? '=', $value, $boolean ?? 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and']];
                 return true;
             case 'excId':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getPrimaryKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -362,7 +362,7 @@ abstract class AbstractTable
     {
         switch ($key) {
             case 'id':
-                $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTable() . '.' . $this->getPrimaryKey()]];
+                $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTable() . '.' . $this->getKey()]];
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -386,7 +386,7 @@ abstract class AbstractTable
     {
         switch ($key) {
             case 'id':
-                $this->having['having'][] = [$this->getTable() . '.' . $this->getPrimaryKey(), $operator ?? '=', $value, $boolean ?? 'and'];
+                $this->having['having'][] = [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and'];
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -410,7 +410,7 @@ abstract class AbstractTable
     {
         switch ($key) {
             case 'id':
-                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . $this->getPrimaryKey(), $value]];
+                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . $this->getKey(), $value]];
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -572,9 +572,43 @@ abstract class AbstractTable
     {
         return !empty($this->join);
     }
+
+    /**
+     * 重置解析数据，用于复用对象，为了不影响下一条sql生成执行（可选，依情况使用）
+     *
+     * @return self
+     */
+    final public function resetStatus(): self
+    {
+        $this->tableRaw = '';
+        $this->insert = [];
+        $this->update = [];
+        $this->field = [];
+        $this->where = [];
+        $this->group = [];
+        $this->having = [];
+        $this->order = [];
+        $this->join = [];
+
+        $this->fieldAfter = [];
+        return $this;
+    }
+
+    /**
+     * 重置分表分库数据，用于复用对象，为了不影响下一条sql生成执行（可选，依情况使用）
+     *
+     * @return self
+     */
+    final public function resetSelectData(): self
+    {
+        $this->connection = '';
+        $this->table = '';
+        return $this;
+    }
     /*----------------解析 结束----------------*/
 
     /*----------------解析后处理（builder生成） 开始----------------*/
+
     /**
      * 获取Db构造器
      *

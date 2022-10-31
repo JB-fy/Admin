@@ -9,5 +9,5 @@ use app\module\db\model\AbstractModel;
 class AuthMenu extends AbstractModel
 {
     protected string $table = 'auth_menu';
-    protected string $primaryKey = 'menuId';
+    protected string $key = 'menuId';
 }
