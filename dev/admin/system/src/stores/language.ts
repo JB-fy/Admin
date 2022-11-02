@@ -39,7 +39,7 @@ export const useLanguageStore = defineStore('language', {
       //i18n.global.locale = language //当i18n设置legacy: false，要使用i18n.global.locale.value
       i18n.global.locale.value = language
 
-      document.title = this.getWebTitle(router.currentRoute.value.path)
+      document.title = this.getWebTitle(router.currentRoute.value.fullPath)
       /**
        * 下面这几种情况，需要使用router.go(0)，强制刷新页面
        *    路由设置标题时，不能动态刷新
@@ -55,18 +55,18 @@ export const useLanguageStore = defineStore('language', {
       return ''
     },
     //获取页面标题
-    getPageTitle(path: string) {
+    getPageTitle(fullPath: string) {
       const menu = useAdminStore().menuList.find((item) => {
-        return item.url == path
+        return item.url == fullPath
       }) ?? (<any>router).getRoutes().find((item: any) => {
-        return item.path == path
+        return fullPath.indexOf(item.path) === 0
       })?.meta?.menu
       return this.getMenuTitle(menu)
     },
     //获取网站标题
-    getWebTitle(path: string) {
+    getWebTitle(fullPath: string) {
       let webTitle = i18n.global.t('config.webTitle')
-      const title = this.getPageTitle(path)
+      const title = this.getPageTitle(fullPath)
       if (title) {
         webTitle += '-' + title
       }

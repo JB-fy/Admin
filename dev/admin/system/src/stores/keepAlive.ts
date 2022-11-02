@@ -21,14 +21,13 @@ export const useKeepAliveStore = defineStore('keepAlive', {
   getters: {
     appContainerInclude: (state): string[] => {
       const include: string[] = []
-      router.getRoutes().forEach((item) => {
-        //菜单允许缓存，且打开菜单才做缓存。打开菜单才做缓存是为在菜单关闭时实现自动清理缓存，否则关闭菜单还得清理缓存
-        if (item.meta.keepAlive && useAdminStore().menuTabList.findIndex((menuTab) => {
-          return menuTab.path === item.path
-        }) !== -1) {
-          //include.push(item.components.default.name)
-          include.push(item.path)
-        }
+      useAdminStore().menuTabList.forEach((menuTab) => {
+        router.getRoutes().forEach((item) => {
+          if(menuTab.url.indexOf(item.path) === 0 && item.meta.keepAlive){
+            //include.push(item.components.default.name)
+            include.push(item.path)
+          }
+        })
       })
       return include
     },
@@ -36,11 +35,11 @@ export const useKeepAliveStore = defineStore('keepAlive', {
   actions: {
     /**
      * 删除不允许缓存的组件
-     * @param {*} path  路径
+     * @param {*} fullPath  路径
      */
-    removeAppContainerExclude(path: string) {
+    removeAppContainerExclude(fullPath: string) {
       this.appContainerExclude = this.appContainerExclude.filter((item) => {
-        return item !== path
+        return item !== fullPath
       })
     },
     /**
@@ -49,13 +48,12 @@ export const useKeepAliveStore = defineStore('keepAlive', {
      *          1：AppContainer.vue文件内component标签加上判断是否允许缓存，允许才显示界面（v-if="keepAliveStore.appContainerExclude.indexOf(route.path) === -1"）
      *          2：设置路由不允许缓存，不显示页面
      *          3：打开路由，路由后置守卫afterEach中重新设置成允许缓存，显示页面
-     * @param {*} path  菜单标签的路由路径
+     * @param {*} fullPath  菜单标签的路由路径
      */
-    refreshMenuTab(path: string) {
-      this.appContainerExclude.push(path)
-      const currentPath = router.currentRoute.value.path
-      if (path === currentPath) {
-        router.push(path)
+    refreshMenuTab(fullPath: string) {
+      this.appContainerExclude.push(fullPath)
+      if (fullPath === router.currentRoute.value.fullPath) {
+        router.push(router.currentRoute.value.fullPath)
       }
     },
   }

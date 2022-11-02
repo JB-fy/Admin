@@ -8,7 +8,7 @@ export const useAdminStore = defineStore('admin', {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
       menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
       menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
-      menuTabList: [] as { menuName: string, title: { [propName: string]: string }, path: string, icon: string, closable: boolean }[], //菜单标签列表
+      menuTabList: [] as { menuName: string, title: { [propName: string]: string }, url: string, icon: string, closable: boolean }[], //菜单标签列表
     }
   },
   getters: {
@@ -17,22 +17,21 @@ export const useAdminStore = defineStore('admin', {
     },
     //获取当前菜单的菜单链
     getCurrentMenuChain: (state) => {
-      const currentRoute = router.currentRoute.value
       const menu = state.menuList.find((item) => {
-        return item.url == currentRoute.path
+        return item.url == router.currentRoute.value.fullPath
       })
       //菜单中没有，就直接返回路由中的数据。例如：个人中心页面
       if (!menu?.menuChain) {
         return [{
-          title: useLanguageStore().getMenuTitle(currentRoute.meta?.menu),
-          path: currentRoute.path,
-          icon: currentRoute.meta?.menu?.icon,
+          title: useLanguageStore().getMenuTitle(router.currentRoute.value.meta?.menu),
+          url: router.currentRoute.value.fullPath,
+          icon: router.currentRoute.value.meta?.menu?.icon,
         }]
       }
       return menu.menuChain.map((item) => {
         return {
           title: useLanguageStore().getMenuTitle(item),
-          path: item.url,
+          url: item.url,
           icon: item.icon,
         }
       })
@@ -43,18 +42,18 @@ export const useAdminStore = defineStore('admin', {
         return item.url == '/'
       }) ?? (<any>router).getRoutes().find((item: any) => {
         return item.path == '/'
-      }).meta
+      })?.meta?.menu
       const menuTabList = menu ? [{
         menuName: menu.menuName,
         title: menu.title,
-        path: menu.url,
+        url: menu?.url ?? '/',
         icon: menu.icon,
         closable: false,
       }, ...state.menuTabList] : [...state.menuTabList]
       return menuTabList.map((item) => {
         return {
           title: useLanguageStore().getMenuTitle(item),
-          path: item.path,
+          url: item.url,
           icon: item.icon,
           closable: item.closable,
         }
@@ -66,19 +65,19 @@ export const useAdminStore = defineStore('admin', {
      * 推入菜单标签列表
      * @param menuTab 
      */
-    pushMenuTabList(menuTab: { menuName: string, title: { [propName: string]: string }, path: string, icon: string }) {
-      if (menuTab.path == '/') {
+    pushMenuTabList(menuTab: { menuName: string, title: { [propName: string]: string }, url: string, icon: string }) {
+      if (menuTab.url == '/') {
         return
       }
       let result = this.menuTabList.findIndex((item) => {
-        return item.path === menuTab.path
+        return item.url === menuTab.url
       })
       if (result !== -1) {
         return
       }
       /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 开始--------*/
       const menu = this.menuList.find((item) => {
-        return item.url == menuTab.path
+        return item.url == menuTab.url
       })
       if (menu) {
         menuTab.menuName = menu.menuName
@@ -93,70 +92,65 @@ export const useAdminStore = defineStore('admin', {
     },
     /**
      * 关闭自身菜单标签
-     * 
-     * @param path 
+     * @param fullPath 
      */
-    closeSelfMenuTab(path: string) {
+    closeSelfMenuTab(fullPath: string) {
       this.menuTabList = this.menuTabList.filter((item) => {
-        return !item.closable || item.path !== path
+        return !item.closable || item.url !== fullPath
       })
-      const currentPath = router.currentRoute.value.path
-      if (path === currentPath) {
-        router.push(this.menuTabList?.[this.menuTabList.length - 1]?.path ?? '/')
+      if (fullPath === router.currentRoute.value.fullPath) {
+        router.push(this.menuTabList?.[this.menuTabList.length - 1]?.url ?? '/')
       }
     },
     /**
      * 关闭其他菜单标签
-     * @param {*} path  菜单标签的路由路径
+     * @param {*} fullPath  菜单标签的路由路径
      */
-    closeOtherMenuTab(path: string) {
+    closeOtherMenuTab(fullPath: string) {
       this.menuTabList = this.menuTabList.filter((item) => {
-        return !item.closable || item.path === path
+        return !item.closable || item.url === fullPath
       })
-      const currentPath = router.currentRoute.value.path
-      if (path !== currentPath) {
-        router.push(path)
+      if (fullPath !== router.currentRoute.value.fullPath) {
+        router.push(fullPath)
       }
     },
     /**
      * 关闭左侧菜单标签
-     * @param {*} path  菜单标签的路由路径
+     * @param {*} fullPath  菜单标签的路由路径
      */
-    closeLeftMenuTab(path: string) {
+    closeLeftMenuTab(fullPath: string) {
       const leftIndex = this.menuTabList.findIndex((item) => {
-        return item.path === path
+        return item.url === fullPath
       })
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index >= leftIndex
       })
-      const currentPath = router.currentRoute.value.path
-      if (path !== currentPath) {
+      if (fullPath !== router.currentRoute.value.fullPath) {
         const currentLeftIndex = this.menuTabList.findIndex((item) => {
-          return item.path === currentPath
+          return item.url === router.currentRoute.value.fullPath
         })
         if (currentLeftIndex === -1) {
-          router.push(path)
+          router.push(fullPath)
         }
       }
     },
     /**
      * 关闭右侧菜单标签
-     * @param {*} path  菜单标签的路由路径
+     * @param {*} fullPath  菜单标签的路由路径
      */
-    closeRightMenuTab(path: string) {
+    closeRightMenuTab(fullPath: string) {
       const rightIndex = this.menuTabList.findIndex((item) => {
-        return item.path === path
+        return item.url === fullPath
       })
       this.menuTabList = this.menuTabList.filter((item, index) => {
         return !item.closable || index <= rightIndex
       })
-      const currentPath = router.currentRoute.value.path
-      if (path !== currentPath) {
+      if (fullPath !== router.currentRoute.value.fullPath) {
         const currentRightIndex = this.menuTabList.findIndex((item) => {
-          return item.path === currentPath
+          return item.url === router.currentRoute.value.fullPath
         })
         if (currentRightIndex === -1) {
-          router.push(path)
+          router.push(fullPath)
         }
       }
     },
@@ -167,7 +161,7 @@ export const useAdminStore = defineStore('admin', {
       this.menuTabList = this.menuTabList.filter((item) => {
         return !item.closable
       })
-      router.push(this.menuTabList?.[this.menuTabList.length - 1]?.path ?? '/')
+      router.push(this.menuTabList?.[this.menuTabList.length - 1]?.url ?? '/')
     },
     /**
      * 登录

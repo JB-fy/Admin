@@ -8,7 +8,7 @@ let aaaa = ref(false)
 
 <template>
     <div>
-        <div @click="aaaa = true">阿牛</div>
+        <div @click="aaaa = true">点击</div>
         <el-input v-model="input" placeholder="请输入" />
         <!-- <el-dialog v-model="aaaa" title="Shipping address">
             111111

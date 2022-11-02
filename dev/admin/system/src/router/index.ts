@@ -104,6 +104,13 @@ const initRouteList = [
                 },
                 meta: { keepAlive: true, isAuth: true, menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
             },
+            {
+                path: '/thirdUrl',
+                component: {
+                    template: '<iframe :src="$route.query.url" frameborder="0" style="width: 100%; height: calc(100vh - 194px);"></iframe>',
+                },
+                meta: { keepAlive: true, isAuth: true, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
+            },
         ]
     },
     {
@@ -133,9 +140,9 @@ router.beforeEach(async (to: any) => {
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
             adminStore.logout(to.path)
             return false */
-            return '/login?redirect=' + to.path
+            return '/login?redirect=' + to.fullPath
         }
-        document.title = useLanguageStore().getWebTitle(to.path)
+        document.title = useLanguageStore().getWebTitle(to.fullPath)
         return true
     }
     if (to.path === '/login') {
@@ -164,17 +171,17 @@ router.beforeEach(async (to: any) => {
     if (to.meta.isAuth) {
         adminStore.pushMenuTabList({
             ...to.meta?.menu,
-            path: to.path,
+            url: to.fullPath,
         })
     }
     /**--------设置菜单标签 结束--------**/
 
-    document.title = useLanguageStore().getWebTitle(to.path)
+    document.title = useLanguageStore().getWebTitle(to.fullPath)
     return true
 })
 
 router.afterEach((to) => {
-    useKeepAliveStore().removeAppContainerExclude(to.path)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
+    useKeepAliveStore().removeAppContainerExclude(to.fullPath)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
 })
 
 export default router

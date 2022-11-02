@@ -14,12 +14,12 @@ const subMenuTitle = async () => {
 }
 const router = useRouter()
 const route = useRoute()
-const menuSelect = (path: string) => {
+const menuSelect = (fullPath: string) => {
     subMenuTitle()    //菜单激活也会导致bug。:router="true"会使这里无效，虽有执行，但不能去除css属性。可能路由跳转后才追加css属性
-    if (path.indexOf('http') === 0) {
-        window.open(path, '_blank')
+    if (fullPath.indexOf('http') === 0) {
+        window.open(fullPath, '_blank')
     } else {
-        router.push(path)
+        router.push(fullPath)
     }
 }
 const menuOpen = () => {
@@ -33,7 +33,7 @@ const menuClose = () => {
 
 <template>
     <ElScrollbar>
-        <ElMenu :default-active="route.path" :collapse="settingStore.leftMenuFold" :router="false" :unique-opened="true"
+        <ElMenu :default-active="route.fullPath" :collapse="settingStore.leftMenuFold" :router="false" :unique-opened="true"
             background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" @select="menuSelect"
             @open="menuOpen" @close="menuClose">
             <LeftMenuItem :tree="adminStore.menuTree" />
