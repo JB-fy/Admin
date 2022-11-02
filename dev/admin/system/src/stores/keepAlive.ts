@@ -4,16 +4,6 @@ import router from '@/router'
 export const useKeepAliveStore = defineStore('keepAlive', {
   state: () => {
     return {
-      /* appContainerInclude: (() => {
-        const include: string[] = []
-        router.getRoutes().forEach((item) => {
-          if (item.meta.keepAlive) {
-            //include.push(item.components.default.name)
-            include.push(item.path)
-          }
-        })
-        return include
-      })(), */
       appContainerExclude: [] as string[], //不允许缓存的路由路径列表，这里主要用于实现缓存刷新（动态设置页面组件名称name时，用路径命名，故这里面填写路径）
       appContainerMax: 10 as number   //缓存组件最大数量
     }
@@ -23,9 +13,17 @@ export const useKeepAliveStore = defineStore('keepAlive', {
       const include: string[] = []
       useAdminStore().menuTabList.forEach((menuTab) => {
         router.getRoutes().forEach((item) => {
-          if(menuTab.url.indexOf(item.path) === 0 && item.meta.keepAlive){
-            //include.push(item.components.default.name)
-            include.push(item.path)
+          if (item.meta.keepAlive) {
+            const indexTmp = item.path.indexOf('/:')
+            if (indexTmp === -1) {
+              if (menuTab.url.indexOf(item.path) === 0) {
+                include.push(item.path)
+              }
+            } else {
+              if (menuTab.url.indexOf(item.path.slice(0, indexTmp)) === 0 && item.meta.keepAlive) {
+                include.push(item.path)
+              }
+            }
           }
         })
       })

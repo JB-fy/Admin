@@ -59,7 +59,12 @@ export const useLanguageStore = defineStore('language', {
       const menu = useAdminStore().menuList.find((item) => {
         return item.url == fullPath
       }) ?? (<any>router).getRoutes().find((item: any) => {
-        return fullPath.indexOf(item.path) === 0
+          const indexTmp = item.path.indexOf('/:')
+          if (indexTmp === -1) {
+            return fullPath.indexOf(item.path) === 0
+          } else {
+            return fullPath.indexOf(item.path.slice(0, indexTmp)) === 0
+          }
       })?.meta?.menu
       return this.getMenuTitle(menu)
     },

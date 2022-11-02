@@ -105,7 +105,7 @@ const initRouteList = [
                 meta: { keepAlive: true, isAuth: true, menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
             },
             {
-                path: '/thirdUrl',
+                path: '/thirdUrl/:userId?',
                 component: {
                     template: '<iframe :src="$route.query.url" frameborder="0" style="width: 100%; height: calc(100vh - 194px);"></iframe>',
                 },
