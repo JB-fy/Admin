@@ -8,7 +8,7 @@ export const useAdminStore = defineStore('admin', {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
       menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
       menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
-      menuTabList: [] as { menuName: string, title: { [propName: string]: string }, url: string, icon: string, closable: boolean }[], //菜单标签列表
+      menuTabList: [] as { url: string, keepAlive: boolean, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表
     }
   },
   getters: {
@@ -48,6 +48,7 @@ export const useAdminStore = defineStore('admin', {
         title: menu.title,
         url: menu?.url ?? '/',
         icon: menu.icon,
+        keepAlive: menu?.keepAlive ?? true,
         closable: false,
       }, ...state.menuTabList] : [...state.menuTabList]
       return menuTabList.map((item) => {
@@ -55,6 +56,7 @@ export const useAdminStore = defineStore('admin', {
           title: useLanguageStore().getMenuTitle(item),
           url: item.url,
           icon: item.icon,
+          keepAlive: item.keepAlive,
           closable: item.closable,
         }
       })
@@ -65,7 +67,7 @@ export const useAdminStore = defineStore('admin', {
      * 推入菜单标签列表
      * @param menuTab 
      */
-    pushMenuTabList(menuTab: { menuName: string, title: { [propName: string]: string }, url: string, icon: string }) {
+    pushMenuTabList(menuTab: { url: string, keepAlive: boolean, menuName: string, title: { [propName: string]: string }, icon: string }) {
       if (menuTab.url == '/') {
         return
       }

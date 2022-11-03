@@ -12,20 +12,9 @@ export const useKeepAliveStore = defineStore('keepAlive', {
     appContainerInclude: (state): string[] => {
       const include: string[] = []
       useAdminStore().menuTabList.forEach((menuTab) => {
-        router.getRoutes().forEach((item) => {
-          if (item.meta.keepAlive) {
-            const indexTmp = item.path.indexOf('/:')
-            if (indexTmp === -1) {
-              if (menuTab.url.indexOf(item.path) === 0) {
-                include.push(item.path)
-              }
-            } else {
-              if (menuTab.url.indexOf(item.path.slice(0, indexTmp)) === 0 && item.meta.keepAlive) {
-                include.push(item.path)
-              }
-            }
-          }
-        })
+        if (menuTab.keepAlive) {
+          include.push(menuTab.url)
+        }
       })
       return include
     },

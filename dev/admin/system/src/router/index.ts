@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout/default/Index.vue'
 
 /**
- * meta说明：（menuName,title,icon三个，当路由在后端数据库菜单表中未记录时必须设置，反之不用设置。例如：个人中心不在用户菜单中，则需要设置）
+ * meta说明：（当路由在后端数据库菜单表中未记录时，menu必须设置，反之不用设置。例如：个人中心不在用户菜单中，则需要设置）
  *      keepAlive: true,    //是否可以缓存
  *      isAuth: true,   //是否需要权限验证  
  *      menu: { menuName: '菜单名称', title: {'en': 'homepage', 'zh-cn': '主页',...}, icon:'图标'}，    //菜单配置
@@ -109,7 +109,7 @@ const initRouteList = [
                 component: {
                     template: '<iframe :src="$route.query.url" frameborder="0" style="width: 100%; height: calc(100vh - 194px);"></iframe>',
                 },
-                meta: { keepAlive: true, isAuth: true, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
+                meta: { keepAlive: false, isAuth: true, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
             },
         ]
     },
@@ -170,8 +170,9 @@ router.beforeEach(async (to: any) => {
     //404不放入菜单标签中
     if (to.meta.isAuth) {
         adminStore.pushMenuTabList({
-            ...to.meta?.menu,
             url: to.fullPath,
+            ...to.meta?.menu,
+            keepAlive: to.meta?.keepAlive ?? false,
         })
     }
     /**--------设置菜单标签 结束--------**/
