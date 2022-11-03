@@ -25,7 +25,7 @@ export const useAdminStore = defineStore('admin', {
         return [{
           title: useLanguageStore().getMenuTitle(router.currentRoute.value.meta?.menu),
           url: router.currentRoute.value.fullPath,
-          icon: router.currentRoute.value.meta?.menu?.icon,
+          icon: (router.currentRoute.value.meta?.menu as any)?.icon,
         }]
       }
       return menu.menuChain.map((item) => {
