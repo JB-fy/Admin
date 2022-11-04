@@ -35,27 +35,34 @@ class LogOfRequest extends AbstractAspect
         $startTime = microtime(true);
         try {
             $response = $proceedingJoinPoint->process();
-            $responseData = json_encode($response, JSON_UNESCAPED_UNICODE);
+            $responseBody = json_encode($response, JSON_UNESCAPED_UNICODE);
             /*if ($response instanceof Response) {
-                $responseData = json_encode($response->getData(), JSON_UNESCAPED_UNICODE);
+                $responseBody = json_encode($response->getData(), JSON_UNESCAPED_UNICODE);
             } else {
-                $responseData = json_encode($response, JSON_UNESCAPED_UNICODE);
+                $responseBody = json_encode($response, JSON_UNESCAPED_UNICODE);
             }*/
             return $response;
         } catch (\Throwable $e) {
             if ($e instanceof \app\exception\Json) {
                 $responseData = $e->getResponseData();
                 //unset($responseData['data']['list']); //列表数据太大,记录会给数据库太大压力
-                $responseData = json_encode($responseData, JSON_UNESCAPED_UNICODE);
+                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
+            } elseif ($e instanceof \think\exception\ValidateException) {
+                $responseData = [
+                    'code' => '000999',
+                    'msg' => $e->getMessage(),
+                    'data' => [],
+                ];
+                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
             /* } elseif ($e instanceof \app\exception\Raw) {
-                $responseData = json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE); */
+                $responseBody = json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE); */
             } else {
-                $responseData = json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE);
+                $responseBody = json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE);
             }
             throw $e;
         } finally {
             $endTime = microtime(true);
-            $this->logRequest($startTime, $endTime, $responseData);
+            $this->logRequest($startTime, $endTime, $responseBody);
         }
     }
 
@@ -64,10 +71,10 @@ class LogOfRequest extends AbstractAspect
      *
      * @param float $startTime
      * @param float $endTime
-     * @param string $responseData
+     * @param string $responseBody
      * @return void
      */
-    public function logRequest(float $startTime, float $endTime, string $responseData)
+    public function logRequest(float $startTime, float $endTime, string $responseBody)
     {
         /* $request = request();
         $LogData = [
@@ -75,7 +82,7 @@ class LogOfRequest extends AbstractAspect
             'requestData' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
             'requestHeaders' => json_encode($request->header(), JSON_UNESCAPED_UNICODE),
             'runTime' => round(($endTime - $startTime) * 1000, 3),
-            'responseData' => $responseData,
+            'responseBody' => $responseBody,
         ];
         container(SystemLogOfRequest::class, true)->add($LogData); */
     }

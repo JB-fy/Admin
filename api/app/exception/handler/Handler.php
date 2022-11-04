@@ -17,8 +17,7 @@ class Handler extends AbstractHandler
         } */
         if ($e instanceof \app\exception\Json) {
             return $e->getResponse();
-        }
-        if ($e instanceof \think\exception\ValidateException) {
+        } elseif ($e instanceof \think\exception\ValidateException) {
             $responseData = [
                 'code' => '000999',
                 'msg' => $e->getMessage(),
@@ -26,8 +25,7 @@ class Handler extends AbstractHandler
             ];
             $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
             return response($responseBody)->withHeader('Content-Type', 'application/json');
-        }
-        if ($e instanceof \app\exception\Raw) {
+        } elseif ($e instanceof \app\exception\Raw) {
             return $e->getResponse();
         }
         return parent::render($request, $e);
