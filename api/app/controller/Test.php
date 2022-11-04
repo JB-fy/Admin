@@ -68,6 +68,7 @@ class Test extends AbstractController
         //return response('hello webman');
         //throwSuccessJson([]);
         //sleep(10);
+        //throwRaw('哈哈阿');
         throwFailJson('000999');
     }
 }

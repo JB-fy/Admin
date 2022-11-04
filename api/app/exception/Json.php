@@ -27,33 +27,28 @@ class Json extends AbstractException
     }
 
     /**
-     * 获取apiCode
+     * 获取response
      *
-     * @return string
+     * @return \support\Response
      */
-    final public function getApiCode(): string
+    final public function getResponse(): \support\Response
     {
-        return $this->apiCode;
+        $responseBody = json_encode($this->getResponseData(), JSON_UNESCAPED_UNICODE);
+        return response($responseBody)->withHeader('Content-Type', 'application/json');
     }
 
     /**
-     * 获取apiData
-     *
-     * @return string
-     */
-    final public function getApiMsg(): string
-    {
-        return $this->apiMsg;
-    }
-
-    /**
-     * 获取apiCode
+     * 获取responseData
      *
      * @return array
      */
-    final public function getApiData(): array
+    final public function getResponseData(): array
     {
-        return $this->apiData;
+        return [
+            'code' => $this->apiCode,
+            'msg' => $this->apiMsg,
+            'data' => $this->apiData,
+        ];
     }
 
     /**

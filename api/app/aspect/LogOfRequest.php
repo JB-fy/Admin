@@ -44,11 +44,7 @@ class LogOfRequest extends AbstractAspect
             return $response;
         } catch (\Throwable $e) {
             if ($e instanceof \app\exception\Json) {
-                $responseData = [
-                    'code' => $e->getApiCode(),
-                    'msg' => $e->getApiMsg(),
-                    'data' => $e->getApiData(),
-                ];
+                $responseData = $e->getResponseData();
                 //unset($responseData['data']['list']); //列表数据太大,记录会给数据库太大压力
                 $responseData = json_encode($responseData, JSON_UNESCAPED_UNICODE);
             /* } elseif ($e instanceof \app\exception\Raw) {

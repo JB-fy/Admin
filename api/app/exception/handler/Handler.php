@@ -12,14 +12,11 @@ class Handler extends AbstractHandler
 {
     public function render(Request $request, Throwable $e): Response
     {
+        /* if ($e instanceof \app\exception\AbstractException) {
+            return $e->getResponse();
+        } */
         if ($e instanceof \app\exception\Json) {
-            $responseData = [
-                'code' => $e->getApiCode(),
-                'msg' => $e->getApiMsg(),
-                'data' => $e->getApiData(),
-            ];
-            $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
-            return response($responseBody)->withHeader('Content-Type', 'application/json');
+            return $e->getResponse();
         }
         if ($e instanceof \think\exception\ValidateException) {
             $responseData = [
@@ -27,18 +24,11 @@ class Handler extends AbstractHandler
                 'msg' => $e->getMessage(),
                 'data' => [],
             ];
-            /* $msg = $e->getError();
-            if (is_array($msg)) {
-                $responseData['msg'] = trans($responseData['code'], [], 'code');
-                $responseData['data'] = $msg;
-            } else {
-                $responseData['msg'] = $msg;
-            } */
             $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
             return response($responseBody)->withHeader('Content-Type', 'application/json');
         }
         if ($e instanceof \app\exception\Raw) {
-            return response($e->getMessage());
+            return $e->getResponse();
         }
         return parent::render($request, $e);
     }

@@ -6,6 +6,8 @@ namespace app\exception;
 
 class Raw extends AbstractException
 {
+    protected string $raw;
+
     /**
      * 构造函数
      *
@@ -13,6 +15,16 @@ class Raw extends AbstractException
      */
     public function __construct(string $raw)
     {
-        parent::__construct($raw);
+        $this->raw = $raw;
+    }
+
+    /**
+     * 获取response
+     *
+     * @return \support\Response
+     */
+    final public function getResponse(): \support\Response
+    {
+        return response($this->raw);
     }
 }
