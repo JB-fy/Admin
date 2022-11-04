@@ -13,7 +13,13 @@ class Handler extends AbstractHandler
     public function render(Request $request, Throwable $e): Response
     {
         if ($e instanceof \app\exception\Json) {
-            return response($e->getMessage())->withHeader('Content-Type', 'application/json');
+            $responseData = [
+                'code' => $e->getApiCode(),
+                'msg' => $e->getApiMsg(),
+                'data' => $e->getApiData(),
+            ];
+            $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
+            return response($responseBody)->withHeader('Content-Type', 'application/json');
         }
         if ($e instanceof \think\exception\ValidateException) {
             $responseData = [

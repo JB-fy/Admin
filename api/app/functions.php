@@ -13,7 +13,7 @@ declare(strict_types=1);
  */
 function throwSuccessJson(array $data = [], string $code = '000000', string $msg = '')
 {
-    throw container(\app\exception\Json::class, true, ['code' => $code, 'data' => $data, 'msg' => $msg]);
+    throw container(\app\exception\Json::class, true, ['code' => $code, 'msg' => $msg, 'data' => $data]);
 }
 
 /**
@@ -27,7 +27,7 @@ function throwSuccessJson(array $data = [], string $code = '000000', string $msg
  */
 function throwFailJson(string $code, string $msg = '', array $data = [])
 {
-    throw container(\app\exception\Json::class, true, ['code' => $code, 'data' => $data, 'msg' => $msg]);
+    throw container(\app\exception\Json::class, true, ['code' => $code, 'msg' => $msg, 'data' => $data]);
 }
 
 /**

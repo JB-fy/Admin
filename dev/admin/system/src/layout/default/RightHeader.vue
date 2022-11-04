@@ -78,9 +78,6 @@ const menuTab = reactive({
                 </ElLink>
 
                 <ElLink :underline="false">
-                    <AutoiconEpLock />
-                </ElLink>
-                <ElLink :underline="false">
                     <AutoiconEpSearch />
                 </ElLink>
                 <ElLink :underline="false">
