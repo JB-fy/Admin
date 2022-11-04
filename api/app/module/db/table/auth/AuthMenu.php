@@ -28,9 +28,7 @@ class AuthMenu extends AbstractTable
                 $this->field['select'][] = 'menuId';
                 $this->field['select'][] = 'pid';
 
-                $this->order[] = ['method' => 'orderBy', 'param' => ['pid', 'asc']];
-                $this->order[] = ['method' => 'orderBy', 'param' => ['sort', 'asc']];
-                $this->order[] = ['method' => 'orderBy', 'param' => ['menuId', 'asc']];
+                $this->orderOfAlone('menuTree');    //排序方式
                 return true;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
                 $this->fieldAfter[] = 'showMenu';   //需做后续处理
@@ -40,6 +38,25 @@ class AuthMenu extends AbstractTable
                 //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extendData, "$.title")) AS title'); //不知道怎么直接转成对象返回
                 $this->field['select'][] = 'extendData->url AS url';
                 $this->field['select'][] = 'extendData->icon AS icon';
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 解析order（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return boolean
+     */
+    protected function orderOfAlone(string $key, $value = null): bool
+    {
+        switch ($key) {
+            case 'menuTree':
+                $this->order[] = ['method' => 'orderBy', 'param' => ['pid', 'asc']];
+                $this->order[] = ['method' => 'orderBy', 'param' => ['sort', 'asc']];
+                $this->order[] = ['method' => 'orderBy', 'param' => ['menuId', 'asc']];
                 return true;
         }
         return false;

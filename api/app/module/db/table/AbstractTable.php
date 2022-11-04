@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace app\module\db\table;
 
-use Illuminate\Database\Query\Builder;
 use support\Db;
 
 abstract class AbstractTable
@@ -37,7 +36,7 @@ abstract class AbstractTable
      *
      * @return string
      */
-    public function getConnection(): string
+    final public function getConnection(): string
     {
         return empty($this->connection) ? $this->model->connection : $this->connection;
     }
@@ -47,7 +46,7 @@ abstract class AbstractTable
      *
      * @return string
      */
-    public function getTable(): string
+    final public function getTable(): string
     {
         return empty($this->table) ? $this->model->table : $this->table;
     }
@@ -448,7 +447,7 @@ abstract class AbstractTable
      * @param [type] $value
      * @return boolean
      */
-    final protected function updateOfAlone(string $key, $value): bool
+    final protected function updateOfAlone(string $key, $value = null): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -540,7 +539,7 @@ abstract class AbstractTable
      * @param [type] $value
      * @return boolean
      */
-    protected function orderOfAlone(string $key, $value): bool
+    protected function orderOfAlone(string $key, $value = null): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -607,18 +606,18 @@ abstract class AbstractTable
     }
     /*----------------解析 结束----------------*/
 
-    /*----------------解析后处理（builder生成） 开始----------------*/
+    /*----------------解析后处理 开始----------------*/
     /**
      * 获取Db构造器
      *
-     * @return Builder
+     * @return \Illuminate\Database\Query\Builder
      */
-    final public function getBuilder(): Builder
+    final public function getBuilder(): \Illuminate\Database\Query\Builder
     {
         if (empty($this->tableRaw)) {
-            $this->builder = Db::table($this->getTable(), null, $this->getConnection());
+            $this->builder = Db::connection($this->getConnection())->table($this->getTable());
         } else {
-            $this->builder = Db::table($this->tableRaw, null, $this->getConnection());
+            $this->builder = Db::connection($this->getConnection())->table($this->tableRaw);
         }
         if (!empty($this->field)) {
             $this->handleField();
@@ -744,7 +743,7 @@ abstract class AbstractTable
         }
         return $this;
     }
-    /*----------------解析后处理（builder生成） 结束----------------*/
+    /*----------------解析后处理 结束----------------*/
 
     /*----------------封装部分方法方便使用 开始----------------*/
     /**
