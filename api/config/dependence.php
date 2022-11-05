@@ -17,6 +17,13 @@ use app\module\db\table\auth\AuthScene;
 use Psr\Container\ContainerInterface;
 
 return [
+    /**
+     * 这里定义的依赖注入，使用时必须特别注意。以下面为例说明
+     *  container('systemAdminJwt')   第一次使用时，读取一次配置，随后缓存在容器内
+     *  container('systemAdminJwt', true) 每次使用都会读取配置
+     *  由于配置不会经常改动，不建议每次使用都读取配置
+     *  但使用container('systemAdminJwt')，必须在更改配置后，重启webman服务
+     */
     'systemAdminJwt' => function (ContainerInterface $container) {
         $config = container(AuthScene::class, true)->where(['sceneCode' => 'systemAdmin'])->getBuilder()->value('sceneConfig');
         $config = json_decode($config, true);

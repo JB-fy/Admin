@@ -56,7 +56,7 @@ class Login extends AbstractService
                 $payload = [
                     'id' => $info->adminId
                 ];
-                $systemAdminJwt = container($type . 'Jwt');
+                $systemAdminJwt = container('systemAdminJwt', true);   //如果
                 $token = $systemAdminJwt->createToken($payload);
 
                 //缓存token（选做。限制多地登录，多设备登录等情况下可用）
@@ -88,7 +88,7 @@ class Login extends AbstractService
                 if (empty($token)) {
                     throwFailJson('001400');
                 }
-                $systemAdminJwt = container($type . 'Jwt');
+                $systemAdminJwt = container('systemAdminJwt');
                 $payload = $systemAdminJwt->verifyToken($token);
                 /**--------验证token 结束--------**/
 
