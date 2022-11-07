@@ -13,15 +13,15 @@ const saveDrawer = reactive({
 const saveForm = reactive({
     ref: null as any,
     data: {
-        account: '',
-        password: ''
+        sceneName: '',
+        sceneCode: ''
     },
     rules: {
-        account: [
-            { type: 'string', required: true, min: 4, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 4, max: 30 }) }
+        sceneName: [
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
-        password: [
-            { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
+        sceneCode: [
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ]
     },
     loading: false,
@@ -45,23 +45,16 @@ const saveForm = reactive({
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveDrawer.visible" title="新增" size="50%"
             :show-close="true" :before-close="saveDrawer.handleClose" custom-class="saveDrawer">
             <ElScrollbar>
-                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules">
-                    <ElFormItem prop="account">
-                        <ElInput v-model="saveForm.data.account" :placeholder="t('common.account')">
-                            <template #prefix>
-                                <AutoiconEpUser />
-                            </template>
-                        </ElInput>
+                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
+                    label-width="auto" :status-icon="true">
+                    <ElFormItem label="名称" prop="sceneName">
+                        <ElInput v-model="saveForm.data.sceneName" placeholder="名称" />
                     </ElFormItem>
-                    <ElFormItem prop="password">
-                        <ElInput v-model="saveForm.data.password" type="password" :placeholder="t('common.password')"
-                            :show-password="true">
-                            <template #prefix>
-                                <AutoiconEpLock />
-                            </template>
-                        </ElInput>
+                    <ElFormItem label="场景标识" prop="sceneCode">
+                        <ElInput v-model="saveForm.data.sceneCode" placeholder="标识" />
                     </ElFormItem>
                 </ElForm>
+                <div style="text-align: center; font-size: 300px; color: #409EFF;">场景列表</div>
             </ElScrollbar>
             <template #footer>
                 <ElButton @click="saveDrawer.ref.handleClose()">{{ t('common.cancel') }}</ElButton>
@@ -74,7 +67,22 @@ const saveForm = reactive({
 </template>
 
 <style scoped>
+:deep(.saveDrawer .el-drawer__header) {
+    box-shadow: var(--el-box-shadow-lighter);
+    padding: 10px;
+    margin-bottom: 0px;
+}
+
 :deep(.saveDrawer .el-drawer__body) {
     padding: 0;
+}
+
+:deep(.saveDrawer .el-form) {
+    margin: 20px;
+}
+
+:deep(.saveDrawer .el-drawer__footer) {
+    box-shadow: var(--el-box-shadow-lighter);
+    padding: 10px;
 }
 </style>
