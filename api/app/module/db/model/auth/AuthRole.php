@@ -8,6 +8,6 @@ use app\module\db\model\AbstractModel;
 
 class AuthRole extends AbstractModel
 {
-    protected string $table = 'auth_role';
-    protected string $key = 'roleId';
+    protected $table = 'auth_role';
+    protected $primaryKey = 'roleId';
 }

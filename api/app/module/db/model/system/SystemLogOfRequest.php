@@ -8,6 +8,6 @@ use app\module\db\model\AbstractModel;
 
 class SystemLogOfRequest extends AbstractModel
 {
-    protected string $table = 'system_log_of_request';
-    protected string $key = 'requestLogId';
+    protected $table = 'system_log_of_request';
+    protected $primaryKey = 'requestLogId';
 }

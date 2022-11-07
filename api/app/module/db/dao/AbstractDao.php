@@ -24,7 +24,7 @@ abstract class AbstractDao
     protected array $fieldAfter = [];    //获取数据库数据后，再做处理的字段
 
     protected $model;   //模型
-    protected $builder; //构造器
+    protected \Illuminate\Database\Query\Builder $builder; //构造器
 
     /* final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
     {
@@ -34,11 +34,12 @@ abstract class AbstractDao
     /**
      * 获取连接
      *
-     * @return string
+     * @return string|null
      */
-    final public function getConnection(): string
+    final public function getConnection(): string|null
     {
-        return empty($this->connection) ? $this->model->connection : $this->connection;
+        //return empty($this->connection) ? $this->model->connection : $this->connection;
+        return empty($this->connection) ? $this->model->getConnectionName() : $this->connection;
     }
 
     /**
@@ -48,7 +49,8 @@ abstract class AbstractDao
      */
     final public function getTable(): string
     {
-        return empty($this->table) ? $this->model->table : $this->table;
+        //return empty($this->table) ? $this->model->table : $this->table;
+        return empty($this->table) ? $this->model->getTable() : $this->table;
     }
 
     /**
@@ -58,7 +60,8 @@ abstract class AbstractDao
      */
     final public function getKey(): string
     {
-        return $this->model->key;
+        //return $this->model->primaryKey;
+        return $this->model->getKeyName();
     }
 
     /**

@@ -8,5 +8,5 @@ use app\module\db\model\AbstractModel;
 
 class AuthRoleRelToAction extends AbstractModel
 {
-    protected string $table = 'auth_role_rel_to_action';
+    protected $table = 'auth_role_rel_to_action';
 }

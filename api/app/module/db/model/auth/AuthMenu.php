@@ -8,6 +8,6 @@ use app\module\db\model\AbstractModel;
 
 class AuthMenu extends AbstractModel
 {
-    protected string $table = 'auth_menu';
-    protected string $key = 'menuId';
+    protected $table = 'auth_menu';
+    protected $primaryKey = 'menuId';
 }

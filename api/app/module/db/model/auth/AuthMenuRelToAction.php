@@ -8,5 +8,5 @@ use app\module\db\model\AbstractModel;
 
 class AuthMenuRelToAction extends AbstractModel
 {
-    protected string $table = 'auth_menu_rel_to_action';
+    protected $table = 'auth_menu_rel_to_action';
 }

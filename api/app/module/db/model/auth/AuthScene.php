@@ -8,6 +8,6 @@ use app\module\db\model\AbstractModel;
 
 class AuthScene extends AbstractModel
 {
-    protected string $table = 'auth_scene';
-    protected string $key = 'sceneId';
+    protected $table = 'auth_scene';
+    protected $primaryKey = 'sceneId';
 }

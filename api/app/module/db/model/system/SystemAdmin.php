@@ -8,6 +8,6 @@ use app\module\db\model\AbstractModel;
 
 class SystemAdmin extends AbstractModel
 {
-    protected string $table = 'system_admin';
-    protected string $key = 'adminId';
+    protected $table = 'system_admin';
+    protected $primaryKey = 'adminId';
 }
