@@ -138,19 +138,22 @@ const menuTab = reactive({
                                 <template #dropdown>
                                     <ElDropdownMenu>
                                         <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.url)">
-                                            {{ t('common.refresh') }}
+                                            <AutoiconEpRefresh />{{ t('common.refresh') }}
                                         </ElDropdownItem>
-                                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(item.url)">
-                                            {{ t('common.closeOther') }}
+                                        <ElDropdownItem @click="adminStore.closeSelfMenuTab(item.url)">
+                                            <AutoiconEpClose />{{ t('common.close') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="adminStore.closeLeftMenuTab(item.url)">
-                                            {{ t('common.closeLeft') }}
+                                            <AutoiconEpBack />{{ t('common.closeLeft') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="adminStore.closeRightMenuTab(item.url)">
-                                            {{ t('common.closeRight') }}
+                                            <AutoiconEpRight />{{ t('common.closeRight') }}
+                                        </ElDropdownItem>
+                                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(item.url)">
+                                            <AutoiconEpSwitch />{{ t('common.closeOther') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="adminStore.closeAllMenuTab()">
-                                            {{ t('common.closeAll') }}
+                                            <AutoiconEpCircleClose />{{ t('common.closeAll') }}
                                         </ElDropdownItem>
                                     </ElDropdownMenu>
                                 </template>
@@ -167,19 +170,22 @@ const menuTab = reactive({
                 <template #dropdown>
                     <ElDropdownMenu>
                         <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.fullPath)">
-                            {{ t('common.refresh') }}
+                            <AutoiconEpRefresh />{{ t('common.refresh') }}
                         </ElDropdownItem>
-                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(route.fullPath)">
-                            {{ t('common.closeOther') }}
+                        <ElDropdownItem @click="adminStore.closeSelfMenuTab(route.fullPath)">
+                            <AutoiconEpClose />{{ t('common.close') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="adminStore.closeLeftMenuTab(route.fullPath)">
-                            {{ t('common.closeLeft') }}
+                            <AutoiconEpBack />{{ t('common.closeLeft') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="adminStore.closeRightMenuTab(route.fullPath)">
-                            {{ t('common.closeRight') }}
+                            <AutoiconEpRight />{{ t('common.closeRight') }}
+                        </ElDropdownItem>
+                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(route.fullPath)">
+                            <AutoiconEpSwitch />{{ t('common.closeOther') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="adminStore.closeAllMenuTab()">
-                            {{ t('common.closeAll') }}
+                            <AutoiconEpCircleClose />{{ t('common.closeAll') }}
                         </ElDropdownItem>
                     </ElDropdownMenu>
                 </template>

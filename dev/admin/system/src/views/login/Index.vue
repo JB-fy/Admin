@@ -3,37 +3,35 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
-const form = reactive({
-    login: {
-        ref: null as any,
-        data: {
-            account: '',
-            password: ''
-        },
-        rules: {
-            account: [
-                { type: 'string', required: true, min: 4, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 4, max: 30 }) }
-            ],
-            password: [
-                { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
-            ]
-        },
-        loading: false,
-        submit: () => {
-            form.login.ref.validate(async (valid: boolean) => {
-                if (!valid) {
-                    return false
-                }
-                form.login.loading = true
-                try {
-                    await useAdminStore().login(form.login.data.account, form.login.data.password)
-                    router.replace(<string>(route.query.redirect ? route.query.redirect : '/'))
-                } catch (error) {
-                    await errorHandle(<Error>error)
-                }
-                form.login.loading = false
-            })
-        }
+const loginForm = reactive({
+    ref: null as any,
+    data: {
+        account: '',
+        password: ''
+    },
+    rules: {
+        account: [
+            { type: 'string', required: true, min: 4, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 4, max: 30 }) }
+        ],
+        password: [
+            { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
+        ]
+    },
+    loading: false,
+    submit: () => {
+        loginForm.ref.validate(async (valid: boolean) => {
+            if (!valid) {
+                return false
+            }
+            loginForm.loading = true
+            try {
+                await useAdminStore().login(loginForm.data.account, loginForm.data.password)
+                router.replace(<string>(route.query.redirect ? route.query.redirect : '/'))
+            } catch (error) {
+                await errorHandle(<Error>error)
+            }
+            loginForm.loading = false
+        })
     }
 })
 </script>
@@ -44,17 +42,17 @@ const form = reactive({
         <ElDivider>
             <div style="font-size: 25px;">{{ t('common.login') }}</div>
         </ElDivider>
-        <ElForm :ref="(el: any) => { form.login.ref = el }" :model="form.login.data" :rules="form.login.rules"
-            @keyup.enter="form.login.submit">
+        <ElForm :ref="(el: any) => { loginForm.ref = el }" :model="loginForm.data" :rules="loginForm.rules"
+            @keyup.enter="loginForm.submit">
             <ElFormItem prop="account">
-                <ElInput v-model="form.login.data.account" :placeholder="t('common.account')">
+                <ElInput v-model="loginForm.data.account" :placeholder="t('common.account')">
                     <template #prefix>
                         <AutoiconEpUser />
                     </template>
                 </ElInput>
             </ElFormItem>
             <ElFormItem prop="password">
-                <ElInput v-model="form.login.data.password" type="password" :placeholder="t('common.password')"
+                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('common.password')"
                     :show-password="true">
                     <template #prefix>
                         <AutoiconEpLock />
@@ -62,7 +60,7 @@ const form = reactive({
                 </ElInput>
             </ElFormItem>
             <ElFormItem>
-                <ElButton :loading="form.login.loading" type="primary" @click="form.login.submit" style="width:100%;">
+                <ElButton :loading="loginForm.loading" type="primary" @click="loginForm.submit" style="width:100%;">
                     {{ t('common.login') }}
                 </ElButton>
             </ElFormItem>
