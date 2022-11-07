@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\aspect;
 
-use app\module\db\table\auth\AuthScene as TableAuthScene;
+use app\module\db\dao\auth\AuthScene as DaoAuthScene;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class AuthScene extends AbstractAspect
@@ -37,7 +37,7 @@ class AuthScene extends AbstractAspect
         if (empty($sceneCode)) {
             throwFailJson('001001');
         }
-        $request->authSceneInfo = container(TableAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getInfo();
+        $request->authSceneInfo = container(DaoAuthScene::class, true)->where(['sceneCode' => $sceneCode])->getInfo();
         if (empty($request->authSceneInfo)) {
             throwFailJson('001001');
         }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\module\service;
 
 use app\module\cache\Login as CacheLogin;
-use app\module\db\table\system\SystemAdmin;
+use app\module\db\dao\system\SystemAdmin;
 use app\module\logic\Login as LogicLogin;
 
 class Login extends AbstractService

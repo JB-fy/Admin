@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace app\module\db\table;
+namespace app\module\db\dao;
 
 use support\Db;
 
-abstract class AbstractTable
+abstract class AbstractDao
 {
     protected string $connection = '';  //分库情况下，解析后所确定的连接
     protected string $table = '';   //分表情况下，解析后所确定的表

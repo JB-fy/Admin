@@ -9,7 +9,7 @@ use app\module\service\AbstractService;
 
 class AuthMenu extends AbstractService
 {
-    protected $table = \app\module\db\table\auth\AuthMenu::class;
+    protected $dao = \app\module\db\dao\auth\AuthMenu::class;
 
     /**
      * 获取树状权限菜单
@@ -20,8 +20,8 @@ class AuthMenu extends AbstractService
      */
     public function tree(array $field = [], array $where = [])
     {
-        $tableAuthMenu = container($this->table, true);
-        $list = $tableAuthMenu->field($field)->where($where)->getList();
+        $daoAuthMenu = container($this->dao, true);
+        $list = $daoAuthMenu->field($field)->where($where)->getList();
 
         $tree = container(LogicAuthMenu::class)->tree($list);
         throwSuccessJson(['tree' => $tree]);

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace app\module\db\table\system;
+namespace app\module\db\dao\system;
 
-use app\module\db\table\AbstractTable;
+use app\module\db\dao\AbstractDao;
 use DI\Annotation\Inject;
-use app\module\db\table\auth\AuthRole;
-use app\module\db\table\auth\AuthRoleRelOfSystemAdmin;
+use app\module\db\dao\auth\AuthRole;
+use app\module\db\dao\auth\AuthRoleRelOfSystemAdmin;
 
-class SystemAdmin extends AbstractTable
+class SystemAdmin extends AbstractDao
 {
     /**
      * @Inject
@@ -45,14 +45,14 @@ class SystemAdmin extends AbstractTable
     {
         switch ($key) {
             case 'roleName':
-                $tableAuthRoleRelOfSystemAdmin = container(AuthRoleRelOfSystemAdmin::class, true);
-                $tableAuthRoleRelOfSystemAdminName = $tableAuthRoleRelOfSystemAdmin->getTable();
-                if (!isset($this->join[$tableAuthRoleRelOfSystemAdminName])) {
-                    $this->join[$tableAuthRoleRelOfSystemAdminName] = [
+                $daoAuthRoleRelOfSystemAdmin = container(AuthRoleRelOfSystemAdmin::class, true);
+                $daoAuthRoleRelOfSystemAdminTable = $daoAuthRoleRelOfSystemAdmin->getTable();
+                if (!isset($this->join[$daoAuthRoleRelOfSystemAdminTable])) {
+                    $this->join[$daoAuthRoleRelOfSystemAdminTable] = [
                         'method' => 'leftJoin',
                         'param' => [
-                            $tableAuthRoleRelOfSystemAdminName,
-                            $tableAuthRoleRelOfSystemAdminName . '.adminId',
+                            $daoAuthRoleRelOfSystemAdminTable,
+                            $daoAuthRoleRelOfSystemAdminTable . '.adminId',
                             '=',
                             $this->getTable() . '.' . $this->getKey()
                         ]
@@ -67,7 +67,7 @@ class SystemAdmin extends AbstractTable
                             $tableAuthRoleName,
                             $tableAuthRoleName . '.roleId',
                             '=',
-                            $tableAuthRoleRelOfSystemAdminName . '.roleId'
+                            $daoAuthRoleRelOfSystemAdminTable . '.roleId'
                         ]
                     ];
                 }

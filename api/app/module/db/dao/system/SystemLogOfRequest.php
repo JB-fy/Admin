@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace app\module\db\table\system;
+namespace app\module\db\dao\system;
 
-use app\module\db\table\AbstractTable;
+use app\module\db\dao\AbstractDao;
 use DI\Annotation\Inject;
 
-class SystemLogOfRequest extends AbstractTable
+class SystemLogOfRequest extends AbstractDao
 {
     /**
      * @Inject

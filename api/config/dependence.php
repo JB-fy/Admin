@@ -13,7 +13,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-use app\module\db\table\auth\AuthScene;
+use app\module\db\dao\auth\AuthScene;
 use Psr\Container\ContainerInterface;
 
 return [

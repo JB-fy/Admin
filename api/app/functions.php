@@ -60,7 +60,7 @@ function container(string $name, bool $isMake = false, array $parameters = [])
          * 
          * 带有状态的类：
          *      \app\module\cache\文件夹下的类
-         *      \app\module\db\table\文件夹下的类
+         *      \app\module\db\dao\文件夹下的类
          *      \app\module\validate\文件夹下的类继承\think\Validate，带有以下状态：当前场景currentScene，是否批量batch，是否抛出错误failException
          */
         return \support\Container::make($name, $parameters);

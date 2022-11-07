@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\aspect;
 
-use app\module\db\table\system\SystemLogOfRequest;
+use app\module\db\dao\system\SystemLogOfRequest;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class LogOfRequest extends AbstractAspect

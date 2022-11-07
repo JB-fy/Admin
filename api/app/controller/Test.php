@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\controller;
 
-use app\module\db\table\system\SystemAdmin;
+use app\module\db\dao\system\SystemAdmin;
 use support\Db;
 use support\Request;
 
@@ -21,20 +21,20 @@ class Test extends AbstractController
             'field' => ['*', 'roleName'],
             'order' => ['id' => 'asc']
         ];
-        $tableSystemAdmin = container(SystemAdmin::class, true);
-        $tableSystemAdmin->where($data['where']);
-        if ($tableSystemAdmin->isJoin()) {
-            $count = $tableSystemAdmin->getBuilder()->distinct()->count($tableSystemAdmin->getTable() . '.' . $tableSystemAdmin->getKey());
+        $daoSystemAdmin = container(SystemAdmin::class, true);
+        $daoSystemAdmin->where($data['where']);
+        if ($daoSystemAdmin->isJoin()) {
+            $count = $daoSystemAdmin->getBuilder()->distinct()->count($daoSystemAdmin->getTable() . '.' . $daoSystemAdmin->getKey());
         } else {
-            $count = $tableSystemAdmin->getBuilder()->count();
+            $count = $daoSystemAdmin->getBuilder()->count();
         }
         $list = [];
         if ($count > 0) {
-            $tableSystemAdmin->field($data['field'])->order($data['order']);
-            if ($tableSystemAdmin->isJoin()) {
-                $tableSystemAdmin->group(['id']);
+            $daoSystemAdmin->field($data['field'])->order($data['order']);
+            if ($daoSystemAdmin->isJoin()) {
+                $daoSystemAdmin->group(['id']);
             }
-            $list = $tableSystemAdmin->getBuilder()->offset(0)->limit(10)->get()->toArray();
+            $list = $daoSystemAdmin->getBuilder()->offset(0)->limit(10)->get()->toArray();
         }
         throwSuccessJson(['count' => $count, 'list' => $list]); */
 
