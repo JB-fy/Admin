@@ -8,7 +8,7 @@ use support\Db;
 
 abstract class AbstractDao
 {
-    protected string $connection = '';  //分库情况下，解析后所确定的连接
+    protected string|null $connection;  //分库情况下，解析后所确定的连接
     protected string $table = '';   //分表情况下，解析后所确定的表
 
     protected string $tableRaw = '';    //表的原生表达式。当需要强制索引等特殊情况时使用。示例：Db::raw('table AS alias FORCE INDEX (索引)')。
@@ -38,7 +38,6 @@ abstract class AbstractDao
      */
     final public function getConnection(): string|null
     {
-        //return empty($this->connection) ? $this->model->connection : $this->connection;
         return empty($this->connection) ? $this->model->getConnectionName() : $this->connection;
     }
 
@@ -49,7 +48,6 @@ abstract class AbstractDao
      */
     final public function getTable(): string
     {
-        //return empty($this->table) ? $this->model->table : $this->table;
         return empty($this->table) ? $this->model->getTable() : $this->table;
     }
 
@@ -60,7 +58,6 @@ abstract class AbstractDao
      */
     final public function getKey(): string
     {
-        //return $this->model->primaryKey;
         return $this->model->getKeyName();
     }
 
@@ -71,7 +68,7 @@ abstract class AbstractDao
      */
     final public function getAllColumn(): array
     {
-        return $this->model->allColumn;
+        return $this->model->getAllColumn();
     }
 
     /*----------------解析 开始----------------*/
@@ -640,8 +637,8 @@ abstract class AbstractDao
         if (!empty($this->join)) {
             $this->handleJoin();
         }
-        if ($this->model->isSoftDelete) {
-            $this->builder->where($this->getTable() . '.' . $this->model->fieldSoftDelete, '=', 0);
+        if ($this->model->isSoftDelete()) {
+            $this->builder->where($this->getTable() . '.' . $this->model->fieldSoftDelete(), '=', 0);
         }
         return $this->builder;
     }
@@ -826,9 +823,9 @@ abstract class AbstractDao
     final public function delete(): int
     {
         $this->getBuilder();
-        if ($this->model->isSoftDelete) {
+        if ($this->model->isSoftDelete()) {
             return $this->builder->update([
-                $this->getTable() . '.' . $this->model->fieldSoftDelete => 1
+                $this->getTable() . '.' . $this->model->fieldSoftDelete() => 1
             ]);
         }
         return $this->builder->delete();
