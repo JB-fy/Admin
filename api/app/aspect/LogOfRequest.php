@@ -23,7 +23,8 @@ class LogOfRequest extends AbstractAspect
      */
     public $classes = [
         \app\controller\Index::class,
-        \app\controller\Login::class
+        \app\controller\Login::class,
+        \app\controller\auth\AuthScene::class
     ];
 
     /**

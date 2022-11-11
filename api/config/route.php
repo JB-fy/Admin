@@ -31,6 +31,10 @@ Route::group('/login', function () {
     Route::add(['GET', 'POST', 'OPTIONS'], '/menuTree', [\app\controller\Login::class, 'menuTree']);
 });
 
+Route::group('/auth/scene', function () {
+    Route::add(['GET', 'POST', 'OPTIONS'], '/list', [\app\controller\auth\AuthScene::class, 'list']);
+});
+
 //当找不到路由时，处理方法
 Route::fallback(function () {
     //return redirect('/');
