@@ -27,11 +27,11 @@ abstract class AbstractService
      */
     public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
-        /* if (empty($data['order'])) {
+        if (empty($data['order'])) {
             $data['order'] = [
                 'id' => 'desc',
             ];
-        } */
+        }
         $offset = ($page - 1) * $limit;
         $countAfter = ($offset == 0 && $limit == 0);  //用于判断是否先获取$list，再通过count($list)计算$count
         $dao = container($this->dao, true);
