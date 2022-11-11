@@ -16,7 +16,7 @@ abstract class AbstractService
     protected $dao = '';   //dao类的路径，调用地方实例化对象。因dao类带有状态，无法直接使用容器注释功能做依赖注入。
 
     /**
-     * 列表（只）
+     * 列表（通用，需要特殊处理的覆盖重新定义）
      * 
      * @param array $field
      * @param array $where
@@ -27,12 +27,9 @@ abstract class AbstractService
      */
     public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
-        if (empty($data['order'])) {
-            $data['order'] = [
-                'id' => 'desc',
-            ];
-        }
+        empty($order) ? $order = ['id' => 'desc'] : null;
         $offset = ($page - 1) * $limit;
+
         $countAfter = ($offset == 0 && $limit == 0);  //用于判断是否先获取$list，再通过count($list)计算$count
         $dao = container($this->dao, true);
         $dao->where($where);

@@ -8,3 +8,7 @@
     /server/tool/composer
 国内镜像源修改
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+查看当前镜像源
+    composer config -g -l
+默认镜像源
+    https://repo.packagist.org
