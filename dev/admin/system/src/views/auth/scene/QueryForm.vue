@@ -1,34 +1,24 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const emits = defineEmits(['search'])
+const emits = defineEmits(['query'])
 
-const handleSearchEvent = () => emits('search', queryForm.data)
+const handleQueryEvent = () => { emits('query', queryForm.data) }
 
 const queryForm = reactive({
-    ref: null as any,
     data: {
         sceneName: '',
         sceneCode: '',
         isStop: ''
     },
-    loading: false,
     submit: () => {
-        queryForm.ref.validate(async (valid: boolean) => {
-            if (!valid) {
-                return false
-            }
-            queryForm.loading = true
-            await request('index.index', queryForm.data)
-            handleSearchEvent()
-            queryForm.loading = false
-        })
+        handleQueryEvent()
     }
 })
 </script>
 
 <template>
-    <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryForm.data" :inline="true">
+    <ElForm class="query-form" :model="queryForm.data" :inline="true">
         <ElFormItem prop="sceneName">
             <ElInput v-model="queryForm.data.sceneName" placeholder="名称" :clearable="true" />
         </ElFormItem>
@@ -42,7 +32,7 @@ const queryForm = reactive({
             </ElSelect>
         </ElFormItem>
         <ElFormItem>
-            <ElButton :loading="queryForm.loading" type="primary" @click="queryForm.submit">
+            <ElButton type="primary" @click="handleQueryEvent">
                 <AutoiconEpSearch />{{ t('common.query') }}
             </ElButton>
         </ElFormItem>

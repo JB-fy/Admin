@@ -4,8 +4,12 @@ import SaveForm from './SaveForm.vue'
 import List from './List.vue'
 
 const { t } = useI18n()
+
+const queryFormData = ref({})
+provide('queryFormData', queryFormData)
 // 搜索
-const queryFormSearchEmit = (data) => {
+const queryFormEmit = (data) => {
+    queryFormData.value = data
     console.log(data)
 }
 
@@ -16,7 +20,7 @@ provide('saveDrawerVisible', saveDrawerVisible)
 <template>
     <ElContainer class="app-container">
         <ElHeader>
-            <QueryForm @search="queryFormSearchEmit"/>
+            <QueryForm @query="queryFormEmit" />
         </ElHeader>
 
         <ElMain style="padding: 0;">

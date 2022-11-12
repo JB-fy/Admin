@@ -7,7 +7,7 @@ import i18n from '@/i18n'
  * @param isErrorHandle 错误处理，默认true。传false则会抛出错误，可在调用处捕获错误进行特殊处理。以下几种情况需要传false：调用接口报错需要特殊处理；多接口调用时，有接口报错，后续接口不再请求。（多接口请求也可以传true，用返回参数是否false判断是否进行后续接口请求）
  * @returns 
  */
-const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'))
+const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'), 0, 10)
 //export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean = true): Promise<{ [propName: string]: any } | false | void> => {
 export const request = async (apiCode: string, data?: {}, isErrorHandle: boolean = true): Promise<any> => {
     //const apiList = batchImport(import.meta.globEager('@/api/**/*.ts')) //放外面去。这样每次调用都不要重新加载了
