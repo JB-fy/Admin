@@ -11,8 +11,8 @@ class CommonList extends AbstractValidate
         'where|条件' => 'array',
         'order|排序' => 'array',
         //'order.*|排序方式' => 'in:asc,desc,ASC,DESC',
-        /* 'page|页码' => 'integer|min:1',  //框架integral规则不支持php8
-        'limit|条目' => 'integer|min:0', */
+        'page|页码' => 'integer|>:0',  //框架integral规则不支持php8
+        'limit|条目' => 'integer|>=:0',
     ];
 
     protected $message  =   [

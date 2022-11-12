@@ -6,9 +6,11 @@
     chmod 755 /server/tool/composer/composer
 设置环境变量增加以下目录（参考linux学习文件）
     /server/tool/composer
-国内镜像源修改
+修改镜像源
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-查看当前镜像源
+删除镜像源变成默认镜像源
+    composer config -g --unset repos.packagist
+查看镜像源
     composer config -g -l
 默认镜像源
     https://repo.packagist.org
