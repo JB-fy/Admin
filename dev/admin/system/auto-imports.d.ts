@@ -2,7 +2,10 @@
 export {}
 declare global {
   const ApiError: typeof import('./src/common/error/apiError')['ApiError']
+  const AutoiconEpDelete: typeof import('~icons/ep/delete')['default']
+  const AutoiconEpEdit: typeof import('~icons/ep/edit')['default']
   const EffectScope: typeof import('vue')['EffectScope']
+  const ElButton: typeof import('element-plus/es')['ElButton']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
   const batchImport: typeof import('./src/common/import')['batchImport']
@@ -46,6 +49,7 @@ declare global {
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
   const removeAccessToken: typeof import('./src/common/accessToken')['removeAccessToken']
+  const removeObjectNullValue: typeof import('./src/common/functions')['removeObjectNullValue']
   const request: typeof import('./src/common/common')['request']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const setAccessToken: typeof import('./src/common/accessToken')['setAccessToken']

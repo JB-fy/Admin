@@ -4,27 +4,29 @@ import SaveForm from './SaveForm.vue'
 import List from './List.vue'
 
 const { t } = useI18n()
+const list = reactive({
+    ref: null as any,
+})
 
-const queryFormData = ref({})
+const queryFormData = reactive({})
 provide('queryFormData', queryFormData)
 // 搜索
-const queryFormEmit = (data) => {
-    queryFormData.value = data
-    console.log(data)
+const handleQuery = () => {
+    list.ref.getList(true)
 }
 
-const saveDrawerVisible = ref(false)
-provide('saveDrawerVisible', saveDrawerVisible)
+const saveFormVisible = ref(false)
+provide('saveFormVisible', saveFormVisible)
 </script>
 
 <template>
     <ElContainer class="app-container">
         <ElHeader>
-            <QueryForm @query="queryFormEmit" />
+            <QueryForm @query="handleQuery" />
         </ElHeader>
 
         <ElMain style="padding: 0;">
-            <List />
+            <List :ref="(el: any) => { list.ref = el }" />
         </ElMain>
 
         <SaveForm />

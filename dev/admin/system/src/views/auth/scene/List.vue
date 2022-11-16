@@ -1,45 +1,14 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const saveDrawerVisible = inject('saveDrawerVisible')
+const saveFormVisible = inject('saveFormVisible')
 
-const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
-    Array.from({ length }).map((_, columnIndex) => ({
-        ...props,
-        key: `${prefix}${columnIndex}`,
-        dataKey: `${prefix}${columnIndex}`,
-        title: `Column ${columnIndex}`,
-        width: 150,
-    }))
-
-const generateData = (
-    columns: ReturnType<typeof generateColumns>,
-    length = 200,
-    prefix = 'row-'
-) => Array.from({ length }).map((_, rowIndex) => {
-    return columns.reduce(
-        (rowData, column, columnIndex) => {
-            rowData[column.dataKey] = `Row ${rowIndex} - Col ${columnIndex}`
-            return rowData
-        },
-        {
-            id: `${prefix}${rowIndex}`,
-            parentId: null,
-        }
-    )
-})
-
-/* const columns = generateColumns(10)
-const data = generateData(columns, 100) */
-
-//const data = await request('auth.scene.list', { where: queryForm.data })
-const columns = [
-    {
-        dataKey: 'id',
+const table = reactive({
+    columns: [{
+        dataKey: 'sceneId',
         title: 'ID',
         key: 'id',
-        width: 150,
-        hidden: false,
+        width: 120,
         align: 'left',
         fixed: 'left',
         sortable: true
@@ -49,53 +18,115 @@ const columns = [
         title: '场景名称',
         key: 'sceneName',
         width: 120,
-        style: { width: 'auto' },
-        minWidth: 120,
-        maxWidth: 200,
     },
     {
         dataKey: 'sceneCode',
         title: '场景标识',
         key: 'sceneCode',
         width: 120,
-        style: { width: 'auto' },
-        minWidth: 120,
-        maxWidth: 200,
+    },
+    {
+        dataKey: 'sceneConfig',
+        title: '场景配置',
+        key: 'sceneConfig',
+        width: 200,
+        hidden: true
+    },
+    {
+        dataKey: 'isStop',
+        title: '停用',
+        key: 'isStop',
+        align: 'center',
+        width: 120,
+        cellRenderer: (data: any) => {
+            return [
+                h(ElButton, {
+                    type: data.rowData.isStop ? 'danger' : 'primary',
+                    size: 'small',
+                    /* plain: true,
+                    circle: true, */
+                    round: true
+                }, {
+                    default: () => data.rowData.isStop ? '是' : '否'
+                })
+            ]
+        }
+    },
+    {
+        dataKey: 'updateTime',
+        title: '更新时间',
+        key: 'updateTime',
+        align: 'center',
+        width: 150,
+    },
+    {
+        dataKey: 'createTime',
+        title: '创建时间',
+        key: 'createTime',
+        align: 'center',
+        width: 150,
     },
     {
         dataKey: 'action',
         title: '操作',
         key: 'action',
+        align: 'center',
         fixed: 'right',
-        width: 150,
-    }
-]
-const data = [
-    {
-        parentId: null,
-        id: '1',
-        sceneName: '场景名称1',
-        sceneCode: '场景标识1'
-    },
-    {
-        parentId: null,
-        id: '2',
-        sceneName: '场景名称2',
-        sceneCode: '场景标识2'
-    }
-]
+        width: 200,
+        cellRenderer: (data: any) => {
+            return [
+                h(ElButton, {
+                    type: 'primary',
+                    size: 'small',
+                    onClick: () => handleEdit(data.rowData.sceneId)
+                }, {
+                    default: () => [h(AutoiconEpEdit), t('common.edit')]
+                }),
+                h(ElButton, {
+                    type: 'danger',
+                    size: 'small',
+                    onClick: () => handleDelete(data.rowData.sceneId)
+                }, {
+                    default: () => [h(AutoiconEpDelete), t('common.delete')]
+                })
+            ]
+        },
+    }],
+    data: []
+})
 
 const pagination = reactive({
-    data: {
-        currentPage: 1,
-        pageSize: 10,
-    },
-    sizeChange: (val: number) => {
-        console.log(`${val} items per page`)
-    },
-    currentChange: (val: number) => {
-        console.log(`current page: ${val}`)
+    total: 1,
+    page: 1,
+    limit: 10
+})
+
+const handleEdit = (id: number) => {
+
+}
+const handleDelete = (id: number) => {
+
+}
+
+const queryFormData = inject('queryFormData') as { [propName: string]: any }
+const getList = async (resetPage: boolean = false) => {
+    if (resetPage) {
+        pagination.page = 1
     }
+    let param = {
+        field: [],
+        where: removeObjectNullValue(queryFormData),
+        order: {},
+        page: pagination.page,
+        limit: pagination.limit
+    }
+    const res = await request('auth.scene.list', param)
+    table.data = res.data.list
+}
+getList()
+
+defineExpose({
+    getList
 })
 </script>
 
@@ -105,7 +136,7 @@ const pagination = reactive({
             <ElRow class="main-table-tool">
                 <ElCol :span="16">
                     <ElSpace :size="10" style="height: 100%; margin-left: 10px;">
-                        <ElButton type="primary" @click="saveDrawerVisible = true">
+                        <ElButton type="primary" @click="saveFormVisible = true">
                             <AutoiconEpEditPen />{{ t('common.add') }}
                         </ElButton>
                         <ElButton type="danger">
@@ -121,14 +152,9 @@ const pagination = reactive({
                             </ElButton>
                             <template #dropdown>
                                 <ElDropdownMenu>
-                                    <ElDropdownItem>
-                                        <ElCheckbox>
-                                            字段1
-                                        </ElCheckbox>
-                                    </ElDropdownItem>
-                                    <ElDropdownItem>
-                                        <ElCheckbox>
-                                            字段2
+                                    <ElDropdownItem v-for="(item, key) in table.columns" :key="key">
+                                        <ElCheckbox v-model="item.hidden">
+                                            {{ item.title }}
                                         </ElCheckbox>
                                     </ElDropdownItem>
                                 </ElDropdownMenu>
@@ -138,13 +164,13 @@ const pagination = reactive({
                 </ElCol>
             </ElRow>
 
-            <ElTableV2 class="main-table" :columns="columns" :data="data" :width="width" :height="0"
-                :max-height="height - 40" :footer-height="40" :fixed="true">
+            <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :width="width"
+                :height="height - 40" :footer-height="40" :fixed="true">
                 <template #footer>
-                    <ElPagination v-model:currentPage="pagination.data.currentPage"
-                        v-model:page-size="pagination.data.pageSize" :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
-                        :background="true" layout="total, sizes, prev, pager, next, jumper" :total="400"
-                        @size-change="pagination.sizeChange" @current-change="pagination.currentChange" />
+                    <ElPagination v-model:total="pagination.total" v-model:currentPage="pagination.page"
+                        v-model:page-size="pagination.limit" @size-change="getList" @current-change="getList"
+                        :page-sizes="[10, 20, 50, 100, 200, 500, 1000]" layout="total, sizes, prev, pager, next, jumper"
+                        :background="true" />
                 </template>
             </ElTableV2>
         </template>
