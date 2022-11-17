@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const saveFormVisible = inject('saveFormVisible')
+const saveVisible = inject('saveVisible')
 
 const table = reactive({
     columns: [{
@@ -17,12 +17,14 @@ const table = reactive({
         dataKey: 'sceneName',
         title: '场景名称',
         key: 'sceneName',
+        align: 'center',
         width: 120,
     },
     {
         dataKey: 'sceneCode',
         title: '场景标识',
         key: 'sceneCode',
+        align: 'center',
         width: 120,
     },
     {
@@ -30,6 +32,7 @@ const table = reactive({
         title: '场景配置',
         key: 'sceneConfig',
         width: 200,
+        align: 'center',
         hidden: true
     },
     {
@@ -48,8 +51,8 @@ const table = reactive({
                     round: true
                 }, {
                     default: () => data.rowData.isStop ? '是' : '否'
-                })
-            ]
+                }),
+            ] as any
         }
     },
     {
@@ -65,9 +68,9 @@ const table = reactive({
         key: 'createTime',
         align: 'center',
         width: 150,
+        sortable: true
     },
     {
-        dataKey: 'action',
         title: '操作',
         key: 'action',
         align: 'center',
@@ -92,13 +95,28 @@ const table = reactive({
             ]
         },
     }],
-    data: []
+    data: [],
+    order: {
+        key: 'id',
+        order: 'desc',
+    },
+    handleOrder: (order: any) => {
+        table.order = order
+        table.data = table.data.reverse()
+        getList()
+    },
 })
 
 const pagination = reactive({
-    total: 1,
+    total: 0,
     page: 1,
-    limit: 10
+    limit: 10,
+    sizeChange: (val: number) => {
+        getList()
+    },
+    pageChange: (val: number) => {
+        getList()
+    }
 })
 
 const handleEdit = (id: number) => {
@@ -108,20 +126,23 @@ const handleDelete = (id: number) => {
 
 }
 
-const queryFormData = inject('queryFormData') as { [propName: string]: any }
+const queryData = inject('queryData') as { [propName: string]: any }
 const getList = async (resetPage: boolean = false) => {
     if (resetPage) {
         pagination.page = 1
     }
     let param = {
         field: [],
-        where: removeObjectNullValue(queryFormData),
-        order: {},
+        where: removeObjectNullValue(queryData),
+        order: {
+            [table.order.key]: table.order.order
+        },
         page: pagination.page,
         limit: pagination.limit
     }
     const res = await request('auth.scene.list', param)
     table.data = res.data.list
+    pagination.total = res.data.count
 }
 getList()
 
@@ -131,50 +152,64 @@ defineExpose({
 </script>
 
 <template>
-    <ElAutoResizer>
-        <template #default="{ height, width }">
-            <ElRow class="main-table-tool">
-                <ElCol :span="16">
-                    <ElSpace :size="10" style="height: 100%; margin-left: 10px;">
-                        <ElButton type="primary" @click="saveFormVisible = true">
-                            <AutoiconEpEditPen />{{ t('common.add') }}
-                        </ElButton>
-                        <ElButton type="danger">
-                            <AutoiconEpDelete />{{ t('common.delete') }}
-                        </ElButton>
-                    </ElSpace>
-                </ElCol>
-                <ElCol :span="8" style="text-align: right;">
-                    <ElSpace :size="10" style="height: 100%;">
-                        <ElDropdown max-height="300" :hide-on-click="false">
-                            <ElButton type="info" :circle="true">
-                                <AutoiconEpView />
-                            </ElButton>
-                            <template #dropdown>
-                                <ElDropdownMenu>
-                                    <ElDropdownItem v-for="(item, key) in table.columns" :key="key">
-                                        <ElCheckbox v-model="item.hidden">
-                                            {{ item.title }}
-                                        </ElCheckbox>
-                                    </ElDropdownItem>
-                                </ElDropdownMenu>
-                            </template>
-                        </ElDropdown>
-                    </ElSpace>
-                </ElCol>
-            </ElRow>
+    <ElRow class="main-table-tool">
+        <ElCol :span="16">
+            <ElSpace :size="10" style="height: 100%; margin-left: 10px;">
+                <ElButton type="primary" @click="saveVisible = true">
+                    <AutoiconEpEditPen />{{ t('common.add') }}
+                </ElButton>
+                <ElButton type="danger">
+                    <AutoiconEpDelete />{{ t('common.delete') }}
+                </ElButton>
+            </ElSpace>
+        </ElCol>
+        <ElCol :span="8" style="text-align: right;">
+            <ElSpace :size="10" style="height: 100%;">
+                <ElDropdown max-height="300" :hide-on-click="false">
+                    <ElButton type="info" :circle="true">
+                        <AutoiconEpView />
+                    </ElButton>
+                    <template #dropdown>
+                        <ElDropdownMenu>
+                            <ElDropdownItem v-for="(item, key) in table.columns" :key="key">
+                                <ElCheckbox v-model="item.hidden">
+                                    {{ item.title }}
+                                </ElCheckbox>
+                            </ElDropdownItem>
+                        </ElDropdownMenu>
+                    </template>
+                </ElDropdown>
+            </ElSpace>
+        </ElCol>
+    </ElRow>
 
-            <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :width="width"
-                :height="height - 40" :footer-height="40" :fixed="true">
-                <template #footer>
-                    <ElPagination v-model:total="pagination.total" v-model:currentPage="pagination.page"
-                        v-model:page-size="pagination.limit" @size-change="getList" @current-change="getList"
-                        :page-sizes="[10, 20, 50, 100, 200, 500, 1000]" layout="total, sizes, prev, pager, next, jumper"
-                        :background="true" />
-                </template>
-            </ElTableV2>
-        </template>
-    </ElAutoResizer>
+    <ElMain style="padding: 0;">
+        <ElAutoResizer>
+            <template #default="{ height, width }">
+                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.order"
+                    @column-sort="table.handleOrder" :width="width" :height="height" :fixed="true">
+                    <template #overlay>
+                        <div
+                            style="height: 100%; background-color: var(--el-mask-color); display: flex; align-items: center; justify-content: center;">
+                            <ElIcon class="is-loading" color="var(--el-color-primary)" :size="26">
+                                <AutoiconEpLoading />
+                            </ElIcon>
+                        </div>
+                    </template>
+                </ElTableV2>
+            </template>
+        </ElAutoResizer>
+    </ElMain>
+
+    <ElRow class="main-table-pagination">
+        <ElCol :span="24">
+            <ElPagination :total="pagination.total" v-model:currentPage="pagination.page"
+                v-model:page-size="pagination.limit" @size-change="pagination.sizeChange"
+                @current-change="pagination.pageChange" :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+                layout="total, sizes, prev, pager, next, jumper" :background="true" />
+        </ElCol>
+    </ElRow>
+
 </template>
 
 <style scoped>
@@ -186,11 +221,28 @@ defineExpose({
     border-top-left-radius: 8px;
 }
 
-.main-table :deep(.el-table-v2__main) {
+/* .main-table :deep(.el-table-v2__main) {
     position: static;
+} */
+
+.main-table-pagination {
+    height: 40px;
+    background-color: var(--el-bg-color);
+    border-top: 2px dashed var(--el-border-color);
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
-.main-table :deep(.el-table-v2__footer) {
+.main-table-pagination :deep(.el-pagination) {
+    float: right;
+    margin-right: 5px;
+}
+
+:deep(.el-table-v2__overlay) {
+    z-index: 10;
+}
+
+/* .main-table :deep(.el-table-v2__footer) {
     background-color: var(--el-bg-color);
     border-top: 2px dashed var(--el-border-color);
     border-bottom-right-radius: 8px;
@@ -202,5 +254,5 @@ defineExpose({
 .main-table :deep(.el-table-v2__footer .el-pagination) {
     float: right;
     margin-right: 5px;
-}
+} */
 </style>

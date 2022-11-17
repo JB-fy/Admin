@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const queryFormData = inject('queryFormData') as { [propName: string]: any }
+const queryData = inject('queryData') as { [propName: string]: any }
 
 const emits = defineEmits(['query'])
 const queryForm = reactive({
@@ -16,16 +16,16 @@ const queryForm = reactive({
 </script>
 
 <template>
-    <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryFormData" :inline="true"
+    <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryData" :inline="true"
         @keyup.enter="queryForm.submit">
         <ElFormItem prop="sceneName">
-            <ElInput v-model="queryFormData.sceneName" placeholder="名称" :clearable="true" />
+            <ElInput v-model="queryData.sceneName" placeholder="名称" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneCode">
-            <ElInput v-model="queryFormData.sceneCode" placeholder="标识" :clearable="true" />
+            <ElInput v-model="queryData.sceneCode" placeholder="标识" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
-            <ElSelect v-model="queryFormData.isStop" placeholder="停用" :clearable="true">
+            <ElSelect v-model="queryData.isStop" placeholder="停用" :clearable="true">
                 <ElOption :label="t('common.no')" value="0" />
                 <ElOption :label="t('common.yes')" value="1" />
             </ElSelect>

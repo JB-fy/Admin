@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const saveFormVisible = inject('saveFormVisible')
+const saveVisible = inject('saveVisible')
 
 const saveDrawer = reactive({
     ref: null as any,
@@ -43,7 +43,7 @@ const saveForm = reactive({
 
 <template>
     <div class="save-drawer">
-        <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveFormVisible" title="新增" size="50%"
+        <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveVisible" title="新增" size="50%"
             :before-close="saveDrawer.handleClose">
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
