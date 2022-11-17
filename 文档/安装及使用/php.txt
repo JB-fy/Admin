@@ -1,19 +1,14 @@
 依赖：yum install gcc gcc-c++ make libxml2-devel openssl-devel sqlite-devel libcurl-devel libicu-devel openldap-devel libxslt-devel
     1、创建安装目录
-        mkdir -p /server/tool/php-8.1.11
+        mkdir -p /server/tool/php-8.1.12
     2、解压php安装
-        tar -xvf php-8.1.11.tar.gz
-
-        //创建用户组，用户并改变文件所属用户组和用户
-        groupadd php
-        useradd -r -g php -s /bin/false php
-        chown -R php:php /server/tool/php-8.1.11
+        tar -xvf php-8.1.12.tar.gz
 
         进入解压目录运行
             //apache模块加载方式设置
             --with-apxs2=/tool/apache/bin/apxs
             //php-fpm方式设置
-            --enable-fpm --with-fpm-user=php --with-fpm-group=php
+            --enable-fpm
 
 报错处理
     报错：Cannot find ldap libraries in /usr/lib.
@@ -23,52 +18,41 @@
         wget http://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/oniguruma-devel-6.9.6-1.el9.5.x86_64.rpm
         yum localinstall oniguruma-devel-6.9.6-1.el9.5.x86_64.rpm
 
-    错误：centos9系统自带的openssl版本太高，需要装低版本1.1.1，否则make && make install会出错
-        wget https://www.openssl.org/source/openssl-1.1.1q.tar.gz
-        tar -xvf openssl-1.1.1q.tar.gz
-        cd openssl-1.1.1q
-        yum install perl
-        ./config --prefix=/server/openssl --openssldir=/server/openssl
-        make && make install
-        编译加上--with-openssl=/server/openssl
-
         //8.0版本弃用
         --with-iconv-dir --enable-inline-optimization --with-xmlrpc --enable-maintainer-zts
-ph
-        ./configure --prefix=/server/tool/php-8.1.11 --with-config-file-path=/server/tool/php-8.1.11/etc --with-config-file-scan-dir=/server/tool/php-8.1.11/etc/php.d --enable-fpm --with-fpm-user=php --with-fpm-group=php --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
+
+        ./configure --prefix=/server/tool/php-8.1.12 --with-config-file-path=/server/tool/php-8.1.12/etc --with-config-file-scan-dir=/server/tool/php-8.1.12/etc/php.d --enable-fpm --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
         //安装
         make && make install
     3、拷贝配置文件
         //拷贝php配置文件
-        cp /server/php-8.1.11/php.ini-production /server/tool/php-8.1.11/etc/php.ini
-        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-8.1.11，php-fpm-7.1.15）
-        cp /server/php-8.1.11/sapi/fpm/init.d.php-fpm /server/tool/php-8.1.11/bin/php-fpm-8.1.11
-        cp /server/tool/php-8.1.11/etc/php-fpm.conf.default /server/tool/php-8.1.11/etc/php-fpm.conf
-        cp /server/tool/php-8.1.11/etc/php-fpm.d/www.conf.default /server/tool/php-8.1.11/etc/php-fpm.d/www.conf
+        cp /server/php-8.1.12/php.ini-production /server/tool/php-8.1.12/etc/php.ini
+        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-8.1.12，php-fpm-7.4.33）
+        cp /server/php-8.1.12/sapi/fpm/init.d.php-fpm /server/tool/php-8.1.12/bin/php-fpm-8.1.12
+        cp /server/tool/php-8.1.12/etc/php-fpm.conf.default /server/tool/php-8.1.12/etc/php-fpm.conf
+        cp /server/tool/php-8.1.12/etc/php-fpm.d/www.conf.default /server/tool/php-8.1.12/etc/php-fpm.d/www.conf
         //安装多版本需要改监听端口，不同版本端口设置要不一样
-        vi /server/tool/php-8.1.11/etc/php-fpm.d/www.conf
+        vi /server/tool/php-8.1.12/etc/php-fpm.d/www.conf
     4、编辑自启动文件
-        vi /etc/systemd/system/php-fpm-8.1.11.service
+        vi /etc/systemd/system/php-fpm-8.1.12.service
 [Unit]
-Description=php-fpm-8.1.11
+Description=php-fpm-8.1.12
 After=network.target
 [Service]
 Type=forking
-PIDFile=/server/tool/php-8.1.11/var/run/php-fpm.pid
-ExecStart=/server/tool/php-8.1.11/bin/php-fpm-8.1.11 start
-ExecReload=/server/tool/php-8.1.11/bin/php-fpm-8.1.11 reload
-ExecStop=/server/tool/php-8.1.11/bin/php-fpm-8.1.11 stop
+PIDFile=/server/tool/php-8.1.12/var/run/php-fpm.pid
+ExecStart=/server/tool/php-8.1.12/bin/php-fpm-8.1.12 start
+ExecReload=/server/tool/php-8.1.12/bin/php-fpm-8.1.12 reload
+ExecStop=/server/tool/php-8.1.12/bin/php-fpm-8.1.12 stop
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
     5、设置自启动
-        chmod -R 755 /server/tool/php-8.1.11/bin/php-fpm-8.1.11
-        systemctl enable php-fpm-8.1.11
-    6、启动php-fpm
-        /server/tool/php-8.1.11/bin/php-fpm-8.1.11 start
-    7、设置环境变量增加以下目录（参考linux学习文件）
-        /server/tool/php-8.1.11/bin
-    8、扩展安装
+        chmod -R 755 /server/tool/php-8.1.12/bin/php-fpm-8.1.12
+        systemctl enable php-fpm-8.1.12
+    6、设置环境变量增加以下目录（参考linux学习文件）
+        /server/tool/php-8.1.12/bin
+    7、扩展安装
         扩展包里面执行以下步骤
         phpize
         ./configure
@@ -83,12 +67,12 @@ WantedBy=multi-user.target
     tar -xvf redis-5.3.7.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-8.1.11/bin/php-config
+    ./configure --with-php-config=/server/tool/php-8.1.12/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=redis.so
 安装swoole
-    tar -xvf swoole-src-5.0.0.tar.gz
+    tar -xvf swoole-src-5.0.1.tar.gz
     进入目录编译
     phpize
     ./configure --enable-openssl --enable-http2
@@ -100,13 +84,13 @@ WantedBy=multi-user.target
     tar -xvf event-3.0.8.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-8.1.11/bin/php-config
+    ./configure --with-php-config=/server/tool/php-8.1.12/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=event.so
 
 修改配置参数
-vi /server/tool/php-8.1.11/etc/php.ini
+vi /server/tool/php-8.1.12/etc/php.ini
 修改以下参数
 memory_limit            1024M
 upload_max_filesize     50M

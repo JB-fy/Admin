@@ -23,6 +23,8 @@ cp 前文件名 后文件名	//复制并重命名文件或目录
 rm -rf 文件名	//删除文件
 find 路径 -name 文件名	//查找文件
 ln -s 源文件 目标文件	//创建软链接
+groupadd 用户组名	//创建用户组
+useradd 用户名	//创建用户。示例：useradd -r -g mysql -s /bin/false mysql（-r 系统账号，-g mysql 指定所属用户组，-s /bin/false 不能登录）
 chown -R 用户组:用户名 路径	//设置文件所属组和用户，-R表示递归设置
 chmod -R 755 路径	//设置文件权限，-R表示递归设置
 lsattr 文件名 	//查看文件属性
@@ -51,7 +53,7 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 /**--------设置环境变量 开始--------**/
 修改配置文件 /etc/profile 在最下面追加目录（多路径用冒号分开）
 vi /etc/profile
-PATH=$PATH:/server/tool/nginx-1.22.0/sbin:/server/tool/php-8.1.11/bin:/server/tool/node-16.17.1/bin:/server/tool/composer:/server/tool/git-2.37.3/bin
+PATH=$PATH:/server/tool/nginx-1.22.0/sbin:/server/tool/php-8.1.12/bin:/server/tool/node-16.17.1/bin:/server/tool/composer:/server/tool/git-2.37.3/bin
 PATH=$PATH:/server/tool/mysql-8.0.30/bin
 source /etc/profile	//马上生效
 /**--------设置环境变量 结束--------**/
@@ -65,7 +67,7 @@ vi /etc/selinux/config
 systemctl status 服务名		//查看服务状态
 systemctl start 服务名		//开启服务
 systemctl stop 服务名		//关闭服务
-systemctl restart 服务名		//重启服务
+systemctl restart|reload 服务名		//重启服务
 systemctl disable 服务名		//禁止开机自启动
 systemctl enable 服务名		//开启开机自启动
 systemctl list-units --type=service //查看所有自启动服务
