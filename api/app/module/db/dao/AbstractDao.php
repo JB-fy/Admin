@@ -637,9 +637,6 @@ abstract class AbstractDao
         if (!empty($this->join)) {
             $this->handleJoin();
         }
-        if ($this->model->isSoftDelete()) {
-            $this->builder->where($this->getTable() . '.' . $this->model->fieldSoftDelete(), '=', 0);
-        }
         return $this->builder;
     }
 
@@ -823,11 +820,6 @@ abstract class AbstractDao
     final public function delete(): int
     {
         $this->getBuilder();
-        if ($this->model->isSoftDelete()) {
-            return $this->builder->update([
-                $this->getTable() . '.' . $this->model->fieldSoftDelete() => 1
-            ]);
-        }
         return $this->builder->delete();
     }
 

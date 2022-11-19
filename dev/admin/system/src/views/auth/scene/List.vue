@@ -96,6 +96,7 @@ const table = reactive({
         },
     }],
     data: [],
+    loading: false,
     order: {
         key: 'id',
         order: 'desc',
@@ -140,9 +141,11 @@ const getList = async (resetPage: boolean = false) => {
         page: pagination.page,
         limit: pagination.limit
     }
+    table.loading = true
     const res = await request('auth.scene.list', param)
     table.data = res.data.list
     pagination.total = res.data.count
+    table.loading = false
 }
 getList()
 
@@ -188,13 +191,10 @@ defineExpose({
             <template #default="{ height, width }">
                 <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.order"
                     @column-sort="table.handleOrder" :width="width" :height="height" :fixed="true">
-                    <template #overlay>
-                        <div
-                            style="height: 100%; background-color: var(--el-mask-color); display: flex; align-items: center; justify-content: center;">
-                            <ElIcon class="is-loading" color="var(--el-color-primary)" :size="26">
-                                <AutoiconEpLoading />
-                            </ElIcon>
-                        </div>
+                    <template v-if="table.loading" #overlay>
+                        <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
+                            <AutoiconEpLoading />
+                        </ElIcon>
                     </template>
                 </ElTableV2>
             </template>
@@ -225,6 +225,14 @@ defineExpose({
     position: static;
 } */
 
+.main-table :deep(.el-table-v2__overlay) {
+    z-index: 10;
+    background-color: var(--el-mask-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .main-table-pagination {
     height: 40px;
     background-color: var(--el-bg-color);
@@ -236,10 +244,6 @@ defineExpose({
 .main-table-pagination :deep(.el-pagination) {
     float: right;
     margin-right: 5px;
-}
-
-:deep(.el-table-v2__overlay) {
-    z-index: 10;
 }
 
 /* .main-table :deep(.el-table-v2__footer) {

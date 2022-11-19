@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace app\module\db\model;
 
-// use Illuminate\Database\Eloquent\SoftDeletes;
 use support\Db;
 // use support\Model;
 
@@ -18,11 +17,6 @@ abstract class AbstractModel/*  extends Model */
     protected $primaryKey;   //主键名
 
     protected array $allColumn = [];   //全部列（正常都是固定的，分库分表也都一样）
-
-    //use SoftDeletes;
-
-    protected bool $isSoftDelete = false;   //是否软删除
-    protected string $fieldSoftDelete = 'isDelete';   //软删除字段。当isSoftDelete为true时才有效
 
     final public function __construct(array $attributes = [])
     {
@@ -49,16 +43,6 @@ abstract class AbstractModel/*  extends Model */
     final public function getAllColumn(): array
     {
         return $this->allColumn;
-    }
-
-    final public function isSoftDelete(): bool
-    {
-        return $this->isSoftDelete;
-    }
-
-    final public function fieldSoftDelete(): string
-    {
-        return $this->fieldSoftDelete;
     }
 
     /* public function __get(string $name)
