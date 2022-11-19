@@ -75,12 +75,12 @@ WantedBy=multi-user.target
     tar -xvf swoole-src-5.0.1.tar.gz
     进入目录编译
     phpize
-    ./configure --enable-openssl --enable-http2
+    //5.0版本弃用：--enable-http2
+    ./configure --enable-openssl
     make && make install
     在php.ini添加以下内容
     extension=swoole.so
 安装event
-    wget https://pecl.php.net/get/event-3.0.8.tgz
     tar -xvf event-3.0.8.tgz
     进入目录编译
     phpize
