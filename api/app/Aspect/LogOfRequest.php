@@ -30,8 +30,8 @@ class LogOfRequest extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $startTime = microtime(true);
         try {
+            $startTime = microtime(true);
             $response = $proceedingJoinPoint->process();
             $responseBody = json_encode($response, JSON_UNESCAPED_UNICODE);
             /*if ($response instanceof Response) {
@@ -42,9 +42,12 @@ class LogOfRequest extends AbstractAspect
             return $response;
         } catch (\Throwable $th) {
             if ($th instanceof \App\Exception\Json) {
-                $responseData = $th->getResponseData();
+                $responseBody = $th->getResponseBody();
+                /* $responseData = $th->getResponseData();
                 //unset($responseData['data']['list']); //列表数据太大,记录会给数据库太大压力
-                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
+                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE); */
+            } elseif ($th instanceof \App\Exception\Raw) {
+                $responseBody = $th->getResponseBody();
             } elseif ($th instanceof \Hyperf\Validation\ValidationException) {
                 $responseData = [
                     'code' => '000999',
@@ -52,8 +55,6 @@ class LogOfRequest extends AbstractAspect
                     'data' => [],
                 ];
                 $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
-                /* } elseif ($th instanceof \App\Exception\Raw) {
-                $responseBody = json_encode($th->getMessage(), JSON_UNESCAPED_UNICODE); */
             } else {
                 $responseBody = json_encode($th->getMessage(), JSON_UNESCAPED_UNICODE);
             }
