@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Hyperf\Database\Schema\Schema;
-use Hyperf\DbConnection\Db;
+use App\Module\Db\Dao\Auth\Scene;
 
 class Test extends AbstractController
 {
     public function index()
     {
+        $a = make(Scene::class)->getBuilder()->get()->toArray();
+        //var_dump($a);
         //sleep(10);
         //throwSuccessJson([]);
         //throwRaw('哈哈阿');

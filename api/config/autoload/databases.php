@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * This file is part of Hyperf.
  *
@@ -38,9 +39,27 @@ return [
         ],
         'commands' => [
             'gen:model' => [
-                'path' => 'app/Model',
+                'path' => 'app/Module/Db/Model',
+                'inheritance' => 'AbstractModel',
+                'uses' => 'App\Module\Db\Model\AbstractModel',
                 'force_casts' => true,
-                'inheritance' => 'Model',
+                'refresh_fillable' => true,
+                'with_comments' => true,
+                'table_mapping' => [
+                    'auth_action:Auth\Action',
+                    'auth_action_rel_to_scene:Auth\ActionRelToScene',
+                    'auth_menu:Auth\Menu',
+                    'auth_role:Auth\Role',
+                    'auth_role_rel_of_platform_admin:Auth\RoleRelOfPlatformAdmin',
+                    'auth_role_rel_to_action:Auth\RoleRelToAction',
+                    'auth_role_rel_to_menu:Auth\RoleRelToMenu',
+                    'auth_scene:Auth\Scene',
+
+                    'platform_admin:Platform\Admin',
+                    'platform_config:Platform\Config',
+
+                    'log_request:Log\Request',
+                ],
             ],
         ],
     ],

@@ -1,6 +1,19 @@
     SQL语法顺序：select->from->where->group by->having->order by->limit
     SQL执行顺序：from->where->group by->having->select->order by->limit
 
+
+框架使用说明：
+    启动服务
+        php bin/hyperf.php start
+        php bin/hyperf.php server:watch //热更新
+    快速生成模型类(--pool对应哪个库)
+        php bin/hyperf.php gen:model --pool=default
+    快速生成Dao类（先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法），生成后再自己修改
+        php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
+    
 框架使用规范：
-    对象获取与创建强制使用container方法，使用该方法需要特别注意对象是否含有状态。
-    所有数据库操作必须使用app\module\db\dao文件夹内的类
+    1：使用容器和依赖注入功能时，需要特别注意对象是否含有状态。以下为带有状态的类
+        app\Module\Db\Dao内的类
+        app\Module\Db\Model内的类（如果继承\Hyperf\DbConnection\Model\Model模型的话）
+    2：禁止在任何地方使用app\Module\Db\Model类，防止改变其状态，否则会对app\Module\Db\Dao的使用造成影响
+    3：只使用app\Module\Db\Dao或Hyperf\DbConnection\Db做数据库处理
