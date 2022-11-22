@@ -15,23 +15,4 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Config extends AbstractDao
 {
-    /**
-     * The table associated with the model.
-     */
-    protected ?string $table = 'platform_config';
-
-    /**
-     * The connection name for the model.
-     */
-    protected ?string $connection = 'default';
-
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected array $fillable = ['id', 'configKey', 'configValue', 'updateTime', 'createTime'];
-
-    /**
-     * The attributes that should be cast to native types.
-     */
-    protected array $casts = ['id' => 'integer'];
 }
