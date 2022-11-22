@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\Cache;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 
@@ -11,6 +12,9 @@ abstract class AbstractCache
 {
     #[Inject]
     protected ContainerInterface $container;
+
+    #[Inject]
+    protected ConfigInterface $config;
 
     protected string $connection = 'default';  //默认连接
 

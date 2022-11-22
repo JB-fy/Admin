@@ -48,6 +48,9 @@ class AppExceptionHandler extends ExceptionHandler
                 'data' => [],
             ];
             $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
+            /* if (!$response->hasHeader('content-type')) {
+                $response = $response->withAddedHeader('content-type', 'text/plain; charset=utf-8');
+            } */
             return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
         }
         $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
