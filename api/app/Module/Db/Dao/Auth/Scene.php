@@ -22,5 +22,6 @@ class Scene extends AbstractDao
      * @var \App\Module\Db\Model\Auth\Scene
      */
     #[Inject]
-    protected  $model;
+    protected $model;
+    //protected \App\Module\Db\Model\Auth\Scene $model;
 }

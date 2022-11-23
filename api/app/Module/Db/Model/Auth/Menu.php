@@ -7,7 +7,7 @@ namespace App\Module\Db\Model\Auth;
 use App\Module\Db\Model\AbstractModel;
 
 /**
- * @property int $id 权限菜单ID
+ * @property int $menuId 权限菜单ID
  * @property int $sceneId 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
  * @property int $pid 父ID
  * @property string $menuName 名称
@@ -25,14 +25,15 @@ class Menu extends AbstractModel
      * The table associated with the model.
      */
     protected ?string $table = 'auth_menu';
+    protected string $primaryKey = 'menuId';
 
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['id', 'sceneId', 'pid', 'menuName', 'pidPath', 'level', 'extendData', 'sort', 'isStop', 'updateTime', 'createTime'];
+    protected array $fillable = ['menuId', 'sceneId', 'pid', 'menuName', 'pidPath', 'level', 'extendData', 'sort', 'isStop', 'updateTime', 'createTime'];
 
     /**
      * The attributes that should be cast to native types.
      */
-    protected array $casts = ['id' => 'integer', 'sceneId' => 'integer', 'pid' => 'integer', 'level' => 'integer', 'sort' => 'integer', 'isStop' => 'integer'];
+    protected array $casts = ['menuId' => 'integer', 'sceneId' => 'integer', 'pid' => 'integer', 'level' => 'integer', 'sort' => 'integer', 'isStop' => 'integer'];
 }

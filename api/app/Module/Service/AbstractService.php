@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace app\module\service;
-//use DI\Annotation\Inject;
+namespace App\Module\Service;
+
+use Hyperf\Di\Annotation\Inject;
+use Psr\Container\ContainerInterface;
 
 abstract class AbstractService
 {
-    // /**
-    //  * @Inject
-    //  * @var \app\module\db\dao\auth\AuthMenu
-    //  */
-    // protected $dao;
-    //protected $dao = \app\module\db\dao\auth\AuthMenu::class;
-    protected $dao = '';   //dao类的路径，调用地方实例化对象。因dao类带有状态，无法直接使用容器注释功能做依赖注入。
+    #[Inject]
+    protected ContainerInterface $container;
+
+    //protected $daoName = \app\module\db\dao\auth\AuthMenu::class;
+    protected $daoName = '';   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
 
     /**
      * 列表（通用，需要特殊处理的覆盖重新定义）
@@ -31,7 +31,7 @@ abstract class AbstractService
         $offset = ($page - 1) * $limit;
 
         $countAfter = ($offset == 0 && $limit == 0);  //用于判断是否先获取$list，再通过count($list)计算$count
-        $dao = container($this->dao, true);
+        $dao = make($this->daoName);
         $dao->where($where);
         if (!$countAfter) {
             if ($dao->isJoin()) {
@@ -64,7 +64,7 @@ abstract class AbstractService
      */
     public function create(array $data)
     {
-        $dao = container($this->dao, true);
+        $dao = make($this->daoName);
         $id = $dao->insert($data)->saveInsert();
         if (empty($id)) {
             throwFailJson('999999');
@@ -81,7 +81,7 @@ abstract class AbstractService
      */
     public function update(array $data, int $id)
     {
-        $dao = container($this->dao, true);
+        $dao = make($this->daoName);
         $result = $dao->where(['id' => $id])->update($data)->saveUpdate();
         if (empty($result)) {
             throwFailJson('999999');
@@ -97,7 +97,7 @@ abstract class AbstractService
      */
     public function delete(array $idArr)
     {
-        $dao = container($this->dao, true);
+        $dao = make($this->daoName);
         $result = $dao->where([['id', 'in', $idArr]])->delete();
         if (empty($result)) {
             throwFailJson('999999');

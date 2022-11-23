@@ -10,7 +10,7 @@ class CommonList extends AbstractValidation
         'field' => 'array',
         'where' => 'array',
         'order' => 'array',
-        //'order.*' => 'in:asc,desc,ASC,DESC',
+        'order.*' => 'in:asc,desc,ASC,DESC',
         'page' => 'integer|min:1',
         'limit' => 'integer|min:0',
     ];

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-//use app\module\service\auth\AuthMenu as ServiceAuthMenu;
-use app\module\service\Login as ServiceLogin;
+use App\Module\Service\Login as ServiceLogin;
 use App\Module\Validation\Login as ValidationLogin;
 
 class Login extends AbstractController
@@ -17,14 +16,15 @@ class Login extends AbstractController
      */
     public function encryptStr()
     {
-        switch ($this->request->authSceneInfo->sceneCode) {
-            case 'platform':
+        var_dump($this->request->sceneInfo);
+        switch ($this->request->sceneInfo->sceneCode) {
+            case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
-                $this->container->get(ValidationLogin::class)->scene('encryptStr')->check($data);
+                $this->container->get(ValidationLogin::class)->make($data, 'encryptStr')->validate();
                 /**--------验证参数 结束--------**/
 
-                $this->container->get(ServiceLogin::class)->encryptStr($data['account'], 'platform');
+                $this->container->get(ServiceLogin::class)->encryptStr($data['account'], 'platformAdmin');
                 break;
             default:
                 throwFailJson('001001');
@@ -39,14 +39,14 @@ class Login extends AbstractController
      */
     public function login()
     {
-        switch ($this->request->authSceneInfo->sceneCode) {
-            case 'platform':
+        switch ($this->request->sceneInfo->sceneCode) {
+            case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
-                $this->container->get(ValidationLogin::class)->check($data);
+                $this->container->get(ValidationLogin::class)->make($data)->validate();
                 /**--------验证参数 结束--------**/
 
-                $this->container->get(ServiceLogin::class)->login($data['account'], $data['password'], 'platform');
+                $this->container->get(ServiceLogin::class)->login($data['account'], $data['password'], 'platformAdmin');
                 break;
             default:
                 throwFailJson('001001');
@@ -61,9 +61,9 @@ class Login extends AbstractController
      */
     public function info()
     {
-        switch ($this->request->authSceneInfo->sceneCode) {
-            case 'platform':
-                throwSuccessJson(['info' => $this->request->platformInfo]);
+        switch ($this->request->sceneInfo->sceneCode) {
+            case 'platformAdmin':
+                throwSuccessJson(['info' => $this->request->platformAdminInfo]);
                 break;
             default:
                 throwFailJson('001001');
@@ -78,8 +78,8 @@ class Login extends AbstractController
      */
     // public function updateInfo()
     // {
-    //     switch ($this->request->authSceneInfo->sceneCode) {
-    //         case 'platform':
+    //     switch ($this->request->sceneInfo->sceneCode) {
+    //         case 'platformAdmin':
     //             /**--------验证参数 开始--------**/
     //             $data = $this->request->all();
     //             $this->container->get(ValidationLogin::class, true)->scene('encryptStr')->check($data);
@@ -107,7 +107,7 @@ class Login extends AbstractController
     //             }
     //             /**--------验证参数 结束--------**/
 
-    //             $this->container->get(AdminService::class)->update($data, $this->request->platformInfo->adminId);
+    //             $this->container->get(AdminService::class)->update($data, $this->request->platformAdminInfo->adminId);
     //             break;
     //         default:
     //             throwFailJson('001001');
@@ -122,16 +122,16 @@ class Login extends AbstractController
      */
     // public function menuTree()
     // {
-    //     switch ($this->request->authSceneInfo->sceneCode) {
-    //         case 'platform':
-    //             /* if ($this->request->platformInfo->adminId == 1) {
+    //     switch ($this->request->sceneInfo->sceneCode) {
+    //         case 'platformAdmin':
+    //             /* if ($this->request->platformAdminInfo->adminId == 1) {
     //                 $where = [
-    //                     'sceneId' => $this->request->authSceneInfo->sceneId,
+    //                     'sceneId' => $this->request->sceneInfo->sceneId,
     //                     'isStop' => 0
     //                 ];
     //             } else {
     //                 $where = [
-    //                     'platformId' => $this->request->platformInfo->adminId,
+    //                     'adminId' => $this->request->platformAdminInfo->adminId,
     //                     'isStop' => 0
     //                 ];
     //             } */

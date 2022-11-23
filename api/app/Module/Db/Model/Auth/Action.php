@@ -7,7 +7,7 @@ namespace App\Module\Db\Model\Auth;
 use App\Module\Db\Model\AbstractModel;
 
 /**
- * @property int $id 权限操作ID
+ * @property int $actionId 权限操作ID
  * @property int $pid 父ID（主要用于归类，方便查看。否则可以不要）
  * @property string $actionName 名称
  * @property string $actionCode 标识（代码中用于判断权限）
@@ -25,14 +25,15 @@ class Action extends AbstractModel
      * The table associated with the model.
      */
     protected ?string $table = 'auth_action';
+    protected string $primaryKey = 'actionId';
 
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['id', 'pid', 'actionName', 'actionCode', 'pidPath', 'level', 'remark', 'sort', 'isStop', 'updateTime', 'createTime'];
+    protected array $fillable = ['actionId', 'pid', 'actionName', 'actionCode', 'pidPath', 'level', 'remark', 'sort', 'isStop', 'updateTime', 'createTime'];
 
     /**
      * The attributes that should be cast to native types.
      */
-    protected array $casts = ['id' => 'integer', 'pid' => 'integer', 'level' => 'integer', 'sort' => 'integer', 'isStop' => 'integer'];
+    protected array $casts = ['actionId' => 'integer', 'pid' => 'integer', 'level' => 'integer', 'sort' => 'integer', 'isStop' => 'integer'];
 }

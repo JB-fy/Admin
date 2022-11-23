@@ -168,7 +168,20 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'field' => '查询字段',
+        'where' => '筛选字段',
+        'order' => '排序字段',
+        'order.*' => '排序值',
+        'page' => '页码',
+        'limit' => '条数',
+
+        'id' => 'ID',
+        'excId' => '排除ID',
+
+        'account' => '账号',
+        'password' => '密码',
+    ],
     'phone_number' => ':attribute 必须为一个有效的电话号码',
     'telephone_number' => ':attribute 必须为一个有效的手机号码',
 

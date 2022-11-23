@@ -19,7 +19,7 @@ class Login extends AbstractService
      */
     public function encryptStr(string $account, string $type)
     {
-        $encryptStr = container(LogicLogin::class)->createEncryptStr($account, $type);
+        $encryptStr = $this->container->get(LogicLogin::class)->createEncryptStr($account, $type);
         throwSuccessJson(['encryptStr' => $encryptStr]);
     }
 
