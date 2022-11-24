@@ -8,7 +8,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 //这个中间件可以不要，控制器没有对应场景也会报错
-//#[Aspect]
+#[Aspect]
 class Scene extends AbstractAspect
 {
     //执行优先级（大值优先）
@@ -18,7 +18,7 @@ class Scene extends AbstractAspect
     public array $classes = [
         \App\Controller\Index::class,
         \App\Controller\Login::class,
-        \App\Controller\Auth\AuthScene::class
+        \App\Controller\Auth\Scene::class
     ];
 
     //要切入的注解，具体切入的还是使用了这些注解的类，仅可切入类注解和类方法注解

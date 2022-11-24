@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Module\Logic\Login as LogicLogin;
 use App\Module\Service\Login as ServiceLogin;
 use App\Module\Validation\Login as ValidationLogin;
 
@@ -62,7 +63,8 @@ class Login extends AbstractController
     {
         switch (getRequestScene()) {
             case 'platformAdmin':
-                throwSuccessJson(['info' => $this->request->platformAdminInfo]);
+                $info = $this->container->get(LogicLogin::class)->getInfo('platformAdmin');
+                throwSuccessJson(['info' => $info]);
                 break;
             default:
                 throwFailJson('001001');

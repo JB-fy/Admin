@@ -12,8 +12,8 @@ abstract class AbstractService
     #[Inject]
     protected ContainerInterface $container;
 
-    //protected $daoName = \app\module\db\dao\auth\AuthMenu::class;
-    protected $daoName = '';   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
+    //protected $daoClassName = \app\module\db\dao\auth\AuthMenu::class;
+    protected $daoClassName = '';   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
 
     /**
      * 列表（通用，需要特殊处理的覆盖重新定义）
@@ -31,7 +31,7 @@ abstract class AbstractService
         $offset = ($page - 1) * $limit;
 
         $countAfter = ($offset == 0 && $limit == 0);  //用于判断是否先获取$list，再通过count($list)计算$count
-        $dao = make($this->daoName);
+        $dao = getDao($this->daoClassName);
         $dao->where($where);
         if (!$countAfter) {
             if ($dao->isJoin()) {
@@ -64,7 +64,7 @@ abstract class AbstractService
      */
     public function create(array $data)
     {
-        $dao = make($this->daoName);
+        $dao = getDao($this->daoClassName);
         $id = $dao->insert($data)->saveInsert();
         if (empty($id)) {
             throwFailJson('999999');
@@ -81,7 +81,7 @@ abstract class AbstractService
      */
     public function update(array $data, int $id)
     {
-        $dao = make($this->daoName);
+        $dao = getDao($this->daoClassName);
         $result = $dao->where(['id' => $id])->update($data)->saveUpdate();
         if (empty($result)) {
             throwFailJson('999999');
@@ -97,7 +97,7 @@ abstract class AbstractService
      */
     public function delete(array $idArr)
     {
-        $dao = make($this->daoName);
+        $dao = getDao($this->daoClassName);
         $result = $dao->where([['id', 'in', $idArr]])->delete();
         if (empty($result)) {
             throwFailJson('999999');

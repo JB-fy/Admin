@@ -95,9 +95,9 @@ if (!function_exists('getDao')) {
      *      app\Module\Db\Dao文件夹内的类统一使用此方法实例化。防止误使用容器获取，容器获取的实例状态改变会污染框架环境
      *
      * @param string $className
-     * @return void
+     * @return object
      */
-    function getDao(string $className)
+    function getDao(string $className): object
     {
         return make($className);
     }
@@ -109,9 +109,9 @@ if (!function_exists('getCache')) {
      *  注意：
      *      当确定使用的缓存对象一定不会切换连接库时（即不改变app\Module\Cache\AbstractCache类的$cache变量），可使用容器缓存获取
      * @param string $className
-     * @return void
+     * @return object
      */
-    function getCache(string $className)
+    function getCache(string $className): object
     {
         //return make($className);
         return getContainer()->get($className);
