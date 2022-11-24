@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Module\Logic\Login as LogicLogin;
-use App\Module\Service\Login as ServiceLogin;
-use App\Module\Validation\Login as ValidationLogin;
+use Hyperf\Di\Annotation\Inject;
 
 class Login extends AbstractController
 {
+    #[Inject]
+    protected \App\Module\Validation\Login $validation;
+
+    #[Inject]
+    protected \App\Module\Service\Login $service;
+
     /**
      * 获取登录加密字符串(前端登录操作用于加密密码后提交)
      *
@@ -21,10 +25,10 @@ class Login extends AbstractController
             case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
-                $this->container->get(ValidationLogin::class)->make($data, 'encryptStr')->validate();
+                $this->validation->make($data, 'encryptStr')->validate();
                 /**--------验证参数 结束--------**/
 
-                $this->container->get(ServiceLogin::class)->encryptStr($data['account'], 'platformAdmin');
+                $this->service->encryptStr($data['account'], 'platformAdmin');
                 break;
             default:
                 throwFailJson('001001');
@@ -43,10 +47,10 @@ class Login extends AbstractController
             case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
-                $this->container->get(ValidationLogin::class)->make($data)->validate();
+                $this->validation->make($data)->validate();
                 /**--------验证参数 结束--------**/
 
-                $this->container->get(ServiceLogin::class)->login($data['account'], $data['password'], 'platformAdmin');
+                $this->service->login($data['account'], $data['password'], 'platformAdmin');
                 break;
             default:
                 throwFailJson('001001');
@@ -63,7 +67,7 @@ class Login extends AbstractController
     {
         switch (getRequestScene()) {
             case 'platformAdmin':
-                $info = $this->container->get(LogicLogin::class)->getInfo('platformAdmin');
+                $info = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 throwSuccessJson(['info' => $info]);
                 break;
             default:
