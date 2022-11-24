@@ -18,10 +18,6 @@ use Hyperf\Di\Annotation\Inject;
  */
 class Scene extends AbstractDao
 {
-    /**
-     * @var \App\Module\Db\Model\Auth\Scene
-     */
-    #[Inject]
+    #[Inject(value: \App\Module\Db\Model\Auth\Scene::class)]
     protected $model;
-    //protected \App\Module\Db\Model\Auth\Scene $model;
 }

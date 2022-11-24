@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Platform;
 
 use App\Module\Db\Dao\AbstractDao;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $id 管理员ID
@@ -19,4 +20,6 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Admin extends AbstractDao
 {
+    #[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
+    protected $model;
 }

@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use App\Module\Db\Dao\Auth\Scene as AuthScene;
-use App\Module\Logic\Auth\Scene as LogicAuthScene;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
-#[Aspect]
+//这个中间件可以不要，控制器没有对应场景也会报错
+//#[Aspect]
 class Scene extends AbstractAspect
 {
     //执行优先级（大值优先）
@@ -32,16 +30,16 @@ class Scene extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $sceneCode = $this->container->get(RequestInterface::class)->getHeaderLine('Scene');
+        $sceneCode = getRequestScene();
         if (empty($sceneCode)) {
             throwFailJson('001001');
         }
-        $sceneInfo = make(AuthScene::class)->where(['sceneCode' => $sceneCode])->getInfo();
+        $sceneInfo = make(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => $sceneCode])->getInfo();
         if (empty($sceneInfo)) {
             throwFailJson('001001');
         }
         $sceneInfo->sceneConfig = json_decode($sceneInfo->sceneConfig, true);
-        $this->container->get(LogicAuthScene::class)->setRequestSceneInfo($sceneInfo);
+        $this->container->get(\App\Module\Logic\Auth\Scene::class)->setRequestSceneInfo($sceneInfo);
         try {
             $response = $proceedingJoinPoint->process();
             return $response;

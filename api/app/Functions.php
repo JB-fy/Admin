@@ -49,6 +49,42 @@ if (!function_exists('throwRaw')) {
     }
 }
 
+if (!function_exists('getContainer')) {
+    /**
+     * 获取容器
+     *
+     * @return \Psr\Container\ContainerInterface
+     */
+    function getContainer(): \Psr\Container\ContainerInterface
+    {
+        return \Hyperf\Utils\ApplicationContext::getContainer();
+    }
+}
+
+if (!function_exists('getRequestScene')) {
+    /**
+     * 获取当前请求场景
+     *
+     * @return string|null
+     */
+    function getRequestScene(): ?string
+    {
+        return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Scene');
+    }
+}
+
+/**
+ * 获取当前请求是http还是https
+ *
+ * @return string
+ */
+/* function getHttpScheme(): string
+{
+    //必须在nginx配置文件中设置转发该头部
+    return request()->header('x-forwarded-proto', '');
+} */
+
+
 if (!function_exists('randStr')) {
     /**
      * 随机字符串
@@ -75,14 +111,3 @@ if (!function_exists('randStr')) {
         return $randStr;
     }
 }
-
-/**
- * 获取当前请求是http还是https
- *
- * @return string
- */
-/* function getHttpScheme(): string
-{
-    //必须在nginx配置文件中设置转发该头部
-    return request()->header('x-forwarded-proto', '');
-} */

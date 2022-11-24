@@ -23,6 +23,7 @@ abstract class AbstractDao/* extends \Hyperf\DbConnection\Model\Model */
 
     protected array $fieldAfter = [];    //获取数据库数据后，再做处理的字段
 
+    //#[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
     protected $model;   //模型
     protected \Hyperf\Database\Query\Builder $builder; //构造器
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Platform;
 
 use App\Module\Db\Dao\AbstractDao;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $id 配置ID
@@ -15,4 +16,6 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Config extends AbstractDao
 {
+    #[Inject(value: \App\Module\Db\Model\Platform\Config::class)]
+    protected $model;
 }

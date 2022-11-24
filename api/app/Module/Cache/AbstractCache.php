@@ -18,7 +18,7 @@ abstract class AbstractCache
 
     protected string $connection = 'default';  //默认连接
 
-    protected $cache;
+    protected \Hyperf\Redis\RedisProxy $cache;
 
     public function __construct(array $connectionSelectData = [])
     {

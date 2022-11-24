@@ -16,8 +16,8 @@ class Login extends AbstractController
      */
     public function encryptStr()
     {
-        switch ($this->request->getAttribute('sceneInfo')->sceneCode) {
-            case 'PlatformAdmin':
+        switch (getRequestScene()) {
+            case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
                 $this->container->get(ValidationLogin::class)->make($data, 'encryptStr')->validate();
@@ -38,7 +38,7 @@ class Login extends AbstractController
      */
     public function login()
     {
-        switch ($this->request->sceneInfo->sceneCode) {
+        switch (getRequestScene()) {
             case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
@@ -60,7 +60,7 @@ class Login extends AbstractController
      */
     public function info()
     {
-        switch ($this->request->sceneInfo->sceneCode) {
+        switch (getRequestScene()) {
             case 'platformAdmin':
                 throwSuccessJson(['info' => $this->request->platformAdminInfo]);
                 break;
@@ -77,7 +77,7 @@ class Login extends AbstractController
      */
     // public function updateInfo()
     // {
-    //     switch ($this->request->sceneInfo->sceneCode) {
+    //     switch (getRequestScene()) {
     //         case 'platformAdmin':
     //             /**--------验证参数 开始--------**/
     //             $data = $this->request->all();
@@ -121,7 +121,7 @@ class Login extends AbstractController
      */
     // public function menuTree()
     // {
-    //     switch ($this->request->sceneInfo->sceneCode) {
+    //     switch (getRequestScene()) {
     //         case 'platformAdmin':
     //             /* if ($this->request->platformAdminInfo->adminId == 1) {
     //                 $where = [

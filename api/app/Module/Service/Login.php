@@ -36,10 +36,12 @@ class Login extends AbstractService
         switch ($type) {
             case 'platformAdmin':
                 /**--------验证账号密码 开始--------**/
+                    $info = make(Admin::class)->where(['phone|account' => $account])->getInfo();
+                    var_dump( $info );
                 if (is_numeric($account)) {
-                    $info = container(Admin::class, true)->where(['phone' => $account])->getInfo();
+                    $info = make(Admin::class)->where(['phone' => $account])->getInfo();
                 } else {
-                    $info = container(Admin::class, true)->where(['account' => $account])->getInfo();
+                    $info = make(Admin::class)->where(['account' => $account])->getInfo();
                 }
                 if (empty($info)) {
                     throwFailJson('001010');
