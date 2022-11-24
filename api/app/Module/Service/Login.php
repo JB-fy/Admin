@@ -36,14 +36,14 @@ class Login extends AbstractService
         switch ($type) {
             case 'platformAdmin':
                 /**--------验证账号密码 开始--------**/
-                $info = make(Admin::class)->where(['loginStr' => $account])->getInfo();
+                $info = getDao(Admin::class)->where(['loginStr' => $account])->getInfo();
                 if (empty($info)) {
                     throwFailJson('001010');
                 }
                 if ($info->isStop) {
                     throwFailJson('001011');
                 }
-                if (!container(LogicLogin::class)->checkPassword($info->password, $password, $account, $type)) {
+                if (!$this->container->get(LogicLogin::class)->checkPassword($info->password, $password, $account, $type)) {
                     throwFailJson('001010');
                 }
                 /**--------验证账号密码 结束--------**/
@@ -52,11 +52,11 @@ class Login extends AbstractService
                 $payload = [
                     'id' => $info->adminId
                 ];
-                $platformAdminJwt = container('platformAdminJwt', true);   //如果
+                $platformAdminJwt = $this->container->get('platformAdminJwt', true);   //如果
                 $token = $platformAdminJwt->createToken($payload);
 
                 //缓存token（选做。限制多地登录，多设备登录等情况下可用）
-                $cacheLogin = container(CacheLogin::class, true);
+                $cacheLogin = getCache(CacheLogin::class);
                 $cacheLogin->setTokenKey($payload['id'], $type);
                 $cacheLogin->setToken($token, $platformAdminJwt->getConfig()['expireTime']);
 

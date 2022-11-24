@@ -6,9 +6,9 @@ namespace App\Module\Db\Dao;
 
 use Hyperf\DbConnection\Db;
 
-abstract class AbstractDao/* extends \Hyperf\DbConnection\Model\Model */
+abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
 {
-    protected ?string $connection;  //分库情况下，解析后所确定的连接
+    protected ?string $connection/*  = 'default' */;  //分库情况下，解析后所确定的连接
     protected ?string $table;   //分表情况下，解析后所确定的表
 
     protected string $tableRaw = '';    //表的原生表达式。当需要强制索引等特殊情况时使用。示例：Db::raw('table AS alias FORCE INDEX (索引)')。

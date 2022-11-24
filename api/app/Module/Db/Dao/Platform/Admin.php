@@ -6,10 +6,11 @@ namespace App\Module\Db\Dao\Platform;
 
 use App\Module\Db\Dao\AbstractDao;
 use App\Module\Db\Dao\Auth\Role;
+use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * @property int $id 管理员ID
+ * @property int $adminId 管理员ID
  * @property string $account 账号
  * @property string $phone 电话号码
  * @property string $password 密码（md5保存）
@@ -35,7 +36,7 @@ class Admin extends AbstractDao
         switch ($key) {
             case 'roleName':
                 $this->joinOfAlone($key);
-                $this->field['select'][] = make(Role::class)->getTable() . '.' . $key;
+                $this->field['select'][] = getDao(Role::class)->getTable() . '.' . $key;
                 return true;
         }
         return false;
@@ -71,38 +72,38 @@ class Admin extends AbstractDao
      * @param [type] $value 值，用于确定关联表
      * @return boolean
      */
-    /* protected function joinOfAlone(string $key, $value = null): bool
+    protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'roleName':
-                $daoAuthRoleRelOfSystemAdmin = container(AuthRoleRelOfSystemAdmin::class, true);
-                $daoAuthRoleRelOfSystemAdminTable = $daoAuthRoleRelOfSystemAdmin->getTable();
-                if (!isset($this->join[$daoAuthRoleRelOfSystemAdminTable])) {
-                    $this->join[$daoAuthRoleRelOfSystemAdminTable] = [
+                $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
+                $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
+                if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
+                    $this->join[$roleRelOfPlatformAdminDaoTable] = [
                         'method' => 'leftJoin',
                         'param' => [
-                            $daoAuthRoleRelOfSystemAdminTable,
-                            $daoAuthRoleRelOfSystemAdminTable . '.adminId',
+                            $roleRelOfPlatformAdminDaoTable,
+                            $roleRelOfPlatformAdminDaoTable . '.adminId',
                             '=',
                             $this->getTable() . '.' . $this->getKey()
                         ]
                     ];
                 }
-                $tableAuthRole = container(AuthRole::class, true);
-                $tableAuthRoleName = $tableAuthRole->getTable();
-                if (!isset($this->join[$tableAuthRoleName])) {
-                    $this->join[$tableAuthRoleName] = [
+                $roleDao = getDao(Role::class);
+                $roleDaoTable = $roleDao->getTable();
+                if (!isset($this->join[$roleDaoTable])) {
+                    $this->join[$roleDaoTable] = [
                         'method' => 'leftJoin',
                         'param' => [
-                            $tableAuthRoleName,
-                            $tableAuthRoleName . '.roleId',
+                            $roleDaoTable,
+                            $roleDaoTable . '.roleId',
                             '=',
-                            $daoAuthRoleRelOfSystemAdminTable . '.roleId'
+                            $roleRelOfPlatformAdminDaoTable . '.roleId'
                         ]
                     ];
                 }
                 return true;
         }
         return false;
-    } */
+    }
 }

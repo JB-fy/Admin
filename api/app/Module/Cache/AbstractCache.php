@@ -16,14 +16,8 @@ abstract class AbstractCache
     #[Inject]
     protected ConfigInterface $config;
 
-    protected string $connection = 'default';  //默认连接
-
-    protected \Hyperf\Redis\RedisProxy $cache;
-
-    public function __construct(array $connectionSelectData = [])
-    {
-        $this->connection($connectionSelectData);
-    }
+    #[Inject(value: \Hyperf\Redis\Redis::class)]
+    protected \Hyperf\Redis\Redis|\Hyperf\Redis\RedisProxy $cache;  //默认redis的default连接库
 
     /**
      * 解析连接（多个redis情况下，用于确定使用哪个连接）
@@ -34,7 +28,6 @@ abstract class AbstractCache
     public function connection(array $connectionSelectData)
     {
         //选择逻辑
-        //$this->connection = ''; //设置当前使用的连接
-        $this->cache = $this->container->get(\Hyperf\Redis\RedisFactory::class)->get($this->connection);
+        //$this->cache = $this->container->get(\Hyperf\Redis\RedisFactory::class)->get($this->connection);
     }
 }

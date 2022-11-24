@@ -8,7 +8,7 @@ use App\Module\Db\Dao\AbstractDao;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * @property int $id 权限菜单ID
+ * @property int $menuId 权限菜单ID
  * @property int $sceneId 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
  * @property int $pid 父ID
  * @property string $menuName 名称

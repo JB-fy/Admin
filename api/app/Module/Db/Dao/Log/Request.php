@@ -8,7 +8,7 @@ use App\Module\Db\Dao\AbstractDao;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * @property int $id 请求日志ID
+ * @property int $logId 请求日志ID
  * @property string $requestUrl 请求地址
  * @property string $requestData 请求数据
  * @property string $requestHeader 请求头

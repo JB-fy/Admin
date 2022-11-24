@@ -8,7 +8,7 @@ use App\Module\Db\Dao\AbstractDao;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * @property int $id 权限角色ID
+ * @property int $roleId 权限角色ID
  * @property int $sceneId 权限场景ID
  * @property int $tableId 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
  * @property string $roleName 名称

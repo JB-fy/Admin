@@ -8,7 +8,7 @@ use App\Module\Db\Dao\AbstractDao;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * @property int $id 权限操作ID
+ * @property int $actionId 权限操作ID
  * @property int $pid 父ID（主要用于归类，方便查看。否则可以不要）
  * @property string $actionName 名称
  * @property string $actionCode 标识（代码中用于判断权限）
