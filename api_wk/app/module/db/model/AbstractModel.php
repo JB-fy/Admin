@@ -18,7 +18,7 @@ abstract class AbstractModel/*  extends Model */
 
     protected array $allColumn = [];   //全部列（正常都是固定的，分库分表也都一样）
 
-    final public function __construct(array $attributes = [])
+    public function __construct(array $attributes = [])
     {
         $this->allColumn = Db::connection($this->connection)->getSchemaBuilder()->getColumnListing($this->table);
         //parent::__construct($attributes);

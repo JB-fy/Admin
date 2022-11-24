@@ -26,7 +26,7 @@ abstract class AbstractDao/* extends \Hyperf\DbConnection\Model\Model */
     protected $model;   //模型
     protected \Hyperf\Database\Query\Builder $builder; //构造器
 
-    /* final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
+    /* public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
     {
         //$this->connection($connectionSelectData)->table($tableSelectData);
     } */

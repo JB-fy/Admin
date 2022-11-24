@@ -13,7 +13,7 @@ abstract class AbstractCache
      */
     protected $cache;
 
-    final public function __construct(array $connectionSelectData = [])
+    public function __construct(array $connectionSelectData = [])
     {
         $this->connection($connectionSelectData);
     }

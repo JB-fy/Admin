@@ -26,7 +26,7 @@ abstract class AbstractDao
     protected $model;   //模型
     protected \Illuminate\Database\Query\Builder $builder; //构造器
 
-    /* final public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
+    /* public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
     {
         //$this->connection($connectionSelectData)->table($tableSelectData);
     } */

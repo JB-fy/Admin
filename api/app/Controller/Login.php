@@ -16,9 +16,8 @@ class Login extends AbstractController
      */
     public function encryptStr()
     {
-        var_dump($this->request->sceneInfo);
-        switch ($this->request->sceneInfo->sceneCode) {
-            case 'platformAdmin':
+        switch ($this->request->getAttribute('sceneInfo')->sceneCode) {
+            case 'PlatformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
                 $this->container->get(ValidationLogin::class)->make($data, 'encryptStr')->validate();
