@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Module\Service\Auth\Menu;
 use Hyperf\Di\Annotation\Inject;
 
 class Login extends AbstractController
@@ -47,7 +48,7 @@ class Login extends AbstractController
             case 'platformAdmin':
                 /**--------验证参数 开始--------**/
                 $data = $this->request->all();
-                $this->validation->make($data)->validate();
+                $this->validation->make($data, 'admin')->validate();
                 /**--------验证参数 结束--------**/
 
                 $this->service->login($data['account'], $data['password'], 'platformAdmin');
@@ -125,34 +126,35 @@ class Login extends AbstractController
      *
      * @return void
      */
-    // public function menuTree()
-    // {
-    //     switch (getRequestScene()) {
-    //         case 'platformAdmin':
-    //             /* if ($this->request->platformAdminInfo->adminId == 1) {
-    //                 $where = [
-    //                     'sceneId' => $this->request->sceneInfo->sceneId,
-    //                     'isStop' => 0
-    //                 ];
-    //             } else {
-    //                 $where = [
-    //                     'adminId' => $this->request->platformAdminInfo->adminId,
-    //                     'isStop' => 0
-    //                 ];
-    //             } */
-    //             $where = [
-    //                 'sceneId' => 1,
-    //                 'isStop' => 0
-    //             ];
-    //             $field = [
-    //                 'menuTree',
-    //                 'showMenu'
-    //             ];
-    //             $this->container->get(ServiceAuthMenu::class)->tree($field, $where);
-    //             break;
-    //         default:
-    //             throwFailJson('001001');
-    //             break;
-    //     }
-    // }
+    public function menuTree()
+    {
+        switch (getRequestScene()) {
+            case 'platformAdmin':
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                /* if ($this->request->platformAdminInfo->adminId == 1) {
+                    $where = [
+                        'sceneId' => $this->request->sceneInfo->sceneId,
+                        'isStop' => 0
+                    ];
+                } else {
+                    $where = [
+                        'adminId' => $this->request->platformAdminInfo->adminId,
+                        'isStop' => 0
+                    ];
+                } */
+                $where = [
+                    'sceneId' => 1,
+                    'isStop' => 0
+                ];
+                $field = [
+                    'menuTree',
+                    'showMenu'
+                ];
+                $this->container->get(Menu::class)->tree($field, $where);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
 }

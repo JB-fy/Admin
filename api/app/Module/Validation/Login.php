@@ -15,5 +15,9 @@ class Login extends AbstractValidation
         'encryptStr' => [
             'account'
         ],
+        'admin' => [
+            'account',
+            'password'
+        ],
     ];
 }

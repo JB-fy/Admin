@@ -13,7 +13,7 @@ abstract class AbstractService
     protected ContainerInterface $container;
 
     //protected $daoClassName = \app\module\db\dao\auth\AuthMenu::class;
-    protected $daoClassName = '';   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
+    protected $daoClassName;   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
 
     /**
      * 列表（通用，需要特殊处理的覆盖重新定义）

@@ -24,4 +24,71 @@ class Menu extends AbstractDao
 {
     #[Inject(value: \App\Module\Db\Model\Auth\Menu::class)]
     protected $model;
+
+    /**
+     * 解析field（独有的）
+     *
+     * @param string $key
+     * @return boolean
+     */
+    protected function fieldOfAlone(string $key): bool
+    {
+        switch ($key) {
+            case 'menuTree':    //树状需要以下字段和排序方式
+                $this->field['select'][] = $this->getTable() . '.' . 'menuId';
+                $this->field['select'][] = $this->getTable() . '.' . 'pid';
+
+                $this->orderOfAlone('menuTree');    //排序方式
+                return true;
+            case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
+                $this->fieldAfter[] = 'showMenu';   //需做后续处理
+
+                $this->field['select'][] = $this->getTable() . '.' . 'menuName';
+                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extendData, "$.title")) AS title'); //不知道怎么直接转成对象返回
+                $this->field['select'][] = $this->getTable() . '.' . 'extendData->title AS title';
+                $this->field['select'][] = $this->getTable() . '.' . 'extendData->url AS url';
+                $this->field['select'][] = $this->getTable() . '.' . 'extendData->icon AS icon';
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 解析order（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return boolean
+     */
+    protected function orderOfAlone(string $key, $value = null): bool
+    {
+        switch ($key) {
+            case 'menuTree':
+                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . 'pid', 'ASC']];
+                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . 'sort', 'ASC']];
+                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . 'menuId', 'ASC']];
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取数据库数据后，再做处理的字段
+     *
+     * @param object $info
+     * @return object
+     */
+    public function handleFieldAfter(object $info): object
+    {
+        foreach ($this->fieldAfter as $field) {
+            switch ($field) {
+                case 'showMenu':
+                    $info->title = $info->title ? json_decode($info->title, true) : [];
+                    $info->icon = $info->icon ?? '';
+                    $info->url = $info->url ?? '';
+                    break;
+            }
+        }
+        return $info;
+    }
 }
