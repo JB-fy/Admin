@@ -16,10 +16,8 @@ abstract class AbstractCache
     #[Inject]
     protected ConfigInterface $config;
 
-    /* #[Inject(value: \Hyperf\Redis\Redis::class)]
-    protected \Hyperf\Redis\Redis|\Hyperf\Redis\RedisProxy $cache;  //默认redis的default连接库 */
-
-    protected ?\Hyperf\Redis\RedisProxy $cache;  //默认redis的default连接库
+    //#[Inject(value: \Hyperf\Redis\Redis::class)]
+    protected \Hyperf\Redis\Redis|\Hyperf\Redis\RedisProxy $cache;  //默认redis的default连接库
 
     protected string $connection = 'default';  //默认连接
 
