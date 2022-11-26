@@ -12,8 +12,8 @@ class Scene extends AbstractController
     #[Inject()]
     protected \App\Module\Service\Auth\Scene $service;
 
-    /* #[Inject]
-    protected \App\Module\Validation\Login $validation; */
+    #[Inject]
+    protected \App\Module\Validation\Auth\Scene $validation;
 
     public function list()
     {
@@ -26,18 +26,9 @@ class Scene extends AbstractController
             'page' => $request->input('page', 1),
             'limit' => $request->input('limit', 10),
         ]; */
-        $this->container->get(\App\Module\Validate\CommonList::class)->make($data)->validate();
+        $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
 
-        /* $filterRules = [
-            'id' => 'integer|min:1',
-            'excId' => 'integer|min:1',
-            'authMenuId' => 'integer|min:1',
-            'scene' => 'in:' . implode(',', array_keys($this->translator->trans('const.scene'))),
-            'pid' => 'integer|min:0',
-            'menuName' => 'alpha_dash|between:1,30',
-            'isStop' => 'in:' . implode(',', array_keys($this->translator->trans('const.yesOrNo'))),
-        ];
-        $this->validation->make($data, 'encryptStr')->validate(); */
+        $this->validation->make($data['where'], 'encryptStr')->validate();
 
         /* if (!isset($data['order']) || empty($data['order'])) {
             $data['order'] = [

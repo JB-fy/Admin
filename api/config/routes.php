@@ -23,8 +23,8 @@ Router::addGroup('/login',function (){
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/menuTree', [\App\Controller\Login::class, 'menuTree']);
 });
 
-Router::addGroup('/auth/scene/', function () {
-    Router::addRoute(['GET', 'POST', 'OPTIONS'], 'list', [\App\Controller\Auth\AuthScene::class, 'list']);
+Router::addGroup('/auth/scene', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Auth\Scene::class, 'list']);
 });
 
 Router::get('/favicon.ico', function () {
