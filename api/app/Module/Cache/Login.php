@@ -35,9 +35,9 @@ class Login extends AbstractCache
     /**
      * 获取加密字符串
      *
-     * @return string
+     * @return string|boolean
      */
-    public function getEncryptStr(): string
+    public function getEncryptStr(): string|bool
     {
         $encryptStr = $this->cache->get($this->encryptStrKey);
         $this->cache->del($this->encryptStrKey);
@@ -74,9 +74,9 @@ class Login extends AbstractCache
     /**
      * 获取token
      *
-     * @return string
+     * @return string|boolean
      */
-    public function getToken(): string
+    public function getToken(): string|bool
     {
         return $this->cache->get($this->tokenKey);
     }
