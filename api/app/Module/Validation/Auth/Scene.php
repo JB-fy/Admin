@@ -14,6 +14,7 @@ class Scene extends AbstractValidation
         'sceneId' => 'integer|min:1',
         'sceneName' => 'alpha_dash|between:1,30',
         'sceneCode' => 'alpha_dash|between:1,30',
-        'isStop' => 'in:' . implode(',', array_keys(trans('const.yesOrNo'))),
+        //'isStop' => 'in:' . implode(',', array_keys(trans('const.yesOrNo'))),
+        'isStop' => 'in:0,1',
     ];
 }
