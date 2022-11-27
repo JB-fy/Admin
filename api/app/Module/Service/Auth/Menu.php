@@ -9,8 +9,6 @@ use App\Module\Service\AbstractService;
 
 class Menu extends AbstractService
 {
-    protected $daoClassName = \App\Module\Db\Dao\Auth\Menu::class;
-
     /**
      * 获取树状权限菜单
      *

@@ -24,13 +24,17 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     protected array $fieldAfter = [];    //获取数据库数据后，再做处理的字段
 
     //#[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
-    protected $model;   //模型
+    protected \App\Module\Db\Model\AbstractModel $model;   //模型
     protected \Hyperf\Database\Query\Builder $builder; //构造器
 
-    /* public function __construct(array $tableSelectData = [], array $connectionSelectData = [])
+    public function __construct()
     {
-        //$this->connection($connectionSelectData)->table($tableSelectData);
-    } */
+        //子类未定义$model时会自动设置。注意：Dao类目录和Model目录的对应关系
+        if (empty($this->model)) {
+            $modelClassName = str_replace('\\Dao\\', '\\Model\\', get_class($this));
+            $this->model = \Hyperf\Utils\ApplicationContext::getContainer()->get($modelClassName);
+        }
+    }
 
     /**
      * 获取连接

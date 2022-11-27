@@ -8,5 +8,4 @@ use App\Module\Service\AbstractService;
 
 class Scene extends AbstractService
 {
-    protected $daoClassName = \App\Module\Db\Dao\Auth\Scene::class;
 }

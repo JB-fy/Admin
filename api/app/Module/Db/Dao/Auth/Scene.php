@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Auth;
 
 use App\Module\Db\Dao\AbstractDao;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $sceneId 权限场景ID
@@ -18,6 +17,4 @@ use Hyperf\Di\Annotation\Inject;
  */
 class Scene extends AbstractDao
 {
-    #[Inject(value: \App\Module\Db\Model\Auth\Scene::class)]
-    protected $model;
 }

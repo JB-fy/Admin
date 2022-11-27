@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Log;
 
 use App\Module\Db\Dao\AbstractDao;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $logId 请求日志ID
@@ -19,6 +18,4 @@ use Hyperf\Di\Annotation\Inject;
  */
 class Request extends AbstractDao
 {
-    #[Inject(value: \App\Module\Db\Model\Log\Request::class)]
-    protected $model;
 }

@@ -12,11 +12,19 @@ abstract class AbstractService
     #[Inject]
     protected ContainerInterface $container;
 
-    //protected $daoClassName = \app\module\db\dao\auth\AuthMenu::class;
-    protected $daoClassName;   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
+    //protected string $daoClassName = \App\Module\Db\Dao\Auth\Scene::class;
+    protected string $daoClassName;   //dao类的路径，调用地方实例化对象。因dao类带有状态，使用依赖注入会污染进程环境
+
+    public function __construct()
+    {
+        //子类未定义$daoClassName时会自动设置。注意：Dao类目录和Service目录的对应关系
+        if (empty($this->daoClassName)) {
+            $this->daoClassName = str_replace('\\Service\\', '\\Db\\Dao\\', get_class($this));
+        }
+    }
 
     /**
-     * 列表（通用，需要特殊处理的覆盖重新定义）
+     * 列表（通用。需要特殊处理的，子类重新定义即可）
      * 
      * @param array $field
      * @param array $where
@@ -27,37 +35,76 @@ abstract class AbstractService
      */
     public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
-        empty($order) ? $order = ['id' => 'desc'] : null;
-        $offset = ($page - 1) * $limit;
-
-        $countAfter = ($offset == 0 && $limit == 0);  //用于判断是否先获取$list，再通过count($list)计算$count
         $dao = getDao($this->daoClassName);
         $dao->where($where);
-        if (!$countAfter) {
-            if ($dao->isJoin()) {
-                $count = $dao->getBuilder()->distinct()->count($dao->getTable() . '.' . $dao->getKey());
-            } else {
-                $count = $dao->getBuilder()->count();
-            }
-        }
+        $offset = ($page - 1) * $limit;
 
-        $list = [];
-        if ($countAfter || $count > $offset) {
+        empty($order) ? $order = ['id' => 'DESC'] : null;
+        $dao->field($field)->order($order);
+        if ($dao->isJoin()) {
+            $dao->group(['id']);
+        }
+        $list = $dao->getList($offset, $limit);
+        throwSuccessJson(['list' => $list]);
+    }
+    /* //重新定义示例
+    public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
+    {
+        try {
+            parent::list(...func_get_args());
+        } catch (\App\Exception\Json $th) {
+            $responseData = $th->getResponseData();
+            //数据处理
+            $th->setApiData($responseData['data']);
+            throw $th;
+        }
+    } */
+
+    /**
+     * 列表，带总数（通用。需要特殊处理的，子类重新定义即可）
+     * 
+     * @param array $field
+     * @param array $where
+     * @param array $order
+     * @param integer $page
+     * @param integer $limit
+     * @return void
+     */
+    public function listWithCount(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
+    {
+        $offset = ($page - 1) * $limit;
+        $dao = getDao($this->daoClassName);
+        $dao->where($where);
+        if ($offset == 0 && $limit == 0) {  //是否先获取$list，再通过count($list)计算$count
+            empty($order) ? $order = ['id' => 'DESC'] : null;
             $dao->field($field)->order($order);
             if ($dao->isJoin()) {
                 $dao->group(['id']);
             }
             $list = $dao->getList($offset, $limit);
-            if ($countAfter) {
-                $count = count($list);
+            $count = count($list);
+        } else {
+            if ($dao->isJoin()) {
+                $count = $dao->getBuilder()->distinct()->count($dao->getTable() . '.' . $dao->getKey());
+            } else {
+                $count = $dao->getBuilder()->count();
+            }
+
+            $list = [];
+            if ($count > $offset) {
+                empty($order) ? $order = ['id' => 'DESC'] : null;
+                $dao->field($field)->order($order);
+                if ($dao->isJoin()) {
+                    $dao->group(['id']);
+                }
+                $list = $dao->getList($offset, $limit);
             }
         }
-
         throwSuccessJson(['count' => $count, 'list' => $list]);
     }
 
     /**
-     * 创建
+     * 创建（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $data
      * @return void
@@ -73,7 +120,7 @@ abstract class AbstractService
     }
 
     /**
-     * 修改
+     * 修改（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $data
      * @param integer $id
@@ -90,7 +137,7 @@ abstract class AbstractService
     }
 
     /**
-     * 删除
+     * 删除（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $idArr
      * @return void

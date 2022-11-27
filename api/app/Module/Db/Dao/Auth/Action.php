@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Auth;
 
 use App\Module\Db\Dao\AbstractDao;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $actionId 权限操作ID
@@ -22,6 +21,4 @@ use Hyperf\Di\Annotation\Inject;
  */
 class Action extends AbstractDao
 {
-    #[Inject(value: \App\Module\Db\Model\Auth\Action::class)]
-    protected $model;
 }

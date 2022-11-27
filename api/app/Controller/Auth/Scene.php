@@ -9,7 +9,7 @@ use Hyperf\Di\Annotation\Inject;
 
 class Scene extends AbstractController
 {
-    #[Inject()]
+    #[Inject]
     protected \App\Module\Service\Auth\Scene $service;
 
     #[Inject]
@@ -28,13 +28,7 @@ class Scene extends AbstractController
         ]; */
         $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
 
-        $this->validation->make($data['where'], 'encryptStr')->validate();
-
-        /* if (!isset($data['order']) || empty($data['order'])) {
-            $data['order'] = [
-                'id' => 'desc',
-            ];
-        } */
+        $this->validation->make($data['where']/* , 'list' */)->validate();
         /**--------参数验证并处理 结束--------**/
 
         switch (getRequestScene()) {
@@ -63,8 +57,8 @@ class Scene extends AbstractController
                 empty($data['field']) ? $data['field'] = $allowField : null; */
                 /**--------参数处理 结束--------**/
 
-                $this->service->list(...$data);
-                //$this->service->list($data['field'], $data['where'], $data['order'], $data['page'], $data['limit']);
+                $this->service->listWithCount(...$data);
+                //$this->service->listWithCount($data['field'], $data['where'], $data['order'], $data['page'], $data['limit']);
                 break;
             default:
                 throwFailJson('001001');

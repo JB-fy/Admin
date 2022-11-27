@@ -7,7 +7,6 @@ namespace App\Module\Db\Dao\Platform;
 use App\Module\Db\Dao\AbstractDao;
 use App\Module\Db\Dao\Auth\Role;
 use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $adminId 管理员ID
@@ -22,9 +21,6 @@ use Hyperf\Di\Annotation\Inject;
  */
 class Admin extends AbstractDao
 {
-    #[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
-    protected $model;
-
     /**
      * 解析field（独有的）
      *
@@ -56,9 +52,9 @@ class Admin extends AbstractDao
         switch ($key) {
             case 'loginStr':
                 if (is_numeric($value)) {
-                    $this->where[] = ['method' => 'where', 'param' => ['phone', $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . 'phone', $operator ?? '=', $value, $boolean ?? 'and']];
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => ['account', $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . 'account', $operator ?? '=', $value, $boolean ?? 'and']];
                 }
                 return true;
         }

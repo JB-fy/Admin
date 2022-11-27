@@ -17,4 +17,13 @@ class Scene extends AbstractValidation
         //'isStop' => 'in:' . implode(',', array_keys(trans('const.yesOrNo'))),
         'isStop' => 'in:0,1',
     ];
+
+    protected array $scene = [
+        /* 'list' => [
+            'id',
+            'sceneName',
+            'sceneCode',
+            'isStop',
+        ], */
+    ];
 }

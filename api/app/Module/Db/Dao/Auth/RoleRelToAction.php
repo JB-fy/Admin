@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Auth;
 
 use App\Module\Db\Dao\AbstractDao;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @property int $roleId 权限角色ID
@@ -15,6 +14,4 @@ use Hyperf\Di\Annotation\Inject;
  */
 class RoleRelToAction extends AbstractDao
 {
-    #[Inject(value: \App\Module\Db\Model\Auth\RoleRelToAction::class)]
-    protected $model;
 }
