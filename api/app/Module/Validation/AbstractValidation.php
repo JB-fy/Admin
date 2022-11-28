@@ -24,18 +24,26 @@ abstract class AbstractValidation
     protected array $scene = [];
     /* protected $scene = [
         'sceneName' => [
-            'attributeName',
-            'attributeName' => [
-                'append' => ['ruleName',...], //新增规则
-                'remove' => ['ruleName',...]  //删除规则
-            ]
+            'only'=>[   //只验证哪些字段
+                'attributeName',
+                ...
+            ],
+            'append' => [ //新增规则
+                'attributeName' => [
+                    'rule',
+                    ...
+                ],
+                ...
+            ],
+            'remove' => [ //删除规则
+                'attributeName' => [
+                    'ruleName',
+                    ...
+                ],
+                ...
+            ],
         ]
     ]; */
-
-    /* public function sceneEncryptStr()
-    {
-        return $this->only(['account']);
-    } */
 
     /**
      * 创建验证器
@@ -68,23 +76,38 @@ abstract class AbstractValidation
         if (empty($sceneName) || !isset($this->scene[$sceneName])) {
             return $this->rule;
         }
-        $rule = [];
-        foreach ($this->scene[$sceneName] as $k => $v) {
-            if (is_array($v)) {
-                if (isset($this->rule[$k])) {
-                    $tmp = explode('|', $this->rule[$k]);
-                } else {
-                    $tmp = [];
+        //处理顺序 only、remove、append
+        $rule = $this->rule;
+        if (isset($this->scene[$sceneName]['only'])) {
+            foreach ($rule as $k => $v) {
+                if (in_array($k, $this->scene[$sceneName]['only'])) {
+                    continue;
                 }
-                if (isset($v['append'])) {
-                    $tmp = array_unique(array_merge($tmp, $v['append']));
+                unset($rule[$k]);
+            }
+        }
+        foreach ($rule as $k => $v) {
+            $tmpRule = explode('|', $v);
+            if (isset($this->scene[$sceneName]['remove'][$k])) {
+                foreach ($tmpRule as $k1 => $v1) {
+                    list($tmpRuleName) = explode(':', $v1);
+                    if (in_array($tmpRuleName, $this->scene[$sceneName]['remove'][$k])) {
+                        unset($tmpRule[$k1]);
+                    }
                 }
-                if (isset($v['remove'])) {
-                    $tmp = array_diff($tmp, $v['remove']);
+            }
+            if (isset($this->scene[$sceneName]['append'][$k])) {
+                $tmpRule = array_unique(array_merge($tmpRule, $this->scene[$sceneName]['append'][$k]));
+            }
+            $rule[$k] = implode('|', $tmpRule);
+        }
+        //新增字段并添加规则（是否支持自己看）
+        if (isset($this->scene[$sceneName]['append'])) {
+            foreach ($this->scene[$sceneName]['append'] as $k => $v) {
+                if (isset($rule[$k])) {
+                    continue;
                 }
-                $rule[$k] = implode('|', $tmp);
-            } else {
-                $rule[$v] = $this->rule[$v];
+                $rule[$k] = implode('|', $v);
             }
         }
         return $rule;

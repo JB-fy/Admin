@@ -123,7 +123,7 @@ class Login extends AbstractService
                     $cacheLogin->setToken($refreshToken, $type);
 
                     //refreshToken保存在请求对象内（在exception\handler\Handler内返回给前端，用于刷新token）
-                    $request->platformAdminToken = $refreshToken;
+                    $request->newPlatformAdminToken = $refreshToken;
                 } */
                 /**--------选做。如果token即将过期，刷新token 结束--------**/
                 break;

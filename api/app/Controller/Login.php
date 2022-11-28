@@ -5,16 +5,9 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Module\Service\Auth\Menu;
-use Hyperf\Di\Annotation\Inject;
 
 class Login extends AbstractController
 {
-    #[Inject]
-    protected \App\Module\Validation\Login $validation;
-
-    #[Inject]
-    protected \App\Module\Service\Login $service;
-
     /**
      * 获取登录加密字符串(前端登录操作用于加密密码后提交)
      *

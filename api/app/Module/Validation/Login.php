@@ -13,11 +13,15 @@ class Login extends AbstractValidation
 
     protected array $scene = [
         'encryptStr' => [
-            'account'
+            'only' => [
+                'account',
+            ],
         ],
         'admin' => [
-            'account',
-            'password'
+            'only' => [
+                'account',
+                'password'
+            ],
         ],
     ];
 }

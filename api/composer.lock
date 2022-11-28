@@ -1170,16 +1170,16 @@
         },
         {
             "name": "hyperf/database",
-            "version": "v3.0.0-rc.13",
+            "version": "v3.0.0-rc.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/database.git",
-                "reference": "977ae8fca9baff12aa1c636a8694ac8b0dcceeb7"
+                "reference": "f34d807032d2ee1f2d49adf8a517a04a641c2161"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/database/zipball/977ae8fca9baff12aa1c636a8694ac8b0dcceeb7",
-                "reference": "977ae8fca9baff12aa1c636a8694ac8b0dcceeb7",
+                "url": "https://api.github.com/repos/hyperf/database/zipball/f34d807032d2ee1f2d49adf8a517a04a641c2161",
+                "reference": "f34d807032d2ee1f2d49adf8a517a04a641c2161",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1229,7 +1229,7 @@
                 "pull-request": "https://github.com/hyperf/hyperf/pulls",
                 "source": "https://github.com/hyperf/hyperf"
             },
-            "time": "2022-11-01T02:50:54+00:00"
+            "time": "2022-11-24T08:09:08+00:00"
         },
         {
             "name": "hyperf/db-connection",
@@ -2111,16 +2111,16 @@
         },
         {
             "name": "hyperf/pool",
-            "version": "v3.0.0-rc.13",
+            "version": "v3.0.0-rc.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/pool.git",
-                "reference": "5cffc36dd32ae2a9ccce7b095613598aa2675caf"
+                "reference": "6a937ff363b84208c26cf918490a07d38ab0c987"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/pool/zipball/5cffc36dd32ae2a9ccce7b095613598aa2675caf",
-                "reference": "5cffc36dd32ae2a9ccce7b095613598aa2675caf",
+                "url": "https://api.github.com/repos/hyperf/pool/zipball/6a937ff363b84208c26cf918490a07d38ab0c987",
+                "reference": "6a937ff363b84208c26cf918490a07d38ab0c987",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2167,7 +2167,7 @@
                 "pull-request": "https://github.com/hyperf/hyperf/pulls",
                 "source": "https://github.com/hyperf/hyperf"
             },
-            "time": "2022-11-01T02:50:54+00:00"
+            "time": "2022-11-26T11:47:54+00:00"
         },
         {
             "name": "hyperf/process",
