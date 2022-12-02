@@ -48,11 +48,15 @@ abstract class AbstractController
     final protected function listParamVatetion(): array
     {
         $data = $this->request->all();
-        $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
-        !isset($data['page']) ?: $data['page'] = (int)$data['page'];
-        !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
+        if (!empty($data)) {
+            $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
+            !isset($data['page']) ?: $data['page'] = (int)$data['page'];
+            !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
-        $this->validation->make($data['where'], 'list')->validate();
+            if (!empty($data['where'])) {
+                $this->validation->make($data['where'], 'list')->validate();
+            }
+        }
         return $data;
     }
 }

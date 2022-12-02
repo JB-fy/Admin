@@ -187,4 +187,6 @@ return [
 
     'chinese_word' => ':attribute 必须包含以下有效字符 (中文/英文，数字, 下划线)',
     'sequential_array' => ':attribute 必须是一个有序数组',
+
+    'required_if_null' => ' :attribute 不能为空字符串',
 ];

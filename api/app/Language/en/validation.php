@@ -174,4 +174,6 @@ return [
 
     'chinese_word' => 'The :attribute must contain valid characters(chinese/english character, number, underscore)',
     'sequential_array' => 'The :attribute must be sequential array',
+
+    'required_if_null' => 'The :attribute cannot be an empty string',
 ];
