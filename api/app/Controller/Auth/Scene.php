@@ -15,7 +15,7 @@ class Scene extends AbstractController
      */
     public function list()
     {
-        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
@@ -57,7 +57,7 @@ class Scene extends AbstractController
      */
     public function info()
     {
-        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
@@ -81,7 +81,7 @@ class Scene extends AbstractController
      */
     public function create()
     {
-        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
@@ -105,7 +105,7 @@ class Scene extends AbstractController
      */
     public function update()
     {
-        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
@@ -129,7 +129,7 @@ class Scene extends AbstractController
      */
     public function delete()
     {
-        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
@@ -145,4 +145,16 @@ class Scene extends AbstractController
                 break;
         }
     }
+
+    /**
+     * 创建更新时的参数处理
+     *
+     * @param array $data
+     * @return array
+     */
+    /* protected function handleData(array $data): array
+    {
+        //isset($data['sceneConfig']) && empty($data['sceneConfig']) ? $data['sceneConfig'] = null : null;    //传值且为空时，数据库该字段设置为null。更建议放在Dao类中处理
+        return $data;
+    } */
 }

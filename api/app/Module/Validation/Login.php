@@ -17,7 +17,7 @@ class Login extends AbstractValidation
                 'account',
             ],
         ],
-        'admin' => [
+        'login' => [
             'only' => [
                 'account',
                 'password'

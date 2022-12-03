@@ -132,9 +132,9 @@ const getList = async (resetPage: boolean = false) => {
     if (resetPage) {
         pagination.page = 1
     }
-    let param = {
+    const param = {
         field: [],
-        where: removeObjectNullValue(queryData),
+        where: removeEmptyOfObj(queryData),
         order: {
             [table.order.key]: table.order.order
         },
@@ -142,10 +142,11 @@ const getList = async (resetPage: boolean = false) => {
         limit: pagination.limit
     }
     table.loading = true
-    const res = await request('auth.scene.list', param)
-    if (res !== false) {
+    try {
+        const res = await request('auth.scene.list', param)
         table.data = res.data.list
         pagination.total = res.data.count
+    } catch (error) {
     }
     table.loading = false
 }

@@ -160,7 +160,6 @@ router.beforeEach(async (to: any) => {
             await adminStore.setInfo()  //记录用户信息
             await adminStore.setMenuTree()  //设置左侧菜单
         } catch (error) {
-            await errorHandle(<Error>error)
             return false
         }
     }

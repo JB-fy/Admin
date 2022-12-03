@@ -288,7 +288,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-                $this->update[$this->getKey()] = $value;
+                $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -468,7 +468,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value
      * @return boolean
      */
-    final protected function updateOfAlone(string $key, $value = null): bool
+    protected function updateOfAlone(string $key, $value = null): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -797,15 +797,18 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * 获取信息
      *
      * @param boolean $isUseWriter
-     * @return object
+     * @return object|null
      */
-    final public function getInfo(bool $isUseWriter = false): object
+    final public function getInfo(bool $isUseWriter = false): object|null
     {
         $this->getBuilder();
         if ($isUseWriter) {
             $this->builder->useWritePdo();
         }
         $info = $this->builder->first();
+        if (empty($info)) {
+            return $info;
+        }
         return $this->handleFieldAfter($info);
     }
 

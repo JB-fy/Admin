@@ -12,7 +12,7 @@ class Scene extends AbstractValidation
         'sceneId' => 'sometimes|required|integer|min:1',
         'sceneName' => 'sometimes|required|alpha_dash|between:1,30',
         'sceneCode' => 'sometimes|required|alpha_dash|between:1,30',
-        'sceneConfig' => 'sometimes|required|json',
+        'sceneConfig' => 'json',    //可以为空值。空值需要在Dao类中处理
         //'isStop' => 'sometimes|required|in:' . implode(',', array_keys(trans('const.yesOrNo'))), //需在构造函数中创建该规则
 
         'id' => 'sometimes|required|integer|min:1',
@@ -43,7 +43,6 @@ class Scene extends AbstractValidation
             'remove' => [
                 'sceneName' => ['sometimes'],
                 'sceneCode' => ['sometimes'],
-                'sceneConfig' => ['sometimes'],
             ]
         ],
         'update' => [

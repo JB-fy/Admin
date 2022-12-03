@@ -46,35 +46,50 @@ abstract class AbstractController
      * @param string $sceneName
      * @return array
      */
-    final protected function validated(string $sceneName): array
+    final protected function validate(string $sceneName): array
     {
         $data = $this->request->all();
         switch ($sceneName) {
             case 'list':
                 if (!empty($data)) {
-                    //$data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();  //返回参数原封不动
-                    $data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //只返回验证规则内才有的参数
+                    //$data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //不存在的字段不验证。相当于加sometimes规则
+                    $data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
                     !isset($data['page']) ?: $data['page'] = (int)$data['page'];
                     !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
                     if (!empty($data['where'])) {
-                        $data['where'] = $this->validation->make($data['where'], $sceneName)->validated();
+                        $data['where'] = $this->validation->make($data['where'], $sceneName)->validate();
                     }
                 }
                 break;
+            case 'create':
+                $data = $this->validation->make($data, $sceneName)->validate();
+                $data = $this->handleData($data);
+                break;
             case 'update':
-                $data = $this->validation->make($data, $sceneName)->validated();
+                $data = $this->validation->make($data, $sceneName)->validate();
                 if (count($data) < 2) { //更新除了id还必须有其他参数，所以至少需要两个参数
                     throwFailJson('000999');
                 }
+                $data = $this->handleData($data);
                 break;
             case 'info':
-            case 'create':
             case 'delete':
             default:
-                $data = $this->validation->make($data, $sceneName)->validated();
+                $data = $this->validation->make($data, $sceneName)->validate();
                 break;
         }
+        return $data;
+    }
+
+    /**
+     * 创建更新时的参数处理（通用。需要特殊处理的，子类重新定义即可）
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function handleData(array $data): array
+    {
         return $data;
     }
 }

@@ -177,7 +177,19 @@ return [
         'limit' => '条数',
 
         'id' => 'ID',
+        'idArr' => 'ID列表',
+        'idArr.*' => 'ID列表内的值',
         'excId' => '排除ID',
+        'excIdArr' => '排除ID列表',
+        'excIdArr.*' => '排除ID列表内的值',
+
+        'isStop' => '停用',
+
+        'sceneId' => '场景ID',
+
+        'sceneName' => '场景名称',
+        'sceneCode' => '场景标识',
+        'sceneConfig' => '场景配置',
 
         'account' => '账号',
         'password' => '密码',

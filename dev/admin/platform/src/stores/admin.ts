@@ -174,31 +174,28 @@ export const useAdminStore = defineStore('admin', {
     async login(account: string, password: string) {
       let res = await request('login.encryptStr', {
         account: account
-      }, false)
+      })
       res = await request('login.login', {
         account: account,
         password: md5(md5(password) + res.data.encryptStr)
-      }, false)
+      })
       this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
       //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
       //useKeepAliveStore().$reset()
-
       setAccessToken(res.data.token)
-      this.setInfo(); //设置用户信息（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
-      this.setMenuTree()   //设置左侧菜单树（可选，路由前置守卫有执行，此处执行，路由可减少一次跳转）
     },
     /**
      * 设置登录用户信息
      */
     async setInfo() {
-      const res = await request('login.info', {}, false)
+      const res = await request('login.info', {})
       this.info = res.data.info
     },
     /**
      * 设置左侧菜单（包含更新路由meta数据）
      */
     async setMenuTree() {
-      const res = await request('login.menuTree', {}, false)
+      const res = await request('login.menuTree', {})
       /**--------注册动态路由 开始--------**/
       const handleMenuTree = (menuTree: any, menuChain: any = []) => {
         const menuTreeTmp: any = []

@@ -10,17 +10,34 @@ export const getBrowserLanguage = (defaultValue: string = 'zh-cn'): string => {
 }
 
 /**
- * 对象的非空属性组成一个新对象返回
+ * 是否空对象
  * @param obj 
  * @returns 
  */
-export const removeObjectNullValue = (obj: { [propName: string]: any }) => {
+export const isEmptyObj = (obj: any) => {
+    if (Array.prototype.isPrototypeOf(obj) && obj.length === 0) {
+        return true
+    }
+    if (Object.prototype.isPrototypeOf(obj) && Object.keys(obj).length === 0) {
+        return true
+    }
+    return false
+}
+
+/**
+ * 清理对象空值属性
+ * @param obj 
+ * @param isClearStr    清理空字符串：''
+ * @param isClearObj    清理空对象：[]，{}
+ * @returns 
+ */
+export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: boolean = true, isClearObj: boolean = false) => {
     const temp: { [propName: string]: any } = {}
     Object.keys(obj).forEach(item => {
-        if (!(obj[item] === '' ||
-            obj[item] === undefined ||
+        if (!(obj[item] === undefined ||
             obj[item] === null ||
-            obj[item] === 'null')
+            (obj[item] === '' && isClearStr) ||
+            (isEmptyObj(obj[item]) && isClearObj))
         ) {
             temp[item] = obj[item]
         }

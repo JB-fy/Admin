@@ -15,13 +15,9 @@ class Login extends AbstractController
      */
     public function encryptStr()
     {
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
-                /**--------验证参数 开始--------**/
-                $data = $this->request->all();
-                $this->validation->make($data, 'encryptStr')->validate();
-                /**--------验证参数 结束--------**/
-
                 $this->service->encryptStr($data['account'], 'platformAdmin');
                 break;
             default:
@@ -37,13 +33,9 @@ class Login extends AbstractController
      */
     public function login()
     {
+        $data = $this->validate(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
-                /**--------验证参数 开始--------**/
-                $data = $this->request->all();
-                $this->validation->make($data, 'admin')->validate();
-                /**--------验证参数 结束--------**/
-
                 $this->service->login($data['account'], $data['password'], 'platformAdmin');
                 break;
             default:
