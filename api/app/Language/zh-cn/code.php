@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 return [
     '000000' => '成功',
-    '000404' => '404找不到路由',    //Not Found
+    '000404' => '找不到路由',    //Not Found
     '000500' => '内部服务器错误',   //Internal Server Error.
     '000999' => '非法数据',
 
