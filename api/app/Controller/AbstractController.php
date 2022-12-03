@@ -45,18 +45,43 @@ abstract class AbstractController
      * 
      * @return array
      */
-    final protected function listParamVatetion(): array
+    final protected function listVatetion(): array
     {
         $data = $this->request->all();
         if (!empty($data)) {
-            $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
+            //$data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();  //返回参数原封不动
+            $data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //只返回验证规则内才有的参数
             !isset($data['page']) ?: $data['page'] = (int)$data['page'];
             !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
             if (!empty($data['where'])) {
-                $this->validation->make($data['where'], 'list')->validate();
+                $data['where'] = $this->validation->make($data['where'], 'list')->validated();
             }
         }
+        return $data;
+    }
+
+    /**
+     * 创建参数验证并处理
+     * 
+     * @return array
+     */
+    final protected function createVatetion(): array
+    {
+        $data = $this->request->all();
+        $data = $this->validation->make($data, 'create')->validated();
+        return $data;
+    }
+
+    /**
+     * 更新参数验证并处理
+     * 
+     * @return array
+     */
+    final protected function updateVatetion(): array
+    {
+        $data = $this->request->all();
+        $data = $this->validation->make($data, 'update')->validated();
         return $data;
     }
 }

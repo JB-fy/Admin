@@ -10,7 +10,7 @@ class Scene extends AbstractController
 {
     public function list()
     {
-        $data = $this->listParamVatetion(); //参数验证并处理
+        $data = $this->listVatetion(); //参数验证并处理
 
         switch (getRequestScene()) {
             case 'platformAdmin':

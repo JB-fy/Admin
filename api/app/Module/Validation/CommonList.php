@@ -10,8 +10,8 @@ class CommonList extends AbstractValidation
         'field' => 'sometimes|required_if_null|array',
         'where' => 'sometimes|required_if_null|array',
         'order' => 'sometimes|required_if_null|array',
-        'order.*' => 'sometimes|required_if_null|in:asc,desc,ASC,DESC',
-        'page' => 'sometimes|required_if_null|integer|min:1',
-        'limit' => 'sometimes|required_if_null|integer|min:0',
+        'order.*' => 'sometimes|required|in:asc,desc,ASC,DESC',
+        'page' => 'sometimes|required|integer|min:1',
+        'limit' => 'sometimes|required|integer|min:0',
     ];
 }
