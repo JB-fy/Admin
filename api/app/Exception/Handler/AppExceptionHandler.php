@@ -20,7 +20,7 @@ use Throwable;
 
 class AppExceptionHandler extends ExceptionHandler
 {
-    public function __construct(protected StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger, protected \Hyperf\ExceptionHandler\Formatter\FormatterInterface $formatter)
     {
     }
 
@@ -28,34 +28,37 @@ class AppExceptionHandler extends ExceptionHandler
     {
         //$response = $response->withHeader('Server', 'Hyperf');    //有默认值：swoole-http-server
         if ($throwable instanceof \App\Exception\Json) {
-            // 阻止异常冒泡
-            $this->stopPropagation();
+            $this->stopPropagation();   //阻止异常冒泡
             $responseBody = $throwable->getResponseBody();
             //return \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->json($throwable->getResponseData());
             return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
         } elseif ($throwable instanceof \App\Exception\Raw) {
-            // 阻止异常冒泡
-            $this->stopPropagation();
+            $this->stopPropagation();   //阻止异常冒泡
             $responseBody = $throwable->getResponseBody();
             //return \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw($responseBody);
             return $response->withHeader('Content-Type', 'text/plain; charset=utf-8')->withBody(new SwooleStream($responseBody));
         } elseif ($throwable instanceof \Hyperf\Validation\ValidationException) {
-            // 阻止异常冒泡
-            $this->stopPropagation();
+            $this->stopPropagation();   //阻止异常冒泡
             $responseData = [
                 'code' => '000999',
                 'msg' => $throwable->validator->errors()->first(),
                 'data' => [],
             ];
             $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
-            /* if (!$response->hasHeader('content-type')) {
-                $response = $response->withAddedHeader('content-type', 'text/plain; charset=utf-8');
+            /* if (!$response->hasHeader('Content-type')) {
+                $response = $response->withAddedHeader('Content-type', 'text/plain; charset=utf-8');
             } */
             return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
+        } elseif ($throwable instanceof \Hyperf\HttpMessage\Exception\HttpException) {
+            $this->stopPropagation();   //阻止异常冒泡
+            $this->logger->debug($this->formatter->format($throwable));
+            //return $response->withStatus($throwable->getStatusCode())->withBody(new SwooleStream($throwable->getMessage()));
+            return $response->withStatus(404)->withBody(new SwooleStream(trans('code.000404')));
         }
         $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
         $this->logger->error($throwable->getTraceAsString());
-        return $response->withStatus(500)->withBody(new SwooleStream('Internal Server Error.'));
+        //return $response->withStatus(500)->withBody(new SwooleStream('Internal Server Error.'));
+        return $response->withStatus(500)->withBody(new SwooleStream(trans('code.000500')));
     }
 
     public function isValid(Throwable $throwable): bool
