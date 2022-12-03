@@ -24,6 +24,16 @@ abstract class AbstractService
     }
 
     /**
+     * 获取当前Dao实例
+     *
+     * @return \App\Module\Db\Dao\AbstractDao
+     */
+    final protected function getDao(): \App\Module\Db\Dao\AbstractDao
+    {
+        return getDao($this->daoClassName);
+    }
+
+    /**
      * 列表（通用。需要特殊处理的，子类重新定义即可）
      * 
      * @param array $field
@@ -35,7 +45,7 @@ abstract class AbstractService
      */
     public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
-        $dao = getDao($this->daoClassName);
+        $dao = $this->getDao();
         $dao->where($where);
         $offset = ($page - 1) * $limit;
 
@@ -73,7 +83,7 @@ abstract class AbstractService
     public function listWithCount(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $offset = ($page - 1) * $limit;
-        $dao = getDao($this->daoClassName);
+        $dao = $this->getDao();
         $dao->where($where);
         if ($offset == 0 && $limit == 0) {  //是否先获取$list，再通过count($list)计算$count
             empty($order) ? $order = ['id' => 'DESC'] : null;
@@ -104,6 +114,22 @@ abstract class AbstractService
     }
 
     /**
+     * 详情（通用。需要特殊处理的，子类重新定义即可）
+     *
+     * @param array $where
+     * @return void
+     */
+    public function info(array $where)
+    {
+        $dao = $this->getDao();
+        $info = $dao->where($where)->getInfo();
+        if (empty($info)) {
+            throwFailJson('002999');
+        }
+        throwSuccessJson(['info' => $info]);
+    }
+
+    /**
      * 创建（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $data
@@ -111,7 +137,7 @@ abstract class AbstractService
      */
     public function create(array $data)
     {
-        $dao = getDao($this->daoClassName);
+        $dao = $this->getDao();
         $id = $dao->insert($data)->saveInsert();
         if (empty($id)) {
             throwFailJson('999999');
@@ -120,16 +146,16 @@ abstract class AbstractService
     }
 
     /**
-     * 修改（通用。需要特殊处理的，子类重新定义即可）
+     * 更新（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $data
-     * @param integer $id
+     * @param array $where
      * @return void
      */
-    public function update(array $data, int $id)
+    public function update(array $data, array $where)
     {
-        $dao = getDao($this->daoClassName);
-        $result = $dao->where(['id' => $id])->update($data)->saveUpdate();
+        $dao = $this->getDao();
+        $result = $dao->where($where)->update($data)->saveUpdate();
         if (empty($result)) {
             throwFailJson('999999');
         }
@@ -139,13 +165,13 @@ abstract class AbstractService
     /**
      * 删除（通用。需要特殊处理的，子类重新定义即可）
      *
-     * @param array $idArr
+     * @param array $where
      * @return void
      */
-    public function delete(array $idArr)
+    public function delete(array $where)
     {
-        $dao = getDao($this->daoClassName);
-        $result = $dao->where([['id', 'in', $idArr]])->delete();
+        $dao = $this->getDao();
+        $result = $dao->where($where)->delete();
         if (empty($result)) {
             throwFailJson('999999');
         }

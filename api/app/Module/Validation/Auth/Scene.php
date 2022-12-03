@@ -9,22 +9,30 @@ use App\Module\Validation\AbstractValidation;
 class Scene extends AbstractValidation
 {
     protected array $rule = [
-        /*--------场景（list，create，update）共用规则 开始--------*/
-        'id' => 'sometimes|required|integer|min:1',
+        'sceneId' => 'sometimes|required|integer|min:1',
         'sceneName' => 'sometimes|required|alpha_dash|between:1,30',
         'sceneCode' => 'sometimes|required|alpha_dash|between:1,30',
         'sceneConfig' => 'sometimes|required|json',
         //'isStop' => 'sometimes|required|in:' . implode(',', array_keys(trans('const.yesOrNo'))), //需在构造函数中创建该规则
-        /*--------场景（list，create，update）共用规则 结束--------*/
 
-        /*--------场景（list）可用规则 开始--------*/
+        'id' => 'sometimes|required|integer|min:1',
+        'idArr' => 'sometimes|required|array|min:1',
+        'idArr.*' => 'sometimes|required|integer|min:1',
         'excId' => 'sometimes|required|integer|min:1',
-        'sceneId' => 'sometimes|required|integer|min:1',
-        /*--------场景（list）可用规则 结束--------*/
+        'excIdArr' => 'sometimes|required|array|min:1',
+        'excIdArr.*' => 'sometimes|required|integer|min:1',
     ];
 
     protected array $scene = [
         'list' => [],   //可为空，则默认全部规则
+        'info' => [
+            'only' => [
+                'id'
+            ],
+            'remove' => [
+                'id' => ['sometimes']
+            ]
+        ],
         'create' => [
             'only' => [
                 'sceneName',
@@ -48,6 +56,16 @@ class Scene extends AbstractValidation
             ],
             'remove' => [
                 'id' => ['sometimes']
+            ]
+        ],
+        'delete' => [
+            'only' => [
+                'idArr',
+                'idArr.*'
+            ],
+            'remove' => [
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes']
             ]
         ],
     ];

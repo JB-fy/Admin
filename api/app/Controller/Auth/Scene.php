@@ -8,10 +8,14 @@ use App\Controller\AbstractController;
 
 class Scene extends AbstractController
 {
+    /**
+     * 列表
+     *
+     * @return void
+     */
     public function list()
     {
-        $data = $this->listVatetion(); //参数验证并处理
-
+        $data = $this->validated(__FUNCTION__); //参数验证并处理
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
@@ -39,6 +43,102 @@ class Scene extends AbstractController
                 /**--------参数过滤 结束--------**/
 
                 $this->service->listWithCount(...$data);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
+
+    /**
+     * 详情
+     *
+     * @return void
+     */
+    public function info()
+    {
+        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        switch (getRequestScene()) {
+            case 'platformAdmin':
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                /**--------验证权限 开始--------**/
+                /* $authActionCode = 'authSceneInfo';
+                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
+                /**--------验证权限 结束--------**/
+
+                $this->service->info(['id' => $data['id']]);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
+
+    /**
+     * 创建
+     *
+     * @return void
+     */
+    public function create()
+    {
+        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        switch (getRequestScene()) {
+            case 'platformAdmin':
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                /**--------验证权限 开始--------**/
+                /* $authActionCode = 'authSceneCreate';
+                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
+                /**--------验证权限 结束--------**/
+
+                $this->service->create($data);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
+
+    /**
+     * 更新
+     *
+     * @return void
+     */
+    public function update()
+    {
+        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        switch (getRequestScene()) {
+            case 'platformAdmin':
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                /**--------验证权限 开始--------**/
+                /* $authActionCode = 'authSceneUpdate';
+                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
+                /**--------验证权限 结束--------**/
+
+                $this->service->update($data, ['id' => $data['id']]);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
+
+    /**
+     * 删除
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        $data = $this->validated(__FUNCTION__); //参数验证并处理
+        switch (getRequestScene()) {
+            case 'platformAdmin':
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                /**--------验证权限 开始--------**/
+                /* $authActionCode = 'authSceneInfo';
+                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
+                /**--------验证权限 结束--------**/
+
+                $this->service->delete(['id' => $data['idArr']]);
                 break;
             default:
                 throwFailJson('001001');

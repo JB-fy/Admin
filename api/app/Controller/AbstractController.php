@@ -41,47 +41,40 @@ abstract class AbstractController
     }
 
     /**
-     * 列表参数验证并处理
+     * 参数验证并处理
      * 
+     * @param string $sceneName
      * @return array
      */
-    final protected function listVatetion(): array
+    final protected function validated(string $sceneName): array
     {
         $data = $this->request->all();
-        if (!empty($data)) {
-            //$data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();  //返回参数原封不动
-            $data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //只返回验证规则内才有的参数
-            !isset($data['page']) ?: $data['page'] = (int)$data['page'];
-            !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
+        switch ($sceneName) {
+            case 'list':
+                if (!empty($data)) {
+                    //$data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();  //返回参数原封不动
+                    $data = $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //只返回验证规则内才有的参数
+                    !isset($data['page']) ?: $data['page'] = (int)$data['page'];
+                    !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
-            if (!empty($data['where'])) {
-                $data['where'] = $this->validation->make($data['where'], 'list')->validated();
-            }
+                    if (!empty($data['where'])) {
+                        $data['where'] = $this->validation->make($data['where'], $sceneName)->validated();
+                    }
+                }
+                break;
+            case 'update':
+                $data = $this->validation->make($data, $sceneName)->validated();
+                if (count($data) < 2) { //更新除了id还必须有其他参数，所以至少需要两个参数
+                    throwFailJson('000999');
+                }
+                break;
+            case 'info':
+            case 'create':
+            case 'delete':
+            default:
+                $data = $this->validation->make($data, $sceneName)->validated();
+                break;
         }
-        return $data;
-    }
-
-    /**
-     * 创建参数验证并处理
-     * 
-     * @return array
-     */
-    final protected function createVatetion(): array
-    {
-        $data = $this->request->all();
-        $data = $this->validation->make($data, 'create')->validated();
-        return $data;
-    }
-
-    /**
-     * 更新参数验证并处理
-     * 
-     * @return array
-     */
-    final protected function updateVatetion(): array
-    {
-        $data = $this->request->all();
-        $data = $this->validation->make($data, 'update')->validated();
         return $data;
     }
 }
