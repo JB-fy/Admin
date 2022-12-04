@@ -50,9 +50,9 @@ class AppExceptionHandler extends ExceptionHandler
             } */
             return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
         } elseif ($throwable instanceof \Hyperf\Database\Exception\QueryException) {
-            $this->stopPropagation();   //阻止异常冒泡
             //当数据库报1062重复索引时的处理
             if (preg_match('/^SQLSTATE.*1062 Duplicate.*\.([^\']*)\'/', $throwable->getMessage(), $matches) === 1) {
+                $this->stopPropagation();   //阻止异常冒泡
                 $nameKey = 'validation.attributes.' . $matches[1];
                 $name =  trans($nameKey);
                 if ($name === $nameKey) {
