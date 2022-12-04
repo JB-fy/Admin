@@ -50,7 +50,7 @@ class LogOfRequest extends AbstractAspect
                 $responseBody = $th->getResponseBody();
             } elseif ($th instanceof \Hyperf\Validation\ValidationException) {
                 $responseData = [
-                    'code' => '000999',
+                    'code' => '999998',
                     'msg' => $th->validator->errors()->first(),
                     'data' => [],
                 ];

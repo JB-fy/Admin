@@ -13,14 +13,17 @@ const saveDrawer = reactive({
     }
 })
 
+const emits = defineEmits(['save'])
+const saveData = inject('saveData') as { [propName: string]: any }
+saveData.value = {
+    sceneName: '',
+    sceneCode: '',
+    sceneConfig: '',
+    isStop: 0,
+    ...saveData.value
+}
 const saveForm = reactive({
     ref: null as any,
-    data: {
-        sceneName: '',
-        sceneCode: '',
-        sceneConfig: '',
-        isStop: 0
-    },
     rules: {
         sceneName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
@@ -56,9 +59,12 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = removeEmptyOfObj(saveForm.data)
+            const param = {
+                ...removeEmptyOfObj(saveData.value, false)
+            }
             try {
                 await request('auth.scene.save', param, true)
+                emits('save')
             } catch (error) {
             }
             saveForm.loading = false
@@ -72,27 +78,27 @@ const saveForm = reactive({
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveVisible" title="新增" size="50%"
             :before-close="saveDrawer.handleClose">
             <ElScrollbar>
-                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
+                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveData" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true">
                     <ElFormItem label="名称" prop="sceneName">
-                        <ElInput v-model="saveForm.data.sceneName" placeholder="名称" minlength="1" maxlength="30"
+                        <ElInput v-model="saveData.sceneName" placeholder="名称" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" />
-                        <!-- <ElInput style="max-width: 300px;" v-model="saveForm.data.sceneName" placeholder="名称"
+                        <!-- <ElInput style="max-width: 300px;" v-model="saveData.sceneName" placeholder="名称"
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                         <label>
                             <ElAlert title="标题" type="info" :show-icon="true" :closable="false" />
                         </label> -->
                     </ElFormItem>
                     <ElFormItem label="场景标识" prop="sceneCode">
-                        <ElInput v-model="saveForm.data.sceneCode" placeholder="场景标识" minlength="1" maxlength="30" />
+                        <ElInput v-model="saveData.sceneCode" placeholder="场景标识" minlength="1" maxlength="30" />
                     </ElFormItem>
                     <ElFormItem label="场景配置" prop="sceneConfig">
                         <!-- <ElAlert title="标题" type="info" :show-icon="true" :closable="false" /> -->
-                        <ElInput v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
+                        <ElInput v-model="saveData.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
                     <ElFormItem label="停用" prop="isStop">
-                        <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0"
-                            :inline-prompt="true" active-text="是" inactive-text="否"
+                        <ElSwitch v-model="saveData.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"
+                            active-text="是" inactive-text="否"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />
                     </ElFormItem>
                 </ElForm>

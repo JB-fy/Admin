@@ -9,13 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/', [\App\Controller\Index::class, 'index']);
 
 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/test', [\App\Controller\Test::class, 'index']);
 
-Router::addGroup('/login',function (){
+Router::addGroup('/login', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/encryptStr', [\App\Controller\Login::class, 'encryptStr']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '', [\App\Controller\Login::class, 'login']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Login::class, 'info']);
@@ -25,6 +26,10 @@ Router::addGroup('/login',function (){
 
 Router::addGroup('/auth/scene', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Auth\Scene::class, 'list']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Scene::class, 'info']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Scene::class, 'create']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Scene::class, 'update']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Scene::class, 'delete']);
 });
 
 Router::get('/favicon.ico', function () {

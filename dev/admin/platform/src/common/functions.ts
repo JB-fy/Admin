@@ -36,8 +36,8 @@ export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: b
     Object.keys(obj).forEach(item => {
         if (!(obj[item] === undefined ||
             obj[item] === null ||
-            (obj[item] === '' && isClearStr) ||
-            (isEmptyObj(obj[item]) && isClearObj))
+            (isClearStr && obj[item] === '') ||
+            (isClearObj && isEmptyObj(obj[item])))
         ) {
             temp[item] = obj[item]
         }

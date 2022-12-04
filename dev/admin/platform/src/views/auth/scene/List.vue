@@ -1,15 +1,13 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const saveVisible = inject('saveVisible')
-
 const table = reactive({
     columns: [{
         dataKey: 'sceneId',
         title: 'ID',
         key: 'id',
-        width: 120,
-        align: 'left',
+        width: 150,
+        align: 'center',
         fixed: 'left',
         sortable: true
     },
@@ -75,7 +73,7 @@ const table = reactive({
         key: 'action',
         align: 'center',
         fixed: 'right',
-        width: 200,
+        width: 250,
         cellRenderer: (data: any) => {
             return [
                 h(ElButton, {
@@ -91,6 +89,13 @@ const table = reactive({
                     onClick: () => handleDelete(data.rowData.sceneId)
                 }, {
                     default: () => [h(AutoiconEpDelete), t('common.delete')]
+                }),
+                h(ElButton, {
+                    type: 'warning',
+                    size: 'small',
+                    onClick: () => handleCopy(data.rowData.sceneId)
+                }, {
+                    default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
                 })
             ]
         },
@@ -120,11 +125,37 @@ const pagination = reactive({
     }
 })
 
+const saveVisible = inject('saveVisible') as any
+const saveData = inject('saveData') as { [propName: string]: any }
+const handleAdd = () => {
+    saveData.value = {}
+    saveVisible.value = true
+}
 const handleEdit = (id: number) => {
-
+    request('auth.scene.info', { id: id }).then((res) => {
+        saveData.value = {
+            ...res.data.info,
+            id: res.data.info.sceneId   //后台接口以id字段判断是创建还是更新
+        }
+        /* //可不删除。后台接口有做数据过滤
+        delete saveData.value.sceneId
+        delete saveData.value.updateTime
+        delete saveData.value.createTime */
+        saveVisible.value = true
+    })
 }
 const handleDelete = (id: number) => {
-
+    request('auth.scene.del', { idArr: [id] }, true).then((res) => {
+        getList()
+    })
+}
+const handleCopy = (id: number) => {
+    request('auth.scene.info', { id: id }).then((res) => {
+        saveData.value = {
+            ...res.data.info
+        }
+        saveVisible.value = true
+    })
 }
 
 const queryData = inject('queryData') as { [propName: string]: any }
@@ -134,7 +165,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     const param = {
         field: [],
-        where: removeEmptyOfObj(queryData),
+        where: removeEmptyOfObj(queryData.value),
         order: {
             [table.order.key]: table.order.order
         },
@@ -161,12 +192,12 @@ defineExpose({
     <ElRow class="main-table-tool">
         <ElCol :span="16">
             <ElSpace :size="10" style="height: 100%; margin-left: 10px;">
-                <ElButton type="primary" @click="saveVisible = true">
+                <ElButton type="primary" @click="handleAdd">
                     <AutoiconEpEditPen />{{ t('common.add') }}
                 </ElButton>
-                <ElButton type="danger">
+                <!-- <ElButton type="danger">
                     <AutoiconEpDelete />{{ t('common.delete') }}
-                </ElButton>
+                </ElButton> -->
             </ElSpace>
         </ElCol>
         <ElCol :span="8" style="text-align: right;">

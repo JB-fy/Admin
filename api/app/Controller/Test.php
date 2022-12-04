@@ -18,7 +18,7 @@ class Test extends AbstractController
         //\Swoole\Coroutine::sleep(10);
         //throwSuccessJson([]);
         //throwRaw('哈哈阿');
-        throwFailJson('000999');
+        throwFailJson('999998');
 
         /* $cacheLogin = make(\App\Module\Cache\Login::class);
         $cacheLogin->setEncryptStrKey('admin', 'aaaa');

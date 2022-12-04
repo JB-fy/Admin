@@ -3,20 +3,33 @@ import List from './List.vue'
 import Query from './Query.vue'
 import Save from './Save.vue'
 
-const { t } = useI18n()
+
+/*--------列表 开始--------*/
 const list = reactive({
     ref: null as any,
 })
+/*--------列表 开始--------*/
 
-const queryData = reactive({})
+/*--------搜索 开始--------*/
+const queryData = ref({})
 provide('queryData', queryData)
-// 搜索
+//搜索
 const handleQuery = () => {
     list.ref.getList(true)
 }
+/*--------搜索 结束--------*/
 
+/*--------保存（新增|编辑） 开始--------*/
+const saveData = ref({})
+provide('saveData', saveData)
 const saveVisible = ref(false)
 provide('saveVisible', saveVisible)
+//保存成功处理
+const handleSave = () => {
+    list.ref.getList(true)
+    saveVisible.value = false
+}
+/*--------保存（新增|编辑） 结束--------*/
 </script>
 
 <template>
@@ -27,7 +40,7 @@ provide('saveVisible', saveVisible)
 
         <List :ref="(el: any) => { list.ref = el }" />
 
-        <Save />
+        <Save @save="handleSave" />
     </ElContainer>
 </template>
 

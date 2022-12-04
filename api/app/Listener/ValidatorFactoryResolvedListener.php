@@ -43,5 +43,15 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
             }
             return true;
         });
+
+        //框架自带json规则验证array时，会报method_exists使用错误，导致服务器错误不提示json格式错误
+        /* $validatorFactory->extend('json', function ($attribute, $value, $parameters, $validator) {
+            try {
+                json_decode($value);
+            } catch (\Throwable $th) {
+                return false;
+            }
+            return true;
+        }); */
     }
 }

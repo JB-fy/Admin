@@ -124,7 +124,7 @@ abstract class AbstractService
         $dao = $this->getDao();
         $info = $dao->where($where)->getInfo();
         if (empty($info)) {
-            throwFailJson('002999');
+            throwFailJson('999300');
         }
         throwSuccessJson(['info' => $info]);
     }
