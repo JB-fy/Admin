@@ -113,18 +113,6 @@ const table = reactive({
     },
 })
 
-const pagination = reactive({
-    total: 0,
-    page: 1,
-    limit: 10,
-    sizeChange: (val: number) => {
-        getList()
-    },
-    pageChange: (val: number) => {
-        getList()
-    }
-})
-
 const save = inject('save') as { visible: boolean, title: string, data: { [propName: string]: any }, handleSave: Function }
 //新增
 const handleAdd = () => {
@@ -158,6 +146,19 @@ const handleDelete = (id: number) => {
         getList()
     })
 }
+
+//分页
+const pagination = reactive({
+    total: 0,
+    page: 1,
+    limit: 10,
+    sizeChange: (val: number) => {
+        getList()
+    },
+    pageChange: (val: number) => {
+        getList()
+    }
+})
 
 const queryData = inject('queryData') as { [propName: string]: any }
 const getList = async (resetPage: boolean = false) => {

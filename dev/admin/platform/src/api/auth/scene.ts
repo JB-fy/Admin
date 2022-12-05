@@ -1,11 +1,18 @@
 import axios from 'axios'
+const CancelToken = axios.CancelToken
+let cancel: Function | null
 
 export function list(data: any) {
+  if (cancel) {
+    cancel()
+  }
   return http({
     url: '/auth/scene/list',
     method: 'post',
     data: data,
-    cancelToken: axios.CancelToken.source().token
+    cancelToken: new CancelToken(function executor(c) {
+      cancel = c
+    })
   })
 }
 

@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 23/10/2022 21:58:47
+ Date: 05/12/2022 04:26:09
 */
 
 SET NAMES utf8mb4;
@@ -79,39 +79,24 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menuId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', '', 0, '{\"url\": \"/\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"homepage\", \"zh-cn\": \"主页\"}}', 0, 0, '2022-10-23 21:10:42', '2022-09-17 23:46:20');
-INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"authManage \", \"zh-cn\": \"权限管理\"}}', 100, 0, '2022-10-23 21:16:41', '2022-09-17 23:49:51');
-INSERT INTO `auth_menu` VALUES (3, 1, 2, '管理员', '', 0, '{\"url\": \"/systemAdmin\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"admin \", \"zh-cn\": \"管理员\"}}', 50, 0, '2022-10-23 21:17:46', '2022-09-17 23:49:53');
-INSERT INTO `auth_menu` VALUES (4, 1, 2, '菜单', '', 0, '{\"url\": \"/authMenu\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"menu \", \"zh-cn\": \"菜单\"}}', 100, 0, '2022-10-23 21:18:52', '2022-09-17 23:49:54');
-INSERT INTO `auth_menu` VALUES (5, 1, 2, '角色', '', 0, '{\"url\": \"/authRole\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"role \", \"zh-cn\": \"角色\"}}', 50, 0, '2022-10-23 21:19:02', '2022-09-17 23:49:55');
-INSERT INTO `auth_menu` VALUES (6, 1, 0, '系统管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"systemManage \", \"zh-cn\": \"系统管理\"}}', 99, 0, '2022-10-23 21:19:29', '2022-09-17 23:49:56');
-INSERT INTO `auth_menu` VALUES (7, 1, 6, '系统配置', '', 0, '{\"url\": \"/systemConfig\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"systemConfig \", \"zh-cn\": \"系统配置\"}}', 50, 0, '2022-10-23 21:19:55', '2022-09-17 23:49:57');
-INSERT INTO `auth_menu` VALUES (8, 1, 0, '日志管理', '', 0, '{\"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"logManage \", \"zh-cn\": \"日志管理\"}}', 95, 0, '2022-10-23 21:20:13', '2022-09-17 23:49:59');
-INSERT INTO `auth_menu` VALUES (9, 1, 8, '请求日志', '', 0, '{\"url\": \"/systemLogOfRequest\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"requestLog \", \"zh-cn\": \"请求日志\"}}', 50, 0, '2022-10-23 21:20:31', '2022-09-17 23:50:06');
-INSERT INTO `auth_menu` VALUES (10, 1, 0, '测试', '', 0, '{\"url\": \"https://www.baidu.com/\", \"icon\": \"autoicon-ep-lock\", \"title\": {\"en\": \"test \", \"zh-cn\": \"测试\"}}', 100, 0, '2022-10-23 21:21:03', '2022-10-17 00:25:42');
-
--- ----------------------------
--- Table structure for auth_menu_rel_to_action
--- ----------------------------
-DROP TABLE IF EXISTS `auth_menu_rel_to_action`;
-CREATE TABLE `auth_menu_rel_to_action`  (
-  `menuId` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '权限菜单ID',
-  `actionId` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '权限操作ID',
-  `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`menuId`, `actionId`) USING BTREE,
-  INDEX `menuId`(`menuId` ASC) USING BTREE,
-  INDEX `actionId`(`actionId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限菜单，权限操作关联表（菜单包含哪些操作）' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of auth_menu_rel_to_action
--- ----------------------------
+INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', '', 0, '{\"url\": \"/\", \"icon\": \"AutoiconEpHomeFilled\", \"title\": {\"en\": \"homepage\", \"zh-cn\": \"主页\"}}', 0, 0, '2022-11-03 23:30:30', '2022-09-17 23:46:20');
+INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', '', 0, '{\"icon\": \"AutoiconEpLock\", \"title\": {\"en\": \"authManage \", \"zh-cn\": \"权限管理\"}}', 100, 0, '2022-11-04 00:38:28', '2022-09-17 23:49:51');
+INSERT INTO `auth_menu` VALUES (3, 1, 2, '管理员', '', 0, '{\"url\": \"/platform/admin\", \"icon\": \"AutoiconEpUserFilled\", \"title\": {\"en\": \"admin \", \"zh-cn\": \"管理员\"}}', 50, 0, '2022-12-05 22:46:33', '2022-09-17 23:49:53');
+INSERT INTO `auth_menu` VALUES (4, 1, 2, '菜单', '', 0, '{\"url\": \"/auth/menu\", \"icon\": \"AutoiconEpMenu\", \"title\": {\"en\": \"menu \", \"zh-cn\": \"菜单\"}}', 100, 0, '2022-12-05 22:46:38', '2022-09-17 23:49:54');
+INSERT INTO `auth_menu` VALUES (5, 1, 2, '角色', '', 0, '{\"url\": \"/auth/role\", \"icon\": \"AutoiconEpView\", \"title\": {\"en\": \"role \", \"zh-cn\": \"角色\"}}', 50, 0, '2022-12-05 22:46:42', '2022-09-17 23:49:55');
+INSERT INTO `auth_menu` VALUES (6, 1, 0, '系统管理', '', 0, '{\"icon\": \"AutoiconEpPlatform\", \"title\": {\"en\": \"systemManage \", \"zh-cn\": \"系统管理\"}}', 99, 0, '2022-11-04 00:38:16', '2022-09-17 23:49:56');
+INSERT INTO `auth_menu` VALUES (7, 1, 6, '系统配置', '', 0, '{\"url\": \"/platform/config\", \"icon\": \"AutoiconEpSetting\", \"title\": {\"en\": \"systemConfig \", \"zh-cn\": \"系统配置\"}}', 50, 0, '2022-12-05 22:46:47', '2022-09-17 23:49:57');
+INSERT INTO `auth_menu` VALUES (8, 1, 0, '日志管理', '', 0, '{\"icon\": \"AutoiconEpDataAnalysis\", \"title\": {\"en\": \"logManage \", \"zh-cn\": \"日志管理\"}}', 95, 0, '2022-11-04 00:36:00', '2022-09-17 23:49:59');
+INSERT INTO `auth_menu` VALUES (9, 1, 8, '请求日志', '', 0, '{\"url\": \"/log/request\", \"icon\": \"AutoiconEpReading\", \"title\": {\"en\": \"requestLog \", \"zh-cn\": \"请求日志\"}}', 50, 0, '2022-12-05 22:46:59', '2022-09-17 23:50:06');
+INSERT INTO `auth_menu` VALUES (10, 1, 2, '场景', '', 0, '{\"url\": \"/auth/scene\", \"icon\": \"AutoiconEpFlag\", \"title\": {\"en\": \"scene \", \"zh-cn\": \"场景\"}}', 100, 0, '2022-12-05 22:47:03', '2022-09-17 23:49:54');
+INSERT INTO `auth_menu` VALUES (11, 1, 0, '第三方网站', '', 0, '{\"url\": \"/thirdUrl?url=https://cn.vuejs.org/api/\", \"icon\": \"AutoiconEpChromeFilled\", \"title\": {\"en\": \"thridWebsite \", \"zh-cn\": \"第三方网站\"}}', 100, 0, '2022-11-03 01:11:33', '2022-10-17 00:25:42');
+INSERT INTO `auth_menu` VALUES (12, 1, 0, '第三方网站（新标签）', '', 0, '{\"url\": \"https://www.baidu.com/\", \"icon\": \"AutoiconEpChromeFilled\", \"title\": {\"en\": \"test \", \"zh-cn\": \"第三方网站（新标签）\"}}', 100, 0, '2022-11-03 01:11:36', '2022-10-17 00:25:42');
+INSERT INTO `auth_menu` VALUES (13, 1, 0, '第三方网站1', '', 0, '{\"url\": \"/thirdUrl?url=https://element-plus.gitee.io/zh-CN/\", \"icon\": \"AutoiconEpElementPlus\", \"title\": {\"en\": \"thridWebsite1 \", \"zh-cn\": \"第三方网站1\"}}', 100, 0, '2022-11-03 23:45:56', '2022-10-17 00:25:42');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -135,10 +120,10 @@ CREATE TABLE `auth_role`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for auth_role_rel_of_system_admin
+-- Table structure for auth_role_rel_of_platform_admin
 -- ----------------------------
-DROP TABLE IF EXISTS `auth_role_rel_of_system_admin`;
-CREATE TABLE `auth_role_rel_of_system_admin`  (
+DROP TABLE IF EXISTS `auth_role_rel_of_platform_admin`;
+CREATE TABLE `auth_role_rel_of_platform_admin`  (
   `roleId` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '权限角色ID',
   `adminId` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '平台管理员ID',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -149,7 +134,7 @@ CREATE TABLE `auth_role_rel_of_system_admin`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限角色，系统管理员关联表（系统管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of auth_role_rel_of_system_admin
+-- Records of auth_role_rel_of_platform_admin
 -- ----------------------------
 
 -- ----------------------------
@@ -194,28 +179,47 @@ CREATE TABLE `auth_role_rel_to_menu`  (
 DROP TABLE IF EXISTS `auth_scene`;
 CREATE TABLE `auth_scene`  (
   `sceneId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '权限场景ID',
-  `sceneType` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型：0菜单类型，1操作类型。角色创建时，菜单类型使用菜单表创建，操作类型使用操作表创建',
   `sceneCode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '标识（代码中用于识别调用接口的所在场景，做对应的身份鉴定及权力鉴定。如已在代码中使用，不建议更改）',
   `sceneName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `sceneConfig` json NULL COMMENT '配置（内容自定义。json格式：{\"alg\": \"算法\",\"key\": \"密钥\",\"expTime\": \"签名有效时间\",...}）',
-  `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`sceneId`) USING BTREE,
   UNIQUE INDEX `sceneCode`(`sceneCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 114 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES (1, 0, 'systemAdmin', '系统后台', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', '', 0, '2022-10-14 23:32:00', '2022-09-17 23:13:53');
+INSERT INTO `auth_scene` VALUES (1, 'platformAdmin', '系统后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-05 22:17:32', '2022-09-17 23:13:53');
+INSERT INTO `auth_scene` VALUES (2, 'systemAdmin', '系统后台', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-05 22:20:03', '2022-11-17 23:51:32');
 
 -- ----------------------------
--- Table structure for system_admin
+-- Table structure for log_request
 -- ----------------------------
-DROP TABLE IF EXISTS `system_admin`;
-CREATE TABLE `system_admin`  (
+DROP TABLE IF EXISTS `log_request`;
+CREATE TABLE `log_request`  (
+  `logId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '请求日志ID',
+  `requestUrl` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '请求地址',
+  `requestData` json NULL COMMENT '请求数据',
+  `requestHeader` json NULL COMMENT '请求头',
+  `responseBody` json NULL COMMENT '响应体',
+  `runTime` decimal(8, 3) UNSIGNED NOT NULL DEFAULT 0.000 COMMENT '运行时间（单位：毫秒）',
+  `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`logId`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '系统日志-请求表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of log_request
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for platform_admin
+-- ----------------------------
+DROP TABLE IF EXISTS `platform_admin`;
+CREATE TABLE `platform_admin`  (
   `adminId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
   `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
   `phone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '电话号码',
@@ -231,15 +235,15 @@ CREATE TABLE `system_admin`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '系统管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of system_admin
+-- Records of platform_admin
 -- ----------------------------
-INSERT INTO `system_admin` VALUES (1, 'admin', NULL, 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', '', 0, '2022-09-04 22:54:09', '2022-09-04 22:53:41');
+INSERT INTO `platform_admin` VALUES (1, 'admin', NULL, 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', '', 0, '2022-09-04 22:54:09', '2022-09-04 22:53:41');
 
 -- ----------------------------
--- Table structure for system_config
+-- Table structure for platform_config
 -- ----------------------------
-DROP TABLE IF EXISTS `system_config`;
-CREATE TABLE `system_config`  (
+DROP TABLE IF EXISTS `platform_config`;
+CREATE TABLE `platform_config`  (
   `configId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '配置ID',
   `configKey` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '配置项Key',
   `configValue` varchar(15000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '配置项值（设置大点。以后可能需要保存富文本内容，如公司简介或协议等等）',
@@ -250,27 +254,7 @@ CREATE TABLE `system_config`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '系统配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of system_config
--- ----------------------------
-
--- ----------------------------
--- Table structure for system_log_of_request
--- ----------------------------
-DROP TABLE IF EXISTS `system_log_of_request`;
-CREATE TABLE `system_log_of_request`  (
-  `requestLogId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '请求日志ID',
-  `requestUrl` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '请求地址',
-  `requestData` json NULL COMMENT '请求数据',
-  `requestHeader` json NULL COMMENT '请求头',
-  `responseData` json NULL COMMENT '响应数据',
-  `runTime` decimal(8, 3) UNSIGNED NOT NULL DEFAULT 0.000 COMMENT '运行时间（单位：毫秒）',
-  `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`requestLogId`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '系统日志-请求表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of system_log_of_request
+-- Records of platform_config
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -17,20 +17,21 @@
 
 
 
-
 /**----------------npm相关命令 结束----------------**/
-#检查包是否已经过时
-	npm outdated
-#安装包（-g表示全局，没有表示局部）
+#查看配置
+	npm config list
+#查看当前源，默认：https://registry.npmjs.org/
+	npm config get registry
+#切换源
+	npm config set registry=https://registry.npm.taobao.org/
+#删除源
+	npm config rm registry
+#安装包（-g表示全局，没有表示局部  --save保存到生成环境  --save-dev保存到开发环境）
 	npm install 包名
-#更新包
-	npm update 包名@版本号 --save
+#更新包（加--save才会更新版本）
+	npm update 包名 --save
 #卸载包
- 	npm uninstall 包名
-#清除未被使用到的包
-	npm prune
-#查看帮助命令
-	npm help
+ 	npm remove 包名
 #清除缓存
 	npm cache clean --force
 #查看包（没有包名查看全部，--depth=0显示层级）
@@ -43,8 +44,6 @@
 		version			查看当前版本号
 		versions		查看历史版本和当前版本
 /**----------------npm相关命令 结束----------------**/
-
-
 
 
 
@@ -70,7 +69,6 @@
 #安装md5加密
 	npm install js-md5
 /**----------------创建vue3项目 结束----------------**/
-
 
 
 
