@@ -11,6 +11,14 @@ const list = reactive({
 /*--------列表 开始--------*/
 
 /*--------搜索 开始--------*/
+const query = reactive({
+    data: {},
+    handleQuery: () => {
+        list.ref.getList(true)
+    }
+})
+provide('query', query)
+
 const queryData = ref({})
 provide('queryData', queryData)
 //搜索
@@ -20,6 +28,17 @@ const handleQuery = () => {
 /*--------搜索 结束--------*/
 
 /*--------保存（新增|编辑） 开始--------*/
+const save = reactive({
+    visible: false,
+    title: '新增',
+    data: {},
+    handleSave: () => {
+        list.ref.getList(true)
+        save.visible = false
+    }
+})
+provide('save', save)
+
 const saveData = ref({})
 provide('saveData', saveData)
 const saveVisible = ref(false)
