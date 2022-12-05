@@ -1,8 +1,11 @@
+import axios from 'axios'
+
 export function list(data: any) {
   return http({
     url: '/auth/scene/list',
     method: 'post',
-    data: data
+    data: data,
+    cancelToken: axios.CancelToken.source().token
   })
 }
 
@@ -15,7 +18,7 @@ export function info(data: any) {
 }
 
 export function save(data: any) {
-  if (data?.id) {
+  if (data?.id > 0) {
     return http({
       url: '/auth/scene/update',
       method: 'post',

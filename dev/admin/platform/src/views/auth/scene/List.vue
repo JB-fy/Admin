@@ -79,7 +79,7 @@ const table = reactive({
                 h(ElButton, {
                     type: 'primary',
                     size: 'small',
-                    onClick: () => handleEdit(data.rowData.sceneId)
+                    onClick: () => handleEditCopy(data.rowData.sceneId)
                 }, {
                     default: () => [h(AutoiconEpEdit), t('common.edit')]
                 }),
@@ -93,7 +93,7 @@ const table = reactive({
                 h(ElButton, {
                     type: 'warning',
                     size: 'small',
-                    onClick: () => handleCopy(data.rowData.sceneId)
+                    onClick: () => handleEditCopy(data.rowData.sceneId, 'copy')
                 }, {
                     default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
                 })
@@ -127,34 +127,33 @@ const pagination = reactive({
 
 const saveVisible = inject('saveVisible') as any
 const saveData = inject('saveData') as { [propName: string]: any }
+//新增
 const handleAdd = () => {
     saveData.value = {}
     saveVisible.value = true
 }
-const handleEdit = (id: number) => {
+//编辑|复制
+const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth.scene.info', { id: id }).then((res) => {
-        saveData.value = {
-            ...res.data.info,
-            id: res.data.info.sceneId   //后台接口以id字段判断是创建还是更新
-        }
-        /* //可不删除。后台接口有做数据过滤
+        saveData.value = { ...res.data.info }
+        //可不删除。后台接口验证数据时会做数据过滤
         delete saveData.value.sceneId
         delete saveData.value.updateTime
-        delete saveData.value.createTime */
+        delete saveData.value.createTime
+        switch (type) {
+            case 'edit':
+                saveData.value.id = id  //后台接口以id字段判断是创建还是更新
+                break;
+            case 'copy':
+                break;
+        }
         saveVisible.value = true
     })
 }
+//删除
 const handleDelete = (id: number) => {
     request('auth.scene.del', { idArr: [id] }, true).then((res) => {
         getList()
-    })
-}
-const handleCopy = (id: number) => {
-    request('auth.scene.info', { id: id }).then((res) => {
-        saveData.value = {
-            ...res.data.info
-        }
-        saveVisible.value = true
     })
 }
 
