@@ -136,10 +136,6 @@ const handleAdd = () => {
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth.scene.info', { id: id }).then((res) => {
         saveData.value = { ...res.data.info }
-        //可不删除。后台接口验证数据时会做数据过滤
-        delete saveData.value.sceneId
-        delete saveData.value.updateTime
-        delete saveData.value.createTime
         switch (type) {
             case 'edit':
                 saveData.value.id = id  //后台接口以id字段判断是创建还是更新
@@ -147,6 +143,10 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
             case 'copy':
                 break;
         }
+        //可不删除。后台接口验证数据时会做数据过滤
+        delete saveData.value.sceneId
+        delete saveData.value.updateTime
+        delete saveData.value.createTime
         saveVisible.value = true
     })
 }
