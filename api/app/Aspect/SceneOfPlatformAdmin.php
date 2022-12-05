@@ -8,7 +8,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 #[Aspect]
-class SceneOfSystemAdmin extends AbstractAspect
+class SceneOfPlatformAdmin extends AbstractAspect
 {
     //执行优先级（大值优先）
     public ?int $priority = 19;

@@ -125,29 +125,31 @@ const pagination = reactive({
     }
 })
 
-const saveVisible = inject('saveVisible') as any
-const saveData = inject('saveData') as { [propName: string]: any }
+const save = inject('save') as { visible: boolean, title: string, data: { [propName: string]: any }, handleSave: Function }
 //新增
 const handleAdd = () => {
-    saveData.value = {}
-    saveVisible.value = true
+    save.data = {}
+    save.title = t('common.add')
+    save.visible = true
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth.scene.info', { id: id }).then((res) => {
-        saveData.value = { ...res.data.info }
+        save.data = { ...res.data.info }
         switch (type) {
             case 'edit':
-                saveData.value.id = id  //后台接口以id字段判断是创建还是更新
+                save.title = t('common.edit')
+                save.data.id = id  //后台接口以id字段判断是创建还是更新
                 break;
             case 'copy':
+                save.title = t('common.copy')
                 break;
         }
         //可不删除。后台接口验证数据时会做数据过滤
-        delete saveData.value.sceneId
-        delete saveData.value.updateTime
-        delete saveData.value.createTime
-        saveVisible.value = true
+        delete save.data.sceneId
+        delete save.data.updateTime
+        delete save.data.createTime
+        save.visible = true
     })
 }
 //删除
@@ -182,6 +184,7 @@ const getList = async (resetPage: boolean = false) => {
 }
 getList()
 
+//暴露组件接口给父组件调用。即Index组件可调用List组件的getList方法
 defineExpose({
     getList
 })

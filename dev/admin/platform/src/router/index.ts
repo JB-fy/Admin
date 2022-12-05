@@ -33,64 +33,64 @@ const initRouteList = [
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/authAction',
+                path: '/auth/action',
                 component: async () => {
                     const component = await import('@/views/auth/action/Index.vue')
-                    component.default.name = '/authAction'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/action'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/authMenu',
+                path: '/auth/menu',
                 component: async () => {
                     const component = await import('@/views/auth/menu/Index.vue')
-                    component.default.name = '/authMenu'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/menu'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/authRole',
+                path: '/auth/role',
                 component: async () => {
                     const component = await import('@/views/auth/role/Index.vue')
-                    component.default.name = '/authRole'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/role'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/authScene',
+                path: '/auth/scene',
                 component: async () => {
                     const component = await import('@/views/auth/scene/Index.vue')
-                    component.default.name = '/authScene'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/scene'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/systemAdmin',
+                path: '/platform/admin',
                 component: async () => {
-                    const component = await import('@/views/system/admin/Index.vue')
-                    component.default.name = '/systemAdmin'    //设置页面组件name为path，方便清理缓存
+                    const component = await import('@/views/platform/admin/Index.vue')
+                    component.default.name = '/platform/admin'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/systemConfig',
+                path: '/platform/config',
                 component: async () => {
-                    const component = await import('@/views/system/config/Index.vue')
-                    component.default.name = '/systemConfig'    //设置页面组件name为path，方便清理缓存
+                    const component = await import('@/views/platform/config/Index.vue')
+                    component.default.name = '/platform/config'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
             },
             {
-                path: '/systemLogOfRequest',
+                path: '/log/request',
                 component: async () => {
-                    const component = await import('@/views/system/logOfRequest/Index.vue')
-                    component.default.name = '/systemLogOfRequest'    //设置页面组件name为path，方便清理缓存
+                    const component = await import('@/views/log/request/Index.vue')
+                    component.default.name = '/log/request'    //设置页面组件name为path，方便清理缓存
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }

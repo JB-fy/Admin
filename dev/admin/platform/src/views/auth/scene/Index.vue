@@ -3,22 +3,7 @@ import List from './List.vue'
 import Query from './Query.vue'
 import Save from './Save.vue'
 
-
-/*--------列表 开始--------*/
-const list = reactive({
-    ref: null as any,
-})
-/*--------列表 开始--------*/
-
 /*--------搜索 开始--------*/
-const query = reactive({
-    data: {},
-    handleQuery: () => {
-        list.ref.getList(true)
-    }
-})
-provide('query', query)
-
 const queryData = ref({})
 provide('queryData', queryData)
 //搜索
@@ -27,27 +12,24 @@ const handleQuery = () => {
 }
 /*--------搜索 结束--------*/
 
+/*--------列表 开始--------*/
+const list = reactive({
+    ref: null as any,
+})
+/*--------列表 开始--------*/
+
 /*--------保存（新增|编辑） 开始--------*/
 const save = reactive({
     visible: false,
-    title: '新增',
+    title: '',  //新增|编辑|复制
     data: {},
     handleSave: () => {
+        //保存成功处理
         list.ref.getList(true)
         save.visible = false
     }
 })
 provide('save', save)
-
-const saveData = ref({})
-provide('saveData', saveData)
-const saveVisible = ref(false)
-provide('saveVisible', saveVisible)
-//保存成功处理
-const handleSave = () => {
-    list.ref.getList(true)
-    saveVisible.value = false
-}
 /*--------保存（新增|编辑） 结束--------*/
 </script>
 
@@ -59,7 +41,7 @@ const handleSave = () => {
 
         <List :ref="(el: any) => { list.ref = el }" />
 
-        <Save @save="handleSave" />
+        <Save />
     </ElContainer>
 </template>
 
