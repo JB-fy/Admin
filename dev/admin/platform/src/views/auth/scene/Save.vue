@@ -93,24 +93,25 @@ const saveDrawer = reactive({
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
-                    <ElFormItem label="名称" prop="sceneName">
-                        <ElInput v-model="saveCommon.data.sceneName" placeholder="名称" minlength="1" maxlength="30"
-                            :show-word-limit="true" :clearable="true" />
+                    <ElFormItem :label="t('view.auth.scene.sceneName')" prop="sceneName">
+                        <ElInput v-model="saveCommon.data.sceneName" :placeholder="t('view.auth.scene.sceneName')"
+                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
-                    <ElFormItem label="场景标识" prop="sceneCode">
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                        <ElInput v-model="saveCommon.data.sceneCode" placeholder="场景标识" minlength="1" maxlength="30"
-                            :show-word-limit="true" :clearable="true" />
-                        <!-- <ElInput v-model="saveCommon.data.sceneCode" placeholder="场景标识" minlength="1" maxlength="30"
+                    <ElFormItem :label="t('view.auth.scene.sceneCode')" prop="sceneCode">
+                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true"
+                            :closable="false" />
+                        <ElInput v-model="saveCommon.data.sceneCode" :placeholder="t('view.auth.scene.sceneCode')"
+                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                        <!-- <ElInput v-model="saveCommon.data.sceneCode" :placeholder="t('view.auth.scene.sceneCode')" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" style="max-width: 300px;" />
                         <label>
-                            <ElAlert title="值不能与现有记录重复" type="info" :show-icon="true" :closable="false" />
+                            <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                         </label> -->
                     </ElFormItem>
-                    <ElFormItem label="场景配置" prop="sceneConfig">
+                    <ElFormItem :label="t('view.auth.scene.sceneConfig')" prop="sceneConfig">
                         <ElInput v-model="saveCommon.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
-                    <ElFormItem label="停用" prop="isStop">
+                    <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"
                             :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />

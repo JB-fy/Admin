@@ -23,13 +23,15 @@ const queryForm = reactive({
     <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
         @keyup.enter="queryForm.submit">
         <ElFormItem prop="sceneName">
-            <ElInput v-model="queryCommon.data.sceneName" placeholder="名称" :clearable="true" />
+            <ElInput v-model="queryCommon.data.sceneName" :placeholder="t('view.auth.scene.sceneName')"
+                :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneCode">
-            <ElInput v-model="queryCommon.data.sceneCode" placeholder="标识" :clearable="true" />
+            <ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('view.auth.scene.sceneCode')"
+                :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
-            <ElSelect v-model="queryCommon.data.isStop" placeholder="停用" :clearable="true">
+            <ElSelect v-model="queryCommon.data.isStop" :placeholder="t('common.name.isStop')" :clearable="true">
                 <ElOption :label="t('common.no')" value="0" />
                 <ElOption :label="t('common.yes')" value="1" />
             </ElSelect>
