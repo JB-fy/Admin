@@ -2,40 +2,33 @@
 const { t } = useI18n()
 
 const table = reactive({
-    checkedList: {} as { [propName: number]: boolean },
     columns: [{
-        key: '',
+        title: t('common.name.checked'),
+        key: 'checked',
         width: 30,
         align: 'center',
         fixed: 'left',
         cellRenderer: (props: any) => {
             return [
                 h(ElCheckbox as any, {
-                    'model-value': table.checkedList[props.rowData.id],
+                    'model-value': props.rowData.checked,
                     onChange: (val: boolean) => {
-                        if (val) {
-                            table.checkedList[props.rowData.id] = val
-                        } else {
-                            delete table.checkedList[props.rowData.id]
-                        }
+                        props.rowData.checked = val
                     }
                 })
-            ]
+            ] as any
         },
         headerCellRenderer: () => {
-            const checkedLength = Object.keys(table.checkedList).length
+            const allChecked = table.data.every((item: any) => item.checked)
+            const someChecked = table.data.some((item: any) => item.checked)
             return [
                 h(ElCheckbox as any, {
-                    'model-value': table.data.length ? checkedLength === table.data.length : false,
-                    indeterminate: checkedLength > 0 && checkedLength < table.data.length,
+                    'model-value': table.data.length ? allChecked : false,
+                    indeterminate: someChecked && !allChecked,
                     onChange: (val: boolean) => {
-                        if (val) {
-                            table.data.forEach((item: any) => {
-                                table.checkedList[item.id] = true
-                            })
-                        } else {
-                            table.checkedList = {}
-                        }
+                        table.data.forEach((item: any) => {
+                            item.checked = val
+                        })
                     }
                 })
             ]
@@ -45,7 +38,7 @@ const table = reactive({
         title: t('common.name.id'),
         key: 'id',
         width: 150,
-        align: 'left',
+        align: 'center',
         fixed: 'left',
         sortable: true,
     },
@@ -176,6 +169,20 @@ const handleAdd = () => {
     saveCommon.title = t('common.add')
     saveCommon.visible = true
 }
+//批量删除
+const handleBatchDelete = () => {
+    const idArr: number[] = [];
+    table.data.forEach((item: any) => {
+        if (item.checked) {
+            idArr.push(item.id)
+        }
+    })
+    if (idArr.length) {
+        handleDelete(idArr)
+    } else {
+        ElMessage.error(t('common.tip.selectDelete'))
+    }
+}
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth.scene.info', { id: id }).then((res) => {
@@ -194,7 +201,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         delete saveCommon.data.updateTime
         delete saveCommon.data.createTime
         saveCommon.visible = true
-    })
+    }).catch(() => { })
 }
 //删除
 const handleDelete = (idArr: number[] | string[]) => {
@@ -205,9 +212,8 @@ const handleDelete = (idArr: number[] | string[]) => {
         showClose: false,
     }).then(() => {
         request('auth.scene.del', { idArr: idArr }, true).then((res) => {
-            table.checkedList
             getList()
-        })
+        }).catch(() => { })
     }).catch(() => { })
 }
 //更新
@@ -246,7 +252,6 @@ const getList = async (resetPage: boolean = false) => {
     table.loading = true
     try {
         const res = await request('auth.scene.list', param)
-        table.checkedList = {}
         table.data = res.data.list.map((item: any) => {
             item.id = item.sceneId  //统一写成id。代码复用时，不用到处改sceneId
             return item
@@ -271,8 +276,8 @@ defineExpose({
                 <ElButton type="primary" @click="handleAdd">
                     <AutoiconEpEditPen />{{ t('common.add') }}
                 </ElButton>
-                <ElButton type="danger" @click="handleDelete(Object.keys(table.checkedList))">
-                    <AutoiconEpDelete />{{ t('common.batchDelete') }}
+                <ElButton type="danger" @click="handleBatchDelete">
+                    <AutoiconEpDeleteFilled />{{ t('common.batchDelete') }}
                 </ElButton>
             </ElSpace>
         </ElCol>

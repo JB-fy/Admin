@@ -26,11 +26,13 @@ export default {
     batchDelete: '批量删除',
 
     tip: {
+        selectDelete: '请选择要删除的记录',
         configDelete: '确定删除？',
         configExit: '确定退出当前操作？',
         notDuplicate: '不能与现有记录重复',
     },
     name: {
+        checked: '复选框',
         id: 'ID',
         isStop: '停用',
         createTime: '创建时间',
