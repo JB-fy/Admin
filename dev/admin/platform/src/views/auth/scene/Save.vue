@@ -66,10 +66,15 @@ const saveForm = reactive({
 const saveDrawer = reactive({
     ref: null as any,
     beforeClose: (done: Function) => {
-        ElMessageBox.confirm('确定放弃当前操作？', { center: true }).then(() => {
+        //确定退出当前操作？
+        ElMessageBox.confirm('', {
+            type: 'info',
+            title: t('common.tip.configExit'),
+            center: true,
+            showClose: false,
+        }).then(() => {
             done()
-        }).catch((error) => {
-        })
+        }).catch(() => { })
     },
     closed: () => {
         saveForm.ref.clearValidate()    //清理表单验证错误提示
@@ -93,7 +98,7 @@ const saveDrawer = reactive({
                             :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem label="场景标识" prop="sceneCode">
-                        <ElAlert title="值不能与现有记录重复" type="info" :show-icon="true" :closable="false" />
+                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                         <ElInput v-model="saveCommon.data.sceneCode" placeholder="场景标识" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" />
                         <!-- <ElInput v-model="saveCommon.data.sceneCode" placeholder="场景标识" minlength="1" maxlength="30"
@@ -107,7 +112,7 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem label="停用" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"
-                            :inline-prompt="true" active-text="是" inactive-text="否"
+                            :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />
                     </ElFormItem>
                 </ElForm>

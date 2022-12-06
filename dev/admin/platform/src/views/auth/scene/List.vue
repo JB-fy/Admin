@@ -4,7 +4,7 @@ const { t } = useI18n()
 const table = reactive({
     columns: [{
         dataKey: 'id',
-        title: 'ID',
+        title: t('common.name.id'),
         key: 'id',
         width: 150,
         align: 'center',
@@ -35,7 +35,7 @@ const table = reactive({
     },
     {
         dataKey: 'isStop',
-        title: '停用',
+        title: t('common.name.isStop'),
         key: 'isStop',
         align: 'center',
         width: 120,
@@ -48,15 +48,15 @@ const table = reactive({
                     //circle: true,
                     round: true
                 }, {
-                    default: () => data.rowData.isStop ? '是' : '否'
+                    default: () => data.rowData.isStop ? t('common.yes') : t('common.no')
                 }), */
                 h(ElSwitch as any, {
                     'model-value': data.rowData.isStop,
                     'active-value': 1,
                     'inactive-value': 0,
                     'inline-prompt': true,
-                    'active-text': '是',
-                    'inactive-text': '否',
+                    'active-text': t('common.yes'),
+                    'inactive-text': t('common.no'),
                     style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
                     onChange: (val: number) => {
                         handleUpdate({
@@ -73,21 +73,21 @@ const table = reactive({
     },
     {
         dataKey: 'updateTime',
-        title: '更新时间',
+        title: t('common.name.updateTime'),
         key: 'updateTime',
         align: 'center',
         width: 150,
     },
     {
         dataKey: 'createTime',
-        title: '创建时间',
+        title: t('common.name.createTime'),
         key: 'createTime',
         align: 'center',
         width: 150,
         sortable: true
     },
     {
-        title: '操作',
+        title: t('common.name.action'),
         key: 'action',
         align: 'center',
         fixed: 'right',
@@ -160,18 +160,21 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
 }
 //删除
 const handleDelete = (id: number) => {
-    ElMessageBox.confirm('确认删除？').then(() => {
+    ElMessageBox.confirm('', {
+        type: 'warning',
+        title: t('common.tip.configDelete'),
+        center: true,
+        showClose: false,
+    }).then(() => {
         request('auth.scene.del', { idArr: [id] }, true).then((res) => {
             getList()
         })
-    }).catch((error) => {
-    })
+    }).catch(() => { })
 }
 //更新
 const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
-    await request('auth.scene.save', param)
+    await request('auth.scene.save', param, true)
 }
-
 
 //分页
 const pagination = reactive({
@@ -187,6 +190,7 @@ const pagination = reactive({
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+//列表
 const getList = async (resetPage: boolean = false) => {
     if (resetPage) {
         pagination.page = 1

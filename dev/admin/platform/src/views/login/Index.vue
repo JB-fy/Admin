@@ -44,14 +44,14 @@ const loginForm = reactive({
         <ElForm :ref="(el: any) => { loginForm.ref = el }" :model="loginForm.data" :rules="loginForm.rules"
             @keyup.enter="loginForm.submit">
             <ElFormItem prop="account">
-                <ElInput v-model="loginForm.data.account" :placeholder="t('common.account')">
+                <ElInput v-model="loginForm.data.account" :placeholder="t('common.name.account')">
                     <template #prefix>
                         <AutoiconEpUser />
                     </template>
                 </ElInput>
             </ElFormItem>
             <ElFormItem prop="password">
-                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('common.password')"
+                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('common.name.password')"
                     :show-password="true">
                     <template #prefix>
                         <AutoiconEpLock />

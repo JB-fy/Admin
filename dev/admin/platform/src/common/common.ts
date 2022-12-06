@@ -21,7 +21,7 @@ export const request = async (apiCode: string, data: object = {}, isSuccessTip: 
 
     try {
         if (typeof apiMethod !== 'function') {
-            throw new Error(i18n.global.t('error.apiFunctionNoFind'))
+            throw new Error(i18n.global.t('common.error.apiNotFind'))
         }
         const res = await apiMethod(data)
         if (isSuccessTip) {
