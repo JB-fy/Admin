@@ -113,37 +113,40 @@ const table = reactive({
     },
 })
 
-const save = inject('save') as { visible: boolean, title: string, data: { [propName: string]: any }, handleSave: Function }
+const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
 //新增
 const handleAdd = () => {
-    save.data = {}
-    save.title = t('common.add')
-    save.visible = true
+    saveCommon.data = {}
+    saveCommon.title = t('common.add')
+    saveCommon.visible = true
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth.scene.info', { id: id }).then((res) => {
-        save.data = { ...res.data.info }
+        saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
-                save.title = t('common.edit')
-                save.data.id = id  //后台接口以id字段判断是创建还是更新
+                saveCommon.data.id = id  //后台接口以id字段判断是创建还是更新
+                saveCommon.title = t('common.edit')
                 break;
             case 'copy':
-                save.title = t('common.copy')
+                saveCommon.title = t('common.copy')
                 break;
         }
         //可不删除。后台接口验证数据时会做数据过滤
-        delete save.data.sceneId
-        delete save.data.updateTime
-        delete save.data.createTime
-        save.visible = true
+        delete saveCommon.data.sceneId
+        delete saveCommon.data.updateTime
+        delete saveCommon.data.createTime
+        saveCommon.visible = true
     })
 }
 //删除
 const handleDelete = (id: number) => {
-    request('auth.scene.del', { idArr: [id] }, true).then((res) => {
-        getList()
+    ElMessageBox.confirm('确认删除？').then(() => {
+        request('auth.scene.del', { idArr: [id] }, true).then((res) => {
+            getList()
+        })
+    }).catch((error) => {
     })
 }
 
@@ -160,14 +163,14 @@ const pagination = reactive({
     }
 })
 
-const queryData = inject('queryData') as { [propName: string]: any }
+const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 const getList = async (resetPage: boolean = false) => {
     if (resetPage) {
         pagination.page = 1
     }
     const param = {
         field: [],
-        where: removeEmptyOfObj(queryData.value),
+        where: removeEmptyOfObj(queryCommon.data),
         order: {
             [table.order.key]: table.order.order
         },
@@ -185,7 +188,7 @@ const getList = async (resetPage: boolean = false) => {
 }
 getList()
 
-//暴露组件接口给父组件调用。即Index组件可调用List组件的getList方法
+//暴露组件接口给父组件
 defineExpose({
     getList
 })
@@ -207,7 +210,7 @@ defineExpose({
             <ElSpace :size="10" style="height: 100%;">
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
-                        <AutoiconEpView />
+                        <AutoiconEpHide />
                     </ElButton>
                     <template #dropdown>
                         <ElDropdownMenu>

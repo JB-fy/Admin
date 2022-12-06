@@ -9,7 +9,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 #[Aspect]
-class LogOfRequest extends AbstractAspect
+class LogRequest extends AbstractAspect
 {
     //执行优先级（大值优先）
     public ?int $priority = 30;

@@ -19,6 +19,7 @@ declare module '@vue/runtime-core' {
     AutoiconEpDeleteloadingIcon: typeof import('~icons/ep/deleteloading-icon')['default']
     AutoiconEpEditPen: typeof import('~icons/ep/edit-pen')['default']
     AutoiconEpFold: typeof import('~icons/ep/fold')['default']
+    AutoiconEpHide: typeof import('~icons/ep/hide')['default']
     AutoiconEpLoading: typeof import('~icons/ep/loading')['default']
     AutoiconEpLocation: typeof import('~icons/ep/location')['default']
     AutoiconEpLock: typeof import('~icons/ep/lock')['default']

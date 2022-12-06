@@ -3,43 +3,34 @@ import List from './List.vue'
 import Query from './Query.vue'
 import Save from './Save.vue'
 
-/*--------搜索 开始--------*/
-const queryData = ref({})
-provide('queryData', queryData)
 //搜索
-const handleQuery = () => {
-    list.ref.getList(true)
-}
-/*--------搜索 结束--------*/
+const queryCommon = reactive({
+    data: {}
+})
+provide('queryCommon', queryCommon)
 
-/*--------列表 开始--------*/
-const list = reactive({
+//列表
+const listCommon = reactive({
     ref: null as any,
 })
-/*--------列表 开始--------*/
+provide('listCommon', listCommon)
 
-/*--------保存（新增|编辑） 开始--------*/
-const save = reactive({
+//保存
+const saveCommon = reactive({
     visible: false,
     title: '',  //新增|编辑|复制
-    data: {},
-    handleSave: () => {
-        //保存成功处理
-        list.ref.getList(true)
-        save.visible = false
-    }
+    data: {}
 })
-provide('save', save)
-/*--------保存（新增|编辑） 结束--------*/
+provide('saveCommon', saveCommon)
 </script>
 
 <template>
     <ElContainer class="app-container">
         <ElHeader>
-            <Query @query="handleQuery" />
+            <Query />
         </ElHeader>
 
-        <List :ref="(el: any) => { list.ref = el }" />
+        <List :ref="(el: any) => { listCommon.ref = el }" />
 
         <Save />
     </ElContainer>

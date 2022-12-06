@@ -1,38 +1,41 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const queryData = inject('queryData') as { [propName: string]: any }
-
-const emits = defineEmits(['query'])
+const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+const listCommon = inject('listCommon') as { ref: any }
 const queryForm = reactive({
     ref: null as any,
+    loading: false,
     submit: () => {
-        emits('query')
+        queryForm.loading = true
+        listCommon.ref.getList(true).finally(() => {
+            queryForm.loading = false
+        })
     },
     reset: () => {
         queryForm.ref.resetFields()
-        //emits('query')
+        //queryForm.submit()
     }
 })
 </script>
 
 <template>
-    <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryData" :inline="true"
+    <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
         @keyup.enter="queryForm.submit">
         <ElFormItem prop="sceneName">
-            <ElInput v-model="queryData.sceneName" placeholder="名称" :clearable="true" />
+            <ElInput v-model="queryCommon.data.sceneName" placeholder="名称" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneCode">
-            <ElInput v-model="queryData.sceneCode" placeholder="标识" :clearable="true" />
+            <ElInput v-model="queryCommon.data.sceneCode" placeholder="标识" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
-            <ElSelect v-model="queryData.isStop" placeholder="停用" :clearable="true">
+            <ElSelect v-model="queryCommon.data.isStop" placeholder="停用" :clearable="true">
                 <ElOption :label="t('common.no')" value="0" />
                 <ElOption :label="t('common.yes')" value="1" />
             </ElSelect>
         </ElFormItem>
         <ElFormItem>
-            <ElButton type="primary" @click="queryForm.submit">
+            <ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
                 <AutoiconEpSearch />{{ t('common.query') }}
             </ElButton>
             <ElButton type="info" @click="queryForm.reset">
