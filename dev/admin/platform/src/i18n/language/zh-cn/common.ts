@@ -23,6 +23,7 @@ export default {
     closeRight: '关闭右侧',
     closeAll: '关闭全部',
     upTop: '置顶',
+    batchDelete: '批量删除',
 
     tip: {
         configDelete: '确定删除？',

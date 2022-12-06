@@ -344,7 +344,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value[0], $boolean ?? 'and']];
                     } else {
-                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? 'In', $value, $boolean ?? 'and']];
+                        $this->where[] = ['method' => 'whereIn', 'param' => [$this->getTable() . '.' . $this->getKey(), $value, $boolean ?? 'and']];
                     }
                 } else {
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and']];
@@ -355,7 +355,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value[0], $boolean ?? 'and']];
                     } else {
-                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? 'NotIn', $value, $boolean ?? 'and']];
+                        $this->where[] = ['method' => 'whereNotIn', 'param' => [$this->getTable() . '.' . $this->getKey(), $value, $boolean ?? 'and']];
                     }
                 } else {
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and']];

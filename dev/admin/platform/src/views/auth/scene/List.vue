@@ -2,14 +2,52 @@
 const { t } = useI18n()
 
 const table = reactive({
+    checkedList: {} as { [propName: number]: boolean },
     columns: [{
+        key: '',
+        width: 30,
+        align: 'center',
+        fixed: 'left',
+        cellRenderer: (props: any) => {
+            return [
+                h(ElCheckbox as any, {
+                    'model-value': table.checkedList[props.rowData.id],
+                    onChange: (val: boolean) => {
+                        if (val) {
+                            table.checkedList[props.rowData.id] = val
+                        } else {
+                            delete table.checkedList[props.rowData.id]
+                        }
+                    }
+                })
+            ]
+        },
+        headerCellRenderer: () => {
+            const checkedLength = Object.keys(table.checkedList).length
+            return [
+                h(ElCheckbox as any, {
+                    'model-value': table.data.length ? checkedLength === table.data.length : false,
+                    indeterminate: checkedLength > 0 && checkedLength < table.data.length,
+                    onChange: (val: boolean) => {
+                        if (val) {
+                            table.data.forEach((item: any) => {
+                                table.checkedList[item.id] = true
+                            })
+                        } else {
+                            table.checkedList = {}
+                        }
+                    }
+                })
+            ]
+        }
+    }, {
         dataKey: 'id',
         title: t('common.name.id'),
         key: 'id',
         width: 150,
-        align: 'center',
+        align: 'left',
         fixed: 'left',
-        sortable: true
+        sortable: true,
     },
     {
         dataKey: 'sceneName',
@@ -39,19 +77,19 @@ const table = reactive({
         key: 'isStop',
         align: 'center',
         width: 120,
-        cellRenderer: (data: any) => {
+        cellRenderer: (props: any) => {
             return [
                 /* h(ElButton, {
-                    type: data.rowData.isStop ? 'danger' : 'primary',
+                    type: props.rowData.isStop ? 'danger' : 'primary',
                     size: 'small',
                     //plain: true,
                     //circle: true,
                     round: true
                 }, {
-                    default: () => data.rowData.isStop ? t('common.yes') : t('common.no')
+                    default: () => props.rowData.isStop ? t('common.yes') : t('common.no')
                 }), */
                 h(ElSwitch as any, {
-                    'model-value': data.rowData.isStop,
+                    'model-value': props.rowData.isStop,
                     'active-value': 1,
                     'inactive-value': 0,
                     'inline-prompt': true,
@@ -60,10 +98,10 @@ const table = reactive({
                     style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
                     onChange: (val: number) => {
                         handleUpdate({
-                            id: data.rowData.id,
+                            id: props.rowData.id,
                             isStop: val
                         }).then((res) => {
-                            data.rowData.isStop = val
+                            props.rowData.isStop = val
                         }).catch((error) => {
                         })
                     }
@@ -92,26 +130,26 @@ const table = reactive({
         align: 'center',
         fixed: 'right',
         width: 250,
-        cellRenderer: (data: any) => {
+        cellRenderer: (props: any) => {
             return [
                 h(ElButton, {
                     type: 'primary',
                     size: 'small',
-                    onClick: () => handleEditCopy(data.rowData.id)
+                    onClick: () => handleEditCopy(props.rowData.id)
                 }, {
                     default: () => [h(AutoiconEpEdit), t('common.edit')]
                 }),
                 h(ElButton, {
                     type: 'danger',
                     size: 'small',
-                    onClick: () => handleDelete(data.rowData.id)
+                    onClick: () => handleDelete([props.rowData.id])
                 }, {
                     default: () => [h(AutoiconEpDelete), t('common.delete')]
                 }),
                 h(ElButton, {
                     type: 'warning',
                     size: 'small',
-                    onClick: () => handleEditCopy(data.rowData.id, 'copy')
+                    onClick: () => handleEditCopy(props.rowData.id, 'copy')
                 }, {
                     default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
                 })
@@ -159,14 +197,15 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
     })
 }
 //删除
-const handleDelete = (id: number) => {
+const handleDelete = (idArr: number[] | string[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
     }).then(() => {
-        request('auth.scene.del', { idArr: [id] }, true).then((res) => {
+        request('auth.scene.del', { idArr: idArr }, true).then((res) => {
+            table.checkedList
             getList()
         })
     }).catch(() => { })
@@ -207,6 +246,7 @@ const getList = async (resetPage: boolean = false) => {
     table.loading = true
     try {
         const res = await request('auth.scene.list', param)
+        table.checkedList = {}
         table.data = res.data.list.map((item: any) => {
             item.id = item.sceneId  //统一写成id。代码复用时，不用到处改sceneId
             return item
@@ -231,9 +271,9 @@ defineExpose({
                 <ElButton type="primary" @click="handleAdd">
                     <AutoiconEpEditPen />{{ t('common.add') }}
                 </ElButton>
-                <!-- <ElButton type="danger">
-                    <AutoiconEpDelete />{{ t('common.delete') }}
-                </ElButton> -->
+                <ElButton type="danger" @click="handleDelete(Object.keys(table.checkedList))">
+                    <AutoiconEpDelete />{{ t('common.batchDelete') }}
+                </ElButton>
             </ElSpace>
         </ElCol>
         <ElCol :span="8" style="text-align: right;">
