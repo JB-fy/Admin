@@ -14,6 +14,7 @@ const listCommon = inject('listCommon') as { ref: any }
 
 const saveForm = reactive({
     ref: null as any,
+    loading: false,
     rules: {
         sceneName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
@@ -42,7 +43,6 @@ const saveForm = reactive({
             { type: 'enum', enum: [0, 1]/* Object.keys(customOption.yesOrNo).map(Number) */, trigger: 'change', message: t('validation.select') }
         ]
     },
-    loading: false,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
