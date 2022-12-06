@@ -66,7 +66,7 @@ const saveForm = reactive({
 const saveDrawer = reactive({
     ref: null as any,
     beforeClose: (done: Function) => {
-        ElMessageBox.confirm('是否退出当前操作？').then(() => {
+        ElMessageBox.confirm('确定放弃当前操作？', { center: true }).then(() => {
             done()
         }).catch((error) => {
         })

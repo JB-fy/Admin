@@ -1,6 +1,5 @@
 import i18n from '@/i18n'
 
-
 /**
  * 请求接口
  * @param apiCode   接口标识。apiList内的键用'.'拼接组成。例如：login.encryptStr

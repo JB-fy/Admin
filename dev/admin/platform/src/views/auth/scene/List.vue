@@ -3,7 +3,7 @@ const { t } = useI18n()
 
 const table = reactive({
     columns: [{
-        dataKey: 'sceneId',
+        dataKey: 'id',
         title: 'ID',
         key: 'id',
         width: 150,
@@ -41,15 +41,33 @@ const table = reactive({
         width: 120,
         cellRenderer: (data: any) => {
             return [
-                h(ElButton, {
+                /* h(ElButton, {
                     type: data.rowData.isStop ? 'danger' : 'primary',
                     size: 'small',
-                    /* plain: true,
-                    circle: true, */
+                    //plain: true,
+                    //circle: true,
                     round: true
                 }, {
                     default: () => data.rowData.isStop ? '是' : '否'
-                }),
+                }), */
+                h(ElSwitch as any, {
+                    'model-value': data.rowData.isStop,
+                    'active-value': 1,
+                    'inactive-value': 0,
+                    'inline-prompt': true,
+                    'active-text': '是',
+                    'inactive-text': '否',
+                    style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
+                    onChange: (val: number) => {
+                        handleUpdate({
+                            id: data.rowData.id,
+                            isStop: val
+                        }).then((res) => {
+                            data.rowData.isStop = val
+                        }).catch((error) => {
+                        })
+                    }
+                })
             ] as any
         }
     },
@@ -79,21 +97,21 @@ const table = reactive({
                 h(ElButton, {
                     type: 'primary',
                     size: 'small',
-                    onClick: () => handleEditCopy(data.rowData.sceneId)
+                    onClick: () => handleEditCopy(data.rowData.id)
                 }, {
                     default: () => [h(AutoiconEpEdit), t('common.edit')]
                 }),
                 h(ElButton, {
                     type: 'danger',
                     size: 'small',
-                    onClick: () => handleDelete(data.rowData.sceneId)
+                    onClick: () => handleDelete(data.rowData.id)
                 }, {
                     default: () => [h(AutoiconEpDelete), t('common.delete')]
                 }),
                 h(ElButton, {
                     type: 'warning',
                     size: 'small',
-                    onClick: () => handleEditCopy(data.rowData.sceneId, 'copy')
+                    onClick: () => handleEditCopy(data.rowData.id, 'copy')
                 }, {
                     default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
                 })
@@ -149,6 +167,11 @@ const handleDelete = (id: number) => {
     }).catch((error) => {
     })
 }
+//更新
+const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
+    await request('auth.scene.save', param)
+}
+
 
 //分页
 const pagination = reactive({
@@ -180,7 +203,10 @@ const getList = async (resetPage: boolean = false) => {
     table.loading = true
     try {
         const res = await request('auth.scene.list', param)
-        table.data = res.data.list
+        table.data = res.data.list.map((item: any) => {
+            item.id = item.sceneId  //统一写成id。代码复用时，不用到处改sceneId
+            return item
+        })
         pagination.total = res.data.count
     } catch (error) {
     }
