@@ -6,7 +6,6 @@ const listCommon = inject('listCommon') as { ref: any }
 //可不做。主要作用：新增时设置默认值；知道有哪些字段
 /* saveCommon.data = {
     menuName: '',
-    menuCode: '',
     extraData: '',
     isStop: 0,
     ...saveCommon.data
@@ -59,6 +58,44 @@ const saveForm = reactive({
     }
 })
 
+const sceneIdSelect = reactive({
+    loading: false,
+    isEnd: false,
+    data: [],
+    param: {
+        field: ['id', 'sceneName'],
+        where: {},
+        order: { id: 'desc' },
+        page: 1,
+        limit: 10
+    },
+    getOption: (keyword: string) => {
+        if (sceneIdSelect.isEnd) {
+            return
+        }
+        const param = {
+            ...sceneIdSelect.param,
+            where: { sceneName: keyword },
+        }
+        sceneIdSelect.loading = true
+        request('auth.scene.list', param).then((res) => {
+            sceneIdSelect.data = res.data.list.map((item: any) => {
+                return {
+                    value: item.sceneId,
+                    label: item.sceneName
+                }
+            })
+            if (res.data.list.length < sceneIdSelect.param.limit) {
+                sceneIdSelect.isEnd = true
+            }
+            sceneIdSelect.param.page++
+        }).catch(() => {
+        }).finally(() => {
+            sceneIdSelect.loading = false
+        })
+    }
+})
+
 const saveDrawer = reactive({
     ref: null as any,
     beforeClose: (done: Function) => {
@@ -91,9 +128,14 @@ const saveDrawer = reactive({
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
                     <ElFormItem :label="t('view.auth.menu.menuName')" prop="menuName">
                         <ElInput v-model="saveCommon.data.menuName" :placeholder="t('view.auth.menu.menuName')"
-                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                            minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('view.auth.menu.extraData')" prop="extraData">
+                    <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
+                        <ElSelectV2 v-model="saveCommon.data.sceneId" :placeholder="t('view.auth.scene.sceneId')"
+                            :remote-method="sceneIdSelect.getOption" :options="sceneIdSelect.data"
+                            :loading="sceneIdSelect.loading" :filterable="true" :remote="true" :clearable="true" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">

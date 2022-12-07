@@ -108,6 +108,7 @@ const table = reactive({
         key: 'updateTime',
         align: 'center',
         width: 150,
+        sortable: true,
     },
     {
         dataKey: 'createTime',
@@ -243,9 +244,7 @@ const getList = async (resetPage: boolean = false) => {
     const param = {
         field: [],
         where: removeEmptyOfObj(queryCommon.data),
-        order: {
-            [table.order.key]: table.order.order
-        },
+        order: { [table.order.key]: table.order.order },
         page: pagination.page,
         limit: pagination.limit
     }
@@ -258,8 +257,7 @@ const getList = async (resetPage: boolean = false) => {
             return item
         })
         pagination.total = res.data.count
-    } catch (error) {
-    }
+    } catch (error) { }
     table.loading = false
 }
 getList()

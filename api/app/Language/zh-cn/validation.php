@@ -186,7 +186,7 @@ return [
         'menuId' => '菜单ID',
         'sceneId' => '场景ID',
 
-        'pid' => '上级ID',
+        'pid' => '父ID',
 
         'extraData' => '额外数据',
         'sort' => '排序值',

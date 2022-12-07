@@ -33,11 +33,16 @@ export default {
     },
     name: {
         checked: '复选框',
-        id: 'ID',
-        isStop: '停用',
         createTime: '创建时间',
         updateTime: '更新时间',
         action: '操作',
+
+        id: 'ID',
+        sort: '排序值',
+        isStop: '停用',
+
+        pid: '父ID',
+        extraData: '额外数据',
 
         account: '账号',
         password: '密码',
