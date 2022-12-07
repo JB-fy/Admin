@@ -20,3 +20,9 @@
     3：只使用app\Module\Db\Dao或Hyperf\DbConnection\Db做数据库处理
     4：app\Module\Db\Dao文件夹内的类统一使用getDao方法实例化
     5：app\Module\Cache文件夹内的类统一使用getCache方法实例化
+
+
+    {
+        "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"]
+      }
+      

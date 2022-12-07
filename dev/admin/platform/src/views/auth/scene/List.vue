@@ -225,7 +225,7 @@ const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
 const pagination = reactive({
     total: 0,
     page: 1,
-    limit: 10,
+    limit: useSettingStore().paginationSize,
     sizeChange: (val: number) => {
         getList()
     },
@@ -253,6 +253,7 @@ const getList = async (resetPage: boolean = false) => {
     try {
         const res = await request('auth.scene.list', param)
         table.data = res.data.list.map((item: any) => {
+            item.checked = false    //可不设置，即是false
             item.id = item.sceneId  //统一写成id。代码复用时，不用到处改sceneId
             return item
         })

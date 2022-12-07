@@ -56,8 +56,7 @@ const saveForm = reactive({
                 await request('auth.scene.save', param, true)
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
-            } catch (error) {
-            }
+            } catch (error) { }
             saveForm.loading = false
         })
     }

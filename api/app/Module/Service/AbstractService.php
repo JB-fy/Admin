@@ -139,6 +139,20 @@ abstract class AbstractService
     {
         $dao = $this->getDao();
         $id = $dao->insert($data)->saveInsert();
+        /* //重复索引错误已在\App\Exception\Handler\AppExceptionHandler处理
+        try {
+            $id = $dao->insert($data)->saveInsert();
+        } catch (\Hyperf\Database\Exception\QueryException $th) {
+            if (preg_match('/^SQLSTATE.*1062 Duplicate.*\.([^\']*)\'/', $th->getMessage(), $matches) === 1) {
+                $nameKey = 'validation.attributes.' . $matches[1];
+                $name =  trans($nameKey);
+                if ($name === $nameKey) {
+                    throwFailJson('999301');
+                } else {
+                    throwFailJson('999302', trans('code.999302', ['name' => $name]));
+                }
+            }
+        } */
         if (empty($id)) {
             throwFailJson('999999');
         }

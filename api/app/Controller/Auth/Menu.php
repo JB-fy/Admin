@@ -6,7 +6,7 @@ namespace App\Controller\Auth;
 
 use App\Controller\AbstractController;
 
-class Scene extends AbstractController
+class Menu extends AbstractController
 {
     /**
      * 列表
@@ -21,7 +21,7 @@ class Scene extends AbstractController
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
                 /* try {
-                    $authActionCode = 'authSceneLook';
+                    $authActionCode = 'authMenuLook';
                     $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode);
                     $isAuth = true;
                 } catch (ApiException $e) {
@@ -31,11 +31,11 @@ class Scene extends AbstractController
 
                 /**--------参数过滤 结束--------**/
                 /* if ($isAuth) {
-                    $allowField = getDao(DaoAuthScene::class, true)->getAllColumn();
+                    $allowField = getDao(DaoAuthMenu::class, true)->getAllColumn();
                     //$allowField = array_merge($allowField, ['pMenuName', 'menuActionJson']);
                 } else {
                     //无查看权限时只能查看一些基本的字段
-                    $allowField = ['sceneId', 'sceneName', 'scene'];
+                    $allowField = ['menuId', 'menuName', 'menu'];
                 }
 
                 $data['field'] = array_intersect($data['field'], $allowField); //过滤不可查看字段
@@ -62,7 +62,7 @@ class Scene extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authSceneInfo';
+                /* $authActionCode = 'authMenuInfo';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -86,7 +86,7 @@ class Scene extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authSceneCreate';
+                /* $authActionCode = 'authMenuCreate';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -110,7 +110,7 @@ class Scene extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authSceneUpdate';
+                /* $authActionCode = 'authMenuUpdate';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -134,7 +134,7 @@ class Scene extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authSceneInfo';
+                /* $authActionCode = 'authMenuInfo';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -145,16 +145,4 @@ class Scene extends AbstractController
                 break;
         }
     }
-
-    /**
-     * 创建|更新时的参数处理
-     *
-     * @param array $data
-     * @return array
-     */
-    /* protected function handleData(array $data): array
-    {
-        //isset($data['sceneConfig']) && empty($data['sceneConfig']) ? $data['sceneConfig'] = null : null;    //传值且为空时，数据库该字段设置为null。更建议放在Dao类中处理
-        return $data;
-    } */
 }
