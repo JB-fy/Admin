@@ -13,7 +13,7 @@ use App\Module\Db\Dao\AbstractDao;
  * @property string $menuName 名称
  * @property string $pidPath 层级路径
  * @property int $level 层级
- * @property string $extendData 扩展数据。（json格式：{"title（多语言时设置，未设置以menuName返回）": {"语言标识":"标题",...},"icon": "图标","url": "链接地址",...}）
+ * @property string $extraData 扩展数据。（json格式：{"title（多语言时设置，未设置以menuName返回）": {"语言标识":"标题",...},"icon": "图标","url": "链接地址",...}）
  * @property int $sort 排序值（从小到大排序，默认50，范围0-100）
  * @property int $isStop 是否停用：0否 1是
  * @property string $updateTime 更新时间
@@ -40,10 +40,10 @@ class Menu extends AbstractDao
                 $this->fieldAfter[] = 'showMenu';   //需做后续处理
 
                 $this->field['select'][] = $this->getTable() . '.' . 'menuName';
-                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extendData, "$.title")) AS title'); //不知道怎么直接转成对象返回
-                $this->field['select'][] = $this->getTable() . '.' . 'extendData->title AS title';
-                $this->field['select'][] = $this->getTable() . '.' . 'extendData->url AS url';
-                $this->field['select'][] = $this->getTable() . '.' . 'extendData->icon AS icon';
+                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.title")) AS title'); //不知道怎么直接转成对象返回
+                $this->field['select'][] = $this->getTable() . '.' . 'extraData->title AS title';
+                $this->field['select'][] = $this->getTable() . '.' . 'extraData->url AS url';
+                $this->field['select'][] = $this->getTable() . '.' . 'extraData->icon AS icon';
                 return true;
         }
         return false;

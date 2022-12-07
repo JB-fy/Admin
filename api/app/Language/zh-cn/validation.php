@@ -183,9 +183,16 @@ return [
         'excIdArr' => '排除ID列表',
         'excIdArr.*' => '排除ID列表内的值',
 
+        'menuId' => '菜单ID',
+        'sceneId' => '场景ID',
+
+        'pid' => '上级ID',
+
+        'extraData' => '额外数据',
+        'sort' => '排序值',
         'isStop' => '停用',
 
-        'sceneId' => '场景ID',
+        'menuName' => '菜单名称',
 
         'sceneName' => '场景名称',
         'sceneCode' => '场景标识',

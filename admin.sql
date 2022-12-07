@@ -71,7 +71,7 @@ CREATE TABLE `auth_menu`  (
   `menuName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `pidPath` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '层级路径',
   `level` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '层级',
-  `extendData` json NULL COMMENT '扩展数据。（json格式：{\"title（多语言时设置，未设置以menuName返回）\": {\"语言标识\":\"标题\",...},\"icon\": \"图标\",\"url\": \"链接地址\",...}）',
+  `extraData` json NULL COMMENT '额外数据。（json格式：{\"title（多语言时设置，未设置以menuName返回）\": {\"语言标识\":\"标题\",...},\"icon\": \"图标\",\"url\": \"链接地址\",...}）',
   `sort` tinyint UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序值（从小到大排序，默认50，范围0-100）',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

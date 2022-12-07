@@ -1,13 +1,48 @@
 <script setup lang="ts">
-onMounted(async () => {
-    request('index.index')
+import List from './List.vue'
+import Query from './Query.vue'
+import Save from './Save.vue'
+
+//搜索
+const queryCommon = reactive({
+    data: {}
 })
-let input = ref('')
+provide('queryCommon', queryCommon)
+
+//列表
+const listCommon = reactive({
+    ref: null as any,
+})
+provide('listCommon', listCommon)
+
+//保存
+const saveCommon = reactive({
+    visible: false,
+    title: '',  //新增|编辑|复制
+    data: {}
+})
+provide('saveCommon', saveCommon)
 </script>
 
 <template>
-    <div>
-        <el-input v-model="input" placeholder="请输入" />
-        <div style="text-align: center; font-size: 300px; color: #409EFF;">权限菜单</div>
-    </div>
+    <ElContainer class="app-container">
+        <ElHeader>
+            <Query />
+        </ElHeader>
+
+        <List :ref="(el: any) => { listCommon.ref = el }" />
+
+        <Save />
+    </ElContainer>
 </template>
+
+<style scoped>
+.app-container {
+    height: 100%;
+}
+
+.app-container :deep(.el-header) {
+    height: auto;
+    padding: 0;
+}
+</style>

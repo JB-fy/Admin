@@ -489,7 +489,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         /* switch ($key) {
             case 'xxxx':
                 $this->field['select'][] = $key;
-                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extendData, "$.' . $key . '")) AS ' . $key);    //不能防sql注入
+                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.' . $key . '")) AS ' . $key);    //不能防sql注入
                 //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ?', [$key]];  //能防sql注入
                 return true;
         } */

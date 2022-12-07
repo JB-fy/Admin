@@ -17,7 +17,8 @@ class SceneOfPlatformAdmin extends AbstractAspect
     public array $classes = [
         \App\Controller\Login::class . '::info',
         \App\Controller\Login::class . '::menuTree',
-        \App\Controller\Auth\Scene::class
+        \App\Controller\Auth\Menu::class,
+        \App\Controller\Auth\Scene::class,
     ];
 
     //要切入的注解，具体切入的还是使用了这些注解的类，仅可切入类注解和类方法注解
