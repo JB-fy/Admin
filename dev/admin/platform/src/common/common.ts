@@ -9,9 +9,8 @@
  * @param isErrorHandle 失败错误处理
  * @returns 
  */
-const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'), 0, 10)
+const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'), 0, 10)    //放外面。这样每次调用都不要重新加载了
 export const request = async (apiCode: string, data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true): Promise<any> => {
-    //const apiList = batchImport(import.meta.globEager('@/api/**/*.ts')) //放外面去。这样每次调用都不要重新加载了
     const apiCodeList: string[] = apiCode.split('.')
     switch (apiCodeList[apiCodeList.length - 1]) {
         case 'delete':  //src/api内的文件不能用delete作函数名
