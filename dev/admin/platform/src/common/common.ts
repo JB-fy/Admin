@@ -3,7 +3,7 @@
  * @param apiCode   接口标识。格式：index.encryptStr
  *                      用法1：直接写接口地址。'/'要写成'.'
  *                      用法2：写apiList内的键名。键名以src/api作为根目录，用'.'拼接组成
- *                  建议：一般用法1即可。在接口改动需要更改地址时，则在src/api建立之前对应的接口，则不用到处修改之前的代码
+ *                  建议：一般用法1即可。在接口更改地址时，在src/api建立之前对应的接口，则不用到处修改之前的代码
  * @param data  请求参数
  * @param isSuccessTip  成功弹出提示
  * @param isErrorHandle 失败错误处理
@@ -13,12 +13,11 @@ const apiList = await batchImport(import.meta.globEager('@/api/**/*.ts'), 0, 10)
 export const request = async (apiCode: string, data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true): Promise<any> => {
     //const apiList = batchImport(import.meta.globEager('@/api/**/*.ts')) //放外面去。这样每次调用都不要重新加载了
     const apiCodeList: string[] = apiCode.split('.')
-    /* switch (apiCodeList[apiCodeList.length - 1]) {
+    switch (apiCodeList[apiCodeList.length - 1]) {
         case 'delete':  //src/api内的文件不能用delete作函数名
             apiCodeList[apiCodeList.length - 1] = 'del'
             break;
-    } */
-    console.log(apiList)
+    }
     let apiMethod: any = apiList
     for (const value of apiCodeList) {
         if (!(value in apiMethod)) {
