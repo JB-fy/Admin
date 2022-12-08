@@ -7,10 +7,9 @@
  * @param rawImportList 导入列表。（调用import.meta.globEager或import.meta.glob方法返回的数据）
  * @param level 命名层次。特别注意：如果有不同层次文件时，默认以最浅层文件为基准开始命名。正数则表示以父级文件夹（增加相应层数）为基准开始命名；负数则表示以子级文件（减去相应层数）为基准开始命名，意味着将有部分文件不会返回。例如：-1，则最浅层文件将不返回。
  * @param type  类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；10：多维对象（键名保持原样）；11：多维对象（键名小驼峰法）；12：多维对象（键名大驼峰法）；
- * @param noUseIndex  当文件名是index.*或者Index.*时，放弃该名称，以父级文件夹命名
  * @returns 
  */
-export const batchImport = async (rawImportList: any, level: number = 0, type: number = 0, noUseIndex: boolean = false): Promise<{ [propName: string]: any }> => {
+export const batchImport = async (rawImportList: any, level: number = 0, type: number = 0): Promise<{ [propName: string]: any }> => {
     let importList: { [propName: string]: any } = {}
     let keyArr: string[] = []
     let keyList: string[][] = []
@@ -133,7 +132,7 @@ export const batchImport = async (rawImportList: any, level: number = 0, type: n
     return importList
 }
 /*--------使用方式 开始--------*/
-// console.log(await batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10, false))
+// console.log(await batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10))
 // console.log(await batchImport(import.meta.globEager('@/api/**/*.ts')))
 // console.log(await batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')))
 /*--------使用方式 结束--------*/
