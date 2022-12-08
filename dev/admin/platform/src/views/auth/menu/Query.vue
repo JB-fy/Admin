@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, tm } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
@@ -27,10 +27,8 @@ const queryForm = reactive({
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
-            <ElSelect v-model="queryCommon.data.isStop" :placeholder="t('common.name.isStop')" :clearable="true">
-                <ElOption :label="t('common.no')" value="0" />
-                <ElOption :label="t('common.yes')" value="1" />
-            </ElSelect>
+            <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
+                :placeholder="t('common.name.isStop')" :clearable="true" />
         </ElFormItem>
         <ElFormItem>
             <ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">

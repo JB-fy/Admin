@@ -59,42 +59,83 @@ const saveForm = reactive({
 })
 
 const sceneIdSelect = reactive({
-    loading: false,
-    isEnd: false,
     data: [],
     param: {
         field: ['id', 'sceneName'],
         where: {},
         order: { id: 'desc' },
         page: 1,
-        limit: 10
+        limit: 0
     },
-    getOption: (keyword: string) => {
-        if (sceneIdSelect.isEnd) {
-            return
-        }
-        const param = {
-            ...sceneIdSelect.param,
-            where: { sceneName: keyword },
-        }
-        sceneIdSelect.loading = true
-        request('auth.scene.list', param).then((res) => {
+    getOption: () => {
+        request('auth.scene.list', sceneIdSelect.param).then((res) => {
             sceneIdSelect.data = res.data.list.map((item: any) => {
                 return {
                     value: item.sceneId,
                     label: item.sceneName
                 }
             })
-            if (res.data.list.length < sceneIdSelect.param.limit) {
-                sceneIdSelect.isEnd = true
-            }
-            sceneIdSelect.param.page++
         }).catch(() => {
         }).finally(() => {
-            sceneIdSelect.loading = false
         })
+    },
+    visibleChange: (val: boolean) => {
+        if (val) {
+            sceneIdSelect.getOption()
+        }
     }
 })
+// const sceneIdSelect = reactive({
+//     loading: false,
+//     isEnd: false,
+//     data: [],
+//     param: {
+//         field: ['id', 'sceneName'],
+//         where: {},
+//         order: { id: 'desc' },
+//         page: 1,
+//         limit: 0
+//     },
+//     getOption: (keyword: string) => {
+//         if (sceneIdSelect.isEnd) {
+//             return
+//         }
+//         if (keyword) {
+//             sceneIdSelect.param.where.sceneName = keyword
+//         } else {
+//             delete sceneIdSelect.param.where.sceneName
+//         }
+//         /* const param = {
+//             ...sceneIdSelect.param,
+//             where: { sceneName: keyword },
+//         } */
+//         const param = {
+//             ...sceneIdSelect.param
+//         }
+//         sceneIdSelect.loading = true
+//         request('auth.scene.list', param).then((res) => {
+//             sceneIdSelect.data = res.data.list.map((item: any) => {
+//                 return {
+//                     value: item.sceneId,
+//                     label: item.sceneName
+//                 }
+//             })
+//             if (res.data.list.length < sceneIdSelect.param.limit) {
+//                 sceneIdSelect.isEnd = true
+//             }
+//             sceneIdSelect.param.page++
+//         }).catch(() => {
+//         }).finally(() => {
+//             sceneIdSelect.loading = false
+//         })
+//     },
+//     visibleChange: (val: boolean) => {
+//         console.log(111)
+//         if (val) {
+//             sceneIdSelect.getOption('')
+//         }
+//     }
+// })
 
 const saveDrawer = reactive({
     ref: null as any,
@@ -131,9 +172,13 @@ const saveDrawer = reactive({
                             minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
+                        <!-- <ElSelectV2 v-model="saveCommon.data.sceneId" :placeholder="t('view.auth.scene.sceneId')"
+                            :options="sceneIdSelect.data" :clearable="true" :filterable="true" :remote="true"
+                            :remote-method="sceneIdSelect.getOption" :loading="sceneIdSelect.loading"
+                            @visible-change="sceneIdSelect.visibleChange" /> -->
                         <ElSelectV2 v-model="saveCommon.data.sceneId" :placeholder="t('view.auth.scene.sceneId')"
-                            :remote-method="sceneIdSelect.getOption" :options="sceneIdSelect.data"
-                            :loading="sceneIdSelect.loading" :filterable="true" :remote="true" :clearable="true" />
+                            :options="sceneIdSelect.data" :clearable="true" :filterable="true"
+                            @visible-change="sceneIdSelect.visibleChange" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
