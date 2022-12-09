@@ -83,7 +83,13 @@ const sceneIdSelect = reactive({
         if (val) {
             sceneIdSelect.getOption()
         }
-    }
+    },
+    watch: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
+        console.log(newValue)
+        if (newValue > 0 && !oldValue) {
+            sceneIdSelect.getOption()
+        }
+    })
 })
 // const sceneIdSelect = reactive({
 //     loading: false,
