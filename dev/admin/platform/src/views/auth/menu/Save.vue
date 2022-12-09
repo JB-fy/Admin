@@ -56,49 +56,52 @@ const saveForm = reactive({
     }
 })
 
-// const vMyDirective = {
-//     beforeMounted: (el) => {
-//         console.log(1111)
-//         console.log(el)
-//         const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
-//         console.log(dropId)
-//         const currentDom = document.getElementById(dropId).querySelector('.el-virtual-scrollbar .el-scrollbar__thumb');
-//         console.log(currentDom)
-//         /* currentDom.addEventListener("scroll", function () {
-//             console.log(this.scrollHeight)
-//             console.log(this.scrollTop)
-//             console.log(this.clientHeight)
-//             const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight;
-//             if (CONDITION) {
+/* const vMyDirective = {
+    updated: (el) => {
+        const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
+        if (dropId) {
+            const currentDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list');
+            if (currentDom) {
+                currentDom.addEventListener('scroll', () => {
+                    if (currentDom.scrollHeight - currentDom.scrollTop <= currentDom.clientHeight) {
 
-//             }
-//         }); */
-//     }
-// }
+                    }
+                });
+            }
+        }
+    }
+} */
 const sceneIdSelect = reactive({
     ref: null as any,
     loading: false,
+    isEnd: false,
     data: [],
     param: {
         field: ['id', 'sceneName'],
         where: {} as { [propName: string]: any },
         order: { id: 'desc' },
         page: 1,
-        limit: 0
+        limit: 10
     },
     setData: () => {
         if (sceneIdSelect.loading) {
             return
         }
+        if (sceneIdSelect.isEnd) {
+            return
+        }
         sceneIdSelect.loading = true
         request('auth.scene.list', sceneIdSelect.param).then((res) => {
-            sceneIdSelect.data = res.data.list.map((item: any) => {
+            /* sceneIdSelect.data = res.data.list.map((item: any) => {
                 return {
                     value: item.sceneId,
                     label: item.sceneName
                 }
-            })
-            /* res.data.list.forEach((item: any) => {
+            }) */
+            if (sceneIdSelect.param.limit === 0 || res.data.list.length < sceneIdSelect.param.limit) {
+                sceneIdSelect.isEnd = true
+            }
+            res.data.list.forEach((item: any) => {
                 sceneIdSelect.data.push({
                     value: item.sceneId,
                     label: item.sceneName
@@ -107,13 +110,11 @@ const sceneIdSelect = reactive({
             nextTick(() => {
                 const scrollDom = sceneIdSelect.ref.popperRef.querySelector('.el-select-dropdown__list')
                 if (scrollDom) {
-                    console.log(scrollDom)
                     const scrollFunc = () => {
-                        //console.log(scrollDom.scrollTop)    //0-150
+                        console.log(scrollDom.scrollTop)    //0-150
                         //console.log(scrollDom.scrollHeight) //300
                         //console.log(scrollDom.clientHeight) //150
-                        const isScrollEnd = scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight
-                        if (isScrollEnd) {
+                        if (scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight) {
                             sceneIdSelect.param.page++
                             sceneIdSelect.setData()
                         }
@@ -121,23 +122,26 @@ const sceneIdSelect = reactive({
                     scrollDom.removeEventListener('scroll', scrollFunc)
                     scrollDom.addEventListener('scroll', scrollFunc)
                 }
-            }) */
+            })
         }).catch(() => {
         }).finally(() => {
             sceneIdSelect.loading = false
         })
     },
-    watch: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
-        if (newValue > 0 && !oldValue) {
-            sceneIdSelect.setData()
-        }
-    }),
+    watch: {
+        sceneId: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
+            if (newValue > 0 && !oldValue) {
+                sceneIdSelect.setData()
+            }
+        }),
+    },
     visibleChange: (val: boolean) => {
         //if (val && sceneIdSelect.data.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {  //每次打开都加载
             delete sceneIdSelect.param.where.sceneName
             sceneIdSelect.data = []
             sceneIdSelect.param.page = 1
+            sceneIdSelect.isEnd = false
             sceneIdSelect.setData()
         }
     },
@@ -149,8 +153,16 @@ const sceneIdSelect = reactive({
         }
         sceneIdSelect.data = []
         sceneIdSelect.param.page = 1
+        sceneIdSelect.isEnd = false
         sceneIdSelect.setData()
     }
+})
+watch(() => {
+    return sceneIdSelect.ref?.popperRef?.querySelector('.el-select-dropdown__list')
+}, (newValue, oldValue) => {
+    console.log(newValue)
+    console.log(oldValue)
+    console.log(sceneIdSelect.ref?.popperRef?.querySelector('.el-select-dropdown__list'))
 })
 
 const saveDrawer = reactive({
@@ -188,13 +200,13 @@ const saveDrawer = reactive({
                             minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
-                        <!-- <ElSelectV2 v-model="saveCommon.data.sceneId" :placeholder="t('view.auth.scene.sceneId')"
-                            :options="sceneIdSelect.data" :clearable="true" :filterable="true"
-                            @visible-change="sceneIdSelect.visibleChange" :remote="true"
-                            :remote-method="sceneIdSelect.remoteMethod" :loading="sceneIdSelect.loading" v-infinite-scroll="sceneIdSelect.remoteMethod" /> -->
                         <ElSelectV2 :ref="(el: any) => { sceneIdSelect.ref = el }" v-model="saveCommon.data.sceneId"
                             :placeholder="t('view.auth.scene.sceneId')" :options="sceneIdSelect.data" :clearable="true"
-                            :filterable="true" @visible-change="sceneIdSelect.visibleChange" />
+                            :filterable="true" @visible-change="sceneIdSelect.visibleChange" :remote="true"
+                            :remote-method="sceneIdSelect.remoteMethod" :loading="sceneIdSelect.loading" />
+                        <!-- <ElSelectV2 :ref="(el: any) => { sceneIdSelect.ref = el }" v-model="saveCommon.data.sceneId"
+                            :placeholder="t('view.auth.scene.sceneId')" :options="sceneIdSelect.data" :clearable="true"
+                            :filterable="true" @visible-change="sceneIdSelect.visibleChange" /> -->
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />

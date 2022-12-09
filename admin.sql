@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 05/12/2022 04:26:09
+ Date: 10/12/2022 01:25:42
 */
 
 SET NAMES utf8mb4;
@@ -23,20 +23,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `auth_action`;
 CREATE TABLE `auth_action`  (
   `actionId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '权限操作ID',
-  `pid` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '父ID（主要用于归类，方便查看。否则可以不要）',
   `actionName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `actionCode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标识（代码中用于判断权限）',
-  `pidPath` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '层级路径',
-  `level` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '层级',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
-  `sort` tinyint UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序值（从小到大排序，默认50，范围0-100）',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`actionId`) USING BTREE,
-  UNIQUE INDEX `actionCode`(`actionCode` ASC) USING BTREE,
-  INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `actionCode`(`actionCode` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action
@@ -79,7 +74,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menuId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -97,6 +92,7 @@ INSERT INTO `auth_menu` VALUES (10, 1, 2, '场景', '', 0, '{\"url\": \"/auth/sc
 INSERT INTO `auth_menu` VALUES (11, 1, 0, '第三方网站', '', 0, '{\"url\": \"/thirdUrl?url=https://cn.vuejs.org/api/\", \"icon\": \"AutoiconEpChromeFilled\", \"title\": {\"en\": \"thridWebsite \", \"zh-cn\": \"第三方网站\"}}', 100, 0, '2022-11-03 01:11:33', '2022-10-17 00:25:42');
 INSERT INTO `auth_menu` VALUES (12, 1, 0, '第三方网站（新标签）', '', 0, '{\"url\": \"https://www.baidu.com/\", \"icon\": \"AutoiconEpChromeFilled\", \"title\": {\"en\": \"test \", \"zh-cn\": \"第三方网站（新标签）\"}}', 100, 0, '2022-11-03 01:11:36', '2022-10-17 00:25:42');
 INSERT INTO `auth_menu` VALUES (13, 1, 0, '第三方网站1', '', 0, '{\"url\": \"/thirdUrl?url=https://element-plus.gitee.io/zh-CN/\", \"icon\": \"AutoiconEpElementPlus\", \"title\": {\"en\": \"thridWebsite1 \", \"zh-cn\": \"第三方网站1\"}}', 100, 0, '2022-11-03 23:45:56', '2022-10-17 00:25:42');
+INSERT INTO `auth_menu` VALUES (14, 154, 0, '第三方网站1', '', 0, '{\"url\": \"/thirdUrl?url=https://element-plus.gitee.io/zh-CN/\", \"icon\": \"AutoiconEpElementPlus\", \"title\": {\"en\": \"thridWebsite1 \", \"zh-cn\": \"第三方网站1\"}}', 100, 1, '2022-12-10 00:00:47', '2022-12-08 21:56:49');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -187,13 +183,32 @@ CREATE TABLE `auth_scene`  (
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`sceneId`) USING BTREE,
   UNIQUE INDEX `sceneCode`(`sceneCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 114 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 155 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES (1, 'platformAdmin', '系统后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-05 22:17:32', '2022-09-17 23:13:53');
-INSERT INTO `auth_scene` VALUES (2, 'systemAdmin', '系统后台', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-05 22:20:03', '2022-11-17 23:51:32');
+INSERT INTO `auth_scene` VALUES (1, 'platformAdmin', '平台后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-06 22:51:16', '2022-09-17 23:13:53');
+INSERT INTO `auth_scene` VALUES (2, 'systemAdmin', '系统后台', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-07 01:45:43', '2022-11-17 23:51:32');
+INSERT INTO `auth_scene` VALUES (134, 'systemAdmin1', '系统后台1', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:18', '2022-12-07 22:13:10');
+INSERT INTO `auth_scene` VALUES (135, 'systemAdmin2', '系统后台2', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:23', '2022-12-07 22:13:13');
+INSERT INTO `auth_scene` VALUES (136, 'systemAdmin3', '系统后台3', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:26', '2022-12-07 22:13:18');
+INSERT INTO `auth_scene` VALUES (137, 'systemAdmin4', '系统后台4', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:29', '2022-12-07 22:13:21');
+INSERT INTO `auth_scene` VALUES (138, 'systemAdmin5', '系统后台5', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:32', '2022-12-07 22:13:27');
+INSERT INTO `auth_scene` VALUES (139, 'systemAdmin6', '系统后台6', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:38', '2022-12-07 22:13:30');
+INSERT INTO `auth_scene` VALUES (140, 'systemAdmin7', '系统后台7', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:42', '2022-12-07 22:13:33');
+INSERT INTO `auth_scene` VALUES (141, 'systemAdmin8', '系统后台8', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:45', '2022-12-07 22:13:36');
+INSERT INTO `auth_scene` VALUES (142, 'systemAdmin9', '系统后台9', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:48', '2022-12-07 22:13:40');
+INSERT INTO `auth_scene` VALUES (143, 'systemAdmin10', '系统后台10', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:54', '2022-12-07 22:13:44');
+INSERT INTO `auth_scene` VALUES (144, 'systemAdmin11', '系统后台11', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:29:57', '2022-12-07 22:14:04');
+INSERT INTO `auth_scene` VALUES (145, 'systemAdmin12', '系统后台12', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:00', '2022-12-07 22:14:08');
+INSERT INTO `auth_scene` VALUES (146, 'systemAdmin13', '系统后台13', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:04', '2022-12-07 22:14:11');
+INSERT INTO `auth_scene` VALUES (147, 'systemAdmin14', '系统后台14', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:08', '2022-12-07 22:14:16');
+INSERT INTO `auth_scene` VALUES (148, 'systemAdmin15', '系统后台15', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:12', '2022-12-07 22:14:22');
+INSERT INTO `auth_scene` VALUES (149, 'systemAdmin16', '系统后台16', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:17', '2022-12-07 22:14:26');
+INSERT INTO `auth_scene` VALUES (150, 'systemAdmin17', '系统后台17', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:22', '2022-12-07 22:14:32');
+INSERT INTO `auth_scene` VALUES (151, 'systemAdmin18', '系统后台18', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 22:30:27', '2022-12-07 22:14:35');
+INSERT INTO `auth_scene` VALUES (154, 'systemAdmin19', '系统后台19', '{\"signKey\": \"www.admin.com_system\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2022-12-08 23:42:49', '2022-12-08 22:30:34');
 
 -- ----------------------------
 -- Table structure for log_request

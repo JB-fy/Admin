@@ -22,7 +22,116 @@
     5：app\Module\Cache文件夹内的类统一使用getCache方法实例化
 
 
-    {
-        "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"]
-      }
-      
+
+
+    /* const vMyDirective = {
+        updated: (el) => {
+            const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
+            if (dropId) {
+                const currentDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list');
+                if (currentDom) {
+                    currentDom.addEventListener('scroll', () => {
+                        if (currentDom.scrollHeight - currentDom.scrollTop <= currentDom.clientHeight) {
+    
+                        }
+                    });
+                }
+            }
+        }
+    } */
+    const sceneIdSelect = reactive({
+        ref: null as any,
+        loading: false,
+        isEnd: false,
+        data: [],
+        param: {
+            field: ['id', 'sceneName'],
+            where: {} as { [propName: string]: any },
+            order: { id: 'desc' },
+            page: 1,
+            limit: 0
+        },
+        setData: () => {
+            if (sceneIdSelect.loading) {
+                return
+            }
+            if (sceneIdSelect.isEnd) {
+                return
+            }
+            sceneIdSelect.loading = true
+            request('auth.scene.list', sceneIdSelect.param).then((res) => {
+                /* sceneIdSelect.data = res.data.list.map((item: any) => {
+                    return {
+                        value: item.sceneId,
+                        label: item.sceneName
+                    }
+                }) */
+                if (sceneIdSelect.param.limit === 0 || res.data.list.length < sceneIdSelect.param.limit) {
+                    sceneIdSelect.isEnd = true
+                }
+                res.data.list.forEach((item: any) => {
+                    sceneIdSelect.data.push({
+                        value: item.sceneId,
+                        label: item.sceneName
+                    })
+                })
+                if (sceneIdSelect.param.page === 1) {
+                    nextTick(() => {
+                        const scrollDom = sceneIdSelect.ref.popperRef.querySelector('.el-select-dropdown__list')
+                        console.log(scrollDom)
+                        if (scrollDom) {
+                            const scrollFunc = () => {
+                                console.log(scrollDom.scrollTop)    //0-150
+                                //console.log(scrollDom.scrollHeight) //300
+                                //console.log(scrollDom.clientHeight) //150
+                                if (scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight) {
+                                    sceneIdSelect.param.page++
+                                    sceneIdSelect.setData()
+                                }
+                            }
+                            //scrollDom.removeEventListener('scroll', scrollFunc)
+                            scrollDom.addEventListener('scroll', scrollFunc)
+                        }
+                    })
+                }
+            }).catch(() => {
+            }).finally(() => {
+                sceneIdSelect.loading = false
+            })
+        },
+        watch: {
+            sceneId: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
+                if (newValue > 0 && !oldValue) {
+                    sceneIdSelect.setData()
+                }
+            })
+        },
+        visibleChange: (val: boolean) => {
+            //if (val && sceneIdSelect.data.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
+            if (val) {  //每次打开都加载
+                delete sceneIdSelect.param.where.sceneName
+                sceneIdSelect.data = []
+                sceneIdSelect.param.page = 1
+                sceneIdSelect.isEnd = false
+                sceneIdSelect.setData()
+            }
+        },
+        remoteMethod: (keyword: string) => {
+            if (keyword) {
+                sceneIdSelect.param.where.sceneName = keyword
+            } else {
+                delete sceneIdSelect.param.where.sceneName
+            }
+            sceneIdSelect.data = []
+            sceneIdSelect.param.page = 1
+            sceneIdSelect.isEnd = false
+            sceneIdSelect.setData()
+        }
+    })
+
+
+
+    <ElSelectV2 :ref="(el: any) => { sceneIdSelect.ref = el }" v-model="saveCommon.data.sceneId"
+    :placeholder="t('view.auth.scene.sceneId')" :options="sceneIdSelect.data" :clearable="true"
+    :filterable="true" @visible-change="sceneIdSelect.visibleChange" :remote="true"
+    :remote-method="sceneIdSelect.remoteMethod" :loading="sceneIdSelect.loading" />
