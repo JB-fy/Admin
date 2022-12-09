@@ -4,12 +4,10 @@ const { t } = useI18n()
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
 //可不做。主要作用：新增时设置默认值；知道有哪些字段
-/* saveCommon.data = {
-    menuName: '',
-    extraData: '',
-    isStop: 0,
+saveCommon.data = {
+    sort: 50,
     ...saveCommon.data
-} */
+}
 
 const saveForm = reactive({
     ref: null as any,
@@ -58,16 +56,41 @@ const saveForm = reactive({
     }
 })
 
+// const vMyDirective = {
+//     beforeMounted: (el) => {
+//         console.log(1111)
+//         console.log(el)
+//         const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
+//         console.log(dropId)
+//         const currentDom = document.getElementById(dropId).querySelector('.el-virtual-scrollbar .el-scrollbar__thumb');
+//         console.log(currentDom)
+//         /* currentDom.addEventListener("scroll", function () {
+//             console.log(this.scrollHeight)
+//             console.log(this.scrollTop)
+//             console.log(this.clientHeight)
+//             const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight;
+//             if (CONDITION) {
+
+//             }
+//         }); */
+//     }
+// }
 const sceneIdSelect = reactive({
+    ref: null as any,
+    loading: false,
     data: [],
     param: {
         field: ['id', 'sceneName'],
-        where: {},
+        where: {} as { [propName: string]: any },
         order: { id: 'desc' },
         page: 1,
         limit: 0
     },
-    getOption: () => {
+    setData: () => {
+        if (sceneIdSelect.loading) {
+            return
+        }
+        sceneIdSelect.loading = true
         request('auth.scene.list', sceneIdSelect.param).then((res) => {
             sceneIdSelect.data = res.data.list.map((item: any) => {
                 return {
@@ -75,73 +98,60 @@ const sceneIdSelect = reactive({
                     label: item.sceneName
                 }
             })
+            /* res.data.list.forEach((item: any) => {
+                sceneIdSelect.data.push({
+                    value: item.sceneId,
+                    label: item.sceneName
+                })
+            })
+            nextTick(() => {
+                const scrollDom = sceneIdSelect.ref.popperRef.querySelector('.el-select-dropdown__list')
+                if (scrollDom) {
+                    console.log(scrollDom)
+                    const scrollFunc = () => {
+                        //console.log(scrollDom.scrollTop)    //0-150
+                        //console.log(scrollDom.scrollHeight) //300
+                        //console.log(scrollDom.clientHeight) //150
+                        const isScrollEnd = scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight
+                        if (isScrollEnd) {
+                            sceneIdSelect.param.page++
+                            sceneIdSelect.setData()
+                        }
+                    }
+                    scrollDom.removeEventListener('scroll', scrollFunc)
+                    scrollDom.addEventListener('scroll', scrollFunc)
+                }
+            }) */
         }).catch(() => {
         }).finally(() => {
+            sceneIdSelect.loading = false
         })
     },
+    watch: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
+        if (newValue > 0 && !oldValue) {
+            sceneIdSelect.setData()
+        }
+    }),
     visibleChange: (val: boolean) => {
-        if (val) {
-            sceneIdSelect.getOption()
+        //if (val && sceneIdSelect.data.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
+        if (val) {  //每次打开都加载
+            delete sceneIdSelect.param.where.sceneName
+            sceneIdSelect.data = []
+            sceneIdSelect.param.page = 1
+            sceneIdSelect.setData()
         }
     },
-    watch: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
-        console.log(newValue)
-        if (newValue > 0 && !oldValue) {
-            sceneIdSelect.getOption()
+    remoteMethod: (keyword: string) => {
+        if (keyword) {
+            sceneIdSelect.param.where.sceneName = keyword
+        } else {
+            delete sceneIdSelect.param.where.sceneName
         }
-    })
+        sceneIdSelect.data = []
+        sceneIdSelect.param.page = 1
+        sceneIdSelect.setData()
+    }
 })
-// const sceneIdSelect = reactive({
-//     loading: false,
-//     isEnd: false,
-//     data: [],
-//     param: {
-//         field: ['id', 'sceneName'],
-//         where: {},
-//         order: { id: 'desc' },
-//         page: 1,
-//         limit: 0
-//     },
-//     getOption: (keyword: string) => {
-//         if (sceneIdSelect.isEnd) {
-//             return
-//         }
-//         if (keyword) {
-//             sceneIdSelect.param.where.sceneName = keyword
-//         } else {
-//             delete sceneIdSelect.param.where.sceneName
-//         }
-//         /* const param = {
-//             ...sceneIdSelect.param,
-//             where: { sceneName: keyword },
-//         } */
-//         const param = {
-//             ...sceneIdSelect.param
-//         }
-//         sceneIdSelect.loading = true
-//         request('auth.scene.list', param).then((res) => {
-//             sceneIdSelect.data = res.data.list.map((item: any) => {
-//                 return {
-//                     value: item.sceneId,
-//                     label: item.sceneName
-//                 }
-//             })
-//             if (res.data.list.length < sceneIdSelect.param.limit) {
-//                 sceneIdSelect.isEnd = true
-//             }
-//             sceneIdSelect.param.page++
-//         }).catch(() => {
-//         }).finally(() => {
-//             sceneIdSelect.loading = false
-//         })
-//     },
-//     visibleChange: (val: boolean) => {
-//         console.log(111)
-//         if (val) {
-//             sceneIdSelect.getOption('')
-//         }
-//     }
-// })
 
 const saveDrawer = reactive({
     ref: null as any,
@@ -179,12 +189,12 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
                         <!-- <ElSelectV2 v-model="saveCommon.data.sceneId" :placeholder="t('view.auth.scene.sceneId')"
-                            :options="sceneIdSelect.data" :clearable="true" :filterable="true" :remote="true"
-                            :remote-method="sceneIdSelect.getOption" :loading="sceneIdSelect.loading"
-                            @visible-change="sceneIdSelect.visibleChange" /> -->
-                        <ElSelectV2 v-model="saveCommon.data.sceneId" :placeholder="t('view.auth.scene.sceneId')"
                             :options="sceneIdSelect.data" :clearable="true" :filterable="true"
-                            @visible-change="sceneIdSelect.visibleChange" />
+                            @visible-change="sceneIdSelect.visibleChange" :remote="true"
+                            :remote-method="sceneIdSelect.remoteMethod" :loading="sceneIdSelect.loading" v-infinite-scroll="sceneIdSelect.remoteMethod" /> -->
+                        <ElSelectV2 :ref="(el: any) => { sceneIdSelect.ref = el }" v-model="saveCommon.data.sceneId"
+                            :placeholder="t('view.auth.scene.sceneId')" :options="sceneIdSelect.data" :clearable="true"
+                            :filterable="true" @visible-change="sceneIdSelect.visibleChange" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
