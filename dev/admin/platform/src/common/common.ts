@@ -3,10 +3,9 @@
  * @param apiCode   接口标识。格式：index/encryptStr
  *      用法1：直接写接口地址
  *      用法2：写apiList内的键名。键名以src/api作为根目录，用'.'拼接组成
- *  一般用法1即满足大部分需求。以下情况使用用法2：
+ *  一般用法1即满足大部分需求。需要特殊处理才使用用法2：
  *      接口不是post请求时
  *      在接口变动时，只需在src/api目录内建立对应的文件，则不用到处修改之前的代码
- *      接口是单路径地址时，如/login，为防止以后接口变动造成麻烦，调用时传login.login
  * @param data  请求参数
  * @param isSuccessTip  成功弹出提示
  * @param isErrorHandle 失败错误处理
