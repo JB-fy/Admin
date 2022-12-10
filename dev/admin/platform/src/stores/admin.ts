@@ -172,10 +172,10 @@ export const useAdminStore = defineStore('admin', {
      * @returns 
      */
     async login(account: string, password: string) {
-      let res = await request('login.encryptStr', {
+      let res = await request('login/encryptStr', {
         account: account
       })
-      res = await request('login.login', {
+      res = await request('login', {
         account: account,
         password: md5(md5(password) + res.data.encryptStr)
       })
@@ -188,14 +188,14 @@ export const useAdminStore = defineStore('admin', {
      * 设置登录用户信息
      */
     async setInfo() {
-      const res = await request('login.info', {})
+      const res = await request('login/info', {})
       this.info = res.data.info
     },
     /**
      * 设置左侧菜单（包含更新路由meta数据）
      */
     async setMenuTree() {
-      const res = await request('login.menuTree', {})
+      const res = await request('login/menuTree', {})
       /**--------注册动态路由 开始--------**/
       const handleMenuTree = (menuTree: any, menuChain: any = []) => {
         const menuTreeTmp: any = []

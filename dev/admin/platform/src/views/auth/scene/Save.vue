@@ -53,7 +53,7 @@ const saveForm = reactive({
                 ...removeEmptyOfObj(saveCommon.data, false)
             }
             try {
-                await request('auth.scene.save', param, true)
+                await request('auth/scene/save', param, true)
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
             } catch (error) { }

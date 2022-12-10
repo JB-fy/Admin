@@ -47,7 +47,7 @@ const saveForm = reactive({
                 ...removeEmptyOfObj(saveCommon.data, false)
             }
             try {
-                await request('auth.menu.save', param, true)
+                await request('auth/menu/save', param, true)
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
             } catch (error) { }
@@ -91,7 +91,7 @@ const sceneIdSelect = reactive({
             return
         }
         sceneIdSelect.loading = true
-        request('auth.scene.list', sceneIdSelect.param).then((res) => {
+        request('auth/scene/list', sceneIdSelect.param).then((res) => {
             /* sceneIdSelect.data = res.data.list.map((item: any) => {
                 return {
                     value: item.sceneId,

@@ -179,7 +179,7 @@ const handleBatchDelete = () => {
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request('auth.menu.info', { id: id }).then((res) => {
+    request('auth/menu/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
@@ -205,14 +205,14 @@ const handleDelete = (idArr: number[] | string[]) => {
         center: true,
         showClose: false,
     }).then(() => {
-        request('auth.menu.delete', { idArr: idArr }, true).then((res) => {
+        request('auth/menu/delete', { idArr: idArr }, true).then((res) => {
             getList()
         }).catch(() => { })
     }).catch(() => { })
 }
 //更新
 const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
-    await request('auth.menu.save', param, true)
+    await request('auth/menu/save', param, true)
 }
 
 //分页
@@ -243,7 +243,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request('auth.menu.list', param)
+        const res = await request('auth/menu/list', param)
         table.data = res.data.list.map((item: any) => {
             item.checked = false    //可不设置，即是false
             item.id = item.menuId  //统一写成id。代码复用时，不用到处改menuId

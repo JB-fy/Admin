@@ -1,6 +1,6 @@
 <script setup lang="ts">
 onMounted(async () => {
-    request('index.index')
+    request('index/index')
 })
 let input = ref('')
 </script>

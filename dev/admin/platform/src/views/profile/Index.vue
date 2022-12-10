@@ -1,9 +1,9 @@
 <script setup lang="ts">
 onMounted(() => {
-    request('index.index')
+    request('index/index')
 })
 onActivated(() => {
-    request('index.index')
+    request('index/index')
 })
 let input = ref('')
 </script>
