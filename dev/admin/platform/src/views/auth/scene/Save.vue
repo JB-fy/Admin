@@ -29,7 +29,7 @@ const saveForm = reactive({
                         if (value === '' || value === null || value === undefined) {
                             callback()
                         }
-                        const valueTmp = JSON.parse(value)
+                        JSON.parse(value)
                         callback()
                     } catch (e) {
                         callback(new Error())

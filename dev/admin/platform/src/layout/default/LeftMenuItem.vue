@@ -17,13 +17,13 @@ defineProps({
     <template v-for="(item, key) in tree" :key="key">
         <ElSubMenu v-if="item.children.length" :index="subMenuIndexPrefix + '/' + key">
             <template #title>
-                <IconDynamic :icon="item.icon" />
+                <MyIconDynamic :icon="item.icon" />
                 <span>{{ languageStore.getMenuTitle(item) }}</span>
             </template>
             <LeftMenuItem :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + key" />
         </ElSubMenu>
         <ElMenuItem v-else :index="item.url">
-            <IconDynamic :icon="item.icon" />
+            <MyIconDynamic :icon="item.icon" />
             <template #title>
                 <span>{{ languageStore.getMenuTitle(item) }}</span>
             </template>

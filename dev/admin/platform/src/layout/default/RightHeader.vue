@@ -64,7 +64,7 @@ const menuTab = reactive({
                 <ElBreadcrumb separator=">">
                     <ElBreadcrumbItem v-for="(item, key) in adminStore.getCurrentMenuChain" :key="key">
                         <ElSpace :size="0">
-                            <IconDynamic :icon="item.icon" />
+                            <MyIconDynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
                         </ElSpace>
                     </ElBreadcrumbItem>
@@ -132,7 +132,7 @@ const menuTab = reactive({
                                 @visible-change="(status: boolean) => { menuTab.visibleChange(status, item.url) }"
                                 style="height: 100%;" :key="item.url">
                                 <ElSpace :size="0">
-                                    <IconDynamic :icon="item.icon" />
+                                    <MyIconDynamic :icon="item.icon" />
                                     <span>{{ item.title }}</span>
                                 </ElSpace>
                                 <template #dropdown>

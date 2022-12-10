@@ -16,6 +16,9 @@ const saveForm = reactive({
         menuName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
+        sceneId: [
+            { type: 'integer', required: true, min: 0, trigger: 'change', message: t('validator.select') }
+        ],
         extraData: [
             {
                 validator: (rule: any, value: any, callback: any) => {
@@ -23,7 +26,7 @@ const saveForm = reactive({
                         if (value === '' || value === null || value === undefined) {
                             callback()
                         }
-                        const valueTmp = JSON.parse(value)
+                        JSON.parse(value)
                         callback()
                     } catch (e) {
                         callback(new Error())
@@ -53,116 +56,18 @@ const saveForm = reactive({
             } catch (error) { }
             saveForm.loading = false
         })
-    }
-})
-
-/* const vMyDirective = {
-    updated: (el) => {
-        const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
-        if (dropId) {
-            const currentDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list');
-            if (currentDom) {
-                currentDom.addEventListener('scroll', () => {
-                    if (currentDom.scrollHeight - currentDom.scrollTop <= currentDom.clientHeight) {
-
-                    }
-                });
-            }
-        }
-    }
-} */
-const sceneIdSelect = reactive({
-    ref: null as any,
-    loading: false,
-    isEnd: false,
-    data: [],
-    param: {
-        field: ['id', 'sceneName'],
-        where: {} as { [propName: string]: any },
-        order: { id: 'desc' },
-        page: 1,
-        limit: 10
     },
-    setData: () => {
-        if (sceneIdSelect.loading) {
-            return
-        }
-        if (sceneIdSelect.isEnd) {
-            return
-        }
-        sceneIdSelect.loading = true
-        request('auth/scene/list', sceneIdSelect.param).then((res) => {
-            /* sceneIdSelect.data = res.data.list.map((item: any) => {
-                return {
-                    value: item.sceneId,
-                    label: item.sceneName
-                }
-            }) */
-            if (sceneIdSelect.param.limit === 0 || res.data.list.length < sceneIdSelect.param.limit) {
-                sceneIdSelect.isEnd = true
-            }
-            res.data.list.forEach((item: any) => {
-                sceneIdSelect.data.push({
-                    value: item.sceneId,
-                    label: item.sceneName
-                })
+    getOptionsOfSceneId: async (param: any) => {
+        const res = await request('auth/scene/list', param)
+        const options: { value: any, label: any }[] = []
+        res.data.list.forEach((item: any) => {
+            options.push({
+                value: item.sceneId,
+                label: item.sceneName
             })
-            nextTick(() => {
-                const scrollDom = sceneIdSelect.ref.popperRef.querySelector('.el-select-dropdown__list')
-                if (scrollDom) {
-                    const scrollFunc = () => {
-                        console.log(scrollDom.scrollTop)    //0-150
-                        //console.log(scrollDom.scrollHeight) //300
-                        //console.log(scrollDom.clientHeight) //150
-                        if (scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight) {
-                            sceneIdSelect.param.page++
-                            sceneIdSelect.setData()
-                        }
-                    }
-                    scrollDom.removeEventListener('scroll', scrollFunc)
-                    scrollDom.addEventListener('scroll', scrollFunc)
-                }
-            })
-        }).catch(() => {
-        }).finally(() => {
-            sceneIdSelect.loading = false
         })
-    },
-    watch: {
-        sceneId: watch(() => saveCommon.data.sceneId, (newValue, oldValue) => {
-            if (newValue > 0 && !oldValue) {
-                sceneIdSelect.setData()
-            }
-        }),
-    },
-    visibleChange: (val: boolean) => {
-        //if (val && sceneIdSelect.data.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
-        if (val) {  //每次打开都加载
-            delete sceneIdSelect.param.where.sceneName
-            sceneIdSelect.data = []
-            sceneIdSelect.param.page = 1
-            sceneIdSelect.isEnd = false
-            sceneIdSelect.setData()
-        }
-    },
-    remoteMethod: (keyword: string) => {
-        if (keyword) {
-            sceneIdSelect.param.where.sceneName = keyword
-        } else {
-            delete sceneIdSelect.param.where.sceneName
-        }
-        sceneIdSelect.data = []
-        sceneIdSelect.param.page = 1
-        sceneIdSelect.isEnd = false
-        sceneIdSelect.setData()
+        return options
     }
-})
-watch(() => {
-    return sceneIdSelect.ref?.popperRef?.querySelector('.el-select-dropdown__list')
-}, (newValue, oldValue) => {
-    console.log(newValue)
-    console.log(oldValue)
-    console.log(sceneIdSelect.ref?.popperRef?.querySelector('.el-select-dropdown__list'))
 })
 
 const saveDrawer = reactive({
@@ -200,13 +105,8 @@ const saveDrawer = reactive({
                             minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
-                        <ElSelectV2 :ref="(el: any) => { sceneIdSelect.ref = el }" v-model="saveCommon.data.sceneId"
-                            :placeholder="t('view.auth.scene.sceneId')" :options="sceneIdSelect.data" :clearable="true"
-                            :filterable="true" @visible-change="sceneIdSelect.visibleChange" :remote="true"
-                            :remote-method="sceneIdSelect.remoteMethod" :loading="sceneIdSelect.loading" />
-                        <!-- <ElSelectV2 :ref="(el: any) => { sceneIdSelect.ref = el }" v-model="saveCommon.data.sceneId"
-                            :placeholder="t('view.auth.scene.sceneId')" :options="sceneIdSelect.data" :clearable="true"
-                            :filterable="true" @visible-change="sceneIdSelect.visibleChange" /> -->
+                        <MySelectScroll v-model="saveCommon.data.sceneId" selectedField="id" searchField="sceneName"
+                            :apiFunc="saveForm.getOptionsOfSceneId" :apiParam="{ field: ['id', 'sceneName'] }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
