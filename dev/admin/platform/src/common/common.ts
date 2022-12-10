@@ -1,7 +1,7 @@
 /**
  * 请求接口
- * @param apiCode   接口标识。格式：index.encryptStr
- *      用法1：直接写接口地址。'/'要写成'.'
+ * @param apiCode   接口标识。格式：index/encryptStr
+ *      用法1：直接写接口地址
  *      用法2：写apiList内的键名。键名以src/api作为根目录，用'.'拼接组成
  *  一般用法1即满足大部分需求。以下情况使用用法2：
  *      接口不是post请求时
@@ -45,7 +45,7 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
                     break;
             }
             res = await http({
-                url: '/' + apiCodeList.join('/'),
+                url: apiCodeList.join('/'),
                 method: 'post',
                 data: data
             })
