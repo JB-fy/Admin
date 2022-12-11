@@ -2,11 +2,11 @@
 const { t } = useI18n()
 
 const props = defineProps({
-    /* value: {
+    modelValue: {
         type: [String, Number, Array],
         //required: true,
         default: undefined
-    }, */
+    },
     selectedField: {    //有初始值时，用于查询条件的字段
         type: String,
         default: 'id'
@@ -42,32 +42,10 @@ const props = defineProps({
     }, */
 })
 
-const vScroll = {
-    updated: () => {
-        /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
-        if (!dropId) {
-            return
-        }
-        const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
-        const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
-        console.log(scrollDom)
-        if (scrollDom) {
-            //scrollDom.scrollBy(0, 400)
-            const scrollFunc = () => {
-                console.log(scrollDom.scrollTop)
-                if (scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight) {
-                    select.param.page++
-                    select.setOptions()
-                }
-            }
-            //scrollDom.removeEventListener('scroll', scrollFunc)
-            scrollDom.addEventListener('scroll', scrollFunc)
-        }
-    }
-}
+const emits = defineEmits(['update:modelValue'])
 const select = reactive({
     ref: null as any,
-    value: undefined,
+    value: props.modelValue,
     options: [],
     loading: false,
     isEnd: false,
@@ -117,21 +95,58 @@ const select = reactive({
         select.param.page = 1
         select.isEnd = false
         select.setOptions()
-    }
+    },
+    change: (val: any) => {
+        emits('update:modelValue', val)
+        select.value=val
+    },
 })
-watch(() => select.value, (newValue: any, oldValue: any) => {
+if (props.modelValue) {
+    select.param.where[props.selectedField] = props.modelValue
+    select.setOptions()
+    delete select.param.where[props.selectedField]
+}
+/* watch(() => select.value, (newValue: any, oldValue: any) => {
+    console.log(newValue)
     console.log(oldValue)
-    if (newValue > 0 && !oldValue) {
+    console.log(props.modelValue)
+    console.log(props.searchField)
+    if (newValue && !oldValue) {
         select.param.where[props.selectedField] = newValue
         select.setOptions()
     }
-})
+    delete select.param.where[props.selectedField]
+}) */
+
+const vScroll = {
+    updated: () => {
+        /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
+        if (!dropId) {
+            return
+        }
+        const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
+        const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
+        if (scrollDom) {
+            //scrollDom.scrollBy(0, 400)
+            const scrollFunc = () => {
+                console.log(scrollDom.scrollTop)
+                if (scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight) {
+                    select.param.page++
+                    select.setOptions()
+                }
+            }
+            //scrollDom.removeEventListener('scroll', scrollFunc)
+            scrollDom.addEventListener('scroll', scrollFunc)
+        }
+    }
+}
 </script>
 
 <template>
     <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll />
+        :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll
+        @change="select.change" :validate-event="false" />
     <!-- <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
         :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll /> -->

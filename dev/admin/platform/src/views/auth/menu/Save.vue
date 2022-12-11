@@ -17,7 +17,7 @@ const saveForm = reactive({
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
         sceneId: [
-            { type: 'integer', required: true, min: 0, trigger: 'change', message: t('validator.select') }
+            { type: 'integer', required: true, min: 0, trigger: 'change', message: t('validation.select') }
         ],
         extraData: [
             {
