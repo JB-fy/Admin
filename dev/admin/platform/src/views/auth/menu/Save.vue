@@ -106,7 +106,8 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
                         <MySelectScroll v-model="saveCommon.data.sceneId" selectedField="id" searchField="sceneName"
-                            :apiFunc="saveForm.getOptionsOfSceneId" :apiParam="{ field: ['id', 'sceneName'] }" />
+                            :defaultOption="[{ value: 0, label: '请选择' }]" :apiFunc="saveForm.getOptionsOfSceneId"
+                            :apiParam="{ field: ['id', 'sceneName'] }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />

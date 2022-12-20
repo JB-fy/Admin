@@ -7,15 +7,19 @@ const props = defineProps({
         //required: true,
         default: undefined
     },
+    defaultOption: {    //是否含有默认值。格式：[{ value: string | Number, label: string },...]
+        type: Array,
+        default: []
+    },
     selectedField: {    //有初始值时，用于查询条件的字段
         type: String,
         default: 'id'
     },
-    searchField: {
+    searchField: {  //远程查询时，用于查询条件的字段
         type: String,
         required: true
     },
-    apiFunc: {   //接口函数
+    apiFunc: {   //接口函数。函数的返回值格式：[{ value: string | Number, label: string },...]
         type: Function,
         required: true
     },
@@ -46,7 +50,7 @@ const emits = defineEmits(['update:modelValue'])
 const select = reactive({
     ref: null as any,
     value: props.modelValue,
-    options: [],
+    options: [...props.defaultOption] as { value: string | Number, label: string }[],
     loading: false,
     isEnd: false,
     param: {
@@ -56,6 +60,9 @@ const select = reactive({
         page: 1,
         limit: 10,
         ...props.apiParam
+    },
+    resetOptions: () => {
+        select.options = [...props.defaultOption] as any
     },
     setOptions: () => {
         if (select.loading) {
@@ -79,7 +86,7 @@ const select = reactive({
         //if (val && select.options.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {  //每次打开都加载
             delete select.param.where[props.searchField]
-            select.options = []
+            select.resetOptions()
             select.param.page = 1
             select.isEnd = false
             select.setOptions()
@@ -91,14 +98,14 @@ const select = reactive({
         } else {
             delete select.param.where[props.searchField]
         }
-        select.options = []
+        select.resetOptions()
         select.param.page = 1
         select.isEnd = false
         select.setOptions()
     },
     change: (val: any) => {
         emits('update:modelValue', val)
-        select.value=val
+        select.value = val
     },
 })
 if (props.modelValue) {
@@ -145,8 +152,8 @@ const vScroll = {
 <template>
     <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll
-        @change="select.change" :validate-event="false" />
+        :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll @change="select.change"
+        :validate-event="false" />
     <!-- <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
         :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll /> -->
