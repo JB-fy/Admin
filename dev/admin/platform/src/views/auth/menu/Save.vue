@@ -39,7 +39,7 @@ const saveForm = reactive({
         isStop: [
             { type: 'enum', enum: [0, 1]/* Object.keys(customOption.yesOrNo).map(Number) */, trigger: 'change', message: t('validation.select') }
         ]
-    },
+    } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
