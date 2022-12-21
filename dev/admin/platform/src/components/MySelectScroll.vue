@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { t } = useI18n()
+import i18n from '@/i18n'
+//const { t } = useI18n()
 
 const props = defineProps({
     modelValue: {
@@ -29,8 +30,8 @@ const props = defineProps({
     },
     placeholder: {
         type: String,
-        default: '请选择'
-        //default: t('view.auth.scene.sceneId')
+        //default: t('common.tip.pleaseSelect') //defineProps会被提取到setup外执行，故这里t函数是不存在的
+        default: i18n.global.t('common.tip.pleaseSelect')
     },
     clearable: {
         type: Boolean,

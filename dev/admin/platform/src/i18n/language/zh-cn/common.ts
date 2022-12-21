@@ -26,6 +26,7 @@ export default {
     batchDelete: '批量删除',
 
     tip: {
+        pleaseSelect: '请选择',
         selectDelete: '请选择要删除的记录',
         configDelete: '确定删除？',
         configExit: '确定退出当前操作？',
