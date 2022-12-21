@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import i18n from '@/i18n'
-//const { t } = useI18n()
 
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array],
         //required: true,
-        default: undefined
     },
     defaultOption: {    //是否含有默认值。格式：[{ value: string | Number, label: string },...]
         type: Array,
@@ -31,7 +28,7 @@ const props = defineProps({
     placeholder: {
         type: String,
         //default: t('common.tip.pleaseSelect') //defineProps会被提取到setup外执行，故这里t函数是不存在的
-        default: i18n.global.t('common.tip.pleaseSelect')
+        //default: i18n.global.t('common.tip.pleaseSelect') //切换时不会改变
     },
     clearable: {
         type: Boolean,
@@ -151,9 +148,10 @@ const vScroll = {
 </script>
 
 <template>
-    <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
-        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="true" :remote-method="select.remoteMethod" :loading="select.loading" v-scroll @change="select.change"
+    <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value"
+        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
+        :filterable="filterable" @visible-change="select.visibleChange" :remote="true"
+        :remote-method="select.remoteMethod" :loading="select.loading" v-scroll @change="select.change"
         :validate-event="false" />
     <!-- <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"

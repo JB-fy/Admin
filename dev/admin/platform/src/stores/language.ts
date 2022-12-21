@@ -41,11 +41,13 @@ export const useLanguageStore = defineStore('language', {
 
       document.title = this.getWebTitle()
       /**
-       * 下面这几种情况，需要使用router.go(0)，强制刷新页面
-       *    路由设置标题时，不能动态刷新
-       *    部分接口，不能动态刷新
+       * 由于许多情况不会动态刷新，故建议直接刷新页面
+       *    列举以下这几种不能动态刷新的情况
+       *      路由设置标题时
+       *      部分接口需重新请求
+       *      t函数赋值的变量。如各种表单验证
        */
-      //router.go(0)
+      router.go(0)  //刷新页面
     },
     //获取页面标题
     getMenuTitle(menu: any) {
