@@ -14,8 +14,8 @@ git config --global user.name '账号'		//设置全局账号
 git config --global user.email '邮箱'	//设置全局邮箱
 git config --global --unset user.name	//删除全局账号
 git config --global --unset user.email	//删除全局邮箱
-git config --global credential.helper store --file 保存文件路径（默认：~/.git-credentials）   //保存账号和密码（长期）
-git config --global credential.helper cache --timeout 缓存时间（默认：900）//缓存账号和密码（短期）86400
+git config --global credential.helper cache --timeout 缓存时间（默认：900）//缓存账号和密码
+git config --global credential.helper store --file 保存文件路径（默认：~/.git-credentials）   //保存账号和密码
 
 git init	//初始化本地仓库
 git add ./	//添加文件到本地仓库
