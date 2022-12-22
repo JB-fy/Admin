@@ -56,17 +56,6 @@ const saveForm = reactive({
             } catch (error) { }
             saveForm.loading = false
         })
-    },
-    getOptionsOfSceneId: async (param: any) => {
-        const res = await request('auth/scene/list', param)
-        const options: { value: any, label: any }[] = []
-        res.data.list.forEach((item: any) => {
-            options.push({
-                value: item.sceneId,
-                label: item.sceneName
-            })
-        })
-        return options
     }
 })
 
@@ -104,10 +93,10 @@ const saveDrawer = reactive({
                         <ElInput v-model="saveCommon.data.menuName" :placeholder="t('view.auth.menu.menuName')"
                             minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
+                    <!-- <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId" v-if="saveCommon.visible"> -->
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
-                        <MySelectScroll v-model="saveCommon.data.sceneId" selectedField="id" searchField="sceneName"
-                            :defaultOption="[{ value: 0, label: '请选择' }]" :apiFunc="saveForm.getOptionsOfSceneId"
-                            :apiParam="{ field: ['id', 'sceneName'] }" />
+                        <MySelectScroll v-model="saveCommon.data.sceneId" :defaultOptions="[{ value: 0, label: '请选择' }]"
+                            apiCode="auth/scene/list" :apiParam="{ field: ['sceneId', 'sceneName'] }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />

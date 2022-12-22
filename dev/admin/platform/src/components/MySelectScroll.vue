@@ -6,17 +6,20 @@ const props = defineProps({
         type: [String, Number, Array],
         //required: true,
     },
-    defaultOption: {    //是否含有默认值。格式：[{ value: string | Number, label: string },...]
+    defaultOptions: {    //选项初始默认值。格式：[{ value: string | number, label: string },...]
         type: Array,
         default: []
     },
-    apiFunc: {   //接口函数。函数的返回值格式：[{ value: string|number, label: string },...]
-        type: Function,
-        required: true
+    apiCode: {    //格式：接口标识
+        type: String,
+        required: true,
     },
-    apiParam: { //接口函数所需参数。格式：{ field: srting[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number,limit: number }
+    apiParam: { //接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }
         type: Object,
         required: true,
+    },
+    apiDataToOptions: {    //接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
+        type: Function
     },
     apiSelectedField: {    //有初始值时，用于查询条件的字段
         type: String,
@@ -49,133 +52,137 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue'])
 const select = reactive({
     ref: null as any,
-    value: props.modelValue,
-    /* value: computed({
+    value: computed({
         get: () => {
             return props.modelValue
         },
         set: (val) => {
             emits('update:modelValue', val)
         }
-    }), */
-    options: [...props.defaultOption] as { value: string | number, label: string }[],
+    }),
+    options: [...props.defaultOptions] as { value: string | number, label: string }[],
     loading: computed((): boolean => {
-        //ElSelectV2的loading属性建议在远程数据全部加载时启用
-        if (select.param.page == 1 && select.param.limit == 0) {
-            return select.apiLoading
+        //ElSelectV2的loading属性建议在远程数据全部加载时使用，其他情况下都为false。
+        //例如：分页加载时使用会导致因出现加载中元素节点而导致滚动条节点丢失再出现。虽然可根据这个重新处理滚动事件，但视觉效果也不好
+        if (select.api.param.page == 1 && select.api.param.limit == 0) {
+            return select.api.loading
         }
         return false
     }),
-    isEnd: false,
-    apiLoading: false,
-    param: {
-        field: [],
-        where: {} as { [propName: string]: any },
-        order: { id: 'desc' },
-        page: 1,
-        limit: 10,
-        ...props.apiParam
+    api: {
+        isEnd: false,
+        loading: false,
+        param: {
+            field: [],
+            where: {} as { [propName: string]: any },
+            order: { id: 'desc' },
+            page: 1,
+            limit: 10,
+            ...props.apiParam
+        },
+        dataToOptions: props.apiDataToOptions ? props.apiDataToOptions : (res: any) => {
+            const options: { value: any, label: any }[] = []
+            res.data.list.forEach((item: any) => {
+                options.push({
+                    value: item[select.api.param.field[0]],
+                    label: item[select.api.param.field[1]]
+                })
+            })
+            return options
+        },
+        selectedField: props.apiSelectedField ?? props.apiParam.field[0],
+        searchField: props.apiSearchField ?? props.apiParam.field[1],
+        addOptions: () => {
+            if (select.api.loading) {
+                return
+            }
+            if (select.api.isEnd) {
+                return
+            }
+            select.api.loading = true
+            request(props.apiCode, select.api.param).then((res) => {
+                const options = select.api.dataToOptions(res)
+                select.options = select.options.concat(options ?? [])
+                if (select.api.param.limit === 0 || options.length < select.api.param.limit) {
+                    select.api.isEnd = true
+                }
+            }).catch(() => {
+            }).finally(() => {
+                select.api.loading = false
+            })
+        },
     },
     resetOptions: () => {
-        select.options = [...props.defaultOption] as any
-    },
-    setOptions: () => {
-        if (select.apiLoading) {
-            return
-        }
-        if (select.isEnd) {
-            return
-        }
-        select.apiLoading = true
-        props.apiFunc(select.param).then((options: []) => {
-            if (select.param.limit === 0 || options.length < select.param.limit) {
-                select.isEnd = true
-            }
-            select.options = select.options.concat(options ?? [])
-        }).catch(() => {
-        }).finally(() => {
-            select.apiLoading = false
-        })
+        select.options = [...props.defaultOptions] as any
+        select.api.param.page = 1
+        select.api.isEnd = false
     },
     visibleChange: (val: boolean) => {
         //if (val && select.options.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {  //每次打开都加载
-            delete select.param.where[props.apiSearchField ?? props.apiParam.field[1]]
+            delete select.api.param.where[select.api.searchField]
             select.resetOptions()
-            select.param.page = 1
-            select.isEnd = false
-            select.setOptions()
+            select.api.addOptions()
         }
     },
     remoteMethod: (keyword: string) => {
         if (keyword) {
-            select.param.where[props.apiSearchField ?? props.apiParam.field[1]] = keyword
+            select.api.param.where[select.api.searchField] = keyword
         } else {
-            delete select.param.where[props.apiSearchField ?? props.apiParam.field[1]]
+            delete select.api.param.where[select.api.searchField]
         }
         select.resetOptions()
-        select.param.page = 1
-        select.isEnd = false
-        select.setOptions()
-    },
-    change: (val: any) => {
-        emits('update:modelValue', val)
-    },
+        select.api.addOptions()
+    }
 })
 if (props.modelValue) {
-    select.param.where[props.apiSelectedField ?? props.apiParam.field[0]] = props.modelValue
-    select.setOptions()
-    delete select.param.where[props.apiSelectedField ?? props.apiParam.field[0]]
+    select.api.param.where[select.api.selectedField] = props.modelValue
+    select.api.addOptions()
+    delete select.api.param.where[select.api.selectedField]
 }
-watch(() => props.modelValue, (newVal: any, oldVal: any) => {
-    console.log(newVal)
-    select.value = newVal
-})
 /* watch(() => select.value, (newVal: any, oldVal: any) => {
     console.log(newVal)
     console.log(oldVal)
     console.log(props.modelValue)
     console.log(props.apiSearchField??props.apiParam.field[1])
     if (newVal && !oldVal) {
-        select.param.where[props.apiSelectedField ?? props.apiParam.field[0]] = newVal
+        select.api.param.where[select.api.selectedField] = newVal
         select.setOptions()
     }
-    delete select.param.where[props.apiSelectedField ?? props.apiParam.field[0]]
+    delete select.api.param.where[select.api.selectedField]
 }) */
 
-const vScroll = {
-    updated: () => {
-        /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
-        if (!dropId) {
-            return
-        }
-        const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
-        const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
-        if (scrollDom) {
-            //scrollDom.scrollBy(0, 400)
-            const scrollFunc = () => {
-                console.log(scrollDom.scrollTop)
-                if (scrollDom.scrollHeight - scrollDom.scrollTop <= scrollDom.clientHeight) {
-                    select.param.page++
-                    select.setOptions()
-                }
-            }
-            scrollDom.removeEventListener('scroll', scrollFunc)
-            scrollDom.addEventListener('scroll', scrollFunc)
-        }
+//滚动方法。需要写外面，否则无法通过移除事件removeEventListener移除
+const scrollFunc = (event: any) => {
+    if (event.target.scrollTop > 0 && event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight) {
+        select.api.param.page++
+        select.api.addOptions()
     }
 }
+/* //分页加载要使用动态设置select.loading时，使用这个方式设置滚动事件
+watch(() => select.loading, (newVal: any, oldVal: any) => {
+    if (select.loading === false) { */
+watch(() => select.options, (newVal: any, oldVal: any) => {
+    if (select.options.length) {
+        nextTick(() => {
+            /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
+            if (!dropId) {
+                return
+            }
+            const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
+            const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
+            if (scrollDom) {
+                scrollDom.removeEventListener('scroll', scrollFunc)
+                scrollDom.addEventListener('scroll', scrollFunc)
+            }
+        })
+    }
+})
 </script>
 
 <template>
     <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
         :filterable="filterable" @visible-change="select.visibleChange" :remote="true"
-        :remote-method="select.remoteMethod" :loading="select.loading" v-scroll @change="select.change"
-        :validate-event="false" />
-    <!-- <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value"
-        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
-        :filterable="filterable" @visible-change="select.visibleChange" :remote="true"
-        :remote-method="select.remoteMethod" :loading="select.loading" v-scroll @change="select.change"
-        :validate-event="false" /> -->
+        :remote-method="select.remoteMethod" :loading="select.loading" :validate-event="false" />
 </template>
