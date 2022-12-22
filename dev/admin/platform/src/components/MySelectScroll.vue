@@ -51,6 +51,7 @@ const select = reactive({
     ref: null as any,
     value: computed({
         get: () => {
+            console.log(111)
             return props.modelValue
         },
         set: (val) => {
