@@ -6,34 +6,31 @@ const props = defineProps({
         type: [String, Number, Array],
         //required: true,
     },
-    defaultOptions: {    //选项初始默认值。格式：[{ value: string | number, label: string },...]
+    defaultOptions: {   //选项初始默认值。格式：[{ value: string | number, label: string },...]
         type: Array,
         default: []
     },
-    apiCode: {    //格式：接口标识
+    apiCode: {  //格式：接口标识
         type: String,
         required: true,
     },
-    apiParam: { //接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }
+    apiParam: { //接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0个和第1个字段默认用于select.api的dataToOptions，selectedField，searchField三个属性。使用时请注意，否则需要设置props的apiDataToOptions，apiSelectedField，apiSearchField三个参数
         type: Object,
         required: true,
     },
-    apiDataToOptions: {    //接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
+    apiDataToOptions: { //接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
         type: Function
     },
-    apiSelectedField: {    //有初始值时，用于查询条件的字段
-        type: String,
-        //default: 'id' //默认为props.apiParam.field[0]
+    apiSelectedField: { //当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认为props.apiParam.field[0]
+        type: String
     },
-    apiSearchField: {  //远程查询时，用于查询条件的字段
-        type: String,
-        //required: true,
-        //default: 'id' //默认为props.apiParam.field[1]
+    apiSearchField: {   //当用户输入关键字做查询时，接口参数where中使用的字段名。默认为props.apiParam.field[1]
+        type: String
     },
     placeholder: {
         type: String,
         //default: t('common.tip.pleaseSelect') //defineProps会被提取到setup外执行，故这里t函数是不存在的
-        //default: i18n.global.t('common.tip.pleaseSelect') //动态切换时不会改变，需直接写在html中（系统默认页面刷新会切换）
+        //default: i18n.global.t('common.tip.pleaseSelect') //动态切换时不会改变，需直接写在html中（框架语言切换默认会做页面刷新）
     },
     clearable: {
         type: Boolean,
@@ -118,7 +115,7 @@ const select = reactive({
         select.api.isEnd = false
     },
     visibleChange: (val: boolean) => {
-        //if (val && select.options.length == 0) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
+        //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {  //每次打开都加载
             delete select.api.param.where[select.api.searchField]
             select.resetOptions()
@@ -135,22 +132,14 @@ const select = reactive({
         select.api.addOptions()
     }
 })
-if (props.modelValue) {
+if (props.modelValue && select.options.findIndex((item) => {
+    return item.value == props.modelValue
+}) === -1) {
+    select.resetOptions()
     select.api.param.where[select.api.selectedField] = props.modelValue
     select.api.addOptions()
     delete select.api.param.where[select.api.selectedField]
 }
-/* watch(() => select.value, (newVal: any, oldVal: any) => {
-    console.log(newVal)
-    console.log(oldVal)
-    console.log(props.modelValue)
-    console.log(props.apiSearchField??props.apiParam.field[1])
-    if (newVal && !oldVal) {
-        select.api.param.where[select.api.selectedField] = newVal
-        select.setOptions()
-    }
-    delete select.api.param.where[select.api.selectedField]
-}) */
 
 //滚动方法。需要写外面，否则无法通过移除事件removeEventListener移除
 const scrollFunc = (event: any) => {
