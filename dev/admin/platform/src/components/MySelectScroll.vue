@@ -44,10 +44,6 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-    validateEvent: {
-        type: Boolean,
-        default: false
-    },
     disabled: {
         type: Boolean,
         default: false
@@ -183,12 +179,12 @@ if (props.modelValue) {
  * 因上面的代码只在组件创建时初始化一次，所以当表的不同记录先后点击编辑按钮时，第二次编辑不会初始化options。
  *  解决方法
  *      1：在组件使用的地方用v-if来重新创建组件
- *          优点：适用于各种复杂环境
+ *          优点：适用于各种复杂情况
  *      2：参考下面的监听器代码
  *          优点：可减少对服务器的请求。当切换记录编辑时，如果两条记录数据是一样，不用重新请求接口初始化options
  *          缺点：必须设置validateEvent为false，否则当点击编辑，再点击新增，会直接提示错误信息
  */
-watch(() => props.modelValue, (newVal: any, oldVal: any) => {
+/* watch(() => props.modelValue, (newVal: any, oldVal: any) => {
     if (Array.isArray(props.modelValue)) {
         if (props.modelValue.length && select.options.filter((item) => {
             //return (<string[] | number[]>props.modelValue).indexOf(item.value) !== -1
@@ -203,7 +199,7 @@ watch(() => props.modelValue, (newVal: any, oldVal: any) => {
         select.resetOptions()
         select.initOptions()
     }
-})
+}) */
 
 //滚动方法。需要写外面，否则无法通过removeEventListener移除事件
 const scrollFunc = (event: any) => {
@@ -238,12 +234,11 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
     <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
         :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
-        :remote-method="select.remoteMethod" :loading="select.loading" :validate-event="validateEvent"
-        :disabled="disabled" :multiple="multiple" :multiple-limit="multipleLimit" :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
+        :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" :multiple="multiple"
+        :multiple-limit="multipleLimit" :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip"
+        style="min-width: 225px;" />
     <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
         :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
-        :remote-method="select.remoteMethod" :loading="select.loading" :validate-event="validateEvent"
-        :disabled="disabled" />
+        :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
 </template>

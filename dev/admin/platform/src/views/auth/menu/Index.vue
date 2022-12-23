@@ -32,7 +32,7 @@ provide('saveCommon', saveCommon)
 
         <List :ref="(el: any) => { listCommon.ref = el }" />
 
-        <Save />
+        <Save v-if="saveCommon.visible" />
     </ElContainer>
 </template>
 

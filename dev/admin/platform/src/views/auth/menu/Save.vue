@@ -36,6 +36,9 @@ const saveForm = reactive({
                 message: t('validation.json')
             },
         ],
+        sort: [
+            { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) }
+        ],
         isStop: [
             { type: 'enum', enum: [0, 1]/* Object.keys(customOption.yesOrNo).map(Number) */, trigger: 'change', message: t('validation.select') }
         ]
@@ -99,6 +102,13 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.sort')" prop="sort">
+                        <ElInputNumber v-model="saveCommon.data.sort" :precision="0" :min="0" :max="100" :step="1"
+                            :step-strictly="true" controls-position="right" />
+                        <label>
+                            <ElAlert :title="t('common.tip.sort')" type="info" :show-icon="true" :closable="false" />
+                        </label>
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"

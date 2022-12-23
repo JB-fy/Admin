@@ -3,14 +3,6 @@ const { t } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
-//可不做。主要作用：新增时设置默认值；知道有哪些字段
-/* saveCommon.data = {
-    sceneName: '',
-    sceneCode: '',
-    sceneConfig: '',
-    isStop: 0,
-    ...saveCommon.data
-} */
 
 const saveForm = reactive({
     ref: null as any,
@@ -42,7 +34,7 @@ const saveForm = reactive({
         isStop: [
             { type: 'enum', enum: [0, 1]/* Object.keys(customOption.yesOrNo).map(Number) */, trigger: 'change', message: t('validation.select') }
         ]
-    },
+    } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
@@ -101,11 +93,6 @@ const saveDrawer = reactive({
                             :closable="false" />
                         <ElInput v-model="saveCommon.data.sceneCode" :placeholder="t('view.auth.scene.sceneCode')"
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
-                        <!-- <ElInput v-model="saveCommon.data.sceneCode" :placeholder="t('view.auth.scene.sceneCode')" minlength="1" maxlength="30"
-                            :show-word-limit="true" :clearable="true" style="max-width: 300px;" />
-                        <label>
-                            <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                        </label> -->
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneConfig')" prop="sceneConfig">
                         <ElInput v-model="saveCommon.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />

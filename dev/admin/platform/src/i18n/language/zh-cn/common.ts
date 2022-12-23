@@ -31,6 +31,7 @@ export default {
         configDelete: '确定删除？',
         configExit: '确定退出当前操作？',
         notDuplicate: '不能与现有记录重复',
+        sort: '从小到大排序'
     },
     name: {
         checked: '复选框',
