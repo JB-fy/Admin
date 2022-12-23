@@ -162,7 +162,8 @@ class Menu extends AbstractController
                 ];
                 $field = [
                     'menuTree',
-                    'showMenu'
+                    'id',
+                    'menuName'
                 ];
                 $this->service->tree($field, $where);
                 break;
