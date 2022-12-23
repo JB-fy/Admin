@@ -94,7 +94,6 @@ const saveDrawer = reactive({
                             minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
-                        <!-- MySelectScroll用在弹层中每次打开需要强制刷新，否则无法触发事件，故需要v-if="saveCommon.visible" -->
                         <MySelectScroll v-model="saveCommon.data.sceneId" :defaultOptions="[{ value: 0, label: '请选择' }]"
                             apiCode="auth/scene/list" :apiParam="{ field: ['sceneId', 'sceneName'] }" />
                     </ElFormItem>
@@ -104,7 +103,7 @@ const saveDrawer = reactive({
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"
                             :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
-                            style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />
+                            style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
                     </ElFormItem>
                 </ElForm>
             </ElScrollbar>

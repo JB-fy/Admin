@@ -340,6 +340,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
+            case $this->getKey():
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value[0], $boolean ?? 'and']];

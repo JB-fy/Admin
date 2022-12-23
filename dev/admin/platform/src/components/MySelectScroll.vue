@@ -40,10 +40,34 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-    /* multiple: {
-      type: Boolean,
-      default: false
-    }, */
+    remote: {
+        type: Boolean,
+        default: true
+    },
+    validateEvent: {
+        type: Boolean,
+        default: false
+    },
+    disabled: {
+        type: Boolean,
+        default: false
+    },
+    multiple: {
+        type: Boolean,
+        default: false
+    },
+    collapseTags: {
+        type: Boolean,
+        default: true
+    },
+    collapseTagsTooltip: {
+        type: Boolean,
+        default: true
+    },
+    multipleLimit: {
+        type: Number,
+        default: 0
+    },
 })
 
 const emits = defineEmits(['update:modelValue'])
@@ -51,7 +75,6 @@ const select = reactive({
     ref: null as any,
     value: computed({
         get: () => {
-            console.log(111)
             return props.modelValue
         },
         set: (val) => {
@@ -59,6 +82,16 @@ const select = reactive({
         }
     }),
     options: [...props.defaultOptions] as { value: string | number, label: string }[],
+    initOptions: () => {
+        select.api.param.where[select.api.selectedField] = props.modelValue
+        select.api.addOptions()
+        delete select.api.param.where[select.api.selectedField]
+    },
+    resetOptions: () => {
+        select.options = [...props.defaultOptions] as any
+        select.api.param.page = 1
+        select.api.isEnd = false
+    },
     loading: computed((): boolean => {
         //ElSelectV2的loading属性建议在远程数据全部加载时使用，其他情况下都为false。
         //例如：分页加载时使用会导致因出现加载中元素节点而导致滚动条节点丢失再出现。虽然可根据这个重新处理滚动事件，但视觉效果也不好
@@ -110,11 +143,6 @@ const select = reactive({
             })
         },
     },
-    resetOptions: () => {
-        select.options = [...props.defaultOptions] as any
-        select.api.param.page = 1
-        select.api.isEnd = false
-    },
     visibleChange: (val: boolean) => {
         //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {  //每次打开都加载
@@ -133,16 +161,37 @@ const select = reactive({
         select.api.addOptions()
     }
 })
-if (props.modelValue && select.options.findIndex((item) => {
-    return item.value == props.modelValue
-}) === -1) {
-    select.resetOptions()
-    select.api.param.where[select.api.selectedField] = props.modelValue
-    select.api.addOptions()
-    delete select.api.param.where[select.api.selectedField]
+//组件创建时，如有初始值，需初始化options。
+if (props.modelValue) {
+    select.initOptions()
 }
+/**
+ * 因上面的代码只在组件创建时初始化一次，所以当表的不同记录先后点击编辑按钮时，第二次编辑不会初始化options。
+ *  解决方法
+ *      1：在组件使用的地方用v-if来强制刷新组件清理缓存。这样，下面这段代码就可以不要
+ *          优点：可以应对各种复杂情况
+ *      2：参考下面的监听器代码
+ *          优点：可减少对服务器的请求。当切换记录编辑时，如果两条记录数据是一样，不用重新请求接口初始化options
+ *          缺点：必须设置validateEvent为false，否则当点击编辑，再点击新增，会直接提示错误信息
+ */
+watch(() => props.modelValue, (newVal: any, oldVal: any) => {
+    if (Array.isArray(props.modelValue)) {
+        if (props.modelValue.length && select.options.filter((item) => {
+            //return (<string[] | number[]>props.modelValue).indexOf(item.value) !== -1
+            return (<any>props.modelValue).indexOf(item.value) !== -1
+        }).length !== props.modelValue.length) {
+            select.resetOptions()
+            select.initOptions()
+        }
+    } else if (props.modelValue && select.options.findIndex((item) => {
+        return item.value == props.modelValue
+    }) === -1) {
+        select.resetOptions()
+        select.initOptions()
+    }
+})
 
-//滚动方法。需要写外面，否则无法通过移除事件removeEventListener移除
+//滚动方法。需要写外面，否则无法通过removeEventListener移除事件
 const scrollFunc = (event: any) => {
     if (event.target.scrollTop > 0 && event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight) {
         select.api.param.page++
@@ -171,8 +220,16 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 </script>
 
 <template>
-    <ElSelectV2 :ref="(el: any) => { select.ref = el }" v-model="select.value"
+    <!-- multiple设置为true时，必须设置样式width，否则显示时很小 -->
+    <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
-        :filterable="filterable" @visible-change="select.visibleChange" :remote="true"
-        :remote-method="select.remoteMethod" :loading="select.loading" :validate-event="false" />
+        :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
+        :remote-method="select.remoteMethod" :loading="select.loading" :validate-event="validateEvent"
+        :disabled="disabled" :multiple="multiple" :multiple-limit="multipleLimit" :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
+    <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value"
+        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
+        :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
+        :remote-method="select.remoteMethod" :loading="select.loading" :validate-event="validateEvent"
+        :disabled="disabled" />
 </template>
