@@ -30,6 +30,7 @@ Router::addGroup('/auth/menu', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Menu::class, 'create']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Menu::class, 'update']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Menu::class, 'delete']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/tree', [\App\Controller\Auth\Menu::class, 'tree']);
 });
 
 Router::addGroup('/auth/scene', function () {

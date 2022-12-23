@@ -145,4 +145,30 @@ class Menu extends AbstractController
                 break;
         }
     }
+
+    /**
+     * 获取菜单树
+     *
+     * @return void
+     */
+    public function tree()
+    {
+        switch (getRequestScene()) {
+            case 'platformAdmin':
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $where = [
+                    'sceneId' => 1,
+                    'isStop' => 0
+                ];
+                $field = [
+                    'menuTree',
+                    'showMenu'
+                ];
+                $this->service->tree($field, $where);
+                break;
+            default:
+                throwFailJson('001001');
+                break;
+        }
+    }
 }

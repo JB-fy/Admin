@@ -10,7 +10,7 @@ const props = defineProps({
         type: Array,
         default: []
     },
-    apiCode: {  //格式：接口标识
+    apiCode: {  //接口标识。参考common/utils/common.js文件内request方法的参数说明
         type: String,
         required: true,
     },
