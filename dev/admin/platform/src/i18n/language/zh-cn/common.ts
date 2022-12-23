@@ -43,16 +43,14 @@ export default {
         sort: '排序值',
         isStop: '停用',
 
-        pid: '父ID',
         extraData: '额外数据',
 
         account: '账号',
         password: '密码',
 
         rel: {
-            pid: '父级',
+            pid: '上级',
             sceneId: '场景',
-            menuId: '菜单',
         },
     },
     status: {
