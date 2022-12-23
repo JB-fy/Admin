@@ -103,25 +103,28 @@ const select = reactive({
     api: {
         isEnd: false,
         loading: false,
-        param: {
-            field: [],
-            where: {} as { [propName: string]: any },
-            order: { id: 'desc' },
-            page: 1,
-            limit: 10,
-            ...props.apiParam
-        },
-        dataToOptions: props.apiDataToOptions ? props.apiDataToOptions : (res: any) => {
-            const options: { value: any, label: any }[] = []
-            res.data.list.forEach((item: any) => {
-                options.push({
-                    value: item[select.api.param.field[0]],
-                    label: item[select.api.param.field[1]]
+        param: computed((): { field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
+            return {
+                field: [],
+                where: {} as { [propName: string]: any },
+                order: { id: 'desc' },
+                page: 1,
+                limit: 10,
+                ...props.apiParam
+            }
+        }),
+        dataToOptions: computed(() => {
+            return props.apiDataToOptions ? props.apiDataToOptions : (res: any) => {
+                const options: { value: any, label: any }[] = []
+                res.data.list.forEach((item: any) => {
+                    options.push({
+                        value: item[select.api.param.field[0]],
+                        label: item[select.api.param.field[1]]
+                    })
                 })
-            })
-            return options
-        },
-        //selectedField: props.apiSelectedField ?? props.apiParam.field[0],
+                return options
+            }
+        }),
         selectedField: computed((): string => {
             if (props.apiSelectedField) {
                 return props.apiSelectedField
@@ -131,7 +134,9 @@ const select = reactive({
             }
             return props.apiParam.field[0]
         }),
-        searchField: props.apiSearchField ?? props.apiParam.field[1],
+        searchField: computed((): string => {
+            return props.apiSearchField ?? props.apiParam.field[1]
+        }),
         addOptions: () => {
             if (select.api.loading) {
                 return
@@ -229,7 +234,7 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 </script>
 
 <template>
-    <!-- multiple设置为true时，必须设置样式width，否则显示时很小 -->
+    <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
     <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
         :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
