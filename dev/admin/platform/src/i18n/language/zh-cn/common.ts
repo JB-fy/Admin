@@ -48,6 +48,7 @@ export default {
         account: '账号',
         password: '密码',
 
+        allTopLevel: '全部顶级',
         rel: {
             pid: '上级',
             sceneId: '场景',

@@ -68,9 +68,6 @@ const saveDrawer = reactive({
             done()
         }).catch(() => { })
     },
-    closed: () => {
-        saveForm.ref.clearValidate()    //清理表单验证错误提示
-    },
     buttonClose: () => {
         //saveCommon.visible = false
         saveDrawer.ref.handleClose()    //会触发beforeClose
@@ -81,7 +78,7 @@ const saveDrawer = reactive({
 <template>
     <div class="save-drawer">
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title"
-            size="50%" :before-close="saveDrawer.beforeClose" @closed="saveDrawer.closed">
+            size="50%" :before-close="saveDrawer.beforeClose">
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">

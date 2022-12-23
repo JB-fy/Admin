@@ -78,9 +78,6 @@ const saveDrawer = reactive({
             done()
         }).catch(() => { })
     },
-    closed: () => {
-        saveForm.ref.clearValidate()    //清理表单验证错误提示
-    },
     buttonClose: () => {
         //saveCommon.visible = false
         saveDrawer.ref.handleClose()    //会触发beforeClose
@@ -91,21 +88,20 @@ const saveDrawer = reactive({
 <template>
     <div class="save-drawer">
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title"
-            size="50%" :before-close="saveDrawer.beforeClose" @closed="saveDrawer.closed">
+            size="50%" :before-close="saveDrawer.beforeClose">
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
                     <ElFormItem :label="t('view.auth.menu.menuName')" prop="menuName">
                         <ElInput v-model="saveCommon.data.menuName" :placeholder="t('view.auth.menu.menuName')"
-                            minlength="1" maxlength="30" :show-word-limit="true" />
+                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
                         <MySelectScroll v-model="saveCommon.data.sceneId" apiCode="auth/scene/list"
                             :apiParam="{ field: ['id', 'sceneName'] }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.pid')" prop="pid">
-                        <MySelectScroll v-model="saveCommon.data.pid" :defaultOptions="[{ value: 0, label: '顶级' }]"
-                            apiCode="auth/menu/list"
+                        <MySelectScroll v-model="saveCommon.data.pid" apiCode="auth/menu/list"
                             :apiParam="{ field: ['id', 'menuName'], where: { excId: saveCommon.data.id } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">

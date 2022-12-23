@@ -26,6 +26,11 @@ const queryForm = reactive({
             <ElInput v-model="queryCommon.data.menuName" :placeholder="t('view.auth.menu.menuName')"
                 :clearable="true" />
         </ElFormItem>
+        <ElFormItem prop="pid">
+            <MySelectScroll v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"
+                :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]" apiCode="auth/menu/list"
+                :apiParam="{ field: ['id', 'menuName'] }" />
+        </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
             <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
                 :placeholder="t('common.name.isStop')" :clearable="true" />
