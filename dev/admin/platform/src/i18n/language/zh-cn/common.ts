@@ -48,6 +48,12 @@ export default {
 
         account: '账号',
         password: '密码',
+
+        rel: {
+            pid: '父级',
+            sceneId: '场景',
+            menuId: '菜单',
+        },
     },
     status: {
         whether: [

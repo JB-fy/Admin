@@ -17,7 +17,10 @@ const saveForm = reactive({
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
         sceneId: [
-            { type: 'integer', required: true, min: 0, trigger: 'change', message: t('validation.select') }
+            { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+        ],
+        pid: [
+            { type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
         ],
         extraData: [
             {
@@ -40,7 +43,7 @@ const saveForm = reactive({
             { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) }
         ],
         isStop: [
-            { type: 'enum', enum: [0, 1]/* Object.keys(customOption.yesOrNo).map(Number) */, trigger: 'change', message: t('validation.select') }
+            { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
         ]
     } as any,
     submit: () => {
@@ -96,9 +99,14 @@ const saveDrawer = reactive({
                         <ElInput v-model="saveCommon.data.menuName" :placeholder="t('view.auth.menu.menuName')"
                             minlength="1" maxlength="30" :show-word-limit="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('view.auth.scene.sceneId')" prop="sceneId">
-                        <MySelectScroll v-model="saveCommon.data.sceneId" :defaultOptions="[{ value: 0, label: '请选择' }]"
-                            apiCode="auth/scene/list" :apiParam="{ field: ['id', 'sceneName'] }" />
+                    <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
+                        <MySelectScroll v-model="saveCommon.data.sceneId" apiCode="auth/scene/list"
+                            :apiParam="{ field: ['id', 'sceneName'] }" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.rel.pid')" prop="pid">
+                        <MySelectScroll v-model="saveCommon.data.pid" :defaultOptions="[{ value: 0, label: '顶级' }]"
+                            apiCode="auth/menu/list"
+                            :apiParam="{ field: ['id', 'menuName'], where: { excId: saveCommon.data.id } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />

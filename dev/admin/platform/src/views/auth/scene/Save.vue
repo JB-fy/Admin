@@ -32,7 +32,8 @@ const saveForm = reactive({
             },
         ],
         isStop: [
-            { type: 'enum', enum: [0, 1]/* Object.keys(customOption.yesOrNo).map(Number) */, trigger: 'change', message: t('validation.select') }
+            /* { type: 'enum', enum: tm('common.status.whether').map((item) => item.value), trigger: 'change', message: t('validation.select') } */
+            { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
         ]
     } as any,
     submit: () => {
