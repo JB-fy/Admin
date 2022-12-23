@@ -314,7 +314,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $this->field['select'][] = $key;
                 return true;
             case 'id':
-                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+                $this->field['select'][] = $this->getTable() . '.' . $this->getKey() . ' AS ' . $key;
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {

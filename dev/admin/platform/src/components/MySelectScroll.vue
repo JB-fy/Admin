@@ -126,10 +126,10 @@ const select = reactive({
             if (props.apiSelectedField) {
                 return props.apiSelectedField
             }
-            if (props.apiParam.field[0].slice(-2).toLowerCase() != 'id') {
-                return props.apiParam.field[0]
+            if (props.apiParam.field[0] == 'id') {
+                return props.multiple ? 'idArr' : 'id'
             }
-            return props.multiple ? 'idArr' : 'id'
+            return props.apiParam.field[0]
         }),
         searchField: props.apiSearchField ?? props.apiParam.field[1],
         addOptions: () => {
