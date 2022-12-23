@@ -21,10 +21,10 @@ const props = defineProps({
     apiDataToOptions: { //接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
         type: Function
     },
-    apiSelectedField: { //当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认为props.apiParam.field[0]
+    apiSelectedField: { //当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认：props.apiParam.field[0]
         type: String
     },
-    apiSearchField: {   //当用户输入关键字做查询时，接口参数where中使用的字段名。默认为props.apiParam.field[1]
+    apiSearchField: {   //当用户输入关键字做查询时，接口参数where中使用的字段名。默认：props.apiParam.field[1]
         type: String
     },
     placeholder: {
@@ -121,7 +121,16 @@ const select = reactive({
             })
             return options
         },
-        selectedField: props.apiSelectedField ?? props.apiParam.field[0],
+        //selectedField: props.apiSelectedField ?? props.apiParam.field[0],
+        selectedField: computed((): string => {
+            if (props.apiSelectedField) {
+                return props.apiSelectedField
+            }
+            if (props.apiParam.field[0].slice(-2).toLowerCase() != 'id') {
+                return props.apiParam.field[0]
+            }
+            return props.multiple ? 'idArr' : 'id'
+        }),
         searchField: props.apiSearchField ?? props.apiParam.field[1],
         addOptions: () => {
             if (select.api.loading) {
@@ -168,8 +177,8 @@ if (props.modelValue) {
 /**
  * 因上面的代码只在组件创建时初始化一次，所以当表的不同记录先后点击编辑按钮时，第二次编辑不会初始化options。
  *  解决方法
- *      1：在组件使用的地方用v-if来强制刷新组件清理缓存。这样，下面这段代码就可以不要
- *          优点：可以应对各种复杂情况
+ *      1：在组件使用的地方用v-if来重新创建组件
+ *          优点：适用于各种复杂环境
  *      2：参考下面的监听器代码
  *          优点：可减少对服务器的请求。当切换记录编辑时，如果两条记录数据是一样，不用重新请求接口初始化options
  *          缺点：必须设置validateEvent为false，否则当点击编辑，再点击新增，会直接提示错误信息
