@@ -72,15 +72,6 @@ const table = reactive({
         width: 120,
         cellRenderer: (props: any) => {
             return [
-                /* h(ElButton, {
-                    type: props.rowData.isStop ? 'danger' : 'primary',
-                    size: 'small',
-                    //plain: true,
-                    //circle: true,
-                    round: true
-                }, {
-                    default: () => props.rowData.isStop ? t('common.yes') : t('common.no')
-                }), */
                 h(ElSwitch as any, {
                     'model-value': props.rowData.isStop,
                     'active-value': 1,
@@ -95,8 +86,7 @@ const table = reactive({
                             isStop: val
                         }).then((res) => {
                             props.rowData.isStop = val
-                        }).catch((error) => {
-                        })
+                        }).catch((error) => { })
                     }
                 })
             ] as any

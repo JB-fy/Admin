@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ElInputNumber } from 'element-plus';
+
 const { t } = useI18n()
 
 const table = reactive({
@@ -58,6 +60,66 @@ const table = reactive({
         hidden: true
     },
     {
+        dataKey: 'sort',
+        title: t('common.name.sort'),
+        key: 'sort',
+        align: 'center',
+        width: 120,
+        cellRenderer: (props: any) => {
+            if (props.rowData.editing) {
+                const sortRef = ref()
+                const sortOldVal = props.rowData.sort
+                return [
+                    h(ElInputNumber as any, {
+                        'ref': (el: any) => { sortRef.value = el; el?.focus() },
+                        'model-value': props.rowData.sort,
+                        'precision': 0,
+                        'min': 0,
+                        'max': 100,
+                        'step': 1,
+                        'step-strictly': true,
+                        //'controls': false,
+                        'controls-position': 'right',
+                        onChange: (val: number) => {
+                            sortRef.value?.focus()
+                            props.rowData.sort = val
+                            /* handleUpdate({
+                                id: props.rowData.id,
+                                sort: val
+                            }).then((res) => {
+                                props.rowData.sort = val
+                            }).catch((error) => {
+                            }) */
+                        },
+                        /* onBlur: () => {
+                            props.rowData.editing = false
+                            handleUpdate({
+                                id: props.rowData.id,
+                                sort: props.rowData.sort
+                            }).then((res) => {
+                            }).catch((error) => {
+                                props.rowData.sort = sortOldVal
+                            })
+                        }, */
+                        onKeydownEnter: () => {
+                            props.rowData.editing = false
+                        },
+                    })
+                ]
+            }
+            return [
+                h('div', {
+                    style: 'border: 1px transparent dotted; padding: 5px; border-color: var(--el-color-primary);',
+                    onClick: () => {
+                        props.rowData.editing = true
+                    }
+                }, {
+                    default: () => props.rowData.sort
+                })
+            ]
+        }
+    },
+    {
         dataKey: 'isStop',
         title: t('common.name.isStop'),
         key: 'isStop',
@@ -65,15 +127,6 @@ const table = reactive({
         width: 120,
         cellRenderer: (props: any) => {
             return [
-                /* h(ElButton, {
-                    type: props.rowData.isStop ? 'danger' : 'primary',
-                    size: 'small',
-                    //plain: true,
-                    //circle: true,
-                    round: true
-                }, {
-                    default: () => props.rowData.isStop ? t('common.yes') : t('common.no')
-                }), */
                 h(ElSwitch as any, {
                     'model-value': props.rowData.isStop,
                     'active-value': 1,
@@ -88,8 +141,7 @@ const table = reactive({
                             isStop: val
                         }).then((res) => {
                             props.rowData.isStop = val
-                        }).catch((error) => {
-                        })
+                        }).catch((error) => { })
                     }
                 })
             ] as any

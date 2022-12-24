@@ -84,8 +84,6 @@ const cascader = reactive({
             }).catch((error) => { })
             delete cascader.api.param.where['pid']
         },
-        value: 'id',
-        label: 'menuName',
         //value: 'value',
         //label: 'label',
         //children: 'children',
@@ -170,7 +168,7 @@ const cascader = reactive({
         }
     }
 })
-//组件创建时，如有初始值，需初始化options。
+//组件创建时，如有初始值，需初始化options
 if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue)) {
     cascader.initOptions()
 }

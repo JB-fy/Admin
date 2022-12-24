@@ -102,10 +102,12 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.pid')" prop="pid">
                         <MyCascader v-model="saveCommon.data.pid"
-                            :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" :props="{ checkStrictly: false }" />
+                            :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
+                            :props="{ checkStrictly: false, value: 'id', label: 'menuName' }" />
                         <MyCascader v-model="saveCommon.data.pid"
                             :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
-                            :filterable="false" :props="{ checkStrictly: true, lazy: true }" />
+                            :filterable="false"
+                            :props="{ checkStrictly: true, lazy: true, value: 'id', label: 'menuName' }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />

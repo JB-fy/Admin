@@ -173,7 +173,7 @@ const select = reactive({
         select.api.addOptions()
     }
 })
-//组件创建时，如有初始值，需初始化options。
+//组件创建时，如有初始值，需初始化options
 if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue) {
     select.initOptions()
 }
