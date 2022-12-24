@@ -97,17 +97,15 @@ const saveDrawer = reactive({
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
-                        <MySelectScroll v-model="saveCommon.data.sceneId" apiCode="auth/scene/list"
-                            :apiParam="{ field: ['id', 'sceneName'] }" />
+                        <MySelectScroll v-model="saveCommon.data.sceneId"
+                            :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.pid')" prop="pid">
-                        <MySelectScroll v-model="saveCommon.data.pid" apiCode="auth/menu/list"
-                            :apiParam="{ field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId, excId: saveCommon.data.id } }" />
-                        <MyCascader v-model="saveCommon.data.pid" apiCode="auth/menu/tree"
-                            :apiParam="{ field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } }" />
-                        <MyCascader v-model="saveCommon.data.pid" apiCode="auth/menu/list"
-                            :apiParam="{ field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } }"
-                            :filterable="false" :props="{ checkStrictly: true }" />
+                        <MyCascader v-model="saveCommon.data.pid"
+                            :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" :props="{ checkStrictly: false }" />
+                        <MyCascader v-model="saveCommon.data.pid"
+                            :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
+                            :filterable="false" :props="{ checkStrictly: true, lazy: true }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />

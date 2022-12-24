@@ -10,22 +10,17 @@ const props = defineProps({
         type: Array,
         default: []
     },
-    apiCode: {  //接口标识。参考common/utils/common.js文件内request方法的参数说明
-        type: String,
-        required: true,
-    },
-    apiParam: { //接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0个和第1个字段默认用于select.api的dataToOptions，selectedField，searchField三个属性。使用时请注意，否则需要设置props的apiDataToOptions，apiSelectedField，apiSearchField三个参数
+    /**
+     * 接口。格式：{ code: string, param: object, dataToOptions: function, selectedField: string, searchField: string }
+     *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
+     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0个和第1个字段默认用于select.api的dataToOptions，selectedField，searchField三个属性。使用时请注意，否则需要设置props.api中对应的三个参数
+     *      dataToOptions：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
+     *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认：props.api.param.field[0]
+     *      searchField：非必须。当用户输入关键字做查询时，接口参数where中使用的字段名。默认：props.api.param.field[1]
+     */
+    api: {
         type: Object,
         required: true,
-    },
-    apiDataToOptions: { //接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
-        type: Function
-    },
-    apiSelectedField: { //当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认：props.apiParam.field[0]
-        type: String
-    },
-    apiSearchField: {   //当用户输入关键字做查询时，接口参数where中使用的字段名。默认：props.apiParam.field[1]
-        type: String
     },
     placeholder: {
         type: String,
@@ -106,11 +101,11 @@ const select = reactive({
                 order: { id: 'desc' },
                 page: 1,
                 limit: 10,
-                ...props.apiParam
+                ...props.api.param
             }
         }),
         dataToOptions: computed(() => {
-            return props.apiDataToOptions ? props.apiDataToOptions : (res: any) => {
+            return props.api.dataToOptions ? props.api.dataToOptions : (res: any) => {
                 const options: { value: any, label: any }[] = []
                 res.data.list.forEach((item: any) => {
                     options.push({
@@ -122,18 +117,18 @@ const select = reactive({
             }
         }),
         selectedField: computed((): string => {
-            if (props.apiSelectedField) {
-                return props.apiSelectedField
+            if (props.api.selectedField) {
+                return props.api.selectedField
             }
-            if (props.apiParam.field[0] == 'id') {
+            if (props.api.param.field[0] == 'id') {
                 return props.multiple ? 'idArr' : 'id'
             }
-            return props.apiParam.field[0]
+            return props.api.param.field[0]
         }),
         searchField: computed((): string => {
-            return props.apiSearchField ?? props.apiParam.field[1]
+            return props.api.searchField ?? props.api.param.field[1]
         }),
-        addOptions: () => {
+        getOptions: async () => {
             if (select.api.loading) {
                 return
             }
@@ -141,16 +136,23 @@ const select = reactive({
                 return
             }
             select.api.loading = true
-            request(props.apiCode, select.api.param).then((res) => {
-                const options = select.api.dataToOptions(res)
-                select.options = select.options.concat(options ?? [])
+            let options = []
+            try {
+                const res = await request(props.api.code, select.api.param)
+                options = select.api.dataToOptions(res)
                 if (select.api.param.limit === 0 || options.length < select.api.param.limit) {
                     select.api.isEnd = true
                 }
-            }).catch(() => {
-            }).finally(() => {
-                select.api.loading = false
-            })
+            } catch (error) { }
+            select.api.loading = false
+            return options
+        },
+        addOptions: () => {
+            select.api.getOptions().then((options) => {
+                if (options.length) {
+                    select.options = select.options.concat(options ?? [])
+                }
+            }).catch((error) => { })
         },
     },
     visibleChange: (val: boolean) => {

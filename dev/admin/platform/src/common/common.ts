@@ -61,19 +61,18 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
     }
 }
 /*--------使用方式 开始--------*/
-/* request('index/index', data)
-    .then((res) => {
-        console.log(res)
-    })
-    .catch((error) => {
-        errorHandle(<Error>error)   //request第四个参数为false时增加，否则已经做过错误处理
-    }).finally(()=>{
-
-    })
+/* request('index/index', data).then((res) => {
+    console.log(res)
+}).catch((error) => {
+    errorHandle(<Error>error)   //request第四个参数为false时增加，否则已经做过错误处理
+}).finally(() => {
+})
 
 try {
-    await request('index/index', data)
+    const res = await request('index/index', data)
+    console.log(res)
 } catch (error) {
     //errorHandle(<Error>error) //request第四个参数为false时增加，否则已经做过错误处理
+} finally {
 } */
 /*--------使用方式 结束--------*/
