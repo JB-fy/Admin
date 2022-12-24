@@ -66,52 +66,52 @@ const table = reactive({
         align: 'center',
         width: 120,
         cellRenderer: (props: any) => {
-            if (props.rowData.editing) {
-                const sortRef = ref()
-                const sortOldVal = props.rowData.sort
+            if (props.rowData.editSort) {
+                let currentVal = props.rowData.sort
                 return [
                     h(ElInputNumber as any, {
-                        'ref': (el: any) => { sortRef.value = el; el?.focus() },
-                        'model-value': props.rowData.sort,
+                        'ref': (el: any) => { el?.focus() },
+                        'model-value': currentVal,
+                        'placeholder': t('common.tip.sort'),
                         'precision': 0,
                         'min': 0,
                         'max': 100,
                         'step': 1,
                         'step-strictly': true,
-                        //'controls': false,
+                        'controls': false,  //控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
                         'controls-position': 'right',
                         onChange: (val: number) => {
-                            sortRef.value?.focus()
-                            props.rowData.sort = val
-                            /* handleUpdate({
-                                id: props.rowData.id,
-                                sort: val
-                            }).then((res) => {
-                                props.rowData.sort = val
-                            }).catch((error) => {
-                            }) */
+                            currentVal = val
                         },
-                        /* onBlur: () => {
-                            props.rowData.editing = false
-                            handleUpdate({
-                                id: props.rowData.id,
-                                sort: props.rowData.sort
-                            }).then((res) => {
-                            }).catch((error) => {
-                                props.rowData.sort = sortOldVal
-                            })
+                        onBlur: () => {
+                            props.rowData.editSort = false
+                            if ((currentVal || currentVal === 0) && currentVal != props.rowData.sort) {
+                                handleUpdate({
+                                    id: props.rowData.id,
+                                    sort: currentVal
+                                }).then((res) => {
+                                    props.rowData.sort = currentVal
+                                }).catch((error) => {
+                                })
+                            }
+                        }
+                        /* onKeydown: (event: any) => {
+                            switch (event.keyCode) {
+                                //case 27:    //Esc键：Escape
+                                //case 32:    //空格键：" "
+                                case 13:    //Enter键：Enter
+                                    break;
+                            }
                         }, */
-                        onKeydownEnter: () => {
-                            props.rowData.editing = false
-                        },
                     })
                 ]
             }
             return [
                 h('div', {
-                    style: 'border: 1px transparent dotted; padding: 5px; border-color: var(--el-color-primary);',
+                    class: 'inline-edit',
+                    //style: 'color: var(--el-color-primary); cursor:pointer; border: 1px transparent dotted; padding: 5px; border-color: var(--el-color-primary);',
                     onClick: () => {
-                        props.rowData.editing = true
+                        props.rowData.editSort = true
                     }
                 }, {
                     default: () => props.rowData.sort
@@ -418,4 +418,15 @@ defineExpose({
     float: right;
     margin-right: 5px;
 } */
+
+:deep(.inline-edit) {
+    color: var(--el-color-primary);
+    cursor: pointer;
+    border: 1px transparent dotted;
+    padding: 5px;
+}
+
+:deep(.inline-edit:hover) {
+    border-color: var(--el-color-primary);
+}
 </style>

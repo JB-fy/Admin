@@ -114,7 +114,7 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.sort')" prop="sort">
                         <ElInputNumber v-model="saveCommon.data.sort" :precision="0" :min="0" :max="100" :step="1"
-                            :step-strictly="true" controls-position="right" />
+                            :step-strictly="true" controls-position="right" :value-on-clear="50" />
                         <label>
                             <ElAlert :title="t('common.tip.sort')" type="info" :show-icon="true" :closable="false" />
                         </label>
