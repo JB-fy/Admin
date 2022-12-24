@@ -156,15 +156,13 @@ class Menu extends AbstractController
         switch (getRequestScene()) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
-                $where = [
-                    'sceneId' => 1,
+                $data = $this->request->all();
+                $where = array_merge($data['where'], [
                     'isStop' => 0
-                ];
-                $field = [
+                ]);
+                $field = array_merge($data['field'], [
                     'menuTree',
-                    'id',
-                    'menuName'
-                ];
+                ]);
                 $this->service->tree($field, $where);
                 break;
             default:

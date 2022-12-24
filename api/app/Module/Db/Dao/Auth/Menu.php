@@ -31,7 +31,7 @@ class Menu extends AbstractDao
     {
         switch ($key) {
             case 'menuTree':    //树状需要以下字段和排序方式
-                $this->field['select'][] = $this->getTable() . '.' . 'menuId';
+                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
                 $this->field['select'][] = $this->getTable() . '.' . 'pid';
 
                 $this->orderOfAlone('menuTree');    //排序方式
