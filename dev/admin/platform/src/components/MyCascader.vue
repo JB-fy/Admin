@@ -42,9 +42,9 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    multiple: {
-        type: Boolean,
-        default: false
+    props: {
+        type: Object,
+        default: {}
     },
     collapseTags: {
         type: Boolean,
@@ -53,10 +53,6 @@ const props = defineProps({
     collapseTagsTooltip: {
         type: Boolean,
         default: true
-    },
-    multipleLimit: {
-        type: Number,
-        default: 0
     },
 })
 
@@ -73,6 +69,19 @@ const cascader = reactive({
         }
     }),
     options: [...props.defaultOptions] as { value: string | number, label: string }[],
+    props: {
+        multiple: false,
+        checkStrictly: false,
+        emitPath: false,
+        value: 'id',
+        label: 'menuName',
+        //value: 'value',
+        //label: 'label',
+        //children: 'children',
+        //disabled: 'disabled',
+        //leaf: 'leaf', //动态加载时用于终止继续加载。当checkStrictly为false时，该字段必须有，否则选中后值为null
+        ...props.props
+    },
     initOptions: () => {
         cascader.api.addOptions()
     },
@@ -137,8 +146,7 @@ const cascader = reactive({
         },
     },
     visibleChange: (val: boolean) => {
-        //if (val && cascader.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
-        if (val) {  //每次打开都加载
+        if (val) {  //每次打开都重新加载
             cascader.resetOptions()
             cascader.api.addOptions()
         }
@@ -164,16 +172,10 @@ const cascader = reactive({
         }).finally(() => {
             cascader.api.loading = false
         })
-        /* const options = [{
-            value: 2,
-            label: 'Option',
-            leaf: level >= 2,   //用于终止继续加载。当prop.checkStrictly为false时，该字段必须有，否则选中后值为null
-        }]
-        resolve(options) */
     }
 })
 //组件创建时，如有初始值，需初始化options。
-if (props.filterable && props.modelValue) {
+if (props.filterable && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue)) {
     cascader.initOptions()
 }
 </script>
@@ -181,11 +183,9 @@ if (props.filterable && props.modelValue) {
 <template>
     <ElCascader v-if="filterable" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="cascader.options" :clearable="clearable"
-        :filterable="filterable" @visible-change="cascader.visibleChange"
-        :props="{ multiple: multiple, emitPath: false, checkStrictly: true, value: 'id', label: 'menuName', children: 'children' }"
+        :filterable="filterable" @visible-change="cascader.visibleChange" :props="cascader.props"
         :disabled="disabled" />
     <ElCascader v-else :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
         :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :clearable="clearable"
-        :props="{ multiple: multiple, emitPath: false, checkStrictly: false, value: 'id', label: 'menuName', children: 'children', lazy: lazy, lazyLoad: cascader.lazyLoad }"
-        :disabled="disabled" />
+        :props="{ ...cascader.props, lazy: lazy, lazyLoad: cascader.lazyLoad }" :disabled="disabled" />
 </template>

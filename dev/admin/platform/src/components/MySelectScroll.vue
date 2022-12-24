@@ -155,7 +155,7 @@ const select = reactive({
     },
     visibleChange: (val: boolean) => {
         //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
-        if (val) {  //每次打开都加载
+        if (val) {  //每次打开都重新加载
             delete select.api.param.where[select.api.searchField]
             select.resetOptions()
             select.api.addOptions()
@@ -172,7 +172,7 @@ const select = reactive({
     }
 })
 //组件创建时，如有初始值，需初始化options。
-if (props.modelValue) {
+if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue) {
     select.initOptions()
 }
 /**
