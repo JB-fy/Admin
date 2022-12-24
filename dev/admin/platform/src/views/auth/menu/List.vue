@@ -67,10 +67,11 @@ const table = reactive({
         width: 120,
         cellRenderer: (props: any) => {
             if (props.rowData.editSort) {
+                let currentRef: any
                 let currentVal = props.rowData.sort
                 return [
                     h(ElInputNumber as any, {
-                        'ref': (el: any) => { el?.focus() },
+                        'ref': (el: any) => { currentRef = el; el?.focus() },
                         'model-value': currentVal,
                         'placeholder': t('common.tip.sort'),
                         'precision': 0,
@@ -94,15 +95,17 @@ const table = reactive({
                                 }).catch((error) => {
                                 })
                             }
-                        }
-                        /* onKeydown: (event: any) => {
+                        },
+                        onKeydown: (event: any) => {
                             switch (event.keyCode) {
                                 //case 27:    //Esc键：Escape
                                 //case 32:    //空格键：" "
                                 case 13:    //Enter键：Enter
+                                    //props.rowData.editSort = false  //也会触发onBlur事件
+                                    currentRef?.blur()
                                     break;
                             }
-                        }, */
+                        },
                     })
                 ]
             }
