@@ -46,7 +46,7 @@ const table = reactive({
     },
     {
         dataKey: 'menuName',
-        title: t('view.auth.menu.menuName'),
+        title: t('common.name.menu.menuName'),
         key: 'menuName',
         align: 'center',
         width: 120,

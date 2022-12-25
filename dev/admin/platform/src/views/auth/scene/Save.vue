@@ -82,17 +82,17 @@ const saveDrawer = reactive({
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
-                    <ElFormItem :label="t('view.auth.scene.sceneName')" prop="sceneName">
-                        <ElInput v-model="saveCommon.data.sceneName" :placeholder="t('view.auth.scene.sceneName')"
+                    <ElFormItem :label="t('common.name.scene.sceneName')" prop="sceneName">
+                        <ElInput v-model="saveCommon.data.sceneName" :placeholder="t('common.name.scene.sceneName')"
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('view.auth.scene.sceneCode')" prop="sceneCode">
+                    <ElFormItem :label="t('common.name.scene.sceneCode')" prop="sceneCode">
                         <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true"
                             :closable="false" />
-                        <ElInput v-model="saveCommon.data.sceneCode" :placeholder="t('view.auth.scene.sceneCode')"
+                        <ElInput v-model="saveCommon.data.sceneCode" :placeholder="t('common.name.scene.sceneCode')"
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('view.auth.scene.sceneConfig')" prop="sceneConfig">
+                    <ElFormItem :label="t('common.name.scene.sceneConfig')" prop="sceneConfig">
                         <ElInput v-model="saveCommon.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">

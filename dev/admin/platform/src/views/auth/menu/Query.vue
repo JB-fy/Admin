@@ -22,8 +22,12 @@ const queryForm = reactive({
 <template>
     <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
         @keyup.enter="queryForm.submit">
+        <ElFormItem prop="id">
+            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
+                :controls="false" />
+        </ElFormItem>
         <ElFormItem prop="menuName">
-            <ElInput v-model="queryCommon.data.menuName" :placeholder="t('view.auth.menu.menuName')"
+            <ElInput v-model="queryCommon.data.menuName" :placeholder="t('common.name.auth.menu.menuName')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneId">
@@ -53,5 +57,9 @@ const queryForm = reactive({
 <style scoped>
 .query-form :deep(.el-form-item) {
     margin: 0 10px 10px 0;
+}
+
+.query-form :deep(.el-input-number .el-input__inner) {
+    text-align: left;
 }
 </style>

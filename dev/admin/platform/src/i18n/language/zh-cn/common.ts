@@ -53,6 +53,17 @@ export default {
             pid: '上级',
             sceneId: '场景',
         },
+
+        auth: {
+            scene: {
+                sceneName: '场景名称',
+                sceneCode: '场景标识',
+                sceneConfig: '场景配置',
+            },
+            menu: {
+                menuName: '菜单名称',
+            }
+        }
     },
     status: {
         whether: [
