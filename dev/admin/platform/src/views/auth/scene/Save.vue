@@ -59,15 +59,18 @@ const saveDrawer = reactive({
     ref: null as any,
     size: useSettingStore().saveDrawer.size,
     beforeClose: (done: Function) => {
-        //确定退出当前操作？
-        ElMessageBox.confirm('', {
-            type: 'info',
-            title: t('common.tip.configExit'),
-            center: true,
-            showClose: false,
-        }).then(() => {
+        if (useSettingStore().saveDrawer.isTipClose) {
+            ElMessageBox.confirm('', {
+                type: 'info',
+                title: t('common.tip.configExit'),
+                center: true,
+                showClose: false,
+            }).then(() => {
+                done()
+            }).catch(() => { })
+        } else {
             done()
-        }).catch(() => { })
+        }
     },
     buttonClose: () => {
         //saveCommon.visible = false
