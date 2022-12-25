@@ -40,7 +40,8 @@ export default {
         action: '操作',
 
         id: 'ID',
-        sort: '排序值',
+        level: '层级',
+        sort: '排序',
         isStop: '停用',
 
         extraData: '额外数据',
@@ -62,6 +63,7 @@ export default {
             },
             menu: {
                 menuName: '菜单名称',
+                pidPath: '上级路径'
             }
         }
     },

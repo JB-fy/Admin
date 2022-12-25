@@ -8,7 +8,7 @@ const table = reactive({
         width: 30,
         align: 'center',
         fixed: 'left',
-        cellRenderer: (props: any) => {
+        cellRenderer: (props: any): any => {
             return [
                 h(ElCheckbox as any, {
                     'model-value': props.rowData.checked,
@@ -16,7 +16,7 @@ const table = reactive({
                         props.rowData.checked = val
                     }
                 })
-            ] as any
+            ]
         },
         headerCellRenderer: () => {
             const allChecked = table.data.every((item: any) => item.checked)
@@ -70,7 +70,7 @@ const table = reactive({
         key: 'isStop',
         align: 'center',
         width: 120,
-        cellRenderer: (props: any) => {
+        cellRenderer: (props: any): any => {
             return [
                 h(ElSwitch as any, {
                     'model-value': props.rowData.isStop,
@@ -89,7 +89,7 @@ const table = reactive({
                         }).catch((error) => { })
                     }
                 })
-            ] as any
+            ]
         }
     },
     {
@@ -114,7 +114,7 @@ const table = reactive({
         align: 'center',
         fixed: 'right',
         width: 250,
-        cellRenderer: (props: any) => {
+        cellRenderer: (props: any): any => {
             return [
                 h(ElButton, {
                     type: 'primary',

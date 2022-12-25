@@ -45,6 +45,14 @@ class Menu extends AbstractDao
                 $this->field['select'][] = $this->getTable() . '.' . 'extraData->url AS url';
                 $this->field['select'][] = $this->getTable() . '.' . 'extraData->icon AS icon';
                 return true;
+            case 'sceneName':
+                $this->joinOfAlone($key);
+                $this->field['select'][] = getDao(Scene::class)->getTable() . '.' . $key;
+                return true;
+            case 'pMenuName':
+                $this->joinOfAlone($key);
+                $this->field['select'][] = 'p_' . $this->getTable() . '.menuName AS pMenuName';
+                return true;
         }
         return false;
     }
@@ -86,5 +94,48 @@ class Menu extends AbstractDao
             }
         }
         return $info;
+    }
+
+    /**
+     * 解析join（独有的）
+     *
+     * @param string $key   键，用于确定关联表
+     * @param [type] $value 值，用于确定关联表
+     * @return boolean
+     */
+    protected function joinOfAlone(string $key, $value = null): bool
+    {
+        switch ($key) {
+            case 'sceneName':
+                $sceneDao = getDao(Scene::class);
+                $sceneDaoTable = $sceneDao->getTable();
+                if (!isset($this->join[$sceneDaoTable])) {
+                    $this->join[$sceneDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $sceneDaoTable,
+                            $sceneDaoTable . '.sceneId',
+                            '=',
+                            $this->getTable() . '.sceneId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'pMenuName':
+                $pMenuDaoTable = 'p_' . $this->getTable();
+                if (!isset($this->join[$pMenuDaoTable])) {
+                    $this->join[$pMenuDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $this->getTable() . ' AS ' . $pMenuDaoTable,
+                            $pMenuDaoTable . '.menuId',
+                            '=',
+                            $this->getTable() . '.pid'
+                        ]
+                    ];
+                }
+                return true;
+        }
+        return false;
     }
 }

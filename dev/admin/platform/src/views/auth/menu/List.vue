@@ -10,7 +10,7 @@ const table = reactive({
         width: 30,
         align: 'center',
         fixed: 'left',
-        cellRenderer: (props: any) => {
+        cellRenderer: (props: any): any => {
             return [
                 h(ElCheckbox as any, {
                     'model-value': props.rowData.checked,
@@ -18,7 +18,7 @@ const table = reactive({
                         props.rowData.checked = val
                     }
                 })
-            ] as any
+            ]
         },
         headerCellRenderer: () => {
             const allChecked = table.data.every((item: any) => item.checked)
@@ -52,6 +52,36 @@ const table = reactive({
         width: 120,
     },
     {
+        dataKey: 'sceneName',
+        title: t('common.name.rel.sceneId'),
+        key: 'sceneId',
+        align: 'center',
+        width: 120,
+    },
+    {
+        dataKey: 'pMenuName',
+        title: t('common.name.rel.pid'),
+        key: 'pid',
+        align: 'center',
+        width: 120,
+    },
+    {
+        dataKey: 'level',
+        title: t('common.name.level'),
+        key: 'level',
+        align: 'center',
+        width: 120,
+        sortable: true,
+    },
+    {
+        dataKey: 'pidPath',
+        title: t('common.name.auth.menu.pidPath'),
+        key: 'pidPath',
+        width: 150,
+        align: 'center',
+        hidden: true
+    },
+    {
         dataKey: 'extraData',
         title: t('common.name.extraData'),
         key: 'extraData',
@@ -65,7 +95,8 @@ const table = reactive({
         key: 'sort',
         align: 'center',
         width: 120,
-        cellRenderer: (props: any) => {
+        sortable: true,
+        cellRenderer: (props: any): any => {
             if (props.rowData.editSort) {
                 let currentRef: any
                 let currentVal = props.rowData.sort
@@ -128,7 +159,7 @@ const table = reactive({
         key: 'isStop',
         align: 'center',
         width: 120,
-        cellRenderer: (props: any) => {
+        cellRenderer: (props: any): any => {
             return [
                 h(ElSwitch as any, {
                     'model-value': props.rowData.isStop,
@@ -147,7 +178,7 @@ const table = reactive({
                         }).catch((error) => { })
                     }
                 })
-            ] as any
+            ]
         }
     },
     {
@@ -172,7 +203,7 @@ const table = reactive({
         align: 'center',
         fixed: 'right',
         width: 250,
-        cellRenderer: (props: any) => {
+        cellRenderer: (props: any): any => {
             return [
                 h(ElButton, {
                     type: 'primary',

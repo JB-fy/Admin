@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Auth;
 
 use App\Controller\AbstractController;
+use App\Module\Db\Dao\Auth\Menu as AuthMenu;
 
 class Menu extends AbstractController
 {
@@ -31,15 +32,17 @@ class Menu extends AbstractController
 
                 /**--------参数过滤 结束--------**/
                 /* if ($isAuth) {
-                    $allowField = getDao(DaoAuthMenu::class, true)->getAllColumn();
-                    //$allowField = array_merge($allowField, ['pMenuName', 'menuActionJson']);
+                    $allowField = getDao(AuthMenu::class)->getAllColumn();
+                    $allowField = array_merge($allowField, ['sceneName', 'pMenuName']);
                 } else {
                     //无查看权限时只能查看一些基本的字段
                     $allowField = ['menuId', 'menuName', 'menu'];
-                }
+                } */
 
+                $allowField = getDao(AuthMenu::class)->getAllColumn();
+                $allowField = array_merge($allowField, ['sceneName', 'pMenuName']);
                 $data['field'] = array_intersect($data['field'], $allowField); //过滤不可查看字段
-                empty($data['field']) ? $data['field'] = $allowField : null; */
+                empty($data['field']) ? $data['field'] = $allowField : null;
                 /**--------参数过滤 结束--------**/
 
                 $this->service->listWithCount(...$data);
