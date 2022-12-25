@@ -823,7 +823,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         if (empty($info)) {
             return $info;
         }
-        return $this->afterField($info);
+        $this->afterField($info);
+        return $info;
     }
 
     /**
@@ -844,7 +845,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         $list = $this->builder->get()->toArray();
         if (!empty($this->afterField)) {
             foreach ($list as &$v) {
-                $v = $this->afterField($v);
+                $this->afterField($v);
             }
         }
         return $list;
