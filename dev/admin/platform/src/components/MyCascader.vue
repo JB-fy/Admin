@@ -54,7 +54,7 @@ const props = defineProps({
     },
 })
 
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue', 'change'])
 const cascader = reactive({
     ref: null as any,
     value: computed({
@@ -62,6 +62,7 @@ const cascader = reactive({
             return props.modelValue
         },
         set: (val) => {
+            emits('change')
             emits('update:modelValue', val)
         }
     }),

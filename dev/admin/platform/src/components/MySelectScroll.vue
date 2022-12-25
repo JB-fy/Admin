@@ -59,7 +59,7 @@ const props = defineProps({
     },
 })
 
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue', 'change'])
 const select = reactive({
     ref: null as any,
     value: computed({
@@ -67,6 +67,7 @@ const select = reactive({
             return props.modelValue
         },
         set: (val) => {
+            emits('change')
             emits('update:modelValue', val)
         }
     }),
