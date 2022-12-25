@@ -101,7 +101,7 @@ const select = reactive({
                 where: {} as { [propName: string]: any },
                 order: { id: 'desc' },
                 page: 1,
-                limit: 10,
+                limit: useSettingStore().scrollSize,
                 ...props.api.param
             }
         }),

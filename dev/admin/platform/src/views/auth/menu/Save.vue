@@ -67,6 +67,7 @@ const saveForm = reactive({
 
 const saveDrawer = reactive({
     ref: null as any,
+    size: useSettingStore().saveDrawer.size,
     beforeClose: (done: Function) => {
         //确定退出当前操作？
         ElMessageBox.confirm('', {
@@ -88,7 +89,7 @@ const saveDrawer = reactive({
 <template>
     <div class="save-drawer">
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title"
-            size="50%" :before-close="saveDrawer.beforeClose">
+            :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">

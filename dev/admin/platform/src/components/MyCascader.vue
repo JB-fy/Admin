@@ -141,6 +141,17 @@ const cascader = reactive({
                     }
                     return res.data.list
                 }
+                /* const options: any = []
+                res.data.tree.forEach((item: any) => {
+                    options.push({
+                        [cascader.props.value]: item[cascader.api.param.field[0]],
+                        [cascader.props.label]: item[cascader.api.param.field[1]],
+                        disabled: true,
+                        //[cascader.props.leaf]: false,   //后端接口还得返回一个是否有子集的字段，暂时不考虑
+                        ...item
+                    })
+                })
+                return options */
                 return res.data.tree
             }
         }),
