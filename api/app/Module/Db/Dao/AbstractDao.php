@@ -21,7 +21,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     protected array $order = [];   //解析后的order。格式：[['method'=>'orderBy', 'param'=>[参数]],...]。有顺序要求，必须与原来一致，改变顺序会造成排序结果不同
     protected array $join = [];    //解析后的join。格式：[['method'=>'join', 'param'=>[参数]],...]。无顺序要求
 
-    protected array $fieldAfter = [];    //获取数据库数据后，再做处理的字段
+    protected array $afterField = [];    //获取数据后，再处理的字段
 
     //#[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
     protected \App\Module\Db\Model\AbstractModel $model;   //模型
@@ -613,7 +613,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         $this->order = [];
         $this->join = [];
 
-        $this->fieldAfter = [];
+        $this->afterField = [];
         return $this;
     }
 
@@ -797,6 +797,17 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
+     * 删除
+     *
+     * @return integer
+     */
+    final public function delete(): int
+    {
+        $this->getBuilder();
+        return $this->builder->delete();
+    }
+
+    /**
      * 获取信息
      *
      * @param boolean $isUseWriter
@@ -812,7 +823,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         if (empty($info)) {
             return $info;
         }
-        return $this->handleFieldAfter($info);
+        return $this->afterField($info);
     }
 
     /**
@@ -831,41 +842,12 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         }
         $this->handleLimit($offset, $limit);
         $list = $this->builder->get()->toArray();
-        if (!empty($this->fieldAfter)) {
+        if (!empty($this->afterField)) {
             foreach ($list as &$v) {
-                $v = $this->handleFieldAfter($v);
+                $v = $this->afterField($v);
             }
         }
         return $list;
-    }
-
-    /**
-     * 删除
-     *
-     * @return integer
-     */
-    final public function delete(): int
-    {
-        $this->getBuilder();
-        return $this->builder->delete();
-    }
-
-    /**
-     * 获取数据库数据后，再做处理的字段
-     *
-     * @param object $info
-     * @return object
-     */
-    protected function handleFieldAfter(object $info): object
-    {
-        /* foreach ($this->fieldAfter as $field) {
-            switch ($field) {
-                case 'xxxx':
-                    $info->xxxx = 'xxxx';
-                    break;
-            }
-        } */
-        return $info;
     }
 
     /**
@@ -881,6 +863,55 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             $this->builder->offset($offset)->limit(99999999);
         }
         return $this;
+    }
+
+    /**
+     * 获取数据库数据后，再处理的字段（入口）
+     *
+     * @param object $info
+     * @return void
+     */
+    final protected function afterField(object &$info)
+    {
+        foreach ($this->afterField as $field) {
+            if (!$this->afterFieldOfAlone($field, $info)) {
+                $this->afterFieldOfCommon($field, $info);
+            }
+        }
+    }
+
+    /**
+     * 获取数据后，再处理的字段（公共的）
+     *
+     * @param string $key
+     * @param object $info
+     * @return boolean
+     */
+    final protected function afterFieldOfCommon(string $key, object &$info): bool
+    {
+        /* switch ($key) {
+            case 'xxxx':
+                $info->xxxx = 'xxxx';
+                return true;
+        } */
+        return false;
+    }
+
+    /**
+     * 获取数据后，再处理的字段（独有的）
+     *
+     * @param string $key
+     * @param object $info
+     * @return boolean
+     */
+    protected function afterFieldOfAlone(string $key, object &$info): bool
+    {
+        /* switch ($key) {
+            case 'xxxx':
+                $info->xxxx = 'xxxx';
+                return true;
+        } */
+        return false;
     }
     /*----------------封装部分方法方便使用 结束----------------*/
 }

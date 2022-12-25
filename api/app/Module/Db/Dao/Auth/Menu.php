@@ -77,26 +77,6 @@ class Menu extends AbstractDao
     }
 
     /**
-     * 获取数据库数据后，再做处理的字段
-     *
-     * @param object $info
-     * @return object
-     */
-    public function handleFieldAfter(object $info): object
-    {
-        foreach ($this->fieldAfter as $field) {
-            switch ($field) {
-                case 'showMenu':
-                    $info->title = $info->title ? json_decode($info->title, true) : [];
-                    $info->icon = $info->icon ?? '';
-                    $info->url = $info->url ?? '';
-                    break;
-            }
-        }
-        return $info;
-    }
-
-    /**
      * 解析join（独有的）
      *
      * @param string $key   键，用于确定关联表
@@ -134,6 +114,25 @@ class Menu extends AbstractDao
                         ]
                     ];
                 }
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取数据后，再处理的字段（独有的）
+     *
+     * @param string $key
+     * @param object $info
+     * @return boolean
+     */
+    protected function afterFieldOfAlone(string $key, object &$info): bool
+    {
+        switch ($key) {
+            case 'showMenu':
+                $info->title = $info->title ? json_decode($info->title, true) : [];
+                $info->icon = $info->icon ?? '';
+                $info->url = $info->url ?? '';
                 return true;
         }
         return false;
