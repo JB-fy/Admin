@@ -890,11 +890,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final protected function afterFieldOfCommon(string $key, object &$info): bool
     {
-        /* switch ($key) {
-            case 'xxxx':
-                $info->xxxx = 'xxxx';
+        switch ($key) {
+            case 'id':
+                $info->{$key} = $info->{$this->getKey()};
                 return true;
-        } */
+        }
         return false;
     }
 

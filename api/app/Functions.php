@@ -117,6 +117,20 @@ if (!function_exists('getCache')) {
         return getContainer()->get($className);
     }
 }
+
+if (!function_exists('getLogger')) {
+    /**
+     * 获取Logger对象
+     * 
+     * @param string $name  对应文件内开头的name
+     * @param string $group 对应config/autoload/logger.php内的key
+     * @return \Psr\Log\LoggerInterface
+     */
+    function getLogger(string $name = 'hyperf', string $group = 'default'): \Psr\Log\LoggerInterface
+    {
+        return getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name, $group);
+    }
+}
 /*----------------基于当前框架封装的函数  结束----------------*/
 
 
