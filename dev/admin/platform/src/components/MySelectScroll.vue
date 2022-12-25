@@ -13,7 +13,7 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, dataToOptions: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0个和第1个字段默认用于select.api的dataToOptions，selectedField，searchField三个属性。使用时请注意，否则需要设置props.api中对应的三个参数
+     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的dataToOptions，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
      *      dataToOptions：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
      *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认：props.api.param.field[0]
      *      searchField：非必须。当用户输入关键字做查询时，接口参数where中使用的字段名。默认：props.api.param.field[1]
@@ -23,9 +23,7 @@ const props = defineProps({
         required: true,
     },
     placeholder: {
-        type: String,
-        //default: t('common.tip.pleaseSelect') //defineProps会被提取到setup外执行，故这里t函数是不存在的
-        //default: i18n.global.t('common.tip.pleaseSelect') //动态切换时不会改变，需直接写在html中（框架语言切换默认会做页面刷新）
+        type: String
     },
     clearable: {
         type: Boolean,
@@ -71,6 +69,9 @@ const select = reactive({
         set: (val) => {
             emits('update:modelValue', val)
         }
+    }),
+    placeholder: computed(() => {
+        return props.placeholder ?? t('common.tip.pleaseSelect')
     }),
     options: [...props.defaultOptions] as { value: string | number, label: string }[],
     initOptions: () => {
@@ -234,13 +235,21 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 <template>
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
     <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value"
-        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
-        :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
-        :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" :multiple="multiple"
-        :multiple-limit="multipleLimit" :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip"
-        style="min-width: 225px;" />
-    <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value"
-        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :options="select.options" :clearable="clearable"
-        :filterable="filterable" @visible-change="select.visibleChange" :remote="remote"
-        :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
+        :placeholder="select.placeholder" :options="select.options" :clearable="clearable" :filterable="filterable"
+        @visible-change="select.visibleChange" :remote="remote" :remote-method="select.remoteMethod"
+        :loading="select.loading" :disabled="disabled" :multiple="multiple" :multiple-limit="multipleLimit"
+        :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
+    <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="select.placeholder"
+        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
+        :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
+
+
+    <!-------- 使用示例 开始-------->
+    <!-- <MySelectScroll v-model="saveCommon.data.sceneId"
+        :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
+
+    <MySelectScroll v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
+        :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
+        :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+    <!-------- 使用示例 结束-------->
 </template>

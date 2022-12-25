@@ -13,17 +13,16 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, dataToOptions: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0个和第1个字段默认用于select.api的dataToOptions，selectedField，searchField三个属性。使用时请注意，否则需要设置props.api中对应的三个参数
+     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的dataToOptions属性，使用时请注意。或直接在props.props中设置对应参数
      *      dataToOptions：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
+     *      pidField：非必须。动态加载时用于获取子级，接口参数where中使用的字段名。
      */
     api: {
         type: Object,
         required: true,
     },
     placeholder: {
-        type: String,
-        //default: t('common.tip.pleaseSelect') //defineProps会被提取到setup外执行，故这里t函数是不存在的
-        //default: i18n.global.t('common.tip.pleaseSelect') //动态切换时不会改变，需直接写在html中（框架语言切换默认会做页面刷新）
+        type: String
     },
     clearable: {
         type: Boolean,
@@ -37,10 +36,6 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    props: {
-        type: Object,
-        default: {}
-    },
     collapseTags: {
         type: Boolean,
         default: true
@@ -48,6 +43,14 @@ const props = defineProps({
     collapseTagsTooltip: {
         type: Boolean,
         default: true
+    },
+    separator: {
+        type: String,
+        default: '/'
+    },
+    props: {
+        type: Object,
+        default: {}
     },
 })
 
@@ -63,33 +66,35 @@ const cascader = reactive({
             emits('update:modelValue', val)
         }
     }),
+    placeholder: computed(() => {
+        return props.placeholder ?? t('common.tip.pleaseSelect')
+    }),
     options: [...props.defaultOptions] as { value: string | number, label: string }[],
     props: {
         multiple: false,
-        checkStrictly: false,
+        checkStrictly: true,
         emitPath: false,
         lazy: false,
         lazyLoad: (node: any, resolve: any) => {
             if (node.level == 0) {
-                cascader.api.param.where['pid'] = 0
+                cascader.api.param.where[cascader.api.pidField] = 0
             } else {
-                cascader.api.param.where['pid'] = node.data.id
+                cascader.api.param.where[cascader.api.pidField] = node.data.id
             }
             cascader.api.getOptions().then((options) => {
                 if (options.length === 0) {
                     node.data.leaf = true
                 }
-                //cascader.options = cascader.options.concat(options ?? [])
                 resolve(options)
             }).catch((error) => { })
-            delete cascader.api.param.where['pid']
+            delete cascader.api.param.where[cascader.api.pidField]
         },
-        //value: 'value',
-        //label: 'label',
-        //children: 'children',
-        //disabled: 'disabled',
-        //leaf: 'leaf', //动态加载时用于终止继续加载。当checkStrictly为false时，该字段必须有，否则选中后值为null
-        ...props.props
+        value: props.props.value ?? props.api.param.field[0] ?? 'value',
+        label: props.props.value ?? props.api.param.field[1] ?? 'label',
+        children: props.props.children ?? 'children',
+        disabled: props.props.disabled ?? 'disabled',
+        leaf: props.props.leaf ?? 'leaf',   //动态加载时用于终止继续加载。当checkStrictly为false时，该字段必须有，否则选中后值为null
+        ...props.props,
     },
     initOptions: () => {
         cascader.api.addOptions()
@@ -120,25 +125,27 @@ const cascader = reactive({
         }),
         dataToOptions: computed(() => {
             return props.api.dataToOptions ? props.api.dataToOptions : (res: any) => {
-                return cascader.props.lazy ? res.data.list : res.data.tree
-                /* const options: { value: any, label: any }[] = []
                 if (cascader.props.lazy) {
-                    res.data.list.forEach((item: any) => {
-                        options.push({
-                            value: item[cascader.api.param.field[0]],
-                            label: item[cascader.api.param.field[1]]
+                    if (!cascader.props.checkStrictly) {
+                        //这种情况暂时可以用非动态全部加载解决。等确实需要使用时在考虑修改。
+                        //动态加载，且当checkStrictly为false时，leaf字段必须有，否则选中后值为null
+                        /* const options: any = []
+                        res.data.list.forEach((item: any) => {
+                            options.push({
+                                [cascader.props.value]: item[cascader.api.param.field[0]],
+                                [cascader.props.label]: item[cascader.api.param.field[1]],
+                                //[cascader.props.leaf]: false    //后端接口还得返回一个是否有子集的字段，暂时不考虑
+                            })
                         })
-                    })
-                } else {
-                    res.data.tree.forEach((item: any) => {
-                        options.push({
-                            value: item[cascader.api.param.field[0]],
-                            label: item[cascader.api.param.field[1]]
-                        })
-                    })
+                        return options */
+                    }
+                    return res.data.list
                 }
-                return options */
+                return res.data.tree
             }
+        }),
+        pidField: computed((): string => {
+            return props.api.pidField ?? 'pid'
         }),
         getOptions: async () => {
             if (cascader.api.loading) {
@@ -163,8 +170,14 @@ const cascader = reactive({
     },
     visibleChange: (val: boolean) => {
         if (val) {  //每次打开都重新加载
-            cascader.resetOptions()
-            cascader.api.addOptions()
+            if (cascader.props.lazy) {
+                //重新触发下动态加载事件。
+                /* cascader.props.lazy = false
+                cascader.props.lazy = true */
+            } else {
+                cascader.resetOptions()
+                cascader.api.addOptions()
+            }
         }
     }
 })
@@ -176,10 +189,23 @@ if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValu
 
 <template>
     <ElCascader v-if="cascader.props.lazy" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
-        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :clearable="clearable" :props="cascader.props"
-        :disabled="disabled" />
+        :placeholder="cascader.placeholder" :clearable="clearable" :props="cascader.props"
+        @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
     <ElCascader v-else :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
-        :placeholder="placeholder ?? t('common.tip.pleaseSelect')" :clearable="clearable" :options="cascader.options"
-        :filterable="filterable" @visible-change="cascader.visibleChange" :props="cascader.props"
-        :disabled="disabled" />
+        :placeholder="cascader.placeholder" :clearable="clearable" :options="cascader.options" :props="cascader.props"
+        :filterable="filterable" @visible-change="cascader.visibleChange" :disabled="disabled"
+        :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
+
+    <!-------- 使用示例 开始-------->
+    <!-- <MyCascader v-model="saveCommon.data.pid"
+        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" />
+    <MyCascader v-model="saveCommon.data.pid"
+        :api="{ code: 'auth/menu/list', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
+        :props="{ lazy: true }" />
+
+    <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"
+        :defaultOptions="[{ id: 0, menuName: t('common.name.allTopLevel') }]"
+        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'] } }" /> -->
+    <!-------- 使用示例 结束-------->
 </template>

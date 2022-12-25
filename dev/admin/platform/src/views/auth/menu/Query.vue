@@ -30,6 +30,11 @@ const queryForm = reactive({
             <MySelectScroll v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
                 :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
         </ElFormItem>
+        <ElFormItem prop="pid">
+            <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"
+                :defaultOptions="[{ id: 0, menuName: t('common.name.allTopLevel') }]"
+                :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'] } }" />
+        </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
             <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
                 :placeholder="t('common.name.isStop')" :clearable="true" />
