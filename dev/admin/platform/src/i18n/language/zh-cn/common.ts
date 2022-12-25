@@ -38,6 +38,8 @@ export default {
         createTime: '创建时间',
         updateTime: '更新时间',
         action: '操作',
+
+        no: '无',
         allTopLevel: '全部顶级',
 
         id: 'ID',

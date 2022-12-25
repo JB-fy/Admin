@@ -364,6 +364,17 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
                 }
                 return true;
+            case 'pid':
+                if (is_array($value)) {
+                    if (count($value) === 1) {
+                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value[0], $boolean ?? 'and']];
+                    } else {
+                        $this->where[] = ['method' => 'whereIn', 'param' => [$this->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                    }
+                } else {
+                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                }
+                return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
@@ -776,10 +787,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     final public function saveInsert(bool $isGetId = true): bool|int
     {
         $this->getBuilder();
-        if ((isset($this->insert[0]) && is_array($this->insert[0])) || !$isGetId) {
+        if (count($this->insert) > 1 || !$isGetId) {
             return $this->builder->insert($this->insert);
         }
-        return $this->builder->insertGetId($this->insert);
+        return $this->builder->insertGetId($this->insert[0]);
     }
 
     /**

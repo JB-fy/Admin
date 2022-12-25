@@ -121,8 +121,7 @@ abstract class AbstractService
      */
     public function info(array $where)
     {
-        $dao = $this->getDao();
-        $info = $dao->where($where)->getInfo();
+        $info = $this->getDao()->where($where)->getInfo();
         if (empty($info)) {
             throwFailJson('999300');
         }
@@ -137,11 +136,10 @@ abstract class AbstractService
      */
     public function create(array $data)
     {
-        $dao = $this->getDao();
-        $id = $dao->insert($data)->saveInsert();
+        $id = $this->getDao()->insert($data)->saveInsert();
         /* //重复索引错误已在\App\Exception\Handler\AppExceptionHandler处理
         try {
-            $id = $dao->insert($data)->saveInsert();
+            $id = $this->getDao()->insert($data)->saveInsert();
         } catch (\Hyperf\Database\Exception\QueryException $th) {
             if (preg_match('/^SQLSTATE.*1062 Duplicate.*\.([^\']*)\'/', $th->getMessage(), $matches) === 1) {
                 $nameKey = 'validation.attributes.' . $matches[1];
@@ -168,8 +166,7 @@ abstract class AbstractService
      */
     public function update(array $data, array $where)
     {
-        $dao = $this->getDao();
-        $result = $dao->where($where)->update($data)->saveUpdate();
+        $result = $this->getDao()->where($where)->update($data)->saveUpdate();
         if (empty($result)) {
             throwFailJson('999999');
         }
@@ -184,8 +181,7 @@ abstract class AbstractService
      */
     public function delete(array $where)
     {
-        $dao = $this->getDao();
-        $result = $dao->where($where)->delete();
+        $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
             throwFailJson('999999');
         }

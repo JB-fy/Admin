@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Auth;
 
 use App\Module\Db\Dao\AbstractDao;
+use Hyperf\DbConnection\Db;
 
 /**
  * @property int $menuId 权限菜单ID
@@ -21,6 +22,26 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Menu extends AbstractDao
 {
+    /**
+     * 解析update（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return boolean
+     */
+    protected function updateOfAlone(string $key, $value = null): bool
+    {
+        switch ($key) {
+            case 'pidPathOfChild':
+                $this->update[$this->getTable() . '.pidPath'] = Db::raw('REPLACE(' . $this->getTable() . '.pidPath, \'' . $value[0] . '\', \'' . $value[1] . '\')');
+                return true;
+            case 'levelOfChild':
+                $this->update[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level - ' . $value);
+                return true;
+        }
+        return false;
+    }
+
     /**
      * 解析field（独有的）
      *
