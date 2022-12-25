@@ -39,7 +39,7 @@ export default {
         updateTime: '更新时间',
         action: '操作',
 
-        no: '无',
+        without: '无',
         allTopLevel: '全部顶级',
 
         id: 'ID',
