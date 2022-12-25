@@ -2286,16 +2286,16 @@
         },
         {
             "name": "hyperf/validation",
-            "version": "v3.0.0-rc.13",
+            "version": "v3.0.0-rc.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/validation.git",
-                "reference": "f9618c4e35433132f0c02ce6666c7189c8858b4f"
+                "reference": "082ad0f0b2fc55d909a88e50cde9e56f0424e2ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/validation/zipball/f9618c4e35433132f0c02ce6666c7189c8858b4f",
-                "reference": "f9618c4e35433132f0c02ce6666c7189c8858b4f",
+                "url": "https://api.github.com/repos/hyperf/validation/zipball/082ad0f0b2fc55d909a88e50cde9e56f0424e2ce",
+                "reference": "082ad0f0b2fc55d909a88e50cde9e56f0424e2ce",
                 "shasum": ""
             },
             "require": {
@@ -2339,9 +2339,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/validation/issues",
-                "source": "https://github.com/hyperf/validation/tree/v3.0.0-rc.13"
+                "source": "https://github.com/hyperf/validation/tree/v3.0.0-rc.21"
             },
-            "time": "2022-11-01T02:50:54+00:00"
+            "time": "2022-12-22T08:23:24+00:00"
         },
         {
             "name": "laminas/laminas-mime",
