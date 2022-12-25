@@ -62,7 +62,6 @@ const cascader = reactive({
             return props.modelValue
         },
         set: (val) => {
-            console.log(val)
             emits('update:modelValue', val)
         }
     }),

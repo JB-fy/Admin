@@ -101,11 +101,13 @@ const saveDrawer = reactive({
                         <MySelectScroll v-model="saveCommon.data.sceneId"
                             :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.rel.pid')" prop="pid">
+                    <ElFormItem v-if="saveCommon.data.sceneId" :label="t('common.name.rel.pid')" prop="pid">
                         <MyCascader v-model="saveCommon.data.pid"
                             :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
+                        <ElAlert :title="t('view.auth.menu.tip.extraData')" type="info" :show-icon="true"
+                            :closable="false" />
                         <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.sort')" prop="sort">
