@@ -38,6 +38,7 @@ export default {
         createTime: '创建时间',
         updateTime: '更新时间',
         action: '操作',
+        allTopLevel: '全部顶级',
 
         id: 'ID',
         level: '层级',
@@ -49,12 +50,10 @@ export default {
         account: '账号',
         password: '密码',
 
-        allTopLevel: '全部顶级',
         rel: {
-            pid: '上级',
-            sceneId: '场景',
+            pid: '父级',
+            sceneId: '所属场景',
         },
-
         auth: {
             scene: {
                 sceneName: '场景名称',
@@ -63,7 +62,7 @@ export default {
             },
             menu: {
                 menuName: '菜单名称',
-                pidPath: '上级路径'
+                pidPath: '父级路径'
             }
         }
     },

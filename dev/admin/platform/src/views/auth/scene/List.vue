@@ -47,14 +47,14 @@ const table = reactive({
         title: t('common.name.auth.scene.sceneName'),
         key: 'sceneName',
         align: 'center',
-        width: 120,
+        width: 150,
     },
     {
         dataKey: 'sceneCode',
         title: t('common.name.auth.scene.sceneCode'),
         key: 'sceneCode',
         align: 'center',
-        width: 120,
+        width: 150,
     },
     {
         dataKey: 'sceneConfig',
@@ -69,7 +69,7 @@ const table = reactive({
         title: t('common.name.isStop'),
         key: 'isStop',
         align: 'center',
-        width: 120,
+        width: 100,
         cellRenderer: (props: any): any => {
             return [
                 h(ElSwitch as any, {

@@ -5,7 +5,7 @@ export const useSettingStore = defineStore('setting', {
     return {
       leftMenuFold: false,  //左侧菜单折叠状态
       paginationSize: 20, //分页组件默认每页条数
-      scrollSize: 10, //滚动加载等组件默认每页条数
+      scrollSize: 20, //滚动加载等组件默认每页条数
       saveDrawer: { //保存组件抽屉的宽度
         size: '50%'
       },

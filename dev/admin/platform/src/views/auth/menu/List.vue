@@ -49,28 +49,28 @@ const table = reactive({
         title: t('common.name.auth.menu.menuName'),
         key: 'menuName',
         align: 'center',
-        width: 120,
+        width: 150,
     },
     {
         dataKey: 'sceneName',
         title: t('common.name.rel.sceneId'),
         key: 'sceneId',
         align: 'center',
-        width: 120,
+        width: 150,
     },
     {
         dataKey: 'pMenuName',
         title: t('common.name.rel.pid'),
         key: 'pid',
         align: 'center',
-        width: 120,
+        width: 150,
     },
     {
         dataKey: 'level',
         title: t('common.name.level'),
         key: 'level',
         align: 'center',
-        width: 120,
+        width: 100,
         sortable: true,
     },
     {
@@ -94,7 +94,7 @@ const table = reactive({
         title: t('common.name.sort'),
         key: 'sort',
         align: 'center',
-        width: 120,
+        width: 100,
         sortable: true,
         cellRenderer: (props: any): any => {
             if (props.rowData.editSort) {
@@ -158,7 +158,7 @@ const table = reactive({
         title: t('common.name.isStop'),
         key: 'isStop',
         align: 'center',
-        width: 120,
+        width: 100,
         cellRenderer: (props: any): any => {
             return [
                 h(ElSwitch as any, {
