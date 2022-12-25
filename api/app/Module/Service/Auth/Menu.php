@@ -75,9 +75,8 @@ class Menu extends AbstractService
         if (empty($result)) {
             throwFailJson('999999');
         }
-        //修改过父级id时,更新所有子孙级的pidPath和level
+        //修改pid时，更新所有子孙级的pidPath和level
         if (isset($data['pid'])) {
-            //Db::update('update `' . $this->dao->entity->getTable() . '` SET pidPath = REPLACE(pidPath, \'' . $oldInfo->pidPath . '\', \'' . $data['pidPath'] . '\'),level = (level - ' . $oldInfo->level - $data['level'] . ') WHERE pidPath like \'' . $oldInfo->pidPath . '%\'');
             $this->getDao()->where([['pidPath', 'like', $oldInfo->pidPath . '%']])
                 ->update([
                     'pidPathOfChild' => [$oldInfo->pidPath, $data['pidPath']],
