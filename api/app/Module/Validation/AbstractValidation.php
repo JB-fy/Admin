@@ -13,14 +13,37 @@ abstract class AbstractValidation
     #[Inject]
     protected ValidatorFactoryInterface $validationFactory;
 
+    protected array $ruleOfCommon = [
+        'id' => 'sometimes|required|integer|min:1',
+        'idArr' => 'sometimes|required|array|min:1',
+        'idArr.*' => 'sometimes|required|integer|min:1',
+        'excId' => 'sometimes|required|integer|min:1',
+        'excIdArr' => 'sometimes|required|array|min:1',
+        'excIdArr.*' => 'sometimes|required|integer|min:1',
+    ];
     protected array $rule = [];
 
-    //建议写在app\Language内的语言文件中。特殊情况写这里
-    protected array $message = [];
-
-    //建议写在app\Language内的语言文件中。特殊情况写这里
-    protected array $customAttribute = [];
-
+    protected array $sceneOfCommon = [
+        'list' => [],   //可为空，则默认全部规则
+        'info' => [
+            'only' => [
+                'id'
+            ],
+            'remove' => [
+                'id' => ['sometimes']
+            ]
+        ],
+        'delete' => [
+            'only' => [
+                'idArr',
+                'idArr.*'
+            ],
+            'remove' => [
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes']
+            ]
+        ],
+    ];
     protected array $scene = [];
     /* protected $scene = [
         'sceneName' => [
@@ -44,6 +67,11 @@ abstract class AbstractValidation
             ],
         ]
     ]; */
+
+    //建议写在app\Language内的语言文件中。特殊情况写这里
+    protected array $message = [];
+    //建议写在app\Language内的语言文件中。特殊情况写这里
+    protected array $customAttribute = [];
 
     /**
      * 创建验证器
@@ -73,14 +101,15 @@ abstract class AbstractValidation
      */
     final protected function makeRule(string $sceneName): array
     {
-        if (empty($sceneName) || !isset($this->scene[$sceneName])) {
-            return $this->rule;
+        $rule = array_merge($this->ruleOfCommon, $this->rule);
+        $scene = array_merge($this->sceneOfCommon, $this->scene);
+        if (empty($sceneName) || !isset($scene[$sceneName])) {
+            return $rule;
         }
         //处理顺序 only、remove、append
-        $rule = $this->rule;
-        if (isset($this->scene[$sceneName]['only'])) {
+        if (isset($scene[$sceneName]['only'])) {
             foreach ($rule as $k => $v) {
-                if (in_array($k, $this->scene[$sceneName]['only'])) {
+                if (in_array($k, $scene[$sceneName]['only'])) {
                     continue;
                 }
                 unset($rule[$k]);
@@ -88,22 +117,22 @@ abstract class AbstractValidation
         }
         foreach ($rule as $k => $v) {
             $tmpRule = explode('|', $v);
-            if (isset($this->scene[$sceneName]['remove'][$k])) {
+            if (isset($scene[$sceneName]['remove'][$k])) {
                 foreach ($tmpRule as $k1 => $v1) {
                     list($tmpRuleName) = explode(':', $v1);
-                    if (in_array($tmpRuleName, $this->scene[$sceneName]['remove'][$k])) {
+                    if (in_array($tmpRuleName, $scene[$sceneName]['remove'][$k])) {
                         unset($tmpRule[$k1]);
                     }
                 }
             }
-            if (isset($this->scene[$sceneName]['append'][$k])) {
-                $tmpRule = array_unique(array_merge($tmpRule, $this->scene[$sceneName]['append'][$k]));
+            if (isset($scene[$sceneName]['append'][$k])) {
+                $tmpRule = array_unique(array_merge($tmpRule, $scene[$sceneName]['append'][$k]));
             }
             $rule[$k] = implode('|', $tmpRule);
         }
         //新增字段并添加规则（是否支持自己看）
-        if (isset($this->scene[$sceneName]['append'])) {
-            foreach ($this->scene[$sceneName]['append'] as $k => $v) {
+        if (isset($scene[$sceneName]['append'])) {
+            foreach ($scene[$sceneName]['append'] as $k => $v) {
                 if (isset($rule[$k])) {
                     continue;
                 }

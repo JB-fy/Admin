@@ -19,6 +19,7 @@ class Language extends AbstractAspect
     public array $classes = [
         \App\Controller\Index::class,
         \App\Controller\Login::class,
+        \App\Controller\Auth\Action::class,
         \App\Controller\Auth\Menu::class,
         \App\Controller\Auth\Scene::class,
     ];

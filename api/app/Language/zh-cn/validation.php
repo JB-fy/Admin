@@ -183,6 +183,7 @@ return [
         'excIdArr' => '排除ID列表',
         'excIdArr.*' => '排除ID列表内的值',
 
+        'actionId' => '操作ID',
         'menuId' => '菜单ID',
         'sceneId' => '场景ID',
 

@@ -16,25 +16,9 @@ class Menu extends AbstractValidation
         'extraData' => 'json',    //可以为空值。空值需要在Dao类中处理
         'sort' => 'sometimes|required|integer|min:0|max:100',
         'isStop' => 'sometimes|required|integer|in:0,1',
-
-        'id' => 'sometimes|required|integer|min:1',
-        'idArr' => 'sometimes|required|array|min:1',
-        'idArr.*' => 'sometimes|required|integer|min:1',
-        'excId' => 'sometimes|required|integer|min:1',
-        'excIdArr' => 'sometimes|required|array|min:1',
-        'excIdArr.*' => 'sometimes|required|integer|min:1',
     ];
 
     protected array $scene = [
-        'list' => [],   //可为空，则默认全部规则
-        'info' => [
-            'only' => [
-                'id'
-            ],
-            'remove' => [
-                'id' => ['sometimes']
-            ]
-        ],
         'create' => [
             'only' => [
                 'sceneId',
@@ -61,16 +45,6 @@ class Menu extends AbstractValidation
             ],
             'remove' => [
                 'id' => ['sometimes']
-            ]
-        ],
-        'delete' => [
-            'only' => [
-                'idArr',
-                'idArr.*'
-            ],
-            'remove' => [
-                'idArr' => ['sometimes'],
-                'idArr.*' => ['sometimes']
             ]
         ],
     ];

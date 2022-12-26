@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Validation\Auth;
+
+use App\Module\Validation\AbstractValidation;
+
+class MenActionu extends AbstractValidation
+{
+    protected array $rule = [
+        'actionId' => 'sometimes|required|integer|min:1',
+        'actionName' => 'sometimes|required|alpha_dash|between:1,30',
+        'actionCode' => 'sometimes|required|alpha_dash|between:1,30',
+        'remark' => 'string|between:0,120',
+        'isStop' => 'sometimes|required|integer|in:0,1',
+    ];
+
+    protected array $scene = [
+        'create' => [
+            'only' => [
+                'actionName',
+                'actionCode',
+                'remark',
+                'isStop',
+            ],
+            'remove' => [
+                'actionName' => ['sometimes'],
+                'actionCode' => ['sometimes'],
+            ]
+        ],
+        'update' => [
+            'only' => [
+                'id',
+                'actionName',
+                'actionCode',
+                'remark',
+                'isStop',
+            ],
+            'remove' => [
+                'id' => ['sometimes']
+            ]
+        ],
+    ];
+}

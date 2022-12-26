@@ -14,25 +14,9 @@ class Scene extends AbstractValidation
         'sceneCode' => 'sometimes|required|alpha_dash|between:1,30',
         'sceneConfig' => 'json',    //可以为空值。空值需要在Dao类中处理
         'isStop' => 'sometimes|required|in:0,1',
-
-        'id' => 'sometimes|required|integer|min:1',
-        'idArr' => 'sometimes|required|array|min:1',
-        'idArr.*' => 'sometimes|required|integer|min:1',
-        'excId' => 'sometimes|required|integer|min:1',
-        'excIdArr' => 'sometimes|required|array|min:1',
-        'excIdArr.*' => 'sometimes|required|integer|min:1',
     ];
 
     protected array $scene = [
-        'list' => [],   //可为空，则默认全部规则
-        'info' => [
-            'only' => [
-                'id'
-            ],
-            'remove' => [
-                'id' => ['sometimes']
-            ]
-        ],
         'create' => [
             'only' => [
                 'sceneName',
@@ -55,16 +39,6 @@ class Scene extends AbstractValidation
             ],
             'remove' => [
                 'id' => ['sometimes']
-            ]
-        ],
-        'delete' => [
-            'only' => [
-                'idArr',
-                'idArr.*'
-            ],
-            'remove' => [
-                'idArr' => ['sometimes'],
-                'idArr.*' => ['sometimes']
             ]
         ],
     ];

@@ -17,6 +17,7 @@ class SceneOfPlatformAdmin extends AbstractAspect
     public array $classes = [
         \App\Controller\Login::class . '::info',
         \App\Controller\Login::class . '::menuTree',
+        \App\Controller\Auth\Action::class,
         \App\Controller\Auth\Menu::class,
         \App\Controller\Auth\Scene::class,
     ];

@@ -24,6 +24,14 @@ Router::addGroup('/login', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/menuTree', [\App\Controller\Login::class, 'menuTree']);
 });
 
+Router::addGroup('/auth/action', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Auth\Action::class, 'list']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Action::class, 'info']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Action::class, 'create']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Action::class, 'update']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Action::class, 'delete']);
+});
+
 Router::addGroup('/auth/menu', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Auth\Menu::class, 'list']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Menu::class, 'info']);
