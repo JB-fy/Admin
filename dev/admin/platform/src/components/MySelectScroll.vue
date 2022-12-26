@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const { t } = useI18n()
-
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array],
@@ -70,9 +68,6 @@ const select = reactive({
             emits('change')
             emits('update:modelValue', val)
         }
-    }),
-    placeholder: computed(() => {
-        return props.placeholder ?? t('common.tip.pleaseSelect')
     }),
     options: [...props.defaultOptions] as { value: string | number, label: string }[],
     initOptions: () => {
@@ -236,11 +231,11 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 <template>
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
     <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value"
-        :placeholder="select.placeholder" :options="select.options" :clearable="clearable" :filterable="filterable"
+        :placeholder="placeholder" :options="select.options" :clearable="clearable" :filterable="filterable"
         @visible-change="select.visibleChange" :remote="remote" :remote-method="select.remoteMethod"
         :loading="select.loading" :disabled="disabled" :multiple="multiple" :multiple-limit="multipleLimit"
         :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
-    <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="select.placeholder"
+    <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
         :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
 

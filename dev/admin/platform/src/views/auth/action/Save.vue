@@ -88,6 +88,9 @@ const saveDrawer = reactive({
                     <ElFormItem :label="t('common.name.rel.sceneIdArr')" prop="sceneIdArr">
                         <MySelectScroll v-model="saveCommon.data.sceneIdArr"
                             :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] }, limit:5 }" :multiple="true" />
+
+                        <MyTransfer v-model="saveCommon.data.sceneIdArr"
+                            :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] }, limit:5 }" :multiple="true" />
                         <ElTransfer v-model="saveCommon.data.sceneIdArr"
                             :filter-placeholder="t('common.name.rel.sceneIdArr')" :filterable="true" />
                     </ElFormItem>

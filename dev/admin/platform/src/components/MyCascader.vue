@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const { t } = useI18n()
-
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array],
@@ -65,9 +63,6 @@ const cascader = reactive({
             emits('change')
             emits('update:modelValue', val)
         }
-    }),
-    placeholder: computed(() => {
-        return props.placeholder ?? t('common.tip.pleaseSelect')
     }),
     options: [...props.defaultOptions] as { value: string | number, label: string }[],
     props: {
@@ -189,13 +184,13 @@ if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValu
 
 <template>
     <ElCascader v-if="cascader.props.lazy" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
-        :placeholder="cascader.placeholder" :clearable="clearable" :props="cascader.props"
+        :placeholder="placeholder" :clearable="clearable" :props="cascader.props"
         @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
-    <ElCascader v-else :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
-        :placeholder="cascader.placeholder" :clearable="clearable" :options="cascader.options" :props="cascader.props"
-        :filterable="filterable" @visible-change="cascader.visibleChange" :disabled="disabled"
-        :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
+    <ElCascader v-else :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value" :placeholder="placeholder"
+        :clearable="clearable" :options="cascader.options" :props="cascader.props" :filterable="filterable"
+        @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
 
     <!-------- 使用示例 开始-------->
     <!-- <MyCascader v-model="saveCommon.data.pid"
