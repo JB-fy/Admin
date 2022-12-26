@@ -69,7 +69,7 @@ class Action extends AbstractController
                 /**--------验证权限 结束--------**/
 
                 $allowField = getDao(AuthAction::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id']);
+                $allowField = array_merge($allowField, ['id', 'sceneIdArr']);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 $this->service->info(['id' => $data['id']], $data['field']);
                 break;

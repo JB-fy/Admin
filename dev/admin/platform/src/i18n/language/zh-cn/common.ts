@@ -56,6 +56,7 @@ export default {
         rel: {
             pid: '父级',
             sceneId: '所属场景',
+            sceneIdArr: '所属场景',
         },
         auth: {
             action: {

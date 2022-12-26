@@ -85,8 +85,15 @@ const saveDrawer = reactive({
                                 :closable="false" />
                         </label>
                     </ElFormItem>
+                    <ElFormItem :label="t('common.name.rel.sceneIdArr')" prop="sceneIdArr">
+                        <MySelectScroll v-model="saveCommon.data.sceneIdArr"
+                            :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] }, limit:5 }" :multiple="true" />
+                        <ElTransfer v-model="saveCommon.data.sceneIdArr"
+                            :filter-placeholder="t('common.name.rel.sceneIdArr')" :filterable="true" />
+                    </ElFormItem>
                     <ElFormItem :label="t('common.name.remark')" prop="remark">
-                        <ElInput v-model="saveCommon.data.remark" type="textarea" :autosize="{ minRows: 3 }" />
+                        <ElInput v-model="saveCommon.data.remark" type="textarea" :autosize="{ minRows: 3 }"
+                            minlength="0" maxlength="120" :show-word-limit="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"

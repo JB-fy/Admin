@@ -95,7 +95,7 @@ class Menu extends AbstractService
      */
     public function delete(array $where)
     {
-        $idArr = $where['id'] ?? $this->getDao()->where($where)->getBuilder()->pluck('menuId');
+        $idArr = $where['id'] ?? $this->getDao()->where($where)->getBuilder()->pluck('menuId')->toArray();
         if ($this->getDao()->where(['pid' => $idArr])->getBuilder()->exists()) {
             throwFailJson('999306');
         }

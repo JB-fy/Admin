@@ -58,7 +58,7 @@ class Menu extends AbstractDao
                 $this->orderOfAlone('menuTree');    //排序方式
                 return true;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
-                $this->afterField[] = 'showMenu';   //需做后续处理
+                $this->afterField[] = 'showMenu';
 
                 $this->field['select'][] = $this->getTable() . '.' . 'menuName';
                 //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.title")) AS title'); //不知道怎么直接转成对象返回
