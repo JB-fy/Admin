@@ -178,19 +178,7 @@ const handleBatchDelete = () => {
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth/scene/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
-        switch (type) {
-            case 'edit':
-                saveCommon.data.id = id  //后台接口以id字段判断是创建还是更新
-                saveCommon.title = t('common.edit')
-                break;
-            case 'copy':
-                saveCommon.title = t('common.copy')
-                break;
-        }
-        //可不删除。后台接口验证数据时会做数据过滤
-        delete saveCommon.data.sceneId
-        delete saveCommon.data.updateTime
-        delete saveCommon.data.createTime
+        saveCommon.title = t('common.' + type)
         saveCommon.visible = true
     }).catch(() => { })
 }
@@ -241,11 +229,7 @@ const getList = async (resetPage: boolean = false) => {
     table.loading = true
     try {
         const res = await request('auth/scene/list', param)
-        table.data = res.data.list.map((item: any) => {
-            item.checked = false    //可不设置，即是false
-            item.id = item.sceneId  //统一写成id。代码复用时，不用到处改sceneId
-            return item
-        })
+        table.data = res.data.list
         pagination.total = res.data.count
     } catch (error) { }
     table.loading = false

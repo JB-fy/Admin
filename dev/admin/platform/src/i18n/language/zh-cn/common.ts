@@ -44,6 +44,7 @@ export default {
 
         id: 'ID',
         level: '层级',
+        remark: '备注',
         sort: '排序',
         isStop: '停用',
 
@@ -57,15 +58,19 @@ export default {
             sceneId: '所属场景',
         },
         auth: {
+            action: {
+                actionName: '操作名称',
+                actionCode: '操作标识',
+            },
+            menu: {
+                menuName: '菜单名称',
+                pidPath: '父级路径'
+            },
             scene: {
                 sceneName: '场景名称',
                 sceneCode: '场景标识',
                 sceneConfig: '场景配置',
             },
-            menu: {
-                menuName: '菜单名称',
-                pidPath: '父级路径'
-            }
         }
     },
     status: {

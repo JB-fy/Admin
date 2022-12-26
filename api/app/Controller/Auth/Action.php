@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Auth;
 
 use App\Controller\AbstractController;
+use App\Module\Db\Dao\Auth\Action as AuthAction;
 
 class Action extends AbstractController
 {
@@ -38,10 +39,9 @@ class Action extends AbstractController
                     $allowField = ['menuId', 'menuName', 'menu'];
                 } */
 
-                /* $allowField = getDao(AuthAction::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['sceneName', 'pActionName']);
-                $data['field'] = array_intersect($data['field'], $allowField); //过滤不可查看字段
-                empty($data['field']) ? $data['field'] = $allowField : null; */
+                $allowField = getDao(AuthAction::class)->getAllColumn();
+                $allowField = array_merge(getDao(AuthAction::class)->getAllColumn(), ['id']);
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 /**--------参数过滤 结束--------**/
 
                 $this->service->listWithCount(...$data);
@@ -68,7 +68,10 @@ class Action extends AbstractController
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
-                $this->service->info(['id' => $data['id']]);
+                $allowField = getDao(AuthAction::class)->getAllColumn();
+                $allowField = array_merge($allowField, ['id']);
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
+                $this->service->info(['id' => $data['id']], $data['field']);
                 break;
             default:
                 throwFailJson('001001');

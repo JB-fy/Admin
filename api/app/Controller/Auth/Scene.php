@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Auth;
 
 use App\Controller\AbstractController;
+use App\Module\Db\Dao\Auth\Scene as AuthScene;
 
 class Scene extends AbstractController
 {
@@ -36,10 +37,11 @@ class Scene extends AbstractController
                 } else {
                     //无查看权限时只能查看一些基本的字段
                     $allowField = ['sceneId', 'sceneName', 'scene'];
-                }
+                } */
 
-                $data['field'] = array_intersect($data['field'], $allowField); //过滤不可查看字段
-                empty($data['field']) ? $data['field'] = $allowField : null; */
+                $allowField = getDao(AuthScene::class)->getAllColumn();
+                $allowField = array_merge($allowField, ['id']);
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 /**--------参数过滤 结束--------**/
 
                 $this->service->listWithCount(...$data);
@@ -66,7 +68,10 @@ class Scene extends AbstractController
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
-                $this->service->info(['id' => $data['id']]);
+                $allowField = getDao(AuthScene::class)->getAllColumn();
+                $allowField = array_merge($allowField, ['id']);
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
+                $this->service->info(['id' => $data['id']], $data['field']);
                 break;
             default:
                 throwFailJson('001001');

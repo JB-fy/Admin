@@ -31,6 +31,13 @@ abstract class AbstractValidation
             ],
             'remove' => [
                 'id' => ['sometimes']
+            ],
+            'append' => [
+                'field' => [
+                    'sometimes',
+                    'required_if_null',
+                    'array',
+                ]
             ]
         ],
         'delete' => [

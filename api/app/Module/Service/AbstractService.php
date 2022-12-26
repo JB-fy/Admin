@@ -117,11 +117,12 @@ abstract class AbstractService
      * 详情（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $where
+     * @param array $field
      * @return void
      */
-    public function info(array $where)
+    public function info(array $where, array $field = [])
     {
-        $info = $this->getDao()->where($where)->getInfo();
+        $info = $this->getDao()->field($field)->where($where)->getInfo();
         if (empty($info)) {
             throwFailJson('999300');
         }

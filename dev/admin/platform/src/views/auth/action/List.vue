@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ElInputNumber } from 'element-plus';
-
 const { t } = useI18n()
 
 const table = reactive({
@@ -45,113 +43,26 @@ const table = reactive({
         sortable: true,
     },
     {
-        dataKey: 'menuName',
-        title: t('common.name.auth.menu.menuName'),
-        key: 'menuName',
+        dataKey: 'actionName',
+        title: t('common.name.auth.action.actionName'),
+        key: 'actionName',
         align: 'center',
         width: 150,
     },
     {
-        dataKey: 'sceneName',
-        title: t('common.name.rel.sceneId'),
-        key: 'sceneId',
+        dataKey: 'actionCode',
+        title: t('common.name.auth.action.actionCode'),
+        key: 'actionCode',
         align: 'center',
         width: 150,
     },
     {
-        dataKey: 'pMenuName',
-        title: t('common.name.rel.pid'),
-        key: 'pid',
-        align: 'center',
-        width: 150,
-    },
-    {
-        dataKey: 'level',
-        title: t('common.name.level'),
-        key: 'level',
-        align: 'center',
-        width: 100,
-        sortable: true,
-    },
-    {
-        dataKey: 'pidPath',
-        title: t('common.name.auth.menu.pidPath'),
-        key: 'pidPath',
-        width: 150,
-        align: 'center',
-        hidden: true
-    },
-    {
-        dataKey: 'extraData',
-        title: t('common.name.extraData'),
-        key: 'extraData',
+        dataKey: 'remark',
+        title: t('common.name.remark'),
+        key: 'remark',
         width: 200,
         align: 'center',
         hidden: true
-    },
-    {
-        dataKey: 'sort',
-        title: t('common.name.sort'),
-        key: 'sort',
-        align: 'center',
-        width: 100,
-        sortable: true,
-        cellRenderer: (props: any): any => {
-            if (props.rowData.editSort) {
-                let currentRef: any
-                let currentVal = props.rowData.sort
-                return [
-                    h(ElInputNumber as any, {
-                        'ref': (el: any) => { currentRef = el; el?.focus() },
-                        'model-value': currentVal,
-                        'placeholder': t('common.tip.sort'),
-                        'precision': 0,
-                        'min': 0,
-                        'max': 100,
-                        'step': 1,
-                        'step-strictly': true,
-                        'controls': false,  //控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
-                        'controls-position': 'right',
-                        onChange: (val: number) => {
-                            currentVal = val
-                        },
-                        onBlur: () => {
-                            props.rowData.editSort = false
-                            if ((currentVal || currentVal === 0) && currentVal != props.rowData.sort) {
-                                handleUpdate({
-                                    id: props.rowData.id,
-                                    sort: currentVal
-                                }).then((res) => {
-                                    props.rowData.sort = currentVal
-                                }).catch((error) => {
-                                })
-                            }
-                        },
-                        onKeydown: (event: any) => {
-                            switch (event.keyCode) {
-                                //case 27:    //Esc键：Escape
-                                //case 32:    //空格键：" "
-                                case 13:    //Enter键：Enter
-                                    //props.rowData.editSort = false  //也会触发onBlur事件
-                                    currentRef?.blur()
-                                    break;
-                            }
-                        },
-                    })
-                ]
-            }
-            return [
-                h('div', {
-                    class: 'inline-edit',
-                    //style: 'color: var(--el-color-primary); cursor:pointer; border: 1px transparent dotted; padding: 5px; border-color: var(--el-color-primary);',
-                    onClick: () => {
-                        props.rowData.editSort = true
-                    }
-                }, {
-                    default: () => props.rowData.sort
-                })
-            ]
-        }
     },
     {
         dataKey: 'isStop',
@@ -265,7 +176,7 @@ const handleBatchDelete = () => {
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request('auth/menu/info', { id: id }).then((res) => {
+    request('auth/action/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
         saveCommon.title = t('common.' + type)
         saveCommon.visible = true
@@ -279,14 +190,14 @@ const handleDelete = (idArr: number[] | string[]) => {
         center: true,
         showClose: false,
     }).then(() => {
-        request('auth/menu/delete', { idArr: idArr }, true).then((res) => {
+        request('auth/action/delete', { idArr: idArr }, true).then((res) => {
             getList()
         }).catch(() => { })
     }).catch(() => { })
 }
 //更新
 const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
-    await request('auth/menu/save', param, true)
+    await request('auth/action/save', param, true)
 }
 
 //分页
@@ -317,7 +228,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request('auth/menu/list', param)
+        const res = await request('auth/action/list', param)
         table.data = res.data.list
         pagination.total = res.data.count
     } catch (error) { }
@@ -436,15 +347,4 @@ defineExpose({
     float: right;
     margin-right: 5px;
 } */
-
-:deep(.inline-edit) {
-    color: var(--el-color-primary);
-    cursor: pointer;
-    border: 1px transparent dotted;
-    padding: 5px;
-}
-
-:deep(.inline-edit:hover) {
-    border-color: var(--el-color-primary);
-}
 </style>

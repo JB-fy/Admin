@@ -40,9 +40,8 @@ class Menu extends AbstractController
                 } */
 
                 $allowField = getDao(AuthMenu::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['sceneName', 'pMenuName']);
-                $data['field'] = array_intersect($data['field'], $allowField); //过滤不可查看字段
-                empty($data['field']) ? $data['field'] = $allowField : null;
+                $allowField = array_merge($allowField, ['id', 'sceneName', 'pMenuName']);
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 /**--------参数过滤 结束--------**/
 
                 $this->service->listWithCount(...$data);
@@ -69,7 +68,10 @@ class Menu extends AbstractController
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
-                $this->service->info(['id' => $data['id']]);
+                $allowField = getDao(AuthMenu::class)->getAllColumn();
+                $allowField = array_merge($allowField, ['id']);
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
+                $this->service->info(['id' => $data['id']], $data['field']);
                 break;
             default:
                 throwFailJson('001001');
