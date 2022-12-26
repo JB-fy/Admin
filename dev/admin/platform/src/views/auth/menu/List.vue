@@ -267,7 +267,15 @@ const handleBatchDelete = () => {
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request('auth/menu/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
-        saveCommon.title = t('common.' + type)
+        switch (type) {
+            case 'edit':
+                saveCommon.title = t('common.edit')
+                break;
+            case 'copy':
+                delete saveCommon.data.id
+                saveCommon.title = t('common.copy')
+                break;
+        }
         saveCommon.visible = true
     }).catch(() => { })
 }

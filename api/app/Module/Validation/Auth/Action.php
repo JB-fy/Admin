@@ -6,7 +6,7 @@ namespace App\Module\Validation\Auth;
 
 use App\Module\Validation\AbstractValidation;
 
-class MenActionu extends AbstractValidation
+class Action extends AbstractValidation
 {
     protected array $rule = [
         'actionId' => 'sometimes|required|integer|min:1',
@@ -29,6 +29,7 @@ class MenActionu extends AbstractValidation
             'remove' => [
                 'actionName' => ['sometimes'],
                 'actionCode' => ['sometimes'],
+                'sceneIdArr' => ['sometimes'],
             ]
         ],
         'update' => [

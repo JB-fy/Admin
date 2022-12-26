@@ -885,6 +885,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final protected function afterField(object &$info)
     {
+        //isset($info->{$this->getKey()}) ? $info->id = $info->{$this->getKey()} : null;  //设置id字段
         foreach ($this->afterField as $field) {
             if (!$this->afterFieldOfAlone($field, $info)) {
                 $this->afterFieldOfCommon($field, $info);

@@ -8,31 +8,16 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     rules: {
-        sceneName: [
+        actionName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
-        sceneCode: [
+        actionCode: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
-        sceneConfig: [
-            {
-                validator: (rule: any, value: any, callback: any) => {
-                    try {
-                        if (value === '' || value === null || value === undefined) {
-                            callback()
-                        }
-                        JSON.parse(value)
-                        callback()
-                    } catch (e) {
-                        callback(new Error())
-                    }
-                },
-                trigger: 'blur',
-                message: t('validation.json')
-            },
+        remark: [
+            { type: 'string', min: 0, max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }
         ],
         isStop: [
-            /* { type: 'enum', enum: tm('common.status.whether').map((item) => item.value), trigger: 'change', message: t('validation.select') } */
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
         ]
     } as any,
@@ -46,7 +31,7 @@ const saveForm = reactive({
                 ...removeEmptyOfObj(saveCommon.data, false)
             }
             try {
-                await request('auth/scene/save', param, true)
+                await request('auth/action/save', param, true)
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
             } catch (error) { }
@@ -86,24 +71,22 @@ const saveDrawer = reactive({
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
-                    <ElFormItem :label="t('common.name.auth.scene.sceneName')" prop="sceneName">
-                        <ElInput v-model="saveCommon.data.sceneName"
-                            :placeholder="t('common.name.auth.scene.sceneName')" minlength="1" maxlength="30"
+                    <ElFormItem :label="t('common.name.auth.action.actionName')" prop="actionName">
+                        <ElInput v-model="saveCommon.data.actionName"
+                            :placeholder="t('common.name.auth.action.actionName')" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.auth.scene.sceneCode')" prop="sceneCode">
-                        <ElInput v-model="saveCommon.data.sceneCode"
-                            :placeholder="t('common.name.auth.scene.sceneCode')" minlength="1" maxlength="30"
+                    <ElFormItem :label="t('common.name.auth.action.actionCode')" prop="actionCode">
+                        <ElInput v-model="saveCommon.data.actionCode"
+                            :placeholder="t('common.name.auth.action.actionCode')" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                         <label>
                             <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true"
                                 :closable="false" />
                         </label>
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.auth.scene.sceneConfig')" prop="sceneConfig">
-                        <ElAlert :title="t('view.auth.scene.tip.sceneConfig')" type="info" :show-icon="true"
-                            :closable="false" />
-                        <ElInput v-model="saveCommon.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
+                    <ElFormItem :label="t('common.name.remark')" prop="remark">
+                        <ElInput v-model="saveCommon.data.remark" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"

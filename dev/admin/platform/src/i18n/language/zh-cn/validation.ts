@@ -7,6 +7,10 @@ export default {
         string: '必须大于等于 {min} 个字符',
         number: '必须大于等于 {min}'
     },
+    max: {
+        string: '必须小于等于 {max} 个字符',
+        number: '必须小于等于 {max}'
+    },
     json: '必须是有效的 JSON 格式',
     select: '请选择',
 }
