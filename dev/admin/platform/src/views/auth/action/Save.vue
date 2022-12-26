@@ -91,8 +91,6 @@ const saveDrawer = reactive({
 
                         <MyTransfer v-model="saveCommon.data.sceneIdArr"
                             :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] }, limit:5 }" :multiple="true" />
-                        <ElTransfer v-model="saveCommon.data.sceneIdArr"
-                            :filter-placeholder="t('common.name.rel.sceneIdArr')" :filterable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.remark')" prop="remark">
                         <ElInput v-model="saveCommon.data.remark" type="textarea" :autosize="{ minRows: 3 }"
