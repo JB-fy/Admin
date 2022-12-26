@@ -189,9 +189,16 @@ return [
 
         'pid' => '父ID',
 
+        'sceneIdArr' => '场景列表',
+        'sceneIdArr.*' => '场景列表内所有值',
+
         'extraData' => '额外数据',
+        'remark' => '备注',
         'sort' => '排序值',
         'isStop' => '停用',
+
+        'actionName' => '操作名称',
+        'actionCode' => '操作标识',
 
         'menuName' => '菜单名称',
 
