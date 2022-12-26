@@ -4,7 +4,7 @@ const props = defineProps({
         type: [String, Number, Array],
         //required: true,
     },
-    defaultOptions: {   //选项初始默认值。格式：[{ value: string | number, label: string },...]
+    defaultOptions: {   //选项初始默认值。格式：[{ [cascader.props.value]: string | number, [cascader.props.label]: string },...]
         type: Array,
         default: []
     },
@@ -12,8 +12,8 @@ const props = defineProps({
      * 接口。格式：{ code: string, param: object, dataToOptions: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的dataToOptions属性，使用时请注意。或直接在props.props中设置对应参数
-     *      dataToOptions：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
-     *      pidField：非必须。动态加载时用于获取子级，接口参数where中使用的字段名。
+     *      dataToOptions：非必须。接口返回数据转换方法
+     *      pidField：非必须。动态加载时用于获取子级，接口参数where中使用的字段名
      */
     api: {
         type: Object,
@@ -64,7 +64,7 @@ const cascader = reactive({
             emits('update:modelValue', val)
         }
     }),
-    options: [...props.defaultOptions] as { value: string | number, label: string }[],
+    options: [...props.defaultOptions] as any,
     props: {
         multiple: false,
         checkStrictly: true,
@@ -85,7 +85,7 @@ const cascader = reactive({
             delete cascader.api.param.where[cascader.api.pidField]
         },
         value: props.props.value ?? props.api.param.field[0] ?? 'value',
-        label: props.props.value ?? props.api.param.field[1] ?? 'label',
+        label: props.props.label ?? props.api.param.field[1] ?? 'label',
         children: props.props.children ?? 'children',
         disabled: props.props.disabled ?? 'disabled',
         leaf: props.props.leaf ?? 'leaf',   //动态加载时用于终止继续加载。当checkStrictly为false时，该字段必须有，否则选中后值为null
@@ -98,14 +98,6 @@ const cascader = reactive({
         cascader.options = [...props.defaultOptions] as any
         cascader.api.param.page = 1
     },
-    loading: computed((): boolean => {
-        //ElSelectV2的loading属性建议在远程数据全部加载时使用，其他情况下都为false。
-        //例如：分页加载时使用会导致因出现加载中元素节点而导致滚动条节点丢失再出现。虽然可根据这个重新处理滚动事件，但视觉效果也不好
-        if (cascader.api.param.page == 1 && cascader.api.param.limit == 0) {
-            return cascader.api.loading
-        }
-        return false
-    }),
     api: {
         loading: false,
         param: computed((): { field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {

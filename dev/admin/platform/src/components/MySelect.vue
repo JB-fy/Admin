@@ -69,7 +69,7 @@ const select = reactive({
             emits('update:modelValue', val)
         }
     }),
-    options: [...props.defaultOptions] as { value: string | number, label: string }[],
+    options: [...props.defaultOptions] as any,
     initOptions: () => {
         select.api.param.where[select.api.selectedField] = props.modelValue
         select.api.addOptions()
@@ -207,7 +207,7 @@ const scrollFunc = (event: any) => {
         select.api.addOptions()
     }
 }
-/* //分页加载要使用动态设置select.loading时，使用这个方式设置滚动事件
+/* //分页加载，用到动态设置select.loading时，用这个方式设置滚动事件
 watch(() => select.loading, (newVal: any, oldVal: any) => {
     if (select.loading === false) { */
 watch(() => select.options, (newVal: any, oldVal: any) => {
