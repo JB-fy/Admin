@@ -7,7 +7,7 @@ const props = defineProps({
     }
 })
 const prefix = computed(() => {
-    return props.icon.slice(0, props.icon.indexOf('-'))
+    return props.icon.slice(0, props.icon.indexOf('-')).toLowerCase()
 })
 const iconCode = computed(() => {
     if (prefix.value === 'vant') {
