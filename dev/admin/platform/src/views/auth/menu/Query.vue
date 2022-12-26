@@ -31,7 +31,7 @@ const queryForm = reactive({
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneId">
-            <MySelectScroll v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
+            <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
                 :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
         </ElFormItem>
         <ElFormItem prop="pid">

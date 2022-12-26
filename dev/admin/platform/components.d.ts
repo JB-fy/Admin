@@ -71,6 +71,7 @@ declare module '@vue/runtime-core' {
     ElTransfer: typeof import('element-plus/es')['ElTransfer']
     MyCascader: typeof import('./src/components/MyCascader.vue')['default']
     MyIconDynamic: typeof import('./src/components/MyIconDynamic.vue')['default']
+    MySelect: typeof import('./src/components/MySelect.vue')['default']
     MySelectScroll: typeof import('./src/components/MySelectScroll.vue')['default']
     MyTransfer: typeof import('./src/components/MyTransfer.vue')['default']
     MyTransferScroll: typeof import('./src/components/MyTransferScroll.vue')['default']

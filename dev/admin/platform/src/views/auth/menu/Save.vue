@@ -102,7 +102,7 @@ const saveDrawer = reactive({
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
-                        <MySelectScroll v-model="saveCommon.data.sceneId"
+                        <MySelect v-model="saveCommon.data.sceneId"
                             :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }"
                             @change="() => { saveCommon.data.pid = 0 }" />
                     </ElFormItem>
