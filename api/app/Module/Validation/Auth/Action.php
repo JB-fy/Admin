@@ -23,6 +23,8 @@ class Action extends AbstractValidation
             'only' => [
                 'actionName',
                 'actionCode',
+                'sceneIdArr',
+                'sceneIdArr.*',
                 'remark',
                 'isStop',
             ],
@@ -37,6 +39,8 @@ class Action extends AbstractValidation
                 'id',
                 'actionName',
                 'actionCode',
+                'sceneIdArr',
+                'sceneIdArr.*',
                 'remark',
                 'isStop',
             ],

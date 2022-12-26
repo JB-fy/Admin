@@ -22,8 +22,8 @@ class Action extends AbstractService
         if (empty($id)) {
             throwFailJson('999999');
         }
-        if (isset($saveData['sceneIdArr'])) {
-            $this->container->get(AuthAction::class)->saveRelScene($saveData['sceneIdArr'], $id);
+        if (isset($data['sceneIdArr'])) {
+            $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
         }
         throwSuccessJson();
     }
@@ -41,9 +41,9 @@ class Action extends AbstractService
         if (empty($result)) {
             throwFailJson('999999');
         }
-        if (isset($saveData['sceneIdArr'])) {
+        if (isset($data['sceneIdArr'])) {
             $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('actionId');
-            $this->container->get(AuthAction::class)->saveRelScene($saveData['sceneIdArr'], $id);
+            $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
         }
         throwSuccessJson();
     }
