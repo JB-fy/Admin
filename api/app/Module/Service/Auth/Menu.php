@@ -56,7 +56,7 @@ class Menu extends AbstractService
                 unset($data['pid']);
             } else {
                 if ($data['pid'] > 0) {
-                    $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->getInfo();
+                    $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
                     if (empty($pInfo)) {
                         throwFailJson('999303');
                     }
@@ -79,8 +79,8 @@ class Menu extends AbstractService
         if (isset($data['pid'])) {
             $this->getDao()->where([['pidPath', 'like', $oldInfo->pidPath . '%']])
                 ->update([
-                    'pidPathOfChild' => [$oldInfo->pidPath, $data['pidPath']],
-                    'levelOfChild' => $oldInfo->level - $data['level'],
+                    'pidPathOfChild' => [$data['pidPath'], $oldInfo->pidPath],
+                    'levelOfChild' => $data['level'] - $oldInfo->level,
                 ])
                 ->saveUpdate();
         }

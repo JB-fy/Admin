@@ -32,11 +32,11 @@ class Menu extends AbstractDao
     protected function updateOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'pidPathOfChild':
-                $this->update[$this->getTable() . '.pidPath'] = Db::raw('REPLACE(' . $this->getTable() . '.pidPath, \'' . $value[0] . '\', \'' . $value[1] . '\')');
+            case 'pidPathOfChild':  //更新所有子孙级的pidPath。参数：[父级新pidPath，父级旧pidPath]
+                $this->update[$this->getTable() . '.pidPath'] = Db::raw('REPLACE(' . $this->getTable() . '.pidPath, \'' . $value[1] . '\', \'' . $value[0] . '\')');
                 return true;
-            case 'levelOfChild':
-                $this->update[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level - ' . $value);
+            case 'levelOfChild':    //更新所有子孙级的level。参数：父级新level - 父级旧level。即父级新旧level差值
+                $this->update[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level + ' . $value);
                 return true;
         }
         return false;
