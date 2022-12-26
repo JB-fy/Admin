@@ -291,14 +291,19 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             default:
-                list($realKey) = explode('->', $key);   //json情况
+                if (in_array($key, $this->getAllColumn())) {
+                    $this->update[$this->getTable() . '.' . $key] = $value;
+                    return true;
+                }
+                //暂时不考虑其他复杂字段。复杂字段建议直接写入updateOfAlone方法
+                /* list($realKey) = explode('->', $key);   //json情况
                 list($realKey) = explode(' AS ', $realKey); //别名情况
                 list($realKey) = explode(' as ', $realKey); //别名情况
                 $realKey = trim($realKey);  //去除两边空白
                 if (in_array($realKey, $this->getAllColumn())) {
                     $this->update[$this->getTable() . '.' . $key] = $value;
                     return true;
-                }
+                } */
         }
         return false;
     }
