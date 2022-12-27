@@ -64,7 +64,7 @@ class Action extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authActionInfo';
+                /* $authActionCode = 'authActionLook';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -139,7 +139,7 @@ class Action extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authActionInfo';
+                /* $authActionCode = 'authActionDelete';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 

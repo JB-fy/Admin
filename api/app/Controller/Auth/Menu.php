@@ -64,7 +64,7 @@ class Menu extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authMenuInfo';
+                /* $authActionCode = 'authMenuLook';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -139,7 +139,7 @@ class Menu extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authMenuInfo';
+                /* $authActionCode = 'authMenuDelete';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 

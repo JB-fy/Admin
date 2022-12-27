@@ -49,18 +49,18 @@ class Menu extends AbstractService
     {
         if (isset($data['pid'])) {
             $oldInfo = $this->getDao()->where($where)->getInfo();
-            if ($data['pid'] == $oldInfo->menuId) {
+            if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
                 throwFailJson('999304');
             }
             if ($data['pid'] == $oldInfo->pid) {
-                unset($data['pid']);
+                unset($data['pid']);    //未修改则删除，更新后就不用处理$data['pid']
             } else {
                 if ($data['pid'] > 0) {
                     $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
                     if (empty($pInfo)) {
                         throwFailJson('999303');
                     }
-                    if (in_array($oldInfo->menuId, explode('-',  $pInfo->pidPath))) {
+                    if (in_array($oldInfo->menuId, explode('-',  $pInfo->pidPath))) {   //父级不能是自身的子孙级
                         throwFailJson('999305');
                     }
                     $data['pidPath'] =  $pInfo->pidPath . '-' . $oldInfo->menuId;

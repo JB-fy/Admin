@@ -64,7 +64,7 @@ class Scene extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authSceneInfo';
+                /* $authActionCode = 'authSceneLook';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -139,7 +139,7 @@ class Scene extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authSceneInfo';
+                /* $authActionCode = 'authSceneDelete';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
