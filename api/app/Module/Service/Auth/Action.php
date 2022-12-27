@@ -37,11 +37,15 @@ class Action extends AbstractService
      */
     public function update(array $data, array $where)
     {
-        $this->getDao()->where($where)->update($data)->saveUpdate();
-        //上面可能结果为0，而只修改sceneIdArr
         if (isset($data['sceneIdArr'])) {
             $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('actionId');
             $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
+            $this->getDao()->where($where)->update($data)->saveUpdate();
+        } else {
+            $result = $this->getDao()->where($where)->update($data)->saveUpdate();
+            if (empty($result)) {    //有可能只改sceneIdArr
+                throwFailJson('999999');
+            }
         }
         throwSuccessJson();
     }

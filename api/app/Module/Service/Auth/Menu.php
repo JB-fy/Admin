@@ -34,7 +34,7 @@ class Menu extends AbstractService
             $update['pidPath'] = '0-' . $id;
             $update['level'] = 1;
         }
-        $this->getDao()->update($update)->where(['id' => $id])->saveUpdate();
+        $this->getDao()->where(['id' => $id])->update($update)->saveUpdate();
         throwSuccessJson();
     }
 
