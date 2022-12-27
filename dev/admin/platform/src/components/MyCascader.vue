@@ -176,8 +176,6 @@ const cascader = reactive({
 if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue)) {
     cascader.initOptions()
 }
-console.log(props.props)
-console.log(cascader.props)
 </script>
 
 <template>
@@ -193,11 +191,11 @@ console.log(cascader.props)
         :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
 
     <!-------- 使用示例 开始-------->
-   <!--  <MyCascader v-model="saveCommon.data.menuIdArr"
+    <!-- <MyCascader v-model="saveCommon.data.menuIdArr"
         :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
-        :isPanel="true" :props="{ multiple: true }" /> -->
+        :isPanel="true" :props="{ multiple: true }" />
 
-    <!-- <MyCascader v-model="saveCommon.data.pid"
+    <MyCascader v-model="saveCommon.data.pid"
         :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" />
     <MyCascader v-model="saveCommon.data.pid"
         :api="{ code: 'auth/menu/list', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
