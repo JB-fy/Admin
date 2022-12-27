@@ -17,7 +17,7 @@ class Json extends AbstractException
      * @param string $msg
      * @param array $data
      */
-    public function __construct(string $code = '000000', string $msg = '', array $data = [])
+    public function __construct(string $code = '00000000', string $msg = '', array $data = [])
     {
         $this->apiCode = $code;
         $this->apiMsg = $msg === '' ? trans('code.' . $code) : $msg;

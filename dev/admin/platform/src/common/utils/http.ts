@@ -28,7 +28,7 @@ http.interceptors.request.use(
 
 http.interceptors.response.use(
     (response) => {
-        if (response.data.code === '000000') {
+        if (response.data.code === '00000000') {
             return response.data
         }
         return Promise.reject(new ApiError(JSON.stringify(response.data)))

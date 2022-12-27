@@ -20,7 +20,7 @@ class Menu extends AbstractService
         if (!empty($data['pid'])) {
             $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->getInfo();
             if (empty($pInfo)) {
-                throwFailJson('999303');
+                throwFailJson('29999998');
             }
         }
         $id = $this->getDao()->insert($data)->saveInsert();
@@ -50,7 +50,7 @@ class Menu extends AbstractService
         if (isset($data['pid'])) {
             $oldInfo = $this->getDao()->where($where)->getInfo();
             if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
-                throwFailJson('999304');
+                throwFailJson('29999997');
             }
             if ($data['pid'] == $oldInfo->pid) {
                 unset($data['pid']);    //未修改则删除，更新后就不用处理$data['pid']
@@ -58,10 +58,10 @@ class Menu extends AbstractService
                 if ($data['pid'] > 0) {
                     $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
                     if (empty($pInfo)) {
-                        throwFailJson('999303');
+                        throwFailJson('29999998');
                     }
                     if (in_array($oldInfo->menuId, explode('-',  $pInfo->pidPath))) {   //父级不能是自身的子孙级
-                        throwFailJson('999305');
+                        throwFailJson('29999996');
                     }
                     $data['pidPath'] =  $pInfo->pidPath . '-' . $oldInfo->menuId;
                     $data['level'] = $pInfo->level + 1;
@@ -97,7 +97,7 @@ class Menu extends AbstractService
     {
         $idArr = $where['id'] ?? $this->getDao()->where($where)->getBuilder()->pluck('menuId')->toArray();
         if ($this->getDao()->where(['pid' => $idArr])->getBuilder()->exists()) {
-            throwFailJson('999306');
+            throwFailJson('29999995');
         }
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {

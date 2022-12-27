@@ -34,11 +34,11 @@ class Scene extends AbstractAspect
     {
         $sceneCode = getRequestScene();
         if (empty($sceneCode)) {
-            throwFailJson('001001');
+            throwFailJson('39999999');
         }
         $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => $sceneCode])->getInfo();
         if (empty($sceneInfo)) {
-            throwFailJson('001001');
+            throwFailJson('39999999');
         }
         /* $sceneInfo->sceneConfig = json_decode($sceneInfo->sceneConfig, true);
         $this->container->get(\App\Module\Logic\Auth\Scene::class)->setRequestSceneInfo($sceneInfo); */

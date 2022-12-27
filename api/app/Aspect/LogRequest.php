@@ -52,7 +52,7 @@ class LogRequest extends AbstractAspect
                 $responseBody = $th->getResponseBody();
             } elseif ($th instanceof \Hyperf\Validation\ValidationException) {
                 $responseData = [
-                    'code' => '999998',
+                    'code' => '89999998',
                     'msg' => $th->validator->errors()->first(),
                     'data' => [],
                 ];

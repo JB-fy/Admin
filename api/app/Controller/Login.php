@@ -21,7 +21,7 @@ class Login extends AbstractController
                 $this->service->encryptStr($data['account'], 'platformAdmin');
                 break;
             default:
-                throwFailJson('001001');
+                throwFailJson('39999999');
                 break;
         }
     }
@@ -39,7 +39,7 @@ class Login extends AbstractController
                 $this->service->login($data['account'], $data['password'], 'platformAdmin');
                 break;
             default:
-                throwFailJson('001001');
+                throwFailJson('39999999');
                 break;
         }
     }
@@ -57,7 +57,7 @@ class Login extends AbstractController
                 throwSuccessJson(['info' => $info]);
                 break;
             default:
-                throwFailJson('001001');
+                throwFailJson('39999999');
                 break;
         }
     }
@@ -101,7 +101,7 @@ class Login extends AbstractController
     //             $this->container->get(AdminService::class)->update($data, $this->request->platformAdminInfo->adminId);
     //             break;
     //         default:
-    //             throwFailJson('001001');
+    //             throwFailJson('39999999');
     //             break;
     //     }
     // }
@@ -138,7 +138,7 @@ class Login extends AbstractController
                 $this->container->get(Menu::class)->tree($field, $where);
                 break;
             default:
-                throwFailJson('001001');
+                throwFailJson('39999999');
                 break;
         }
     }

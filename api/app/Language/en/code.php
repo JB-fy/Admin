@@ -9,6 +9,6 @@ declare(strict_types=1);
  *      4-6位：错误码。
  */
 return [
-    '000000' => 'success',
-    '999999' => 'fail',
+    '00000000' => 'success',
+    '99999999' => 'fail',
 ];

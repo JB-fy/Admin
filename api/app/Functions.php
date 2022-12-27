@@ -39,7 +39,7 @@ if (!function_exists('throwSuccessJson')) {
      * @throws \App\Exception\Json
      * @return void
      */
-    function throwSuccessJson(array $data = [], string $code = '000000', string $msg = '')
+    function throwSuccessJson(array $data = [], string $code = '00000000', string $msg = '')
     {
         throw make(\App\Exception\Json::class, ['code' => $code, 'msg' => $msg, 'data' => $data]);
     }
@@ -56,7 +56,7 @@ if (!function_exists('throwFailJson')) {
      * @throws \App\Exception\Json
      * @return void
      */
-    function throwFailJson(string $code = '999999', string $msg = '', array $data = [])
+    function throwFailJson(string $code = '99999999', string $msg = '', array $data = [])
     {
         throw make(\App\Exception\Json::class, ['code' => $code, 'msg' => $msg, 'data' => $data]);
     }
