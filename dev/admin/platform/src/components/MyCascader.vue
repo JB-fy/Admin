@@ -19,6 +19,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    isPanel: {  //是否为面板
+        type: Boolean,
+        default: false
+    },
     placeholder: {
         type: String
     },
@@ -172,10 +176,14 @@ const cascader = reactive({
 if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue)) {
     cascader.initOptions()
 }
+console.log(props.props)
+console.log(cascader.props)
 </script>
 
 <template>
-    <ElCascader v-if="cascader.props.lazy" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
+    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
+        :options="cascader.options" :props="cascader.props" />
+    <ElCascader v-else-if="cascader.props.lazy" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
         :placeholder="placeholder" :clearable="clearable" :props="cascader.props"
         @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
@@ -185,6 +193,10 @@ if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValu
         :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
 
     <!-------- 使用示例 开始-------->
+   <!--  <MyCascader v-model="saveCommon.data.menuIdArr"
+        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
+        :isPanel="true" :props="{ multiple: true }" /> -->
+
     <!-- <MyCascader v-model="saveCommon.data.pid"
         :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" />
     <MyCascader v-model="saveCommon.data.pid"
