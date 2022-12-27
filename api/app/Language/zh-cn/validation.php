@@ -185,10 +185,15 @@ return [
 
         'actionId' => '操作ID',
         'menuId' => '菜单ID',
+        'roleId' => '角色ID',
         'sceneId' => '场景ID',
 
         'pid' => '父ID',
 
+        'actionIdArr' => '操作列表',
+        'actionIdArr.*' => '操作列表内所有值',
+        'menuIdArr' => '菜单列表',
+        'menuIdArr.*' => '菜单列表内所有值',
         'sceneIdArr' => '场景列表',
         'sceneIdArr.*' => '场景列表内所有值',
 
@@ -201,6 +206,8 @@ return [
         'actionCode' => '操作标识',
 
         'menuName' => '菜单名称',
+
+        'roleName' => '角色名称',
 
         'sceneName' => '场景名称',
         'sceneCode' => '场景标识',

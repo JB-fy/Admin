@@ -31,7 +31,7 @@ class Action extends AbstractDao
     {
         switch ($key) {
             case 'sceneIdArr':
-                $this->afterField[] = 'sceneIdArr';
+                $this->afterField[] = $key;
 
                 //需要id字段
                 $this->field['select'][] = $this->getTable() . '.' . $this->getKey();

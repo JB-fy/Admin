@@ -20,6 +20,7 @@ class LogRequest extends AbstractAspect
         \App\Controller\Login::class,
         \App\Controller\Auth\Action::class,
         \App\Controller\Auth\Menu::class,
+        \App\Controller\Auth\Role::class,
         \App\Controller\Auth\Scene::class,
     ];
 

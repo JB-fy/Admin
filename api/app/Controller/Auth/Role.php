@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\Auth;
 
 use App\Controller\AbstractController;
-use App\Module\Db\Dao\Auth\Action as AuthAction;
+use App\Module\Db\Dao\Auth\Role as AuthRole;
 
-class Action extends AbstractController
+class Role extends AbstractController
 {
     /**
      * 列表
@@ -22,7 +22,7 @@ class Action extends AbstractController
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
                 /* try {
-                    $authActionCode = 'authActionLook';
+                    $authActionCode = 'authRoleLook';
                     $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode);
                     $isAuth = true;
                 } catch (ApiException $e) {
@@ -32,14 +32,14 @@ class Action extends AbstractController
 
                 /**--------参数过滤 结束--------**/
                 /* if ($isAuth) {
-                    $allowField = getDao(AuthAction::class)->getAllColumn();
+                    $allowField = getDao(AuthRole::class)->getAllColumn();
                     $allowField = array_merge($allowField, ['sceneName', 'pActionName']);
                 } else {
                     //无查看权限时只能查看一些基本的字段
                     $allowField = ['menuId', 'menuName', 'menu'];
                 } */
 
-                $allowField = getDao(AuthAction::class)->getAllColumn();
+                $allowField = getDao(AuthRole::class)->getAllColumn();
                 $allowField = array_merge($allowField, ['id']);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 /**--------参数过滤 结束--------**/
@@ -64,12 +64,12 @@ class Action extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authActionLook';
+                /* $authActionCode = 'authRoleLook';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
-                $allowField = getDao(AuthAction::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id', 'sceneIdArr']);
+                $allowField = getDao(AuthRole::class)->getAllColumn();
+                $allowField = array_merge($allowField, ['id', 'sceneName', 'menuIdArr', 'actionIdArr']);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 $this->service->info(['id' => $data['id']], $data['field']);
                 break;
@@ -91,7 +91,7 @@ class Action extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authActionCreate';
+                /* $authActionCode = 'authRoleCreate';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -115,7 +115,7 @@ class Action extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authActionUpdate';
+                /* $authActionCode = 'authRoleUpdate';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 
@@ -139,7 +139,7 @@ class Action extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
                 /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authActionDelete';
+                /* $authActionCode = 'authRoleDelete';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
                 /**--------验证权限 结束--------**/
 

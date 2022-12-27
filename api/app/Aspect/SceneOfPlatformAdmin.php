@@ -19,6 +19,7 @@ class SceneOfPlatformAdmin extends AbstractAspect
         \App\Controller\Login::class . '::menuTree',
         \App\Controller\Auth\Action::class,
         \App\Controller\Auth\Menu::class,
+        \App\Controller\Auth\Role::class,
         \App\Controller\Auth\Scene::class,
     ];
 

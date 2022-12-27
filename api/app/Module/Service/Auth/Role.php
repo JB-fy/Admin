@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Service\Auth;
+
+use App\Module\Db\Dao\Auth\ActionRelToScene;
+use App\Module\Db\Dao\Auth\Menu;
+use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
+use App\Module\Db\Dao\Auth\RoleRelToAction;
+use App\Module\Db\Dao\Auth\RoleRelToMenu;
+use App\Module\Logic\Auth\Role as AuthRole;
+use App\Module\Service\AbstractService;
+
+class Role extends AbstractService
+{
+    /**
+     * 创建
+     *
+     * @param array $data
+     * @return void
+     */
+    public function create(array $data)
+    {
+        if (isset($data['menuIdArr']) && count($data['menuIdArr']) != getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
+            //$count = getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
+            throwFailJson('89999998');
+        }
+        if (isset($data['actionIdArr']) && count($data['actionIdArr']) != getDao(ActionRelToScene::class)->where(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
+            throwFailJson('89999998');
+        }
+
+        $id = $this->getDao()->insert($data)->saveInsert();
+        if (empty($id)) {
+            throwFailJson();
+        }
+        if (isset($data['menuIdArr'])) {
+            $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $id);
+        }
+        if (isset($data['actionIdArr'])) {
+            $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $id);
+        }
+        throwSuccessJson();
+    }
+
+    /**
+     * 更新
+     *
+     * @param array $data
+     * @param array $where
+     * @return void
+     */
+    public function update(array $data, array $where)
+    {
+        if (isset($data['menuIdArr']) || isset($data['actionIdArr'])) {
+            $oldInfo = $this->getDao()->where($where)->getInfo();
+        }
+        if (isset($data['menuIdArr'])) {
+            if (count($data['menuIdArr']) != getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                throwFailJson('89999998');
+            }
+            $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
+            $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改menuIdArr
+        } elseif (isset($data['actionIdArr'])) {
+            if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->where(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                throwFailJson('89999998');
+            }
+            $this->container->get(AuthRole::class)->saveRelMenu($data['actionIdArr'], $oldInfo->roleId);
+            $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改actionIdArr
+        } else {
+            $result = $this->getDao()->where($where)->update($data)->saveUpdate();
+            if (empty($result)) {
+                throwFailJson();
+            }
+        }
+        throwSuccessJson();
+    }
+
+    /**
+     * 删除
+     *
+     * @param array $where
+     * @return void
+     */
+    public function delete(array $where)
+    {
+        $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->pluck('roleId')->toArray();
+        $result = $this->getDao()->where($where)->delete();
+        if (empty($result)) {
+            throwFailJson();
+        }
+        getDao(RoleRelToMenu::class)->where(['roleId' => $id])->delete();
+        getDao(RoleRelToAction::class)->where(['roleId' => $id])->delete();
+        getDao(RoleRelOfPlatformAdmin::class)->where(['roleId' => $id])->delete();
+        throwSuccessJson();
+    }
+}

@@ -12,7 +12,7 @@ class Action extends AbstractLogic
     public function saveRelScene(array $sceneIdArr, int $id = 0)
     {
         $sceneIdArrOfOld = getDao(ActionRelToScene::class)->where(['actionId' => $id])->getBuilder()->pluck('sceneId')->toArray();
-        /**----新增关联场景  开始----**/
+        /**----新增关联场景 开始----**/
         $insertSceneIdArr = array_diff($sceneIdArr, $sceneIdArrOfOld);
         if (!empty($insertSceneIdArr)) {
             $insertList = [];
@@ -24,13 +24,13 @@ class Action extends AbstractLogic
             }
             getDao(ActionRelToScene::class)->insert($insertList)->saveInsert();
         }
-        /**----新增关联场景  结束----**/
+        /**----新增关联场景 结束----**/
 
-        /**----删除关联场景  开始----**/
+        /**----删除关联场景 开始----**/
         $deleteSceneIdArr = array_diff($sceneIdArrOfOld, $sceneIdArr);
         if (!empty($deleteSceneIdArr)) {
             getDao(ActionRelToScene::class)->where(['actionId' => $id, 'sceneId' => $deleteSceneIdArr])->delete();
         }
-        /**----删除关联场景  结束----**/
+        /**----删除关联场景 结束----**/
     }
 }
