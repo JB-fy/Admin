@@ -40,7 +40,7 @@ class AppExceptionHandler extends ExceptionHandler
         } elseif ($throwable instanceof \Hyperf\Validation\ValidationException) {
             $this->stopPropagation();   //阻止异常冒泡
             $responseData = [
-                'code' => '89999998',
+                'code' => '89999999',
                 'msg' => $throwable->validator->errors()->first(),
                 'data' => [],
             ];
