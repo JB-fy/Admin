@@ -25,7 +25,7 @@ class Menu extends AbstractService
         }
         $id = $this->getDao()->insert($data)->saveInsert();
         if (empty($id)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         if (!empty($data['pid'])) {
             $update['pidPath'] = $pInfo->pidPath . '-' . $id;
@@ -73,7 +73,7 @@ class Menu extends AbstractService
         }
         $result = $this->getDao()->where($where)->update($data)->saveUpdate();
         if (empty($result)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         //修改pid时，更新所有子孙级的pidPath和level
         if (isset($data['pid'])) {
@@ -101,7 +101,7 @@ class Menu extends AbstractService
         }
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         throwSuccessJson();
     }

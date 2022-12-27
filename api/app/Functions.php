@@ -56,7 +56,7 @@ if (!function_exists('throwFailJson')) {
      * @throws \App\Exception\Json
      * @return void
      */
-    function throwFailJson(string $code, string $msg = '', array $data = [])
+    function throwFailJson(string $code = '999999', string $msg = '', array $data = [])
     {
         throw make(\App\Exception\Json::class, ['code' => $code, 'msg' => $msg, 'data' => $data]);
     }

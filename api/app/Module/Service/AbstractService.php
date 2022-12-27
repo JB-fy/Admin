@@ -153,7 +153,7 @@ abstract class AbstractService
             }
         } */
         if (empty($id)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         throwSuccessJson();
     }
@@ -169,7 +169,7 @@ abstract class AbstractService
     {
         $result = $this->getDao()->where($where)->update($data)->saveUpdate();
         if (empty($result)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         throwSuccessJson();
     }
@@ -184,7 +184,7 @@ abstract class AbstractService
     {
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         throwSuccessJson();
     }

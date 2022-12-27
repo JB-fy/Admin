@@ -20,7 +20,7 @@ class Action extends AbstractService
     {
         $id = $this->getDao()->insert($data)->saveInsert();
         if (empty($id)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         if (isset($data['sceneIdArr'])) {
             $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
@@ -40,11 +40,11 @@ class Action extends AbstractService
         if (isset($data['sceneIdArr'])) {
             $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('actionId');
             $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
-            $this->getDao()->where($where)->update($data)->saveUpdate();
+            $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改sceneIdArr
         } else {
             $result = $this->getDao()->where($where)->update($data)->saveUpdate();
-            if (empty($result)) {    //有可能只改sceneIdArr
-                throwFailJson('999999');
+            if (empty($result)) {
+                throwFailJson();
             }
         }
         throwSuccessJson();
@@ -61,7 +61,7 @@ class Action extends AbstractService
         $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->pluck('actionId')->toArray();
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
-            throwFailJson('999999');
+            throwFailJson();
         }
         getDao(ActionRelToScene::class)->where(['actionId' => $id])->delete();
         throwSuccessJson();
