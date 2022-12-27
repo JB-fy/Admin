@@ -41,13 +41,13 @@ class Login extends AbstractService
                 /**--------验证账号密码 开始--------**/
                 $info = getDao(Admin::class)->where(['loginStr' => $account])->getInfo();
                 if (empty($info)) {
-                    throwFailJson('30010001');
+                    throwFailJson('39990000');
                 }
                 if ($info->isStop) {
-                    throwFailJson('30010002');
+                    throwFailJson('39990001');
                 }
                 if (!$this->logic->checkPassword($info->password, $password, $account, $type)) {
-                    throwFailJson('30010001');
+                    throwFailJson('39990000');
                 }
                 /**--------验证账号密码 结束--------**/
 
