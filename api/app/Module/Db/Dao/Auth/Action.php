@@ -109,7 +109,7 @@ class Action extends AbstractDao
     {
         switch ($key) {
             case 'sceneIdArr':
-                $info->sceneIdArr = getDao(ActionRelToScene::class)->where(['actionId' => $info->{$this->getKey()}])->getBuilder()->pluck('sceneId')->toArray();
+                $info->{$key} = getDao(ActionRelToScene::class)->where(['actionId' => $info->{$this->getKey()}])->getBuilder()->pluck('sceneId')->toArray();
                 return true;
         }
         return false;

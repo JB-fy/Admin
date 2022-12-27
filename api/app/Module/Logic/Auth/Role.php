@@ -29,6 +29,7 @@ class Role extends AbstractLogic
 
         /**----删除关联菜单 开始----**/
         $deleteMenuIdArr = array_diff($menuIdArrOfOld, $menuIdArr);
+        var_dump($deleteMenuIdArr);
         if (!empty($deleteMenuIdArr)) {
             getDao(RoleRelToMenu::class)->where(['roleId' => $id, 'menuId' => $deleteMenuIdArr])->delete();
         }

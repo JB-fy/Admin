@@ -10,6 +10,7 @@ class Role extends AbstractValidation
 {
     protected array $rule = [
         'roleId' => 'sometimes|required|integer|min:1',
+        'sceneId' => 'sometimes|required|integer|min:1',
         'roleName' => 'sometimes|required|alpha_dash|between:1,30',
         'menuIdArr' => 'sometimes|required_if_null|array|min:1',
         'menuIdArr.*' => 'sometimes|required|integer|min:1',
@@ -22,6 +23,7 @@ class Role extends AbstractValidation
         'create' => [
             'only' => [
                 'roleName',
+                'sceneId',
                 'menuIdArr',
                 'menuIdArr.*',
                 'actionIdArr',
@@ -30,6 +32,7 @@ class Role extends AbstractValidation
             ],
             'remove' => [
                 'roleName' => ['sometimes'],
+                'sceneId' => ['sometimes'],
                 'roleCode' => ['sometimes'],
                 'menuIdArr' => ['sometimes'],
                 'actionIdArr' => ['sometimes'],
@@ -39,6 +42,7 @@ class Role extends AbstractValidation
             'only' => [
                 'id',
                 'roleName',
+                'sceneId',
                 'menuIdArr',
                 'menuIdArr.*',
                 'actionIdArr',

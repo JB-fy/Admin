@@ -371,22 +371,23 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
                 }
                 return true;
-            case 'pid':
-                if (is_array($value)) {
-                    if (count($value) === 1) {
-                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value[0], $boolean ?? 'and']];
+            default:
+                if (strtolower(substr($key, -2)) === 'id') {    //最后两个字符为id时的判断条件
+                    if (is_array($value)) {
+                        if (count($value) === 1) {
+                            $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value[0], $boolean ?? 'and']];
+                        } else {
+                            $this->where[] = ['method' => 'whereIn', 'param' => [$this->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                        }
                     } else {
-                        $this->where[] = ['method' => 'whereIn', 'param' => [$this->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
                     }
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
-                }
-                return true;
-            default:
-                if (in_array($key, $this->getAllColumn())) {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
-                } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$key, $operator ?? '=', $value, $boolean ?? 'and']];
+                    if (in_array($key, $this->getAllColumn())) {
+                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                    } else {
+                        $this->where[] = ['method' => 'where', 'param' => [$key, $operator ?? '=', $value, $boolean ?? 'and']];
+                    }
                 }
                 return true;
         }

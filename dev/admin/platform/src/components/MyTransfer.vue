@@ -98,6 +98,14 @@ const transfer = reactive({
 })
 //组件创建时，初始化options
 transfer.initOptions()
+
+//当外部环境where变化时，重置options
+watch(() => props.api.param.where, (newVal: any, oldVal: any) => {
+    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        transfer.resetOptions()
+        transfer.api.addOptions()
+    }
+})
 </script>
 
 <template>

@@ -173,9 +173,17 @@ const cascader = reactive({
     }
 })
 //组件创建时，如有初始值，需初始化options
-if (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue)) {
+if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue))) {
     cascader.initOptions()
 }
+
+//当外部环境where变化时，重置options
+watch(() => props.api.param.where, (newVal: any, oldVal: any) => {
+    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        cascader.resetOptions()
+        cascader.api.addOptions()
+    }
+})
 </script>
 
 <template>

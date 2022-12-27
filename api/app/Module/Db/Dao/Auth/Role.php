@@ -26,9 +26,9 @@ class Role extends AbstractDao
     protected function fieldOfAlone(string $key): bool
     {
         switch ($key) {
-            case 'menuName':
+            case 'sceneName':
                 $this->joinOfAlone($key);
-                $this->field['select'][] = getDao(Menu::class)->getTable() . '.' . $key;
+                $this->field['select'][] = getDao(Scene::class)->getTable() . '.' . $key;
                 return true;
             case 'menuIdArr':
             case 'actionIdArr':
@@ -51,17 +51,17 @@ class Role extends AbstractDao
     protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'menuName':
-                $menuDao = getDao(Menu::class);
-                $menuDaoTable = $menuDao->getTable();
-                if (!isset($this->join[$menuDaoTable])) {
-                    $this->join[$menuDaoTable] = [
+            case 'sceneName':
+                $sceneDao = getDao(Scene::class);
+                $sceneDaoTable = $sceneDao->getTable();
+                if (!isset($this->join[$sceneDaoTable])) {
+                    $this->join[$sceneDaoTable] = [
                         'method' => 'leftJoin',
                         'param' => [
-                            $menuDaoTable,
-                            $menuDaoTable . '.menuId',
+                            $sceneDaoTable,
+                            $sceneDaoTable . '.sceneId',
                             '=',
-                            $this->getTable() . '.menuId'
+                            $this->getTable() . '.sceneId'
                         ]
                     ];
                 }
@@ -81,10 +81,10 @@ class Role extends AbstractDao
     {
         switch ($key) {
             case 'menuIdArr':
-                $info->sceneIdArr = getDao(RoleRelToMenu::class)->where(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
+                $info->{$key} = getDao(RoleRelToMenu::class)->where(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
                 return true;
             case 'actionIdArr':
-                $info->sceneIdArr = getDao(RoleRelToAction::class)->where(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
+                $info->{$key} = getDao(RoleRelToAction::class)->where(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
                 return true;
         }
         return false;

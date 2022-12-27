@@ -40,7 +40,7 @@ class Role extends AbstractController
                 } */
 
                 $allowField = getDao(AuthRole::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id']);
+                $allowField = array_merge($allowField, ['id', 'sceneName']);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);    //过滤不可查看字段
                 /**--------参数过滤 结束--------**/
 
