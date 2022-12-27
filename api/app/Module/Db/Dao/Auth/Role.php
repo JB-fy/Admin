@@ -17,7 +17,6 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Role extends AbstractDao
 {
-
     /**
      * 解析field（独有的）
      *

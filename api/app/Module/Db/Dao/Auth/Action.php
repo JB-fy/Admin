@@ -41,6 +41,64 @@ class Action extends AbstractDao
     }
 
     /**
+     * 解析where（独有的）
+     *
+     * @param string $key
+     * @param string|null $operator
+     * @param [type] $value
+     * @param string|null $boolean
+     * @return boolean
+     */
+    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    {
+        switch ($key) {
+            case 'sceneId':
+                $this->joinOfAlone($key);
+                if (is_array($value)) {
+                    if (count($value) === 1) {
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value[0], $boolean ?? 'and']];
+                    } else {
+                        $this->where[] = ['method' => 'whereIn', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                    }
+                } else {
+                    $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                }
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 解析join（独有的）
+     *
+     * @param string $key   键，用于确定关联表
+     * @param [type] $value 值，用于确定关联表
+     * @return boolean
+     */
+    protected function joinOfAlone(string $key, $value = null): bool
+    {
+        switch ($key) {
+            case 'sceneId':
+                $actionRelToSceneDao = getDao(ActionRelToScene::class);
+                $actionRelToSceneDaoTable = $actionRelToSceneDao->getTable();
+                if (!isset($this->join[$actionRelToSceneDaoTable])) {
+                    $this->join[$actionRelToSceneDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $actionRelToSceneDaoTable,
+                            $actionRelToSceneDaoTable . '.actionId',
+                            '=',
+                            $this->getTable() . '.actionId'
+                        ]
+                    ];
+                }
+                return true;
+        }
+        return false;
+    }
+
+
+    /**
      * 获取数据后，再处理的字段（独有的）
      *
      * @param string $key

@@ -56,6 +56,8 @@ export default {
         rel: {
             pid: '父级',
             sceneId: '所属场景',
+            actionIdArr: '所含操作',
+            menuIdArr: '所含菜单',
             sceneIdArr: '所属场景',
         },
         auth: {
@@ -66,6 +68,9 @@ export default {
             menu: {
                 menuName: '菜单名称',
                 pidPath: '父级路径'
+            },
+            role: {
+                roleName: '角色名称',
             },
             scene: {
                 sceneName: '场景名称',

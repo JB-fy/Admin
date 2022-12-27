@@ -16,6 +16,8 @@ class Action extends AbstractValidation
         'sceneIdArr.*' => 'sometimes|required|integer|min:1',
         'remark' => 'string|between:0,120',
         'isStop' => 'sometimes|required|integer|in:0,1',
+
+        'sceneId' => 'sometimes|required|integer|min:1',
     ];
 
     protected array $scene = [
