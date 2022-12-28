@@ -23,6 +23,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
 
     protected array $afterField = [];    //获取数据后，再处理的字段
 
+    protected array $jsonField = [];    //json类型字段。这些字段创建|更新时，需要特殊处理
+
     //#[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
     protected \App\Module\Db\Model\AbstractModel $model;   //模型
     protected \Hyperf\Database\Query\Builder $builder; //构造器
@@ -269,8 +271,15 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             default:
                 //数据库不存在的字段过滤掉
                 if (in_array($key, $this->getAllColumn())) {
-                    //$this->insert[$index][$this->getTable() . '.' . $key] = $value;
-                    $this->insert[$index][$key] = $value;
+                    if (in_array($key, $this->jsonField)) {
+                        if ($value === '' || $value === null) {
+                            $this->insert[$index][$key] =  null;
+                        } else {
+                            $this->insert[$index][$key] =  is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+                        }
+                    } else {
+                        $this->insert[$index][$key] = $value;
+                    }
                     return true;
                 }
         }
@@ -291,8 +300,17 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             default:
+                //数据库不存在的字段过滤掉
                 if (in_array($key, $this->getAllColumn())) {
-                    $this->update[$this->getTable() . '.' . $key] = $value;
+                    if (in_array($key, $this->jsonField)) {
+                        if ($value === '' || $value === null) {
+                            $this->update[$this->getTable() . '.' . $key] = null;
+                        } else {
+                            $this->update[$this->getTable() . '.' . $key] = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+                        }
+                    } else {
+                        $this->update[$this->getTable() . '.' . $key] = $value;
+                    }
                     return true;
                 }
                 //暂时不考虑其他复杂字段。复杂字段建议直接写入updateOfAlone方法

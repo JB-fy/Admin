@@ -17,46 +17,7 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Scene extends AbstractDao
 {
-    /**
-     * 解析insert（独有的）
-     *
-     * @param string $key
-     * @param [type] $value
-     * @param integer $index
-     * @return boolean
-     */
-    protected function insertOfAlone(string $key, $value, int $index = 0): bool
-    {
-        switch ($key) {
-            case 'sceneConfig':
-                if (!($value === '' || $value === null)) {
-                    $this->insert[$index][$key] =  is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
-                }
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * 解析update（独有的）
-     *
-     * @param string $key
-     * @param [type] $value
-     * @return boolean
-     */
-    protected function updateOfAlone(string $key, $value = null): bool
-    {
-        switch ($key) {
-            case 'sceneConfig':
-                if ($value === '' || $value === null) {
-                    $this->update[$this->getTable() . '.' . $key] = null;
-                } else {
-                    $this->update[$this->getTable() . '.' . $key] = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
-                }
-                return true;
-        }
-        return false;
-    }
+    protected array $jsonField = ['sceneConfig']; //json类型字段。这些字段创建|更新时，需要特殊处理
 
     /**
      * 解析where（独有的）

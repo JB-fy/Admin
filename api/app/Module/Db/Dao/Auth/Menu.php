@@ -22,6 +22,8 @@ use Hyperf\DbConnection\Db;
  */
 class Menu extends AbstractDao
 {
+    protected array $jsonField = ['extraData']; //json类型字段。这些字段创建|更新时，需要特殊处理
+
     /**
      * 解析update（独有的）
      *
