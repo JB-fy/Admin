@@ -300,6 +300,13 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             default:
+                /* //暂时不考虑其他复杂字段。复杂字段建议直接写入updateOfAlone方法
+                list($realKey) = explode('->', $key);   //json情况
+                list($realKey) = explode(' AS ', $realKey); //别名情况
+                list($realKey) = explode(' as ', $realKey); //别名情况
+                $realKey = trim($realKey);  //去除两边空白
+                //数据库不存在的字段过滤掉
+                if (in_array($realKey, $this->getAllColumn())) { */
                 //数据库不存在的字段过滤掉
                 if (in_array($key, $this->getAllColumn())) {
                     if (in_array($key, $this->jsonField)) {
@@ -313,15 +320,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     }
                     return true;
                 }
-                //暂时不考虑其他复杂字段。复杂字段建议直接写入updateOfAlone方法
-                /* list($realKey) = explode('->', $key);   //json情况
-                list($realKey) = explode(' AS ', $realKey); //别名情况
-                list($realKey) = explode(' as ', $realKey); //别名情况
-                $realKey = trim($realKey);  //去除两边空白
-                if (in_array($realKey, $this->getAllColumn())) {
-                    $this->update[$this->getTable() . '.' . $key] = $value;
-                    return true;
-                } */
         }
         return false;
     }
@@ -365,7 +363,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-            case 'idArr':
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', array_shift($value), $boolean ?? 'and']];
@@ -377,7 +374,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 }
                 return true;
             case 'excId':
-            case 'excIdArr':
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', array_shift($value), $boolean ?? 'and']];
@@ -390,7 +386,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
-                    if (strtolower(substr($key, -2)) === 'id') {    //最后两个字符为id时的判断条件
+                    if (strtolower(substr($key, -2)) === 'id') {    //id类型字段的处理方式
                         if (is_array($value)) {
                             if (count($value) === 1) {
                                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
