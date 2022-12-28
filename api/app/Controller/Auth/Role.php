@@ -17,9 +17,10 @@ class Role extends AbstractController
     public function list()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
                 /**--------验证权限 开始--------**/
                 /* try {
                     $authActionCode = 'authRoleLook';
@@ -60,9 +61,10 @@ class Role extends AbstractController
     public function info()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
                 /**--------验证权限 开始--------**/
                 /* $authActionCode = 'authRoleLook';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
@@ -87,9 +89,10 @@ class Role extends AbstractController
     public function create()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
                 /**--------验证权限 开始--------**/
                 /* $authActionCode = 'authRoleCreate';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
@@ -111,9 +114,10 @@ class Role extends AbstractController
     public function update()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
                 /**--------验证权限 开始--------**/
                 /* $authActionCode = 'authRoleUpdate';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
@@ -135,9 +139,10 @@ class Role extends AbstractController
     public function delete()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
                 /**--------验证权限 开始--------**/
                 /* $authActionCode = 'authRoleDelete';
                 $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */

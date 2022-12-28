@@ -42,6 +42,29 @@ class Role extends AbstractDao
     }
 
     /**
+     * 解析where（独有的）
+     *
+     * @param string $key
+     * @param string|null $operator
+     * @param [type] $value
+     * @param string|null $boolean
+     * @return boolean
+     */
+    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    {
+        switch ($key) {
+            case 'platformAdminId':
+                if ($operator === null) {
+                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, 'like', '%' . $value . '%', $boolean ?? 'and']];
+                } else {
+                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator, $value, $boolean ?? 'and']];
+                }
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * 解析join（独有的）
      *
      * @param string $key   键，用于确定关联表

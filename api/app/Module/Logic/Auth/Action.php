@@ -9,6 +9,13 @@ use App\Module\Logic\AbstractLogic;
 
 class Action extends AbstractLogic
 {
+    /**
+     * 保存关联场景
+     *
+     * @param array $sceneIdArr
+     * @param integer $id
+     * @return void
+     */
     public function saveRelScene(array $sceneIdArr, int $id = 0)
     {
         $sceneIdArrOfOld = getDao(ActionRelToScene::class)->where(['actionId' => $id])->getBuilder()->pluck('sceneId')->toArray();

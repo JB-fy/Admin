@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace App\Module\Logic\Auth;
 
+use App\Module\Db\Dao\Auth\Role as AuthRole;
 use App\Module\Db\Dao\Auth\RoleRelToAction;
 use App\Module\Db\Dao\Auth\RoleRelToMenu;
 use App\Module\Logic\AbstractLogic;
 
 class Role extends AbstractLogic
 {
+    /**
+     * 保存关联菜单
+     *
+     * @param array $menuIdArr
+     * @param integer $id
+     * @return void
+     */
     public function saveRelMenu(array $menuIdArr, int $id = 0)
     {
         $menuIdArrOfOld = getDao(RoleRelToMenu::class)->where(['roleId' => $id])->getBuilder()->pluck('menuId')->toArray();
@@ -36,6 +44,13 @@ class Role extends AbstractLogic
         /**----删除关联菜单 结束----**/
     }
 
+    /**
+     * 保存关联操作
+     *
+     * @param array $actionIdArr
+     * @param integer $id
+     * @return void
+     */
     public function saveRelAction(array $actionIdArr, int $id = 0)
     {
         $actionIdArrOfOld = getDao(RoleRelToAction::class)->where(['roleId' => $id])->getBuilder()->pluck('actionId')->toArray();
@@ -59,5 +74,39 @@ class Role extends AbstractLogic
             getDao(RoleRelToAction::class)->where(['roleId' => $id, 'actionId' => $deleteActionIdArr])->delete();
         }
         /**----删除关联操作 结束----**/
+    }
+
+    /**
+     * 判断权限
+     *
+     * @return string
+     */
+
+    public function checkAuth(string $actionCode, string $type, bool $isThrow = true): bool
+    {
+        $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($type);
+        $where = [
+            'checkAction' => [
+                'actionCode' => $actionCode,
+                'type' => $type,
+                'adminId' => $loginInfo->adminId
+            ]
+        ];
+        switch ($type) {
+            case 'platformAdmin':
+                if ($loginInfo->adminId === 1) { //平台超级管理员，无权限限制
+                    return true;
+                }
+                $where['checkAction']['adminId'] = $loginInfo->adminId;
+                break;
+        }
+        if (empty(getDao(AuthRole::class)->where($where)->getBuilder()->count())) {
+            if ($isThrow) {
+                throwFailJson('39990002');
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 }

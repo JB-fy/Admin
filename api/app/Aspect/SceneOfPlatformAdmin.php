@@ -33,8 +33,9 @@ class SceneOfPlatformAdmin extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         try {
-            if (getRequestScene() == 'platformAdmin') {
-                $this->container->get(\App\Module\Service\Login::class)->verifyToken('platformAdmin');
+            $sceneCode = getRequestScene();
+            if ($sceneCode == 'platformAdmin') {
+                $this->container->get(\App\Module\Service\Login::class)->verifyToken($sceneCode);
             }
             $response = $proceedingJoinPoint->process();
             return $response;

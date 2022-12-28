@@ -97,7 +97,6 @@ class Action extends AbstractDao
         return false;
     }
 
-
     /**
      * 获取数据后，再处理的字段（独有的）
      *

@@ -16,9 +16,10 @@ class Login extends AbstractController
     public function encryptStr()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $this->service->encryptStr($data['account'], 'platformAdmin');
+                $this->service->encryptStr($data['account'], $sceneCode);
                 break;
             default:
                 throwFailJson('39999999');
@@ -34,9 +35,10 @@ class Login extends AbstractController
     public function login()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $this->service->login($data['account'], $data['password'], 'platformAdmin');
+                $this->service->login($data['account'], $data['password'], $sceneCode);
                 break;
             default:
                 throwFailJson('39999999');
@@ -51,9 +53,10 @@ class Login extends AbstractController
      */
     public function info()
     {
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $info = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
+                $info = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
                 throwSuccessJson(['info' => $info]);
                 break;
             default:
@@ -98,7 +101,7 @@ class Login extends AbstractController
     //             }
     //             /**--------验证参数 结束--------**/
 
-    //             $this->container->get(AdminService::class)->update($data, $this->request->platformAdminInfo->adminId);
+    //             $this->container->get(AdminService::class)->update($data, $loginInfo->adminId);
     //             break;
     //         default:
     //             throwFailJson('39999999');
@@ -113,17 +116,18 @@ class Login extends AbstractController
      */
     public function menuTree()
     {
-        switch (getRequestScene()) {
+        $sceneCode = getRequestScene();
+        switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo('platformAdmin');
-                /* if ($this->request->platformAdminInfo->adminId == 1) {
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
+                /* if ($loginInfo->adminId == 1) {
                     $where = [
                         'sceneId' => $this->request->sceneInfo->sceneId,
                         'isStop' => 0
                     ];
                 } else {
                     $where = [
-                        'adminId' => $this->request->platformAdminInfo->adminId,
+                        'adminId' => $loginInfo->adminId,
                         'isStop' => 0
                     ];
                 } */

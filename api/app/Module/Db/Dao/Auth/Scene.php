@@ -17,7 +17,6 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Scene extends AbstractDao
 {
-
     /**
      * 解析insert（独有的）
      *
