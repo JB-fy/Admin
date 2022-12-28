@@ -82,17 +82,17 @@ class Role extends AbstractLogic
      * @return string
      */
 
-    public function checkAuth(string $actionCode, string $type, bool $isThrow = true): bool
+    public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
     {
-        $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($type);
+        $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
         $where = [
             'checkAction' => [
                 'actionCode' => $actionCode,
-                'type' => $type,
+                'sceneCode' => $sceneCode,
                 'adminId' => $loginInfo->adminId
             ]
         ];
-        switch ($type) {
+        switch ($sceneCode) {
             case 'platformAdmin':
                 if ($loginInfo->adminId === 1) { //平台超级管理员，无权限限制
                     return true;

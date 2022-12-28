@@ -17,12 +17,12 @@ class Login extends AbstractService
      * 获取加密字符串
      *
      * @param string $account
-     * @param string $type 类型。值唯一，否则容易出错。例如：数据库两个不同表，用户表和管理员表，可能存在同样的账号名，同时登录时可能会登录失败
+     * @param string $sceneCode
      * @return void
      */
-    public function encryptStr(string $account, string $type)
+    public function encryptStr(string $account, string $sceneCode)
     {
-        $encryptStr = $this->logic->createEncryptStr($account, $type);
+        $encryptStr = $this->logic->createEncryptStr($account, $sceneCode);
         throwSuccessJson(['encryptStr' => $encryptStr]);
     }
 
@@ -31,12 +31,12 @@ class Login extends AbstractService
      *
      * @param string $account
      * @param string $password
-     * @param string $type 类型。值唯一，否则容易出错。例如：数据库两个不同表，用户表和管理员表，可能存在同样的账号名，同时登录时可能会登录失败
+     * @param string $sceneCode
      * @return void
      */
-    public function login(string $account, string $password, string $type)
+    public function login(string $account, string $password, string $sceneCode)
     {
-        switch ($type) {
+        switch ($sceneCode) {
             case 'platformAdmin':
                 /**--------验证账号密码 开始--------**/
                 $info = getDao(Admin::class)->where(['loginStr' => $account])->getInfo();
@@ -46,7 +46,7 @@ class Login extends AbstractService
                 if ($info->isStop) {
                     throwFailJson('39990001');
                 }
-                if (!$this->logic->checkPassword($info->password, $password, $account, $type)) {
+                if (!$this->logic->checkPassword($info->password, $password, $account, $sceneCode)) {
                     throwFailJson('39990000');
                 }
                 /**--------验证账号密码 结束--------**/
@@ -55,12 +55,12 @@ class Login extends AbstractService
                 $payload = [
                     'id' => $info->adminId
                 ];
-                $jwt = $this->logic->getJwt($type);
+                $jwt = $this->logic->getJwt($sceneCode);
                 $token = $jwt->createToken($payload);
 
                 //缓存token（选做。限制多地登录，多设备登录等情况下可用）
                 $cacheLogin = getCache(CacheLogin::class);
-                $cacheLogin->setTokenKey($payload['id'], $type);
+                $cacheLogin->setTokenKey($payload['id'], $sceneCode);
                 $cacheLogin->setToken($token, $jwt->getConfig()['expireTime']);
 
                 throwSuccessJson(['token' => $token]);
@@ -74,25 +74,25 @@ class Login extends AbstractService
     /**
      * 验证Token
      *
-     * @param string $type  类型。值唯一，否则容易出错。例如：数据库两个不同表，用户表和管理员表，可能存在同样的账号名，同时登录时可能会登录失败
+     * @param string $sceneCode
      * @return void
      */
-    public function verifyToken(string $type)
+    public function verifyToken(string $sceneCode)
     {
-        switch ($type) {
+        switch ($sceneCode) {
             case 'platformAdmin':
                 /**--------验证token 开始--------**/
-                $token = $this->logic->getRequestToken($type);
+                $token = $this->logic->getRequestToken($sceneCode);
                 if (empty($token)) {
                     throwFailJson('39994000');
                 }
-                $jwt = $this->logic->getJwt($type);
+                $jwt = $this->logic->getJwt($sceneCode);
                 $payload = $jwt->verifyToken($token);
                 /**--------验证token 结束--------**/
 
                 /**--------选做。限制多地登录，多设备登录等情况下可用（前提必须在登录时做过token缓存） 开始--------**/
                 $cacheLogin = getCache(CacheLogin::class);
-                $cacheLogin->setTokenKey($payload['id'], $type);
+                $cacheLogin->setTokenKey($payload['id'], $sceneCode);
                 $checkToken = $cacheLogin->getToken();
                 if ($checkToken != $token) {
                     throwFailJson('39994002');
@@ -113,14 +113,14 @@ class Login extends AbstractService
                 unset($info->password);
                 unset($info->isStop);
 
-                $this->logic->setInfo($info, $type);    //用户信息保存在请求对象内
+                $this->logic->setInfo($info, $sceneCode);    //用户信息保存在请求对象内
                 /**--------获取用户信息并验证 结束--------**/
 
                 /**--------选做。如果token即将过期，刷新token 开始--------**/
                 /* if ($payload['expireTime'] - time() < 5 * 60) {
                     $refreshToken = $jwt->getToken($payload);
                     //缓存token（选做。限制多地登录，多设备登录等情况下可用）
-                    $cacheLogin->setToken($refreshToken, $type);
+                    $cacheLogin->setToken($refreshToken, $sceneCode);
 
                     //refreshToken保存在请求对象内（在exception\handler\Handler内返回给前端，用于刷新token）
                     $request->newPlatformAdminToken = $refreshToken;

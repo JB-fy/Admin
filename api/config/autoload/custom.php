@@ -6,7 +6,7 @@ declare(strict_types=1);
 return [
     //缓存的key的格式
     'cache' => [
-        'encryptStrFormat' => 'encryptStr_%s_%s', //加密字符串缓存key。参数：类型，账号
-        'tokenFormat' => 'token_%s_%s', //登录后的token缓存key。参数：类型，用户标识
+        'encryptStrFormat' => 'encryptStr_%s_%s', //加密字符串缓存key。参数：场景标识，账号
+        'tokenFormat' => 'token_%s_%s', //登录后的token缓存key。参数：场景标识，用户标识
     ],
 ];

@@ -14,13 +14,13 @@ class Login extends AbstractLogic
      * 生成加密字符串
      *
      * @param string $account
-     * @param string $type
+     * @param string $sceneCode
      * @return string
      */
-    public function createEncryptStr(string $account, string $type): string
+    public function createEncryptStr(string $account, string $sceneCode): string
     {
         $cacheLogin = getCache(CacheLogin::class);
-        $cacheLogin->setEncryptStrKey($account, $type);
+        $cacheLogin->setEncryptStrKey($account, $sceneCode);
         $encryptStr = randStr(8);
         $cacheLogin->setEncryptStr($encryptStr);
         return $encryptStr;
@@ -31,13 +31,13 @@ class Login extends AbstractLogic
      *
      * @param string $rawPassword
      * @param string $password
-     * @param string $type
+     * @param string $sceneCode
      * @return boolean
      */
-    public function checkPassword(string $rawPassword, string $password, string $account, string $type): bool
+    public function checkPassword(string $rawPassword, string $password, string $account, string $sceneCode): bool
     {
         $cacheLogin = getCache(CacheLogin::class);
-        $cacheLogin->setEncryptStrKey($account, $type);
+        $cacheLogin->setEncryptStrKey($account, $sceneCode);
         $encryptStr = $cacheLogin->getEncryptStr();
         return md5($rawPassword . $encryptStr) == $password;
     }
@@ -45,26 +45,26 @@ class Login extends AbstractLogic
     /**
      * 获取类型对应的jwt
      *  注意：
-     * @param string $type
+     * @param string $sceneCode
      * @return \App\Plugin\Jwt
      */
-    public function getJwt(string $type): \App\Plugin\Jwt
+    public function getJwt(string $sceneCode): \App\Plugin\Jwt
     {
-        //return make($type . 'Jwt');   //数据库更改配置可以马上生效。
-        return $this->container->get($type . 'Jwt');    //需要重启服务才能生效。但不用每次使用jwt都要从数据库取配置再实例化
+        //return make($sceneCode . 'Jwt');   //数据库更改配置可以马上生效。
+        return $this->container->get($sceneCode . 'Jwt');    //需要重启服务才能生效。但不用每次使用jwt都要从数据库取配置再实例化
     }
 
     /**
      * 获取类型对应的请求Token
      *
-     * @param string $type
+     * @param string $sceneCode
      * @return string|null
      */
-    public function getRequestToken(string $type): ?string
+    public function getRequestToken(string $sceneCode): ?string
     {
-        switch ($type) {
-            case 'platformAdmin':
-                return $this->container->get(RequestInterface::class)->header('PlatformAdminToken');
+        switch ($sceneCode) {
+            default:
+                return $this->container->get(RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
         }
     }
 
@@ -72,15 +72,15 @@ class Login extends AbstractLogic
      * 在当前请求中，设置登录用户信息
      * 
      * @param object $info
-     * @param string $type
+     * @param string $sceneCode
      * @return void
      */
-    public function setInfo(object $info, string $type)
+    public function setInfo(object $info, string $sceneCode)
     {
-        switch ($type) {
-            case 'platformAdmin':
+        switch ($sceneCode) {
+            default:
                 $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
-                $request = $request->withAttribute('platformAdminInfo', $info);
+                $request = $request->withAttribute($sceneCode . 'Info', $info);
                 Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
                 break;
         }
@@ -89,14 +89,14 @@ class Login extends AbstractLogic
     /**
      * 获取当前请求中的登录用户信息
      * 
-     * @param string $type
+     * @param string $sceneCode
      * @return object
      */
-    public function getInfo(string $type): object
+    public function getInfo(string $sceneCode): object
     {
-        switch ($type) {
-            case 'platformAdmin':
-                return $this->container->get(RequestInterface::class)->getAttribute('platformAdminInfo');
+        switch ($sceneCode) {
+            default:
+                return $this->container->get(RequestInterface::class)->getAttribute($sceneCode . 'Info');
         }
     }
 }

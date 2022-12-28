@@ -12,12 +12,12 @@ class Login extends AbstractCache
      * 设置加密字符串缓存key
      *
      * @param string $account
-     * @param string $type
+     * @param string $sceneCode
      * @return void
      */
-    public function setEncryptStrKey(string $account, string $type)
+    public function setEncryptStrKey(string $account, string $sceneCode)
     {
-        $this->encryptStrKey = sprintf($this->config->get('custom.cache.encryptStrFormat'), $type, $account);
+        $this->encryptStrKey = sprintf($this->config->get('custom.cache.encryptStrFormat'), $sceneCode, $account);
     }
 
     /**
@@ -51,12 +51,12 @@ class Login extends AbstractCache
      * 设置token缓存key
      *
      * @param string|integer $id
-     * @param string $type
+     * @param string $sceneCode
      * @return void
      */
-    public function setTokenKey(string|int $id, string $type)
+    public function setTokenKey(string|int $id, string $sceneCode)
     {
-        $this->tokenKey = sprintf($this->config->get('custom.cache.tokenFormat'), $type, $id);
+        $this->tokenKey = sprintf($this->config->get('custom.cache.tokenFormat'), $sceneCode, $id);
     }
 
     /**
