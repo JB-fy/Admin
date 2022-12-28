@@ -56,6 +56,7 @@ class Role extends AbstractDao
             case 'checkAction': //判断是否有操作权限。参数：['actionCode'=>操作标识, 'sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 $this->joinOfAlone($key, $value);
 
+                $sceneId=getDao(Scene::class)->
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':

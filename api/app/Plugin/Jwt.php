@@ -114,7 +114,7 @@ class Jwt
             case 'HS512':
                 $sign = hash_hmac(str_replace('HS', 'SHA', $signType), $str, $signKey, true);
                 if (!$sign) {
-                    throwFailJson('39999997');
+                    throwFailJson('39999002');
                 }
                 return $sign;
             case 'RS256':
@@ -122,11 +122,11 @@ class Jwt
             case 'RS512':
                 $sign = '';
                 if (!openssl_sign($str, $sign, $signKey, str_replace('HS', 'SHA', $signType))) {
-                    throwFailJson('39999997');
+                    throwFailJson('39999002');
                 }
                 return $sign;
             default:
-                throwFailJson('39999998');
+                throwFailJson('39999003');
         }
     }
 }

@@ -77,11 +77,13 @@ class Role extends AbstractLogic
     }
 
     /**
-     * 判断权限
+     * 判断操作权限
      *
-     * @return string
+     * @param string $actionCode
+     * @param string $sceneCode
+     * @param boolean $isThrow
+     * @return boolean
      */
-
     public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
     {
         $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);

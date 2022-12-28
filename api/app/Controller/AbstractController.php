@@ -23,33 +23,40 @@ abstract class AbstractController
     //#[Inject(value:\App\Module\Validation\Login::class)]
     protected \App\Module\Validation\AbstractValidation $validation;
 
+    //操作标识前缀
+    protected $actionCodePrefix;
+
     public function __construct()
     {
+        $className = get_class($this);
         //子类未定义时会自动设置。注意：目录的对应关系
         if (empty($this->service)) {
-            $serviceClassName = str_replace('\\Controller\\', '\\Module\\Service\\', get_class($this));
+            $serviceClassName = str_replace('\\Controller\\', '\\Module\\Service\\', $className);
             if (class_exists($serviceClassName)) {
                 $this->service = $this->container->get($serviceClassName);
             }
         }
         if (empty($this->validation)) {
-            $validationClassName = str_replace('\\Controller\\', '\\Module\\Validation\\', get_class($this));
+            $validationClassName = str_replace('\\Controller\\', '\\Module\\Validation\\', $className);
             if (class_exists($validationClassName)) {
                 $this->validation = $this->container->get($validationClassName);
             }
+        }
+        if (empty($this->actionCodePrefix)) {
+            $this->actionCodePrefix = lcfirst(str_replace('\\', '',  substr($className, strpos($className, '\\Controller\\') + strlen('\\Controller\\'))));
         }
     }
 
     /**
      * 参数验证并处理
      * 
-     * @param string $sceneName
+     * @param string $funcName
      * @return array
      */
-    final protected function validate(string $sceneName): array
+    final protected function validate(string $funcName): array
     {
         $data = $this->request->all();
-        switch ($sceneName) {
+        switch ($funcName) {
             case 'list':
                 if (!empty($data)) {
                     //$data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //不存在的字段不验证。相当于加sometimes规则
@@ -58,16 +65,16 @@ abstract class AbstractController
                     !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
                     if (!empty($data['where'])) {
-                        $data['where'] = $this->validation->make($data['where'], $sceneName)->validate();
+                        $data['where'] = $this->validation->make($data['where'], $funcName)->validate();
                     }
                 }
                 break;
             case 'create':
-                $data = $this->validation->make($data, $sceneName)->validate();
+                $data = $this->validation->make($data, $funcName)->validate();
                 $data = $this->handleData($data);
                 break;
             case 'update':
-                $data = $this->validation->make($data, $sceneName)->validate();
+                $data = $this->validation->make($data, $funcName)->validate();
                 if (count($data) < 2) { //更新除了id还必须有其他参数，所以至少需要两个参数
                     throwFailJson('89999999');
                 }
@@ -76,10 +83,32 @@ abstract class AbstractController
             case 'info':
             case 'delete':
             default:
-                $data = $this->validation->make($data, $sceneName)->validate();
+                $data = $this->validation->make($data, $funcName)->validate();
                 break;
         }
         return $data;
+    }
+
+    /**
+     * 判断操作权限
+     * 
+     * @param string $funcName
+     * @return array
+     */
+    final protected function checkAuth(string $funcName, string $sceneCode, bool $isThrow = true): bool
+    {
+        switch ($funcName) {
+            case 'list':
+            case 'info':
+                return $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth($this->actionCodePrefix . 'Look', $sceneCode, $isThrow);
+                break;
+            case 'create':
+            case 'update':
+            case 'delete':
+            default:
+                return $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth($this->actionCodePrefix . ucfirst($funcName), $sceneCode, $isThrow);
+                break;
+        }
     }
 
     /**

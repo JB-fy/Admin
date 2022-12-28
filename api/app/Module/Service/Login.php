@@ -66,7 +66,7 @@ class Login extends AbstractService
                 throwSuccessJson(['token' => $token]);
                 break;
             default:
-                throwFailJson('39999996');
+                throwFailJson('39999001');
                 break;
         }
     }
@@ -128,7 +128,7 @@ class Login extends AbstractService
                 /**--------选做。如果token即将过期，刷新token 结束--------**/
                 break;
             default:
-                throwFailJson('39999996');
+                throwFailJson('39999001');
                 break;
         }
     }
