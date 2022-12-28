@@ -89,7 +89,7 @@ class Role extends AbstractLogic
             'checkAction' => [
                 'actionCode' => $actionCode,
                 'sceneCode' => $sceneCode,
-                'adminId' => $loginInfo->adminId
+                'loginId' => $loginInfo->adminId
             ]
         ];
         switch ($sceneCode) {
@@ -97,7 +97,9 @@ class Role extends AbstractLogic
                 if ($loginInfo->adminId === 1) { //平台超级管理员，无权限限制
                     return true;
                 }
-                $where['checkAction']['adminId'] = $loginInfo->adminId;
+                //$where['checkAction']['loginId'] = $loginInfo->adminId;
+                break;
+            default:
                 break;
         }
         if (empty(getDao(AuthRole::class)->where($where)->getBuilder()->count())) {

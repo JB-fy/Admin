@@ -20,16 +20,7 @@ class Role extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
-                /**--------验证权限 开始--------**/
-                /* try {
-                    $authActionCode = 'authRoleLook';
-                    $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode);
-                    $isAuth = true;
-                } catch (ApiException $e) {
-                    $isAuth = false;
-                } */
-                /**--------验证权限 结束--------**/
+                $isAuth = $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth('authRoleLook', $sceneCode, false);  //验证权限
 
                 /**--------参数过滤 结束--------**/
                 /* if ($isAuth) {
@@ -64,11 +55,7 @@ class Role extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
-                /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authRoleLook';
-                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
-                /**--------验证权限 结束--------**/
+                $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth('authRoleLook', $sceneCode);  //验证权限
 
                 $allowField = getDao(AuthRole::class)->getAllColumn();
                 $allowField = array_merge($allowField, ['id', 'sceneName', 'menuIdArr', 'actionIdArr']);
@@ -92,11 +79,7 @@ class Role extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
-                /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authRoleCreate';
-                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
-                /**--------验证权限 结束--------**/
+                $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth('authRoleCreate', $sceneCode);  //验证权限
 
                 $this->service->create($data);
                 break;
@@ -117,11 +100,7 @@ class Role extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
-                /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authRoleUpdate';
-                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
-                /**--------验证权限 结束--------**/
+                $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth('authRoleUpdate', $sceneCode);  //验证权限
 
                 $this->service->update($data, ['id' => $data['id']]);
                 break;
@@ -142,11 +121,7 @@ class Role extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
-                /**--------验证权限 开始--------**/
-                /* $authActionCode = 'authRoleDelete';
-                $this->container->get(AuthService::class)->checkAuth($loginInfo, $authActionCode); */
-                /**--------验证权限 结束--------**/
+                $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth('authRoleDelete', $sceneCode);  //验证权限
 
                 $this->service->delete(['id' => $data['idArr']]);
                 break;

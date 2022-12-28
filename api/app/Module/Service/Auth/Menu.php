@@ -79,8 +79,14 @@ class Menu extends AbstractService
         if (isset($data['pid'])) {
             $this->getDao()->where([['pidPath', 'like', $oldInfo->pidPath . '%']])
                 ->update([
-                    'pidPathOfChild' => [$data['pidPath'], $oldInfo->pidPath],
-                    'levelOfChild' => $data['level'] - $oldInfo->level,
+                    'pidPathOfChild' => [
+                        'newVal' => $data['pidPath'],
+                        'oldVal' => $oldInfo->pidPath
+                    ],
+                    'levelOfChild' => [
+                        'newVal' => $data['level'],
+                        'oldVal' => $oldInfo->level
+                    ]
                 ])
                 ->saveUpdate();
         }

@@ -53,12 +53,23 @@ class Role extends AbstractDao
     protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
-            case 'platformAdminId':
-                if ($operator === null) {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, 'like', '%' . $value . '%', $boolean ?? 'and']];
-                } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator, $value, $boolean ?? 'and']];
+            case 'checkAction': //判断是否有操作权限。参数：['actionCode'=>操作标识, 'sceneCode'=>场景标识, 'loginId'=>登录身份id]
+                $this->joinOfAlone($key, $value);
+
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
+                switch ($value['sceneCode']) {
+                    case 'platformAdmin':
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and']];
+                        break;
+                    default:
+                        break;
                 }
+                $actionDaoTable = getDao(Action::class)->getTable();
+                $this->where[] = ['method' => 'where', 'param' => [$actionDaoTable . '.actionCode', '=', $value['actionCode'], 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [$actionDaoTable . '.isStop', '=', 0, 'and']];
+                $sceneDaoTable = getDao(Scene::class)->getTable();
+                $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.sceneCode', '=', $value['sceneCode'], 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.isStop', '=', 0, 'and']];
                 return true;
         }
         return false;
@@ -85,6 +96,79 @@ class Role extends AbstractDao
                             $sceneDaoTable . '.sceneId',
                             '=',
                             $this->getTable() . '.sceneId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'checkAction':
+                switch ($value['sceneCode']) {
+                    case 'platformAdmin':
+                        $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
+                        $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
+                        if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
+                            $this->join[$roleRelOfPlatformAdminDaoTable] = [
+                                'method' => 'leftJoin',
+                                'param' => [
+                                    $roleRelOfPlatformAdminDaoTable,
+                                    $roleRelOfPlatformAdminDaoTable . '.roleId',
+                                    '=',
+                                    $this->getTable() . '.roleId'
+                                ]
+                            ];
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                $roleRelToActionDao = getDao(RoleRelToAction::class);
+                $roleRelToActionDaoTable = $roleRelToActionDao->getTable();
+                if (!isset($this->join[$roleRelToActionDaoTable])) {
+                    $this->join[$roleRelToActionDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleRelToActionDaoTable,
+                            $roleRelToActionDaoTable . '.roleId',
+                            '=',
+                            $this->getTable() . '.roleId'
+                        ]
+                    ];
+                }
+                $actionDao = getDao(Action::class);
+                $actionDaoTable = $actionDao->getTable();
+                if (!isset($this->join[$actionDaoTable])) {
+                    $this->join[$actionDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $actionDaoTable,
+                            $actionDaoTable . '.actionId',
+                            '=',
+                            $roleRelToActionDaoTable . '.actionId'
+                        ]
+                    ];
+                }
+                $actionRelToSceneDao = getDao(ActionRelToScene::class);
+                $actionRelToSceneDaoTable = $actionRelToSceneDao->getTable();
+                if (!isset($this->join[$actionRelToSceneDaoTable])) {
+                    $this->join[$actionRelToSceneDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $actionRelToSceneDaoTable,
+                            $actionRelToSceneDaoTable . '.actionId',
+                            '=',
+                            $actionDaoTable . '.actionId'
+                        ]
+                    ];
+                }
+                $sceneDao = getDao(Scene::class);
+                $sceneDaoTable = $sceneDao->getTable();
+                if (!isset($this->join[$sceneDaoTable])) {
+                    $this->join[$sceneDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $sceneDaoTable,
+                            $sceneDaoTable . '.sceneId',
+                            '=',
+                            $actionRelToSceneDaoTable . '.sceneId'
                         ]
                     ];
                 }
