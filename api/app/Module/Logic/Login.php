@@ -44,14 +44,14 @@ class Login extends AbstractLogic
 
     /**
      * 获取类型对应的jwt
-     *  注意：
+     * 
      * @param string $sceneCode
      * @return \App\Plugin\Jwt
      */
     public function getJwt(string $sceneCode): \App\Plugin\Jwt
     {
-        //return make($sceneCode . 'Jwt');   //数据库更改配置可以马上生效。
-        return $this->container->get($sceneCode . 'Jwt');    //需要重启服务才能生效。但不用每次使用jwt都要从数据库取配置再实例化
+        //return make($sceneCode . 'Jwt');   //数据库更改会变动
+        return $this->container->get($sceneCode . 'Jwt');    //需要重启服务才会变动
     }
 
     /**

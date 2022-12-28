@@ -11,6 +11,18 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 class Scene extends AbstractLogic
 {
     /**
+     * 获取对应场景信息
+     * 
+     * @param string $sceneCode
+     * @return object
+     */
+    public function getSceneInfo(string $sceneCode): object
+    {
+        //return make($sceneCode . 'SceneInfo');   //数据库更改会变动
+        return $this->container->get($sceneCode . 'SceneInfo');    //需要重启服务才会变动
+    }
+
+    /**
      * 在当前请求中，设置场景信息
      * 
      * @param object $info
@@ -26,9 +38,9 @@ class Scene extends AbstractLogic
     /**
      * 获取当前请求中的场景信息
      * 
-     * @return object
+     * @return object|null
      */
-    public function getInfo(): object
+    public function getInfo(): object|null
     {
         return $this->container->get(RequestInterface::class)->getAttribute('sceneInfo');
     }
