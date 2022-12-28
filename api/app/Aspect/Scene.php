@@ -44,8 +44,8 @@ class Scene extends AbstractAspect
         if ($sceneInfo->isStop) {
             throwFailJson('39999998');
         }
-        /* $sceneInfo->sceneConfig = json_decode($sceneInfo->sceneConfig, true);
-        $this->container->get(\App\Module\Logic\Auth\Scene::class)->setRequestSceneInfo($sceneInfo); */
+        //$sceneInfo->sceneConfig = $sceneInfo->sceneConfig === null ? [] : json_decode($sceneInfo->sceneConfig, true);
+        $this->container->get(\App\Module\Logic\Auth\Scene::class)->setInfo($sceneInfo);
         try {
             $response = $proceedingJoinPoint->process();
             return $response;

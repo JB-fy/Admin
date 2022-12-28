@@ -56,20 +56,24 @@ class Role extends AbstractDao
             case 'checkAction': //判断是否有操作权限。参数：['actionCode'=>操作标识, 'sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 $this->joinOfAlone($key, $value);
 
-                $sceneId=getDao(Scene::class)->
+                /* //当开启切片\App\Aspect\Scene时使用
+                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo();
+                $sceneId = $sceneInfo->sceneId; */
+                $sceneId = getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId');
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.sceneId', '=', $sceneId, 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':
                         $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and']];
                         break;
-                    default:
-                        break;
                 }
                 $actionDaoTable = getDao(Action::class)->getTable();
                 $this->where[] = ['method' => 'where', 'param' => [$actionDaoTable . '.actionCode', '=', $value['actionCode'], 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$actionDaoTable . '.isStop', '=', 0, 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelToAction::class)->getTable() . '.sceneId', '=', $sceneId, 'and']];
                 $sceneDaoTable = getDao(Scene::class)->getTable();
-                $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.sceneCode', '=', $value['sceneCode'], 'and']];
+                //$this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.sceneCode', '=', $value['sceneCode'], 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.sceneId', '=', $sceneId, 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.isStop', '=', 0, 'and']];
                 return true;
         }
