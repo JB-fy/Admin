@@ -54,19 +54,20 @@ class Role extends AbstractService
     {
         if (isset($data['menuIdArr']) || isset($data['actionIdArr'])) {
             $oldInfo = $this->getDao()->where($where)->getInfo();
-        }
-        if (isset($data['menuIdArr'])) {
-            if (count($data['menuIdArr']) != getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
-                throwFailJson('89999998');
+            if (isset($data['menuIdArr'])) {
+                if (count($data['menuIdArr']) != getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                    throwFailJson('89999998');
+                }
+                $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
+                $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改menuIdArr
             }
-            $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
-            $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改menuIdArr
-        } elseif (isset($data['actionIdArr'])) {
-            if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->where(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
-                throwFailJson('89999998');
+            if (isset($data['actionIdArr'])) {
+                if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->where(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                    throwFailJson('89999998');
+                }
+                $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
+                $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改actionIdArr
             }
-            $this->container->get(AuthRole::class)->saveRelMenu($data['actionIdArr'], $oldInfo->roleId);
-            $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改actionIdArr
         } else {
             $result = $this->getDao()->where($where)->update($data)->saveUpdate();
             if (empty($result)) {

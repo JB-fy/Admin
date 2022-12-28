@@ -56,7 +56,7 @@ class Action extends AbstractDao
                 $this->joinOfAlone($key);
                 if (is_array($value)) {
                     if (count($value) === 1) {
-                        $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value[0], $boolean ?? 'and']];
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
                     } else {
                         $this->where[] = ['method' => 'whereIn', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $value, $boolean ?? 'and']];
                     }
