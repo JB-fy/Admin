@@ -24,8 +24,8 @@ class Role extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 if ($isAuth) {
-                    $allowField = getDao(AuthRole::class)->getAllColumn();
-                    $allowField = array_merge($allowField, ['id', 'sceneName']);
+                    $allowField = $this->getAllowField(AuthRole::class);
+                    $allowField = array_merge($allowField, ['sceneName']);
                 } else {
                     $allowField = ['roleId', 'roleName', 'id'];
                 }
@@ -54,8 +54,8 @@ class Role extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
-                $allowField = getDao(AuthRole::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id', 'sceneName', 'menuIdArr', 'actionIdArr']);
+                $allowField = $this->getAllowField(AuthRole::class);
+                $allowField = array_merge($allowField, ['sceneName', 'menuIdArr', 'actionIdArr']);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
                 /**--------参数处理 结束--------**/
 

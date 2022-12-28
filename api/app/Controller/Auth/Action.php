@@ -24,8 +24,7 @@ class Action extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 if ($isAuth) {
-                    $allowField = getDao(AuthAction::class)->getAllColumn();
-                    $allowField = array_merge($allowField, ['id']);
+                    $allowField = $this->getAllowField(AuthAction::class);
                 } else {
                     $allowField = ['actionId', 'actionName', 'id'];
                 }
@@ -54,8 +53,8 @@ class Action extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
-                $allowField = getDao(AuthAction::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id', 'sceneIdArr']);
+                $allowField = $this->getAllowField(AuthAction::class);
+                $allowField = array_merge($allowField, ['sceneIdArr']);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
                 /**--------参数处理 结束--------**/
 

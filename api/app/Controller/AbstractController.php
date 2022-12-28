@@ -112,6 +112,20 @@ abstract class AbstractController
     }
 
     /**
+     * 获取允许查看的字段
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function getAllowField(string $className): array
+    {
+        $allowField = getDao($className)->getAllColumn();
+        $allowField = array_merge($allowField, ['id']);
+        $allowField = array_diff($allowField, ['password']);
+        return $allowField;
+    }
+
+    /**
      * 创建更新时的参数处理（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $data

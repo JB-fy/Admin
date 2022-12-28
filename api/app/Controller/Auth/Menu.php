@@ -24,8 +24,8 @@ class Menu extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 if ($isAuth) {
-                    $allowField = getDao(AuthMenu::class)->getAllColumn();
-                    $allowField = array_merge($allowField, ['id', 'sceneName', 'pMenuName']);
+                    $allowField = $this->getAllowField(AuthMenu::class);
+                    $allowField = array_merge($allowField, ['sceneName', 'pMenuName']);
                 } else {
                     $allowField = ['menuId', 'menuName', 'id'];
                 }
@@ -54,8 +54,7 @@ class Menu extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
-                $allowField = getDao(AuthMenu::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id']);
+                $allowField = $this->getAllowField(AuthMenu::class);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
                 /**--------参数处理 结束--------**/
 

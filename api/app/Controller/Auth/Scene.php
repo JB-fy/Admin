@@ -24,8 +24,7 @@ class Scene extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 if ($isAuth) {
-                    $allowField = getDao(AuthScene::class)->getAllColumn();
-                    $allowField = array_merge($allowField, ['id']);
+                    $allowField = $this->getAllowField(AuthScene::class);
                 } else {
                     $allowField = ['sceneId', 'sceneName', 'id'];
                 }
@@ -54,8 +53,7 @@ class Scene extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
-                $allowField = getDao(AuthScene::class)->getAllColumn();
-                $allowField = array_merge($allowField, ['id']);
+                $allowField = $this->getAllowField(AuthScene::class);
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
                 /**--------参数处理 结束--------**/
 
