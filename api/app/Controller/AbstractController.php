@@ -48,6 +48,16 @@ abstract class AbstractController
     }
 
     /**
+     * 在当前请求中，获取场景标识
+     * 
+     * @return string|null
+     */
+    public function getCurrentSceneCode(): ?string
+    {
+        return $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
+    }
+
+    /**
      * 参数验证并处理
      * 
      * @param string $funcName

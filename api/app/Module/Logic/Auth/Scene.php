@@ -6,7 +6,6 @@ namespace App\Module\Logic\Auth;
 
 use App\Module\Logic\AbstractLogic;
 use Hyperf\Context\Context;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
 class Scene extends AbstractLogic
 {
@@ -14,12 +13,22 @@ class Scene extends AbstractLogic
      * 获取对应场景信息
      * 
      * @param string $sceneCode
-     * @return object
+     * @return object|null
      */
-    public function getInfo(string $sceneCode): object
+    public function getInfo(string $sceneCode): object|null
     {
-        //return make($sceneCode . 'SceneInfo');   //数据库更改会变动
-        return $this->container->get($sceneCode . 'SceneInfo');    //需要重启服务才会变动
+        //return make($sceneCode . 'SceneInfo');   //数据库更新后，会立刻生效
+        return $this->container->get($sceneCode . 'SceneInfo');    //数据库更新后，需要重启服务才会生效
+    }
+
+    /**
+     * 在当前请求中，获取场景标识
+     * 
+     * @return string|null
+     */
+    public function getCurrentSceneCode(): ?string
+    {
+        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Scene');
     }
 
     /**
@@ -36,12 +45,12 @@ class Scene extends AbstractLogic
     }
 
     /**
-     * 获取当前请求中的场景信息
+     * 在当前请求中，获取场景信息
      * 
      * @return object|null
      */
     public function getCurrentInfo(): object|null
     {
-        return $this->container->get(RequestInterface::class)->getAttribute('sceneInfo');
+        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute('sceneInfo');
     }
 }

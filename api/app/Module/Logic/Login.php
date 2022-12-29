@@ -6,7 +6,6 @@ namespace App\Module\Logic;
 
 use App\Module\Cache\Login as CacheLogin;
 use Hyperf\Context\Context;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
 class Login extends AbstractLogic
 {
@@ -43,28 +42,28 @@ class Login extends AbstractLogic
     }
 
     /**
-     * 获取类型对应的jwt
+     * 获取对应的jwt
      * 
      * @param string $sceneCode
      * @return \App\Plugin\Jwt
      */
     public function getJwt(string $sceneCode): \App\Plugin\Jwt
     {
-        //return make($sceneCode . 'Jwt');   //数据库更改会变动
-        return $this->container->get($sceneCode . 'Jwt');    //需要重启服务才会变动
+        //return make($sceneCode . 'Jwt');   //数据库更新后，会立刻生效
+        return $this->container->get($sceneCode . 'Jwt');    //数据库更新后，需要重启服务才会生效
     }
 
     /**
-     * 获取类型对应的请求Token
+     * 在当前请求中，获取对应的Token
      *
      * @param string $sceneCode
      * @return string|null
      */
-    public function getRequestToken(string $sceneCode): ?string
+    public function getCurrentToken(string $sceneCode): ?string
     {
         switch ($sceneCode) {
             default:
-                return $this->container->get(RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
+                return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
         }
     }
 
@@ -87,7 +86,7 @@ class Login extends AbstractLogic
     }
 
     /**
-     * 获取当前请求中的登录用户信息
+     * 当前请求中，获取登录用户信息
      * 
      * @param string $sceneCode
      * @return object
@@ -96,7 +95,7 @@ class Login extends AbstractLogic
     {
         switch ($sceneCode) {
             default:
-                return $this->container->get(RequestInterface::class)->getAttribute($sceneCode . 'Info');
+                return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($sceneCode . 'Info');
         }
     }
 }

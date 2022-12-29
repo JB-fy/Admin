@@ -16,7 +16,7 @@ class Login extends AbstractController
     public function encryptStr()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $this->service->encryptStr($data['account'], $sceneCode);
@@ -35,7 +35,7 @@ class Login extends AbstractController
     public function login()
     {
         $data = $this->validate(__FUNCTION__); //参数验证并处理
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $this->service->login($data['account'], $data['password'], $sceneCode);
@@ -53,7 +53,7 @@ class Login extends AbstractController
      */
     public function info()
     {
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $info = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
@@ -72,7 +72,7 @@ class Login extends AbstractController
      */
     // public function updateInfo()
     // {
-    //     switch (getRequestScene()) {
+    //     switch ($this->getCurrentSceneCode()) {
     //         case 'platformAdmin':
     //             /**--------验证参数 开始--------**/
     //             $data = $this->request->all();
@@ -116,7 +116,7 @@ class Login extends AbstractController
      */
     public function menuTree()
     {
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);

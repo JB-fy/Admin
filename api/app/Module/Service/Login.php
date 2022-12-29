@@ -82,7 +82,7 @@ class Login extends AbstractService
         switch ($sceneCode) {
             case 'platformAdmin':
                 /**--------验证token 开始--------**/
-                $token = $this->logic->getRequestToken($sceneCode);
+                $token = $this->logic->getCurrentToken($sceneCode);
                 if (empty($token)) {
                     throwFailJson('39994000');
                 }
@@ -113,7 +113,7 @@ class Login extends AbstractService
                 unset($info->password);
                 unset($info->isStop);
 
-                $this->logic->setInfo($info, $sceneCode);    //用户信息保存在请求对象内
+                $this->logic->setCurrentInfo($info, $sceneCode);    //用户信息保存在请求对象内
                 /**--------获取用户信息并验证 结束--------**/
 
                 /**--------选做。如果token即将过期，刷新token 开始--------**/

@@ -8,7 +8,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 //这个中间件可以不要，控制器没有对应场景也会报错
-#[Aspect]
+//#[Aspect]
 class Scene extends AbstractAspect
 {
     //执行优先级（大值优先）
@@ -33,20 +33,18 @@ class Scene extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
         if (empty($sceneCode)) {
             throwFailJson('39999999');
         }
 
-        //getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo($sceneCode);
-        $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => $sceneCode])->getInfo();
+        $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo($sceneCode);
         if (empty($sceneInfo)) {
             throwFailJson('39999999');
         }
         if ($sceneInfo->isStop) {
             throwFailJson('39999998');
         }
-        //$sceneInfo->sceneConfig = $sceneInfo->sceneConfig === null ? [] : json_decode($sceneInfo->sceneConfig, true);
         $this->container->get(\App\Module\Logic\Auth\Scene::class)->setCurrentInfo($sceneInfo);
         try {
             $response = $proceedingJoinPoint->process();

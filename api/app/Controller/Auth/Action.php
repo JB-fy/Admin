@@ -17,7 +17,7 @@ class Action extends AbstractController
     public function list()
     {
         $data = $this->validate(__FUNCTION__);
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $isAuth = $this->checkAuth(__FUNCTION__, $sceneCode, false);
@@ -47,7 +47,7 @@ class Action extends AbstractController
     public function info()
     {
         $data = $this->validate(__FUNCTION__);
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $this->checkAuth(__FUNCTION__, $sceneCode);
@@ -74,7 +74,7 @@ class Action extends AbstractController
     public function create()
     {
         $data = $this->validate(__FUNCTION__);
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $this->checkAuth(__FUNCTION__, $sceneCode);
@@ -95,7 +95,7 @@ class Action extends AbstractController
     public function update()
     {
         $data = $this->validate(__FUNCTION__);
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $this->checkAuth(__FUNCTION__, $sceneCode);
@@ -116,7 +116,7 @@ class Action extends AbstractController
     public function delete()
     {
         $data = $this->validate(__FUNCTION__);
-        $sceneCode = getRequestScene();
+        $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $this->checkAuth(__FUNCTION__, $sceneCode);

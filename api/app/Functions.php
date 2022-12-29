@@ -3,18 +3,6 @@
 declare(strict_types=1);
 
 /*----------------基于业务逻辑封装的函数  开始----------------*/
-if (!function_exists('getRequestScene')) {
-    /**
-     * 获取当前请求场景
-     *
-     * @return string|null
-     */
-    function getRequestScene(): ?string
-    {
-        return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Scene');
-    }
-}
-
 /**
  * 获取当前请求是http还是https
  *

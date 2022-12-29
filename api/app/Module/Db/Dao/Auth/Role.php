@@ -56,8 +56,7 @@ class Role extends AbstractDao
             case 'checkAction': //判断是否有操作权限。参数：['actionCode'=>操作标识, 'sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 $this->joinOfAlone($key, $value);
 
-                //当开启切面\App\Aspect\Scene时
-                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();
+                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();    //当开启切面\App\Aspect\Scene时有值
                 $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.sceneId', '=', $sceneId, 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
