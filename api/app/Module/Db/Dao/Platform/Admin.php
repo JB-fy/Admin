@@ -30,9 +30,11 @@ class Admin extends AbstractDao
     protected function fieldOfAlone(string $key): bool
     {
         switch ($key) {
-            case 'roleName':
-                $this->joinOfAlone($key);
-                $this->field['select'][] = getDao(Role::class)->getTable() . '.' . $key;
+            case 'roleIdArr':
+                $this->afterField[] = $key;
+
+                //需要id字段
+                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
                 return true;
         }
         return false;
@@ -50,11 +52,23 @@ class Admin extends AbstractDao
     protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
-            case 'loginStr':
+            case 'accountOrPhone':
                 if (is_numeric($value)) {
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . 'phone', $operator ?? '=', $value, $boolean ?? 'and']];
                 } else {
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . 'account', $operator ?? '=', $value, $boolean ?? 'and']];
+                }
+                return true;
+            case 'roleId':
+                $this->joinOfAlone($key);
+                if (is_array($value)) {
+                    if (count($value) === 1) {
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
+                    } else {
+                        $this->where[] = ['method' => 'whereIn', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                    }
+                } else {
+                    $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
                 }
                 return true;
         }
@@ -71,7 +85,7 @@ class Admin extends AbstractDao
     protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'roleName':
+            case 'roleId':
                 $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
                 $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
                 if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
@@ -85,19 +99,23 @@ class Admin extends AbstractDao
                         ]
                     ];
                 }
-                $roleDao = getDao(Role::class);
-                $roleDaoTable = $roleDao->getTable();
-                if (!isset($this->join[$roleDaoTable])) {
-                    $this->join[$roleDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $roleDaoTable,
-                            $roleDaoTable . '.roleId',
-                            '=',
-                            $roleRelOfPlatformAdminDaoTable . '.roleId'
-                        ]
-                    ];
-                }
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取数据后，再处理的字段（独有的）
+     *
+     * @param string $key
+     * @param object $info
+     * @return boolean
+     */
+    protected function afterFieldOfAlone(string $key, object &$info): bool
+    {
+        switch ($key) {
+            case 'roleIdArr':
+                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->where(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
                 return true;
         }
         return false;

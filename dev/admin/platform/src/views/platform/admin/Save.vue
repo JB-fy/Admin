@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import md5 from 'js-md5'
+
 const { t } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
@@ -8,17 +10,23 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     rules: {
-        actionName: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+        account: [
+            { type: 'string', required: computed((): boolean => { return saveCommon.data.phone ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') }
         ],
-        actionCode: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+        phone: [
+            { type: 'string', required: computed((): boolean => { return saveCommon.data.account ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') }
         ],
-        sceneIdArr: [
+        password: [
+            { type: 'string', required: computed((): boolean => { return saveCommon.data.id ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+        ],
+        nickname: [
+            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+        ],
+        roleIdArr: [
             { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select') }
-        ],
-        remark: [
-            { type: 'string', min: 0, max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
@@ -33,8 +41,9 @@ const saveForm = reactive({
             const param = {
                 ...removeEmptyOfObj(saveCommon.data, false)
             }
+            param.password ? param.password = md5(param.password) : null;
             try {
-                await request('auth/action/save', param, true)
+                await request('platform/admin/save', param, true)
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
             } catch (error) { }
@@ -73,28 +82,27 @@ const saveDrawer = reactive({
             :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
             <ElScrollbar>
                 <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
-                    label-width="auto" :status-icon="true" :scroll-to-error="true">
-                    <ElFormItem :label="t('common.name.auth.action.actionName')" prop="actionName">
-                        <ElInput v-model="saveCommon.data.actionName"
-                            :placeholder="t('common.name.auth.action.actionName')" minlength="1" maxlength="30"
-                            :show-word-limit="true" :clearable="true" />
+                    label-width="auto" :status-icon="true" :scroll-to-error="false">
+                    <ElFormItem :label="t('common.name.account')" prop="account">
+                        <ElInput v-model="saveCommon.data.account" :placeholder="t('common.name.account')" minlength="1"
+                            maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.auth.action.actionCode')" prop="actionCode">
-                        <ElInput v-model="saveCommon.data.actionCode"
-                            :placeholder="t('common.name.auth.action.actionCode')" minlength="1" maxlength="30"
-                            :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
-                        <label>
-                            <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true"
-                                :closable="false" />
-                        </label>
+                    <ElFormItem :label="t('common.name.phone')" prop="phone">
+                        <ElInput v-model="saveCommon.data.phone" :placeholder="t('common.name.phone')" minlength="1"
+                            maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.rel.sceneIdArr')" prop="sceneIdArr">
-                        <MyTransfer v-model="saveCommon.data.sceneIdArr"
-                            :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
+                    <ElFormItem :label="t('common.name.password')" prop="password">
+                        <ElInput v-model="saveCommon.data.password" :placeholder="t('common.name.password')"
+                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true"
+                            :show-password="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.remark')" prop="remark">
-                        <ElInput v-model="saveCommon.data.remark" type="textarea" :autosize="{ minRows: 3 }"
-                            minlength="0" maxlength="120" :show-word-limit="true" />
+                    <ElFormItem :label="t('common.name.nickname')" prop="nickname">
+                        <ElInput v-model="saveCommon.data.nickname" :placeholder="t('common.name.nickname')"
+                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
+                        <MyTransfer v-model="saveCommon.data.roleIdArr"
+                            :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"

@@ -10,11 +10,11 @@ class Admin extends AbstractValidation
 {
     protected array $rule = [
         'adminId' => 'sometimes|required|integer|min:1',
-        'account' => 'sometimes|required_without:phone|alpha_dash|between:6,30',
-        'phone' => 'sometimes|required_without:account|telephone_number|between:1,30',
+        'account' => 'sometimes|required_without:phone|alpha_dash|between:1,30',
+        'phone' => 'sometimes|required_without:account|string|between:1,30|regex:/^1[3-9]\d{9}$/',
         'password' => 'sometimes|required|alpha_dash|size:32',
-        'nickname' => 'sometimes|required|alpha_dash|between:1,30',
-        'avatar' => 'sometimes|required|url|between:1,120',
+        'nickname' => 'alpha_dash|between:1,30',
+        'avatar' => 'url|between:1,120',
         'roleIdArr' => 'sometimes|required_if_null|array|min:1',
         'roleIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'isStop' => 'sometimes|required|integer|in:0,1',

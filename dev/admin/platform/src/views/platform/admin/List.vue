@@ -43,26 +43,32 @@ const table = reactive({
         sortable: true,
     },
     {
-        dataKey: 'actionName',
-        title: t('common.name.auth.action.actionName'),
-        key: 'actionName',
+        dataKey: 'account',
+        title: t('common.name.account'),
+        key: 'account',
         align: 'center',
         width: 150,
     },
     {
-        dataKey: 'actionCode',
-        title: t('common.name.auth.action.actionCode'),
-        key: 'actionCode',
+        dataKey: 'phone',
+        title: t('common.name.phone'),
+        key: 'phone',
         align: 'center',
         width: 150,
     },
     {
-        dataKey: 'remark',
-        title: t('common.name.remark'),
-        key: 'remark',
+        dataKey: 'nickname',
+        title: t('common.name.nickname'),
+        key: 'nickname',
+        align: 'center',
+        width: 150,
+    },
+    {
+        dataKey: 'avatar',
+        title: t('common.name.avatar'),
+        key: 'avatar',
         width: 200,
-        align: 'center',
-        hidden: true
+        align: 'center'
     },
     {
         dataKey: 'isStop',
@@ -176,7 +182,7 @@ const handleBatchDelete = () => {
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request('auth/action/info', { id: id }).then((res) => {
+    request('platform/admin/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
@@ -198,14 +204,14 @@ const handleDelete = (idArr: number[] | string[]) => {
         center: true,
         showClose: false,
     }).then(() => {
-        request('auth/action/delete', { idArr: idArr }, true).then((res) => {
+        request('platform/admin/delete', { idArr: idArr }, true).then((res) => {
             getList()
         }).catch(() => { })
     }).catch(() => { })
 }
 //更新
 const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
-    await request('auth/action/save', param, true)
+    await request('platform/admin/save', param, true)
 }
 
 //分页
@@ -236,7 +242,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request('auth/action/list', param)
+        const res = await request('platform/admin/list', param)
         table.data = res.data.list
         pagination.total = res.data.count
     } catch (error) { }

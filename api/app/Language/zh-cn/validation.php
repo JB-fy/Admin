@@ -187,6 +187,7 @@ return [
         'menuId' => '菜单ID',
         'roleId' => '角色ID',
         'sceneId' => '场景ID',
+        'adminId' => '管理员ID',
 
         'pid' => '父ID',
 
@@ -194,13 +195,21 @@ return [
         'actionIdArr.*' => '操作列表内所有值',
         'menuIdArr' => '菜单列表',
         'menuIdArr.*' => '菜单列表内所有值',
+        'roleIdArr' => '角色列表',
+        'roleIdArr.*' => '角色列表内所有值',
         'sceneIdArr' => '场景列表',
         'sceneIdArr.*' => '场景列表内所有值',
 
-        'extraData' => '额外数据',
-        'remark' => '备注',
         'sort' => '排序值',
         'isStop' => '停用',
+        'remark' => '备注',
+        'extraData' => '额外数据',
+
+        'account' => '账号',
+        'phone' => '手机号',
+        'password' => '密码',
+        'nickname' => '昵称',
+        'avatar' => '头像',
 
         'actionName' => '操作名称',
         'actionCode' => '操作标识',
@@ -212,9 +221,6 @@ return [
         'sceneName' => '场景名称',
         'sceneCode' => '场景标识',
         'sceneConfig' => '场景配置',
-
-        'account' => '账号',
-        'password' => '密码',
     ],
     'phone_number' => ':attribute 必须为一个有效的电话号码',
     'telephone_number' => ':attribute 必须为一个有效的手机号码',

@@ -26,13 +26,13 @@ const queryForm = reactive({
             <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
                 :controls="false" />
         </ElFormItem>
-        <ElFormItem prop="actionName">
-            <ElInput v-model="queryCommon.data.actionName" :placeholder="t('common.name.auth.action.actionName')"
+        <ElFormItem prop="account">
+            <ElInput v-model="queryCommon.data.account" :placeholder="t('common.name.account')"
                 :clearable="true" />
         </ElFormItem>
-        <ElFormItem prop="actionCode">
-            <ElInput v-model="queryCommon.data.actionCode" :placeholder="t('common.name.auth.action.actionCode')"
-                :clearable="true" />
+        <ElFormItem prop="roleId">
+            <MySelect v-model="queryCommon.data.roleId" :placeholder="t('common.name.rel.roleId')"
+                :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
             <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"

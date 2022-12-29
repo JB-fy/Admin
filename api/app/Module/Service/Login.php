@@ -39,7 +39,7 @@ class Login extends AbstractService
         switch ($sceneCode) {
             case 'platformAdmin':
                 /**--------验证账号密码 开始--------**/
-                $info = getDao(Admin::class)->where(['loginStr' => $account])->getInfo();
+                $info = getDao(Admin::class)->where(['accountOrPhone' => $account])->getInfo();
                 if (empty($info)) {
                     throwFailJson('39990000');
                 }

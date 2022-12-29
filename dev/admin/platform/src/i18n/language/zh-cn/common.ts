@@ -43,21 +43,25 @@ export default {
         allTopLevel: '全部顶级',
 
         id: 'ID',
-        level: '层级',
-        remark: '备注',
         sort: '排序',
         isStop: '停用',
-
+        level: '层级',
+        remark: '备注',
         extraData: '额外数据',
 
         account: '账号',
+        phone: '手机号',
         password: '密码',
+        nickname: '昵称',
+        avatar: '头像',
 
         rel: {
             pid: '父级',
+            roleId: '所属角色',
             sceneId: '所属场景',
             actionIdArr: '所含操作',
             menuIdArr: '所含菜单',
+            roleIdArr: '所属角色',
             sceneIdArr: '所属场景',
         },
         auth: {
