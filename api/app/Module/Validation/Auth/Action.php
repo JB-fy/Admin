@@ -13,7 +13,7 @@ class Action extends AbstractValidation
         'actionName' => 'sometimes|required|alpha_dash|between:1,30',
         'actionCode' => 'sometimes|required|alpha_dash|between:1,30',
         'sceneIdArr' => 'sometimes|required_if_null|array|min:1',
-        'sceneIdArr.*' => 'sometimes|required|integer|min:1',
+        'sceneIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'remark' => 'string|between:0,120',
         'isStop' => 'sometimes|required|integer|in:0,1',
 

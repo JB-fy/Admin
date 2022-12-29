@@ -57,6 +57,14 @@ Router::addGroup('/auth/scene', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Scene::class, 'delete']);
 });
 
+Router::addGroup('/platform/admin', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Admin::class, 'list']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Platform\Admin::class, 'info']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Platform\Admin::class, 'create']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Platform\Admin::class, 'update']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Platform\Admin::class, 'delete']);
+});
+
 Router::get('/favicon.ico', function () {
     return '';
 });
