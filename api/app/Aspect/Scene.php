@@ -38,7 +38,7 @@ class Scene extends AbstractAspect
             throwFailJson('39999999');
         }
 
-        //getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getSceneInfo($sceneCode);
+        //getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo($sceneCode);
         $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => $sceneCode])->getInfo();
         if (empty($sceneInfo)) {
             throwFailJson('39999999');
@@ -47,7 +47,7 @@ class Scene extends AbstractAspect
             throwFailJson('39999998');
         }
         //$sceneInfo->sceneConfig = $sceneInfo->sceneConfig === null ? [] : json_decode($sceneInfo->sceneConfig, true);
-        $this->container->get(\App\Module\Logic\Auth\Scene::class)->setInfo($sceneInfo);
+        $this->container->get(\App\Module\Logic\Auth\Scene::class)->setCurrentInfo($sceneInfo);
         try {
             $response = $proceedingJoinPoint->process();
             return $response;

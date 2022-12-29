@@ -75,7 +75,7 @@ class Login extends AbstractLogic
      * @param string $sceneCode
      * @return void
      */
-    public function setInfo(object $info, string $sceneCode)
+    public function setCurrentInfo(object $info, string $sceneCode)
     {
         switch ($sceneCode) {
             default:
@@ -92,7 +92,7 @@ class Login extends AbstractLogic
      * @param string $sceneCode
      * @return object
      */
-    public function getInfo(string $sceneCode): object
+    public function getCurrentInfo(string $sceneCode): object
     {
         switch ($sceneCode) {
             default:

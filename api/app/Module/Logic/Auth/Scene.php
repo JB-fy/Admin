@@ -16,7 +16,7 @@ class Scene extends AbstractLogic
      * @param string $sceneCode
      * @return object
      */
-    public function getSceneInfo(string $sceneCode): object
+    public function getInfo(string $sceneCode): object
     {
         //return make($sceneCode . 'SceneInfo');   //数据库更改会变动
         return $this->container->get($sceneCode . 'SceneInfo');    //需要重启服务才会变动
@@ -28,7 +28,7 @@ class Scene extends AbstractLogic
      * @param object $info
      * @return void
      */
-    public function setInfo(object $info)
+    public function setCurrentInfo(object $info)
     {
         $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
         $request = $request->withAttribute('sceneInfo', $info);
@@ -40,7 +40,7 @@ class Scene extends AbstractLogic
      * 
      * @return object|null
      */
-    public function getInfo(): object|null
+    public function getCurrentInfo(): object|null
     {
         return $this->container->get(RequestInterface::class)->getAttribute('sceneInfo');
     }

@@ -57,7 +57,7 @@ class Role extends AbstractDao
                 $this->joinOfAlone($key, $value);
 
                 //当开启切面\App\Aspect\Scene时
-                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo();
+                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();
                 $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.sceneId', '=', $sceneId, 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];

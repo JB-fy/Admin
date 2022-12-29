@@ -56,7 +56,7 @@ class Login extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $info = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
+                $info = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
                 throwSuccessJson(['info' => $info]);
                 break;
             default:
@@ -119,7 +119,7 @@ class Login extends AbstractController
         $sceneCode = getRequestScene();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
                 /* if ($loginInfo->adminId == 1) {
                     $where = [
                         'sceneId' => $this->request->sceneInfo->sceneId,

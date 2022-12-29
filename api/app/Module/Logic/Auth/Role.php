@@ -86,7 +86,7 @@ class Role extends AbstractLogic
      */
     public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
     {
-        $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getInfo($sceneCode);
+        $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
         $where = [
             'checkAction' => [
                 'actionCode' => $actionCode,
