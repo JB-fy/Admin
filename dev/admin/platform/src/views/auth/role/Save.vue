@@ -38,6 +38,14 @@ const saveForm = reactive({
             const param = {
                 ...removeEmptyOfObj(saveCommon.data, false)
             }
+            let menuIdArr: any = []
+            param.menuIdArr.forEach((item: any) => {
+                menuIdArr = menuIdArr.concat(item)
+            })
+            //param.menuIdArr = [...new Set(menuIdArr)]
+            param.menuIdArr = menuIdArr.filter((item: any, index: any) => {
+                return menuIdArr.indexOf(item) === index
+            })
             try {
                 await request('auth/role/save', param, true)
                 listCommon.ref.getList(true)
@@ -91,7 +99,7 @@ const saveDrawer = reactive({
                     <ElFormItem v-if="saveCommon.data.sceneId" :label="t('common.name.rel.menuIdArr')" prop="menuIdArr">
                         <MyCascader v-model="saveCommon.data.menuIdArr"
                             :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
-                            :isPanel="true" :props="{ multiple: true }" />
+                            :isPanel="true" :props="{ multiple: true, checkStrictly: false, emitPath: true }" />
                     </ElFormItem>
                     <ElFormItem v-if="saveCommon.data.sceneId" :label="t('common.name.rel.actionIdArr')"
                         prop="actionIdArr">
