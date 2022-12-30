@@ -3,16 +3,15 @@ const { t } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
-//可不做。主要作用：新增时设置默认值；知道有哪些字段
-saveCommon.data = {
-    pid: 0,
-    sort: 50,
-    ...saveCommon.data
-}
 
 const saveForm = reactive({
     ref: null as any,
     loading: false,
+    data: {
+        pid: 0,
+        sort: 50,
+        ...saveCommon.data
+    } as { [propName: string]: any },
     rules: {
         menuName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
@@ -67,7 +66,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = {
-                ...removeEmptyOfObj(saveCommon.data, false)
+                ...removeEmptyOfObj(saveForm.data, false)
             }
             try {
                 await request('auth/menu/save', param, true)
@@ -108,36 +107,36 @@ const saveDrawer = reactive({
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title"
             :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
             <ElScrollbar>
-                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
+                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
                     <ElFormItem :label="t('common.name.auth.menu.menuName')" prop="menuName">
-                        <ElInput v-model="saveCommon.data.menuName" :placeholder="t('common.name.auth.menu.menuName')"
+                        <ElInput v-model="saveForm.data.menuName" :placeholder="t('common.name.auth.menu.menuName')"
                             minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
-                        <MySelect v-model="saveCommon.data.sceneId"
+                        <MySelect v-model="saveForm.data.sceneId"
                             :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }"
-                            @change="() => { saveCommon.data.pid = 0 }" />
+                            @change="() => { saveForm.data.pid = 0 }" />
                     </ElFormItem>
-                    <ElFormItem v-if="saveCommon.data.sceneId" :label="t('common.name.rel.pid')" prop="pid">
-                        <MyCascader v-model="saveCommon.data.pid"
-                            :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId, excId: saveCommon.data.id } } }"
+                    <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.pid')" prop="pid">
+                        <MyCascader v-model="saveForm.data.pid"
+                            :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveForm.data.sceneId, excId: saveForm.data.id } } }"
                             :defaultOptions="[{ id: 0, menuName: t('common.name.without') }]" :clearable="false" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.extraData')" prop="extraData">
                         <ElAlert :title="t('view.auth.menu.tip.extraData')" type="info" :show-icon="true"
                             :closable="false" />
-                        <ElInput v-model="saveCommon.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
+                        <ElInput v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.sort')" prop="sort">
-                        <ElInputNumber v-model="saveCommon.data.sort" :precision="0" :min="0" :max="100" :step="1"
+                        <ElInputNumber v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1"
                             :step-strictly="true" controls-position="right" :value-on-clear="50" />
                         <label>
                             <ElAlert :title="t('common.tip.sort')" type="info" :show-icon="true" :closable="false" />
                         </label>
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
-                        <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"
+                        <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0"
                             :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
                     </ElFormItem>

@@ -7,6 +7,9 @@ const listCommon = inject('listCommon') as { ref: any }
 const saveForm = reactive({
     ref: null as any,
     loading: false,
+    data: {
+        ...saveCommon.data
+    } as { [propName: string]: any },
     rules: {
         actionName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
@@ -33,7 +36,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = {
-                ...removeEmptyOfObj(saveCommon.data, false)
+                ...removeEmptyOfObj(saveForm.data, false)
             }
             try {
                 await request('auth/action/save', param, true)
@@ -74,15 +77,15 @@ const saveDrawer = reactive({
         <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title"
             :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
             <ElScrollbar>
-                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveCommon.data" :rules="saveForm.rules"
+                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                     label-width="auto" :status-icon="true" :scroll-to-error="true">
                     <ElFormItem :label="t('common.name.auth.action.actionName')" prop="actionName">
-                        <ElInput v-model="saveCommon.data.actionName"
+                        <ElInput v-model="saveForm.data.actionName"
                             :placeholder="t('common.name.auth.action.actionName')" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.auth.action.actionCode')" prop="actionCode">
-                        <ElInput v-model="saveCommon.data.actionCode"
+                        <ElInput v-model="saveForm.data.actionCode"
                             :placeholder="t('common.name.auth.action.actionCode')" minlength="1" maxlength="30"
                             :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                         <label>
@@ -91,15 +94,15 @@ const saveDrawer = reactive({
                         </label>
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.sceneIdArr')" prop="sceneIdArr">
-                        <MyTransfer v-model="saveCommon.data.sceneIdArr"
+                        <MyTransfer v-model="saveForm.data.sceneIdArr"
                             :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.remark')" prop="remark">
-                        <ElInput v-model="saveCommon.data.remark" type="textarea" :autosize="{ minRows: 3 }"
+                        <ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }"
                             minlength="0" maxlength="120" :show-word-limit="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
-                        <ElSwitch v-model="saveCommon.data.isStop" :active-value="1" :inactive-value="0"
+                        <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0"
                             :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />
                     </ElFormItem>
