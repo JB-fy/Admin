@@ -15,7 +15,8 @@ const saveForm = reactive({
     loading: false,
     rules: {
         menuName: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         sceneId: [
             { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
@@ -25,15 +26,27 @@ const saveForm = reactive({
         ],
         extraData: [
             {
-                validator: (rule: any, value: any, callback: any) => {
+                type: 'object',
+                fields: {
+                    title: {
+                        type: 'object',
+                        fields: {
+                            'zh-cn': { type: 'string', required: true, min: 1, message: 'title.zh-cn' + t('validation.min.string', { min: 1 }) },
+                            en: { type: 'string', min: 1, message: 'title.en' + t('validation.min.string', { min: 1 }) }
+                        },
+                        message: 'title' + t('validation.regex')
+                    },
+                    icon: { type: 'string', min: 1, message: 'icon' + t('validation.min.string', { min: 1 }) },
+                    url: { type: 'string', min: 1, message: 'url' + t('validation.min.string', { min: 1 }) }
+                },
+                transform(value: any) {
+                    if (value === '' || value === null || value === undefined) {
+                        return undefined
+                    }
                     try {
-                        if (value === '' || value === null || value === undefined) {
-                            callback()
-                        }
-                        JSON.parse(value)
-                        callback()
+                        return JSON.parse(value)
                     } catch (e) {
-                        callback(new Error())
+                        return value
                     }
                 },
                 trigger: 'blur',

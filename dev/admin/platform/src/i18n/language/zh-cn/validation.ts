@@ -11,6 +11,7 @@ export default {
         string: '必须小于等于 {max} 个字符',
         number: '必须小于等于 {max}'
     },
+    regex: '格式是无效的',
     json: '必须是有效的 JSON 格式',
     select: '请选择',
     //account: '必须包含以下有效字符 (中文/英文，数字)',

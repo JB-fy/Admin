@@ -26,7 +26,7 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         roleIdArr: [
-            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+            { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }

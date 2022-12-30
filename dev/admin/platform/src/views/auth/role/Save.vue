@@ -14,16 +14,17 @@ const saveForm = reactive({
     loading: false,
     rules: {
         roleName: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         sceneId: [
             { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
         ],
         menuIdArr: [
-            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+            { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
         ],
         actionIdArr: [
-            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+            { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }

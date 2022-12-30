@@ -9,13 +9,35 @@ const saveForm = reactive({
     loading: false,
     rules: {
         sceneName: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         sceneCode: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         sceneConfig: [
             {
+                type: 'object',
+                fields: {
+                    signKey: { type: 'string', min: 1, message: 'signKey' + t('validation.min.string', { min: 1 }) },
+                    signType: { type: 'string', min: 1, message: 'signType' + t('validation.min.string', { min: 1 }) },
+                    expireTime: { type: 'integer', min: 1, message: 'expireTime' + t('validation.min.number', { min: 1 }) }
+                },
+                transform(value: any) {
+                    if (value === '' || value === null || value === undefined) {
+                        return undefined
+                    }
+                    try {
+                        return JSON.parse(value)
+                    } catch (e) {
+                        return value
+                    }
+                },
+                trigger: 'blur',
+                message: t('validation.json')
+            },
+            /* {
                 validator: (rule: any, value: any, callback: any) => {
                     try {
                         if (value === '' || value === null || value === undefined) {
@@ -29,7 +51,7 @@ const saveForm = reactive({
                 },
                 trigger: 'blur',
                 message: t('validation.json')
-            },
+            }, */
         ],
         isStop: [
             /* { type: 'enum', enum: tm('common.status.whether').map((item) => item.value), trigger: 'change', message: t('validation.select') } */
