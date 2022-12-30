@@ -44,7 +44,7 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
                     break;
             }
             res = await http({
-                url: apiCodeList.join('/'),
+                url: '/' + apiCodeList.join('/'),
                 method: 'post',
                 data: data
             })

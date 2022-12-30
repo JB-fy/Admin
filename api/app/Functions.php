@@ -3,16 +3,8 @@
 declare(strict_types=1);
 
 /*----------------基于业务逻辑封装的函数  开始----------------*/
-/**
- * 获取当前请求是http还是https
- *
- * @return string
- */
-/* function getHttpScheme(): string
-{
-    //必须在nginx配置文件中设置转发该头部
-    return request()->header('x-forwarded-proto', '');
-} */
+
+
 /*----------------基于业务逻辑封装的函数  结束----------------*/
 
 
@@ -32,7 +24,6 @@ if (!function_exists('throwSuccessJson')) {
         throw make(\App\Exception\Json::class, ['code' => $code, 'msg' => $msg, 'data' => $data]);
     }
 }
-
 
 if (!function_exists('throwFailJson')) {
     /**
@@ -119,6 +110,72 @@ if (!function_exists('getLogger')) {
         return getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name, $group);
     }
 }
+
+if (!function_exists('getRequest')) {
+    /**
+     * 获取Request对象
+     * 
+     * @return \Hyperf\HttpServer\Contract\RequestInterface
+     */
+    function getRequest(): \Hyperf\HttpServer\Contract\RequestInterface
+    {
+        return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
+    }
+}
+
+if (!function_exists('getRequest')) {
+    /**
+     * 获取Request对象
+     * 
+     * @return \Hyperf\HttpServer\Contract\RequestInterface
+     */
+    function getRequest(): \Hyperf\HttpServer\Contract\RequestInterface
+    {
+        return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
+    }
+}
+
+if (!function_exists('getRequestScheme')) {
+    /**
+     * 获取当前请求是http还是https
+     *
+     * @return string
+     */
+    function getRequestScheme(): string
+    {
+        //nginx转发过来的请求，hyperf框架无法识别是否是https，默认都是http。
+        //如要识别，需要nginx域名配置文件中设置转发时，增加一个头部用于说明。下面是nginx中所需增加配置，X-Forwarded-Proto名称可自定义
+        /* map $http_x_forwarded_proto $admin_scheme {
+            default $scheme;
+            https https;
+        }
+        proxy_set_header X-Forwarded-Proto $admin_scheme; */
+        return getRequest()->header('x-forwarded-proto', 'http');
+    }
+}
+
+if (!function_exists('getRequestUrl')) {
+    /**
+     * 获取当前请求Url
+     *
+     * 默认返回示例：http(s)://www.xxxx.com/test
+     * @param boolean $isBase   是否基本url，path及后面部分不要。示例：http(s)://www.xxxx.com
+     * @param boolean $isFull   是否完整url，含query。示例：http(s)://www.xxxx.com/test?a=1&b=2
+     * @return string
+     */
+    function getRequestUrl(bool $isBase = false, bool $isFull = false): string
+    {
+        if ($isBase) {
+            $url = getRequestUrl(false);
+            $path = getRequest()->getPathInfo();
+            return $path == '/' ? $url : str_replace($path, '', $url);
+        }
+        $url = $isFull ? getRequest()->fullUrl() : getRequest()->url();
+        $scheme = getRequestScheme();
+        return $scheme == 'https' ? str_replace('http://', $scheme . '://', $url) : $url;
+    }
+}
+
 /*----------------基于当前框架封装的函数  结束----------------*/
 
 

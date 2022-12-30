@@ -27,6 +27,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     build: {
       outDir: '../../..' + env.VITE_BASE_PATH, //构建文件的输出目录
       assetsDir: 'static',  //放置生成的静态资源的目录(路径相对于outDir)
+      target: ['edge90', 'chrome90', 'firefox90', 'safari15']
     },
     server: {
       host: '0.0.0.0',
