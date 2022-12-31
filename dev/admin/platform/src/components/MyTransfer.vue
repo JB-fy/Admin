@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: Array,
-        //required: true,
+        type: Array
     },
     defaultOptions: {   //选项初始默认值。格式：[{ [transfer.props.key]: string | number, [transfer.props.label]: string },...]
         type: Array,
@@ -89,7 +88,7 @@ const transfer = reactive({
         },
         addOptions: () => {
             transfer.api.getOptions().then((options) => {
-                if (options.length) {
+                if (options?.length) {
                     transfer.options = transfer.options.concat(options ?? [])
                 }
             }).catch((error) => { })

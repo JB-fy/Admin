@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array],
-        //required: true,
+        type: [String, Number, Array]
     },
     defaultOptions: {   //选项初始默认值。格式：[{ value: string | number, label: string },...]
         type: Array,
@@ -146,7 +145,7 @@ const select = reactive({
         },
         addOptions: () => {
             select.api.getOptions().then((options) => {
-                if (options.length) {
+                if (options?.length) {
                     select.options = select.options.concat(options ?? [])
                 }
             }).catch((error) => { })

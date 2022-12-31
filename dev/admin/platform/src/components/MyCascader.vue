@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array],
-        //required: true,
+        type: [String, Number, Array]
     },
     defaultOptions: {   //选项初始默认值。格式：[{ [cascader.props.value]: string | number, [cascader.props.label]: string },...]
         type: Array,
@@ -81,7 +80,7 @@ const cascader = reactive({
                 cascader.api.param.where[cascader.api.pidField] = node.data.id
             }
             cascader.api.getOptions().then((options) => {
-                if (options.length === 0) {
+                if (options?.length === 0) {
                     node.data.leaf = true
                 }
                 resolve(options)
@@ -153,7 +152,7 @@ const cascader = reactive({
         },
         addOptions: () => {
             cascader.api.getOptions().then((options) => {
-                if (options.length) {
+                if (options?.length) {
                     cascader.options = cascader.options.concat(options ?? [])
                 }
             }).catch((error) => { })

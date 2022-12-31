@@ -24,12 +24,15 @@ const saveForm = reactive({
         password: [
             { type: 'string', required: computed((): boolean => { return saveForm.data.id ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
+        roleIdArr: [
+            { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
+        ],
         nickname: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
-        roleIdArr: [
-            { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
+        avatar: [
+            { type: 'string', min: 1, max: 120, trigger: 'change', message: t('validation.between.string', { min: 1, max: 120 }) }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
@@ -95,17 +98,19 @@ const saveDrawer = reactive({
                             maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.password')" prop="password">
-                        <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')"
-                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true"
-                            :show-password="true" />
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.nickname')" prop="nickname">
-                        <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')"
-                            minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                        <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')" minlength="1"
+                            maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
                         <MyTransfer v-model="saveForm.data.roleIdArr"
                             :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.nickname')" prop="nickname">
+                        <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
+                            maxlength="30" :show-word-limit="true" :clearable="true" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.avatar')" prop="avatar">
+                        <MyUpload v-model="saveForm.data.avatar" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0"

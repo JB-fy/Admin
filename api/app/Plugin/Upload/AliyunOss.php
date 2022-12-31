@@ -24,9 +24,10 @@ class AliyunOss extends AbstractUpload
         mt_srand();
         $defaultOption = [
             'isCallback' => true, //是否回调服务器
-            'expireTime' => 5 * 60, //签名有效时间
-            'dir' => 'common/' . date('/Y/m/d/His') . mt_rand(1000, 9999) . '_',    //上传的文件前缀
-            'maxFileSize' => 100 * 1024 * 1024,    //限制上传的文件大小
+            'expireTime' => 5 * 60, //签名有效时间。单位：秒
+            'dir' => 'common/' . date('Y/m/d/His') . mt_rand(1000, 9999) . '_',    //上传的文件前缀
+            'minSize' => 0,    //限制上传的文件大小。单位：字节
+            'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
         ];
         $option = array_merge($defaultOption, $option);
         /*--------初始化配置 结束--------*/
@@ -48,24 +49,19 @@ class AliyunOss extends AbstractUpload
             $signInfo['callback'] = $base64_callback_body;
         }
 
-        $mydatetime = new \DateTime(date('c', $signInfo['expire']));
-        $expiration = $mydatetime->format(\DateTime::ISO8601);
+        // $mydatetime = new \DateTime(date('c', $signInfo['expire']));
+        // $expiration = $mydatetime->format(\DateTime::ISO8601);
+        $expiration = date(DATE_ISO8601, $signInfo['expire']);
         $expiration = substr($expiration, 0, strpos($expiration, '+')) . 'Z';
         $signInfo['policy'] = base64_encode(json_encode([
             'expiration' => $expiration,
             'conditions' => [
-                [
-                    0 => 'content-length-range',
-                    1 => 0,
-                    2 => $option['maxFileSize']
-                ], [
-                    0 => 'starts-with',
-                    1 => '$key',
-                    2 => $signInfo['dir']
-                ]
+                ['content-length-range', $option['minSize'], $option['maxSize']],
+                ['starts-with', '$key', $signInfo['dir']]
             ]
         ]));
         $signInfo['signature'] = base64_encode(hash_hmac('sha1', $signInfo['policy'], $this->config['accessKey'], true));
+
         throwSuccessJson($signInfo);
     }
 
