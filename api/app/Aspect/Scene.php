@@ -14,6 +14,15 @@ class Scene extends AbstractAspect
     //执行优先级（大值优先）
     public ?int $priority = 20;
 
+    public array $classes = [
+        \App\Controller\Login::class,
+        \App\Controller\Auth\Action::class,
+        \App\Controller\Auth\Menu::class,
+        \App\Controller\Auth\Role::class,
+        \App\Controller\Auth\Scene::class,
+        \App\Controller\Platform\Admin::class,
+    ];
+
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint
      * @return void

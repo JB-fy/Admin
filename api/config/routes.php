@@ -24,6 +24,11 @@ Router::addGroup('/login', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/menuTree', [\App\Controller\Login::class, 'menuTree']);
 });
 
+Router::addGroup('/upload', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/sign', [\App\Controller\Upload::class, 'sign']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/notify', [\App\Controller\Upload::class, 'notify']);
+});
+
 Router::addGroup('/auth/action', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Auth\Action::class, 'list']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Action::class, 'info']);

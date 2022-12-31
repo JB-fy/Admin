@@ -3,8 +3,17 @@
 declare(strict_types=1);
 
 /*----------------基于业务逻辑封装的函数  开始----------------*/
-
-
+// if (!function_exists('getUpload')) {
+//     /**
+//      * 获取Upload对象
+//      * 
+//      * @return \App\Plugin\Upload\AbstractUpload
+//      */
+//     function getUpload()
+//     {
+//         return getContainer()->get('upload');
+//     }
+// }
 /*----------------基于业务逻辑封装的函数  结束----------------*/
 
 
@@ -123,18 +132,6 @@ if (!function_exists('getRequest')) {
     }
 }
 
-if (!function_exists('getRequest')) {
-    /**
-     * 获取Request对象
-     * 
-     * @return \Hyperf\HttpServer\Contract\RequestInterface
-     */
-    function getRequest(): \Hyperf\HttpServer\Contract\RequestInterface
-    {
-        return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
-    }
-}
-
 if (!function_exists('getRequestScheme')) {
     /**
      * 获取当前请求是http还是https
@@ -158,24 +155,31 @@ if (!function_exists('getRequestUrl')) {
     /**
      * 获取当前请求Url
      *
-     * 默认返回示例：http(s)://www.xxxx.com/test
-     * @param boolean $isBase   是否基本url，path及后面部分不要。示例：http(s)://www.xxxx.com
-     * @param boolean $isFull   是否完整url，含query。示例：http(s)://www.xxxx.com/test?a=1&b=2
+     * @param integer $type  类型。以下返回示例
+     *      0：http(s)://www.xxxx.com
+     *      1：http(s)://www.xxxx.com/test
+     *      2：http(s)://www.xxxx.com/test?a=1&b=2
      * @return string
      */
-    function getRequestUrl(bool $isBase = false, bool $isFull = false): string
+    function getRequestUrl(int $type = 0): string
     {
-        if ($isBase) {
-            $url = getRequestUrl(false);
-            $path = getRequest()->getPathInfo();
-            return $path == '/' ? $url : str_replace($path, '', $url);
+        switch ($type) {
+            case 1:
+                $url = getRequest()->url();
+                $scheme = getRequestScheme();
+                return $scheme == 'https' ? str_replace('http://', $scheme . '://', $url) : $url;
+            case 2:
+                $url = getRequest()->fullUrl();
+                $scheme = getRequestScheme();
+                return $scheme == 'https' ? str_replace('http://', $scheme . '://', $url) : $url;
+            case 0:
+            default:
+                $url = getRequestUrl(1);
+                $path = getRequest()->getPathInfo();
+                return $path == '/' ? $url : str_replace($path, '', $url);
         }
-        $url = $isFull ? getRequest()->fullUrl() : getRequest()->url();
-        $scheme = getRequestScheme();
-        return $scheme == 'https' ? str_replace('http://', $scheme . '://', $url) : $url;
     }
 }
-
 /*----------------基于当前框架封装的函数  结束----------------*/
 
 

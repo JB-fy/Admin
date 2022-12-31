@@ -20,6 +20,7 @@ abstract class AbstractAspect extends \Hyperf\Di\Aop\AbstractAspect
         \App\Controller\Test::class,
         \App\Controller\Index::class,
         \App\Controller\Login::class,
+        \App\Controller\Upload::class,
         \App\Controller\Auth\Action::class,
         \App\Controller\Auth\Menu::class,
         \App\Controller\Auth\Role::class,

@@ -1,6 +1,7 @@
-    SQL语法顺序：select->from->where->group by->having->order by->limit
-    SQL执行顺序：from->where->group by->having->select->order by->limit
+SQL语法顺序：select->from->where->group by->having->order by->limit
+SQL执行顺序：from->where->group by->having->select->order by->limit
 
+url组成部分：scheme://host:port/path?query#anchor
 
 框架使用说明：
     启动服务

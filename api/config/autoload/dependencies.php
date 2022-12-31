@@ -11,15 +11,15 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    //云存储
-    'cloudStorage' => function (\Psr\Container\ContainerInterface $container) {
+    //上传组件
+    'upload' => function (\Psr\Container\ContainerInterface $container) {
         //$config = $this->config->get('app.aliyunOssConfig');
         $config = [
-            'CM_ALIYUN_OSS_ACCESS_ID' => 'LTAI5tHx81H64BRJA971DPZF',
-            'CM_ALIYUN_OSS_ACCESS_KEY' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51',
-            'CM_ALIYUN_OSS_HOST' => 'http://4724382110.oss-cn-hongkong.aliyuncs.com',
+            'accessId' => 'LTAI5tHx81H64BRJA971DPZF',
+            'accessKey' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51',
+            'host' => 'http://4724382110.oss-cn-hongkong.aliyuncs.com'
         ];
-        return make(\App\Plugin\CloudStorage\AliyunOss::class, ['config' => $config]);
+        return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },
     //平台后台场景信息
     'platformAdminSceneInfo' => function (\Psr\Container\ContainerInterface $container) {
