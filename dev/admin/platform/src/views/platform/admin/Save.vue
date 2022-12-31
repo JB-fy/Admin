@@ -101,16 +101,16 @@ const saveDrawer = reactive({
                         <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')" minlength="1"
                             maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true" />
                     </ElFormItem>
-                    <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
-                        <MyTransfer v-model="saveForm.data.roleIdArr"
-                            :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
-                    </ElFormItem>
                     <ElFormItem :label="t('common.name.nickname')" prop="nickname">
                         <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
                             maxlength="30" :show-word-limit="true" :clearable="true" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.avatar')" prop="avatar">
                         <MyUpload v-model="saveForm.data.avatar" />
+                    </ElFormItem>
+                    <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
+                        <MyTransfer v-model="saveForm.data.roleIdArr"
+                            :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                         <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0"
