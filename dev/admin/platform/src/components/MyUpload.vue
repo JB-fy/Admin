@@ -18,6 +18,14 @@ const props = defineProps({
             param: {}
         }
     },
+    acceptType: {
+        type: Array,
+        default: []
+    },
+    maxSize: {
+        type: Number,
+        default: 0
+    },
     multiple: {
         type: Boolean,
         default: true
@@ -101,16 +109,16 @@ const upload = reactive({
         // } else if (file.response !== undefined) {
         //     fileUrl = file.response.data.filename
         // }
-        // //this.value.splice(this.value.indexOf(fileUrl), 1)
-        // let value = JSON.parse(JSON.stringify(this.value))
+        // //props.modelValue.splice(props.modelValue.indexOf(fileUrl), 1)
+        // let value = JSON.parse(JSON.stringify(props.modelValue))
         // value.splice(value.indexOf(fileUrl), 1)
         //emits('change')
         // emits('update:modelValue', value)
     },
     onSuccess: (res: any, file: any, fileList: any) => {
         // if (res.code === '00000000') {
-        //     //this.value.push(res.data.filename)
-        //     let value = JSON.parse(JSON.stringify(this.value))
+        //     //props.modelValue.push(res.data.filename)
+        //     let value = JSON.parse(JSON.stringify(props.modelValue))
         //     value.push(res.data.filename)
         //     //emits('change')
         //     //emits('update:modelValue', value)
@@ -120,11 +128,11 @@ const upload = reactive({
         // }
     },
     beforeUpload: async (rawFile: any) => {
-        /* if (this.mimeTypes.length > 0 && this.mimeTypes.indexOf(rawFile.type) === -1) {
+        /* if (props.acceptType.length > 0 && props.acceptType.indexOf(rawFile.type) === -1) {
           ElMessage.error('文件格式不在允许范围内！')
           return false;
         }
-        if (this.maxSize < rawFile.size / 1024 / 1024) {
+        if (props.maxSize < rawFile.size / 1024 / 1024) {
           ElMessage.error('文件大小不在允许范围内！')
           return false;
         } */
@@ -178,6 +186,11 @@ const dialogImage = reactive({
                 <AutoiconEpUploadFilled />
             </ElIcon>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <template #tip>
+                <div class="el-upload__tip">
+                    jpg/png files with a size less than 500kb
+                </div>
+            </template>
         </ElUpload>
         <ElDialog v-model="dialogImage.visible" :center="true" :append-to-body="true" top="50px">
             <ElImage style="width: 100%;" :src="dialogImage.url" />
