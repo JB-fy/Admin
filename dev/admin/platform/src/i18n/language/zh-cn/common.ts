@@ -11,6 +11,7 @@ export default {
     confirm: '确定',
     submit: '提交',
     reset: '重置',
+    upload: '上传',
     search: '搜索',
     query: '查找',
     login: '登录',
@@ -31,7 +32,10 @@ export default {
         configDelete: '确定删除？',
         configExit: '确定退出当前操作？',
         notDuplicate: '不能与现有记录重复',
-        sort: '从小到大排序'
+        sort: '从小到大排序',
+        uploadOrDrop: '<em>点击上传</em>或将文件拖到此处',
+        notAcceptFType: '文件格式不在允许范围内！',
+        notSize: '文件格式不在允许范围内！',
     },
     name: {
         checked: '复选框',
