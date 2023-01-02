@@ -61,7 +61,6 @@ const upload = reactive({
             }]
         },
         set: (val) => {
-            console.log(1111)
         }
     }),
     /* //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
