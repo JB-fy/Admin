@@ -10,7 +10,8 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        ...saveCommon.data
+        ...saveCommon.data,
+        avatar: ['https://gamemeta.oss-cn-hangzhou.aliyuncs.com/storage/2022/12/10/89f41739a197b0f7cf9951cba7ba2beb.gif?x-oss-process=image/resize,w_250']
     } as { [propName: string]: any },
     rules: {
         account: [

@@ -111,7 +111,7 @@ class AliyunOss extends AbstractUpload
             throwFailJson('40000003');
         }
         $data = $request->post();
-        $data['filename'] = $this->config['host'] . '/' . $data['filename'];
+        $data['url'] = $this->config['host'] . '/' . $data['filename'];
         throwSuccessJson($data);
     }
 }
