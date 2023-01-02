@@ -10,6 +10,16 @@ export const getBrowserLanguage = (defaultValue: string = 'zh-cn'): string => {
 }
 
 /**
+ * 随机整数
+ * @param min 
+ * @param max 
+ * @returns 
+ */
+export const randomInt = (min: number, max: number) => {
+    return Math.round(Math.random() * (max - min)) + min;
+}
+
+/**
  * 是否空对象
  * @param obj 
  * @returns 

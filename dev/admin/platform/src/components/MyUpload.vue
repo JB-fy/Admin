@@ -41,6 +41,28 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
     ref: null as any,
+    /* fileList: computed({
+        get: (): any => {
+            if (!props.modelValue) {
+                return []
+            }
+            if (props.multiple) {
+                return (<string[]>props.modelValue).map((item) => {
+                    return {
+                        name: item.slice(item.lastIndexOf('/') + 1),
+                        url: item
+                    }
+                })
+            }
+            return [{
+                name: (<string>props.modelValue).slice((<string>props.modelValue).lastIndexOf('/') + 1),
+                url: (<string>props.modelValue)
+            }]
+        },
+        set: (val) => {
+            console.log(1111)
+        }
+    }), */
     fileList: ((): any => {
         if (!props.modelValue) {
             return []
@@ -58,7 +80,7 @@ const upload = reactive({
             url: (<string>props.modelValue)
         }]
     })(),
-    class: computed(() => {
+    class: computed((): string => {
         if (props.multiple) {
             return props.limit && props.limit == upload.fileList.length ? 'hide' : ''
         } else {
@@ -69,8 +91,62 @@ const upload = reactive({
     data: {} as { [propName: string]: any },
     signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ accessid: "xxxx", host: "https://xxxxx.com", dir: "common/2022/12/31/1521189152_", expire: 1672471578, callback: "string", policy: "string", signature: "string" }
     //生成保存在云服务器中的文件名及完成地址
+    initSignInfo: async () => {
+        /* const signInfo = await upload.api.getSignInfo()
+        if (signInfo && Object.keys(signInfo).length) {
+            upload.signInfo = { ...signInfo }
+            upload.action = upload.signInfo.host
+            upload.data = {
+                OSSAccessKeyId: upload.signInfo.accessid,
+                policy: upload.signInfo.policy,
+                signature: upload.signInfo.signature,
+                success_action_status: '200', //让服务端返回200,不然，默认会返回204
+            }
+            upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
+        }
+
+        //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
+        let bufferTime = 10 * 1000 //缓冲时间
+        let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
+        setTimeout(() => {
+            upload.initSignInfo()
+        }, timeout) */
+        let storage = localStorage //使用localStorage或sessionStorage
+        let bufferTime = 10 * 1000 //缓冲时间
+        let signInfo: any = storage.getItem('uploadSignInfo')
+        if (signInfo) {
+            signInfo = JSON.parse(signInfo)
+            if (signInfo.expire * 1000 - new Date().getTime() - bufferTime <= 0) {
+                signInfo = await upload.api.getSignInfo()
+            }
+        } else {
+            signInfo = await upload.api.getSignInfo()
+        }
+
+        if (signInfo && Object.keys(signInfo).length) {
+            storage.setItem('uploadSignInfo', JSON.stringify(signInfo))
+
+            upload.signInfo = { ...signInfo }
+            upload.action = upload.signInfo.host
+            upload.data = {
+                OSSAccessKeyId: upload.signInfo.accessid,
+                policy: upload.signInfo.policy,
+                signature: upload.signInfo.signature,
+                success_action_status: '200', //让服务端返回200,不然，默认会返回204
+            }
+            upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
+        }
+
+        //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
+        let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
+        clearTimeout(Number(storage.getItem('uploadTimeoutId')))   //用于防止重复创建倒计时
+        let uploadTimeoutId = setTimeout(() => {
+            upload.initSignInfo()
+        }, timeout)
+        storage.setItem('uploadTimeoutId', uploadTimeoutId.toString())
+    },
     createSaveInfo: (rawFile: any) => {
-        let fileName = upload.signInfo.dir + rawFile.uid + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
+        let fileName = upload.signInfo.dir + rawFile.uid + randomInt(1000, 9999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
         let url = upload.signInfo.host + '/' + fileName
         return {
             fileName: fileName,
@@ -83,7 +159,7 @@ const upload = reactive({
         param: {
             ...props.api?.param
         },
-        getSign: async () => {
+        getSignInfo: async () => {
             if (upload.api.loading) {
                 return
             }
@@ -102,7 +178,6 @@ const upload = reactive({
         dialogImage.visible = true
     },
     onRemove: (file: any, fileList: any) => {
-        console.log(4444)
         //上传前处理函数beforeUpload返回false时也会触发此函数。此时file内没有response，但是由于没上传也不会存在于props.modelValue中，故不影响删除逻辑
         let url: string = file?.response === undefined ? file.url : file.raw.saveInfo.url
         let value: any = props.modelValue
@@ -115,8 +190,8 @@ const upload = reactive({
         emits('update:modelValue', value)
     },
     onSuccess: (res: any, file: any, fileList: any) => {
-        if (upload.signInfo?.callback && res.code === '00000000') {    //如有回调服务器且有报错，则默认失败
-            //ElMessage.error('上传失败，请稍后再试！')
+        if (upload.signInfo?.callback && res.code !== '00000000') {    //如有回调服务器且有报错，则默认失败
+            ElMessage.error(t('common.tip.uploadFail'))
             fileList.splice(fileList.indexOf(file), 1)
             return
         }
@@ -132,45 +207,23 @@ const upload = reactive({
     },
     beforeUpload: async (rawFile: any) => {
         if (props.acceptType.length > 0 && props.acceptType.indexOf(rawFile.type) === -1) {
-            //ElMessage.error('文件格式不在允许范围内！')
+            ElMessage.error(t('common.tip.notAcceptFileType'))
             return false
         }
         if (props.maxSize > 0 && props.maxSize < rawFile.size / 1024 / 1024) {
-            //ElMessage.error('文件大小不在允许范围内！')
+            ElMessage.error(t('common.tip.notWithinFileSize'))
             return false
         }
-        //判断授权是否失效,失效则重新获取授权, 5s做为缓冲即提前3s更新授权
-        if (upload.signInfo.expire > new Date().getTime() / 1000 + 5) {
-            //未失效需重新设置文件名
-            rawFile.saveInfo = upload.createSaveInfo(rawFile)
-            upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
-            return true
-        }
-
-        const signInfo = await upload.api.getSign()
-        if (signInfo && Object.keys(signInfo).length) {
-            upload.signInfo = { ...signInfo }
-
-            upload.action = upload.signInfo.host
-            upload.data = {
-                OSSAccessKeyId: upload.signInfo.accessid,
-                policy: upload.signInfo.policy,
-                signature: upload.signInfo.signature,
-                success_action_status: '200', //让服务端返回200,不然，默认会返回204
-            }
-            upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
-            rawFile.saveInfo = upload.createSaveInfo(rawFile)
-            upload.data.key = rawFile.saveInfo.fileName //文件的完整保存路径，必须唯一，否则会覆盖服务器同名文件
-            return true
-        }
-        return false
+        rawFile.saveInfo = upload.createSaveInfo(rawFile)
+        upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
     }
 })
-
 const dialogImage = reactive({
     url: '',
     visible: false
 })
+//初始化签名信息
+upload.initSignInfo()
 </script>
 
 <template>

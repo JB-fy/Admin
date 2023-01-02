@@ -34,8 +34,10 @@ export default {
         notDuplicate: '不能与现有记录重复',
         sort: '从小到大排序',
         uploadOrDrop: '<em>点击上传</em>或将文件拖到此处',
-        notAcceptFType: '文件格式不在允许范围内！',
-        notSize: '文件格式不在允许范围内！',
+        uploadFail: '上传失败，请稍后再试！',
+        notAcceptFileType: '文件格式不在允许范围内',
+        notWithinFileSize: '文件大小不在允许范围内',
+        
     },
     name: {
         checked: '复选框',

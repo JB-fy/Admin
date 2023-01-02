@@ -32,7 +32,7 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         avatar: [
-            { type: 'string', min: 1, max: 30, trigger: 'change', message: t('validation.upload') }
+            { type: 'string', min: 1, max: 120, trigger: 'change', message: t('validation.upload') }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
@@ -107,7 +107,6 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.avatar')" prop="avatar">
                         <MyUpload v-model="saveForm.data.avatar" />
-                        <MyUpload v-model="saveForm.data.avatar" :isImage="false" />
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
                         <MyTransfer v-model="saveForm.data.roleIdArr"
