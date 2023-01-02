@@ -41,8 +41,9 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
     ref: null as any,
-    /* fileList: computed({
-        get: (): any => {
+    /* //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）
+    fileList: computed({
+        get: () => {
             if (!props.modelValue) {
                 return []
             }
@@ -63,7 +64,8 @@ const upload = reactive({
             console.log(1111)
         }
     }), */
-    fileList: ((): any => {
+    //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
+    fileList: (() => {
         if (!props.modelValue) {
             return []
         }
@@ -92,7 +94,7 @@ const upload = reactive({
     signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ accessid: "xxxx", host: "https://xxxxx.com", dir: "common/2022/12/31/1521189152_", expire: 1672471578, callback: "string", policy: "string", signature: "string" }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
-        /* const signInfo = await upload.api.getSignInfo()
+        const signInfo = await upload.api.getSignInfo()
         if (signInfo && Object.keys(signInfo).length) {
             upload.signInfo = { ...signInfo }
             upload.action = upload.signInfo.host
@@ -110,8 +112,8 @@ const upload = reactive({
         let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
         setTimeout(() => {
             upload.initSignInfo()
-        }, timeout) */
-        let storage = localStorage //使用localStorage或sessionStorage
+        }, timeout)
+        /* let storage = localStorage //使用localStorage或sessionStorage
         let bufferTime = 10 * 1000 //缓冲时间
         let signInfo: any = storage.getItem('uploadSignInfo')
         if (signInfo) {
@@ -143,7 +145,7 @@ const upload = reactive({
         let uploadTimeoutId = setTimeout(() => {
             upload.initSignInfo()
         }, timeout)
-        storage.setItem('uploadTimeoutId', uploadTimeoutId.toString())
+        storage.setItem('uploadTimeoutId', uploadTimeoutId.toString()) */
     },
     createSaveInfo: (rawFile: any) => {
         let fileName = upload.signInfo.dir + rawFile.uid + randomInt(1000, 9999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
