@@ -41,7 +41,7 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
     ref: null as any,
-    /* //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）
+    //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）
     fileList: computed({
         get: () => {
             if (!props.modelValue) {
@@ -63,8 +63,8 @@ const upload = reactive({
         set: (val) => {
             console.log(1111)
         }
-    }), */
-    //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
+    }),
+    /* //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
     fileList: (() => {
         if (!props.modelValue) {
             return []
@@ -81,7 +81,7 @@ const upload = reactive({
             name: (<string>props.modelValue).slice((<string>props.modelValue).lastIndexOf('/') + 1),
             url: (<string>props.modelValue)
         }]
-    })(),
+    })(), */
     class: computed((): string => {
         if (props.multiple) {
             return props.limit && props.limit == upload.fileList.length ? 'hide' : ''
