@@ -12,9 +12,9 @@ class Role extends AbstractValidation
         'roleId' => 'sometimes|required|integer|min:1',
         'sceneId' => 'sometimes|required|integer|min:1',
         'roleName' => 'sometimes|required|alpha_dash|between:1,30',
-        'menuIdArr' => 'sometimes|required_if_null|array|min:1',
+        'menuIdArr' => 'sometimes|required_if_null|array|min:0',
         'menuIdArr.*' => 'sometimes|required|integer|min:1|distinct',
-        'actionIdArr' => 'sometimes|required_if_null|array|min:1',
+        'actionIdArr' => 'sometimes|required_if_null|array|min:0',
         'actionIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'isStop' => 'sometimes|required|integer|in:0,1',
     ];

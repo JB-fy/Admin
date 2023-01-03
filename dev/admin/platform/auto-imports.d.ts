@@ -8,6 +8,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ElButton: typeof import('element-plus/es')['ElButton']
   const ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+  const ElImage: typeof import('element-plus/es')['ElImage']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
   const ElSwitch: typeof import('element-plus/es')['ElSwitch']

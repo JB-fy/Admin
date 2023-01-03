@@ -42,7 +42,13 @@ const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
     id: new Date().getTime() + '_' + randomInt(1000, 9999) as string,   //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
-    /* //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）
+    value: ((): any => {
+        if (props.multiple) {
+            return props.modelValue ? [...(<string[]>props.modelValue)] : []
+        }
+        return props.modelValue
+    })(),
+    /* //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）。要使用还需解决bug：多文件上传时，onSuccess内执行emits('update:modelValue', upload.value)会触发该处get，导致第二个文件上传被中断
     fileList: computed({
         get: () => {
             if (!props.modelValue) {
@@ -64,7 +70,7 @@ const upload = reactive({
         set: (val) => {
         }
     }), */
-    //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
+    //这个方式动画效果好，但不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
     fileList: (() => {
         if (!props.modelValue) {
             return []
@@ -151,14 +157,13 @@ const upload = reactive({
     onRemove: (file: any, fileList: any) => {
         //上传前处理函数beforeUpload返回false时也会触发此函数。此时file内没有response，但是由于没上传也不会存在于props.modelValue中，故不影响删除逻辑
         let url: string = file?.response === undefined ? file.url : file.raw.saveInfo.url
-        let value: any = props.modelValue
         if (props.multiple) {
-            value.splice(value.indexOf(url), 1)
+            upload.value.splice(upload.value.indexOf(url), 1)
         } else {
-            value = ''
+            upload.value = ''
         }
         emits('change')
-        emits('update:modelValue', value)
+        emits('update:modelValue', upload.value)
     },
     onSuccess: (res: any, file: any, fileList: any) => {
         if (upload.signInfo?.callback && res.code !== '00000000') {    //如有回调服务器且有报错，则默认失败
@@ -166,15 +171,14 @@ const upload = reactive({
             fileList.splice(fileList.indexOf(file), 1)
             return
         }
-        let value: any = props.modelValue
         if (props.multiple) {
-            value.push(file.raw.saveInfo.url)
+            upload.value.push(file.raw.saveInfo.url)
         } else {
-            value = file.raw.saveInfo.url
+            upload.value = file.raw.saveInfo.url
             upload.fileList = [file]
         }
         emits('change')
-        emits('update:modelValue', value)
+        emits('update:modelValue', upload.value)
     },
     beforeUpload: async (rawFile: any) => {
         if (props.acceptType.length > 0 && props.acceptType.indexOf(rawFile.type) === -1) {

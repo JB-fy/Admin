@@ -68,7 +68,28 @@ const table = reactive({
         title: t('common.name.avatar'),
         key: 'avatar',
         width: 200,
-        align: 'center'
+        align: 'center',
+        cellRenderer: (props: any): any => {
+            return [
+                h('div', {
+                    style: 'max-height: 80px; overflow: auto;'
+                }, {
+                    default: () => {
+                        //const imageList= JSON.parse(props.rowData.avatar)
+                        const imageList = [props.rowData.avatar]
+                        const content = imageList.map((item) => {
+                            return h(ElImage as any, {
+                                'style': 'width: 80px; height: 80px; margin-right: 5px;',
+                                'src': item,
+                                'lazy': true,
+                                'preview-src-list': imageList
+                            })
+                        })
+                        return content
+                    }
+                })
+            ]
+        },
     },
     {
         dataKey: 'isStop',

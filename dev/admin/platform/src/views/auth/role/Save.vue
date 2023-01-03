@@ -20,10 +20,10 @@ const saveForm = reactive({
             { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
         ],
         menuIdArr: [
-            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+            { type: 'array', trigger: 'change', message: t('validation.select') }
         ],
         actionIdArr: [
-            { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
+            { type: 'array', defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
