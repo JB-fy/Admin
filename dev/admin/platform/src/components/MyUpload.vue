@@ -40,8 +40,9 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
+    id: new Date().getTime() + '_' + randomInt(1000, 9999) as string,   //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
-    //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）
+    /* //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）
     fileList: computed({
         get: () => {
             if (!props.modelValue) {
@@ -62,8 +63,8 @@ const upload = reactive({
         },
         set: (val) => {
         }
-    }),
-    /* //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
+    }), */
+    //这个方式动画效果最好，但是不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
     fileList: (() => {
         if (!props.modelValue) {
             return []
@@ -80,7 +81,7 @@ const upload = reactive({
             name: (<string>props.modelValue).slice((<string>props.modelValue).lastIndexOf('/') + 1),
             url: (<string>props.modelValue)
         }]
-    })(), */
+    })(),
     class: computed((): string => {
         if (props.multiple) {
             return props.limit && props.limit == upload.fileList.length ? 'hide' : ''
@@ -105,46 +106,15 @@ const upload = reactive({
             }
             upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
         }
-
         //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
         let bufferTime = 10 * 1000 //缓冲时间
         let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
         setTimeout(() => {
-            upload.initSignInfo()
+            //upload.initSignInfo()
+            //定时器清理存在问题。当组件销毁时，倒计时还在执行。如果用户重复点击新增|编辑|复制等按钮会创建无数个定时器
+            //判断元素是否还存在，防止组件其实已经销毁，倒计时却还在重复执行
+            document.getElementById(upload.id) ? upload.initSignInfo() : null
         }, timeout)
-        /* let storage = localStorage //使用localStorage或sessionStorage
-        let bufferTime = 10 * 1000 //缓冲时间
-        let signInfo: any = storage.getItem('uploadSignInfo')
-        if (signInfo) {
-            signInfo = JSON.parse(signInfo)
-            if (signInfo.expire * 1000 - new Date().getTime() - bufferTime <= 0) {
-                signInfo = await upload.api.getSignInfo()
-            }
-        } else {
-            signInfo = await upload.api.getSignInfo()
-        }
-
-        if (signInfo && Object.keys(signInfo).length) {
-            storage.setItem('uploadSignInfo', JSON.stringify(signInfo))
-
-            upload.signInfo = { ...signInfo }
-            upload.action = upload.signInfo.host
-            upload.data = {
-                OSSAccessKeyId: upload.signInfo.accessid,
-                policy: upload.signInfo.policy,
-                signature: upload.signInfo.signature,
-                success_action_status: '200', //让服务端返回200,不然，默认会返回204
-            }
-            upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
-        }
-
-        //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
-        let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
-        clearTimeout(Number(storage.getItem('uploadTimeoutId')))   //用于防止重复创建倒计时
-        let uploadTimeoutId = setTimeout(() => {
-            upload.initSignInfo()
-        }, timeout)
-        storage.setItem('uploadTimeoutId', uploadTimeoutId.toString()) */
     },
     createSaveInfo: (rawFile: any) => {
         let fileName = upload.signInfo.dir + rawFile.uid + randomInt(1000, 9999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
@@ -219,44 +189,48 @@ const upload = reactive({
         upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
     }
 })
+
 const dialogImage = reactive({
     url: '',
     visible: false
 })
-//初始化签名信息
-upload.initSignInfo()
+
+upload.initSignInfo()   //初始化签名信息
 </script>
 
 <template>
-    <div v-if="isImage" class="upload-container">
-        <ElUpload :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
-            :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
-            :on-remove="upload.onRemove" :on-preview="upload.onPreview" :multiple="multiple" :limit="limit"
-            list-type="picture-card" :drag="true" :class="upload.class">
-            <ElIcon class="el-icon--upload">
-                <AutoiconEpUploadFilled />
-            </ElIcon>
-            <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
+    <div :id="upload.id">
+        <div v-if="isImage" class="upload-container">
+            <ElUpload :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList"
+                :action="upload.action" :data="upload.data" :before-upload="upload.beforeUpload"
+                :on-success="upload.onSuccess" :on-remove="upload.onRemove" :on-preview="upload.onPreview"
+                :multiple="multiple" :limit="limit" list-type="picture-card" :drag="true" :class="upload.class">
+                <ElIcon class="el-icon--upload">
+                    <AutoiconEpUploadFilled />
+                </ElIcon>
+                <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
+                <template v-if="tip" #tip>
+                    <div class="el-upload__tip">
+                        {{ tip }}
+                    </div>
+                </template>
+            </ElUpload>
+            <ElDialog v-model="dialogImage.visible" :center="true" :append-to-body="true" top="50px">
+                <ElImage style="width: 100%;" :src="dialogImage.url" />
+            </ElDialog>
+        </div>
+        <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList"
+            :action="upload.action" :data="upload.data" :before-upload="upload.beforeUpload"
+            :on-success="upload.onSuccess" :on-remove="upload.onRemove" :multiple="multiple" :limit="limit"
+            list-type="text">
+            <ElButton type="primary">{{ t('common.upload') }}</ElButton>
             <template v-if="tip" #tip>
                 <div class="el-upload__tip">
                     {{ tip }}
                 </div>
             </template>
         </ElUpload>
-        <ElDialog v-model="dialogImage.visible" :center="true" :append-to-body="true" top="50px">
-            <ElImage style="width: 100%;" :src="dialogImage.url" />
-        </ElDialog>
     </div>
-    <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
-        :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
-        :on-remove="upload.onRemove" :multiple="multiple" :limit="limit" list-type="text">
-        <ElButton type="primary">{{ t('common.upload') }}</ElButton>
-        <template v-if="tip" #tip>
-            <div class="el-upload__tip">
-                {{ tip }}
-            </div>
-        </template>
-    </ElUpload>
 
     <!-------- 使用示例 开始-------->
     <!-- <MyUpload v-model="saveForm.data.avatar" />
