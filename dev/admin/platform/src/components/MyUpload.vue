@@ -110,9 +110,9 @@ const upload = reactive({
         let bufferTime = 10 * 1000 //缓冲时间
         let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
         setTimeout(() => {
+            //组件销毁后，倒计时还会继续执行。如果用户点击新增|编辑|复制等按钮多次，将会创建多个倒计时
             //upload.initSignInfo()
-            //定时器清理存在问题。当组件销毁时，倒计时还在执行。如果用户重复点击新增|编辑|复制等按钮会创建无数个定时器
-            //判断元素是否还存在，防止组件其实已经销毁，倒计时却还在重复执行
+            //判断元素是否还存在，防止组件销毁后，倒计时却还在重复执行
             document.getElementById(upload.id) ? upload.initSignInfo() : null
         }, timeout)
     },
