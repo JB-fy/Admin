@@ -67,21 +67,29 @@ const table = reactive({
         dataKey: 'avatar',
         title: t('common.name.avatar'),
         key: 'avatar',
-        width: 200,
+        width: 100,
         align: 'center',
         cellRenderer: (props: any): any => {
+            if (!props.rowData.avatar) {
+                return ''
+            }
+            //const imageList= JSON.parse(props.rowData.avatar)
+            const imageList = [props.rowData.avatar]
             return [
-                h('div', {
-                    style: 'max-height: 80px; overflow: auto;'
+                h(ElScrollbar, {
+                    //'max-height': '50px',
+                    'wrap-style': 'display: flex; align-items: center;',
+                    //'view-style': 'margin: auto; width: 64px;',   //单列显示增加宽度设置
+                    'view-style': 'margin: auto;',
                 }, {
                     default: () => {
-                        //const imageList= JSON.parse(props.rowData.avatar)
-                        const imageList = [props.rowData.avatar]
                         const content = imageList.map((item) => {
                             return h(ElImage as any, {
-                                'style': 'width: 80px; height: 80px; margin-right: 5px;',
+                                'style': 'width: 45px;',    //如果需要增加高度不想显示滚动条，也得增加table高度。即设置row-height
                                 'src': item,
                                 'lazy': true,
+                                'hide-on-click-modal': true,
+                                'preview-teleported': true,
                                 'preview-src-list': imageList
                             })
                         })
@@ -233,10 +241,12 @@ const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
 }
 
 //分页
+const settingStore = useSettingStore()
 const pagination = reactive({
     total: 0,
     page: 1,
-    limit: useSettingStore().paginationSize,
+    size: settingStore.pagination.size,
+    sizeList: settingStore.pagination.sizeList,
     sizeChange: (val: number) => {
         getList()
     },
@@ -256,7 +266,7 @@ const getList = async (resetPage: boolean = false) => {
         where: removeEmptyOfObj(queryCommon.data),
         order: { [table.order.key]: table.order.order },
         page: pagination.page,
-        limit: pagination.limit
+        limit: pagination.size
     }
     table.loading = true
     try {
@@ -310,7 +320,7 @@ defineExpose({
         <ElAutoResizer>
             <template #default="{ height, width }">
                 <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.order"
-                    @column-sort="table.handleOrder" :width="width" :height="height" :fixed="true">
+                    @column-sort="table.handleOrder" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
                         <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
                             <AutoiconEpLoading />
@@ -324,8 +334,8 @@ defineExpose({
     <ElRow class="main-table-pagination">
         <ElCol :span="24">
             <ElPagination :total="pagination.total" v-model:currentPage="pagination.page"
-                v-model:page-size="pagination.limit" @size-change="pagination.sizeChange"
-                @current-change="pagination.pageChange" :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+                v-model:page-size="pagination.size" @size-change="pagination.sizeChange"
+                @current-change="pagination.pageChange" :page-sizes="pagination.sizeList"
                 layout="total, sizes, prev, pager, next, jumper" :background="true" />
         </ElCol>
     </ElRow>

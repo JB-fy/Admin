@@ -11,6 +11,7 @@ declare global {
   const ElImage: typeof import('element-plus/es')['ElImage']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
+  const ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
   const ElSwitch: typeof import('element-plus/es')['ElSwitch']
   const batchImport: typeof import('./src/common/import')['batchImport']
   const computed: typeof import('vue')['computed']
