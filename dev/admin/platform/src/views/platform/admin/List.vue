@@ -71,7 +71,7 @@ const table = reactive({
         align: 'center',
         cellRenderer: (props: any): any => {
             if (!props.rowData.avatar) {
-                return ''
+                return
             }
             //const imageList= JSON.parse(props.rowData.avatar)
             const imageList = [props.rowData.avatar]

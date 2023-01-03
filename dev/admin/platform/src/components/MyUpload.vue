@@ -150,9 +150,9 @@ const upload = reactive({
             return signInfo
         },
     },
-    onPreview: (uploadFiles: any) => {
-        dialogImage.url = uploadFiles.url
-        dialogImage.visible = true
+    onPreview: (uploadFile: any) => {
+        imageViewer.initialIndex = imageViewer.urlList.indexOf(uploadFile.url)
+        imageViewer.visible = true
     },
     onRemove: (file: any, fileList: any) => {
         //上传前处理函数beforeUpload返回false时也会触发此函数。此时file内没有response，但是由于没上传也不会存在于props.modelValue中，故不影响删除逻辑
@@ -194,9 +194,17 @@ const upload = reactive({
     }
 })
 
-const dialogImage = reactive({
-    url: '',
-    visible: false
+const imageViewer = reactive({
+    urlList: computed((): string[] => {
+        return upload.fileList.map((item) => {
+            return item.url
+        })
+    }),
+    initialIndex: 0,
+    visible: false,
+    close: () => {
+        imageViewer.visible = false
+    }
 })
 
 upload.initSignInfo()   //初始化签名信息
@@ -219,9 +227,8 @@ upload.initSignInfo()   //初始化签名信息
                     </div>
                 </template>
             </ElUpload>
-            <ElDialog v-model="dialogImage.visible" :center="true" :append-to-body="true" top="50px">
-                <ElImage style="width: 100%;" :src="dialogImage.url" />
-            </ElDialog>
+            <ElImageViewer v-if="imageViewer.visible" :url-list="imageViewer.urlList"
+                :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
         </div>
         <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList"
             :action="upload.action" :data="upload.data" :before-upload="upload.beforeUpload"
