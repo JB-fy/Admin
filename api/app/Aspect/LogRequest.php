@@ -67,23 +67,13 @@ class LogRequest extends AbstractAspect
     {
         $request = $this->container->get(RequestInterface::class);
 
-        /* $config = $this->container->get(ConfigInterface::class);
-        $requestData = [
-            'data' => $request->all()
-        ];
-        $scene = $request->getHeaderLine($config->get('app.auth.sceneName'));
-        $loginInfo = $request->getAttribute($config->get('app.auth.' . $scene . '.infoName'));
-        $loginInfo ? $requestData['loginInfo'] = $loginInfo : null; */
-
-        /* $LogData = [
-            //'requestUrl' => $this->container->get(CommonLogic::class)->getUrl(),
-            'requestUrl' => $request->fullUrl(),
-            //'requestData' => json_encode($requestData, JSON_UNESCAPED_UNICODE),
+        $LogData = [
+            'requestUrl' => getRequestUrl(1),
             'requestData' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
-            'requestHeaders' => json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE),
+            'requestHeader' => json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE),
             'runTime' => round(($endTime - $startTime) * 1000, 3),
             'responseBody' => $responseBody,
         ];
-        $this->container->get(\App\Module\Db\Dao\System\LogOfRequest::class, true)->add($LogData); */
+        getDao(\App\Module\Db\Dao\Log\Request::class)->insert($LogData)->saveInsert();
     }
 }
