@@ -11,7 +11,7 @@ abstract class AbstractAspect extends \Hyperf\Di\Aop\AbstractAspect
 {
     #[Inject]
     protected ContainerInterface $container;
-    
+
     //执行优先级（大值优先）
     public ?int $priority = 50;
 
@@ -19,8 +19,9 @@ abstract class AbstractAspect extends \Hyperf\Di\Aop\AbstractAspect
     public array $classes = [
         \App\Controller\Test::class,
         \App\Controller\Index::class,
-        \App\Controller\Login::class,
         \App\Controller\Upload::class,
+
+        \App\Controller\Login::class,
         \App\Controller\Auth\Action::class,
         \App\Controller\Auth\Menu::class,
         \App\Controller\Auth\Role::class,
