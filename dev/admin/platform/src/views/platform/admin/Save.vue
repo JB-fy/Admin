@@ -47,7 +47,7 @@ const saveForm = reactive({
             const param = {
                 ...removeEmptyOfObj(saveForm.data, false)
             }
-            param.password ? param.password = md5(param.password) : null;
+            param.password ? param.password = md5(param.password) : delete param.password
             try {
                 await request('platform/admin/save', param, true)
                 listCommon.ref.getList(true)
@@ -99,7 +99,12 @@ const saveDrawer = reactive({
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.password')" prop="password">
                         <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')" minlength="1"
-                            maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true" />
+                            maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                            style="max-width: 250px;" />
+                        <label v-if="saveForm.data.id">
+                            <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true"
+                                :closable="false" />
+                        </label>
                     </ElFormItem>
                     <ElFormItem :label="t('common.name.nickname')" prop="nickname">
                         <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"

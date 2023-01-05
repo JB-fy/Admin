@@ -56,8 +56,8 @@ class Login extends AbstractController
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $info = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-                throwSuccessJson(['info' => $info]);
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
+                throwSuccessJson(['info' => $loginInfo]);
                 break;
             default:
                 throwFailJson('39999999');
@@ -70,44 +70,24 @@ class Login extends AbstractController
      *
      * @return void
      */
-    // public function updateInfo()
-    // {
-    //     switch ($this->getCurrentSceneCode()) {
-    //         case 'platformAdmin':
-    //             /**--------验证参数 开始--------**/
-    //             $data = $this->request->all();
-    //             $this->container->get(ValidationLogin::class, true)->scene('encryptStr')->check($data);
-    //             /**--------验证参数 结束--------**/
+    public function updateInfo()
+    {
+        $sceneCode = $this->getCurrentSceneCode();
+        switch ($sceneCode) {
+            case 'platformAdmin':
+                /**--------参数验证并处理 开始--------**/
+                $data = $this->request->all();
+                $data = $this->container->get(\App\Module\Validation\Platform\Admin::class)->make($data, 'updateSelf')->validate();
+                /**--------参数验证并处理 结束--------**/
 
-    //             /**--------验证参数 开始--------**/
-    //             $data = [];
-
-    //             $this->request->post('nickname') === null ? null : $data['nickname'] = $this->request->post('nickname');
-    //             $this->request->post('newPassword') === null ? null : $data['newPassword'] = $this->request->post('newPassword');
-    //             $this->request->post('checkNewPassword') === null ? null : $data['checkNewPassword'] = $this->request->post('checkNewPassword');
-    //             $this->request->post('oldPassword') === null ? null : $data['oldPassword'] = $this->request->post('oldPassword');
-
-    //             $rules = [
-    //                 'nickname' => 'between:1,30',
-    //                 'newPassword' => 'size:32|different:oldPassword|same:checkNewPassword',
-    //                 'checkNewPassword' => 'required_with:newPassword|size:32',
-    //                 'oldPassword' => 'required_with:newPassword|size:32',
-    //             ];
-    //             $this->validator->validate($data, $rules);
-    //             if (isset($data['newPassword'])) {
-    //                 $data['password'] = $data['newPassword'];
-    //                 unset($data['newPassword']);
-    //                 unset($data['checkNewPassword']);
-    //             }
-    //             /**--------验证参数 结束--------**/
-
-    //             $this->container->get(AdminService::class)->update($data, $loginInfo->adminId);
-    //             break;
-    //         default:
-    //             throwFailJson('39999999');
-    //             break;
-    //     }
-    // }
+                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
+                $this->container->get(\App\Module\Service\Platform\Admin::class)->update($data, ['id' => $loginInfo->adminId]);
+                break;
+            default:
+                throwFailJson('39999999');
+                break;
+        }
+    }
 
     /**
      * 获取后台用户菜单树

@@ -23,7 +23,7 @@ class AliyunOss extends AbstractUpload
         /*--------初始化配置 开始--------*/
         mt_srand();
         $defaultOption = [
-            'isCallback' => true, //是否回调服务器
+            'isCallback' => false, //是否回调服务器
             'expireTime' => 15 * 60, //签名有效时间。单位：秒
             'dir' => 'common/' . date('Y/m/d/His') . '_' . mt_rand(1000, 9999) . '_',    //上传的文件前缀
             'minSize' => 0,    //限制上传的文件大小。单位：字节

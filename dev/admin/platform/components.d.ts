@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     AutoiconEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
     AutoiconEpBack: typeof import('~icons/ep/back')['default']
     AutoiconEpBell: typeof import('~icons/ep/bell')['default']
+    AutoiconEpCircleCheck: typeof import('~icons/ep/circle-check')['default']
     AutoiconEpCircleClose: typeof import('~icons/ep/circle-close')['default']
     AutoiconEpClose: typeof import('~icons/ep/close')['default']
     AutoiconEpDeleteFilled: typeof import('~icons/ep/delete-filled')['default']

@@ -37,7 +37,8 @@ export default {
         uploadFail: '上传失败，请稍后再试！',
         notAcceptFileType: '文件格式不在允许范围内',
         notWithinFileSize: '文件大小不在允许范围内',
-        
+        notRequired: '不填则不修改',
+        updatePasswordRequired: '修改密码时必填',
     },
     name: {
         checked: '复选框',
@@ -58,6 +59,9 @@ export default {
         account: '账号',
         phone: '手机号',
         password: '密码',
+        newPassword: '新密码',
+        checkPassword: '重复密码',
+        oldPassword: '旧密码',
         nickname: '昵称',
         avatar: '头像',
 
