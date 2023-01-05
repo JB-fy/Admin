@@ -65,6 +65,28 @@ class Action extends AbstractDao
 
                 $this->joinOfAlone('actionRelToScene');
                 return true;
+            case 'selfAction': //获取当前登录身份可用的操作。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
+                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();    //当开启切面\App\Aspect\Scene时有值
+                $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.sceneId', '=', $sceneId, 'and']];
+                $this->joinOfAlone('actionRelToScene');
+                switch ($value['sceneCode']) {
+                    case 'platformAdmin':
+                        if ($value['loginId'] === 1) { //平台超级管理员，所有菜单。不用其他条件了
+                            return true;
+                        }
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and']];
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and']];
+
+                        $this->joinOfAlone('roleRelToAction');
+                        $this->joinOfAlone('role');
+                        $this->joinOfAlone('roleRelOfPlatformAdmin');
+                        break;
+                }
+
+                $this->groupOfCommon('id');
+                return true;
         }
         return false;
     }
@@ -90,6 +112,57 @@ class Action extends AbstractDao
                             $actionRelToSceneDaoTable . '.actionId',
                             '=',
                             $this->getTable() . '.actionId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'roleRelToAction':
+                $roleRelToActionDao = getDao(RoleRelToAction::class);
+                $roleRelToActionDaoTable = $roleRelToActionDao->getTable();
+                if (!isset($this->join[$roleRelToActionDaoTable])) {
+                    $this->join[$roleRelToActionDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleRelToActionDaoTable,
+                            $roleRelToActionDaoTable . '.actionId',
+                            '=',
+                            $this->getTable() . '.actionId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'role':
+                $roleRelToActionDao = getDao(RoleRelToAction::class);
+                $roleRelToActionDaoTable = $roleRelToActionDao->getTable();
+
+                $roleDao = getDao(Role::class);
+                $roleDaoTable = $roleDao->getTable();
+                if (!isset($this->join[$roleDaoTable])) {
+                    $this->join[$roleDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleDaoTable,
+                            $roleDaoTable . '.roleId',
+                            '=',
+                            $roleRelToActionDaoTable . '.roleId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'roleRelOfPlatformAdmin':
+                $roleRelToActionDao = getDao(RoleRelToAction::class);
+                $roleRelToActionDaoTable = $roleRelToActionDao->getTable();
+
+                $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
+                $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
+                if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
+                    $this->join[$roleRelOfPlatformAdminDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleRelOfPlatformAdminDaoTable,
+                            $roleRelOfPlatformAdminDaoTable . '.roleId',
+                            '=',
+                            $roleRelToActionDaoTable . '.roleId'
                         ]
                     ];
                 }

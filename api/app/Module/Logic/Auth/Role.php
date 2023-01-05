@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Module\Logic\Auth;
 
-use App\Module\Db\Dao\Auth\Role as AuthRole;
 use App\Module\Db\Dao\Auth\RoleRelToAction;
 use App\Module\Db\Dao\Auth\RoleRelToMenu;
 use App\Module\Logic\AbstractLogic;
@@ -73,43 +72,5 @@ class Role extends AbstractLogic
             getDao(RoleRelToAction::class)->where(['roleId' => $id, 'actionId' => $deleteActionIdArr])->delete();
         }
         /**----删除关联操作 结束----**/
-    }
-
-    /**
-     * 判断操作权限
-     *
-     * @param string $actionCode
-     * @param string $sceneCode
-     * @param boolean $isThrow
-     * @return boolean
-     */
-    public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
-    {
-        $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-        $where = [
-            'checkAction' => [
-                'actionCode' => $actionCode,
-                'sceneCode' => $sceneCode,
-                'loginId' => $loginInfo->adminId
-            ]
-        ];
-        switch ($sceneCode) {
-            case 'platformAdmin':
-                if ($loginInfo->adminId === 1) { //平台超级管理员，无权限限制
-                    return true;
-                }
-                //$where['checkAction']['loginId'] = $loginInfo->adminId;
-                break;
-            default:
-                break;
-        }
-        if (empty(getDao(AuthRole::class)->where($where)->getBuilder()->count())) {
-            if ($isThrow) {
-                throwFailJson('39990002');
-            } else {
-                return false;
-            }
-        }
-        return true;
     }
 }

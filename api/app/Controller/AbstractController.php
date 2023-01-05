@@ -110,13 +110,13 @@ abstract class AbstractController
         switch ($funcName) {
             case 'list':
             case 'info':
-                return $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth($this->actionCodePrefix . 'Look', $sceneCode, $isThrow);
+                return $this->container->get(\App\Module\Logic\Auth\Action::class)->checkAuth($this->actionCodePrefix . 'Look', $sceneCode, $isThrow);
                 break;
             case 'create':
             case 'update':
             case 'delete':
             default:
-                return $this->container->get(\App\Module\Logic\Auth\Role::class)->checkAuth($this->actionCodePrefix . ucfirst($funcName), $sceneCode, $isThrow);
+                return $this->container->get(\App\Module\Logic\Auth\Action::class)->checkAuth($this->actionCodePrefix . ucfirst($funcName), $sceneCode, $isThrow);
                 break;
         }
     }
