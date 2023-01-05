@@ -61,10 +61,11 @@ class Login extends AbstractLogic
      */
     public function getCurrentToken(string $sceneCode): ?string
     {
-        switch ($sceneCode) {
+        /* switch ($sceneCode) {
             default:
                 return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
-        }
+        } */
+        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
     }
 
     /**
@@ -76,13 +77,16 @@ class Login extends AbstractLogic
      */
     public function setCurrentInfo(object $info, string $sceneCode)
     {
-        switch ($sceneCode) {
+        /* switch ($sceneCode) {
             default:
                 $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
                 $request = $request->withAttribute($sceneCode . 'Info', $info);
                 Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
                 break;
-        }
+        } */
+        $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
+        $request = $request->withAttribute($sceneCode . 'Info', $info);
+        Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
     }
 
     /**
@@ -93,9 +97,10 @@ class Login extends AbstractLogic
      */
     public function getCurrentInfo(string $sceneCode): object
     {
-        switch ($sceneCode) {
+        /* switch ($sceneCode) {
             default:
                 return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($sceneCode . 'Info');
-        }
+        } */
+        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($sceneCode . 'Info');
     }
 }

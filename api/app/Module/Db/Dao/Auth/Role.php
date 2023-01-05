@@ -27,15 +27,16 @@ class Role extends AbstractDao
     {
         switch ($key) {
             case 'sceneName':
-                $this->joinOfAlone($key);
                 $this->field['select'][] = getDao(Scene::class)->getTable() . '.' . $key;
+
+                $this->joinOfAlone($key);
                 return true;
             case 'menuIdArr':
             case 'actionIdArr':
-                $this->afterField[] = $key;
-
                 //需要id字段
                 $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+
+                $this->afterField[] = $key;
                 return true;
         }
         return false;
@@ -54,8 +55,6 @@ class Role extends AbstractDao
     {
         switch ($key) {
             case 'checkAction': //判断是否有操作权限。参数：['actionCode'=>操作标识, 'sceneCode'=>场景标识, 'loginId'=>登录身份id]
-                $this->joinOfAlone($key, $value);
-
                 $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();    //当开启切面\App\Aspect\Scene时有值
                 $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.sceneId', '=', $sceneId, 'and']];
@@ -73,6 +72,8 @@ class Role extends AbstractDao
                 //$this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.sceneCode', '=', $value['sceneCode'], 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.sceneId', '=', $sceneId, 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [$sceneDaoTable . '.isStop', '=', 0, 'and']];
+
+                $this->joinOfAlone($key, $value);
                 return true;
         }
         return false;
@@ -103,7 +104,7 @@ class Role extends AbstractDao
                     ];
                 }
                 return true;
-            case 'checkAction':
+            case 'checkAction': //判断是否有操作权限。参数：['actionCode'=>操作标识, 'sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':
                         $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
@@ -119,8 +120,6 @@ class Role extends AbstractDao
                                 ]
                             ];
                         }
-                        break;
-                    default:
                         break;
                 }
                 $roleRelToActionDao = getDao(RoleRelToAction::class);

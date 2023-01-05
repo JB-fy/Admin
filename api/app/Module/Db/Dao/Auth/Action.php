@@ -31,10 +31,10 @@ class Action extends AbstractDao
     {
         switch ($key) {
             case 'sceneIdArr':
-                $this->afterField[] = $key;
-
                 //需要id字段
                 $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+
+                $this->afterField[] = $key;
                 return true;
         }
         return false;
@@ -53,7 +53,6 @@ class Action extends AbstractDao
     {
         switch ($key) {
             case 'sceneId':
-                $this->joinOfAlone($key);
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
@@ -63,6 +62,8 @@ class Action extends AbstractDao
                 } else {
                     $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
                 }
+
+                $this->joinOfAlone('actionRelToScene');
                 return true;
         }
         return false;
@@ -78,7 +79,7 @@ class Action extends AbstractDao
     protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'sceneId':
+            case 'actionRelToScene':
                 $actionRelToSceneDao = getDao(ActionRelToScene::class);
                 $actionRelToSceneDaoTable = $actionRelToSceneDao->getTable();
                 if (!isset($this->join[$actionRelToSceneDaoTable])) {

@@ -60,21 +60,60 @@ class Menu extends AbstractDao
                 $this->orderOfAlone('menuTree');    //排序方式
                 return true;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
-                $this->afterField[] = 'showMenu';
-
                 $this->field['select'][] = $this->getTable() . '.' . 'menuName';
                 //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.title")) AS title'); //不知道怎么直接转成对象返回
                 $this->field['select'][] = $this->getTable() . '.' . 'extraData->title AS title';
                 $this->field['select'][] = $this->getTable() . '.' . 'extraData->url AS url';
                 $this->field['select'][] = $this->getTable() . '.' . 'extraData->icon AS icon';
+
+                $this->afterField[] = 'showMenu';
                 return true;
             case 'sceneName':
-                $this->joinOfAlone($key);
                 $this->field['select'][] = getDao(Scene::class)->getTable() . '.' . $key;
+
+                $this->joinOfAlone('scene');
                 return true;
             case 'pMenuName':
-                $this->joinOfAlone($key);
                 $this->field['select'][] = 'p_' . $this->getTable() . '.menuName AS pMenuName';
+
+                $this->joinOfAlone('pMenu');
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 解析where（独有的）
+     *
+     * @param string $key
+     * @param string|null $operator
+     * @param [type] $value
+     * @param string|null $boolean
+     * @return boolean
+     */
+    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    {
+        switch ($key) {
+            case 'selfMenu': //获取当前登录身份可用的菜单。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
+                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();    //当开启切面\App\Aspect\Scene时有值
+                $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.sceneId', '=', $sceneId, 'and']];
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
+                switch ($value['sceneCode']) {
+                    case 'platformAdmin':
+                        if ($value['loginId'] === 1) { //平台超级管理员，所有菜单。不用其他条件了
+                            return true;
+                        }
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and']];
+                        $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and']];
+
+                        $this->joinOfAlone('roleRelToMenu');
+                        $this->joinOfAlone('role');
+                        $this->joinOfAlone('roleRelOfPlatformAdmin');
+                        break;
+                }
+
+                $this->groupOfCommon('id');
                 return true;
         }
         return false;
@@ -109,7 +148,7 @@ class Menu extends AbstractDao
     protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'sceneName':
+            case 'scene':
                 $sceneDao = getDao(Scene::class);
                 $sceneDaoTable = $sceneDao->getTable();
                 if (!isset($this->join[$sceneDaoTable])) {
@@ -124,7 +163,7 @@ class Menu extends AbstractDao
                     ];
                 }
                 return true;
-            case 'pMenuName':
+            case 'pMenu':
                 $pMenuDaoTable = 'p_' . $this->getTable();
                 if (!isset($this->join[$pMenuDaoTable])) {
                     $this->join[$pMenuDaoTable] = [
@@ -134,6 +173,57 @@ class Menu extends AbstractDao
                             $pMenuDaoTable . '.menuId',
                             '=',
                             $this->getTable() . '.pid'
+                        ]
+                    ];
+                }
+                return true;
+            case 'roleRelToMenu':
+                $roleRelToMenuDao = getDao(RoleRelToMenu::class);
+                $roleRelToMenuDaoTable = $roleRelToMenuDao->getTable();
+                if (!isset($this->join[$roleRelToMenuDaoTable])) {
+                    $this->join[$roleRelToMenuDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleRelToMenuDaoTable,
+                            $roleRelToMenuDaoTable . '.menuId',
+                            '=',
+                            $this->getTable() . '.menuId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'role':
+                $roleRelToMenuDao = getDao(RoleRelToMenu::class);
+                $roleRelToMenuDaoTable = $roleRelToMenuDao->getTable();
+
+                $roleDao = getDao(Role::class);
+                $roleDaoTable = $roleDao->getTable();
+                if (!isset($this->join[$roleDaoTable])) {
+                    $this->join[$roleDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleDaoTable,
+                            $roleDaoTable . '.roleId',
+                            '=',
+                            $roleRelToMenuDaoTable . '.roleId'
+                        ]
+                    ];
+                }
+                return true;
+            case 'roleRelOfPlatformAdmin':
+                $roleRelToMenuDao = getDao(RoleRelToMenu::class);
+                $roleRelToMenuDaoTable = $roleRelToMenuDao->getTable();
+
+                $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
+                $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
+                if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
+                    $this->join[$roleRelOfPlatformAdminDaoTable] = [
+                        'method' => 'leftJoin',
+                        'param' => [
+                            $roleRelOfPlatformAdminDaoTable,
+                            $roleRelOfPlatformAdminDaoTable . '.roleId',
+                            '=',
+                            $roleRelToMenuDaoTable . '.roleId'
                         ]
                     ];
                 }

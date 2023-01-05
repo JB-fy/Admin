@@ -31,10 +31,10 @@ class Admin extends AbstractDao
     {
         switch ($key) {
             case 'roleIdArr':
-                $this->afterField[] = $key;
-
                 //需要id字段
                 $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+
+                $this->afterField[] = $key;
                 return true;
         }
         return false;
@@ -60,7 +60,6 @@ class Admin extends AbstractDao
                 }
                 return true;
             case 'roleId':
-                $this->joinOfAlone($key);
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
@@ -70,6 +69,8 @@ class Admin extends AbstractDao
                 } else {
                     $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
                 }
+
+                $this->joinOfAlone('roleRelOfPlatformAdmin');
                 return true;
         }
         return false;
@@ -85,7 +86,7 @@ class Admin extends AbstractDao
     protected function joinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'roleId':
+            case 'roleRelOfPlatformAdmin':
                 $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
                 $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
                 if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {

@@ -8,7 +8,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 //这个中间件可以不要，控制器没有对应场景也会报错
-//#[Aspect]
+#[Aspect]
 class Scene extends AbstractAspect
 {
     //执行优先级（大值优先）

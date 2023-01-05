@@ -100,20 +100,11 @@ class Login extends AbstractController
         switch ($sceneCode) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-                /* if ($loginInfo->adminId == 1) {
-                    $where = [
-                        'sceneId' => $this->request->sceneInfo->sceneId,
-                        'isStop' => 0
-                    ];
-                } else {
-                    $where = [
-                        'adminId' => $loginInfo->adminId,
-                        'isStop' => 0
-                    ];
-                } */
                 $where = [
-                    'sceneId' => 1,
-                    'isStop' => 0
+                    'selfMenu' => [
+                        'sceneCode' => $sceneCode,
+                        'loginId' => $loginInfo->adminId
+                    ]
                 ];
                 $field = [
                     'menuTree',
