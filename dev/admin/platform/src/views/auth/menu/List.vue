@@ -301,6 +301,7 @@ const pagination = reactive({
     page: 1,
     size: settingStore.pagination.size,
     sizeList: settingStore.pagination.sizeList,
+    layout: settingStore.pagination.layout,
     sizeChange: (val: number) => {
         getList()
     },
@@ -389,8 +390,8 @@ defineExpose({
         <ElCol :span="24">
             <ElPagination :total="pagination.total" v-model:currentPage="pagination.page"
                 v-model:page-size="pagination.size" @size-change="pagination.sizeChange"
-                @current-change="pagination.pageChange" :page-sizes="pagination.sizeList"
-                layout="total, sizes, prev, pager, next, jumper" :background="true" />
+                @current-change="pagination.pageChange" :page-sizes="pagination.sizeList" :layout="pagination.layout"
+                :background="true" />
         </ElCol>
     </ElRow>
 
