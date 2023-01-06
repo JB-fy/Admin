@@ -85,14 +85,14 @@ class Role extends AbstractService
      */
     public function delete(array $where)
     {
-        $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->pluck('roleId')->toArray();
+        $idArr = $this->getIdArr($where);
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(RoleRelToMenu::class)->where(['roleId' => $id])->delete();
-        getDao(RoleRelToAction::class)->where(['roleId' => $id])->delete();
-        getDao(RoleRelOfPlatformAdmin::class)->where(['roleId' => $id])->delete();
+        getDao(RoleRelToMenu::class)->where(['roleId' => $idArr])->delete();
+        getDao(RoleRelToAction::class)->where(['roleId' => $idArr])->delete();
+        getDao(RoleRelOfPlatformAdmin::class)->where(['roleId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

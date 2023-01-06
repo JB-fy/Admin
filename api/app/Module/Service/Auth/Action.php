@@ -38,8 +38,10 @@ class Action extends AbstractService
     public function update(array $data, array $where)
     {
         if (isset($data['sceneIdArr'])) {
-            $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('actionId');
-            $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
+            $idArr = $this->getIdArr($where);
+            foreach ($idArr as $id) {
+                $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
+            }
             $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改sceneIdArr
         } else {
             $result = $this->getDao()->where($where)->update($data)->saveUpdate();
@@ -58,12 +60,12 @@ class Action extends AbstractService
      */
     public function delete(array $where)
     {
-        $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->pluck('actionId')->toArray();
+        $idArr = $this->getIdArr($where);
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(ActionRelToScene::class)->where(['actionId' => $id])->delete();
+        getDao(ActionRelToScene::class)->where(['actionId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

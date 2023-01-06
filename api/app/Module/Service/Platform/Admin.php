@@ -42,15 +42,17 @@ class Admin extends AbstractService
         }
         /* //平台超级管理员，部分字段不可修改
         if ((isset($data['account']) || isset($data['phone']) || isset($data['isStop']) || isset($data['roleIdArr']))
-            && (isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('adminId')) == getConfig()->get('app.superPlatformAdminId')
+            && in_array(getConfig()->get('app.superPlatformAdminId'), $this->getIdArr($where))
         ) {
             //throw new ApiException('禁止任何对于超级管理员的操作', 9999);
             throwFailJson('39990003');
         } */
 
         if (isset($data['roleIdArr'])) {
-            $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('adminId');
-            $this->container->get(PlatformAdmin::class)->saveRelRole($data['roleIdArr'], $id);
+            $idArr = $this->getIdArr($where);
+            foreach ($idArr as $id) {
+                $this->container->get(PlatformAdmin::class)->saveRelRole($data['roleIdArr'], $id);
+            }
             $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改roleIdArr
         } else {
             $result = $this->getDao()->where($where)->update($data)->saveUpdate();
@@ -69,12 +71,12 @@ class Admin extends AbstractService
      */
     public function delete(array $where)
     {
-        $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->pluck('adminId')->toArray();
+        $idArr = $this->getIdArr($where);
         $result = $this->getDao()->where($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(RoleRelOfPlatformAdmin::class)->where(['adminId' => $id])->delete();
+        getDao(RoleRelOfPlatformAdmin::class)->where(['adminId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

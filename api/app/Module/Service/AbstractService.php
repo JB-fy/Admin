@@ -188,4 +188,22 @@ abstract class AbstractService
         }
         throwSuccessJson();
     }
+
+    /**
+     * 获取更新|删除的id数组
+     *
+     * @param array $where
+     * @return array
+     */
+    final protected function getIdArr(array $where): array
+    {
+        $dao = $this->getDao();
+        return $dao->where($where)->getBuilder()->pluck($dao->getKey())->toArray();
+        if (isset($where['id']) && count($where) == 1) {
+            return is_array($where['id']) ? $where['id'] : [$where['id']];
+        }
+        if (isset($where['idArr']) && count($where) == 1) {
+            return is_array($where['idArr']) ? $where['idArr'] : [$where['idArr']];
+        }
+    }
 }
