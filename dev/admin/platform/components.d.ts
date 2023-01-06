@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     AutoiconEpCircleClose: typeof import('~icons/ep/circle-close')['default']
     AutoiconEpClose: typeof import('~icons/ep/close')['default']
     AutoiconEpDeleteFilled: typeof import('~icons/ep/delete-filled')['default']
+    AutoiconEpDownload: typeof import('~icons/ep/download')['default']
     AutoiconEpEditPen: typeof import('~icons/ep/edit-pen')['default']
     AutoiconEpFold: typeof import('~icons/ep/fold')['default']
     AutoiconEpHide: typeof import('~icons/ep/hide')['default']

@@ -32,10 +32,10 @@ class LogRequest extends AbstractAspect
             return $response;
         } catch (\Throwable $th) {
             if ($th instanceof \App\Exception\Json) {
-                $responseBody = $th->getResponseBody();
-                /* $responseData = $th->getResponseData();
-                //unset($responseData['data']['list']); //列表数据太大,记录会给数据库太大压力
-                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE); */
+                //$responseBody = $th->getResponseBody();
+                $responseData = $th->getResponseData();
+                $responseData['data'] = [];   //不记录data。有时数据太大，记录会给数据库太大压力
+                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
             } elseif ($th instanceof \App\Exception\Raw) {
                 $responseBody = $th->getResponseBody();
             } elseif ($th instanceof \Hyperf\Validation\ValidationException) {

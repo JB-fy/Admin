@@ -63,7 +63,7 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="timeRange">
             <ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-"
-                start-placeholder="开始时间" end-placeholder="结束时间">
+                :start-placeholder="t('common.name.startTime')" :end-placeholder="t('common.name.endTime')">
             </ElDatePicker>
         </ElFormItem>
         <ElFormItem>

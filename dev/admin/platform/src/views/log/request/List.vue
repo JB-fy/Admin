@@ -72,6 +72,46 @@ const table = reactive({
         getList()
     },
 })
+//导出
+const exportButton = reactive({
+    loading: false,
+    click: () => {
+
+        ElMessageBox.confirm('', {
+            type: 'warning',
+            title: t('common.tip.configExport'),
+            center: true,
+            showClose: false,
+        }).then(() => {
+            exportButton.loading = true
+            /* import('@/vendor/Export2Excel').then(excel => {
+                const tHeader = [
+                    this.name.requestUrl,
+                    this.name.requestData,
+                    this.name.requestHeaders,
+                    this.name.responseData,
+                    this.name.runTime,
+                    this.name.addTime
+                ]
+                const filterVal = ['requestUrl', 'requestData', 'requestHeaders', 'responseData', 'runTime', 'addTime']
+                const data = (() => {
+                    return this.table.list.map(v => filterVal.map(j => {
+                        switch (j) {
+                            default:
+                                return v[j];
+                        }
+                    }))
+                })()
+                excel.export_json_to_excel({
+                    header: tHeader,
+                    data,
+                    filename: 'logRequest'
+                })
+            }) */
+            //exportButton.loading = false
+        }).catch(() => { })
+    }
+})
 
 //分页
 const settingStore = useSettingStore()
@@ -127,6 +167,9 @@ defineExpose({
         </ElCol>
         <ElCol :span="8" style="text-align: right;">
             <ElSpace :size="10" style="height: 100%;">
+                <ElButton type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading">
+                    <AutoiconEpDownload />{{ t('common.export') }}
+                </ElButton>
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
                         <AutoiconEpHide />
