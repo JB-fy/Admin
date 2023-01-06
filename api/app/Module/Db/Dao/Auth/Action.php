@@ -73,7 +73,7 @@ class Action extends AbstractDao
                 $this->joinOfAlone('actionRelToScene');
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':
-                        if ($value['loginId'] === 1) { //平台超级管理员，不再需要其他条件
+                        if ($value['loginId'] === getConfig()->get('app.superPlatformAdminId')) { //平台超级管理员，不再需要其他条件
                             return true;
                         }
                         $this->where[] = ['method' => 'where', 'param' => [getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and']];

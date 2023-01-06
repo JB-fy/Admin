@@ -17,7 +17,7 @@ class Login extends AbstractCache
      */
     public function setEncryptStrKey(string $account, string $sceneCode)
     {
-        $this->encryptStrKey = sprintf($this->config->get('custom.cache.encryptStrFormat'), $sceneCode, $account);
+        $this->encryptStrKey = sprintf($this->config->get('app.cache.encryptStrFormat'), $sceneCode, $account);
     }
 
     /**
@@ -56,7 +56,7 @@ class Login extends AbstractCache
      */
     public function setTokenKey(string|int $id, string $sceneCode)
     {
-        $this->tokenKey = sprintf($this->config->get('custom.cache.tokenFormat'), $sceneCode, $id);
+        $this->tokenKey = sprintf($this->config->get('app.cache.tokenFormat'), $sceneCode, $id);
     }
 
     /**

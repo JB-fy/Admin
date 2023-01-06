@@ -40,6 +40,13 @@ class Admin extends AbstractService
         if (isset($data['oldPassword']) && $data['oldPassword'] != $this->getDao()->where($where)->getBuilder()->value('password')) {
             throwFailJson('39990003');
         }
+        /* //平台超级管理员，部分字段不可修改
+        if ((isset($data['account']) || isset($data['phone']) || isset($data['isStop']) || isset($data['roleIdArr']))
+            && (isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('adminId')) == getConfig()->get('app.superPlatformAdminId')
+        ) {
+            //throw new ApiException('禁止任何对于超级管理员的操作', 9999);
+            throwFailJson('39990003');
+        } */
 
         if (isset($data['roleIdArr'])) {
             $id = isset($where['id']) ? $where['id'] : $this->getDao()->where($where)->getBuilder()->value('adminId');

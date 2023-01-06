@@ -40,6 +40,7 @@ class Cross extends AbstractAspect
 
         /*--------设置协程上限文响应体可跨域  开始--------*/
         $response = Context::get(ResponseInterface::class);
+        $response = $response->withHeader('Server', env('APP_NAME', 'swoole-http-server'));  //修改Server，防止暴露服务器所用技术
         $response = $response->withHeader('Access-Control-Allow-Credentials', 'true')
             //->withHeader('Access-Control-Allow-Origin', $request->header('Origin', '*'))
             //->withHeader('Access-Control-Allow-Origin', 'http://www.xxxx.com')

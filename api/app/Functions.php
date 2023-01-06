@@ -106,6 +106,18 @@ if (!function_exists('getCache')) {
     }
 }
 
+if (!function_exists('getConfig')) {
+    /**
+     * 获取Config对象
+     * 
+     * @return \Hyperf\Contract\ConfigInterface
+     */
+    function getConfig(): \Hyperf\Contract\ConfigInterface
+    {
+        return getContainer()->get(\Hyperf\Contract\ConfigInterface::class);
+    }
+}
+
 if (!function_exists('getLogger')) {
     /**
      * 获取Logger对象

@@ -30,12 +30,12 @@ return [
         'prefix' => env('DB_PREFIX', ''),
         'timezone' => env('DB_TIMEZONE', '+8:00'),
         'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+            'min_connections' => (int) env('DB_MIN_CONNECTIONS', 1),
+            'max_connections' => (int) env('DB_MAX_CONNECTIONS', 10),
+            'connect_timeout' => (float) env('DB_CONNECT_TIMEOUT', 10.0),
+            'wait_timeout' => (float) env('DB_WAIT_TIMEOUT', 3.0),
+            'heartbeat' => (int) env('DB_HEARTBEAT', -1),
+            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60.0),
         ],
         'commands' => [
             'gen:model' => [
