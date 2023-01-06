@@ -76,7 +76,6 @@ const table = reactive({
 const exportButton = reactive({
     loading: false,
     click: () => {
-
         ElMessageBox.confirm('', {
             type: 'warning',
             title: t('common.tip.configExport'),
