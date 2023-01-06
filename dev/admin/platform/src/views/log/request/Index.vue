@@ -1,5 +1,37 @@
+<script setup lang="ts">
+import List from './List.vue'
+import Query from './Query.vue'
+
+//搜索
+const queryCommon = reactive({
+    data: {}
+})
+provide('queryCommon', queryCommon)
+
+//列表
+const listCommon = reactive({
+    ref: null as any,
+})
+provide('listCommon', listCommon)
+</script>
+
 <template>
-    <div>
-        <div style="text-align: center; font-size: 300px; color: #409EFF;">日志列表</div>
-    </div>
+    <ElContainer class="app-container">
+        <ElHeader>
+            <Query />
+        </ElHeader>
+
+        <List :ref="(el: any) => { listCommon.ref = el }" />
+    </ElContainer>
 </template>
+
+<style scoped>
+.app-container {
+    height: 100%;
+}
+
+.app-container :deep(.el-header) {
+    height: auto;
+    padding: 0;
+}
+</style>

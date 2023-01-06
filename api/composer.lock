@@ -1479,16 +1479,16 @@
         },
         {
             "name": "hyperf/engine",
-            "version": "v2.1.1",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/engine.git",
-                "reference": "774bd7a78bcf9d500d28399b23b381fef20a75b0"
+                "reference": "99fbf14b68f92c53235deb57459a6931f2d7fa27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/engine/zipball/774bd7a78bcf9d500d28399b23b381fef20a75b0",
-                "reference": "774bd7a78bcf9d500d28399b23b381fef20a75b0",
+                "url": "https://api.github.com/repos/hyperf/engine/zipball/99fbf14b68f92c53235deb57459a6931f2d7fa27",
+                "reference": "99fbf14b68f92c53235deb57459a6931f2d7fa27",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1498,7 +1498,7 @@
                 ]
             },
             "require": {
-                "hyperf/engine-contract": "^1.2",
+                "hyperf/engine-contract": "^1.3",
                 "php": ">=8.0"
             },
             "conflict": {
@@ -1507,18 +1507,21 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
                 "hyperf/guzzle": "^3.0",
+                "hyperf/http-message": " 3.0.*",
+                "mockery/mockery": "^1.5",
                 "phpstan/phpstan": "^1.0",
                 "phpunit/phpunit": "^9.4",
                 "swoole/ide-helper": "dev-master"
             },
             "suggest": {
                 "ext-swoole": ">=5.0",
+                "hyperf/http-message": "Required to use ResponseEmitter.",
                 "psr/http-message": "Required to use WebSocket Frame."
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.2-dev"
                 },
                 "hyperf": {
                     "config": "Hyperf\\Engine\\ConfigProvider"
@@ -1536,6 +1539,7 @@
             "license": [
                 "MIT"
             ],
+            "description": "Coroutine engine provided by swoole.",
             "keywords": [
                 "engine",
                 "hyperf",
@@ -1544,22 +1548,22 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/engine/issues",
-                "source": "https://github.com/hyperf/engine/tree/v2.1.1"
+                "source": "https://github.com/hyperf/engine/tree/v2.2.1"
             },
-            "time": "2023-01-04T08:36:05+00:00"
+            "time": "2023-01-06T05:13:31+00:00"
         },
         {
             "name": "hyperf/engine-contract",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/engine-contract.git",
-                "reference": "9ec24f3e36b3c3e621e11765585b203caf4d1caf"
+                "reference": "607733ec0b980932ee77328470122c4d08397e8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/engine-contract/zipball/9ec24f3e36b3c3e621e11765585b203caf4d1caf",
-                "reference": "9ec24f3e36b3c3e621e11765585b203caf4d1caf",
+                "url": "https://api.github.com/repos/hyperf/engine-contract/zipball/607733ec0b980932ee77328470122c4d08397e8f",
+                "reference": "607733ec0b980932ee77328470122c4d08397e8f",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1585,7 +1589,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2-dev"
+                    "dev-master": "1.3-dev"
                 }
             },
             "autoload": {
@@ -1607,9 +1611,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/engine-contract/issues",
-                "source": "https://github.com/hyperf/engine-contract/tree/v1.2.0"
+                "source": "https://github.com/hyperf/engine-contract/tree/v1.3.0"
             },
-            "time": "2023-01-04T08:21:59+00:00"
+            "time": "2023-01-06T02:07:46+00:00"
         },
         {
             "name": "hyperf/event",

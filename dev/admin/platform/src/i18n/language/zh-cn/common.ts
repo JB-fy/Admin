@@ -48,6 +48,8 @@ export default {
 
         without: '无',
         allTopLevel: '全部顶级',
+        min: '最小值',
+        max: '最大值',
 
         id: 'ID',
         sort: '排序',
@@ -91,7 +93,16 @@ export default {
                 sceneCode: '场景标识',
                 sceneConfig: '场景配置',
             },
-        }
+        },
+        log: {
+            request: {
+                requestUrl: '请求地址',
+                requestHeader: '请求头',
+                requestData: '请求数据',
+                responseBody: '响应结果',
+                runTime: '运行时间',
+            },
+        },
     },
     status: {
         whether: [

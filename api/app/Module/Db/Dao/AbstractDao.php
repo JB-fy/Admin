@@ -384,6 +384,12 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
                 }
                 return true;
+            case 'startTime':
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.createTime', $operator ?? '>=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and']];
+                return true;
+            case 'endTime':
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.createTime', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and']];
+                return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     if (strtolower(substr($key, -2)) === 'id') {    //id类型字段的处理方式

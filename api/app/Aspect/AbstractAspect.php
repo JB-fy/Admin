@@ -26,6 +26,7 @@ abstract class AbstractAspect extends \Hyperf\Di\Aop\AbstractAspect
         \App\Controller\Auth\Menu::class,
         \App\Controller\Auth\Role::class,
         \App\Controller\Auth\Scene::class,
+        \App\Controller\Log\Request::class,
         \App\Controller\Platform\Admin::class,
     ];
 

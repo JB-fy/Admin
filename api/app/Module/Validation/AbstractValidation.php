@@ -20,6 +20,9 @@ abstract class AbstractValidation
         'excId' => 'sometimes|required|integer|min:1',
         'excIdArr' => 'sometimes|required|array|min:1',
         'excIdArr.*' => 'sometimes|required|integer|min:1',
+
+        'startTime' => 'sometimes|required|date',
+        'endTime' => 'sometimes|required|date|after_or_equal:startTime',
     ];
     protected array $rule = [];
 

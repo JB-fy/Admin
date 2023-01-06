@@ -18,4 +18,25 @@ use App\Module\Db\Dao\AbstractDao;
  */
 class Request extends AbstractDao
 {
+    /**
+     * 解析where（独有的）
+     *
+     * @param string $key
+     * @param string|null $operator
+     * @param [type] $value
+     * @param string|null $boolean
+     * @return boolean
+     */
+    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    {
+        switch ($key) {
+            case 'minRunTime':
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.runTime', $operator ?? '>=', $value, $boolean ?? 'and']];
+                return true;
+            case 'maxRunTime':
+                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.runTime', $operator ?? '<=', $value, $boolean ?? 'and']];
+                return true;
+        }
+        return false;
+    }
 }

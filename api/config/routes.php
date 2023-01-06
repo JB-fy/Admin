@@ -62,6 +62,10 @@ Router::addGroup('/auth/scene', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Scene::class, 'delete']);
 });
 
+Router::addGroup('/log/request', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Log\Request::class, 'list']);
+});
+
 Router::addGroup('/platform/admin', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Admin::class, 'list']);
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Platform\Admin::class, 'info']);
