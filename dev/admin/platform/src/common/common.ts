@@ -77,27 +77,65 @@ try {
 } */
 /*--------使用方式 结束--------*/
 
-//import * as XLSX from 'xlsx'
-import { utils, writeFile } from 'xlsx'
 /**
  * 导出excel
  * @param sheetList 
  * @param fileName 
  */
+//import * as XLSX from 'xlsx'
+import { utils, writeFile } from 'xlsx'
 export const exportExcel = (sheetList: { data: any[][] | { [propName: string]: any }[], sheetName?: string }[], fileName: string = 'excel.xlsx') => {
     const workbook = utils.book_new()   //生成工作簿
     sheetList.forEach((item, index) => {
         let sheet
         if (item.data.length > 0 && Array.isArray(item.data[0])) {
             //生成工作表。格式：[[表头1,...],[数据1,...],...]。示例：[["周一", "周二"],["语文", "数学"]]
-            //顺序不会错乱。建议使用这种方式
             sheet = utils.aoa_to_sheet(<any[][]>item.data)
         } else {
             //生成工作表。格式：[{"表头1":"数据1",...},...]。示例：[{周一: '语文',周二: '数学'}]
-            //顺序会因js对象的自动排序导致错乱
             sheet = utils.json_to_sheet(<{ [propName: string]: any }[]>item.data)
         }
         utils.book_append_sheet(workbook, sheet, item.sheetName ?? 'sheet' + (index + 1))   //工作簿中添加工作表
     })
     writeFile(workbook, fileName);  //输出工作表，由文件名决定的输出格式
+}
+
+/**
+ * 请求服务器数据并导出
+ * @param headerList    导出数据头部列表。格式：{表头key:"表头名",...}
+ * @param api 
+ * @param fileName 
+ */
+export const exportHandle = async (headerList: { [propName: string]: string }, api: { code: string, param: { field?: string[], where?: { [propName: string]: any }, order?: { [propName: string]: any }, page?: number, limit?: number } }, fileName: string = 'excel.xlsx') => {
+    const param = {
+        field: [],
+        where: {},
+        order: { id: 'desc' },
+        page: 1,
+        limit: 0,
+        ...api.param
+    }
+    const listHandleFunc = (list: any) => {
+        return list.map((item: any) => {
+            const tmp: { [propName: string]: any } = {}
+            for (const key in headerList) {
+                item[key] ? tmp[headerList[key]] = item[key] : null
+            }
+            return tmp
+        })
+    }
+    while (true) {
+        try {
+            const res = await request(api.code, param)
+            if (res.data.list.length == 0) {
+                break
+            }
+            exportExcel([{ data: listHandleFunc(res.data.list) }], fileName)
+            if (param.limit === 0) {    //直接一次性全部导出
+                break
+            } else {  //分多次慢慢导出
+                param.page++
+            }
+        } catch (error) { }
+    }
 }

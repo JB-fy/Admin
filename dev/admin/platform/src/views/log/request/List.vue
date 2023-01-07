@@ -81,38 +81,25 @@ const exportButton = reactive({
             title: t('common.tip.configExport'),
             center: true,
             showClose: false,
-        }).then(async () => {
+        }).then(() => {
             exportButton.loading = true
             const headerList: { [propName: string]: string } = table.columns.reduce((headerListTmp: { [propName: string]: string }, item: any) => {
                 item.dataKey ? headerListTmp[item.dataKey] = item.title : null
                 return headerListTmp
             }, {})
-
-            const param = {
-                field: [],
-                where: removeEmptyOfObj(queryCommon.data),
-                order: { [table.order.key]: table.order.order },
-                page: 1,
-                limit: 5000
+            const api = {
+                code: 'log/request/list',
+                param: {
+                    field: [],
+                    where: removeEmptyOfObj(queryCommon.data),
+                    order: { [table.order.key]: table.order.order },
+                    page: 1,
+                    limit: 10000
+                }
             }
-            while (true) {
-                try {
-                    const res = await request('log/request/list', param)
-                    if (res.data.list.length == 0) {
-                        break
-                    }
-                    const data = res.data.list.map((item: any) => {
-                        const tmp: { [propName: string]: any } = {}
-                        for (const key in item) {
-                            headerList[key] ? tmp[headerList[key]] = item[key] : null
-                        }
-                        return tmp
-                    })
-                    exportExcel([{ data: data }])
-                    param.page++
-                } catch (error) { }
-            }
-            exportButton.loading = false
+            exportHandle(headerList, api, '请求日志.xlsx').finally(() => {
+                exportButton.loading = false
+            })
         }).catch(() => { })
     }
 })
