@@ -299,7 +299,6 @@ defineExpose({
                 :background="true" />
         </ElCol>
     </ElRow>
-
 </template>
 
 <style scoped>
