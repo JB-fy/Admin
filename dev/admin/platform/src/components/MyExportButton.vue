@@ -13,7 +13,7 @@ const props = defineProps({
      * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。
-     *      transform：非必须。接口返回数据转换方法。当有字段需要通过计算或转化时，必须定义
+     *      transform：非必须。接口返回数据转换方法。当有字段转化时必须
      */
     api: {
         type: Object,
@@ -68,7 +68,6 @@ const exportButton = reactive({
             try {
                 const res = await request(props.api.code, exportButton.api.param)
                 data = exportButton.api.transform(res)
-                console.log(data)
             } catch (error) { }
             return data
         },
