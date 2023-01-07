@@ -76,3 +76,28 @@ try {
 } finally {
 } */
 /*--------使用方式 结束--------*/
+
+//import * as XLSX from 'xlsx'
+import { utils, writeFile } from 'xlsx'
+/**
+ * 导出excel
+ * @param sheetList 
+ * @param fileName 
+ */
+export const exportExcel = (sheetList: { data: any[][] | { [propName: string]: any }[], sheetName?: string }[], fileName: string = 'excel.xlsx') => {
+    const workbook = utils.book_new()   //生成工作簿
+    sheetList.forEach((item, index) => {
+        let sheet
+        if (item.data.length > 0 && Array.isArray(item.data[0])) {
+            //生成工作表。格式：[[表头1,...],[数据1,...],...]。示例：[["周一", "周二"],["语文", "数学"]]
+            //顺序不会错乱。建议使用这种方式
+            sheet = utils.aoa_to_sheet(<any[][]>item.data)
+        } else {
+            //生成工作表。格式：[{"表头1":"数据1",...},...]。示例：[{周一: '语文',周二: '数学'}]
+            //顺序会因js对象的自动排序导致错乱
+            sheet = utils.json_to_sheet(<{ [propName: string]: any }[]>item.data)
+        }
+        utils.book_append_sheet(workbook, sheet, item.sheetName ?? 'sheet' + (index + 1))   //工作簿中添加工作表
+    })
+    writeFile(workbook, fileName);  //输出工作表，由文件名决定的输出格式
+}

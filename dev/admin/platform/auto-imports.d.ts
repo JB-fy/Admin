@@ -21,6 +21,7 @@ declare global {
   const defineComponent: typeof import('vue')['defineComponent']
   const effectScope: typeof import('vue')['effectScope']
   const errorHandle: typeof import('./src/common/error/handler/handler')['errorHandle']
+  const exportExcel: typeof import('./src/common/common')['exportExcel']
   const getAccessToken: typeof import('./src/common/accessToken')['getAccessToken']
   const getBrowserLanguage: typeof import('./src/common/functions')['getBrowserLanguage']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']

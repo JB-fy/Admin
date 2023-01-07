@@ -81,33 +81,38 @@ const exportButton = reactive({
             title: t('common.tip.configExport'),
             center: true,
             showClose: false,
-        }).then(() => {
+        }).then(async () => {
             exportButton.loading = true
-            /* import('@/vendor/Export2Excel').then(excel => {
-                const tHeader = [
-                    this.name.requestUrl,
-                    this.name.requestData,
-                    this.name.requestHeaders,
-                    this.name.responseData,
-                    this.name.runTime,
-                    this.name.addTime
-                ]
-                const filterVal = ['requestUrl', 'requestData', 'requestHeaders', 'responseData', 'runTime', 'addTime']
-                const data = (() => {
-                    return this.table.list.map(v => filterVal.map(j => {
-                        switch (j) {
-                            default:
-                                return v[j];
+            const headerList: { [propName: string]: string } = table.columns.reduce((headerListTmp: { [propName: string]: string }, item: any) => {
+                item.dataKey ? headerListTmp[item.dataKey] = item.title : null
+                return headerListTmp
+            }, {})
+
+            const param = {
+                field: [],
+                where: removeEmptyOfObj(queryCommon.data),
+                order: { [table.order.key]: table.order.order },
+                page: 1,
+                limit: 5000
+            }
+            while (true) {
+                try {
+                    const res = await request('log/request/list', param)
+                    if (res.data.list.length == 0) {
+                        break
+                    }
+                    const data = res.data.list.map((item: any) => {
+                        const tmp: { [propName: string]: any } = {}
+                        for (const key in item) {
+                            headerList[key] ? tmp[headerList[key]] = item[key] : null
                         }
-                    }))
-                })()
-                excel.export_json_to_excel({
-                    header: tHeader,
-                    data,
-                    filename: 'logRequest'
-                })
-            }) */
-            //exportButton.loading = false
+                        return tmp
+                    })
+                    exportExcel([{ data: data }])
+                    param.page++
+                } catch (error) { }
+            }
+            exportButton.loading = false
         }).catch(() => { })
     }
 })
