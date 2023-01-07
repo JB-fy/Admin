@@ -3,6 +3,10 @@ import { defineStore } from 'pinia'
 export const useSettingStore = defineStore('setting', {
   state: () => {
     return {
+      language: {
+        'zh-cn': '中文（简体）',  //Chinese（Simplified）
+        'en': 'English',  //英文
+      },
       leftMenuFold: false,  //左侧菜单折叠状态
       pagination: { //分页组件的配置
         size: 20,  //默认每页条数
@@ -14,9 +18,8 @@ export const useSettingStore = defineStore('setting', {
         isTipClose: true, //退出是否提示
         size: '50%',  //宽度
       },
-      language: {
-        'zh-cn': '中文（简体）',  //Chinese（Simplified）
-        'en': 'English',  //英文
+      exportButton: { //导出按钮组件的配置
+        limit: 10000, //单文件最大导出数量
       },
     }
   },

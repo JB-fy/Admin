@@ -57,7 +57,7 @@ export const useLanguageStore = defineStore('language', {
       return ''
     },
     //获取页面标题
-    getPageTitle(fullPath: string) {
+    getPageTitle(fullPath: string = router.currentRoute.value.fullPath) {
       const menu = useAdminStore().menuList.find((item) => {
         return item.url == fullPath
       }) ?? router.currentRoute.value?.meta?.menu

@@ -8,10 +8,10 @@ const props = defineProps({
         default: []
     },
     /**
-     * 接口。格式：{ code: string, param: object, dataToOptions: function }
+     * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的dataToOptions属性，使用时请注意。或直接在props.props中设置对应参数
-     *      dataToOptions：非必须。接口返回数据转换方法
+     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
+     *      transform：非必须。接口返回数据转换方法
      *      pidField：非必须。动态加载时用于获取子级，接口参数where中使用的字段名
      */
     api: {
@@ -113,8 +113,8 @@ const cascader = reactive({
                 ...props.api.param
             }
         }),
-        dataToOptions: computed(() => {
-            return props.api.dataToOptions ? props.api.dataToOptions : (res: any) => {
+        transform: computed(() => {
+            return props.api.transform ? props.api.transform : (res: any) => {
                 if (cascader.props.lazy) {
                     if (!cascader.props.checkStrictly) {
                         //这种情况暂时可以用非动态全部加载解决。等确实需要使用时在考虑修改。
@@ -145,7 +145,7 @@ const cascader = reactive({
             let options = []
             try {
                 const res = await request(props.api.code, cascader.api.param)
-                options = cascader.api.dataToOptions(res)
+                options = cascader.api.transform(res)
             } catch (error) { }
             cascader.api.loading = false
             return options

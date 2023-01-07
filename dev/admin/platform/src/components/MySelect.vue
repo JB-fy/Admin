@@ -8,10 +8,10 @@ const props = defineProps({
         default: []
     },
     /**
-     * 接口。格式：{ code: string, param: object, dataToOptions: function, selectedField: string, searchField: string }
+     * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的dataToOptions，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
-     *      dataToOptions：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
+     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
+     *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
      *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认：props.api.param.field[0]
      *      searchField：非必须。当用户输入关键字做查询时，接口参数where中使用的字段名。默认：props.api.param.field[1]
      */
@@ -100,8 +100,8 @@ const select = reactive({
                 ...props.api.param
             }
         }),
-        dataToOptions: computed(() => {
-            return props.api.dataToOptions ? props.api.dataToOptions : (res: any) => {
+        transform: computed(() => {
+            return props.api.transform ? props.api.transform : (res: any) => {
                 const options: { value: any, label: any }[] = []
                 res.data.list.forEach((item: any) => {
                     options.push({
@@ -135,7 +135,7 @@ const select = reactive({
             let options = []
             try {
                 const res = await request(props.api.code, select.api.param)
-                options = select.api.dataToOptions(res)
+                options = select.api.transform(res)
                 if (select.api.param.limit === 0 || options.length < select.api.param.limit) {
                     select.api.isEnd = true
                 }

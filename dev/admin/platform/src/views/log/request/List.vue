@@ -72,37 +72,6 @@ const table = reactive({
         getList()
     },
 })
-//导出
-const exportButton = reactive({
-    loading: false,
-    click: () => {
-        ElMessageBox.confirm('', {
-            type: 'warning',
-            title: t('common.tip.configExport'),
-            center: true,
-            showClose: false,
-        }).then(() => {
-            exportButton.loading = true
-            const headerList: { [propName: string]: string } = table.columns.reduce((headerListTmp: { [propName: string]: string }, item: any) => {
-                item.dataKey ? headerListTmp[item.dataKey] = item.title : null
-                return headerListTmp
-            }, {})
-            const api = {
-                code: 'log/request/list',
-                param: {
-                    field: [],
-                    where: removeEmptyOfObj(queryCommon.data),
-                    order: { [table.order.key]: table.order.order },
-                    page: 1,
-                    limit: 10000
-                }
-            }
-            exportHandle(headerList, api, '请求日志.xlsx').finally(() => {
-                exportButton.loading = false
-            })
-        }).catch(() => { })
-    }
-})
 
 //分页
 const settingStore = useSettingStore()
@@ -158,9 +127,8 @@ defineExpose({
         </ElCol>
         <ElCol :span="8" style="text-align: right;">
             <ElSpace :size="10" style="height: 100%;">
-                <ElButton type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading">
-                    <AutoiconEpDownload />{{ t('common.export') }}
-                </ElButton>
+                <MyExportButton :headerList="table.columns"
+                    :api="{ code: 'log/request/list', param: { where: queryCommon.data, order: { [table.order.key]: table.order.order } } }" />
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
                         <AutoiconEpHide />

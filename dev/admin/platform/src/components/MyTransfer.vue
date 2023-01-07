@@ -8,10 +8,10 @@ const props = defineProps({
         default: []
     },
     /**
-     * 接口。格式：{ code: string, param: object, dataToOptions: function }
+     * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于transfer.props的key，label属性，transfer.api的dataToOptions属性，使用时请注意。或直接在props.props中设置对应参数
-     *      dataToOptions：非必须。接口返回数据转换方法
+     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于transfer.props的key，label属性，transfer.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
+     *      transform：非必须。接口返回数据转换方法
      */
     api: {
         type: Object,
@@ -68,8 +68,8 @@ const transfer = reactive({
                 ...props.api.param
             }
         }),
-        dataToOptions: computed(() => {
-            return props.api.dataToOptions ? props.api.dataToOptions : (res: any) => {
+        transform: computed(() => {
+            return props.api.transform ? props.api.transform : (res: any) => {
                 return res.data.list
             }
         }),
@@ -81,7 +81,7 @@ const transfer = reactive({
             let options = []
             try {
                 const res = await request(props.api.code, transfer.api.param)
-                options = transfer.api.dataToOptions(res)
+                options = transfer.api.transform(res)
             } catch (error) { }
             transfer.api.loading = false
             return options
