@@ -13,7 +13,7 @@ class SceneOfPlatformAdmin extends AbstractAspect
     //执行优先级（大值优先）
     public ?int $priority = 19;
 
-    //要切入的类，可以多个，亦可通过 :: 标识到具体的某个方法，通过 * 可以模糊匹配
+    //切入的类
     public array $classes = [
         \App\Controller\Login::class . '::info',
         \App\Controller\Login::class . '::updateInfo',
@@ -25,9 +25,6 @@ class SceneOfPlatformAdmin extends AbstractAspect
         \App\Controller\Log\Request::class,
         \App\Controller\Platform\Admin::class,
     ];
-
-    //要切入的注解，具体切入的还是使用了这些注解的类，仅可切入类注解和类方法注解
-    public array $annotations = [];
 
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint

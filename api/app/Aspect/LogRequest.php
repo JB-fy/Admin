@@ -14,6 +14,21 @@ class LogRequest extends AbstractAspect
     //执行优先级（大值优先）
     public ?int $priority = 30;
 
+    //切入的类
+    public array $classes = [
+        \App\Controller\Test::class,
+        \App\Controller\Index::class,
+        \App\Controller\Upload::class,
+
+        \App\Controller\Login::class,
+        \App\Controller\Auth\Action::class,
+        \App\Controller\Auth\Menu::class,
+        \App\Controller\Auth\Role::class,
+        \App\Controller\Auth\Scene::class,
+        //\App\Controller\Log\Request::class,
+        \App\Controller\Platform\Admin::class,
+    ];
+
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint
      * @return void

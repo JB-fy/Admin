@@ -7,13 +7,13 @@ namespace App\Aspect;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-//这个中间件可以不要，控制器没有对应场景也会报错
 #[Aspect]
 class Scene extends AbstractAspect
 {
     //执行优先级（大值优先）
     public ?int $priority = 20;
 
+    //切入的类
     public array $classes = [
         \App\Controller\Login::class,
         \App\Controller\Auth\Action::class,
