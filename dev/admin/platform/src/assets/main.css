@@ -91,6 +91,17 @@ body {
   justify-content: center;
 }
 
+.main-table .inline-edit {
+  color: var(--el-color-primary);
+  cursor: pointer;
+  border: 1px transparent dotted;
+  padding: 5px;
+}
+
+.main-table .inline-edit:hover {
+  border-color: var(--el-color-primary);
+}
+
 .main-table-pagination {
   height: 40px;
   background-color: var(--el-bg-color);
@@ -104,32 +115,21 @@ body {
   margin: 3px 10px 0 0;
 }
 
-.main-table .inline-edit {
-  color: var(--el-color-primary);
-  cursor: pointer;
-  border: 1px transparent dotted;
-  padding: 5px;
-}
-
-.main-table .inline-edit:hover {
-  border-color: var(--el-color-primary);
-}
-
-.save-drawer.el-drawer .el-drawer__header {
+.save-drawer .el-drawer__header {
   box-shadow: var(--el-box-shadow-lighter);
   padding: 10px;
   margin-bottom: 0px;
 }
 
-.save-drawer.el-drawer .el-drawer__body {
+.save-drawer .el-drawer__body {
   padding: 0;
 }
 
-.save-drawer.el-drawer .el-form {
+.save-drawer .el-form {
   margin: 20px;
 }
 
-.save-drawer.el-drawer .el-drawer__footer {
+.save-drawer .el-drawer__footer {
   box-shadow: var(--el-box-shadow-lighter);
   padding: 10px;
 }
