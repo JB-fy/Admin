@@ -83,78 +83,50 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-    <div class="save-drawer">
-        <ElDrawer :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title"
-            :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
-            <ElScrollbar>
-                <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
-                    label-width="auto" :status-icon="true" :scroll-to-error="false">
-                    <ElFormItem :label="t('common.name.account')" prop="account">
-                        <ElInput v-model="saveForm.data.account" :placeholder="t('common.name.account')" minlength="1"
-                            maxlength="30" :show-word-limit="true" :clearable="true" />
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.phone')" prop="phone">
-                        <ElInput v-model="saveForm.data.phone" :placeholder="t('common.name.phone')" minlength="1"
-                            maxlength="30" :show-word-limit="true" :clearable="true" />
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.password')" prop="password">
-                        <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')" minlength="1"
-                            maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
-                            style="max-width: 250px;" />
-                        <label v-if="saveForm.data.id">
-                            <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true"
-                                :closable="false" />
-                        </label>
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.nickname')" prop="nickname">
-                        <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
-                            maxlength="30" :show-word-limit="true" :clearable="true" />
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.avatar')" prop="avatar">
-                        <MyUpload v-model="saveForm.data.avatar" />
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
-                        <MyTransfer v-model="saveForm.data.roleIdArr"
-                            :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
-                    </ElFormItem>
-                    <ElFormItem :label="t('common.name.isStop')" prop="isStop">
-                        <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0"
-                            :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
-                            style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />
-                    </ElFormItem>
-                </ElForm>
-            </ElScrollbar>
-            <template #footer>
-                <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
-                <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
-                    {{ t('common.save') }}
-                </ElButton>
-            </template>
-        </ElDrawer>
-    </div>
+    <ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible"
+        :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+        <ElScrollbar>
+            <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
+                label-width="auto" :status-icon="true" :scroll-to-error="false">
+                <ElFormItem :label="t('common.name.account')" prop="account">
+                    <ElInput v-model="saveForm.data.account" :placeholder="t('common.name.account')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.phone')" prop="phone">
+                    <ElInput v-model="saveForm.data.phone" :placeholder="t('common.name.phone')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.password')" prop="password">
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                        style="max-width: 250px;" />
+                    <label v-if="saveForm.data.id">
+                        <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.nickname')" prop="nickname">
+                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.avatar')" prop="avatar">
+                    <MyUpload v-model="saveForm.data.avatar" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
+                    <MyTransfer v-model="saveForm.data.roleIdArr"
+                        :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.isStop')" prop="isStop">
+                    <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"
+                        :active-text="t('common.yes')" :inactive-text="t('common.no')"
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)" />
+                </ElFormItem>
+            </ElForm>
+        </ElScrollbar>
+        <template #footer>
+            <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
+            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+                {{ t('common.save') }}
+            </ElButton>
+        </template>
+    </ElDrawer>
 </template>
-
-<style scoped>
-.save-drawer :deep(.el-drawer .el-drawer__header) {
-    box-shadow: var(--el-box-shadow-lighter);
-    padding: 10px;
-    margin-bottom: 0px;
-}
-
-.save-drawer :deep(.el-drawer .el-drawer__body) {
-    padding: 0;
-}
-
-.save-drawer :deep(.el-drawer .el-form) {
-    margin: 20px;
-}
-
-.save-drawer :deep(.el-drawer .el-drawer__footer) {
-    box-shadow: var(--el-box-shadow-lighter);
-    padding: 10px;
-}
-
-.save-drawer :deep(.el-alert) {
-    padding: 0 0.5rem;
-}
-</style>

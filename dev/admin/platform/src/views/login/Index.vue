@@ -16,7 +16,7 @@ const loginForm = reactive({
         password: [
             { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
         ]
-    },
+    } as any,
     loading: false,
     submit: () => {
         loginForm.ref.validate(async (valid: boolean) => {
@@ -71,7 +71,7 @@ const loginForm = reactive({
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background-image: url('@/assets//image/login/login-bg.jpg');
+    background-image: url('@/assets/image/login/login-bg.jpg');
     background-position: center center;
     background-size: cover;
 }

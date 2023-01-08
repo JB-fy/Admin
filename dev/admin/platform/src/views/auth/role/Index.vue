@@ -35,14 +35,3 @@ provide('saveCommon', saveCommon)
         <Save v-if="saveCommon.visible" />
     </ElContainer>
 </template>
-
-<style scoped>
-.app-container {
-    height: 100%;
-}
-
-.app-container :deep(.el-header) {
-    height: auto;
-    padding: 0;
-}
-</style>

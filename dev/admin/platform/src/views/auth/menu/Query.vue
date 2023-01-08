@@ -53,13 +53,3 @@ const queryForm = reactive({
         </ElFormItem>
     </ElForm>
 </template>
-
-<style scoped>
-.query-form :deep(.el-form-item) {
-    margin: 0 10px 10px 0;
-}
-
-.query-form :deep(.el-input-number .el-input__inner) {
-    text-align: left;
-}
-</style>

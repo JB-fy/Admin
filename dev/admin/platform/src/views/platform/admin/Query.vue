@@ -27,8 +27,7 @@ const queryForm = reactive({
                 :controls="false" />
         </ElFormItem>
         <ElFormItem prop="account">
-            <ElInput v-model="queryCommon.data.account" :placeholder="t('common.name.account')"
-                :clearable="true" />
+            <ElInput v-model="queryCommon.data.account" :placeholder="t('common.name.account')" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="roleId">
             <MySelect v-model="queryCommon.data.roleId" :placeholder="t('common.name.rel.roleId')"
@@ -48,13 +47,3 @@ const queryForm = reactive({
         </ElFormItem>
     </ElForm>
 </template>
-
-<style scoped>
-.query-form :deep(.el-form-item) {
-    margin: 0 10px 10px 0;
-}
-
-.query-form :deep(.el-input-number .el-input__inner) {
-    text-align: left;
-}
-</style>

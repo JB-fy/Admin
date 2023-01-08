@@ -78,55 +78,51 @@ const saveForm = reactive({
 </script>
 
 <template>
-    <div style="background-color: #ffffff; border-radius: 8px; padding: 20px;">
-        <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
-            label-width="auto" :status-icon="true" :scroll-to-error="false">
-            <ElFormItem :label="t('common.name.nickname')" prop="nickname">
-                <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
-                    maxlength="30" :show-word-limit="true" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('common.name.avatar')" prop="avatar">
-                <MyUpload v-model="saveForm.data.avatar" />
-            </ElFormItem>
-            <ElFormItem :label="t('common.name.newPassword')" prop="password">
-                <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.newPassword')" minlength="1"
-                    maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
-                    style="max-width: 250px;" />
-                <label>
-                    <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                </label>
-            </ElFormItem>
-            <ElFormItem :label="t('common.name.checkPassword')" prop="checkPassword">
-                <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('common.name.checkPassword')"
-                    minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
-                    style="max-width: 250px;" />
-                <label>
-                    <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                </label>
-            </ElFormItem>
-            <ElFormItem :label="t('common.name.oldPassword')" prop="oldPassword">
-                <ElInput v-model="saveForm.data.oldPassword" :placeholder="t('common.name.oldPassword')" minlength="1"
-                    maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
-                    style="max-width: 250px;" />
-                <label>
-                    <ElAlert :title="t('common.tip.updatePasswordRequired')" type="info" :show-icon="true"
-                        :closable="false" />
-                </label>
-            </ElFormItem>
-            <ElFormItem>
-                <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
-                    <AutoiconEpCircleCheck />{{ t('common.save') }}
-                </ElButton>
-                <ElButton type="info" @click="saveForm.reset">
-                    <AutoiconEpCircleClose />{{ t('common.reset') }}
-                </ElButton>
-            </ElFormItem>
-        </ElForm>
-    </div>
+    <ElContainer>
+        <ElMain style="background-color: var(--el-bg-color); border-radius: 8px;">
+            <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
+                label-width="auto" :status-icon="true" :scroll-to-error="false">
+                <ElFormItem :label="t('common.name.nickname')" prop="nickname">
+                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.avatar')" prop="avatar">
+                    <MyUpload v-model="saveForm.data.avatar" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.newPassword')" prop="password">
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.newPassword')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                        style="max-width: 250px;" />
+                    <label>
+                        <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.checkPassword')" prop="checkPassword">
+                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('common.name.checkPassword')"
+                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                        style="max-width: 250px;" />
+                    <label>
+                        <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.oldPassword')" prop="oldPassword">
+                    <ElInput v-model="saveForm.data.oldPassword" :placeholder="t('common.name.oldPassword')"
+                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                        style="max-width: 250px;" />
+                    <label>
+                        <ElAlert :title="t('common.tip.updatePasswordRequired')" type="info" :show-icon="true"
+                            :closable="false" />
+                    </label>
+                </ElFormItem>
+                <ElFormItem>
+                    <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+                        <AutoiconEpCircleCheck />{{ t('common.save') }}
+                    </ElButton>
+                    <ElButton type="info" @click="saveForm.reset">
+                        <AutoiconEpCircleClose />{{ t('common.reset') }}
+                    </ElButton>
+                </ElFormItem>
+            </ElForm>
+        </ElMain>
+    </ElContainer>
 </template>
-
-<style scoped>
-:deep(.el-alert) {
-    padding: 0 0.5rem;
-}
-</style>
