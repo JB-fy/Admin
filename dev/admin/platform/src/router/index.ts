@@ -20,14 +20,15 @@ const initRouteList = [
             {
                 path: '/',
                 component: async () => {
-                    /*  import说明
-                            参数为静态（无变量）时，可以使用任意方式导入。即能使用@路径
-                            参数为动态（有变量）时，必须是相对路径或绝对路径方式，其他方式不允许。（查看文档绝对路径也不允许，但实际可以使用）
-                    */
+                    /**
+                     * import说明
+                     *   参数为静态（无变量）时，可以使用任意方式导入。即能使用@路径
+                     *   参数为动态（有变量）时，必须是相对路径或绝对路径方式，其他方式不允许。（查看文档绝对路径也不允许，但实际可以使用）
+                     */
                     //let componentPath='../views/index/Index.vue'
                     //const component = await import(componentPath)
                     const component = await import('@/views/index/Index.vue')
-                    component.default.name = '/'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/'    //keepAlive为true允许缓存时，必须设置name
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -36,7 +37,7 @@ const initRouteList = [
                 path: '/auth/action',
                 component: async () => {
                     const component = await import('@/views/auth/action/Index.vue')
-                    component.default.name = '/auth/action'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/action'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -45,7 +46,7 @@ const initRouteList = [
                 path: '/auth/menu',
                 component: async () => {
                     const component = await import('@/views/auth/menu/Index.vue')
-                    component.default.name = '/auth/menu'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/menu'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -54,7 +55,7 @@ const initRouteList = [
                 path: '/auth/role',
                 component: async () => {
                     const component = await import('@/views/auth/role/Index.vue')
-                    component.default.name = '/auth/role'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/role'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -63,7 +64,7 @@ const initRouteList = [
                 path: '/auth/scene',
                 component: async () => {
                     const component = await import('@/views/auth/scene/Index.vue')
-                    component.default.name = '/auth/scene'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/auth/scene'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -72,7 +73,7 @@ const initRouteList = [
                 path: '/platform/admin',
                 component: async () => {
                     const component = await import('@/views/platform/admin/Index.vue')
-                    component.default.name = '/platform/admin'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/platform/admin'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -81,7 +82,7 @@ const initRouteList = [
                 path: '/platform/config',
                 component: async () => {
                     const component = await import('@/views/platform/config/Index.vue')
-                    component.default.name = '/platform/config'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/platform/config'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -90,7 +91,7 @@ const initRouteList = [
                 path: '/log/request',
                 component: async () => {
                     const component = await import('@/views/log/request/Index.vue')
-                    component.default.name = '/log/request'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/log/request'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true }
@@ -99,7 +100,7 @@ const initRouteList = [
                 path: '/profile',
                 component: async () => {
                     const component = await import('@/views/profile/Index.vue')
-                    component.default.name = '/profile'    //设置页面组件name为path，方便清理缓存
+                    component.default.name = '/profile'
                     return component
                 },
                 meta: { keepAlive: true, isAuth: true, menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
