@@ -370,7 +370,7 @@ defineExpose({
         </ElCol>
     </ElRow>
 
-    <ElMain style="padding: 0;">
+    <ElMain>
         <ElAutoResizer>
             <template #default="{ height, width }">
                 <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.order"

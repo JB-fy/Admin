@@ -54,12 +54,16 @@ body {
   }
 } */
 
-.app-container {
+.main-table-container {
   height: 100%;
 }
 
-.app-container .el-header {
+.main-table-container .el-header {
   height: auto;
+  padding: 0;
+}
+
+.main-table-container .el-main {
   padding: 0;
 }
 
@@ -97,7 +101,7 @@ body {
 
 .main-table-pagination .el-pagination {
   float: right;
-  margin: 3px 5px 0 0;
+  margin: 3px 10px 0 0;
 }
 
 .main-table .inline-edit {

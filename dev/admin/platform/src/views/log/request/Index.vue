@@ -16,7 +16,7 @@ provide('listCommon', listCommon)
 </script>
 
 <template>
-    <ElContainer class="app-container">
+    <ElContainer class="main-table-container">
         <ElHeader>
             <Query />
         </ElHeader>
