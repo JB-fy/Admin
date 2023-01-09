@@ -114,7 +114,8 @@ const initRouteList = [
             },
             /* {
                 //待解决bug。带参数的路由，所有符合条件的下级路由，由于组件是同一个，如果其中一个下级路由页面刷新时，会删除所有下级路由的缓存
-                //要解决除非设置不同的组件name，这点貌似无法实现
+                //带参数的路由，要么不设置缓存；要么忽略这个bug，毕竟没啥影响
+                //要解决这个bug，除非可以动态设置组件name，这点貌似无法实现
                 //其他解决方式过于麻烦，需要特意在组件onActivated()方法内实现
                 path: '/test/:userId?',
                 component: {
@@ -181,10 +182,10 @@ router.beforeEach(async (to: any) => {
     //404不放入菜单标签中
     if (to.meta.isAuth) {
         adminStore.pushMenuTabList({
-            url: to.fullPath,
-            componentName: to.meta?.componentName,
-            ...to.meta?.menu,
             keepAlive: to.meta?.keepAlive ?? false,
+            componentName: to.meta?.componentName,
+            url: to.fullPath,
+            ...to.meta?.menu,
         })
     }
     /**--------设置菜单标签 结束--------**/
