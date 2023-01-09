@@ -6,9 +6,9 @@ export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
       info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
-      menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{title: 标题, url: 地址, icon: 图标, children: [子集]}
-      menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { title: string, url: string, icon: string }[] }[],   //菜单列表。单个菜单格式：{title: 标题, url: 地址, icon: 图标, menuChain: [菜单链]}
-      menuTabList: [] as { url: string, keepAlive: boolean, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表
+      menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, children: [子集]}
+      menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { [propName: string]: any }[] }[],   //菜单列表。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, menuChain: [菜单链（包含自身）]}
+      menuTabList: [] as { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表
     }
   },
   getters: {
@@ -38,6 +38,35 @@ export const useAdminStore = defineStore('admin', {
     },
     //获取菜单标签列表
     getMenuTabList: (state) => {
+      /* let menu = state.menuList.find((item) => {
+        return item.url == '/'
+      })
+      let menuOfIndex
+      if (menu) {
+        menuOfIndex = {
+          menuName: menu.menuName,
+          title: menu.title,
+          url: menu.url,
+          componentName: menu.componentName,
+          icon: menu.icon,
+          closable: false,
+        }
+      } else {
+        routeOfIndex = (<any>router).getRoutes().find((item: any) => {
+          return item.path == '/'
+        })
+        if (routeOfIndex) {
+          menuOfIndex = {
+            menuName: routeOfIndex.meta.menu.menuName,
+            title: routeOfIndex.meta.menu.title,
+            url: routeOfIndex.path,
+            componentName: routeOfIndex.meta.componentName,
+            icon: routeOfIndex.meta.menu.icon,
+            closable: false,
+          }
+        }
+      }
+      const menuTabList = menuOfIndex ? [{...menuOfIndex}, ...state.menuTabList] : [...state.menuTabList] */
       let menu = state.menuList.find((item) => {
         return item.url == '/'
       }) ?? (<any>router).getRoutes().find((item: any) => {
@@ -47,16 +76,16 @@ export const useAdminStore = defineStore('admin', {
         menuName: menu.menuName,
         title: menu.title,
         url: menu?.url ?? '/',
+        componentName: menu?.componentName ?? '/',
         icon: menu.icon,
-        keepAlive: menu?.keepAlive ?? true,
         closable: false,
       }, ...state.menuTabList] : [...state.menuTabList]
       return menuTabList.map((item) => {
         return {
           title: useLanguageStore().getMenuTitle(item),
           url: item.url,
+          componentName: item.componentName,
           icon: item.icon,
-          keepAlive: item.keepAlive,
           closable: item.closable,
         }
       })
@@ -67,7 +96,7 @@ export const useAdminStore = defineStore('admin', {
      * 推入菜单标签列表
      * @param menuTab 
      */
-    pushMenuTabList(menuTab: { url: string, keepAlive: boolean, menuName: string, title: { [propName: string]: string }, icon: string }) {
+    pushMenuTabList(menuTab: { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string }) {
       if (menuTab.url == '/') {
         return
       }

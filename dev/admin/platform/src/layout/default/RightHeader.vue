@@ -73,7 +73,7 @@ const menuTab = reactive({
         </ElCol>
         <ElCol :span="12" style="text-align: right;">
             <ElSpace :size="20" style="height: 100%;">
-                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.fullPath)">
+                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
                     <AutoiconEpRefresh />
                 </ElLink>
 
@@ -137,7 +137,7 @@ const menuTab = reactive({
                                 </ElSpace>
                                 <template #dropdown>
                                     <ElDropdownMenu>
-                                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.url)">
+                                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.componentName)">
                                             <AutoiconEpRefresh />{{ t('common.refresh') }}
                                         </ElDropdownItem>
                                         <ElDropdownItem @click="adminStore.closeSelfMenuTab(item.url)">
@@ -169,7 +169,7 @@ const menuTab = reactive({
                 </ElLink>
                 <template #dropdown>
                     <ElDropdownMenu>
-                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.fullPath)">
+                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
                             <AutoiconEpRefresh />{{ t('common.refresh') }}
                         </ElDropdownItem>
                         <ElDropdownItem @click="adminStore.closeSelfMenuTab(route.fullPath)">

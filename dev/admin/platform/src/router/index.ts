@@ -28,10 +28,10 @@ const initRouteList = [
                     //let componentPath='../views/index/Index.vue'
                     //const component = await import(componentPath)
                     const component = await import('@/views/index/Index.vue')
-                    component.default.name = '/'    //keepAlive为true允许缓存时，必须设置name
+                    component.default.name = '/'    //meta.keepAlive为true时，要实现组件缓存和页面刷新，必须设置组件name和meta.componentName，且必须相同
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/' }
             },
             {
                 path: '/auth/action',
@@ -40,7 +40,7 @@ const initRouteList = [
                     component.default.name = '/auth/action'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/action' }
             },
             {
                 path: '/auth/menu',
@@ -49,7 +49,7 @@ const initRouteList = [
                     component.default.name = '/auth/menu'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/menu' }
             },
             {
                 path: '/auth/role',
@@ -58,7 +58,7 @@ const initRouteList = [
                     component.default.name = '/auth/role'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/role' }
             },
             {
                 path: '/auth/scene',
@@ -67,7 +67,7 @@ const initRouteList = [
                     component.default.name = '/auth/scene'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' }
             },
             {
                 path: '/platform/admin',
@@ -76,7 +76,7 @@ const initRouteList = [
                     component.default.name = '/platform/admin'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/admin' }
             },
             {
                 path: '/platform/config',
@@ -85,7 +85,7 @@ const initRouteList = [
                     component.default.name = '/platform/config'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config' }
             },
             {
                 path: '/log/request',
@@ -94,7 +94,7 @@ const initRouteList = [
                     component.default.name = '/log/request'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true }
+                meta: { isAuth: true, keepAlive: true, componentName: '/log/request' }
             },
             {
                 path: '/profile',
@@ -103,26 +103,37 @@ const initRouteList = [
                     component.default.name = '/profile'
                     return component
                 },
-                meta: { keepAlive: true, isAuth: true, menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
+                meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
             },
             {
                 path: '/thirdUrl',
                 component: {
                     template: '<iframe :src="$route.query.url" frameborder="0" style="width: 100%; height: calc(100vh - 194px);"></iframe>',
                 },
-                meta: { keepAlive: false, isAuth: true, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
+                meta: { isAuth: true, keepAlive: false, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
             },
+            /* {
+                //待解决bug。带参数的路由，所有符合条件的下级路由，由于组件是同一个，如果其中一个下级路由页面刷新时，会删除所有下级路由的缓存
+                //要解决除非设置不同的组件name，这点貌似无法实现
+                //其他解决方式过于麻烦，需要特意在组件onActivated()方法内实现
+                path: '/test/:userId?',
+                component: {
+                    name: '/test',
+                    template: '<input />',
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/test', menu: { menuName: '测试', title: { 'en': 'test', 'zh-cn': '测试' }, icon: 'AutoiconEpBicycle' } }
+            }, */
         ]
     },
     {
         path: '/login',
         component: () => import('@/views/login/Index.vue'),
-        meta: { keepAlive: false, isAuth: false, menu: { menuName: '登录', title: { 'en': 'Login', 'zh-cn': '登录' } } }
+        meta: { isAuth: false, keepAlive: false, menu: { menuName: '登录', title: { 'en': 'Login', 'zh-cn': '登录' } } }
     },
     {
         path: '/:pathMatch(.*)*',
         component: () => import('@/views/404/Index.vue'),
-        meta: { keepAlive: false, isAuth: false, menu: { menuName: '404', title: { 'en': '404', 'zh-cn': '404' } } }
+        meta: { isAuth: false, keepAlive: false, menu: { menuName: '404', title: { 'en': '404', 'zh-cn': '404' } } }
     },
 ]
 
@@ -171,6 +182,7 @@ router.beforeEach(async (to: any) => {
     if (to.meta.isAuth) {
         adminStore.pushMenuTabList({
             url: to.fullPath,
+            componentName: to.meta?.componentName,
             ...to.meta?.menu,
             keepAlive: to.meta?.keepAlive ?? false,
         })
@@ -182,7 +194,7 @@ router.beforeEach(async (to: any) => {
 })
 
 router.afterEach((to) => {
-    useKeepAliveStore().removeAppContainerExclude(to.fullPath)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
+    useKeepAliveStore().removeAppContainerExclude(<string>to.meta?.componentName)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
 })
 
 export default router
