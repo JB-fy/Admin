@@ -3,12 +3,17 @@ import Layout from '@/layout/default/Index.vue'
 
 /**
  * meta说明：（当路由在后端数据库菜单表中未记录时，menu必须设置，反之不用设置。例如：个人中心不在用户菜单中，则需要设置）
+ *      isAuth: true,   //是否需要权限验证
  *      keepAlive: true,    //是否可以缓存
- *      isAuth: true,   //是否需要权限验证  
- *      menu: { menuName: '菜单名称', title: {'en': 'homepage', 'zh-cn': '主页',...}, icon:'图标'}，    //菜单配置
- *          menuName: '菜单名称', //菜单名称。
- *          title: {'en': 'homepage', 'zh-cn': '主页'},  //标题，多语言时设置，未设置以menuName为准。
- *          icon: '图标',  //图标。
+ *      componentName: string,    //组件名称
+ *      menu: { 
+ *          menuName: '菜单名称',
+ *          title: {    //标题，多语言时设置，未设置以menuName为准
+ *              'en': 'homepage',
+ *              'zh-cn': '主页',...
+ *          },
+ *          icon:'图标'
+ *      }
  */
 const initRouteList = [
     {

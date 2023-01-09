@@ -38,53 +38,36 @@ export const useAdminStore = defineStore('admin', {
     },
     //获取菜单标签列表
     getMenuTabList: (state) => {
-      /* let menu = state.menuList.find((item) => {
-        return item.url == '/'
-      })
-      let menuOfIndex
-      if (menu) {
-        menuOfIndex = {
-          menuName: menu.menuName,
-          title: menu.title,
-          url: menu.url,
-          componentName: menu.componentName,
-          icon: menu.icon,
-          closable: false,
-        }
-      } else {
-        routeOfIndex = (<any>router).getRoutes().find((item: any) => {
-          return item.path == '/'
-        })
-        if (routeOfIndex) {
-          menuOfIndex = {
-            menuName: routeOfIndex.meta.menu.menuName,
-            title: routeOfIndex.meta.menu.title,
-            url: routeOfIndex.path,
-            componentName: routeOfIndex.meta.componentName,
-            icon: routeOfIndex.meta.menu.icon,
-            closable: false,
-          }
-        }
-      }
-      const menuTabList = menuOfIndex ? [{...menuOfIndex}, ...state.menuTabList] : [...state.menuTabList] */
-      let menu = state.menuList.find((item) => {
-        return item.url == '/'
-      }) ?? (<any>router).getRoutes().find((item: any) => {
+      const routeOfIndex = (<any>router).getRoutes().find((item: any) => {
         return item.path == '/'
-      })?.meta?.menu
-      const menuTabList = menu ? [{
-        menuName: menu.menuName,
-        title: menu.title,
-        url: menu?.url ?? '/',
-        componentName: menu?.componentName ?? '/',
-        icon: menu.icon,
-        closable: false,
-      }, ...state.menuTabList] : [...state.menuTabList]
+      })
+      let menuTabList
+      if (routeOfIndex) {
+        const menuTabOfIndex = {
+          componentName: routeOfIndex.meta.componentName,
+          url: routeOfIndex.path,
+          closable: false,  //首页的菜单标签不能关闭
+          menuName: routeOfIndex.meta?.menu?.menuName,
+          title: routeOfIndex.meta?.menu?.title,
+          icon: routeOfIndex.meta?.menu?.icon,
+        }
+        const menuOfIndex = state.menuList.find((item) => {
+          return item.url == routeOfIndex.path
+        })
+        if (menuOfIndex) {
+          menuTabOfIndex.menuName = menuOfIndex.menuName
+          menuTabOfIndex.title = menuOfIndex.title
+          menuTabOfIndex.icon = menuOfIndex.icon
+        }
+        menuTabList = [{ ...menuTabOfIndex }, ...state.menuTabList]
+      } else {
+        menuTabList = [...state.menuTabList]
+      }
       return menuTabList.map((item) => {
         return {
-          title: useLanguageStore().getMenuTitle(item),
-          url: item.url,
           componentName: item.componentName,
+          url: item.url,
+          title: useLanguageStore().getMenuTitle(item),
           icon: item.icon,
           closable: item.closable,
         }
