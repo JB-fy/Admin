@@ -38,10 +38,19 @@ export const useAdminStore = defineStore('admin', {
     },
     //获取菜单标签列表
     getMenuTabList: (state) => {
+      const menuTabList = state.menuTabList.map((item) => {
+        return {
+          componentName: item.componentName,
+          url: item.url,
+          title: useLanguageStore().getMenuTitle(item),
+          icon: item.icon,
+          closable: item.closable,
+        }
+      })
+      /*--------增加首页的菜单标签并置顶 开始--------*/
       const routeOfIndex = (<any>router).getRoutes().find((item: any) => {
         return item.path == '/'
       })
-      let menuTabList
       if (routeOfIndex) {
         const menuTabOfIndex = {
           componentName: routeOfIndex.meta.componentName,
@@ -59,19 +68,11 @@ export const useAdminStore = defineStore('admin', {
           menuTabOfIndex.title = menuOfIndex.title
           menuTabOfIndex.icon = menuOfIndex.icon
         }
-        menuTabList = [{ ...menuTabOfIndex }, ...state.menuTabList]
-      } else {
-        menuTabList = [...state.menuTabList]
+        menuTabOfIndex.title = useLanguageStore().getMenuTitle(menuTabOfIndex)
+        menuTabList.unshift({ ...menuTabOfIndex })
       }
-      return menuTabList.map((item) => {
-        return {
-          componentName: item.componentName,
-          url: item.url,
-          title: useLanguageStore().getMenuTitle(item),
-          icon: item.icon,
-          closable: item.closable,
-        }
-      })
+      /*--------增加首页的菜单标签并置顶 结束--------*/
+      return menuTabList
     },
   },
   actions: {
@@ -204,11 +205,10 @@ export const useAdminStore = defineStore('admin', {
       this.info = res.data.info
     },
     /**
-     * 设置左侧菜单（包含更新路由meta数据）
+     * 设置左侧菜单树（包含更新路由meta数据）
      */
     async setMenuTree() {
       const res = await request('login/menuTree', {})
-      /**--------注册动态路由 开始--------**/
       const handleMenuTree = (menuTree: any, menuChain: any = []) => {
         const menuTreeTmp: any = []
         for (let i = 0; i < menuTree.length; i++) {
@@ -235,6 +235,7 @@ export const useAdminStore = defineStore('admin', {
               url: menuTree[i].url,
               icon: menuTree[i].icon
             }
+            //设置菜单列表
             this.menuList.push({
               ...menu,
               menuChain: [...menuChain, menu]
@@ -244,7 +245,6 @@ export const useAdminStore = defineStore('admin', {
         return menuTreeTmp
       }
       this.menuTree = handleMenuTree(res.data.tree)
-      /**--------注册动态路由 结束--------**/
     },
     /**
      * 退出登录
