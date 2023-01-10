@@ -28,6 +28,7 @@ declare global {
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getLanguage: typeof import('./src/common/language')['getLanguage']
   const h: typeof import('vue')['h']
+  const handleBatchImportOfAsync: typeof import('./src/common/import')['handleBatchImportOfAsync']
   const http: typeof import('./src/common/utils/http')['default']
   const inject: typeof import('vue')['inject']
   const isActiveAccessToken: typeof import('./src/common/accessToken')['isActiveAccessToken']

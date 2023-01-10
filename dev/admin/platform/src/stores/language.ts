@@ -2,13 +2,12 @@ import { defineStore } from 'pinia'
 import router from '@/router'
 import i18n from '@/i18n'
 
-const elementPlusLoacleList = await batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs'))
 export const useLanguageStore = defineStore('language', {
   state: () => {
     return {
       language: getLanguage(),
       //elementPlusLoacleList: import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs'),
-      elementPlusLoacleList: elementPlusLoacleList,
+      elementPlusLoacleList: batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')),
     }
   },
   getters: {

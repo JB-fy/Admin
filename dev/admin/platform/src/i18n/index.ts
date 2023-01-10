@@ -5,7 +5,7 @@ const i18n = createI18n({
     legacy: false,  //当使用useI18n()时会报错：Uncaught SyntaxError: Not available in legacy mode
     locale: getLanguage(),
     fallbackLocale: ['zh-cn', 'en'],
-    messages: await batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10),
+    messages: batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10),
 })
 
 export default i18n
