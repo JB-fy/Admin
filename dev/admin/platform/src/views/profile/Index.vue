@@ -78,8 +78,8 @@ const saveForm = reactive({
 </script>
 
 <template>
-    <ElContainer>
-        <ElMain style="background-color: var(--el-bg-color); border-radius: 8px;">
+    <ElContainer class="common-container">
+        <ElMain>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="false">
                 <ElFormItem :label="t('common.name.nickname')" prop="nickname">

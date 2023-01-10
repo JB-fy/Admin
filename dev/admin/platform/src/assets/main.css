@@ -53,6 +53,10 @@ body {
     padding: 0 2rem;
   }
 } */
+.common-container .el-main {
+  background-color: var(--el-bg-color);
+  border-radius: 8px;
+}
 
 .main-table-container {
   height: 100%;
