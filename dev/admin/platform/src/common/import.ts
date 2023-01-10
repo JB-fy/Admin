@@ -17,7 +17,7 @@ export const batchImport = async (rawImportList: any, level: number = 0, type: n
     let levelOfMin: number = 0
     let importOne: { [propName: string]: any } = {}
     for (const path in rawImportList) {
-        //keyArr = path.slice(0, path.lastIndexOf('.')).split('/')  //有时.不在最后
+        //keyArr = path.slice(0, path.lastIndexOf('.')).split('/')  //有时.不在最后。比如：xxxx.min.js
         keyArr = path.split('/')
         keyArr[keyArr.length - 1] = keyArr[keyArr.length - 1].slice(0, keyArr[keyArr.length - 1].indexOf('.'))
         keyList.push(keyArr)
