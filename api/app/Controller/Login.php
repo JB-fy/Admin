@@ -15,10 +15,10 @@ class Login extends AbstractController
      */
     public function encryptStr()
     {
-        $data = $this->validate(__FUNCTION__); //参数验证并处理
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->service->encryptStr($data['account'], $sceneCode);
                 break;
             default:
@@ -34,10 +34,10 @@ class Login extends AbstractController
      */
     public function login()
     {
-        $data = $this->validate(__FUNCTION__); //参数验证并处理
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->service->login($data['account'], $data['password'], $sceneCode);
                 break;
             default:

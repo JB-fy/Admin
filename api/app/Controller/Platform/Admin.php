@@ -16,10 +16,10 @@ class Admin extends AbstractController
      */
     public function list()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
@@ -42,10 +42,10 @@ class Admin extends AbstractController
      */
     public function info()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
@@ -69,10 +69,10 @@ class Admin extends AbstractController
      */
     public function create()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->create($data);
@@ -90,10 +90,10 @@ class Admin extends AbstractController
      */
     public function update()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->update($data, ['id' => $data['id']]);
@@ -111,10 +111,10 @@ class Admin extends AbstractController
      */
     public function delete()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->delete(['id' => $data['idArr']]);

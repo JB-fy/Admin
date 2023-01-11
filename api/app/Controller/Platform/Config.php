@@ -18,7 +18,7 @@ class Config extends AbstractController
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $data = $this->validate(__FUNCTION__);
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
                 $this->service->get(empty($data['configKeyArr']) ? [] : ['configKey' => $data['configKeyArr']]);
                 break;
@@ -38,7 +38,7 @@ class Config extends AbstractController
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $data = $this->validate(__FUNCTION__);  //新增配置时，需要在验证文件内新增对应的配置验证。否则数据会被过滤掉
+                $data = $this->validate(__FUNCTION__, $sceneCode);  //新增配置时，需要在验证文件内新增对应的配置验证。否则数据会被过滤掉
                 $this->checkAuth(__FUNCTION__, $sceneCode);
                 $this->service->save($data);
                 break;

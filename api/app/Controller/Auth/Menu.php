@@ -16,10 +16,10 @@ class Menu extends AbstractController
      */
     public function list()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $isAuth = $this->checkAuth(__FUNCTION__, $sceneCode, false);
 
                 /**--------参数处理 开始--------**/
@@ -47,10 +47,10 @@ class Menu extends AbstractController
      */
     public function info()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
@@ -73,10 +73,10 @@ class Menu extends AbstractController
      */
     public function create()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->create($data);
@@ -94,10 +94,10 @@ class Menu extends AbstractController
      */
     public function update()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->update($data, ['id' => $data['id']]);
@@ -115,10 +115,10 @@ class Menu extends AbstractController
      */
     public function delete()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->delete(['id' => $data['idArr']]);
@@ -139,15 +139,24 @@ class Menu extends AbstractController
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
-                $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-                $data = $this->request->all();
-                $where = array_merge($data['where'], [
-                    'isStop' => 0
-                ]);
-                $field = array_merge($data['field'], [
-                    'menuTree',
-                ]);
-                $this->service->tree($field, $where);
+                $data = $this->validate(__FUNCTION__, $sceneCode);
+                $isAuth = $this->checkAuth(__FUNCTION__, $sceneCode, false);
+
+                /**--------参数处理 开始--------**/
+                if ($isAuth) {
+                    $allowField = $this->getAllowField(AuthMenu::class);
+                    $allowField = array_merge($allowField, ['sceneName', 'pMenuName']);
+                } else {
+                    $allowField = ['menuId', 'menuName', 'id'];
+                }
+                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+
+                $data['where'] = array_merge($data['where'], ['isStop' => 0]);  //补充条件
+                $data['field'] = array_merge($data['field'], ['menuTree']); //补充字段（树状菜单所需）
+                /**--------参数处理 结束--------**/
+
+                //$this->service->tree(...$data);
+                $this->service->tree($data['field'], $data['where']);
                 break;
             default:
                 throwFailJson('39999999');

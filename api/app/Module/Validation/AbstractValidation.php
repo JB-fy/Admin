@@ -28,6 +28,7 @@ abstract class AbstractValidation
 
     protected array $sceneOfCommon = [
         'list' => [],   //可为空，则默认全部规则
+        'tree' => [],
         'info' => [
             'only' => [
                 'id'
@@ -87,6 +88,7 @@ abstract class AbstractValidation
      * 创建验证器
      *
      * @param array $data
+     * @param string $sceneName
      * @return ValidatorInterface
      */
     final public function make(array $data, string $sceneName = ''): ValidatorInterface
@@ -113,10 +115,17 @@ abstract class AbstractValidation
     {
         $rule = array_merge($this->ruleOfCommon, $this->rule);
         $scene = array_merge($this->sceneOfCommon, $this->scene);
-        if (empty($sceneName) || !isset($scene[$sceneName])) {
+        if ($sceneName === '') {
             return $rule;
         }
-        //处理顺序 only、remove、append
+        if (!isset($scene[$sceneName])) {
+            //return $rule;
+            throwFailJson('89999997');
+        }
+        if (empty($scene[$sceneName])) {
+            return $rule;
+        }
+        //只验证哪些字段
         if (isset($scene[$sceneName]['only'])) {
             foreach ($rule as $k => $v) {
                 if (in_array($k, $scene[$sceneName]['only'])) {
@@ -125,6 +134,7 @@ abstract class AbstractValidation
                 unset($rule[$k]);
             }
         }
+        //删除规则
         foreach ($rule as $k => $v) {
             $tmpRule = explode('|', $v);
             if (isset($scene[$sceneName]['remove'][$k])) {
@@ -140,7 +150,7 @@ abstract class AbstractValidation
             }
             $rule[$k] = implode('|', $tmpRule);
         }
-        //新增字段并添加规则（是否支持自己看）
+        //新增规则
         if (isset($scene[$sceneName]['append'])) {
             foreach ($scene[$sceneName]['append'] as $k => $v) {
                 if (isset($rule[$k])) {

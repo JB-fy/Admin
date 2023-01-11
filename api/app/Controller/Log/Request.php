@@ -16,10 +16,10 @@ class Request extends AbstractController
      */
     public function list()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/

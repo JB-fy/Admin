@@ -107,9 +107,6 @@ const cascader = reactive({
             return {
                 field: [],
                 where: {} as { [propName: string]: any },
-                order: { id: 'desc' },
-                page: 1,
-                limit: 0,
                 ...props.api.param
             }
         }),

@@ -16,10 +16,10 @@ class Scene extends AbstractController
      */
     public function list()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $isAuth = $this->checkAuth(__FUNCTION__, $sceneCode, false);
 
                 /**--------参数处理 开始--------**/
@@ -46,10 +46,10 @@ class Scene extends AbstractController
      */
     public function info()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 /**--------参数处理 开始--------**/
@@ -72,10 +72,10 @@ class Scene extends AbstractController
      */
     public function create()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->create($data);
@@ -93,10 +93,10 @@ class Scene extends AbstractController
      */
     public function update()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->update($data, ['id' => $data['id']]);
@@ -114,10 +114,10 @@ class Scene extends AbstractController
      */
     public function delete()
     {
-        $data = $this->validate(__FUNCTION__);
         $sceneCode = $this->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
+                $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->delete(['id' => $data['idArr']]);
@@ -127,16 +127,4 @@ class Scene extends AbstractController
                 break;
         }
     }
-
-    /**
-     * 创建|更新时的参数处理
-     *
-     * @param array $data
-     * @return array
-     */
-    /* protected function handleData(array $data): array
-    {
-        //isset($data['sceneConfig']) && empty($data['sceneConfig']) ? $data['sceneConfig'] = null : null;    //传值且为空时，数据库该字段设置为null。更建议放在Dao类中处理
-        return $data;
-    } */
 }
