@@ -4,15 +4,25 @@ const { t } = useI18n()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: {
-        configKey1: '',
+    data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
+        test: '',
     } as { [propName: string]: any },
     rules: {
-        configKey1: [
+        test: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ]
     } as any,
+    initData: async () => {
+        const param = { configKeyArr: Object.keys(saveForm.data) }
+        try {
+            const res = await request('platform/config/get', param)
+            saveForm.data = {
+                ...saveForm.data,
+                ...res.data.config
+            }
+        } catch (error) { }
+    },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
@@ -29,29 +39,19 @@ const saveForm = reactive({
         })
     },
     reset: () => {
-        saveForm.ref.resetFields()
+        //saveForm.ref.resetFields()
+        saveForm.initData()
     }
 })
 
-onMounted(async () => {
-    const param = {
-        configKeyArr: Object.keys(saveForm.data)
-    }
-    try {
-        const res = await request('platform/config/get', param)
-        saveForm.data = {
-            ...saveForm.data,
-            ...res.data.config
-        }
-    } catch (error) { }
-})
+saveForm.initData()
 </script>
 
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('common.name.configKey1')" prop="configKey1">
-            <ElInput v-model="saveForm.data.configKey1" :placeholder="t('common.name.configKey1')" minlength="1"
+        <ElFormItem :label="t('view.platform.config.name.test')" prop="test">
+            <ElInput v-model="saveForm.data.test" :placeholder="t('view.platform.config.name.test')" minlength="1"
                 maxlength="30" :show-word-limit="true" :clearable="true" />
         </ElFormItem>
         <ElFormItem>

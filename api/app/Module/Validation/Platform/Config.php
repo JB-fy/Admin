@@ -12,7 +12,8 @@ class Config extends AbstractValidation
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
         'configKeyArr.*' => 'sometimes|required|distinct',
 
-        //'configKey1' => 'alpha_dash|between:1,30'
+        //'configKey' => 'alpha_dash|between:1,30'
+        'test' => 'alpha_dash|between:1,30'
     ];
 
     protected array $scene = [
@@ -24,7 +25,7 @@ class Config extends AbstractValidation
         ],
         'save' => [
             'only' => [
-                //'configKey1'
+                'test'
             ]
         ]
     ];
