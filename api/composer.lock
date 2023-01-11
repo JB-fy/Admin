@@ -1358,20 +1358,20 @@
         },
         {
             "name": "hyperf/engine",
-            "version": "v2.2.1",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/engine.git",
-                "reference": "99fbf14b68f92c53235deb57459a6931f2d7fa27"
+                "reference": "4713a196ce4c6d71501322937981c3ee1c828deb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/engine/zipball/99fbf14b68f92c53235deb57459a6931f2d7fa27",
-                "reference": "99fbf14b68f92c53235deb57459a6931f2d7fa27",
+                "url": "https://api.github.com/repos/hyperf/engine/zipball/4713a196ce4c6d71501322937981c3ee1c828deb",
+                "reference": "4713a196ce4c6d71501322937981c3ee1c828deb",
                 "shasum": ""
             },
             "require": {
-                "hyperf/engine-contract": "^1.3",
+                "hyperf/engine-contract": "~1.4.0",
                 "php": ">=8.0"
             },
             "conflict": {
@@ -1394,7 +1394,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev"
+                    "dev-master": "2.3-dev"
                 },
                 "hyperf": {
                     "config": "Hyperf\\Engine\\ConfigProvider"
@@ -1421,22 +1421,22 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/engine/issues",
-                "source": "https://github.com/hyperf/engine/tree/v2.2.1"
+                "source": "https://github.com/hyperf/engine/tree/v2.3.0"
             },
-            "time": "2023-01-06T05:13:31+00:00"
+            "time": "2023-01-11T02:51:03+00:00"
         },
         {
             "name": "hyperf/engine-contract",
-            "version": "v1.3.1",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/engine-contract.git",
-                "reference": "de0951ae2d3c8937c96da24464cbeb118839e1bb"
+                "reference": "a3d092a532d738dfb48d8065c37cb1f3625887a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/engine-contract/zipball/de0951ae2d3c8937c96da24464cbeb118839e1bb",
-                "reference": "de0951ae2d3c8937c96da24464cbeb118839e1bb",
+                "url": "https://api.github.com/repos/hyperf/engine-contract/zipball/a3d092a532d738dfb48d8065c37cb1f3625887a3",
+                "reference": "a3d092a532d738dfb48d8065c37cb1f3625887a3",
                 "shasum": ""
             },
             "require": {
@@ -1456,7 +1456,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.3-dev"
+                    "dev-master": "1.4-dev"
                 }
             },
             "autoload": {
@@ -1478,9 +1478,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/engine-contract/issues",
-                "source": "https://github.com/hyperf/engine-contract/tree/v1.3.1"
+                "source": "https://github.com/hyperf/engine-contract/tree/v1.4.0"
             },
-            "time": "2023-01-06T05:08:39+00:00"
+            "time": "2023-01-11T02:44:20+00:00"
         },
         {
             "name": "hyperf/event",
