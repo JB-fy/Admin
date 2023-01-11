@@ -63,11 +63,9 @@ class Admin extends AbstractValidation
         ],
         'updateSelf' => [
             'only' => [
-                'account',
-                'phone',
-                'password',
                 'nickname',
                 'avatar',
+                'password',
                 'oldPassword'
             ],
             'remove' => [
