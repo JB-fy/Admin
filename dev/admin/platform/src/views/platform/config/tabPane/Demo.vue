@@ -5,10 +5,10 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        nickname: '',
+        configKey1: '',
     } as { [propName: string]: any },
     rules: {
-        nickname: [
+        configKey1: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ]
@@ -32,6 +32,7 @@ const saveForm = reactive({
         saveForm.ref.resetFields()
     }
 })
+
 onMounted(async () => {
     const param = {
         configKeyArr: Object.keys(saveForm.data)
@@ -49,8 +50,8 @@ onMounted(async () => {
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('common.name.nickname')" prop="nickname">
-            <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
+        <ElFormItem :label="t('common.name.configKey1')" prop="configKey1">
+            <ElInput v-model="saveForm.data.configKey1" :placeholder="t('common.name.configKey1')" minlength="1"
                 maxlength="30" :show-word-limit="true" :clearable="true" />
         </ElFormItem>
         <ElFormItem>

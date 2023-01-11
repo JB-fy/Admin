@@ -17,9 +17,6 @@ class Config extends AbstractService
     public function get(array $where = [])
     {
         $config = $this->getDao()->where($where)->getBuilder()->pluck('configValue', 'configKey')->toArray();
-        if (empty($config)) {
-            throwFailJson('29999999');
-        }
         throwSuccessJson(['config' => $config]);
     }
 

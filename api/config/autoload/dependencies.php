@@ -20,9 +20,9 @@ return [
             'host' => 'http://4724382110.oss-cn-hongkong.aliyuncs.com'
         ]; */
         $config = [
-            'accessId' => 'LTAI5tF5Xn7YeqJeiinpEkQh',
-            'accessKey' => 'zvPr5ifsp8Lp2B8nwoxkEaKOPMkkRr',
-            'host' => 'https://gamemeta.oss-cn-hangzhou.aliyuncs.com'
+            'accessId' => 'LTAI5tSjYikt3bX33riHezmk',
+            'accessKey' => 'k4uRZU6flv73yz1j4LJu9VY5eNlHas',
+            'host' => 'https://gamemt.oss-cn-hangzhou.aliyuncs.com'
         ];
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },

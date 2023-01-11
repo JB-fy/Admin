@@ -237,7 +237,7 @@ const handleDelete = (idArr: number[] | string[]) => {
 }
 //更新
 const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
-    await request('platform/admin/save', param, true)
+    await request('platform/admin/update', param, true)
 }
 
 //分页

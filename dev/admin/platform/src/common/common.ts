@@ -32,19 +32,8 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
         if (typeof apiMethod === 'function') {
             res = await apiMethod(data)
         } else {
-            //未定义接口时，将apiCode转换成接口地址去请求
-            apiCodeList = apiCode.split('/')    //重置apiCodeList
-            switch (apiCodeList[apiCodeList.length - 1]) {
-                case 'save':
-                    if (data?.id > 0) {
-                        apiCodeList[apiCodeList.length - 1] = 'update'
-                    } else {
-                        apiCodeList[apiCodeList.length - 1] = 'create'
-                    }
-                    break;
-            }
             res = await http({
-                url: '/' + apiCodeList.join('/'),
+                url: apiCode,
                 method: 'post',
                 data: data
             })

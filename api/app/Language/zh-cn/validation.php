@@ -200,6 +200,9 @@ return [
         'sceneIdArr' => '场景列表',
         'sceneIdArr.*' => '场景列表内所有值',
 
+        'configKeyArr' => '配置列表',
+        'configKeyArr.*' => '配置列表内所有值',
+
         'sort' => '排序值',
         'isStop' => '停用',
         'remark' => '备注',

@@ -7,9 +7,9 @@ export default {
 </script>
 <!--直接批量导入组件 结束-->
 <script setup lang="ts">
-//import AdminConfig from './tabPane/AdminConfig.vue'
-// const AdminConfig  = defineAsyncComponent(() => import('./tabPane/AdminConfig.vue'))    //好处：该组件会被打包成单独一个文件
-// console.log(AdminConfig)
+//import Demo from './tabPane/Demo.vue'
+// const Demo  = defineAsyncComponent(() => import('./tabPane/Demo.vue'))    //好处：该组件会被打包成单独一个文件
+// console.log(Demo)
 
 const tabs = reactive({
     loading: false,
@@ -29,7 +29,7 @@ const tabs = reactive({
             <!-- <ElTabs type="border-card" tab-position="top" v-model="tabs.activeTabName" @tab-change="tabs.change"> -->
             <ElTabs type="border-card" tab-position="top" @tab-change="tabs.change">
                 <ElTabPane label="后台" :lazy="true" :key="tabs.tabPaneKey">
-                    <AdminConfig />
+                    <Demo />
                 </ElTabPane>
             </ElTabs>
         </ElMain>

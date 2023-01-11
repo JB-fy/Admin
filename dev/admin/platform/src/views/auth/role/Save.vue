@@ -47,7 +47,11 @@ const saveForm = reactive({
                 return menuIdArr.indexOf(item) === index
             })
             try {
-                await request('auth/role/save', param, true)
+                if (param?.id > 0) {
+                    await request('auth/role/update', param, true)
+                } else {
+                    await request('auth/role/create', param, true)
+                }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
             } catch (error) { }

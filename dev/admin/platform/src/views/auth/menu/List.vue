@@ -290,7 +290,7 @@ const handleDelete = (idArr: number[] | string[]) => {
 }
 //更新
 const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
-    await request('auth/menu/save', param, true)
+    await request('auth/menu/update', param, true)
 }
 
 //分页
