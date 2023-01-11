@@ -85,8 +85,8 @@ abstract class AbstractController
             case 'tree':
             case 'list':
                 if (!empty($data)) {
-                    //$data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validated();  //不存在的字段不验证。相当于加sometimes规则
-                    $data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data)->validate();
+                    //$data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data, $funcName)->validated();  //不存在的字段不验证。相当于加sometimes规则
+                    $data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data, $funcName)->validate();
                     !isset($data['page']) ?: $data['page'] = (int)$data['page'];
                     !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 

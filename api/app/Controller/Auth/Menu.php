@@ -155,8 +155,8 @@ class Menu extends AbstractController
                 $data['field'] = array_merge($data['field'], ['menuTree']); //补充字段（树状菜单所需）
                 /**--------参数处理 结束--------**/
 
-                //$this->service->tree(...$data);
-                $this->service->tree($data['field'], $data['where']);
+                $this->service->tree(...$data);
+                //$this->service->tree($data['field'], $data['where']);
                 break;
             default:
                 throwFailJson('39999999');

@@ -14,4 +14,14 @@ class CommonList extends AbstractValidation
         'page' => 'sometimes|required|integer|min:1',
         'limit' => 'sometimes|required|integer|min:0',
     ];
+
+    protected array $scene = [
+        'list' => [],
+        'tree' => [
+            'only' => [
+                'field',
+                'where',
+            ]
+        ]
+    ];
 }
