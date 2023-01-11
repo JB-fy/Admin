@@ -65,9 +65,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = {
-                ...removeEmptyOfObj(saveForm.data, false)
-            }
+            const param = removeEmptyOfObj(saveForm.data, false)
             try {
                 if (param?.id > 0) {
                     await request('auth/menu/update', param, true)

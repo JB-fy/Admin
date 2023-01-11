@@ -35,9 +35,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = {
-                ...removeEmptyOfObj(saveForm.data, false)
-            }
+            const param = removeEmptyOfObj(saveForm.data, false)
             let menuIdArr: any = []
             param.menuIdArr.forEach((item: any) => {
                 menuIdArr = menuIdArr.concat(item)

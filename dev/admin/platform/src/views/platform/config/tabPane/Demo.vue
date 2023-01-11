@@ -29,9 +29,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = {
-                ...removeEmptyOfObj(saveForm.data, false)
-            }
+            const param = removeEmptyOfObj(saveForm.data, false)
             try {
                 await request('platform/config/save', param, true)
             } catch (error) { }

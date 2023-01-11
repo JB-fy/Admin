@@ -32,11 +32,7 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
         if (typeof apiMethod === 'function') {
             res = await apiMethod(data)
         } else {
-            res = await http({
-                url: apiCode,
-                method: 'post',
-                data: data
-            })
+            res = await http({ url: apiCode, method: 'post', data: data })
         }
         if (isSuccessTip) {
             ElMessage.success(res.msg)
