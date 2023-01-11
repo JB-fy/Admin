@@ -190,6 +190,7 @@ return [
         'roleId' => '角色ID',
         'sceneId' => '场景ID',
         'adminId' => '管理员ID',
+        'logId' => '日志ID',
 
         'pid' => '父ID',
 
@@ -209,10 +210,13 @@ return [
         'isStop' => '停用',
         'remark' => '备注',
         'extraData' => '额外数据',
+        'startTime' => '开始时间',
+        'endTime' => '结束时间',
 
         'account' => '账号',
         'phone' => '手机号',
         'password' => '密码',
+        'oldPassword' => '旧密码',
         'nickname' => '昵称',
         'avatar' => '头像',
 
@@ -226,6 +230,10 @@ return [
         'sceneName' => '场景名称',
         'sceneCode' => '场景标识',
         'sceneConfig' => '场景配置',
+
+        'requestUrl' => '请求地址',
+        'minRunTime' => '运行时间最小值',
+        'maxRunTime' => '运行时间最大值',
     ],
     'phone_number' => ':attribute 必须为一个有效的电话号码',
     'telephone_number' => ':attribute 必须为一个有效的手机号码',

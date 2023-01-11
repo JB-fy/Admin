@@ -19,7 +19,7 @@ class Admin extends AbstractValidation
         'roleIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'isStop' => 'sometimes|required|integer|in:0,1',
 
-        'oldPassword' => 'sometimes|required_with:password|size:32',
+        'oldPassword' => 'sometimes|required_with:password|size:32|different:password',
 
         'roleId' => 'sometimes|required|integer|min:1',
     ];
@@ -70,9 +70,6 @@ class Admin extends AbstractValidation
             ],
             'remove' => [
                 'oldPassword' => ['sometimes']
-            ],
-            'append' => [
-                'password' => ['different:oldPassword']
             ]
         ],
     ];
