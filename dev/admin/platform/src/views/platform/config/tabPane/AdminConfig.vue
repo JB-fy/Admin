@@ -32,6 +32,18 @@ const saveForm = reactive({
         saveForm.ref.resetFields()
     }
 })
+onMounted(async () => {
+    const param = {
+        configKeyArr: Object.keys(saveForm.data)
+    }
+    try {
+        const res = await request('platform/config/get', param)
+        saveForm.data = {
+            ...saveForm.data,
+            ...res.data.config
+        }
+    } catch (error) { }
+})
 </script>
 
 <template>

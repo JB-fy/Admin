@@ -92,6 +92,8 @@ abstract class AbstractController
                 break;
             case 'info':
             case 'delete':
+            case 'get':
+            case 'save':
             default:
                 $data = $this->validation->make($data, $funcName)->validate();
                 break;
@@ -108,6 +110,7 @@ abstract class AbstractController
     final protected function checkAuth(string $funcName, string $sceneCode, bool $isThrow = true): bool
     {
         switch ($funcName) {
+            case 'get':
             case 'list':
             case 'info':
                 return $this->container->get(\App\Module\Logic\Auth\Action::class)->checkAuth($this->actionCodePrefix . 'Look', $sceneCode, $isThrow);
@@ -115,6 +118,7 @@ abstract class AbstractController
             case 'create':
             case 'update':
             case 'delete':
+            case 'save':
             default:
                 return $this->container->get(\App\Module\Logic\Auth\Action::class)->checkAuth($this->actionCodePrefix . ucfirst($funcName), $sceneCode, $isThrow);
                 break;

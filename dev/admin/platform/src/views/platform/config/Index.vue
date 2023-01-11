@@ -26,14 +26,7 @@ const tabs = reactive({
 <template>
     <ElContainer class="common-container">
         <ElMain>
-            <!-- <ElTabs type="border-card" tab-position="top" v-model="tabs.activeTabName" @tab-change="tabs.change">
-                <ElTabPane label="后台" name="first" :lazy="true" :key="tabs.tabPaneKey">
-                    <AdminConfig />
-                </ElTabPane>
-                <ElTabPane label="代理" name="second" :lazy="true">
-                    <AdminConfig />
-                </ElTabPane>
-            </ElTabs> -->
+            <!-- <ElTabs type="border-card" tab-position="top" v-model="tabs.activeTabName" @tab-change="tabs.change"> -->
             <ElTabs type="border-card" tab-position="top" @tab-change="tabs.change">
                 <ElTabPane label="后台" :lazy="true" :key="tabs.tabPaneKey">
                     <AdminConfig />

@@ -392,7 +392,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
-                    if (strtolower(substr($key, -2)) === 'id') {    //id类型字段的处理方式
+                    //id类型字段和部分字段，可通过传递数组做查询
+                    if (strtolower(substr($key, -2)) === 'id' || in_array($key, ['configKey'])) {
                         if (is_array($value)) {
                             if (count($value) === 1) {
                                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];

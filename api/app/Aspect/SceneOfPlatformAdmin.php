@@ -24,6 +24,7 @@ class SceneOfPlatformAdmin extends AbstractAspect
         \App\Controller\Auth\Scene::class,
         \App\Controller\Log\Request::class,
         \App\Controller\Platform\Admin::class,
+        \App\Controller\Platform\Config::class,
     ];
 
     /**

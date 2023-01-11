@@ -74,6 +74,11 @@ Router::addGroup('/platform/admin', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Platform\Admin::class, 'delete']);
 });
 
+Router::addGroup('/platform/config', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/get', [\App\Controller\Platform\Config::class, 'get']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/save', [\App\Controller\Platform\Config::class, 'save']);
+});
+
 Router::get('/favicon.ico', function () {
     return '';
 });
