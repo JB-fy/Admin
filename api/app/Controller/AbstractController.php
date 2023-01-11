@@ -58,20 +58,6 @@ abstract class AbstractController
     }
 
     /**
-     * 获取验证场景
-     * 
-     * @param string $funcName
-     * @param string $sceneCode
-     * @return string
-     */
-    final protected function getValidateSceneName(string $funcName, string $sceneCode = ''): string
-    {
-        //$funcName === 'tree' ? $funcName = 'list' : null;
-        $sceneName = ($sceneCode === '' || $sceneCode == 'platformAdmin') ? $funcName : $funcName . 'Of' . ucfirst($sceneCode);
-        return $sceneName;
-    }
-
-    /**
      * 参数验证并处理
      * 
      * @param string $funcName
@@ -80,24 +66,23 @@ abstract class AbstractController
      */
     final protected function validate(string $funcName, string $sceneCode = ''): array
     {
+        $sceneName = ($sceneCode === '' || $sceneCode == 'platformAdmin') ? $funcName : $funcName . 'Of' . ucfirst($sceneCode);
         $data = $this->request->all();
         switch ($funcName) {
             case 'tree':
             case 'list':
                 if (!empty($data)) {
-                    //$data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data, $funcName)->validated();  //不存在的字段不验证。相当于加sometimes规则
-                    $data =  $this->container->get(\App\Module\Validation\CommonList::class)->make($data, $funcName)->validate();
+                    //$data =  $this->container->get(\App\Module\Validation\Common::class)->make($data, $funcName)->validated();  //不存在的字段不验证。相当于加sometimes规则
+                    $data =  $this->container->get(\App\Module\Validation\Common::class)->make($data, $funcName)->validate();
                     !isset($data['page']) ?: $data['page'] = (int)$data['page'];
                     !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
                     if (!empty($data['where'])) {
-                        $sceneName = $this->getValidateSceneName($funcName, $sceneCode);
                         $data['where'] = $this->validation->make($data['where'], $sceneName)->validate();
                     }
                 }
                 break;
             case 'update':
-                $sceneName = $this->getValidateSceneName($funcName, $sceneCode);
                 $data = $this->validation->make($data, $sceneName)->validate();
                 if (count($data) < 2) { //更新除了id还必须有其他参数，所以至少需要两个参数
                     throwFailJson('89999999');
@@ -109,7 +94,6 @@ abstract class AbstractController
             case 'get':
             case 'save':
             default:
-                $sceneName = $this->getValidateSceneName($funcName, $sceneCode);
                 $data = $this->validation->make($data, $sceneName)->validate();
                 break;
         }

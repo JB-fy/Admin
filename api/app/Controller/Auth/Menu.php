@@ -156,7 +156,6 @@ class Menu extends AbstractController
                 /**--------参数处理 结束--------**/
 
                 $this->service->tree(...$data);
-                //$this->service->tree($data['field'], $data['where']);
                 break;
             default:
                 throwFailJson('39999999');

@@ -170,18 +170,20 @@ return [
 
     'attributes' => [
         'field' => '查询字段',
+        'field.*' => '查询字段内所有值',
         'where' => '筛选字段',
+        'where.*' => '筛选字段内所有值',
         'order' => '排序字段',
-        'order.*' => '排序值',
+        'order.*' => '排序字段内所有值',
         'page' => '页码',
         'limit' => '条数',
 
         'id' => 'ID',
         'idArr' => 'ID列表',
-        'idArr.*' => 'ID列表内的值',
+        'idArr.*' => 'ID列表内所有值',
         'excId' => '排除ID',
         'excIdArr' => '排除ID列表',
-        'excIdArr.*' => '排除ID列表内的值',
+        'excIdArr.*' => '排除ID列表内所有值',
 
         'actionId' => '操作ID',
         'menuId' => '菜单ID',
