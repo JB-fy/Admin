@@ -39,7 +39,7 @@ const saveForm = reactive({
         })
     },
     reset: () => {
-        //saveForm.ref.resetFields()
+        saveForm.ref.resetFields()
         saveForm.initData()
     }
 })
