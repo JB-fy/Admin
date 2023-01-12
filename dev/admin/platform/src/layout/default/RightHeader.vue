@@ -198,7 +198,7 @@ const menuTab = reactive({
 
 .fold-icon {
     font-size: 20px;
-    transition: all 3s, color 0s;
+    transition: all 1s, color 0s;
 }
 
 .fold-icon.is-fold {
