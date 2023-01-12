@@ -9,6 +9,68 @@ export const useAdminStore = defineStore('admin', {
       menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, children: [子集]}
       menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { [propName: string]: any }[] }[],   //菜单列表。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, menuChain: [菜单链（包含自身）]}
       menuTabList: [] as { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表
+      //开发工具菜单。只在开发时显示
+      menuTreeOfDev: {
+        "menuName": "开发工具",
+        "title": {
+          "en": "Dev Tool",
+          "zh-cn": "开发工具"
+        },
+        "url": "",
+        "icon": "AutoiconEpHelpFilled",
+        "children": [
+          {
+            "menuName": "说明文档",
+            "title": {
+              "en": "Document",
+              "zh-cn": "说明文档"
+            },
+            "url": "https://www.baidu.com/",
+            "icon": "AutoiconEpDocument",
+            "children": []
+          },
+          {
+            "menuName": "Hyperf",
+            "title": {
+              "en": "Hyperf",
+              "zh-cn": "Hyperf"
+            },
+            "url": "https://www.hyperf.io/",
+            "icon": "AutoiconEpChromeFilled",
+            "children": []
+          },
+          {
+            "menuName": "ElementPlus",
+            "title": {
+              "en": "Element Plus",
+              "zh-cn": "Element Plus"
+            },
+            "url": "/thirdSite?url=https://element-plus.gitee.io/zh-CN/",
+            "icon": "AutoiconEpElementPlus",
+            "children": []
+          },
+          {
+            "menuName": "Vant4",
+            "title": {
+              "en": "Vant 4",
+              "zh-cn": "Vant 4"
+            },
+            "url": "/thirdSite?url=https://vant-contrib.gitee.io/vant/#/zh-CN",
+            "icon": "Vant-wechat-moments",
+            "children": []
+          },
+          {
+            "menuName": "Vue",
+            "title": {
+              "en": "Vue",
+              "zh-cn": "Vue"
+            },
+            "url": "/thirdSite?url=https://cn.vuejs.org/api/",
+            "icon": "AutoiconEpChromeFilled",
+            "children": []
+          }
+        ]
+      } as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] },
     }
   },
   getters: {
@@ -208,7 +270,6 @@ export const useAdminStore = defineStore('admin', {
      * 设置左侧菜单树（包含更新路由meta数据）
      */
     async setMenuTree() {
-      const res = await request('login/menuTree', {})
       const handleMenuTree = (menuTree: any, menuChain: any = []) => {
         const menuTreeTmp: any = []
         for (let i = 0; i < menuTree.length; i++) {
@@ -244,7 +305,9 @@ export const useAdminStore = defineStore('admin', {
         }
         return menuTreeTmp
       }
-      this.menuTree = handleMenuTree(res.data.tree)
+      const res = await request('login/menuTree', {})
+      const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
+      this.menuTree = handleMenuTree(tree)
     },
     /**
      * 退出登录

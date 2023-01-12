@@ -30,9 +30,9 @@ const initRouteList = [
                      *   参数为静态（无变量）时，可以使用任意方式导入。即能使用@路径
                      *   参数为动态（有变量）时，必须是相对路径或绝对路径方式，其他方式不允许。（查看文档绝对路径也不允许，但实际可以使用）
                      */
-                    //let componentPath='../views/index/Index.vue'
+                    //let componentPath='../views/Index.vue'
                     //const component = await import(componentPath)
-                    const component = await import('@/views/index/Index.vue')
+                    const component = await import('@/views/Index.vue')
                     component.default.name = '/'    //meta.keepAlive为true时，要实现组件缓存和页面刷新，必须设置组件name和meta.componentName，且必须相同
                     return component
                 },
@@ -104,17 +104,15 @@ const initRouteList = [
             {
                 path: '/profile',
                 component: async () => {
-                    const component = await import('@/views/profile/Index.vue')
+                    const component = await import('@/views/Profile.vue')
                     component.default.name = '/profile'
                     return component
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
             },
             {
-                path: '/thirdUrl',
-                component: {
-                    template: '<iframe :src="$route.query.url" frameborder="0" style="width: 100%; height: calc(100vh - 194px);"></iframe>',
-                },
+                path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.gitee.io/zh-CN/
+                component: () => import('@/views/ThirdSite.vue'),
                 meta: { isAuth: true, keepAlive: false, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
             },
             /* {
@@ -133,12 +131,12 @@ const initRouteList = [
     },
     {
         path: '/login',
-        component: () => import('@/views/login/Index.vue'),
+        component: () => import('@/views/Login.vue'),
         meta: { isAuth: false, keepAlive: false, menu: { menuName: '登录', title: { 'en': 'Login', 'zh-cn': '登录' } } }
     },
     {
         path: '/:pathMatch(.*)*',
-        component: () => import('@/views/404/Index.vue'),
+        component: () => import('@/views/404.vue'),
         meta: { isAuth: false, keepAlive: false, menu: { menuName: '404', title: { 'en': '404', 'zh-cn': '404' } } }
     },
 ]
