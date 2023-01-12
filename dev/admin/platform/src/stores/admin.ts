@@ -9,7 +9,7 @@ export const useAdminStore = defineStore('admin', {
       menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, children: [子集]}
       menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { [propName: string]: any }[] }[],   //菜单列表。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, menuChain: [菜单链（包含自身）]}
       menuTabList: [] as { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表
-      //开发工具菜单。只在开发时显示
+      //开发工具菜单。只在开发模式显示（即import.meta.env.DEV为true）
       menuTreeOfDev: {
         "menuName": "开发工具",
         "title": {
@@ -19,7 +19,7 @@ export const useAdminStore = defineStore('admin', {
         "url": "",
         "icon": "AutoiconEpHelpFilled",
         "children": [
-          {
+          /* {
             "menuName": "说明文档",
             "title": {
               "en": "Document",
@@ -28,7 +28,7 @@ export const useAdminStore = defineStore('admin', {
             "url": "https://www.baidu.com/",
             "icon": "AutoiconEpDocument",
             "children": []
-          },
+          }, */
           {
             "menuName": "Hyperf",
             "title": {
@@ -305,7 +305,7 @@ export const useAdminStore = defineStore('admin', {
         }
         return menuTreeTmp
       }
-      const res = await request('login/menuTree', {})
+      const res = await request('login/menuTree')
       const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
       this.menuTree = handleMenuTree(tree)
     },

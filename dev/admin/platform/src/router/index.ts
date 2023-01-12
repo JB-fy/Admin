@@ -113,7 +113,7 @@ const initRouteList = [
             {
                 path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.gitee.io/zh-CN/
                 component: () => import('@/views/ThirdSite.vue'),
-                meta: { isAuth: true, keepAlive: false, menu: { menuName: '第三方网站', title: { 'en': 'thridWebsite', 'zh-cn': '第三方网站' }, icon: 'AutoiconEpChromeFilled' } }
+                meta: { isAuth: true, keepAlive: false }
             },
             /* {
                 //待解决bug。带参数的路由，所有符合条件的下级路由，由于组件是同一个，如果其中一个下级路由页面刷新时，会删除所有下级路由的缓存
