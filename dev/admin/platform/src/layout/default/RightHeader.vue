@@ -77,10 +77,6 @@ const menuTab = reactive({
                     <AutoiconEpRefresh />
                 </ElLink>
 
-                <ElLink :underline="false">
-                    <FullScreenIcon />
-                </ElLink>
-
                 <ElDropdown>
                     <ElLink :underline="false">
                         <AutoiconEpPlace />
@@ -93,6 +89,10 @@ const menuTab = reactive({
                         </ElDropdownMenu>
                     </template>
                 </ElDropdown>
+
+                <ElLink :underline="false">
+                    <FullScreenIcon />
+                </ElLink>
 
                 <ElDropdown @visible-change="userDropdown.visibleChange">
                     <ElLink :underline="false">

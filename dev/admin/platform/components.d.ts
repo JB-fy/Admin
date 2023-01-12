@@ -7,7 +7,6 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    AutoiconEpAim: typeof import('~icons/ep/aim')['default']
     AutoiconEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
     AutoiconEpBack: typeof import('~icons/ep/back')['default']
     AutoiconEpCircleCheck: typeof import('~icons/ep/circle-check')['default']
@@ -17,7 +16,6 @@ declare module '@vue/runtime-core' {
     AutoiconEpDownload: typeof import('~icons/ep/download')['default']
     AutoiconEpEditPen: typeof import('~icons/ep/edit-pen')['default']
     AutoiconEpFold: typeof import('~icons/ep/fold')['default']
-    AutoiconEpFullScreen: typeof import('~icons/ep/full-screen')['default']
     AutoiconEpHide: typeof import('~icons/ep/hide')['default']
     AutoiconEpLoading: typeof import('~icons/ep/loading')['default']
     AutoiconEpLocation: typeof import('~icons/ep/location')['default']
@@ -56,6 +54,7 @@ declare module '@vue/runtime-core' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElImage: typeof import('element-plus/es')['ElImage']
     ElImageViewer: typeof import('element-plus/es')['ElImageViewer']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
