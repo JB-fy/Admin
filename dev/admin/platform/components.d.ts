@@ -7,9 +7,9 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AutoiconEpAim: typeof import('~icons/ep/aim')['default']
     AutoiconEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
     AutoiconEpBack: typeof import('~icons/ep/back')['default']
-    AutoiconEpBell: typeof import('~icons/ep/bell')['default']
     AutoiconEpCircleCheck: typeof import('~icons/ep/circle-check')['default']
     AutoiconEpCircleClose: typeof import('~icons/ep/circle-close')['default']
     AutoiconEpClose: typeof import('~icons/ep/close')['default']
@@ -17,6 +17,7 @@ declare module '@vue/runtime-core' {
     AutoiconEpDownload: typeof import('~icons/ep/download')['default']
     AutoiconEpEditPen: typeof import('~icons/ep/edit-pen')['default']
     AutoiconEpFold: typeof import('~icons/ep/fold')['default']
+    AutoiconEpFullScreen: typeof import('~icons/ep/full-screen')['default']
     AutoiconEpHide: typeof import('~icons/ep/hide')['default']
     AutoiconEpLoading: typeof import('~icons/ep/loading')['default']
     AutoiconEpLocation: typeof import('~icons/ep/location')['default']
@@ -55,7 +56,6 @@ declare module '@vue/runtime-core' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
-    ElImage: typeof import('element-plus/es')['ElImage']
     ElImageViewer: typeof import('element-plus/es')['ElImageViewer']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
@@ -76,6 +76,7 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTransfer: typeof import('element-plus/es')['ElTransfer']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    FullScreenIcon: typeof import('./src/components/FullScreenIcon.vue')['default']
     MyCascader: typeof import('./src/components/MyCascader.vue')['default']
     MyExportButton: typeof import('./src/components/MyExportButton.vue')['default']
     MyIconDynamic: typeof import('./src/components/MyIconDynamic.vue')['default']
