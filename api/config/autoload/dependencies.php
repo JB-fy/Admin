@@ -14,16 +14,16 @@ return [
     //上传组件
     'upload' => function (\Psr\Container\ContainerInterface $container) {
         //$config = $this->config->get('app.aliyunOssConfig');
-        $config = [
+        /* $config = [
             'accessId' => 'LTAI5tHx81H64BRJA971DPZF',
             'accessKey' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51',
             'host' => 'http://4724382110.oss-cn-hongkong.aliyuncs.com'
-        ];
-        /* $config = [
+        ]; */
+        $config = [
             'accessId' => 'LTAI5tSjYikt3bX33riHezmk',
             'accessKey' => 'k4uRZU6flv73yz1j4LJu9VY5eNlHas',
             'host' => 'https://gamemt.oss-cn-hangzhou.aliyuncs.com'
-        ]; */
+        ];
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },
     //平台后台场景信息
