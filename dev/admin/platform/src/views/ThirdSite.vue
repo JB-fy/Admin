@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const thirdSiteUrl:string = route.query.url
+const thirdSiteUrl = route.query.url as string
 </script>
 
 <template>
