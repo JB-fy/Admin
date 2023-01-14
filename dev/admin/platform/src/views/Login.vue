@@ -11,7 +11,7 @@ const loginForm = reactive({
     },
     rules: {
         account: [
-            { type: 'string', required: true, min: 4, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 4, max: 30 }) }
+            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
         password: [
             { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
@@ -43,7 +43,8 @@ const loginForm = reactive({
         <ElForm :ref="(el: any) => { loginForm.ref = el }" :model="loginForm.data" :rules="loginForm.rules"
             @keyup.enter="loginForm.submit">
             <ElFormItem prop="account">
-                <ElInput v-model="loginForm.data.account" :placeholder="t('common.name.account')">
+                <ElInput v-model="loginForm.data.account"
+                    :placeholder="t('common.name.account') + '/' + t('common.name.phone')">
                     <template #prefix>
                         <AutoiconEpUser />
                     </template>
