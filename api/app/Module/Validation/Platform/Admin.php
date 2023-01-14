@@ -62,7 +62,13 @@ class Admin extends AbstractValidation
                 'isStop',
             ],
             'remove' => [
-                'id' => ['sometimes']
+                'id' => ['sometimes'],
+                'account' => ['required'],
+                'phone' => ['required'],
+            ],
+            'append' => [
+                'account' => ['required_without:phone'],
+                'phone' => ['required_without:account']
             ]
         ],
         'updateSelf' => [
