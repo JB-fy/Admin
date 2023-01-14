@@ -37,15 +37,15 @@ class Admin extends AbstractValidation
                 'remark',
                 'isStop',
             ],
-            'append' => [
-                'account' => ['required_without:phone'],
-                'phone' => ['required_without:account']
-            ],
             'remove' => [
                 'account' => ['sometimes', 'required'],
                 'phone' => ['sometimes', 'required'],
                 'password' => ['sometimes'],
                 'roleIdArr' => ['sometimes'],
+            ],
+            'append' => [
+                'account' => ['required_without:phone'],
+                'phone' => ['required_without:account']
             ]
         ],
         'update' => [
@@ -74,12 +74,12 @@ class Admin extends AbstractValidation
                 'password',
                 'checkPassword'
             ],
-            'append' => [
-                'checkPassword' => ['sometimes', 'required_with:account,phone,password', 'size:32'],
-                'password' => ['different:checkPassword']
-            ],
             'remove' => [
                 'checkPassword' => ['sometimes']
+            ],
+            'append' => [
+                'password' => ['different:checkPassword'],
+                //'checkPassword' => ['required_with:account,phone,password', 'size:32'],
             ]
         ],
     ];

@@ -55,23 +55,23 @@ abstract class AbstractValidation
             ]
         ],
     ];
-    protected array $scene = [];
+    protected array $scene = [];    //注意处理顺序：only->remove->append
     /* protected $scene = [
         'sceneName' => [
             'only'=>[   //只验证哪些字段
                 'attributeName',
                 ...
             ],
-            'append' => [ //新增规则
+            'remove' => [ //删除规则
                 'attributeName' => [
-                    'rule',
+                    'ruleName',
                     ...
                 ],
                 ...
             ],
-            'remove' => [ //删除规则
+            'append' => [ //新增规则
                 'attributeName' => [
-                    'ruleName',
+                    'rule',
                     ...
                 ],
                 ...
