@@ -48,7 +48,7 @@ const upload = reactive({
         }
         return props.modelValue
     })(),
-    /* //这个方式动画效果不好，但可以动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，会刷新）。要使用还需解决bug：多文件上传时，onSuccess内执行emits('update:modelValue', upload.value)会触发该处get，导致第二个文件上传被中断
+    /* //这个方式动画效果不好，但可以动态刷新组件（即modelValue改变时，会刷新）。待处理bug：多文件上传时，onSuccess内执行emits('update:modelValue', upload.value)会触发该处get，导致第二个文件上传被中断
     fileList: computed({
         get: () => {
             if (!props.modelValue) {
@@ -70,7 +70,7 @@ const upload = reactive({
         set: (val) => {
         }
     }), */
-    //这个方式动画效果好，但不能动态刷新组件（即组件使用的地方如果modelValue受其他参数变动而改变时，不会刷新）
+    //这个方式动画效果好，但不能动态刷新组件（即modelValue改变时，不会刷新）。处理方法：在组件使用的地方设置key来刷新
     fileList: (() => {
         if (!props.modelValue) {
             return []

@@ -7,6 +7,7 @@ const adminStore = useAdminStore()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
+    avatarUploadKey: 0, //重置时用于刷新头像上传组件
     data: {
         nickname: adminStore.info.nickname,
         avatar: adminStore.info.avatar,
@@ -71,6 +72,7 @@ const saveForm = reactive({
     },
     reset: () => {
         saveForm.ref.resetFields()
+        saveForm.avatarUploadKey++
     }
 })
 </script>
@@ -85,7 +87,7 @@ const saveForm = reactive({
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.avatar')" prop="avatar">
-                    <MyUpload v-model="saveForm.data.avatar" />
+                    <MyUpload v-model="saveForm.data.avatar" :key="saveForm.avatarUploadKey" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.newPassword')" prop="password">
                     <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.newPassword')" minlength="1"
