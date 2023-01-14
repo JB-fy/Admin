@@ -216,7 +216,7 @@ return [
         'account' => '账号',
         'phone' => '手机号',
         'password' => '密码',
-        'oldPassword' => '旧密码',
+        'checkPassword' => '验证密码',
         'nickname' => '昵称',
         'avatar' => '头像',
 

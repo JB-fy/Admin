@@ -28,6 +28,7 @@ export default {
     batchDelete: '批量删除',
 
     tip: {
+        notSet: '未设置',
         notFullScreen: '您的浏览器不支持全屏',
         pleaseSelect: '请选择',
         selectDelete: '请选择要删除的记录',
@@ -41,7 +42,6 @@ export default {
         notAcceptFileType: '文件格式不在允许范围内',
         notWithinFileSize: '文件大小不在允许范围内',
         notRequired: '不填则不修改',
-        updatePasswordRequired: '修改密码时必填',
     },
     name: {
         checked: '复选框',
@@ -67,8 +67,8 @@ export default {
         phone: '手机号',
         password: '密码',
         newPassword: '新密码',
-        checkPassword: '重复密码',
         oldPassword: '旧密码',
+        repeatPassword: '重复密码',
         nickname: '昵称',
         avatar: '头像',
 

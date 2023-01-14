@@ -21,6 +21,6 @@ export default {
     alpha: '只能包含字母',
     alpha_dash: '只能包含字母、数字、中划线或下划线',
     alpha_num: '只能包含字母和数字',
-    checkPassword: '两次密码不一致',
-    oldPassword: '修改密码时，旧密码必填。且不能与新密码相同',
+    repeatPassword: '两次密码不一致',
+    newPasswordDiffOldPassword: '新密码必须与旧密码不同',
 }

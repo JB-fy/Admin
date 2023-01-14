@@ -5,7 +5,7 @@ import router from '@/router'
 export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
-      info: {} as { nickname: string, avatar: string, [propName: string]: any }, //用户信息。格式：{nickname: 昵称, avatar: 头像,...}
+      info: {} as { account: string, phone: string, nickname: string, avatar: string, [propName: string]: any }, //用户信息
       menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, children: [子集]}
       menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { [propName: string]: any }[] }[],   //菜单列表。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, menuChain: [菜单链（包含自身）]}
       menuTabList: [] as { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表

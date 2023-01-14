@@ -8,13 +8,23 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
+        account: '',
+        phone: '',
         nickname: adminStore.info.nickname,
         avatar: adminStore.info.avatar,
         password: '',
+        repeatPassword: '',
         checkPassword: '',
-        oldPassword: '',
     } as { [propName: string]: any },
     rules: {
+        account: [
+            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') }
+        ],
+        phone: [
+            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') }
+        ],
         nickname: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
@@ -25,22 +35,30 @@ const saveForm = reactive({
         password: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
-        checkPassword: [
+        repeatPassword: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             {
                 required: computed((): boolean => { return saveForm.data.password ? true : false; }),
                 validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password != saveForm.data.checkPassword) {
+                    if (saveForm.data.password != saveForm.data.repeatPassword) {
                         callback(new Error())
                     }
                     callback()
-                }, trigger: 'blur', message: t('validation.checkPassword')
+                }, trigger: 'blur', message: t('validation.repeatPassword')
             }
         ],
-        oldPassword: [
+        checkPassword: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             {
-                required: computed((): boolean => { return saveForm.data.password ? true : false; }), trigger: 'blur', message: t('validation.oldPassword')
+                required: computed((): boolean => { return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false; }), trigger: 'blur', message: t('view.profile.tip.checkPassword')
+            },
+            {
+                validator: (rule: any, value: any, callback: any) => {
+                    if (saveForm.data.password && saveForm.data.password == saveForm.data.checkPassword) {
+                        callback(new Error())
+                    }
+                    callback()
+                }, trigger: 'blur', message: t('validation.newPasswordDiffOldPassword')
             }
         ],
     } as any,
@@ -51,9 +69,11 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data, false)
+            param.account || delete param.account
+            param.phone || delete param.phone
             param.password ? param.password = md5(param.password) : delete param.password
-            delete param.checkPassword
-            param.oldPassword ? param.oldPassword = md5(param.oldPassword) : delete param.oldPassword
+            delete param.repeatPassword
+            param.checkPassword ? param.checkPassword = md5(param.checkPassword) : delete param.checkPassword
             try {
                 await request('login/updateInfo', param, true)
                 //成功则更新用户信息
@@ -77,6 +97,24 @@ const saveForm = reactive({
         <ElMain>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="false">
+                <ElFormItem :label="t('common.name.account')" prop="account">
+                    <ElInput v-model="saveForm.data.account" :placeholder="t('common.name.account')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+                    <label>
+                        <ElAlert
+                            :title="t('view.profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })"
+                            type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.phone')" prop="phone">
+                    <ElInput v-model="saveForm.data.phone" :placeholder="t('common.name.phone')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+                    <label>
+                        <ElAlert
+                            :title="t('view.profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })"
+                            type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>
                 <ElFormItem :label="t('common.name.nickname')" prop="nickname">
                     <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" />
@@ -92,20 +130,20 @@ const saveForm = reactive({
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.checkPassword')" prop="checkPassword">
-                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('common.name.checkPassword')"
+                <ElFormItem :label="t('common.name.repeatPassword')" prop="repeatPassword">
+                    <ElInput v-model="saveForm.data.repeatPassword" :placeholder="t('common.name.repeatPassword')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.oldPassword')" prop="oldPassword">
-                    <ElInput v-model="saveForm.data.oldPassword" :placeholder="t('common.name.oldPassword')"
+                <ElFormItem :label="t('common.name.oldPassword')" prop="checkPassword">
+                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('common.name.oldPassword')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('common.tip.updatePasswordRequired')" type="info" :show-icon="true"
+                        <ElAlert :title="t('view.profile.tip.checkPassword')" type="info" :show-icon="true"
                             :closable="false" />
                     </label>
                 </ElFormItem>
