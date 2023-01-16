@@ -16,7 +16,7 @@ class BeforeStartCallback
     public function onBeforeStart()
     {
         /**--------执行请求日志表分区任务 开始--------**/
-        //$this->container->get(\App\Crontab\LogRequest::class)->partition();
+        $this->container->get(\App\Crontab\LogRequest::class)->partition();
         /**--------执行请求日志表分区任务 结束--------**/
     }
 }

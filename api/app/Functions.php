@@ -3,17 +3,12 @@
 declare(strict_types=1);
 
 /*----------------基于业务逻辑封装的函数  开始----------------*/
-// if (!function_exists('getUpload')) {
-//     /**
-//      * 获取Upload对象
-//      * 
-//      * @return \App\Plugin\Upload\AbstractUpload
-//      */
-//     function getUpload()
-//     {
-//         return getContainer()->get('upload');
-//     }
-// }
+/* if (!function_exists('tablePartition')) {
+    //表分区
+    function tablePartition(string $daoClassName, string $field, int $time, int $number)
+    {
+    }
+} */
 /*----------------基于业务逻辑封装的函数  结束----------------*/
 
 
