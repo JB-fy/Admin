@@ -9,12 +9,12 @@ use Hyperf\DbConnection\Db;
 /* use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 
-class OrderTask
+class LogRequest
 {
     #[Inject]
     protected ContainerInterface $container; */
 
-class OrderTask
+class LogRequest
 {
     /* 
     //查看分区
@@ -44,9 +44,6 @@ class OrderTask
         /**--------查询分区（不是分区表或无分区，查询结果都会有一项，且第一项内PARTITION_NAME值为null） 开始--------**/
         $partitionSelSql = 'SELECT PARTITION_NAME FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA = SCHEMA() AND TABLE_NAME = \'' . $table . '\'';
         $partitionResult = $db->select($partitionSelSql, [], false);
-        var_dump($partitionResult);
-        var_dump($db->selectOne($partitionSelSql, [], false));
-        return;
         $partitionList = [];
         if ($partitionResult[0]['PARTITION_NAME'] !== null) {
             foreach ($partitionResult as $v) {

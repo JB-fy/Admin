@@ -21,8 +21,8 @@ return [
         (new Crontab())
             ->setName('LogRequestPartition')
             ->setCallback([App\Crontab\LogRequest::class, 'partition'])
-            ->setRule('0 */15 3 * * 0')//星期天的凌晨3点每15分钟执行一次（多次执行防止新增分区失败）
-            //->setRule('*/5 * * * * *')
+            //->setRule('0 */15 3 * * 0')//星期天的凌晨3点每15分钟执行一次（多次执行防止新增分区失败）
+            ->setRule('*/5 * * * * *')
             //->setSingleton(true)
             ->setMemo('请求日志表每周新增分区'),
         /**--------Callback类型定时任务（默认）结束--------**/
