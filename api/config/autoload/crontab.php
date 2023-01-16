@@ -28,8 +28,8 @@ return [
             /* ->setOnOneServer(true)  //多实例（server）部署项目时，则只有一个实例会被触发。原理：通过在redis内做缓存实现互斥锁
             ->setMutexPool('default') //当setOnOneServer(true)时，使用哪个redis连接池
             ->setMutexExpires(3600)   //当setOnOneServer(true)时，redis内key的缓存时间。同时如果定时任务执行完，但解除互斥锁失败时，互斥锁也会在这个时间之后自动解除。 */
-            //->setEnable(false)
             //->setExecuteTime(\Carbon\Carbon::now())
+            //->setEnable(false)
             ->setMemo('请求日志表每周新增分区'),
         /**--------Callback类型定时任务（默认）结束--------**/
 
