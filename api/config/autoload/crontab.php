@@ -24,6 +24,7 @@ return [
             ->setRule('0 0 3 * * 1')//星期一的凌晨3点执行（方便人工检查是否成功，防止失败隔天该表无法正常使用）
             //->setRule('*/5 * * * * *')
             //->setSingleton(true)
+            //->setOnOneServer(true)
             ->setMemo('请求日志表每周新增分区'),
         /**--------Callback类型定时任务（默认）结束--------**/
 
