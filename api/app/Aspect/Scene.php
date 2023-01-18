@@ -31,10 +31,6 @@ class Scene extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        var_dump(getConfig('test'));
-        var_dump(getConfig('test', '2222'));
-        var_dump(getConfig('test', '3333', 'platformConfig'));
-        var_dump(getConfig('test1', '3333', 'platformConfig'));
         $sceneCode = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
         if (empty($sceneCode)) {
             throwFailJson('39999999');
