@@ -18,9 +18,11 @@ class Scene extends AbstractLogic
     public function getInfo(string $sceneCode): object|null
     {
         if (env('AUTH_SCENE_DYNAMIC_ENABLE', false)) {
-            return make($sceneCode . 'SceneInfo');   //数据库更新会马上生效
+            $allSceneList = make('allSceneList');   //数据库更新会马上生效
+        } else {
+            $allSceneList = $this->container->get('allSceneList');    //数据库更新需要重启服务才会生效
         }
-        return $this->container->get($sceneCode . 'SceneInfo');    //数据库更新需要重启服务才会生效
+        return $allSceneList[$sceneCode];
     }
 
     /**

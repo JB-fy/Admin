@@ -27,13 +27,14 @@ return [
         ];
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },
-    //平台后台场景信息
-    'platformAdminSceneInfo' => function (ContainerInterface $container) {
-        //$allScene = getDao(App\Module\Db\Dao\Auth\Scene::class)->getList();
-        //$allScene = array_combine(array_column($allScene, 'sceneCode'), $allScene);
-        $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => 'platformAdmin'])->getInfo();
-        $sceneInfo->sceneConfig = $sceneInfo->sceneConfig === null ? [] : json_decode($sceneInfo->sceneConfig, true);
-        return $sceneInfo;
+    //全部场景列表（即表auth_scene数据）
+    'allSceneList' => function (ContainerInterface $container) {
+        $allSceneList = getDao(App\Module\Db\Dao\Auth\Scene::class)->getList();
+        $allSceneList = array_combine(array_column($allSceneList, 'sceneCode'), $allSceneList);
+        foreach ($allSceneList as &$v) {
+            $v->sceneConfig = $v->sceneConfig === null ? [] : json_decode($v->sceneConfig, true);
+        }
+        return $allSceneList;
     },
     //平台管理员JWT插件
     'platformAdminJwt' => function (ContainerInterface $container) {
