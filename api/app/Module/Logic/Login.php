@@ -49,8 +49,10 @@ class Login extends AbstractLogic
      */
     public function getJwt(string $sceneCode): \App\Plugin\Jwt
     {
-        //return make($sceneCode . 'Jwt');   //数据库更新后，会立刻生效
-        return $this->container->get($sceneCode . 'Jwt');    //数据库更新后，需要重启服务才会生效
+        if (env('AUTH_SCENE_DYNAMIC_ENABLE', false)) {
+            return make($sceneCode . 'Jwt');   //数据库更新会马上生效
+        }
+        return $this->container->get($sceneCode . 'Jwt');    //数据库更新需要重启服务才会生效
     }
 
     /**

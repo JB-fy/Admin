@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Psr\Container\ContainerInterface;
+
 /**
  * This file is part of Hyperf.
  *
@@ -12,7 +14,7 @@ declare(strict_types=1);
  */
 return [
     //上传组件
-    'upload' => function (\Psr\Container\ContainerInterface $container) {
+    'upload' => function (ContainerInterface $container) {
         /* $config = [
             'accessId' => 'LTAI5tHx81H64BRJA971DPZF',
             'accessKey' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51',
@@ -26,17 +28,18 @@ return [
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },
     //平台后台场景信息
-    'platformAdminSceneInfo' => function (\Psr\Container\ContainerInterface $container) {
+    'platformAdminSceneInfo' => function (ContainerInterface $container) {
         //$allScene = getDao(App\Module\Db\Dao\Auth\Scene::class)->getList();
         //$allScene = array_combine(array_column($allScene, 'sceneCode'), $allScene);
         $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => 'platformAdmin'])->getInfo();
         $sceneInfo->sceneConfig = $sceneInfo->sceneConfig === null ? [] : json_decode($sceneInfo->sceneConfig, true);
         return $sceneInfo;
     },
-    //平台管理员JWT签名
-    'platformAdminJwt' => function (\Psr\Container\ContainerInterface $container) {
-        $config = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => 'platformAdmin'])->getBuilder()->value('sceneConfig');
-        $config = json_decode($config, true);
-        return make(\App\Plugin\Jwt::class, ['config' => $config]);
+    //平台管理员JWT插件
+    'platformAdminJwt' => function (ContainerInterface $container) {
+        /* $config = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => 'platformAdmin'])->getBuilder()->value('sceneConfig');
+        $config = json_decode($config, true); */
+        $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo('platformAdmin');
+        return make(\App\Plugin\Jwt::class, ['config' => $sceneInfo->sceneConfig]);
     }
 ];
