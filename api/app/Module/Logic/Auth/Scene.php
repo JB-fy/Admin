@@ -43,9 +43,7 @@ class Scene extends AbstractLogic
      */
     public function setCurrentInfo(object $info)
     {
-        $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
-        $request = $request->withAttribute('sceneInfo', $info);
-        Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
+        setCurrentRequestAttribute('sceneInfo', $info);
     }
 
     /**
@@ -55,6 +53,6 @@ class Scene extends AbstractLogic
      */
     public function getCurrentInfo(): object|null
     {
-        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute('sceneInfo');
+        return getCurrentRequestAttribute('sceneInfo');
     }
 }

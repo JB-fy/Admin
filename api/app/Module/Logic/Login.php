@@ -81,14 +81,10 @@ class Login extends AbstractLogic
     {
         /* switch ($sceneCode) {
             default:
-                $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
-                $request = $request->withAttribute($sceneCode . 'Info', $info);
-                Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
+                setCurrentRequestAttribute($sceneCode . 'Info', $info);
                 break;
         } */
-        $request = Context::get(\Psr\Http\Message\ServerRequestInterface::class);
-        $request = $request->withAttribute($sceneCode . 'Info', $info);
-        Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
+        setCurrentRequestAttribute($sceneCode . 'Info', $info);
     }
 
     /**
@@ -101,8 +97,8 @@ class Login extends AbstractLogic
     {
         /* switch ($sceneCode) {
             default:
-                return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($sceneCode . 'Info');
+                return getCurrentRequestAttribute($sceneCode . 'Info');
         } */
-        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($sceneCode . 'Info');
+        return getCurrentRequestAttribute($sceneCode . 'Info');
     }
 }

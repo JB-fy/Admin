@@ -213,6 +213,35 @@ if (!function_exists('getRequest')) {
     }
 }
 
+if (!function_exists('setCurrentRequestAttribute')) {
+    /**
+     * 在当前请求中，设置属性
+     * 
+     * @param string $attrName
+     * @param mixed $value
+     * @return void
+     */
+    function setCurrentRequestAttribute(string $attrName, mixed $value)
+    {
+        $request = \Hyperf\Context\Context::get(\Psr\Http\Message\ServerRequestInterface::class);
+        $request = $request->withAttribute($attrName, $value);
+        \Hyperf\Context\Context::set(\Psr\Http\Message\ServerRequestInterface::class, $request);
+    }
+}
+
+if (!function_exists('getCurrentRequestAttribute')) {
+    /**
+     * 在当前请求中，获取属性
+     * 
+     * @param string $attrName
+     * @return mixed
+     */
+    function getCurrentRequestAttribute(string $attrName): mixed
+    {
+        return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($attrName);
+    }
+}
+
 if (!function_exists('getRequestScheme')) {
     /**
      * 获取当前请求是http还是https
