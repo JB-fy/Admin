@@ -13,7 +13,6 @@ declare(strict_types=1);
 return [
     //上传组件
     'upload' => function (\Psr\Container\ContainerInterface $container) {
-        //$config = $this->config->get('app.aliyunOssConfig');
         /* $config = [
             'accessId' => 'LTAI5tHx81H64BRJA971DPZF',
             'accessKey' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51',
@@ -36,8 +35,6 @@ return [
     },
     //平台管理员JWT签名
     'platformAdminJwt' => function (\Psr\Container\ContainerInterface $container) {
-        /* $sceneInfo = $container->get(\App\Module\Logic\Auth\Scene::class)->getInfo('platformAdmin');
-        $config = $sceneInfo->sceneConfig; */
         $config = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => 'platformAdmin'])->getBuilder()->value('sceneConfig');
         $config = json_decode($config, true);
         return make(\App\Plugin\Jwt::class, ['config' => $config]);
