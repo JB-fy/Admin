@@ -62,7 +62,7 @@ class Action extends AbstractLogic
         ];
         switch ($sceneCode) {
             case 'platformAdmin':
-                if ($loginInfo->adminId == getConfig()->get('app.superPlatformAdminId')) { //平台超级管理员，无权限限制
+                if ($loginInfo->adminId == getConfig('app.superPlatformAdminId')) { //平台超级管理员，无权限限制
                     return true;
                 }
                 //$where['selfAction']['loginId'] = $loginInfo->adminId;

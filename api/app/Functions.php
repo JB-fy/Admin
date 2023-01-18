@@ -6,6 +6,20 @@ use Hyperf\DbConnection\Db;
 
 /*----------------基于业务逻辑封装的函数  开始----------------*/
 
+if (!function_exists('getConfig')) {
+    function getConfig(string $key, mixed $default = null, string $type = 'default'): mixed
+    {
+        switch ($type) {
+            case 'platformConfig':
+                $allPlatformConfig = getContainer()->get('allPlatformConfig');
+                return $allPlatformConfig[$key] ?? $default;
+                break;
+            default:
+                return config($key, $default);
+        }
+    }
+}
+
 if (!function_exists('dbTablePartition')) {
     /**
      * 数据库表按时间做分区（通用，默认以分区最大日期作为分区名）
@@ -172,18 +186,6 @@ if (!function_exists('getCache')) {
     {
         //return make($className);
         return getContainer()->get($className);
-    }
-}
-
-if (!function_exists('getConfig')) {
-    /**
-     * 获取Config对象
-     * 
-     * @return \Hyperf\Contract\ConfigInterface
-     */
-    function getConfig(): \Hyperf\Contract\ConfigInterface
-    {
-        return getContainer()->get(\Hyperf\Contract\ConfigInterface::class);
     }
 }
 

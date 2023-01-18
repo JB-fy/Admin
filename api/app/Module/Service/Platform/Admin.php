@@ -42,7 +42,7 @@ class Admin extends AbstractService
         }
         /* //平台超级管理员，部分字段不可修改
         if ((isset($data['account']) || isset($data['phone']) || isset($data['isStop']) || isset($data['roleIdArr']))
-            && in_array(getConfig()->get('app.superPlatformAdminId'), $this->getIdArr($where))
+            && in_array(getConfig('app.superPlatformAdminId'), $this->getIdArr($where))
         ) {
             //throw new ApiException('禁止任何对于超级管理员的操作', 9999);
             throwFailJson('39990003');
