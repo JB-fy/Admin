@@ -36,7 +36,7 @@ class Scene extends AbstractAspect
             throwFailJson('39999999');
         }
 
-        $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo($sceneCode);
+        $sceneInfo = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getInfo($sceneCode);
         if (empty($sceneInfo)) {
             throwFailJson('39999999');
         }

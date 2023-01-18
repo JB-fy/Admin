@@ -30,12 +30,12 @@ class AppExceptionHandler extends ExceptionHandler
         if ($throwable instanceof \App\Exception\Json) {
             $this->stopPropagation();   //阻止异常冒泡
             $responseBody = $throwable->getResponseBody();
-            //return \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->json($throwable->getResponseData());
+            //return getContainer()->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->json($throwable->getResponseData());
             return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
         } elseif ($throwable instanceof \App\Exception\Raw) {
             $this->stopPropagation();   //阻止异常冒泡
             $responseBody = $throwable->getResponseBody();
-            //return \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw($responseBody);
+            //return getContainer()->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw($responseBody);
             return $response->withHeader('Content-Type', 'text/plain; charset=utf-8')->withBody(new SwooleStream($responseBody));
         } elseif ($throwable instanceof \Hyperf\Validation\ValidationException) {
             $this->stopPropagation();   //阻止异常冒泡

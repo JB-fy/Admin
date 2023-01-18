@@ -26,7 +26,7 @@ return [
     'platformAdminJwt' => function (ContainerInterface $container) {
         /* $config = getDao(\App\Module\Db\Dao\Auth\Scene::class)->where(['sceneCode' => 'platformAdmin'])->getBuilder()->value('sceneConfig');
         $config = json_decode($config, true); */
-        $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getInfo('platformAdmin');
+        $sceneInfo = $container->get(\App\Module\Logic\Auth\Scene::class)->getInfo('platformAdmin');
         return make(\App\Plugin\Jwt::class, ['config' => $sceneInfo->sceneConfig]);
     },
     //上传组件
