@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Logic\Auth;
 
 use App\Module\Logic\AbstractLogic;
-use Hyperf\Context\Context;
 
 class Scene extends AbstractLogic
 {

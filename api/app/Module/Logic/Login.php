@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Logic;
 
 use App\Module\Cache\Login as CacheLogin;
-use Hyperf\Context\Context;
 
 class Login extends AbstractLogic
 {
