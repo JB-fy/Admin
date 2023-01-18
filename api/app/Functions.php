@@ -11,9 +11,18 @@ if (!function_exists('getConfig')) {
     {
         switch ($type) {
             case 'platformConfig':
-                $allPlatformConfig = getContainer()->get('allPlatformConfig');
-                return $allPlatformConfig[$key] ?? $default;
-                break;
+                if (env('PLATFORM_CONFIG_DYNAMIC_ENABLE', false)) {
+                    $allPlatformConfig =  make('allPlatformConfig');    //数据库更新会马上生效
+                    return $allPlatformConfig[$key] ?? $default;
+                } else {
+                    $allPlatformConfig = getContainer()->get('allPlatformConfig');  //数据库更新需要重启服务才会生效
+                    switch ($key) {
+                        /* case 'test':   //想要实时获取的可以单独写
+                            return getDao(\App\Module\Db\Dao\Platform\Config::class)->where(['configKey' => $key])->getBuilder()->value('configValue') ?? $default; */
+                        default:
+                            return $allPlatformConfig[$key] ?? $default;
+                    }
+                }
             default:
                 return config($key, $default);
         }
