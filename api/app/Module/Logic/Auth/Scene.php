@@ -9,22 +9,6 @@ use App\Module\Logic\AbstractLogic;
 class Scene extends AbstractLogic
 {
     /**
-     * 获取对应场景信息
-     * 
-     * @param string $sceneCode
-     * @return object|null
-     */
-    public function getInfo(string $sceneCode): object|null
-    {
-        if (env('AUTH_SCENE_DYNAMIC_ENABLE', false)) {
-            $allScene = make('allScene');   //数据库更新会马上生效
-        } else {
-            $allScene = $this->container->get('allScene');    //数据库更新需要重启服务才会生效
-        }
-        return $allScene[$sceneCode];
-    }
-
-    /**
      * 在当前请求中，获取场景标识
      * 
      * @return string|null

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Callback;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 
@@ -13,8 +14,25 @@ class BeforeStartCallback
     #[Inject]
     protected ContainerInterface $container;
 
+    #[Inject]
+    protected ConfigInterface $config;
+
     public function onBeforeStart()
     {
+        /**--------将数据库内的配置设置到config中（方便使用） 开始--------**/
+        //场景列表（即表auth_scene数据）
+        $allScene = getDao(\App\Module\Db\Dao\Auth\Scene::class)->getList();
+        $allScene = array_combine(array_column($allScene, 'sceneCode'), $allScene);
+        foreach ($allScene as &$v) {
+            $v->sceneConfig = $v->sceneConfig === null ? [] : json_decode($v->sceneConfig, true);
+        }
+        $this->config->set('inDb.authScene', $allScene);
+
+        //平台配置（即表platform_config数据）
+        $allPlatformConfig = getDao(\App\Module\Db\Dao\Platform\Config::class)->getBuilder()->pluck('configValue', 'configKey');
+        $this->config->set('inDb.platformConfig', $allPlatformConfig);
+        /**--------将数据库内的配置设置到config中（方便使用） 结束--------**/
+
         /**--------执行请求日志表分区任务 开始--------**/
         $this->container->get(\App\Crontab\LogRequest::class)->partition();
         /**--------执行请求日志表分区任务 结束--------**/

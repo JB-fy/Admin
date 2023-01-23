@@ -55,7 +55,7 @@ class Login extends AbstractService
                 $payload = [
                     'id' => $info->adminId
                 ];
-                $jwt = $this->logic->getJwt($sceneCode);
+                $jwt = make($sceneCode . 'Jwt');
                 $token = $jwt->createToken($payload);
 
                 //缓存token（选做。限制多地登录，多设备登录等情况下可用）
@@ -86,7 +86,7 @@ class Login extends AbstractService
                 if (empty($token)) {
                     throwFailJson('39994000');
                 }
-                $jwt = $this->logic->getJwt($sceneCode);
+                $jwt = make($sceneCode . 'Jwt');
                 $payload = $jwt->verifyToken($token);
                 /**--------验证token 结束--------**/
 

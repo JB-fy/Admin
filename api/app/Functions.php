@@ -7,25 +7,35 @@ use Hyperf\DbConnection\Db;
 /*----------------基于业务逻辑封装的函数  开始----------------*/
 
 if (!function_exists('getConfig')) {
-    function getConfig(string $key, mixed $default = null, string $type = 'default'): mixed
+    function getConfig(string $key, mixed $default = null): mixed
     {
-        switch ($type) {
-            case 'platformConfig':
-                if (env('PLATFORM_CONFIG_DYNAMIC_ENABLE', false)) {
-                    $allPlatformConfig =  make('allPlatformConfig');    //数据库更新会马上生效
-                    return $allPlatformConfig[$key] ?? $default;
-                } else {
-                    $allPlatformConfig = getContainer()->get('allPlatformConfig');  //数据库更新需要重启服务才会生效
-                    switch ($key) {
-                        /* case 'test':   //想要实时获取的可以单独写
-                            return getDao(\App\Module\Db\Dao\Platform\Config::class)->where(['configKey' => $key])->getBuilder()->value('configValue') ?? $default; */
-                        default:
-                            return $allPlatformConfig[$key] ?? $default;
+        $keyArr = explode('.', $key);
+        if ($keyArr[0] === 'inDb') {
+            switch ($keyArr[1]) {
+                case 'platformConfig':
+                    $keyOfDynamic = []; //想要动态获取的configKey
+                    if (env('PLATFORM_CONFIG_DYNAMIC_ENABLE', false) || in_array($keyArr[2],  $keyOfDynamic)) {
+                        return getDao(\App\Module\Db\Dao\Platform\Config::class)
+                            ->where(['configKey' => $keyArr[2]])
+                            ->getBuilder()
+                            ->value('configValue') ?? $default;
                     }
-                }
-            default:
-                return config($key, $default);
+                    break;
+                case 'authScene':
+                    if (env('AUTH_SCENE_DYNAMIC_ENABLE', false)) {
+                        $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)
+                            ->where(['sceneCode' => $keyArr[2]])
+                            ->getInfo();
+                        if (empty($sceneInfo)) {
+                            return $default;
+                        }
+                        $sceneInfo->sceneConfig = $sceneInfo->sceneConfig === null ? [] : json_decode($sceneInfo->sceneConfig, true);
+                        return $sceneInfo;
+                    }
+                    break;
+            }
         }
+        return config($key, $default);
     }
 }
 

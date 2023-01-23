@@ -28,7 +28,7 @@ class Upload extends AbstractController
         /**
          * @var \App\Plugin\Upload\AbstractUpload
          */
-        $upload = $this->container->get('upload');
+        $upload = make('upload');
         $upload->createSign($option);
     }
 
@@ -41,7 +41,7 @@ class Upload extends AbstractController
         /**
          * @var \App\Plugin\Upload\AbstractUpload
          */
-        $upload = $this->container->get('upload');
+        $upload = make('upload');
         $upload->notify();
     }
 }
