@@ -7,6 +7,13 @@ use Hyperf\DbConnection\Db;
 /*----------------基于业务逻辑封装的函数  开始----------------*/
 
 if (!function_exists('getConfig')) {
+    /**
+     * 获取配置
+     *
+     * @param string $key   部分配置在\App\Callback\BeforeStartCallback::class内启动时设置，传参时请注意
+     * @param mixed $default
+     * @return mixed
+     */
     function getConfig(string $key, mixed $default = null): mixed
     {
         $keyArr = explode('.', $key);
