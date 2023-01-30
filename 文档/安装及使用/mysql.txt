@@ -94,7 +94,7 @@ WantedBy=multi-user.target
         FLUSH PRIVILEGES;
         //退出数据库
         EXIT;
-    9、设置环境变量增加以下目录（参考linux学习文件）
+    9、设置环境变量增加以下目录（参考linux常用命令）
         /server/tool/mysql-8.0.30/bin
     10、服务器对外开放3306端口（需要重启防火墙生效）
         firewall-cmd --zone=public --add-port=3306/tcp --permanent
@@ -146,7 +146,7 @@ sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
         ln -s /usr/local/mysql/support-files/mysql.server /etc/init.d/mysqld-8.0.30
         chkconfig --add mysqld-8.0.30
         chkconfig mysqld-8.0.30 on
-    设置环境变量增加以下目录（参考linux学习文件）
+    设置环境变量增加以下目录（参考linux常用命令）
         /usr/local/mysql/bin
     启动mysql
         service mysqld-8.0.30 start

@@ -63,5 +63,5 @@ PrivateTmp=true
 WantedBy=multi-user.target
     5、设置自启动
         systemctl enable nginx-1.22.1
-    6、设置环境变量增加以下目录（参考linux学习文件）
+    6、设置环境变量增加以下目录（参考linux常用命令）
         /server/tool/nginx-1.22.1/sbin

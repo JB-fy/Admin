@@ -200,7 +200,7 @@ esac
     	chmod 755 /etc/rc.d/init.d/nginx-1.22.0
     	chkconfig --add nginx-1.22.0
 		chkconfig nginx-1.22.0 on
-	5、设置环境变量是为了方便输入命令（参考linux学习文件）
+	5、设置环境变量是为了方便输入命令（参考linux常用命令）
 		vi /etc/profile在最下面增加PATH=$PATH:/server/tool/nginx-1.22.0/sbin:/server/tool/php-7.4.30/bin
 		source /etc/profile
 二、php安装
@@ -223,7 +223,7 @@ esac
 		make && make install//安装
 	3、拷贝配置文件
 		cp /server/php-7.4.30/php.ini-production /server/tool/php-7.4.30/etc/php.ini
-	4、设置环境变量是为了方便输入命令（参考linux学习文件）
+	4、设置环境变量是为了方便输入命令（参考linux常用命令）
 		vi /etc/profile在最下面增加PATH=$PATH:/server/tool/php-7.4.30/bin
 		source /etc/profile
 	5、扩展安装

@@ -12,7 +12,7 @@
         make && make install
 
         
-    设置环境变量增加以下目录（参考linux学习文件）
+    设置环境变量增加以下目录（参考linux常用命令）
         /server/tool/node-16.17.1/bin
 
 
