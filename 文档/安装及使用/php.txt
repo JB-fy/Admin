@@ -21,6 +21,7 @@
         //8.0版本弃用
         --with-iconv-dir --enable-inline-optimization --with-xmlrpc --enable-maintainer-zts
 
+        //指定openssl版本--with-openssl=/server/openssl时，需同时设置-disable-shared，否则curl共享库。暂未未验证
         //可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
         ./configure --prefix=/server/tool/php-8.1.12 --with-config-file-path=/server/tool/php-8.1.12/etc --with-config-file-scan-dir=/server/tool/php-8.1.12/etc/php.d --enable-fpm --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-freetype --with-jpeg --with-webp --enable-xml --with-sodium --enable-sysvsem --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
         //安装
