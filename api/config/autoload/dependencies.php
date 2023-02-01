@@ -28,7 +28,11 @@ return [
         $config = [
             'accessId' => 'LTAI5tSjYikt3bX33riHezmk',
             'accessKey' => 'k4uRZU6flv73yz1j4LJu9VY5eNlHas',
-            'host' => 'https://gamemt.oss-cn-hangzhou.aliyuncs.com'
+            //'accessKeyId ' => 'LTAI5tSjYikt3bX33riHezmk',
+            //'accessKeySecret ' => 'k4uRZU6flv73yz1j4LJu9VY5eNlHas',
+            //'endpoint ' => 'https://oss-cn-hangzhou.aliyuncs.com',
+            //'bucket' => 'gamemt'
+            'host' => 'https://gamemt.oss-cn-hangzhou.aliyuncs.com',    //web直传时需要传这个地址
         ];
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },
