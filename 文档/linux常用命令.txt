@@ -17,11 +17,13 @@ sed -i -e "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-*
 sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
 
 passwd //修改密码
+which 文件名	//查找命令文件。只在环境变量$PATH设置的目录里查找
+whereis 文件名	//查找可执行的二进制文件
+find 路径 -name 文件名	//查找文件
 mkdir -p 目录名	//创建目录
 mv 前文件名 后文件名	//移动并重命名文件或目录
 cp 前文件名 后文件名	//复制并重命名文件或目录
 rm -rf 文件名	//删除文件
-find 路径 -name 文件名	//查找文件
 ln -s 源文件 目标文件	//创建软链接
 groupadd 用户组名	//创建用户组
 useradd 用户名	//创建用户。示例：useradd -r -g mysql -s /bin/false mysql（-r 系统账号，-g mysql 指定所属用户组，-s /bin/false 不能登录）
