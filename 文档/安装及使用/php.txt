@@ -26,10 +26,10 @@
         cd openssl-1.1.1q
         ./config --prefix=/server/openssl --openssldir=/server/openssl
         make && make install
-        //备份openssl-3引用库
+        //备份openssl-3.0.5
         mv /usr/bin/openssl /usr/bin/openssl_3.0.5
         mv /usr/include/openssl /usr/include/openssl_3.0.5
-        //将openss-1.1.1q引用库复制一份到openssl-3引用库位置
+        //将openss-1.1.1q复制到openssl-3.0.5原来位置
         cp /server/openssl/bin/openssl /usr/bin/openssl
         cp /server/openssl/include/openssl /usr/include/openssl
         //安装成功后还原回去
