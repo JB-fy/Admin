@@ -18,10 +18,30 @@
         wget http://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/oniguruma-devel-6.9.6-1.el9.5.x86_64.rpm
         yum localinstall oniguruma-devel-6.9.6-1.el9.5.x86_64.rpm
 
+    报错：make: *** [Makefile:749:ext/openssl/openssl.lo] 错误
+    原因：centos9系统自带的openssl版本太高，需要装低版本1.1.1
+        wget https://www.openssl.org/source/openssl-1.1.1q.tar.gz
+        yum install perl
+        tar -xvf openssl-1.1.1q.tar.gz
+        cd openssl-1.1.1q
+        ./config --prefix=/server/openssl --openssldir=/server/openssl
+        make && make install
+        //备份openssl-3引用库
+        mv /usr/bin/openssl /usr/bin/openssl_3.0.5
+        mv /usr/include/openssl /usr/include/openssl_3.0.5
+        //将openss-1.1.1q引用库复制一份到openssl-3引用库位置
+        cp /server/openssl/bin/openssl /usr/bin/openssl
+        cp /server/openssl/include/openssl /usr/include/openssl
+        //安装成功后还原回去
+        mv /usr/bin/openssl /usr/bin/openssl_1.1.1q
+        mv /usr/bin/openssl_3.0.5 /usr/bin/openssl
+        mv /usr/include/openssl /usr/include/openssl_1.1.1q
+        mv /usr/include/openssl_3.0.5 /usr/include/openssl
+            
+
         //8.0版本弃用
         --with-iconv-dir --enable-inline-optimization --with-xmlrpc --enable-maintainer-zts
 
-        //指定openssl版本--with-openssl=/server/openssl时，需同时设置-disable-shared，否则curl共享库。暂未未验证
         //可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
         ./configure --prefix=/server/tool/php-8.1.12 --with-config-file-path=/server/tool/php-8.1.12/etc --with-config-file-scan-dir=/server/tool/php-8.1.12/etc/php.d --enable-fpm --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-freetype --with-jpeg --with-webp --enable-xml --with-sodium --enable-sysvsem --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
         //安装
