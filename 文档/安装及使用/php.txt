@@ -34,10 +34,6 @@
         ln -s /server/openssl/bin/openssl /usr/bin/openssl
 		ln -s /server/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so
         ln -s /server/openssl/include/openssl /usr/include/openssl
-		
-        ln -s /server/openssl/include/openssl/evp.h /usr/local/include/openssl/evp.h
-        ln -s /server/openssl/share/man/man3/EVP_EncryptInit.3 /usr/share/man/man3/EVP_EncryptInit.3
-		ln -s /server/openssl/share/doc/openssl/html/man3/EVP_EncryptInit.html /usr/share/doc/openssl/html/man3/EVP_EncryptInit.html
 		//将安装目录下lib文件夹添加到链接库加载配置文件中
 		echo "/server/openssl/lib" >> /etc/ld.so.conf
 		ldconfig -v
