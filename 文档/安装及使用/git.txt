@@ -1,11 +1,11 @@
 编译安装方式
     解压安装包
-        tar -xvf git-2.37.3.tar.gz
+        tar -xvf git-2.39.1.tar.gz
     进入解压目录编译
-        ./configure --prefix=/server/tool/git-2.37.3
+        ./configure --prefix=/server/tool/git-2.39.1
         make && make install
     设置环境变量增加以下目录（参考linux常用命令）
-        /server/tool/git-2.37.3/bin
+        /server/tool/git-2.39.1/bin
 
 
 

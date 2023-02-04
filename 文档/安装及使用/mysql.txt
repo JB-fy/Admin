@@ -1,6 +1,6 @@
-依赖：yum install gcc gcc-c++ cmake make ncurses-devel rpcgen
+依赖：yum install gcc gcc-c++ cmake make ncurses-devel rpcgen patchelf libtirpc-devel
     1：创建mysql的安装目录及配置文件目录,数据库存放目录,日志目录
-        mkdir -p /server/tool/mysql-8.0.32/data /server/tool/mysql-8.0.32/conf /server/tool/mysql-8.0.32/log
+        mkdir -p /server/tool/mysql-8.0.32/data /server/tool/mysql-8.0.32/conf /server/tool/mysql-8.0.32/log /server/tool/mysql-8.0.32/run
     2：解压mysql压缩包并进入解压的文件夹内编译安装
         tar -xvf mysql-boost-8.0.32.tar.gz
 报错处理：
@@ -33,7 +33,7 @@
         vi /server/tool/mysql-8.0.32/conf/my.cnf
 [mysqld]
 #服务id（集群时必须唯一，建议为IP最后一个数字。5.7版本设置log-bin后，该值也必须设置）
-server-id=210
+server-id=200
 #mysql以什么用户运行
 user=mysql
 #mysql运行在哪个端口
