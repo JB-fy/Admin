@@ -16,10 +16,12 @@ yum info 包名 		//查询详细信息
 sed -i -e "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-*
 sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
 
+curl ifconfig.me	//查看本服务器外网IP
 passwd //修改密码
 which 文件名	//查找命令文件。只在环境变量$PATH设置的目录里查找
 whereis 文件名	//查找可执行的二进制文件
 find 路径 -name 文件名	//查找文件
+grep -rn '字符串' 文件	//查找带有字符串的文件。-r递归处理，-n显示行号。示例：grep -r '哈哈' /*
 mkdir -p 目录名	//创建目录
 mv 前文件名 后文件名	//移动并重命名文件或目录
 cp -r 前文件名 后文件名	//复制并重命名文件或目录。-r递归处理
@@ -56,6 +58,8 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 修改配置文件 /etc/profile 在最下面追加目录（多路径用冒号分开）
 vi /etc/profile
 PATH=$PATH:/server/tool/nginx-1.22.1/sbin:/server/tool/mysql-8.0.32/bin:/server/tool/php-8.1.15/bin:/server/tool/node-18.14.0/bin:/server/tool/composer:/server/tool/git-2.39.1/bin
+//马上生效
+source /etc/profile
 /**--------设置环境变量 结束--------**/
 
 /**--------设置自启动 开始--------**/
