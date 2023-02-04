@@ -1,8 +1,8 @@
-依赖：yum install gcc gcc-c++ make libxml2-devel openssl-devel sqlite-devel libcurl-devel libicu-devel openldap-devel libxslt-devel libwebp-devel libjpeg-devel freetype-devel libsodium-devel
+依赖：yum install gcc gcc-c++ make libxml2-devel openssl-devel sqlite-devel libcurl-devel libicu-devel openldap-devel libxslt-devel libwebp-devel libjpeg-devel freetype-devel libsodium-devel oniguruma-devel
     1、创建安装目录
-        mkdir -p /server/tool/php-8.1.12
+        mkdir -p /server/tool/php-7.4
     2、解压php安装
-        tar -xvf php-8.1.12.tar.gz
+        tar -xvf php-7.4.tar.gz
 
         进入解压目录运行
             //apache模块加载方式设置
@@ -24,18 +24,27 @@
         yum install perl
         tar -xvf openssl-1.1.1q.tar.gz
         cd openssl-1.1.1q
-        ./config --prefix=/server/openssl --openssldir=/server/openssl
+        ./config --prefix=/server/openssl
         make && make install
         //备份openssl-3.0.5
         mv /usr/bin/openssl /usr/bin/openssl_3.0.5
+        mv /usr/lib64/libssl.so /usr/lib64/libssl.so_3.0.5
         mv /usr/include/openssl /usr/include/openssl_3.0.5
         //将openss-1.1.1q复制到openssl-3.0.5原来位置
-        cp /server/openssl/bin/openssl /usr/bin/openssl
-        cp /server/openssl/include/openssl /usr/include/openssl
+        ln -s /server/openssl/bin/openssl /usr/bin/openssl
+		ln -s /server/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so
+        ln -s /server/openssl/include/openssl /usr/include/openssl
+		
+        ln -s /server/openssl/include/openssl/evp.h /usr/local/include/openssl/evp.h
+        ln -s /server/openssl/share/man/man3/EVP_EncryptInit.3 /usr/share/man/man3/EVP_EncryptInit.3
+		ln -s /server/openssl/share/doc/openssl/html/man3/EVP_EncryptInit.html /usr/share/doc/openssl/html/man3/EVP_EncryptInit.html
+		//将安装目录下lib文件夹添加到链接库加载配置文件中
+		echo "/server/openssl/lib" >> /etc/ld.so.conf
+		ldconfig -v
         //安装成功后还原回去
-        mv /usr/bin/openssl /usr/bin/openssl_1.1.1q
+		rm -rf /usr/bin/openssl /usr/lib64/libssl.so /usr/include/openssl
         mv /usr/bin/openssl_3.0.5 /usr/bin/openssl
-        mv /usr/include/openssl /usr/include/openssl_1.1.1q
+        mv /usr/lib64/libssl.so_3.0.5 /usr/lib64/libssl.so
         mv /usr/include/openssl_3.0.5 /usr/include/openssl
             
 
@@ -43,37 +52,37 @@
         --with-iconv-dir --enable-inline-optimization --with-xmlrpc --enable-maintainer-zts
 
         //可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
-        ./configure --prefix=/server/tool/php-8.1.12 --with-config-file-path=/server/tool/php-8.1.12/etc --with-config-file-scan-dir=/server/tool/php-8.1.12/etc/php.d --enable-fpm --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-freetype --with-jpeg --with-webp --enable-xml --with-sodium --enable-sysvsem --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
+        ./configure --prefix=/server/tool/php-7.4 --with-config-file-path=/server/tool/php-7.4/etc --with-config-file-scan-dir=/server/tool/php-7.4/etc/php.d --enable-fpm --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd-compression-support --with-zlib --enable-rpath --enable-bcmath --enable-shmop --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --enable-gd --with-freetype --with-jpeg --with-webp --enable-xml --with-sodium --enable-sysvsem --with-gettext --enable-opcache --with-pear --with-ldap=shared --without-gdbm --enable-exif --with-xsl --with-curl --with-openssl
         //安装
         make && make install
     3、拷贝配置文件
         //拷贝php配置文件
-        cp /server/php-8.1.12/php.ini-production /server/tool/php-8.1.12/etc/php.ini
-        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-8.1.12，php-fpm-8.1.12）
-        cp /server/php-8.1.12/sapi/fpm/init.d.php-fpm /server/tool/php-8.1.12/bin/php-fpm-8.1.12
-        cp /server/tool/php-8.1.12/etc/php-fpm.conf.default /server/tool/php-8.1.12/etc/php-fpm.conf
-        cp /server/tool/php-8.1.12/etc/php-fpm.d/www.conf.default /server/tool/php-8.1.12/etc/php-fpm.d/www.conf
+        cp /server/php-7.4/php.ini-production /server/tool/php-7.4/etc/php.ini
+        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-7.4，php-fpm-7.4）
+        cp /server/php-7.4/sapi/fpm/init.d.php-fpm /server/tool/php-7.4/bin/php-fpm-7.4
+        cp /server/tool/php-7.4/etc/php-fpm.conf.default /server/tool/php-7.4/etc/php-fpm.conf
+        cp /server/tool/php-7.4/etc/php-fpm.d/www.conf.default /server/tool/php-7.4/etc/php-fpm.d/www.conf
         //安装多版本需要改监听端口，不同版本端口设置要不一样
-        vi /server/tool/php-8.1.12/etc/php-fpm.d/www.conf
+        vi /server/tool/php-7.4/etc/php-fpm.d/www.conf
     4、编辑自启动文件
-        vi /etc/systemd/system/php-fpm-8.1.12.service
+        vi /etc/systemd/system/php-fpm-7.4.service
 [Unit]
-Description=php-fpm-8.1.12
+Description=php-fpm-7.4
 After=network.target
 [Service]
 Type=forking
-PIDFile=/server/tool/php-8.1.12/var/run/php-fpm.pid
-ExecStart=/server/tool/php-8.1.12/bin/php-fpm-8.1.12 start
-ExecReload=/server/tool/php-8.1.12/bin/php-fpm-8.1.12 reload
-ExecStop=/server/tool/php-8.1.12/bin/php-fpm-8.1.12 stop
+PIDFile=/server/tool/php-7.4/var/run/php-fpm.pid
+ExecStart=/server/tool/php-7.4/bin/php-fpm-7.4 start
+ExecReload=/server/tool/php-7.4/bin/php-fpm-7.4 reload
+ExecStop=/server/tool/php-7.4/bin/php-fpm-7.4 stop
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
     5、设置自启动
-        chmod -R 755 /server/tool/php-8.1.12/bin/php-fpm-8.1.12
-        systemctl enable php-fpm-8.1.12
+        chmod -R 755 /server/tool/php-7.4/bin/php-fpm-7.4
+        systemctl enable php-fpm-7.4
     6、设置环境变量增加以下目录（参考linux常用命令）
-        /server/tool/php-8.1.12/bin
+        /server/tool/php-7.4/bin
     7、扩展安装
         扩展包里面执行以下步骤
         phpize
@@ -89,7 +98,7 @@ WantedBy=multi-user.target
     tar -xvf redis-5.3.7.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-8.1.12/bin/php-config
+    ./configure --with-php-config=/server/tool/php-7.4/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=redis.so
@@ -106,13 +115,13 @@ WantedBy=multi-user.target
     tar -xvf event-3.0.8.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-8.1.12/bin/php-config
+    ./configure --with-php-config=/server/tool/php-7.4/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=event.so
 
 修改配置参数
-vi /server/tool/php-8.1.12/etc/php.ini
+vi /server/tool/php-7.4/etc/php.ini
 修改以下参数
 memory_limit            1024M
 upload_max_filesize     50M

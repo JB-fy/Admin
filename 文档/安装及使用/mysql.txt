@@ -10,7 +10,7 @@
         yum install perl
         tar -xvf openssl-1.1.1q.tar.gz
         cd openssl-1.1.1q
-        ./config --prefix=/server/openssl --openssldir=/server/openssl
+        ./config --prefix=/server/openssl
         make && make install
         再在cmake时指定-DWITH_SSL=/server/openssl
 
