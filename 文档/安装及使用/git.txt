@@ -20,6 +20,9 @@ git init	//初始化本地仓库
 git add ./	//添加文件到本地仓库
 git commit -m "初始化"	//提交到本地仓库
 git remote add origin https://gitee.com/feng_yi/qyct.git	//绑定远程仓库
-git push -u origin "master"	//推送到远程仓库
-git pull origin "master"	//拉取远程仓库到本地
+git push -u origin 分支名	//推送到远程仓库
+git pull origin 分支名	//拉取远程仓库到本地（直接合并，相当于git fetch + git merge）
+git fetch origin 分支名	//拉取远程仓库到本地（需要确认是否合并）
+git checkout 分支名 //切换分支
+git merge 分支名    //将该分支合并到当前分支中
 /**----------------Git常用命令 结束----------------**/
