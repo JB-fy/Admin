@@ -1,0 +1,42 @@
+/* 奇数 */
+.xxxx:nth-child(2n-1) {}
+
+/* 偶数 */
+.xxxx:nth-child(2n) {}
+
+/* 前4 */
+.xxxx:nth-child(-n+4) {}
+
+/* 4-最后 */
+.xxxx:nth-child(n+4) {}
+
+/* 4-8 */
+.xxxx:nth-child(n+4):nth-child(-n+8) {}
+
+/* 倒数第n个 */
+.xxxx:nth-last-child(n) {}
+
+/* 带有attr="val"属性的元素 */
+xxxx[attr="val"]
+
+.xxxx {
+    /* 弹性盒子，子元素必须设置宽度或高度*/
+    display: flex;
+    /* 垂直居中 */
+    align-items: center;
+    /* 水平居中 */
+    justify-content: center;
+
+
+    /* 超出隐藏 */
+    overflow: hidden;
+    /* 超出部分显示省略号 */
+    text-overflow: ellipsis;
+    /* 文本不换行 */
+    white-space: nowrap;
+
+    /* 边框 */
+    border: 1px dotted #ACACAC;
+    /* 上边框是点状，右边框是实线，下边框是双线，左边框是虚线 */
+    border-style: dotted solid double dashed;
+}
