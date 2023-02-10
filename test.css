@@ -24,7 +24,7 @@ xxxx[attr="val"]
     display: flex;
     /* 垂直居中 */
     align-items: center;
-    /* 水平居中 */
+    /* center水平居中；space-between两边对齐 */
     justify-content: center;
 
 
