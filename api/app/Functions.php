@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Hyperf\DbConnection\Db;
-
 /*----------------基于业务逻辑封装的函数  开始----------------*/
 
 if (!function_exists('getConfig')) {
@@ -77,7 +75,7 @@ if (!function_exists('dbTablePartition')) {
         $dao = getDao($daoClassName);
         $connection = $dao->getConnection();
         $table = $dao->getTable();
-        $db = Db::connection($connection);
+        $db = \Hyperf\DbConnection\Db::connection($connection);
 
         /**--------查询分区（不是分区表或无分区，查询结果都会有一项，且第一项内PARTITION_NAME值为null） 开始--------**/
         $partitionSelSql = 'SELECT PARTITION_NAME FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA = SCHEMA() AND TABLE_NAME = \'' . $table . '\'';
@@ -318,6 +316,58 @@ if (!function_exists('getRequestUrl')) {
         }
     }
 }
+if (!function_exists('getClientIp')) {
+    /**
+     * 获取客户端IP
+     *
+     * @return string
+     */
+    function getClientIp(): string
+    {
+        $clientIpList = getRequest()->header('x-forwarded-for');
+        list($clientIp) = explode(', ', $clientIpList); //只取第一个IP，因可能经过多层代理转发
+        return $clientIp;
+    }
+}
+
+if (!function_exists('getHttpClient')) {
+    /**
+     * 获取http请求客户端
+     *
+     * @param array $config
+     * @return \GuzzleHttp\Client
+     */
+    function getHttpClient(array $config = []): \GuzzleHttp\Client
+    {
+        $defaultConfig = [
+            //'base_uri' => 'http://127.0.0.1:8080',
+            'handler' => \GuzzleHttp\HandlerStack::create(new \Hyperf\Guzzle\CoroutineHandler()), //客户端协程化（\Hyperf\Guzzle\ClientFactory默认就是这个）
+            //'handler' => (new \Hyperf\Guzzle\HandlerStackFactory())->create(),//客户端做连接池优化
+            //'timeout' => 5
+            // 'swoole' => [   //也可直接修改Swoole配置，不过这项配置在Curl Guzzle客户端中是无法生效的，所以谨慎使用。
+            //     'timeout' => 10,    //这会替换原来的配置，外层timeout5会被替换成10
+            //     'socket_buffer_size' => 1024 * 1024 * 2,
+            // ],
+        ];
+        $config = array_merge($defaultConfig, $config);
+        //return make(\GuzzleHttp\Client::class, ['config' => $config]);
+        return \Hyperf\Guzzle\ClientFactory::create($config);
+
+        /* //使用方式
+        $httpClient = getHttpClient(['timeout' => 5]);
+        $option = [
+            //'json' => ['key' => 'value'],
+            'form_params' => ['key' => 'value']
+        ];
+        try {
+            //$response = $client->get($uri);
+            $response = $httpClient->post($uri, $option);
+            $result = $response->getBody()->getContents();
+        } catch (\Throwable $th) {
+            throwFailJson('99999999', $th->getMessage());
+        } */
+    }
+}
 /*----------------基于当前框架封装的函数  结束----------------*/
 
 
@@ -346,6 +396,31 @@ if (!function_exists('randStr')) {
             $randStr .= $str[$index];
         }
         return $randStr;
+    }
+}
+
+if (!function_exists('getServerIpOfLocal')) {
+    /**
+     * 获取内网ip
+     *
+     * @return string
+     */
+    function getServerIpOfLocal(): string
+    {
+        //return exec('ip addr | grep "inet\b" | grep -v "127.0.0.1" | awk \'{ print $2 }\' | awk -F "/" \'{print $1}\'');
+        return exec('hostname -I');
+    }
+}
+
+if (!function_exists('getServerIpOfNetwork')) {
+    /**
+     * 获取外网ip
+     *
+     * @return string
+     */
+    function getServerIpOfNetwork(): string
+    {
+        return exec('curl ifconfig.me');
     }
 }
 /*----------------基于PHP封装的函数  结束----------------*/

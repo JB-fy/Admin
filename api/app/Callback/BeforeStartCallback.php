@@ -19,6 +19,8 @@ class BeforeStartCallback
 
     public function onBeforeStart()
     {
+        $this->config->set('serverIp.local', getServerIpOfLocal());   //设置服务器内网ip
+        $this->config->set('serverIp.network', getServerIpOfNetwork());   //设置服务器外网ip
         /**--------将数据库内的配置设置到config中（方便使用） 开始--------**/
         //场景列表（即表auth_scene数据）
         $allScene = getDao(\App\Module\Db\Dao\Auth\Scene::class)->getList();
