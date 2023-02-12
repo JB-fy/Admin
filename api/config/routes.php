@@ -79,6 +79,11 @@ Router::addGroup('/platform/config', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/save', [\App\Controller\Platform\Config::class, 'save']);
 });
 
+Router::addGroup('/platform/server', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Server::class, 'list']);
+});
+
+
 Router::get('/favicon.ico', function () {
     return '';
 });

@@ -189,8 +189,9 @@ return [
         'menuId' => '菜单ID',
         'roleId' => '角色ID',
         'sceneId' => '场景ID',
-        'adminId' => '管理员ID',
         'logId' => '日志ID',
+        'adminId' => '管理员ID',
+        'serverId' => '服务器id',
 
         'pid' => '父ID',
 
@@ -234,6 +235,8 @@ return [
         'requestUrl' => '请求地址',
         'minRunTime' => '运行时间最小值',
         'maxRunTime' => '运行时间最大值',
+
+        'networkIp' => '公网IP',
     ],
     'phone_number' => ':attribute 必须为一个有效的电话号码',
     'telephone_number' => ':attribute 必须为一个有效的手机号码',

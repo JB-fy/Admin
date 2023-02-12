@@ -29,6 +29,7 @@ abstract class AbstractAspect extends \Hyperf\Di\Aop\AbstractAspect
         \App\Controller\Log\Request::class,
         \App\Controller\Platform\Admin::class,
         \App\Controller\Platform\Config::class,
+        \App\Controller\Platform\Server::class,
     ];
 
     //切入的注解

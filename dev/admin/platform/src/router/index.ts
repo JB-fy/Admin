@@ -75,6 +75,15 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' }
             },
             {
+                path: '/log/request',
+                component: async () => {
+                    const component = await import('@/views/log/request/Index.vue')
+                    component.default.name = '/log/request'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/log/request' }
+            },
+            {
                 path: '/platform/admin',
                 component: async () => {
                     const component = await import('@/views/platform/admin/Index.vue')
@@ -93,13 +102,13 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/config' }
             },
             {
-                path: '/log/request',
+                path: '/platform/server',
                 component: async () => {
-                    const component = await import('@/views/log/request/Index.vue')
-                    component.default.name = '/log/request'
+                    const component = await import('@/views/platform/server/Index.vue')
+                    component.default.name = '/platform/server'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/log/request' }
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/server' }
             },
             {
                 path: '/profile',

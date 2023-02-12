@@ -108,6 +108,12 @@ export default {
                 runTime: '运行时间',
             },
         },
+        platform: {
+            server: {
+                networkIp: '公网IP',
+                localIp: '内网IP',
+            },
+        },
     },
     status: {
         whether: [
