@@ -97,12 +97,12 @@ abstract class AbstractValidation
         $validator = $this->validationFactory->make($data, $rule, $this->message, $this->customAttribute);
         return $validator;
         //建议下面这些方法在调用处根据情况使用
-        /* $validator->validate(); //验证数据，抛出错误
+        /* $data = $validator->validate(); //验证数据，抛出错误，且只返回验证的字段。
+        $data = $validator->validated();    //验证数据，抛出错误，且只返回验证的字段。不存在的字段不验证，相当于自动增加sometimes规则
         if ($validator->fails()) {  //验证数据，不抛出错误
             $rules = $validator->failed();  //获取失败的验证规则
             $errorMessage = $validator->errors()->first();  //获取第一个错误
-        }
-        $data = $validator->validated();    //这里返回已经验证过的数据。未验证字段不返回 */
+        } */
     }
 
     /**

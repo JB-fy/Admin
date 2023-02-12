@@ -20,19 +20,11 @@ return [
     },
     //上传组件
     'upload' => function (ContainerInterface $container) {
-        /* $config = [
-            'accessId' => 'LTAI5tHx81H64BRJA971DPZF',
-            'accessKey' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51',
-            'host' => 'http://4724382110.oss-cn-hongkong.aliyuncs.com'
-        ]; */
         $config = [
-            'accessId' => 'LTAI5tSjYikt3bX33riHezmk',
-            'accessKey' => 'k4uRZU6flv73yz1j4LJu9VY5eNlHas',
-            //'accessKeyId ' => 'LTAI5tSjYikt3bX33riHezmk',
-            //'accessKeySecret ' => 'k4uRZU6flv73yz1j4LJu9VY5eNlHas',
-            //'endpoint ' => 'https://oss-cn-hangzhou.aliyuncs.com',
-            //'bucket' => 'gamemt'
-            'host' => 'https://gamemt.oss-cn-hangzhou.aliyuncs.com',    //web直传时需要传这个地址
+            'accessId' =>  getConfig('inDb.platformConfig.aliyunOssAccessId'),
+            'accessSecret' => getConfig('inDb.platformConfig.aliyunOssAccessSecret'),
+            'host' => getConfig('inDb.platformConfig.aliyunOssHost'),
+            'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),
         ];
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },

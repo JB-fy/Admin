@@ -1,9 +1,11 @@
 export default {
     label: {
-        test: '测试'
+        uploadConfig: '上传'
     },
     name: {
-        //configKey: '',
-        test: '测试'
+        aliyunOssAccessId: '阿里云存储-AccessId',
+        aliyunOssAccessSecret: '阿里云存储-AccessSecret',
+        aliyunOssHost: '阿里云存储-域名',
+        aliyunOssBucket: '阿里云存储-Bucket',
     }
 }
