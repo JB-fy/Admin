@@ -19,8 +19,15 @@ class BeforeStartCallback
 
     public function onBeforeStart()
     {
-        $this->config->set('serverIp.local', getServerIpOfLocal());   //设置服务器内网ip
-        $this->config->set('serverIp.network', getServerIpOfNetwork());   //设置服务器外网ip
+        /**--------设置当前服务器IP并记录 开始--------**/
+        $this->config->set('server.localIp', getServerLocalIp());   //设置服务器内网ip
+        $this->config->set('server.networkIp', getServerNetworkIp());   //设置服务器外网ip
+        /* try {
+           getDao(\App\Module\Db\Dao\Platform\Config::class)->getBuilder()->updateOrInsert(['configKey' => $serverIp], ['configValue' => env('CM_JWT_KEY_PREFIX', '')]);
+        } catch (\Throwable $e) {
+        } */
+        /**--------设置当前服务器IP并记录 结束--------**/
+
         /**--------将数据库内的配置设置到config中（方便使用） 开始--------**/
         //场景列表（即表auth_scene数据）
         $allScene = getDao(\App\Module\Db\Dao\Auth\Scene::class)->getList();

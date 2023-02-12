@@ -360,12 +360,34 @@ if (!function_exists('getHttpClient')) {
             'form_params' => ['key' => 'value']
         ];
         try {
+            $uri = 'http://www.xxxx.com/forward';
             //$response = $client->get($uri);
             $response = $httpClient->post($uri, $option);
             $result = $response->getBody()->getContents();
         } catch (\Throwable $th) {
             throwFailJson('99999999', $th->getMessage());
         } */
+    }
+}
+
+if (!function_exists('getWebSocketClient')) {
+    /**
+     * 获取webSocket客户端
+     *
+     * @param string $host
+     * @return \Hyperf\WebSocketClient\Client
+     */
+    function getWebSocketClient(string $host): \Hyperf\WebSocketClient\Client
+    {
+        //通过ClientFactory创建的Client对象，为短生命周期对象
+        return getContainer()->get(\Hyperf\WebSocketClient\ClientFactory::class)->create($host);
+
+        //使用方式
+        /* $host = 'ws://www.xxxx.com:9502/forward';
+        $client = getWebSocketClient($host);
+        $client->push('sendMsg');
+        $response = $client->recv(2);   //获取服务端响应的消息，超时时间2s
+        $resData = $response->data; */
     }
 }
 /*----------------基于当前框架封装的函数  结束----------------*/
@@ -399,26 +421,26 @@ if (!function_exists('randStr')) {
     }
 }
 
-if (!function_exists('getServerIpOfLocal')) {
+if (!function_exists('getServerLocalIp')) {
     /**
-     * 获取内网ip
+     * 获取内网IP
      *
      * @return string
      */
-    function getServerIpOfLocal(): string
+    function getServerLocalIp(): string
     {
         //return exec('ip addr | grep "inet\b" | grep -v "127.0.0.1" | awk \'{ print $2 }\' | awk -F "/" \'{print $1}\'');
         return exec('hostname -I');
     }
 }
 
-if (!function_exists('getServerIpOfNetwork')) {
+if (!function_exists('getServerNetworkIp')) {
     /**
-     * 获取外网ip
+     * 获取外网IP
      *
      * @return string
      */
-    function getServerIpOfNetwork(): string
+    function getServerNetworkIp(): string
     {
         return exec('curl ifconfig.me');
     }
