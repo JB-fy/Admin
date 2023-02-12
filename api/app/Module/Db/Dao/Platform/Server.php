@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Db\Model\Platform;
+namespace App\Module\Db\Dao\Platform;
 
-use App\Module\Db\Model\AbstractModel;
+use App\Module\Db\Dao\AbstractDao;
 
 /**
  * @property int $serverId 服务器ID
@@ -13,13 +13,17 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $updateTime 更新时间
  * @property string $createTime 创建时间
  */
-class Server extends AbstractModel
+class Server extends AbstractDao
 {
     /**
      * The table associated with the model.
      */
     protected ?string $table = 'platform_server';
-    protected string $primaryKey = 'serverId';
+
+    /**
+     * The connection name for the model.
+     */
+    protected ?string $connection = 'default';
 
     /**
      * The attributes that are mass assignable.

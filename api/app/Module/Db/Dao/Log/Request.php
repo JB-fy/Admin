@@ -9,8 +9,8 @@ use App\Module\Db\Dao\AbstractDao;
 /**
  * @property int $logId 请求日志ID
  * @property string $requestUrl 请求地址
- * @property string $requestData 请求数据
  * @property string $requestHeader 请求头
+ * @property string $requestData 请求数据
  * @property string $responseBody 响应体
  * @property string $runTime 运行时间（单位：毫秒）
  * @property string $updateTime 更新时间

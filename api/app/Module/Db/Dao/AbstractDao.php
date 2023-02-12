@@ -6,6 +6,12 @@ namespace App\Module\Db\Dao;
 
 use Hyperf\DbConnection\Db;
 
+/**
+ * 需使用框架命令快速生成Dao时
+ *      继承extends \Hyperf\DbConnection\Model\Model
+ *      注释掉getConnection方法
+ *      注释掉update方法
+ */
 abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
 {
     protected ?string $connection/*  = 'default' */;  //分库情况下，解析后所确定的连接

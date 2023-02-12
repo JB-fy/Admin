@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Db\Dao\Platform;
 
 use App\Module\Db\Dao\AbstractDao;
-use App\Module\Db\Dao\Auth\Role;
 use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
 
 /**
