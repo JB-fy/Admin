@@ -55,10 +55,11 @@ return [
                     'auth_role_rel_to_menu:Auth\RoleRelToMenu',
                     'auth_scene:Auth\Scene',
 
+                    'log_request:Log\Request',
+
                     'platform_admin:Platform\Admin',
                     'platform_config:Platform\Config',
-
-                    'log_request:Log\Request',
+                    'platform_server:Platform\Server',
                 ],
             ],
         ],

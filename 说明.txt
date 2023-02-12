@@ -7,9 +7,9 @@ url组成部分：scheme://host:port/path?query#anchor
     启动服务
         php bin/hyperf.php start
         php bin/hyperf.php server:watch //热更新
-    快速生成模型类(--pool对应哪个库)
-        php bin/hyperf.php gen:model --pool=default
-    快速生成Dao类（先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法），生成后再自己修改
+    快速生成模型类，需先修改AbstractModel继承自\Hyperf\DbConnection\Model\Model（--pool对应哪个库）
+        php bin/hyperf.php gen:model --pool=default 
+    快速生成Dao类，需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再修改
         php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
     
 框架使用规范：
