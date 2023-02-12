@@ -9,6 +9,7 @@ use Hyperf\DbConnection\Db;
 /**
  * 需使用框架命令快速生成Dao时
  *      继承extends \Hyperf\DbConnection\Model\Model
+ *      设置$connection属性为default
  *      注释掉getConnection方法
  *      注释掉update方法
  */

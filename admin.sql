@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地Mysql-8.0.30
+ Source Server         : 本地-8.0.32
  Source Server Type    : MySQL
- Source Server Version : 80030 (8.0.30)
- Source Host           : 192.168.200.210:3306
- Source Schema         : admin
+ Source Server Version : 80032 (8.0.32)
+ Source Host           : 192.168.200.200:3306
+ Source Schema         : admin_raw
 
  Target Server Type    : MySQL
- Target Server Version : 80030 (8.0.30)
+ Target Server Version : 80032 (8.0.32)
  File Encoding         : 65001
 
- Date: 13/01/2023 00:16:00
+ Date: 12/02/2023 23:13:34
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `auth_action`  (
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`actionId`) USING BTREE,
   UNIQUE INDEX `actionCode`(`actionCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action
@@ -69,7 +69,7 @@ CREATE TABLE `auth_action_rel_to_scene`  (
   PRIMARY KEY (`actionId`, `sceneId`) USING BTREE,
   INDEX `actionId`(`actionId` ASC) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限操作，权限场景关联表（操作可用在哪些场景）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作，权限场景关联表（操作可用在哪些场景）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action_rel_to_scene
@@ -114,7 +114,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menuId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -147,7 +147,7 @@ CREATE TABLE `auth_role`  (
   PRIMARY KEY (`roleId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `tableId`(`tableId` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role
@@ -166,7 +166,7 @@ CREATE TABLE `auth_role_rel_of_platform_admin`  (
   PRIMARY KEY (`roleId`, `adminId`) USING BTREE,
   INDEX `roleId`(`roleId` ASC) USING BTREE,
   INDEX `adminId`(`adminId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限角色，系统管理员关联表（系统管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色，系统管理员关联表（系统管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role_rel_of_platform_admin
@@ -184,7 +184,7 @@ CREATE TABLE `auth_role_rel_to_action`  (
   PRIMARY KEY (`roleId`, `actionId`) USING BTREE,
   INDEX `roleId`(`roleId` ASC) USING BTREE,
   INDEX `actionId`(`actionId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限角色，权限操作关联表（角色包含哪些操作）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色，权限操作关联表（角色包含哪些操作）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role_rel_to_action
@@ -222,7 +222,7 @@ CREATE TABLE `auth_role_rel_to_menu`  (
   PRIMARY KEY (`roleId`, `menuId`) USING BTREE,
   INDEX `roleId`(`roleId` ASC) USING BTREE,
   INDEX `menuId`(`menuId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限角色，权限菜单关联表（角色包含哪些菜单）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色，权限菜单关联表（角色包含哪些菜单）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role_rel_to_menu
@@ -254,7 +254,7 @@ CREATE TABLE `auth_scene`  (
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`sceneId`) USING BTREE,
   UNIQUE INDEX `sceneCode`(`sceneCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_scene
@@ -274,8 +274,24 @@ CREATE TABLE `log_request`  (
   `runTime` decimal(8, 3) UNSIGNED NOT NULL DEFAULT 0.000 COMMENT '运行时间（单位：毫秒）',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`logId`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '系统日志-请求表' ROW_FORMAT = DYNAMIC;
+  PRIMARY KEY (`logId`, `createTime`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统日志-请求表' ROW_FORMAT = DYNAMIC PARTITION BY RANGE (to_days(`createTime`))
+PARTITIONS 14
+(PARTITION `20230205` VALUES LESS THAN (738922) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230206` VALUES LESS THAN (738923) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230207` VALUES LESS THAN (738924) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230208` VALUES LESS THAN (738925) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230209` VALUES LESS THAN (738926) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230210` VALUES LESS THAN (738927) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230211` VALUES LESS THAN (738928) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230212` VALUES LESS THAN (738929) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230214` VALUES LESS THAN (738931) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230215` VALUES LESS THAN (738932) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230216` VALUES LESS THAN (738933) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230217` VALUES LESS THAN (738934) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230218` VALUES LESS THAN (738935) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 ,
+PARTITION `20230219` VALUES LESS THAN (738936) ENGINE = InnoDB MAX_ROWS = 0 MIN_ROWS = 0 )
+;
 
 -- ----------------------------
 -- Records of log_request
@@ -310,7 +326,7 @@ CREATE TABLE `platform_admin`  (
   PRIMARY KEY (`adminId`) USING BTREE,
   UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '平台管理员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_admin
@@ -329,10 +345,28 @@ CREATE TABLE `platform_config`  (
   `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for platform_server
+-- ----------------------------
+DROP TABLE IF EXISTS `platform_server`;
+CREATE TABLE `platform_server`  (
+  `serverId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '服务器ID',
+  `networkIp` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '公网IP',
+  `localIp` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '内网IP',
+  `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `createTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`serverId`) USING BTREE,
+  UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of platform_server
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

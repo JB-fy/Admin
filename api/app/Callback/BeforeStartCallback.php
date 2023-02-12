@@ -20,12 +20,14 @@ class BeforeStartCallback
     public function onBeforeStart()
     {
         /**--------设置当前服务器IP并记录 开始--------**/
-        $this->config->set('server.localIp', getServerLocalIp());   //设置服务器内网ip
-        $this->config->set('server.networkIp', getServerNetworkIp());   //设置服务器外网ip
-        /* try {
-           getDao(\App\Module\Db\Dao\Platform\Config::class)->getBuilder()->updateOrInsert(['configKey' => $serverIp], ['configValue' => env('CM_JWT_KEY_PREFIX', '')]);
-        } catch (\Throwable $e) {
-        } */
+        $serverLocalIp = getServerLocalIp();
+        $serverNetworkIp = getServerNetworkIp();
+        $this->config->set('server.localIp', $serverLocalIp);   //设置服务器内网ip
+        $this->config->set('server.networkIp', $serverNetworkIp);   //设置服务器外网ip
+        try {
+            getDao(\App\Module\Db\Dao\Platform\Server::class)->getBuilder()->updateOrInsert(['networkIp' => $serverNetworkIp], ['localIp' => $serverLocalIp]);
+        } catch (\Throwable $th) {
+        }
         /**--------设置当前服务器IP并记录 结束--------**/
 
         /**--------将数据库内的配置设置到config中（方便使用） 开始--------**/
