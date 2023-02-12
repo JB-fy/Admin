@@ -111,11 +111,9 @@ const upload = reactive({
                 success_action_status: '200', //让服务端返回200,不然，默认会返回204
             }
             upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
-        }
-        //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
-        let bufferTime = 10 * 1000 //缓冲时间
-        let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
-        if (timeout > 0) {
+            //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
+            let bufferTime = 10 * 1000 //缓冲时间
+            let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
             setTimeout(() => {
                 //组件销毁后，倒计时还会继续执行。如果用户点击新增|编辑|复制等按钮多次，将会创建多个倒计时
                 //upload.initSignInfo()
