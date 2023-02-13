@@ -17,9 +17,7 @@
 .xxxx:nth-last-child(n) {}
 
 /* 带有attr="val"属性的元素 */
-xxxx[attr="val"]
-
-.xxxx {
+xxxx[attr="val"] .xxxx {
     /* 弹性盒子，子元素必须设置宽度或高度*/
     display: flex;
     /* 垂直居中 */
@@ -39,4 +37,10 @@ xxxx[attr="val"]
     border: 1px dotted #ACACAC;
     /* 上边框是点状，右边框是实线，下边框是双线，左边框是虚线 */
     border-style: dotted solid double dashed;
+
+    /* 背景 */
+    background-image: url(__TMPL__/mobilepublic/assets/images/opus_bg_05.jpg);
+    background-size: 100% auto;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
