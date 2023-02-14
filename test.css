@@ -25,6 +25,15 @@ xxxx[attr="val"] .xxxx {
     /* center水平居中；space-between两边对齐 */
     justify-content: center;
 
+    /* 垂直居中（父元素需要设置position: relative;或position: absolute;） */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    /* 粘性布局（父元素需要设置overflow: visible;） */
+    position: sticky;
+    top: 0;
 
     /* 超出隐藏 */
     overflow: hidden;
