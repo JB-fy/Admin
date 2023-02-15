@@ -18,7 +18,7 @@
 
 /* 带有attr="val"属性的元素 */
 xxxx[attr="val"] .xxxx {
-    /* 弹性盒子，子元素必须设置宽度或高度*/
+    /* 弹性盒子（注意：伪类:before和:after也会被影响） */
     display: flex;
     /* 垂直居中 */
     align-items: center;
