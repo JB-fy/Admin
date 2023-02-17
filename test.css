@@ -24,9 +24,9 @@ xxxx[attr="val"] .xxxx {
     align-items: center;
     /* center水平居中；space-between两边对齐 */
     justify-content: center;
-    /* 设置弹性盒子内元素的显示顺序 */
+    /* 弹性盒子排列方式 */
     flex-flow: column;
-    /* 弹性盒子内元素设置用，用于占满剩余空间 */
+    /* 弹性盒子内元素设置，用于占满剩余空间 */
     flex: 1;
 
     /* 垂直居中（父元素需要设置position: relative;或position: absolute;） */
