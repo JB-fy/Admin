@@ -6,7 +6,7 @@ const table = reactive({
         dataKey: 'id',
         title: t('common.name.id'),
         key: 'id',
-        width: 150,
+        width: 200,
         align: 'center',
         fixed: 'left',
         sortable: true,

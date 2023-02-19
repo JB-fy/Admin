@@ -5,6 +5,7 @@ const { t } = useI18n()
 
 const table = reactive({
     columns: [{
+        dataKey: 'id',
         title: t('common.name.id'),
         key: 'id',
         width: 200,
