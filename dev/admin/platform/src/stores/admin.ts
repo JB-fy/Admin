@@ -25,7 +25,8 @@ export const useAdminStore = defineStore('admin', {
               "en": "Document",
               "zh-cn": "说明文档"
             },
-            "url": "https://www.baidu.com/",
+            //"url": "https://www.baidu.com/",  //新窗口打开
+            "url": "/thirdSite?url=https://www.baidu.com/", //标签页打开
             "icon": "AutoiconEpDocument",
             "children": []
           }, */
@@ -45,7 +46,7 @@ export const useAdminStore = defineStore('admin', {
               "en": "Element Plus",
               "zh-cn": "Element Plus"
             },
-            "url": "/thirdSite?url=https://element-plus.gitee.io/zh-CN/",
+            "url": "https://element-plus.gitee.io/zh-CN/",
             "icon": "AutoiconEpElementPlus",
             "children": []
           },
@@ -55,7 +56,7 @@ export const useAdminStore = defineStore('admin', {
               "en": "Vant 4",
               "zh-cn": "Vant 4"
             },
-            "url": "/thirdSite?url=https://vant-contrib.gitee.io/vant/#/zh-CN",
+            "url": "https://vant-contrib.gitee.io/vant/#/zh-CN",
             "icon": "Vant-wechat-moments",
             "children": []
           },
@@ -65,7 +66,7 @@ export const useAdminStore = defineStore('admin', {
               "en": "Vue",
               "zh-cn": "Vue"
             },
-            "url": "/thirdSite?url=https://cn.vuejs.org/api/",
+            "url": "https://cn.vuejs.org/api/",
             "icon": "AutoiconEpChromeFilled",
             "children": []
           }
