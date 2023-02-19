@@ -3,44 +3,53 @@ const { t } = useI18n()
 
 const table = reactive({
     columns: [{
-        title: t('common.name.checked'),
-        key: 'checked',
-        width: 30,
+        title: t('common.name.id'),
+        key: 'id',
+        width: 200,
         align: 'center',
         fixed: 'left',
-        cellRenderer: (props: any): any => {
-            return [
-                h(ElCheckbox as any, {
-                    'model-value': props.rowData.checked,
-                    onChange: (val: boolean) => {
-                        props.rowData.checked = val
-                    }
-                })
-            ]
-        },
+        sortable: true,
         headerCellRenderer: () => {
             const allChecked = table.data.every((item: any) => item.checked)
             const someChecked = table.data.some((item: any) => item.checked)
             return [
-                h(ElCheckbox as any, {
-                    'model-value': table.data.length ? allChecked : false,
-                    indeterminate: someChecked && !allChecked,
-                    onChange: (val: boolean) => {
-                        table.data.forEach((item: any) => {
-                            item.checked = val
+                h('div', {
+                    class: 'id-checkbox',
+                    onClick: (event: any) => {
+                        event.stopPropagation();    //阻止冒泡
+                    },
+                }, {
+                    default: () => [
+                        h(ElCheckbox as any, {
+                            'model-value': table.data.length ? allChecked : false,
+                            indeterminate: someChecked && !allChecked,
+                            onChange: (val: boolean) => {
+                                table.data.forEach((item: any) => {
+                                    item.checked = val
+                                })
+                            }
                         })
-                    }
+                    ]
+                }),
+                h('div', {}, {
+                    default: () => t('common.name.id')
                 })
             ]
-        }
-    }, {
-        dataKey: 'id',
-        title: t('common.name.id'),
-        key: 'id',
-        width: 150,
-        align: 'center',
-        fixed: 'left',
-        sortable: true,
+        },
+        cellRenderer: (props: any): any => {
+            return [
+                h(ElCheckbox as any, {
+                    class: 'id-checkbox',
+                    'model-value': props.rowData.checked,
+                    onChange: (val: boolean) => {
+                        props.rowData.checked = val
+                    }
+                }),
+                h('div', {}, {
+                    default: () => props.rowData.id
+                })
+            ]
+        },
     },
     {
         dataKey: 'account',

@@ -44,10 +44,9 @@ export default {
         notRequired: '不填则不修改',
     },
     name: {
-        checked: '复选框',
-        createTime: '创建时间',
-        updateTime: '更新时间',
         action: '操作',
+        updateTime: '更新时间',
+        createTime: '创建时间',
 
         without: '无',
         allTopLevel: '全部顶级',

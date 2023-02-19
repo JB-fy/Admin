@@ -67,6 +67,11 @@ body {
   padding: 0;
 }
 
+.main-table-container .el-table-v2__row,
+.main-table-container .el-table-v2__header-row {
+  justify-content: space-between;
+}
+
 .main-table-container .el-main {
   padding: 0;
 }
@@ -93,6 +98,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.main-table .id-checkbox {
+  padding: 0 10px;
+  position: absolute;
+  left: 0;
 }
 
 .main-table .inline-edit {
