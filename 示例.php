@@ -1,3 +1,10 @@
+<?php
+
+var_dump(openssl_encrypt('123456', 'AES-128-ECB', 'e26e543ce222cc0f', 0));
+var_dump(openssl_decrypt('dasfsdfds', 'AES-128-ECB', 'e26e543ce222cc0f', 0));
+var_dump(strlen('哈哈'));
+
+/* 
 SQL语法顺序：select->from->where->group by->having->order by->limit
 SQL执行顺序：from->where->group by->having->select->order by->limit
 
@@ -21,3 +28,4 @@ url组成部分：scheme://host:port/path?query#anchor
     3：只使用app\Module\Db\Dao或Hyperf\DbConnection\Db做数据库处理
     4：app\Module\Db\Dao文件夹内的类统一使用getDao方法实例化
     5：app\Module\Cache文件夹内的类统一使用getCache方法实例化
+ */

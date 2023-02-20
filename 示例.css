@@ -1,23 +1,4 @@
-/* 奇数 */
-.xxxx:nth-child(2n-1) {}
-
-/* 偶数 */
-.xxxx:nth-child(2n) {}
-
-/* 前4 */
-.xxxx:nth-child(-n+4) {}
-
-/* 4-最后 */
-.xxxx:nth-child(n+4) {}
-
-/* 4-8 */
-.xxxx:nth-child(n+4):nth-child(-n+8) {}
-
-/* 倒数第n个 */
-.xxxx:nth-last-child(n) {}
-
-/* 带有attr="val"属性的元素 */
-xxxx[attr="val"] .xxxx {
+.xxxx {
     /* 弹性盒子（注意：伪类:before和:after也会被影响） */
     display: flex;
     /* 垂直居中 */
@@ -57,3 +38,24 @@ xxxx[attr="val"] .xxxx {
     background-position: center center;
     background-repeat: no-repeat;
 }
+
+/* 带有attr="val"属性的元素 */
+.xxxx[attr="val"] {}
+
+/* 奇数 */
+.xxxx:nth-child(2n-1) {}
+
+/* 偶数 */
+.xxxx:nth-child(2n) {}
+
+/* 前4 */
+.xxxx:nth-child(-n+4) {}
+
+/* 4-最后 */
+.xxxx:nth-child(n+4) {}
+
+/* 4-8 */
+.xxxx:nth-child(n+4):nth-child(-n+8) {}
+
+/* 倒数第n个 */
+.xxxx:nth-last-child(n) {}
