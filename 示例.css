@@ -37,6 +37,9 @@
     background-size: 100% auto;
     background-position: center center;
     background-repeat: no-repeat;
+
+    /* 背景色渐变 */
+    background: linear-gradient(180deg, #C8E2FF 0%,#FFFFFF 20%, #FFFFFF 100%);
 }
 
 /* 带有attr="val"属性的元素 */
