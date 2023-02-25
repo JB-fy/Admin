@@ -53,9 +53,9 @@ log-bin=/server/tool/mysql-8.0.32/log/mysql-bin
 #ERROR_FOR_DIVISION_BY_ZERO     零除操作会插入null，但会产生警告，如果同时启用严格模式，则会产生错误
 #NO_ZERO_DATE,NO_ZERO_IN_DATE   插入0000-00-00 00:00:00时间格式时，但会产生警告，如果同时启用严格模式，则会产生错误
 #NO_ENGINE_SUBSTITUTION     当create table或alert table语句指定表存储引擎不存在时会报错
-#NO_AUTO_CREATE_USER    禁止grant语句自动创建用户，除非使用identified by或identified with包含一个非空的密码。5.7版本可选，8版本取消了
 #ONLY_FULL_GROUP_BY     group by后面的除聚合函数外的字段，必须在select中出现。不建议启用
-sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
+#NO_AUTO_CREATE_USER    禁止grant语句自动创建用户，除非使用identified by或identified with包含一个非空的密码。5.7版本可选，8版本取消了
+sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ZERO_DATE,NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION
 #是否支持符号链接，即数据库或表可以存储在my.cnf中指定datadir之外的分区或目录，为0不开启
 #symbolic-links=0
 #mysql最大接受的数据包大小
