@@ -1,0 +1,79 @@
+阿里云oss图片缩放：?x-oss-process=image/resize,w_250
+
+关闭pc和手机自动跳转三个位置
+    api/app/common/behavior/ReadHtmlCacheBehavior::run  关闭pc和手机互相跳转
+    api/app/media/controller/BaseController::_initialize 关闭pc跳转手机
+    api/app/mobile/controller/BaseController::_initialize   关闭手机跳转pc
+
+任务命令
+    /server/tool/php-7.4.33/bin/php think artificial  人工常用操作
+
+GM测试用：
+用户账号
+18304303030
+weiyi1314
+渠道：
+/channelsite
+ghb3530
+ghb123456
+
+
+龙翔测试用：
+渠道账号：
+/channelsite
+baitao1
+123456
+
+
+阿里云账号：
+游维空间
+xiaoniu1992818
+
+服务器账号：
+root
+ghb123456~
+前端：
+外网面板地址: http://121.40.182.216:16734/97a029a3
+内网面板地址: http://172.20.122.39:16734/97a029a3
+username: qynsulyb
+password: 2364f434
+
+后端1：
+外网面板地址: http://121.41.103.171:8888/c9eb7208
+内网面板地址: http://172.20.122.40:8888/c9eb7208
+username: w4wvtw5n
+password: 0f50eaa6
+后端2：
+外网面板地址: http://121.199.55.46:8888/c31616e0
+内网面板地址: http://172.20.122.38:8888/c31616e0
+username: fkvqhwf5
+password: 1ac02ab6
+
+
+文档连接地址：https://gamemeta.net.cn/mobile/article/detail/id/2.html
+错误图片显示：__TMPL__/mobilepublic/assets/images/background-of-img.png
+
+thinkphp5 mysql使用方式
+where(['game_status' => 1, Db::raw('id=relation_game_id')])
+where(['game_status'=>1, 'id'=>['exp', new Expression('=relation_game_id')]]);
+where('id', 'exp', '=relation_game_id')
+whereRaw('id = relation_game_id')
+
+图片错误用占位使用占位图    
+<img class="cover_img" src="{$vo.cover_url}?x-oss-process=image/resize,w_250" style="width: 100%;" onerror="this.src='__TMPL__/mobilepublic/assets/images/background-of-img.png';this.onerror=null">
+
+无数据显示
+<div class="no-data-container"><div>暂无数据</div></div>
+
+写入日志，做调试用
+\think\Log::init(['type' => 'File', 'path' => ROOT_PATH]);
+\think\Log::write('dddd', 'info');
+
+{:url('mobile/market/index',['id'=>123])}
+
+<if condition="count($carousel) gt 1"></if>
+<if $carousel gt 1></if>
+
+<volist name="$typeList" id="vo">
+id：值
+key：键。默认有。但不能明着写key="key"，否则每个key都会自动加1
