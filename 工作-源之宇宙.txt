@@ -77,3 +77,6 @@ whereRaw('id = relation_game_id')
 <volist name="$typeList" id="vo">
 id：值
 key：键。默认有。但不能明着写key="key"，否则每个key都会自动加1
+
+
+待补充三个的地方需要后期补充代码
