@@ -14,11 +14,19 @@ GM测试用：
 weiyi1314
 渠道：
 /channelsite
-ghb3530
-ghb123456
+hjbjb1
+123456
+hjbjb2
+123456
+hjbjb3
+123456
 
 
 龙翔测试用：
+游戏方后台账号：
+/issue
+test01
+123456
 渠道账号：
 /channelsite
 baitao1
