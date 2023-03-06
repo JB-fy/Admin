@@ -1,4 +1,8 @@
-阿里云oss图片缩放：?x-oss-process=image/resize,w_250
+阿里云oss图片缩放：
+等比缩放：?x-oss-process=image/resize,w_250
+固定宽高缩放（会变形）：?x-oss-process=image/resize,m_fixed,h_500,w_500
+固定宽高裁剪（会丢失）：?x-oss-process=image/resize,m_fill,h_500,w_500
+固定宽高缩放填充（会丢失）：?x-oss-process=image/resize,m_pad,h_500,w_500,color_FF0000
 
 关闭pc和手机自动跳转三个位置
     api/app/common/behavior/ReadHtmlCacheBehavior::run  关闭pc和手机互相跳转
@@ -50,12 +54,13 @@ password: 2364f434
 外网面板地址: http://121.41.103.171:8888/c9eb7208
 内网面板地址: http://172.20.122.40:8888/c9eb7208
 username: w4wvtw5n
-password: 0f50eaa6
+password: Opuab$5f8hcWCPkU
 后端2：
 外网面板地址: http://121.199.55.46:8888/c31616e0
 内网面板地址: http://172.20.122.38:8888/c31616e0
 username: fkvqhwf5
 password: 1ac02ab6
+
 
 
 文档连接地址：https://gamemeta.net.cn/mobile/article/detail/id/2.html
