@@ -61,11 +61,22 @@ password: 1ac02ab6
 文档连接地址：https://gamemeta.net.cn/mobile/article/detail/id/2.html
 错误图片显示：__TMPL__/mobilepublic/assets/images/background-of-img.png
 
+
+
+
 thinkphp5 mysql使用方式
+
+where('id', 'in', [])
 where(['game_status' => 1, Db::raw('id=relation_game_id')])
 where(['game_status'=>1, 'id'=>['exp', new Expression('=relation_game_id')]]);
 where('id', 'exp', '=relation_game_id')
 whereRaw('id = relation_game_id')
+
+update(['id' => xxxx])
+insertGetId();
+
+
+
 
 图片错误用占位使用占位图    
 <img class="cover_img" src="{$vo.cover_url}?x-oss-process=image/resize,w_250" style="width: 100%;" onerror="this.src='__TMPL__/mobilepublic/assets/images/background-of-img.png';this.onerror=null">
