@@ -1,0 +1,5 @@
+设置解析https
+    在win系统增加环境变量：我的电脑（右键属性）->高级系统设置->高级->环境变量
+        SSLKEYLOGFILE=E:\sslkey.log
+    在wireshark->编辑->首选项->TLS中设置
+        E:\sslkey.log
