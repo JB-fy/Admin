@@ -91,7 +91,7 @@ WantedBy=multi-user.target
     进入目录编译
     phpize
     //5.0版本弃用：--enable-http2
-    ./configure --enable-openssl
+    ./configure --with-php-config=/server/tool/php-7.4.33/bin/php-config --enable-openssl
     make && make install
     在php.ini添加以下内容
     extension=swoole.so
@@ -103,6 +103,18 @@ WantedBy=multi-user.target
     make && make install
     在php.ini添加以下内容
     extension=event.so
+安装xdebug
+    tar -xvf xdebug-3.1.6.tgz
+    进入目录编译
+    phpize
+    ./configure --with-php-config=/server/tool/php-7.4.33/bin/php-config
+    make && make install
+    在php.ini添加以下内容
+    zend_extension=xdebug.so
+    xdebug.mode=debug
+    xdebug.start_with_request=yes
+    xdebug.client_host=127.0.0.1
+    xdebug.client_port=9003
 
 修改配置参数
 vi /server/tool/php-7.4.33/etc/php.ini
@@ -116,4 +128,3 @@ disable_functions       phpinfo,eval,proc_open      这里禁用函数（需要�
 extension=redis.so
 extension=swoole.so
 swoole.use_shortname=off
-extension=event.so
