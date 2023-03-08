@@ -79,6 +79,8 @@ whereRaw('id = relation_game_id')
 
 update(['id' => xxxx])
 insertGetId();
+column('id');
+value('id');
 
 
 
