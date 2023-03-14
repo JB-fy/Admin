@@ -3,3 +3,14 @@
         tar -xvf go1.20.2.linux-amd64.tar.gz
     移动到指定目录
         mv /server/go /server/tool/go-1.20.2
+
+
+
+/**----------------go相关命令 结束----------------**/
+#查看配置
+    go env
+#设置代理（默认：https://proxy.golang.org,direct）
+    go env -w GOPROXY=https://goproxy.cn
+#清空缓存
+    go clean --modcache
+/**----------------go相关命令 结束----------------**/
