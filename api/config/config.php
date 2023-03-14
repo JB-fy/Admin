@@ -1,31 +1,27 @@
 <?php
 
-declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
-use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Log\LogLevel;
+use Hyperf\Di\Annotation\AspectCollector;
 
 return [
-    'app_name' => env('APP_NAME', 'skeleton'),
-    'app_env' => env('APP_ENV', 'dev'),
-    'scan_cacheable' => env('SCAN_CACHEABLE', false),
-    StdoutLoggerInterface::class => [
-        'log_level' => [
-            LogLevel::ALERT,
-            LogLevel::CRITICAL,
-            //LogLevel::DEBUG,
-            LogLevel::EMERGENCY,
-            LogLevel::ERROR,
-            LogLevel::INFO,
-            LogLevel::NOTICE,
-            LogLevel::WARNING,
+    'annotations' => [
+        'scan' => [
+            'paths' => [
+                BASE_PATH . '/app',
+            ],
+            'ignore_annotations' => [
+                'mixin',
+            ],
+            'class_map' => [],
+            'collectors' => [
+                AspectCollector::class
+            ],
         ],
     ],
+    'aspects' => [
+        //\app\aspect\Access::class,  //跨域组件可以去掉。可直接在nginx中设置，或在support\Response中全局设置
+        \app\aspect\Language::class,
+        \app\aspect\LogOfRequest::class,
+        \app\aspect\AuthScene::class,
+        \app\aspect\AuthSceneOfSystemAdmin::class,
+    ]
 ];

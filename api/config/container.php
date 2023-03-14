@@ -1,21 +1,20 @@
 <?php
 /**
- * Initialize a dependency injection container that implemented PSR-11 and return the container.
- */
-
-declare(strict_types=1);
-/**
- * This file is part of Hyperf.
+ * This file is part of webman.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the MIT-LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @author    walkor<walkor@workerman.net>
+ * @copyright walkor<walkor@workerman.net>
+ * @link      http://www.workerman.net/
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Hyperf\Di\Container;
-use Hyperf\Di\Definition\DefinitionSourceFactory;
-use Hyperf\Utils\ApplicationContext;
 
-$container = new Container((new DefinitionSourceFactory())());
-
-return ApplicationContext::setContainer($container);
+//return new Webman\Container;
+$builder = new \DI\ContainerBuilder();
+$builder->addDefinitions(config('dependence', []));
+$builder->useAutowiring(true);
+$builder->useAnnotations(true);
+return $builder->build();

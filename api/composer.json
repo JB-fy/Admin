@@ -1,82 +1,66 @@
 {
-    "name": "hyperf/hyperf-skeleton",
-    "type": "project",
-    "keywords": [
-        "php",
-        "swoole",
-        "framework",
-        "hyperf",
-        "microservice",
-        "middleware"
-    ],
-    "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
-    "license": "Apache-2.0",
-    "require": {
-        "php": ">=8.0",
-        "hyperf/cache": "~3.0.0",
-        "hyperf/command": "~3.0.0",
-        "hyperf/config": "~3.0.0",
-        "hyperf/db-connection": "~3.0.0",
-        "hyperf/framework": "~3.0.0",
-        "hyperf/guzzle": "~3.0.0",
-        "hyperf/http-server": "~3.0.0",
-        "hyperf/logger": "~3.0.0",
-        "hyperf/memory": "~3.0.0",
-        "hyperf/process": "~3.0.0",
-        "hyperf/database": "~3.0.0",
-        "hyperf/redis": "~3.0.0",
-        "hyperf/translation": "~3.0.0",
-        "hyperf/validation": "~3.0.0"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "hyperf/devtool": "~3.0.0",
-        "hyperf/testing": "~3.0.0",
-        "hyperf/watcher": "~3.0.0",
-        "mockery/mockery": "^1.0",
-        "phpstan/phpstan": "^1.0",
-        "swoole/ide-helper": "^5.0"
-    },
-    "suggest": {
-        "ext-openssl": "Required to use HTTPS.",
-        "ext-json": "Required to use JSON.",
-        "ext-pdo": "Required to use MySQL Client.",
-        "ext-pdo_mysql": "Required to use MySQL Client.",
-        "ext-redis": "Required to use Redis Client."
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/"
-        },
-        "files": [
-            "app/Functions.php"
-        ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "HyperfTest\\": "./test/"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "optimize-autoloader": true,
-        "sort-packages": true
-    },
-    "extra": [],
-    "scripts": {
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-autoload-dump": [
-            "rm -rf runtime/container"
-        ],
-        "test": "co-phpunit --prepend test/bootstrap.php -c phpunit.xml --colors=always",
-        "cs-fix": "php-cs-fixer fix $1",
-        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./app ./config",
-        "start": [
-            "Composer\\Config::disableProcessTimeout",
-            "php ./bin/hyperf.php start"
-        ]
+  "name": "workerman/webman",
+  "type": "project",
+  "keywords": [
+    "high performance",
+    "http service"
+  ],
+  "homepage": "http://www.workerman.net",
+  "license": "MIT",
+  "description": "High performance HTTP Service Framework.",
+  "authors": [
+    {
+      "name": "walkor",
+      "email": "walkor@workerman.net",
+      "homepage": "http://www.workerman.net",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "email": "walkor@workerman.net",
+    "issues": "https://github.com/walkor/webman/issues",
+    "forum": "http://wenda.workerman.net/",
+    "wiki": "http://workerman.net/doc/webman",
+    "source": "https://github.com/walkor/webman"
+  },
+  "require": {
+    "php": ">=7.2",
+    "workerman/webman-framework": "^1.4.3",
+    "monolog/monolog": "^2.0",
+    "illuminate/database": "^9.29",
+    "illuminate/pagination": "^9.29",
+    "illuminate/events": "^9.30",
+    "symfony/var-dumper": "^6.1",
+    "vlucas/phpdotenv": "^5.4",
+    "hyperf/aop-integration": " ^1.1",
+    "topthink/think-validate": "^2.0",
+    "symfony/translation": "^6.1",
+    "illuminate/redis": "^9.30",
+    "psr/container": "^1.1.1",
+    "php-di/php-di": "^6.4",
+    "doctrine/annotations": "^1.13"
+  },
+  "suggest": {
+    "ext-event": "For better performance. "
+  },
+  "autoload": {
+    "psr-4": {
+      "": "./",
+      "App\\": "./app"
+    },
+    "files": [
+      "./support/helpers.php"
+    ]
+  },
+  "scripts": {
+    "post-package-install": [
+      "support\\Plugin::install"
+    ],
+    "post-package-update": [
+      "support\\Plugin::install"
+    ],
+    "pre-package-uninstall": [
+      "support\\Plugin::uninstall"
+    ]
+  }
 }
