@@ -14,7 +14,7 @@
 #删除其他命令产生的文件和目录
     go clean
 #在当前目录的任意一个带有（//go:generate)开头注释的xx.go文件，自动化执行该注释后面的命令
-    go generate
+    go generate -x（显示并执行命令） -n（显示不执行命令）
 #编译构建
     go build
 #运行文件
