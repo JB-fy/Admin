@@ -10,7 +10,7 @@
 #查看配置
     go env
 #设置代理（默认：https://proxy.golang.org,direct）
-    go env -w GOPROXY=https://goproxy.cn
+    go env -w GOPROXY=https://goproxy.cn,direct
 #清空缓存
     go clean --modcache
 /**----------------go相关命令 结束----------------**/
