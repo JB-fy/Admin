@@ -63,6 +63,22 @@ password: 1ac02ab6
 
 
 
+
+当泥
+http://dn.shangyouhuyu.com
+
+
+河南得玩商务管理有限公司
+http://cx.youqu95.com
+116.62.16.150（公）
+172.22.212.20（私有）
+外网面板地址: https://116.62.16.150:8888/e7c19142
+内网面板地址: https://172.22.212.20:12021/e7c19142
+
+
+
+
+
 文档连接地址：https://gamemeta.net.cn/mobile/article/detail/id/2.html
 错误图片显示：__TMPL__/mobilepublic/assets/images/background-of-img.png
 
