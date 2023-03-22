@@ -100,6 +100,17 @@ value('id');
 
 
 
+$data = OpusOrderModel::field(['art_opus_index_order.*', 'p.account', 'u.phone as platform_phone'])
+->join([PromoteModel::getTable() => 'p'], 'p.id=art_opus_index_order.promote_id', 'left')
+->join([UserModel::getTable() => 'u'], 'u.id=art_opus_index_order.platform_user_id', 'left')
+->where($where)
+->order('id desc')
+->paginate($row, false, ['query' => $this->request->param()]);
+$page = $data->render();
+$this->assign("data_lists", $data);
+$this->assign("page", $page);
+
+
 
 图片错误用占位使用占位图    
 <img class="cover_img" src="{$vo.cover_url}?x-oss-process=image/resize,w_250" style="width: 100%;" onerror="this.src='__TMPL__/mobilepublic/assets/images/background-of-img.png';this.onerror=null">
@@ -121,4 +132,5 @@ id：值
 key：键。默认有。但不能明着写key="key"，否则每个key都会自动加1
 
 
-待补充三个的地方需要后期补充代码
+待补充 三个字的地方需要后期补充代码
+
