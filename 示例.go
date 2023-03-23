@@ -13,7 +13,10 @@ type SearchApiParams struct {
 
 func main() {
 	fmt.Println("Hello, World!")
-	//打印结构体
+	/* 打印结构体
+	%v占位符是不会打印结构体字段名称的，字段之间以空格隔开；
+	%+v占位符会打印字段名称，字段之间也是以空格隔开；
+	%#v占位符则会打印结构体类型和字段名称，字段之间以逗号分隔 */
 	var pageInfo SearchApiParams
 	fmt.Printf("%#v", pageInfo)
 
