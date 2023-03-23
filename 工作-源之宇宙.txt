@@ -1,3 +1,5 @@
+待补充 三个字的地方需要后期补充代码
+
 阿里云oss图片缩放：
 等比缩放：?x-oss-process=image/resize,w_250
 固定宽高缩放（会变形）：?x-oss-process=image/resize,m_fixed,h_500,w_500
@@ -100,6 +102,9 @@ value('id');
 
 
 
+
+待补充 三个字的地方需要后期补充代码
+
 $data = OpusOrderModel::field(['art_opus_index_order.*', 'p.account', 'u.phone as platform_phone'])
 ->join([PromoteModel::getTable() => 'p'], 'p.id=art_opus_index_order.promote_id', 'left')
 ->join([UserModel::getTable() => 'u'], 'u.id=art_opus_index_order.platform_user_id', 'left')
@@ -130,17 +135,3 @@ $this->assign("page", $page);
 <volist name="$typeList" id="vo">
 id：值
 key：键。默认有。但不能明着写key="key"，否则每个key都会自动加1
-
-
-待补充 三个字的地方需要后期补充代码
-
-
-
-go开发流程
-    自动化package->新增
-    代码生成器->新增
-    如果数据库中表已存在，删除server/initialize/gorm.go该表的自动创建，否则将导致原表被修改
-    如果数据库中表已存在，且没有created_by updated_by deleted_by字段，则将server/model/user/tab_user.go中
-        global.GVA_MODEL
-        替换成
-        ID        uint           `gorm:"primarykey"` // 主键ID

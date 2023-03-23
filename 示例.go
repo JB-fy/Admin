@@ -31,3 +31,16 @@ func main() {
 	// var pageInfo systemReq.SearchApiParams
 	// err := c.ShouldBindJSON(&pageInfo)
 }
+
+/*
+go开发流程
+	自动化package->新增
+	代码生成器->新增
+	断开服务
+	如果数据库中表已存在，删除server/initialize/gorm.go该表的自动创建，否则将导致原表被修改
+	如果数据库中表已存在，且没有created_by updated_by deleted_by字段，则将server/model/user/tab_user.go中
+		global.GVA_MODEL
+		替换成
+		ID        uint           `gorm:"primarykey"` // 主键ID
+	重启服务
+*/
