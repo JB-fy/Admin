@@ -39,8 +39,9 @@ func main() {
 	/*--------验证器 开始--------*/
 	//"github.com/go-playground/validator/v10"
 	validate := validator.New()
+	var err error
 	err = validate.Struct(xxStruct)
-	err = validate.Var("", "required")
+	err = validate.Var(map[string]string{"aaaa": "aaaa", "bbbb": "", "": "cccc"}, "required,dive,keys,required,endkeys,required")
 	var errs map[string]error
 	errs = validate.ValidateMap(map[string]interface{}{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]interface{}{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
 	/*--------验证器 结束--------*/
