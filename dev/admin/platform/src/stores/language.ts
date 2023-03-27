@@ -34,11 +34,6 @@ export const useLanguageStore = defineStore('language', {
         return
       }
       setLanguage(language)
-      this.language = language
-      //i18n.global.locale = language //当i18n设置legacy: false，要使用i18n.global.locale.value
-      i18n.global.locale.value = language
-
-      document.title = this.getWebTitle()
       /**
        * 由于许多情况不会动态刷新，故建议直接刷新页面
        *    列举以下这几种不能动态刷新的情况
@@ -47,6 +42,12 @@ export const useLanguageStore = defineStore('language', {
        *      t函数赋值的变量。如各种表单验证
        */
       router.go(0)  //刷新页面
+      /* //没必要做了，刷新页面会重新设置
+      //this.language = language  //这里会导致死循环而卡死。错误信息：Maximum recursive updates exceeded in component <ElDropdown>. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include component template, render function, updated hook or watcher source function.
+      //i18n.global.locale = language //当i18n设置legacy: false，要使用i18n.global.locale.value
+      i18n.global.locale.value = language
+
+      document.title = this.getWebTitle() */
     },
     //获取页面标题
     getMenuTitle(menu: any) {
