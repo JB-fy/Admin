@@ -69,7 +69,7 @@ const saveForm = reactive({
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
-                if (param?.id > 0) {
+                if (param?.idArr?.length > 0) {
                     await request('auth/scene/update', param, true)
                 } else {
                     await request('auth/scene/create', param, true)

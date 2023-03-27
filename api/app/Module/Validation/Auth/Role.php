@@ -40,7 +40,8 @@ class Role extends AbstractValidation
         ],
         'update' => [
             'only' => [
-                'id',
+                'idArr',
+                'idArr.*',
                 'roleName',
                 'sceneId',
                 'menuIdArr',
@@ -50,7 +51,8 @@ class Role extends AbstractValidation
                 'isStop',
             ],
             'remove' => [
-                'id' => ['sometimes']
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes'],
             ]
         ],
     ];

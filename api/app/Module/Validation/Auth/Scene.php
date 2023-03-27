@@ -31,14 +31,16 @@ class Scene extends AbstractValidation
         ],
         'update' => [
             'only' => [
-                'id',
+                'idArr',
+                'idArr.*',
                 'sceneName',
                 'sceneCode',
                 'sceneConfig',
                 'isStop',
             ],
             'remove' => [
-                'id' => ['sometimes']
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes'],
             ]
         ],
     ];

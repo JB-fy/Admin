@@ -45,7 +45,7 @@ const saveForm = reactive({
                 return menuIdArr.indexOf(item) === index
             })
             try {
-                if (param?.id > 0) {
+                if (param?.idArr?.length > 0) {
                     await request('auth/role/update', param, true)
                 } else {
                     await request('auth/role/create', param, true)

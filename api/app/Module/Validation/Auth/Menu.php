@@ -35,7 +35,8 @@ class Menu extends AbstractValidation
         ],
         'update' => [
             'only' => [
-                'id',
+                'idArr',
+                'idArr.*',
                 'sceneId',
                 'pid',
                 'menuName',
@@ -44,7 +45,8 @@ class Menu extends AbstractValidation
                 'isStop',
             ],
             'remove' => [
-                'id' => ['sometimes']
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes'],
             ]
         ],
     ];

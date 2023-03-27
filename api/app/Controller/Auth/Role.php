@@ -101,7 +101,7 @@ class Role extends AbstractController
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
-                $this->service->update($data, ['id' => $data['id']]);
+                $this->service->update($data, ['id' => $data['idArr']]);
                 break;
             default:
                 throwFailJson('39999999');

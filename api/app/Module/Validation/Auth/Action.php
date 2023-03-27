@@ -38,7 +38,8 @@ class Action extends AbstractValidation
         ],
         'update' => [
             'only' => [
-                'id',
+                'idArr',
+                'idArr.*',
                 'actionName',
                 'actionCode',
                 'sceneIdArr',
@@ -47,7 +48,8 @@ class Action extends AbstractValidation
                 'isStop',
             ],
             'remove' => [
-                'id' => ['sometimes']
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes'],
             ]
         ],
     ];

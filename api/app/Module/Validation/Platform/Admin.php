@@ -50,7 +50,8 @@ class Admin extends AbstractValidation
         ],
         'update' => [
             'only' => [
-                'id',
+                'idArr',
+                'idArr.*',
                 'account',
                 'phone',
                 'password',
@@ -62,7 +63,8 @@ class Admin extends AbstractValidation
                 'isStop',
             ],
             'remove' => [
-                'id' => ['sometimes'],
+                'idArr' => ['sometimes'],
+                'idArr.*' => ['sometimes'],
                 'account' => ['required'],
                 'phone' => ['required'],
             ],

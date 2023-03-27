@@ -86,7 +86,7 @@ const table = reactive({
                     style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
                     onChange: (val: number) => {
                         handleUpdate({
-                            id: props.rowData.id,
+                            idArr: [props.rowData.id],
                             isStop: val
                         }).then((res) => {
                             props.rowData.isStop = val
@@ -181,6 +181,8 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
+                saveCommon.data.idArr = [saveCommon.data.id]
+                delete saveCommon.data.id
                 saveCommon.title = t('common.edit')
                 break;
             case 'copy':
@@ -192,7 +194,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
     }).catch(() => { })
 }
 //删除
-const handleDelete = (idArr: number[] | string[]) => {
+const handleDelete = (idArr: number[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
@@ -205,7 +207,7 @@ const handleDelete = (idArr: number[] | string[]) => {
     }).catch(() => { })
 }
 //更新
-const handleUpdate = async (param: { id: number, [propName: string]: any }) => {
+const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
     await request('auth/role/update', param, true)
 }
 

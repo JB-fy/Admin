@@ -100,7 +100,7 @@ class Admin extends AbstractController
                 }
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
-                $this->service->update($data, ['id' => $data['id']]);
+                $this->service->update($data, ['id' => $data['idArr']]);
                 break;
             default:
                 throwFailJson('39999999');
