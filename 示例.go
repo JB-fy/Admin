@@ -1,51 +1,49 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
-)
-
-type SearchApiParams struct {
-	OrderKey string `json:"orderKey"` // 排序
-	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
-}
-
 func main() {
-	/* 打印结构体
-	%v占位符是不会打印结构体字段名称的，字段之间以空格隔开；
-	%+v占位符会打印字段名称，字段之间也是以空格隔开；
-	%#v占位符则会打印结构体类型和字段名称，字段之间以逗号分隔 */
-	var pageInfo SearchApiParams
-	fmt.Printf("%#v\n", pageInfo)
-
-	/*--------gin框架 开始--------*/
-	//"github.com/gin-gonic/gin"
-	c := *gin.Context
-	//path参数获取（/user/:page/*action"）
-	page := c.Param("page")
-	action := c.Param("action")
-	//get参数获取
-	page := c.Query("page")
-	//post参数获取，对应application/x-www-form-urlencoded和from-data格式参数
-	page := c.PostForm("page")
-	//page := c.PostFormMap("page")
-	//post参数获取（Content-Type: application/json）
-	// var pageInfo systemReq.SearchApiParams
-	// err := c.ShouldBindJSON(&pageInfo)
-	/*--------gin框架 结束--------*/
-
-	/*--------验证器 开始--------*/
-	//"github.com/go-playground/validator/v10"
-	validate := validator.New()
-	var err error
-	err = validate.Struct(xxStruct)
-	err = validate.Var(map[string]string{"aaaa": "aaaa", "bbbb": "", "": "cccc"}, "required,dive,keys,required,endkeys,required")
-	var errs map[string]error
-	errs = validate.ValidateMap(map[string]interface{}{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]interface{}{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
-	/*--------验证器 结束--------*/
 }
+
+// type SearchApiParams struct {
+// 	OrderKey string `json:"orderKey"` // 排序
+// 	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
+// }
+// /* 打印结构体
+// %v占位符是不会打印结构体字段名称的，字段之间以空格隔开；
+// %+v占位符会打印字段名称，字段之间也是以空格隔开；
+// %#v占位符则会打印结构体类型和字段名称，字段之间以逗号分隔 */
+// var pageInfo SearchApiParams
+// fmt.Printf("%#v\n", pageInfo)
+// /*--------gin框架 开始--------*/
+// //"github.com/gin-gonic/gin"
+// c := *gin.Context
+// //path参数获取（/user/:page/*action"）
+// page := c.Param("page")
+// action := c.Param("action")
+// //get参数获取
+// page := c.Query("page")
+// //post参数获取，对应application/x-www-form-urlencoded和from-data格式参数
+// page := c.PostForm("page")
+// //page := c.PostFormMap("page")
+// //post参数获取（Content-Type: application/json）
+// // var pageInfo systemReq.SearchApiParams
+// // err := c.ShouldBindJSON(&pageInfo)
+// /*--------gin框架 结束--------*/
+
+// /*--------验证器 开始--------*/
+// //"github.com/go-playground/validator/v10"
+// validate := validator.New()
+// var err error
+// err = validate.Struct(xxStruct)
+// err = validate.Var(map[string]string{"aaaa": "aaaa", "bbbb": "", "": "cccc"}, "required,dive,keys,required,endkeys,required")
+// var errs map[string]error
+// errs = validate.ValidateMap(map[string]interface{}{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]interface{}{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
+// /*--------验证器 结束--------*/
+
+// /*--------时间相关 开始--------*/
+// //2006-01-02 15:04:05相当于php的y-m-d H:i:s
+// st, err := time.Parse("2006-01-02 15:04:05", "2023-01-01 00:00:00")
+// 时间戳 := st.Unix()
+// /*--------时间相关 开始--------*/
 
 /*
 go开发流程
@@ -66,12 +64,14 @@ go开发流程
 		所以强烈不建议用数据库模型结构体接收前端参数，做数据库创建和更新
 	使用map方式做创建和更新操作时，字段名必须与数据库字段名一致
 
-	不建议用结构体直接插入，会有默认值问题（Column 'xxxx' cannot be null）
+	//不建议用结构体直接插入，会有默认值问题（Column 'xxxx' cannot be null）
 		err = global.MustGetGlobalDBByDBName(dbName).Create(&tabGameServer).Error
-	多行数据插入，如果每行数据字段都一样，则直接使用这个方式
+	//多行数据同时插入。每行数据字段都一样时使用，否则差异字段会被插入null，导致数据库报错
 		err = global.MustGetGlobalDBByDBName(dbName).Model(&game.TabGameServer{}).Create(data).Error
-	多行数据插入，如果每行数据字段不一样，则需要每行单独执行，否则会导致差异字段会被插入null
+	//多行数据循环插入。每行数据字段不一样时使用
 		for _, one := range data {
 			err = global.MustGetGlobalDBByDBName(dbName).Model(&game.TabGameServer{}).Create(one).Error
 		}
+
+
 */
