@@ -72,6 +72,4 @@ go开发流程
 		for _, one := range data {
 			err = global.MustGetGlobalDBByDBName(dbName).Model(&game.TabGameServer{}).Create(one).Error
 		}
-
-
 */
