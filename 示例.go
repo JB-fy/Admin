@@ -72,4 +72,8 @@ go开发流程
 		for _, one := range data {
 			err = global.MustGetGlobalDBByDBName(dbName).Model(&game.TabGameServer{}).Create(one).Error
 		}
+
+	//会使关联表字符串类型的字段取出来的值类型为[]btye，根本不能给前端使用。用Table("tab_game_server")替换Model(&game.TabGameServer{})可解决
+	global.MustGetGlobalDBByDBName(dbName).Model(&game.TabGameServer{}).Joins("left join tab_game on tab_game.id = tab_game_server.game_id")
+
 */
