@@ -40,8 +40,11 @@ func main() {
 // /*--------验证器 结束--------*/
 
 // /*--------时间相关 开始--------*/
+// cstZone, _ := time.LoadLocation("Asia/Shanghai")	//设置时区
+// time.Local = cstZone
 // //2006-01-02 15:04:05相当于php的y-m-d H:i:s
 // st, err := time.Parse("2006-01-02 15:04:05", "2023-01-01 00:00:00")
+// st, err := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.Local)
 // 时间戳 := st.Unix()
 // /*--------时间相关 开始--------*/
 
