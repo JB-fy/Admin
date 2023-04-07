@@ -58,7 +58,8 @@ func main() {
 /*--------json 开始--------*/
 
 /*--------gorm 开始--------*/
-/* var info map[string]interface{}
+/*
+var info map[string]interface{}
 db.Table("table").Where("id", id).Take(&info)
 
 var list []map[string]interface{}
@@ -77,7 +78,9 @@ db.Table("table").Updates(map[string]interface{}{"price": gorm.Expr("price + ?",
 db.Where("id", id).Delete(&game.TabPromoteSettlement{})
 
 db.RowsAffected
-errors.Is(err, gorm.ErrRecordNotFound) */
+
+errors.Is(err, gorm.ErrRecordNotFound)	//Find方法不会报这个错
+*/
 /*--------gorm 开始--------*/
 
 /*
