@@ -13,8 +13,8 @@ func main() {
 // %#v占位符则会打印结构体类型和字段名称，字段之间以逗号分隔 */
 // var pageInfo SearchApiParams
 // fmt.Printf("%#v\n", pageInfo)
-// /*--------gin框架 开始--------*/
-// //"github.com/gin-gonic/gin"
+/*--------gin框架 开始--------*/
+//"github.com/gin-gonic/gin"
 // c := *gin.Context
 // //path参数获取（/user/:page/*action"）
 // page := c.Param("page")
@@ -27,9 +27,9 @@ func main() {
 // //post参数获取（Content-Type: application/json）
 // // var pageInfo systemReq.SearchApiParams
 // // err := c.ShouldBindJSON(&pageInfo)
-// /*--------gin框架 结束--------*/
+/*--------gin框架 结束--------*/
 
-// /*--------验证器 开始--------*/
+/*--------验证器 开始--------*/
 // //"github.com/go-playground/validator/v10"
 // validate := validator.New()
 // var err error
@@ -37,16 +37,48 @@ func main() {
 // err = validate.Var(map[string]string{"aaaa": "aaaa", "bbbb": "", "": "cccc"}, "required,dive,keys,required,endkeys,required")
 // var errs map[string]error
 // errs = validate.ValidateMap(map[string]interface{}{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]interface{}{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
-// /*--------验证器 结束--------*/
+/*--------验证器 结束--------*/
 
-// /*--------时间相关 开始--------*/
+/*--------时间相关 开始--------*/
 // cstZone, _ := time.LoadLocation("Asia/Shanghai")	//设置时区
 // time.Local = cstZone
 // //2006-01-02 15:04:05相当于php的y-m-d H:i:s
 // st, err := time.Parse("2006-01-02 15:04:05", "2023-01-01 00:00:00")
 // st, err := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.Local)
 // 时间戳 := st.Unix()
-// /*--------时间相关 开始--------*/
+/*--------时间相关 开始--------*/
+
+/*--------json 开始--------*/
+// var rawData map[string]interface{}{
+// 	"a":"a"
+// }
+// rawDataJson, _ := json.Marshal(rawData)
+// var orgData map[string]interface{}
+// json.Unmarshal(rawDataJson, &orgData)
+/*--------json 开始--------*/
+
+/*--------gorm 开始--------*/
+/* var info map[string]interface{}
+db.Table("table").Where("id", id).Take(&info)
+
+var list []map[string]interface{}
+db.Table("table").Joins("left join table1 on table1.user_id=table.id").Find(&list)
+
+var list []interface{}
+db.Table("table").Where("id", v).Pluck("id", &list)
+
+var sum int
+db.Model(&users).Where("id", 1).Pluck("SUM(price) as sum", &sum)
+
+db.Table("table").Create(map[string]interface{}{"id":id})
+
+db.Table("table").Updates(map[string]interface{}{"price": gorm.Expr("price + ?", 1)})
+
+db.Where("id", id).Delete(&game.TabPromoteSettlement{})
+
+db.RowsAffected
+errors.Is(err, gorm.ErrRecordNotFound) */
+/*--------gorm 开始--------*/
 
 /*
 go开发流程
