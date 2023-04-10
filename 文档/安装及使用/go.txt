@@ -22,6 +22,8 @@
     go build
 #运行文件
     go run xx.go
+#生成模块管理mod文件
+    go mod init xx.go
 #格式化文件
     go fmt xx.go
 #在当前目录的任意一个带有（//go:generate)开头注释的xx.go文件，自动化执行该注释后面的命令
