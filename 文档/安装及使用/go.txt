@@ -12,8 +12,10 @@
         #主要配置说明
             GOPATH  公共工作目录
             GOBIN   go install命令安装可执行文件的存放路径，默认空，则使用GOPATH/bin作为存放路径。该存放路径必须设置到系统环境变量中，否则执行文件命令会报找不到
-#设置代理（默认：https://proxy.golang.org,direct）
+#修改代理（默认：https://proxy.golang.org,direct）
     go env -w GOPROXY=https://goproxy.cn,direct
+#修改GOPATH（默认：/home/xx/go，建议修改为与GOROOT一致，这样就不用设置/home/xx/go/bin到环境变量中）
+    go env -w GOPATH=/server/tool/go-1.20.2
 #安装可执行文件
     go install
 #删除其他命令产生的文件和目录
@@ -26,7 +28,7 @@
     go mod init xx.go
 #格式化文件
     go fmt xx.go
-#在当前目录的任意一个带有（//go:generate)开头注释的xx.go文件，自动化执行该注释后面的命令
+#在当前目录的任意一个带有（//go:generate）开头注释的xx.go文件，自动化执行该注释后面的命令
     go generate -x（显示并执行命令） -n（显示不执行命令） -v（显示被处理的包名和源文件名）
 /**----------------常用命令 结束----------------**/
 
