@@ -39,55 +39,12 @@ baitao1
 123456
 
 
-阿里云账号：
-游维空间
-xiaoniu1992818
-
-服务器账号：
-root
-ghb123456~
-前端：
-外网面板地址: http://121.40.182.216:16734/97a029a3
-内网面板地址: http://172.20.122.39:16734/97a029a3
-username: qynsulyb
-password: 2364f434
-
-后端1：
-外网面板地址: http://121.41.103.171:8888/c9eb7208
-内网面板地址: http://172.20.122.40:8888/c9eb7208
-username: w4wvtw5n
-password: Opuab$5f8hcWCPkU
-后端2：
-外网面板地址: http://121.199.55.46:8888/c31616e0
-内网面板地址: http://172.20.122.38:8888/c31616e0
-username: fkvqhwf5
-password: 1ac02ab6
-
-
-
-
-当泥
-http://dn.shangyouhuyu.com
-
-
-河南得玩商务管理有限公司
-http://cx.youqu95.com
-116.62.16.150（公）
-172.22.212.20（私有）
-外网面板地址: https://116.62.16.150:8888/e7c19142
-内网面板地址: https://172.22.212.20:12021/e7c19142
-
-
-
-
-
 文档连接地址：https://gamemeta.net.cn/mobile/article/detail/id/2.html
 错误图片显示：__TMPL__/mobilepublic/assets/images/background-of-img.png
 
 
-
-
-thinkphp5 mysql使用方式
+//打印sql
+\think\Db::getLastSql()
 
 where('id', 'in', [])
 where(['game_status' => 1, Db::raw('id=relation_game_id')])
@@ -101,14 +58,8 @@ insertGetId();
 column('id');
 value('id');
 
-
-
-
-待补充 三个字的地方需要后期补充代码
-
-$data = OpusOrderModel::field(['art_opus_index_order.*', 'p.account', 'u.phone as platform_phone'])
-->join([PromoteModel::getTable() => 'p'], 'p.id=art_opus_index_order.promote_id', 'left')
-->join([UserModel::getTable() => 'u'], 'u.id=art_opus_index_order.platform_user_id', 'left')
+$data = OpusOrderModel::alias('oo')
+->join([PromoteModel::getTable() => 'p'], 'p.id=oo.promote_id', 'left')
 ->where($where)
 ->order('id desc')
 ->paginate($row, false, ['query' => $this->request->param()]);
@@ -116,6 +67,14 @@ $page = $data->render();
 $this->assign("data_lists", $data);
 $this->assign("page", $page);
 
+
+$res = (new BLogic())->create_blindbox_order($id, UID);
+if ($res['code'] != 200) {
+    //$this->set_message(0, $res['msg']);
+    $this->error($res['msg'], null, $res['data']);
+}
+//$this->set_message(200, '获取成功', $res['data']);
+$this->success($res['msg'], null, $res['data']);
 
 
 图片错误用占位使用占位图    
@@ -129,7 +88,6 @@ $this->assign("page", $page);
 \think\Log::write('dddd', 'info');
 
 {:url('mobile/market/index',['id'=>123])}
-
 
 <if condition="count($carousel) gt 1">
 <if $carousel gt 1>
