@@ -70,11 +70,15 @@ $this->assign("page", $page);
 
 $res = (new BLogic())->create_blindbox_order($id, UID);
 if ($res['code'] != 200) {
-    //$this->set_message(0, $res['msg']);
     $this->error($res['msg'], null, $res['data']);
 }
-//$this->set_message(200, '获取成功', $res['data']);
 $this->success($res['msg'], null, $res['data']);
+
+$res = (new BLogic())->create_blindbox_order($id, UID);
+if ($res['code'] != 200) {
+    $this->set_message(0, $res['msg'], $res['data']);
+}
+$this->set_message(200, $res['msg'], $res['data']);
 
 
 图片错误用占位使用占位图    
