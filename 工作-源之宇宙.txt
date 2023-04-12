@@ -130,9 +130,14 @@ $this->assign("page", $page);
 
 {:url('mobile/market/index',['id'=>123])}
 
-<if condition="count($carousel) gt 1"></if>
-<if $carousel gt 1></if>
 
-<volist name="$typeList" id="vo">
-id：值
-key：键。默认有。但不能明着写key="key"，否则每个key都会自动加1
+<if condition="count($carousel) gt 1">
+<if $carousel gt 1>
+<elseif />
+<else/>
+</if>
+
+<volist name="userList" id="user" empty="">
+volist的key与foreach不同，是数字，从1开始。且不能写key="key"，否则每个key都会自动加1，将从2开始
+
+<foreach name="userList" id="user" key="key" index="i" mod="2" offset="3" length="5" empty="">
