@@ -74,6 +74,7 @@ if ($res['code'] != 200) {
 }
 $this->success($res['msg'], null, $res['data']);
 $this->assign('order', $res['data']['order']);
+return $this->fetch();
 
 $res = (new BLogic())->create_blindbox_order($id, UID);
 if ($res['code'] != 200) {
