@@ -92,6 +92,7 @@ $this->set_message(200, $res['msg'], $res['data']);
 写入日志，做调试用
 \think\Log::init(['type' => 'File', 'path' => ROOT_PATH]);
 \think\Log::write('dddd', 'info');
+file_put_contents(dirname(__FILE__) . '/test.txt', json_encode([]) . PHP_EOL);
 
 {:url('mobile/market/index',['id'=>123])}
 
