@@ -24,12 +24,12 @@
     position: sticky;
     top: 0;
 
+    /* 文本不换行 */
+    white-space: nowrap;
     /* 超出隐藏 */
     overflow: hidden;
     /* 超出部分显示省略号 */
     text-overflow: ellipsis;
-    /* 文本不换行 */
-    white-space: nowrap;
 
     /* 边框 */
     border: 1px dotted #ACACAC;
