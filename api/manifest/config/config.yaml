@@ -1,0 +1,21 @@
+server:
+  address: ":8000"
+  openapiPath: "/api.json"
+  swaggerPath: "/swagger"
+
+logger:
+  level: "all"
+  stdout: true
+
+database:
+  default:
+    # type: "mysql"
+    # host: "0.0.0.0"
+    # port: "3306"
+    # user: "root"
+    # pass: "root@123"
+    # name: "admin"
+    - link: "mysql:root:root@123@tcp(0.0.0.0:3306)/admin"
+      role: "master"
+    - link: "mysql:root:root@123@tcp(0.0.0.0:3306)/admin"
+      role: "slave"
