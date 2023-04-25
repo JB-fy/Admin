@@ -7,8 +7,12 @@
     justify-content: center;
     /* 弹性盒子内元素设置，用于占满剩余空间 */
     flex: 1;
-    /* 弹性盒子排列方式 */
-    flex-flow: column;
+    /* row水平显示；row-reverse水平显示，但顺序相反；column	垂直显示；column-reverse垂直显示，但顺序相反 */
+    flex-direction: row;
+    /* nowrap不拆行或不拆列；wrap拆行或拆列；wrap-reverse拆行或拆列，但顺序相反 */
+    flex-wrap: nowrap;
+    /* flex-direction，flex-wrap组合属性 */
+    flex-flow: row nowrap;
 
     /* 垂直居中（父元素需要设置position: relative;或position: absolute;） */
     position: absolute;
@@ -39,7 +43,7 @@
     background-repeat: no-repeat;
 
     /* 背景色渐变 */
-    background: linear-gradient(180deg, #C8E2FF 0%,#FFFFFF 20%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #C8E2FF 0%, #FFFFFF 20%, #FFFFFF 100%);
 }
 
 /* 带有attr="val"属性的元素 */
