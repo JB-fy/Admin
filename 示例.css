@@ -7,8 +7,8 @@
     justify-content: center;
     /* 弹性盒子内元素设置，用于占满剩余空间 */
     flex: 1;
-    /* row水平显示；row-reverse水平显示，但顺序相反；column	垂直显示；column-reverse垂直显示，但顺序相反 */
-    flex-direction: row;
+    /* row水平显示；row-reverse水平显示，但顺序相反；column垂直显示；column-reverse垂直显示，但顺序相反 */
+    flex-direction: column;
     /* nowrap不拆行或不拆列；wrap拆行或拆列；wrap-reverse拆行或拆列，但顺序相反 */
     flex-wrap: nowrap;
     /* flex-direction，flex-wrap组合属性 */
