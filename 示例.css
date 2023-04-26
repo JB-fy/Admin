@@ -24,6 +24,8 @@
     position: sticky;
     top: 0;
 
+    /* 文本缩进 */
+    text-indent: 3rem;
     /* 文本不换行 */
     white-space: nowrap;
     /* 超出隐藏 */
