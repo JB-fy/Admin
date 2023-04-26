@@ -35,6 +35,8 @@
     border: 1px dotted #ACACAC;
     /* 上边框是点状，右边框是实线，下边框是双线，左边框是虚线 */
     border-style: dotted solid double dashed;
+    /* content-box元素宽高不包含内边距和边框；border-box元素宽高包含内边距和边框 */
+    box-sizing: border-box;
 
     /* 背景 */
     background-image: url(__TMPL__/mobilepublic/assets/images/opus_bg_05.jpg);
