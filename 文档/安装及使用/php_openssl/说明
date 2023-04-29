@@ -1,0 +1,3 @@
+解决本地环境PHP函数file_get_contents()使用https协议时报错问题：SSL operation failed with code
+	在php.ini中增加修改openssl.cafile设置当前文件路径
+	openssl.cafile = /server/tool/php_openssl/cacert.pem
