@@ -1,8 +1,8 @@
 依赖：yum install gcc gcc-c++ make libxml2-devel openssl-devel sqlite-devel libcurl-devel libicu-devel openldap-devel libxslt-devel libwebp-devel libjpeg-devel freetype-devel libsodium-devel oniguruma-devel libzip-devel
     1、创建安装目录
-        mkdir -p /server/tool/php-7.4.33
+        mkdir -p /server/tool/php-8.2.5
     2、解压php安装
-        tar -xvf php-7.4.33.tar.gz
+        tar -xvf php-8.2.5.tar.gz
 
         进入解压目录运行
             //apache模块加载方式设置
@@ -35,38 +35,38 @@
         //8.0版本弃用
         --enable-inline-optimization --enable-maintainer-zts --with-xmlrpc --with-iconv-dir
         //可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
-        ./configure --prefix=/server/tool/php-7.4.33 --with-config-file-path=/server/tool/php-7.4.33/etc --with-config-file-scan-dir=/server/tool/php-7.4.33/etc/php.d --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd --enable-fpm --enable-mysqlnd-compression-support --enable-rpath --enable-bcmath --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --enable-pcntl --enable-sockets --enable-soap --enable-gd --enable-xml --enable-exif --enable-opcache --enable-calendar --enable-session --enable-posix --enable-shmop --enable-sysvsem --enable-sysvmsg --enable-sysvshm --with-sodium --with-zlib --with-mhash --with-freetype --with-jpeg --with-webp --with-gettext --with-pear --with-xsl --with-zip --with-bz2 --with-ldap=shared --with-curl --with-openssl
+        ./configure --prefix=/server/tool/php-8.2.5 --with-config-file-path=/server/tool/php-8.2.5/etc --with-config-file-scan-dir=/server/tool/php-8.2.5/etc/php.d --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd --enable-fpm --enable-mysqlnd-compression-support --enable-rpath --enable-bcmath --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --enable-pcntl --enable-sockets --enable-soap --enable-gd --enable-xml --enable-exif --enable-opcache --enable-calendar --enable-session --enable-posix --enable-shmop --enable-sysvsem --enable-sysvmsg --enable-sysvshm --with-sodium --with-zlib --with-mhash --with-freetype --with-jpeg --with-webp --with-gettext --with-pear --with-xsl --with-zip --with-bz2 --with-ldap=shared --with-curl --with-openssl
 
         //安装
         make && make install
     3、拷贝配置文件
         //拷贝php配置文件
-        cp /server/php-7.4.33/php.ini-production /server/tool/php-7.4.33/etc/php.ini
-        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-7.4.33，php-fpm-7.4.33）
-        cp /server/php-7.4.33/sapi/fpm/init.d.php-fpm /server/tool/php-7.4.33/bin/php-fpm-7.4.33
-        cp /server/tool/php-7.4.33/etc/php-fpm.conf.default /server/tool/php-7.4.33/etc/php-fpm.conf
-        cp /server/tool/php-7.4.33/etc/php-fpm.d/www.conf.default /server/tool/php-7.4.33/etc/php-fpm.d/www.conf
+        cp /server/php-8.2.5/php.ini-production /server/tool/php-8.2.5/etc/php.ini
+        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-8.2.5，php-fpm-8.2.5）
+        cp /server/php-8.2.5/sapi/fpm/init.d.php-fpm /server/tool/php-8.2.5/bin/php-fpm-8.2.5
+        cp /server/tool/php-8.2.5/etc/php-fpm.conf.default /server/tool/php-8.2.5/etc/php-fpm.conf
+        cp /server/tool/php-8.2.5/etc/php-fpm.d/www.conf.default /server/tool/php-8.2.5/etc/php-fpm.d/www.conf
         //安装多版本需要改监听端口，不同版本端口设置要不一样
-        vi /server/tool/php-7.4.33/etc/php-fpm.d/www.conf
+        vi /server/tool/php-8.2.5/etc/php-fpm.d/www.conf
     4、编辑自启动文件
-        vi /etc/systemd/system/php-fpm-7.4.33.service
+        vi /etc/systemd/system/php-fpm-8.2.5.service
 [Unit]
-Description=php-fpm-7.4.33
+Description=php-fpm-8.2.5
 After=network.target
 [Service]
 Type=forking
-PIDFile=/server/tool/php-7.4.33/var/run/php-fpm.pid
-ExecStart=/server/tool/php-7.4.33/bin/php-fpm-7.4.33 start
-ExecReload=/server/tool/php-7.4.33/bin/php-fpm-7.4.33 reload
-ExecStop=/server/tool/php-7.4.33/bin/php-fpm-7.4.33 stop
+PIDFile=/server/tool/php-8.2.5/var/run/php-fpm.pid
+ExecStart=/server/tool/php-8.2.5/bin/php-fpm-8.2.5 start
+ExecReload=/server/tool/php-8.2.5/bin/php-fpm-8.2.5 reload
+ExecStop=/server/tool/php-8.2.5/bin/php-fpm-8.2.5 stop
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
     5、设置自启动
-        chmod -R 755 /server/tool/php-7.4.33/bin/php-fpm-7.4.33
-        systemctl enable php-fpm-7.4.33
+        chmod -R 755 /server/tool/php-8.2.5/bin/php-fpm-8.2.5
+        systemctl enable php-fpm-8.2.5
     6、设置环境变量增加以下目录（参考linux常用命令）
-        /server/tool/php-7.4.33/bin
+        /server/tool/php-8.2.5/bin
     7、扩展安装
         扩展包里面执行以下步骤
         phpize
@@ -82,7 +82,7 @@ WantedBy=multi-user.target
     tar -xvf redis-5.3.7.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-7.4.33/bin/php-config
+    ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=redis.so
@@ -91,7 +91,7 @@ WantedBy=multi-user.target
     进入目录编译
     phpize
     //5.0版本弃用：--enable-http2
-    ./configure --with-php-config=/server/tool/php-7.4.33/bin/php-config --enable-openssl
+    ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config --enable-openssl
     make && make install
     在php.ini添加以下内容
     extension=swoole.so
@@ -99,7 +99,7 @@ WantedBy=multi-user.target
     tar -xvf event-3.0.8.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-7.4.33/bin/php-config
+    ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=event.so
@@ -107,7 +107,7 @@ WantedBy=multi-user.target
     tar -xvf xdebug-3.1.6.tgz
     进入目录编译
     phpize
-    ./configure --with-php-config=/server/tool/php-7.4.33/bin/php-config
+    ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
     zend_extension=xdebug.so
@@ -117,7 +117,7 @@ WantedBy=multi-user.target
     xdebug.client_port=9003
 
 修改配置参数
-vi /server/tool/php-7.4.33/etc/php.ini
+vi /server/tool/php-8.2.5/etc/php.ini
 修改以下参数
 memory_limit            1024M
 upload_max_filesize     50M

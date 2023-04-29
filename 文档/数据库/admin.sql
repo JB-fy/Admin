@@ -4,14 +4,14 @@
  Source Server         : 本地-8.0.32
  Source Server Type    : MySQL
  Source Server Version : 80032 (8.0.32)
- Source Host           : 192.168.200.200:3306
+ Source Host           : 192.168.0.16:3306
  Source Schema         : admin_raw
 
  Target Server Type    : MySQL
  Target Server Version : 80032 (8.0.32)
  File Encoding         : 65001
 
- Date: 13/02/2023 00:13:26
+ Date: 29/04/2023 09:55:44
 */
 
 SET NAMES utf8mb4;
