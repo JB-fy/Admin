@@ -5,9 +5,9 @@
         tar -xvf php-8.2.5.tar.gz
 
         进入解压目录运行
-            //apache模块加载方式设置
+            #apache模块加载方式设置
             --with-apxs2=/tool/apache/bin/apxs
-            //php-fpm方式设置
+            #php-fpm方式设置
             --enable-fpm
 
 报错处理
@@ -28,25 +28,25 @@
         make && make install
 		echo "/usr/local/lib64" >> /etc/ld.so.conf
 		ldconfig -v
-        //安装完php后，备份openssl-1.1.1q，切回系统自带的openssl-3.0.5
+        #安装完php后，备份openssl-1.1.1q，切回系统自带的openssl-3.0.5
         mv /usr/local/bin/openssl /usr/local/bin/openssl-1.1.1q
 		ln -s /usr/bin/openssl /usr/local/bin/openssl
 
-        //8.0版本弃用
+        #8.0版本弃用
         --enable-inline-optimization --enable-maintainer-zts --with-xmlrpc --with-iconv-dir
-        //可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
+        #可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
         ./configure --prefix=/server/tool/php-8.2.5 --with-config-file-path=/server/tool/php-8.2.5/etc --with-config-file-scan-dir=/server/tool/php-8.2.5/etc/php.d --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd --enable-fpm --enable-mysqlnd-compression-support --enable-rpath --enable-bcmath --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --enable-pcntl --enable-sockets --enable-soap --enable-gd --enable-xml --enable-exif --enable-opcache --enable-calendar --enable-session --enable-posix --enable-shmop --enable-sysvsem --enable-sysvmsg --enable-sysvshm --with-sodium --with-zlib --with-mhash --with-freetype --with-jpeg --with-webp --with-gettext --with-pear --with-xsl --with-zip --with-bz2 --with-ldap=shared --with-curl --with-openssl
 
-        //安装
+        #安装
         make && make install
     3、拷贝配置文件
-        //拷贝php配置文件
+        #拷贝php配置文件
         cp /server/php-8.2.5/php.ini-production /server/tool/php-8.2.5/etc/php.ini
-        //php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-8.2.5，php-fpm-8.2.5）
+        #php-fpm启动方式设置（多个版本设置多个php-fpm，如php-fpm-8.2.5，php-fpm-8.2.5）
         cp /server/php-8.2.5/sapi/fpm/init.d.php-fpm /server/tool/php-8.2.5/bin/php-fpm-8.2.5
         cp /server/tool/php-8.2.5/etc/php-fpm.conf.default /server/tool/php-8.2.5/etc/php-fpm.conf
         cp /server/tool/php-8.2.5/etc/php-fpm.d/www.conf.default /server/tool/php-8.2.5/etc/php-fpm.d/www.conf
-        //安装多版本需要改监听端口，不同版本端口设置要不一样
+        #安装多版本需要改监听端口，不同版本端口设置要不一样
         vi /server/tool/php-8.2.5/etc/php-fpm.d/www.conf
     4、编辑自启动文件
         vi /etc/systemd/system/php-fpm-8.2.5.service
@@ -90,7 +90,7 @@ WantedBy=multi-user.target
     tar -xvf swoole-src-5.0.2.tar.gz
     进入目录编译
     /server/tool/php-8.2.5/bin/phpize
-    //5.0版本弃用：--enable-http2
+    #5.0版本弃用：--enable-http2
     ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config --enable-openssl
     make && make install
     在php.ini添加以下内容
@@ -104,23 +104,25 @@ WantedBy=multi-user.target
     在php.ini添加以下内容
     extension=event.so
 安装xdebug
-    tar -xvf xdebug-3.1.6.tgz
+    #php7.4（含）以下安装xdebug-3.1.6
+    tar -xvf xdebug-3.2.1.tgz
     进入目录编译
     /server/tool/php-8.2.5/bin/phpize
     ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
     zend_extension=xdebug.so
-    xdebug.mode=debug
+    xdebug.mode=develop,debug,profile,trace
     xdebug.start_with_request=yes
-    xdebug.client_host=127.0.0.1
+    xdebug.client_host=0.0.0.0
     xdebug.client_port=9003
+
 
 修改配置参数
 vi /server/tool/php-8.2.5/etc/php.ini
 修改以下参数
 memory_limit            1024M
-upload_max_filesize     50M
+upload_max_filesize     100M
 post_max_size           100M
 max_execution_time      不改
 disable_functions       phpinfo,eval,proc_open      这里禁用函数（需要时才做）
@@ -128,3 +130,11 @@ disable_functions       phpinfo,eval,proc_open      这里禁用函数（需要�
 extension=redis.so
 extension=swoole.so
 swoole.use_shortname=off
+zend_extension=xdebug.so
+xdebug.mode=develop,debug,profile,trace
+xdebug.start_with_request=yes
+xdebug.client_host=0.0.0.0
+xdebug.client_port=9003
+
+vi /server/swoole-src-5.0.2/include/swoole_proxy.h
+#include <cstdint>
