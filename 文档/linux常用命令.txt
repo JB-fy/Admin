@@ -57,7 +57,7 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 /**--------设置环境变量 开始--------**/
 修改配置文件 /etc/profile 在最下面追加目录（多路径用冒号分开）
 vi /etc/profile
-PATH=$PATH:/server/tool/nginx-1.22.1/sbin:/server/tool/mysql-8.0.32/bin:/server/tool/php-8.1.15/bin:/server/tool/node-18.14.0/bin:/server/tool/composer:/server/tool/git-2.39.1/bin
+PATH=$PATH:/server/tool/nginx-1.24.0/sbin:/server/tool/mysql-8.0.33/bin:/server/tool/php-8.2.5/bin:/server/tool/composer:/server/tool/node-18.16.0/bin:/server/tool/go-1.20.3/bin:/server/tool/git-2.40.1/bin
 //马上生效
 source /etc/profile
 /**--------设置环境变量 结束--------**/

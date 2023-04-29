@@ -1,17 +1,17 @@
 依赖：yum install gcc gcc-c++ make pcre-devel openssl-devel
     1、创建安装目录
-        mkdir -p /server/tool/nginx-1.22.1
+        mkdir -p /server/tool/nginx-1.24.0
     2、解压nginx安装
-        tar -xvf nginx-1.22.1.tar.gz
+        tar -xvf nginx-1.24.0.tar.gz
 
         进入解压目录编译并安装
-        ./configure --prefix=/server/tool/nginx-1.22.1 --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_realip_module --with-stream --with-stream_ssl_module --with-stream_realip_module --with-http_flv_module --with-http_stub_status_module --with-pcre --with-pcre-jit
+        ./configure --prefix=/server/tool/nginx-1.24.0 --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_realip_module --with-stream --with-stream_ssl_module --with-stream_realip_module --with-http_flv_module --with-http_stub_status_module --with-pcre --with-pcre-jit
 
         make && make install
         //运行测试（远程不能连接时需关闭防火墙）
-        /server/tool/nginx-1.22.1/sbin/nginx
+        /server/tool/nginx-1.24.0/sbin/nginx
     3、域名配置
-        编辑文件 vi /server/tool/nginx-1.22.1/conf/nginx.conf 写入
+        编辑文件 vi /server/tool/nginx-1.24.0/conf/nginx.conf 写入
 #user nobody;  #启动Ngnix工作进程的用户和组
 worker_processes auto;  #启动的工作进程数，默认1，可设置自动auto
 #error_log  logs/error.log error;   #错误日志配置，可选值：debug、info、notice、wam、error、crit、alert、emerg
@@ -40,28 +40,28 @@ http {
     keepalive_timeout   65; #设置会话保持时间，单位是秒
     gzip    on;         #开启文件压缩
     client_max_body_size 1024m; #最大上传文件大小，php也得设置，以双方最小值为准  
-    include /server/tool/nginx-1.22.1/conf/web/*.conf;   #导入其他路径的配置文件
+    include /server/tool/nginx-1.24.0/conf/web/*.conf;   #导入其他路径的配置文件
 }
 
-        创建目录 mkdir -p /server/tool/nginx-1.22.1/conf/web
+        创建目录 mkdir -p /server/tool/nginx-1.24.0/conf/web
         在该目录下创建各个域名的配置文件
-        编辑文件 vi /server/tool/nginx-1.22.1/conf/web/域名.conf 写入
+        编辑文件 vi /server/tool/nginx-1.24.0/conf/web/域名.conf 写入
 
     4、编辑自启动文件
-        vi /etc/systemd/system/nginx-1.22.1.service
+        vi /etc/systemd/system/nginx-1.24.0.service
 [Unit]
 Description=nginx
 After=network.target
 [Service]
 Type=forking
-PIDFile=/server/tool/nginx-1.22.1/logs/nginx.pid
-ExecStart=/server/tool/nginx-1.22.1/sbin/nginx
-ExecReload=/server/tool/nginx-1.22.1/sbin/nginx -s reload
-ExecStop=/server/tool/nginx-1.22.1/sbin/nginx -s quit
+PIDFile=/server/tool/nginx-1.24.0/logs/nginx.pid
+ExecStart=/server/tool/nginx-1.24.0/sbin/nginx
+ExecReload=/server/tool/nginx-1.24.0/sbin/nginx -s reload
+ExecStop=/server/tool/nginx-1.24.0/sbin/nginx -s quit
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
     5、设置自启动
-        systemctl enable nginx-1.22.1
+        systemctl enable nginx-1.24.0
     6、设置环境变量增加以下目录（参考linux常用命令）
-        /server/tool/nginx-1.22.1/sbin
+        /server/tool/nginx-1.24.0/sbin
