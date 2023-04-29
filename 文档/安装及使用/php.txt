@@ -81,15 +81,15 @@ WantedBy=multi-user.target
 安装redis扩展
     tar -xvf redis-5.3.7.tgz
     进入目录编译
-    phpize
+    /server/tool/php-8.2.5/bin/phpize
     ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
     extension=redis.so
 安装swoole
-    tar -xvf swoole-src-5.0.1.tar.gz
+    tar -xvf swoole-src-5.0.2.tar.gz
     进入目录编译
-    phpize
+    /server/tool/php-8.2.5/bin/phpize
     //5.0版本弃用：--enable-http2
     ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config --enable-openssl
     make && make install
@@ -98,7 +98,7 @@ WantedBy=multi-user.target
 安装event
     tar -xvf event-3.0.8.tgz
     进入目录编译
-    phpize
+    /server/tool/php-8.2.5/bin/phpize
     ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
@@ -106,7 +106,7 @@ WantedBy=multi-user.target
 安装xdebug
     tar -xvf xdebug-3.1.6.tgz
     进入目录编译
-    phpize
+    /server/tool/php-8.2.5/bin/phpize
     ./configure --with-php-config=/server/tool/php-8.2.5/bin/php-config
     make && make install
     在php.ini添加以下内容
