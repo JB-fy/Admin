@@ -98,7 +98,8 @@ if (!function_exists('dbTablePartition')) {
             $db->update($partitionCreateSql);
             $maxPartitionName = $partitionName;
         } else {
-            $maxPartitionName = $partitionList[count($partitionList) - 1];
+            //$maxPartitionName = $partitionList[count($partitionList) - 1];
+            $maxPartitionName = $partitionList[0];
         }
         /**--------无分区则建立当前分区 结束--------**/
 
