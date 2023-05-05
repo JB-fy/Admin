@@ -3,16 +3,28 @@ package main
 func main() {
 }
 
-// type SearchApiParams struct {
-// 	OrderKey string `json:"orderKey"` // 排序
-// 	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
-// }
-// /* 打印结构体
-// %v占位符是不会打印结构体字段名称的，字段之间以空格隔开；
-// %+v占位符会打印字段名称，字段之间也是以空格隔开；
-// %#v占位符则会打印结构体类型和字段名称，字段之间以逗号分隔 */
-// var pageInfo SearchApiParams
-// fmt.Printf("%#v\n", pageInfo)
+/*--------打印 开始--------*/
+// %v	按值的本来值输出
+// %+v	在 %v 基础上，对结构体字段名和值进行展开
+// %#v	输出 Go 语言语法格式的值
+// %T	输出 Go 语言语法格式的类型和值
+// %%	输出 % 本体
+// %b	整型以二进制方式显示
+// %o	整型以八进制方式显示
+// %d	整型以十进制方式显示
+// %x	整型以十六进制方式显示
+// %X	整型以十六进制、字母大写方式显示
+// %U	Unicode 字符
+// %f	浮点数
+// %p	指针，十六进制方式显示
+/* type SearchApiParams struct {
+	OrderKey string `json:"orderKey"` // 排序
+	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
+}
+var pageInfo SearchApiParams
+fmt.Printf("%#v\n", pageInfo) */
+/*--------打印 结束--------*/
+
 /*--------gin框架 开始--------*/
 //"github.com/gin-gonic/gin"
 // c := *gin.Context
