@@ -12,6 +12,8 @@
         #主要配置说明
             GOPATH  公共工作目录
             GOBIN   go install命令安装可执行文件的存放路径，默认空，则使用GOPATH/bin作为存放路径。该存放路径必须设置到系统环境变量中，否则执行文件命令会报找不到
+#启用module功能
+go env -w GO111MODULE=on
 #修改代理（默认：https://proxy.golang.org,direct）
     go env -w GOPROXY=https://goproxy.cn,direct
 #修改GOPATH（默认：/home/xx/go，建议修改为与GOROOT一致，这样就不用设置/home/xx/go/bin到环境变量中）
