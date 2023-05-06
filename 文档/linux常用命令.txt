@@ -75,6 +75,25 @@ systemctl restart|reload 服务名		//重启服务
 systemctl disable 服务名		//禁止开机自启动
 systemctl enable 服务名		//开启开机自启动
 systemctl list-units --type=service //查看所有自启动服务
+
+//示例
+vi /etc/systemd/system/xxxx.service
+[Unit]
+Description=nginx
+After=network.target
+#Wants=redis-server.service mysql.service
+[Service]
+Type=forking
+PIDFile=/server/tool/xxxx/logs/nginx.pid
+ExecStart=/server/tool/xxxx/sbin/nginx
+ExecReload=/server/tool/xxxx/sbin/nginx -s reload
+ExecStop=/server/tool/xxxx/sbin/nginx -s quit
+PrivateTmp=true
+#Restart=always	
+#RestartSec=5s
+#StartLimitInterval=0
+[Install]
+WantedBy=multi-user.target
 /**--------设置自启动 结束--------**/
 
 /**--------端口开放关闭（需要重启防火墙生效） 开始--------**/
