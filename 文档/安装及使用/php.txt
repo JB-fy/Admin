@@ -104,7 +104,7 @@ WantedBy=multi-user.target
     在php.ini添加以下内容
     extension=event.so
 安装xdebug
-    #php7.4（含）以下安装xdebug-3.1.6
+    #php8以下安装xdebug-3.1.6
     tar -xvf xdebug-3.2.1.tgz
     进入目录编译
     /server/tool/php-8.2.5/bin/phpize
@@ -112,7 +112,7 @@ WantedBy=multi-user.target
     make && make install
     在php.ini添加以下内容
     zend_extension=xdebug.so
-    xdebug.mode=develop,debug,profile,trace
+    xdebug.mode=develop,debug
     xdebug.start_with_request=yes
     xdebug.client_host=0.0.0.0
     xdebug.client_port=9003
@@ -131,10 +131,7 @@ extension=redis.so
 extension=swoole.so
 swoole.use_shortname=off
 zend_extension=xdebug.so
-xdebug.mode=develop,debug,profile,trace
+xdebug.mode=develop,debug
 xdebug.start_with_request=yes
 xdebug.client_host=0.0.0.0
 xdebug.client_port=9003
-
-vi /server/swoole-src-5.0.2/include/swoole_proxy.h
-#include <cstdint>
