@@ -5,7 +5,12 @@ const option = {
     apiSceneCode: import.meta.env.VITE_AUTH_SCENE_CODE,
     languageName: import.meta.env.VITE_LANGUAGE_NAME,
     accessTokenName: import.meta.env.VITE_ACCESS_TOKEN_NAME,
-    baseURL: import.meta.env.VITE_HTTP_HOST,
+    baseURL: function () {
+        if (import.meta.env.DEV && import.meta.env.VITE_HTTP_HOST.indexOf('http') != 0) {
+            return import.meta.env.VITE_DEV_API_PREFIX + import.meta.env.VITE_HTTP_HOST
+        }
+        return import.meta.env.VITE_HTTP_HOST
+    }(),
     timeout: parseInt(import.meta.env.VITE_HTTP_TIMEOUT),
 }
 

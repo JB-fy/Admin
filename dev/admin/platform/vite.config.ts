@@ -36,11 +36,10 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       //open: true, //启动后打开默认浏览器
       //vite会代理所有地址。而以前的webpack是找不到路由才做代理（故本地开发需要按下面说明做设置）
       proxy: {
-        //本地开发，必须设置env.VITE_HTTP_HOST。设置为后端http地址，直接请求后端接口；或设置为非http地址格式的其他字符串，走下面的代理流程
-        [env.VITE_HTTP_HOST]: {
+        [env.VITE_DEV_API_PREFIX]: {
           target: env.VITE_DEV_SERVER_PROXY,
           changeOrigin: true,
-          rewrite: (path) => path.replace(env.VITE_HTTP_HOST, '')
+          rewrite: (path) => path.replace(env.VITE_DEV_API_PREFIX, '')
         },
       }
     },

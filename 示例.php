@@ -6,7 +6,8 @@ var_dump(strlen('哈哈'));
 
 var_dump(json_decode(openssl_decrypt(base64_decode('dFdWa1N0VklJUm9LUWVMY0dRa0FtY0VnOWxFYzlKS0lQUXUwQktDU09iMDNqZjVhZnJDT1ZnNXY1cnhqUmU1dG91OURDOVlhUkNZVGxUWXB1MjVTOHBtaG9vb09NRm13clV1OVlnMGNNUWFldWsxbFVjNkc5S1crQTc2SmxvblhuQVB2Tm9ld2xWa3JLRVhlcExKZ0RPNDJUdUlEaHBJaDZpTVJsOXllMTRpRkdkeTZkS2xXWklEcjYwRGw3S3ZjeXcyZ3dpK3NxZVlYMDhOeWgzZnhvM1E2MHowMzFnWS9hREdpS3BRSVg1clF4aEJpdkJmMWJNVThobENWM295M1BueGhndkV0WnFuUXFPSlZZUTZTajVjVHlJdzRwZkpjQzRNUlBUU0FOUlI5akJJVWFOYkNqYUZJakx6aWRSY09kdTJycVljTUR5T3ZHSEcxU1lnbzBZQUVPei9UMW92d21jUW00bjVCM1hnUVhDRTBHYzg2STFjbHEyZlUyUUpyYkRQQUJOK3RXMXVZQWQrZi9yY0xiNFFnU2FFU2huRkR4ZDJ1Q3FmNitrNDdtbXFNNHRrRU9VRVJuWDg4NTFvODBLcHdzR0RYWjRITTVHYzVSN2xOVzg4SDJCY0s2LzRJM3lWb25rUkR1T1loM2drZElPdjROMjgyLzNhWnQrcEtFbU9HdU8rWHhXTGFJVFdQUjhMb0hjdm9BcElWTnE5MmRsZ1NaVGlpTTlHbEN2OGorZDlnQ2QzcUVIY0F5Z0FS'), 'AES-128-ECB', 'e26e543ce222cc0f', 0), true));
 
-
+/**--------代码说明 开始--------**/
+/**--------代码说明 结束--------**/
 /* 
 SQL语法顺序：select->from->where->group by->having->order by->limit
 SQL执行顺序：from->where->group by->having->select->order by->limit
