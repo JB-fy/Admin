@@ -19,7 +19,6 @@ class Language implements \Psr\Http\Server\MiddlewareInterface
         $this->container->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
 
         try {
-            $request = \Hyperf\Context\Context::get(\Psr\Http\Message\ServerRequestInterface::class);
             $response = $handler->handle($request);
             return $response;
         } catch (\Throwable $th) {
