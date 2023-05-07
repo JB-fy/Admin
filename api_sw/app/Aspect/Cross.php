@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\HttpServer\Contract\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
-#[Aspect]
+//#[\Hyperf\Di\Annotation\Aspect]
 class Cross extends \Hyperf\Di\Aop\AbstractAspect
 {
     #[\Hyperf\Di\Annotation\Inject]
@@ -58,10 +55,10 @@ class Cross extends \Hyperf\Di\Aop\AbstractAspect
                 return 204;
             }
         } */
-        $request = $this->container->get(RequestInterface::class);
+        $request = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
 
         /*--------设置协程上限文响应体可跨域  开始--------*/
-        $response = \Hyperf\Context\Context::get(ResponseInterface::class);
+        $response = \Hyperf\Context\Context::get(\Psr\Http\Message\ResponseInterface::class);
         $response = $response->withHeader('Server', env('APP_NAME', 'swoole-http-server'));  //修改Server，防止暴露服务器所用技术
         $response = $response->withHeader('Access-Control-Allow-Credentials', 'true')
             //->withHeader('Access-Control-Allow-Origin', $request->header('Origin', '*'))
@@ -71,7 +68,7 @@ class Cross extends \Hyperf\Di\Aop\AbstractAspect
             ->withHeader('Access-Control-Allow-Methods', '*')
             //->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')   //如果有自定义头部此处需要加上,为方便直接使用*不限制
             ->withHeader('Access-Control-Allow-Headers', '*');
-        \Hyperf\Context\Context::set(ResponseInterface::class, $response);
+        \Hyperf\Context\Context::set(\Psr\Http\Message\ResponseInterface::class, $response);
         /*--------设置协程上限文响应体可跨域  结束--------*/
 
         if ($request->getMethod() == 'OPTIONS') {

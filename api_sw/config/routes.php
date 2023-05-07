@@ -88,7 +88,7 @@ Router::addGroup('/platformAdmin', function () {
             Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Server::class, 'list']);
         });
     }, ['middleware' => [\App\Middleware\SceneOfPlatformAdmin::class]]);
-});
+}, ['middleware' => [\App\Middleware\Scene::class]]);
 
 
 Router::addGroup('/login', function () {

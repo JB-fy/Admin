@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
-#[Aspect]
+//#[\Hyperf\Di\Annotation\Aspect]
 class LogRequest extends \Hyperf\Di\Aop\AbstractAspect
 {
     #[\Hyperf\Di\Annotation\Inject]
@@ -90,7 +88,7 @@ class LogRequest extends \Hyperf\Di\Aop\AbstractAspect
      */
     public function logRequest(float $startTime, float $endTime, string $responseBody)
     {
-        $request = $this->container->get(RequestInterface::class);
+        $request = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
 
         $LogData = [
             'requestUrl' => getRequestUrl(1),

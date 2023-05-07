@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-#[Aspect]
+//#[\Hyperf\Di\Annotation\Aspect]
 class SceneOfPlatformAdmin extends \Hyperf\Di\Aop\AbstractAspect
 {
     #[\Hyperf\Di\Annotation\Inject]

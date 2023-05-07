@@ -62,7 +62,7 @@ class LogRequest implements \Psr\Http\Server\MiddlewareInterface
      */
     public function logRequest(float $startTime, float $endTime, string $responseBody)
     {
-        $request = $this->container->get(RequestInterface::class);
+        $request = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
 
         $LogData = [
             'requestUrl' => getRequestUrl(1),

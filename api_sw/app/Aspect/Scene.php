@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-#[Aspect]
+//#[\Hyperf\Di\Annotation\Aspect]
 class Scene extends \Hyperf\Di\Aop\AbstractAspect
 {
     #[Inject]

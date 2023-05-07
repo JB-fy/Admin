@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use Hyperf\Contract\TranslatorInterface;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
-use Hyperf\HttpServer\Contract\RequestInterface;
 
-#[Aspect]
+//#[\Hyperf\Di\Annotation\Aspect]
 class Language extends \Hyperf\Di\Aop\AbstractAspect
 {
     #[\Hyperf\Di\Annotation\Inject]
@@ -44,8 +41,8 @@ class Language extends \Hyperf\Di\Aop\AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $language = $this->container->get(RequestInterface::class)->header('Language', 'zh-cn');
-        $this->container->get(TranslatorInterface::class)->setLocale($language);
+        $language = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Language', 'zh-cn');
+        $this->container->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
 
         try {
             $response = $proceedingJoinPoint->process();
