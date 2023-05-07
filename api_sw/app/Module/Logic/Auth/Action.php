@@ -52,9 +52,7 @@ class Action extends AbstractLogic
      */
     public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
     {
-        var_dump(555);
         $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-        var_dump(6666);
         $where = [
             'actionCode' => $actionCode,
             'selfAction' => [
