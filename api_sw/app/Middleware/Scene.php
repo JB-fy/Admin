@@ -32,6 +32,7 @@ class Scene implements \Psr\Http\Server\MiddlewareInterface
         }
         $this->logicAuthScene->setCurrentInfo($sceneInfo);
         try {
+            $request = \Hyperf\Context\Context::get(\Psr\Http\Message\ServerRequestInterface::class);
             $response = $handler->handle($request);
             return $response;
         } catch (\Throwable $th) {

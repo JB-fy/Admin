@@ -22,6 +22,8 @@ Router::addGroup('/upload', function () {
 });
 
 Router::addGroup('/platformAdmin', function () {
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/test', [\App\Controller\Test::class, 'index']);
+    
     Router::addGroup('/login', function () {
         Router::addRoute(['GET', 'POST', 'OPTIONS'], '/encryptStr', [\App\Controller\Login::class, 'encryptStr']);
         Router::addRoute(['GET', 'POST', 'OPTIONS'], '', [\App\Controller\Login::class, 'login']);
