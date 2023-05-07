@@ -10,10 +10,33 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
 #[Aspect]
-class Language extends AbstractAspect
+class Language extends \Hyperf\Di\Aop\AbstractAspect
 {
+    #[\Hyperf\Di\Annotation\Inject]
+    protected \Psr\Container\ContainerInterface $container;
+
     //执行优先级（大值优先）
     public ?int $priority = 40;
+
+    //切入的类
+    public array $classes = [
+        \App\Controller\Test::class,
+        \App\Controller\Index::class,
+        \App\Controller\Upload::class,
+
+        \App\Controller\Login::class,
+        \App\Controller\Auth\Action::class,
+        \App\Controller\Auth\Menu::class,
+        \App\Controller\Auth\Role::class,
+        \App\Controller\Auth\Scene::class,
+        \App\Controller\Log\Request::class,
+        \App\Controller\Platform\Admin::class,
+        \App\Controller\Platform\Config::class,
+        \App\Controller\Platform\Server::class,
+    ];
+
+    //切入的注解
+    public array $annotations = [];
 
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint
@@ -25,8 +48,8 @@ class Language extends AbstractAspect
         $this->container->get(TranslatorInterface::class)->setLocale($language);
 
         try {
-            $result = $proceedingJoinPoint->process();
-            return $result;
+            $response = $proceedingJoinPoint->process();
+            return $response;
         } catch (\Throwable $th) {
             throw $th;
         }

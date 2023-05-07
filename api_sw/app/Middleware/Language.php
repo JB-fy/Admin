@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class Language implements \Psr\Http\Server\MiddlewareInterface
+{
+    #[\Hyperf\Di\Annotation\Inject]
+    protected \Psr\Container\ContainerInterface $container;
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $language = $this->container->get(RequestInterface::class)->header('Language', 'zh-cn');
+        $this->container->get(TranslatorInterface::class)->setLocale($language);
+
+        try {
+            $response = $handler->handle($request);
+            return $response;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+}

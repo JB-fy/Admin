@@ -9,8 +9,11 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 #[Aspect]
-class Scene extends AbstractAspect
+class Scene extends \Hyperf\Di\Aop\AbstractAspect
 {
+    #[Inject]
+    protected \Psr\Container\ContainerInterface $container;
+
     #[Inject]
     protected \App\Module\Logic\Auth\Scene $logicAuthScene;
 
@@ -29,6 +32,9 @@ class Scene extends AbstractAspect
         \App\Controller\Platform\Config::class,
         \App\Controller\Platform\Server::class,
     ];
+
+    //切入的注解
+    public array $annotations = [];
 
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint

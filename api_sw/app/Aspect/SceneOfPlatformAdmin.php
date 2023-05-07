@@ -8,8 +8,11 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 #[Aspect]
-class SceneOfPlatformAdmin extends AbstractAspect
+class SceneOfPlatformAdmin extends \Hyperf\Di\Aop\AbstractAspect
 {
+    #[\Hyperf\Di\Annotation\Inject]
+    protected \Psr\Container\ContainerInterface $container;
+
     //执行优先级（大值优先）
     public ?int $priority = 19;
 
@@ -27,6 +30,9 @@ class SceneOfPlatformAdmin extends AbstractAspect
         \App\Controller\Platform\Config::class,
         \App\Controller\Platform\Server::class,
     ];
+
+    //切入的注解
+    public array $annotations = [];
 
     /**
      * @param ProceedingJoinPoint $proceedingJoinPoint
