@@ -1,8 +1,6 @@
 import axios from 'axios'
 
 const option = {
-    apiSceneName: import.meta.env.VITE_AUTH_SCENE_NAME,
-    apiSceneCode: import.meta.env.VITE_AUTH_SCENE_CODE,
     languageName: import.meta.env.VITE_LANGUAGE_NAME,
     accessTokenName: import.meta.env.VITE_ACCESS_TOKEN_NAME,
     baseURL: function () {
@@ -21,7 +19,6 @@ const http = axios.create({
 
 http.interceptors.request.use(
     (config: any) => {
-        config.headers[option.apiSceneName] = option.apiSceneCode
         config.headers[option.languageName] = getLanguage()
         config.headers[option.accessTokenName] = getAccessToken()
         return config
