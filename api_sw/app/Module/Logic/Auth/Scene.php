@@ -26,7 +26,7 @@ class Scene extends AbstractLogic
      */
     public function setCurrentInfo(object $info)
     {
-        setCurrentRequestAttribute('sceneInfo', $info);
+        \Hyperf\Context\Context::set('sceneInfo', $info);
     }
 
     /**
@@ -36,6 +36,6 @@ class Scene extends AbstractLogic
      */
     public function getCurrentInfo(): object|null
     {
-        return getCurrentRequestAttribute('sceneInfo');
+        return \Hyperf\Context\Context::get('sceneInfo');
     }
 }

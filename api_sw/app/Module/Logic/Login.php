@@ -64,12 +64,7 @@ class Login extends AbstractLogic
      */
     public function setCurrentInfo(object $info, string $sceneCode)
     {
-        /* switch ($sceneCode) {
-            default:
-                setCurrentRequestAttribute($sceneCode . 'Info', $info);
-                break;
-        } */
-        setCurrentRequestAttribute($sceneCode . 'Info', $info);
+        \Hyperf\Context\Context::set($sceneCode . 'Info', $info);
     }
 
     /**
@@ -80,10 +75,6 @@ class Login extends AbstractLogic
      */
     public function getCurrentInfo(string $sceneCode): object
     {
-        /* switch ($sceneCode) {
-            default:
-                return getCurrentRequestAttribute($sceneCode . 'Info');
-        } */
-        return getCurrentRequestAttribute($sceneCode . 'Info');
+        return \Hyperf\Context\Context::get($sceneCode . 'Info');
     }
 }
