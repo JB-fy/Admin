@@ -75,7 +75,7 @@ const saveForm = reactive({
             delete param.repeatPassword
             param.checkPassword ? param.checkPassword = md5(param.checkPassword) : delete param.checkPassword
             try {
-                await request('/login/updateInfo', param, true)
+                await request('/login/update', param, true)
                 //成功则更新用户信息
                 for (let k in param) {
                     switch (k) {

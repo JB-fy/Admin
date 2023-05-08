@@ -61,7 +61,7 @@ class Login extends AbstractController
      *
      * @return void
      */
-    public function updateInfo()
+    public function update()
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
