@@ -265,7 +265,7 @@ if (!function_exists('getRequest')) {
 //      */
 //     function getCurrentRequestAttribute(string $attrName): mixed
 //     {
-//         return getContainer()->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->getAttribute($attrName);
+//         return getRequest()->getAttribute($attrName);
 //     }
 // }
 

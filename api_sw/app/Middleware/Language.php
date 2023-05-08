@@ -15,7 +15,7 @@ class Language implements \Psr\Http\Server\MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $language = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Language', 'zh-cn');
+        $language = getRequest()->header('Language', 'zh-cn');
         $this->container->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
 
         try {

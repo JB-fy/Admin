@@ -48,11 +48,7 @@ class Login extends AbstractLogic
      */
     public function getCurrentToken(string $sceneCode): ?string
     {
-        /* switch ($sceneCode) {
-            default:
-                return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
-        } */
-        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header(ucfirst($sceneCode) . 'Token');
+        return getRequest()->header(ucfirst($sceneCode) . 'Token');
     }
 
     /**

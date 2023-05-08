@@ -15,7 +15,7 @@ class Scene extends AbstractLogic
      */
     public function getCurrentSceneCode(): ?string
     {
-        return $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Scene');
+        return getRequest()->header('Scene');
     }
 
     /**

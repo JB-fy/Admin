@@ -55,7 +55,7 @@ class Cross extends \Hyperf\Di\Aop\AbstractAspect
                 return 204;
             }
         } */
-        $request = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
+        $request = getRequest();
 
         /*--------设置协程上限文响应体可跨域  开始--------*/
         $response = \Hyperf\Context\Context::get(\Psr\Http\Message\ResponseInterface::class);

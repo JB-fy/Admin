@@ -41,7 +41,7 @@ class Language extends \Hyperf\Di\Aop\AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $language = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class)->header('Language', 'zh-cn');
+        $language = getRequest()->header('Language', 'zh-cn');
         $this->container->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
 
         try {

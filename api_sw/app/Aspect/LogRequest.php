@@ -88,7 +88,7 @@ class LogRequest extends \Hyperf\Di\Aop\AbstractAspect
      */
     public function logRequest(float $startTime, float $endTime, string $responseBody)
     {
-        $request = $this->container->get(\Hyperf\HttpServer\Contract\RequestInterface::class);
+        $request = getRequest();
 
         $LogData = [
             'requestUrl' => getRequestUrl(1),
