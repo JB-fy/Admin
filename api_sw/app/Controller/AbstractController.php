@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Module\Logic\Auth\Scene;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Psr\Container\ContainerInterface;
@@ -15,6 +16,9 @@ abstract class AbstractController
 
     #[Inject]
     protected RequestInterface $request;
+
+    #[Inject]
+    protected Scene $scene;
 
     //#[Inject(value:\App\Module\Service\Login::class)]
     //protected \App\Module\Service\AbstractService $service;   //代码会报红
@@ -45,16 +49,6 @@ abstract class AbstractController
         if (empty($this->actionCodePrefix)) {
             $this->actionCodePrefix = lcfirst(str_replace('\\', '',  substr($className, strpos($className, '\\Controller\\') + strlen('\\Controller\\'))));
         }
-    }
-
-    /**
-     * 在当前请求中，获取场景标识
-     * 
-     * @return string|null
-     */
-    public function getCurrentSceneCode(): ?string
-    {
-        return $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
     }
 
     /**

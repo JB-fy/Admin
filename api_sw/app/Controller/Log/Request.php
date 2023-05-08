@@ -16,7 +16,7 @@ class Request extends AbstractController
      */
     public function list()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);

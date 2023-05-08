@@ -62,7 +62,7 @@ class Action extends AbstractDao
                 $this->joinOfAlone('actionRelToScene');
                 return true;
             case 'selfAction': //获取当前登录身份可用的操作。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
-                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentInfo();    //当开启切面\App\Aspect\Scene时有值
+                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();    //当开启切面\App\Aspect\Scene时有值
                 $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
                 $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
                 $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.sceneId', '=', $sceneId, 'and']];

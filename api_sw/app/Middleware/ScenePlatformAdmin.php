@@ -8,15 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class Scene implements \Psr\Http\Server\MiddlewareInterface
+class ScenePlatformAdmin implements \Psr\Http\Server\MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $logicAuthScene = getContainer()->get(\App\Module\Logic\Auth\Scene::class);
-        $sceneCode = $logicAuthScene->getCurrentSceneCode();
-        if (empty($sceneCode)) {
-            throwFailJson(39999999);
-        }
+        $sceneCode = 'platformAdmin';
         $sceneInfo = getConfig('inDb.authScene.' . $sceneCode);
         if (empty($sceneInfo)) {
             throwFailJson(39999999);
@@ -24,7 +20,8 @@ class Scene implements \Psr\Http\Server\MiddlewareInterface
         if ($sceneInfo->isStop) {
             throwFailJson(39999998);
         }
-        $logicAuthScene->setCurrentInfo($sceneInfo);
+        $logicAuthScene = getContainer()->get(\App\Module\Logic\Auth\Scene::class);
+        $logicAuthScene->setCurrentSceneInfo($sceneInfo);
         try {
             $response = $handler->handle($request);
             return $response;

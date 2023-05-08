@@ -16,7 +16,7 @@ class Role extends AbstractController
      */
     public function list()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
@@ -47,7 +47,7 @@ class Role extends AbstractController
      */
     public function info()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
@@ -74,7 +74,7 @@ class Role extends AbstractController
      */
     public function create()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
@@ -95,7 +95,7 @@ class Role extends AbstractController
      */
     public function update()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
@@ -116,7 +116,7 @@ class Role extends AbstractController
      */
     public function delete()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);

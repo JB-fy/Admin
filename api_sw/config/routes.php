@@ -35,8 +35,8 @@ Router::addGroup('', function () {
             Router::addGroup('/log/request', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Log\Request::class, 'list']);
             });
-        }, ['middleware' => [\App\Middleware\SceneOfPlatformAdmin::class]]);
-    }, ['middleware' => [\App\Middleware\Scene::class]]);
+        }, ['middleware' => [\App\Middleware\ScenePlatformAdminLogin::class]]);
+    }, ['middleware' => [\App\Middleware\ScenePlatformAdmin::class]]);
 });
 
 //做日志记录
@@ -111,7 +111,7 @@ Router::addGroup('', function () {
             Router::addGroup('/platform/server', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Server::class, 'list']);
             });
-        }, ['middleware' => [\App\Middleware\SceneOfPlatformAdmin::class]]);
-    }, ['middleware' => [\App\Middleware\Scene::class]]);
+        }, ['middleware' => [\App\Middleware\ScenePlatformAdminLogin::class]]);
+    }, ['middleware' => [\App\Middleware\ScenePlatformAdmin::class]]);
 }, ['middleware' => [\App\Middleware\LogRequest::class]]);
 /**--------平台后台接口 结束--------**/

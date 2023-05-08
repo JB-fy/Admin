@@ -15,7 +15,7 @@ class Config extends AbstractController
      */
     public function get()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
@@ -35,7 +35,7 @@ class Config extends AbstractController
      */
     public function save()
     {
-        $sceneCode = $this->getCurrentSceneCode();
+        $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);  //新增配置时，需要在验证文件内新增对应的配置验证。否则数据会被过滤掉
