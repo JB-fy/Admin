@@ -207,7 +207,7 @@ const handleDelete = (idArr: number[]) => {
         center: true,
         showClose: false,
     }).then(() => {
-        request('/auth/action/delete', { idArr: idArr }, true).then((res) => {
+        request('/auth/action/del', { idArr: idArr }, true).then((res) => {
             getList()
         }).catch(() => { })
     }).catch(() => { })

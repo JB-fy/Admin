@@ -14,11 +14,6 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
     if (apiCodeList[0] === '') {
         apiCodeList.shift()
     }
-    switch (apiCodeList[apiCodeList.length - 1]) {
-        case 'delete':  //src/api目录内文件不能用delete作函数名。delete为js关键字
-            apiCodeList[apiCodeList.length - 1] = 'del'
-            break;
-    }
     let apiMethod: any = apiList
     for (const value of apiCodeList) {
         if (!(value in apiMethod)) {

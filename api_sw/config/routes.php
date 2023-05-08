@@ -67,7 +67,7 @@ Router::addGroup('', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Action::class, 'info']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Action::class, 'create']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Action::class, 'update']);
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Action::class, 'delete']);
+                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/del', [\App\Controller\Auth\Action::class, 'delete']);
             });
 
             Router::addGroup('/auth/menu', function () {
@@ -75,7 +75,7 @@ Router::addGroup('', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Menu::class, 'info']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Menu::class, 'create']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Menu::class, 'update']);
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Menu::class, 'delete']);
+                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/del', [\App\Controller\Auth\Menu::class, 'delete']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/tree', [\App\Controller\Auth\Menu::class, 'tree']);
             });
 
@@ -84,7 +84,7 @@ Router::addGroup('', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Role::class, 'info']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Role::class, 'create']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Role::class, 'update']);
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Role::class, 'delete']);
+                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/del', [\App\Controller\Auth\Role::class, 'delete']);
             });
 
             Router::addGroup('/auth/scene', function () {
@@ -92,7 +92,7 @@ Router::addGroup('', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Auth\Scene::class, 'info']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Auth\Scene::class, 'create']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Auth\Scene::class, 'update']);
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Auth\Scene::class, 'delete']);
+                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/del', [\App\Controller\Auth\Scene::class, 'delete']);
             });
 
             Router::addGroup('/platform/admin', function () {
@@ -100,7 +100,7 @@ Router::addGroup('', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Platform\Admin::class, 'info']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/create', [\App\Controller\Platform\Admin::class, 'create']);
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Platform\Admin::class, 'update']);
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/delete', [\App\Controller\Platform\Admin::class, 'delete']);
+                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/del', [\App\Controller\Platform\Admin::class, 'delete']);
             });
 
             Router::addGroup('/platform/config', function () {
