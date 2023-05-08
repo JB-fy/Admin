@@ -131,12 +131,12 @@ if (!function_exists('throwSuccessJson')) {
      * 抛出错误（利用错误处理返回结果json格式。好处：深层次调用无需反复return）
      *
      * @param array $data
-     * @param string $code
+     * @param int $code
      * @param string $msg
      * @throws \App\Exception\Json
      * @return void
      */
-    function throwSuccessJson(array $data = [], string $code = '00000000', string $msg = '')
+    function throwSuccessJson(array $data = [], int $code = 0, string $msg = '')
     {
         throw make(\App\Exception\Json::class, ['code' => $code, 'msg' => $msg, 'data' => $data]);
     }
@@ -146,13 +146,13 @@ if (!function_exists('throwFailJson')) {
     /**
      * 抛出错误（利用错误处理返回结果json格式。好处：深层次调用无需反复return）
      *
-     * @param string $code
+     * @param int $code
      * @param string $msg
      * @param array $data
      * @throws \App\Exception\Json
      * @return void
      */
-    function throwFailJson(string $code = '99999999', string $msg = '', array $data = [])
+    function throwFailJson(int $code = 99999999, string $msg = '', array $data = [])
     {
         throw make(\App\Exception\Json::class, ['code' => $code, 'msg' => $msg, 'data' => $data]);
     }
@@ -366,7 +366,7 @@ if (!function_exists('getHttpClient')) {
             $response = $httpClient->post($uri, $option);
             $result = $response->getBody()->getContents();
         } catch (\Throwable $th) {
-            throwFailJson('99999999', $th->getMessage());
+            throwFailJson(99999999, $th->getMessage());
         } */
     }
 }

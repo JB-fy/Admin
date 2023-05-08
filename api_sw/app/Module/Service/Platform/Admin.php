@@ -38,7 +38,7 @@ class Admin extends AbstractService
     public function update(array $data, array $where)
     {
         if (isset($data['checkPassword']) && $data['checkPassword'] != $this->getDao()->where($where)->getBuilder()->value('password')) {
-            throwFailJson('39990003');
+            throwFailJson(39990003);
         }
 
         if (isset($data['roleIdArr'])) {

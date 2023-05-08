@@ -124,7 +124,7 @@ abstract class AbstractService
     {
         $info = $this->getDao()->field($field)->where($where)->getInfo();
         if (empty($info)) {
-            throwFailJson('29999999');
+            throwFailJson(29999999);
         }
         throwSuccessJson(['info' => $info]);
     }
@@ -146,9 +146,9 @@ abstract class AbstractService
                 $nameKey = 'validation.attributes.' . $matches[1];
                 $name =  trans($nameKey);
                 if ($name === $nameKey) {
-                    throwFailJson('29991062');
+                    throwFailJson(29991062);
                 } else {
-                    throwFailJson('29991063', trans('code.29991063', ['name' => $name]));
+                    throwFailJson(29991063, trans('code.29991063', ['name' => $name]));
                 }
             }
         } */

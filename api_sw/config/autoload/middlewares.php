@@ -12,7 +12,6 @@ declare(strict_types=1);
 return [
     'http' => [
         \App\Middleware\Cross::class,
-        \App\Middleware\Language::class,
-        \App\Middleware\LogRequest::class,
+        \App\Middleware\Language::class
     ],
 ];

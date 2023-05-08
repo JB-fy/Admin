@@ -72,7 +72,7 @@ class Action extends AbstractLogic
         }
         if (empty(getDao(AuthAction::class)->where($where)->getBuilder()->count())) {
             if ($isThrow) {
-                throwFailJson('39990002');
+                throwFailJson(39990002);
             } else {
                 return false;
             }

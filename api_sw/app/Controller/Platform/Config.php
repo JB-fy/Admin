@@ -23,7 +23,7 @@ class Config extends AbstractController
                 $this->service->get(empty($data['configKeyArr']) ? [] : ['configKey' => $data['configKeyArr']]);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }
@@ -43,7 +43,7 @@ class Config extends AbstractController
                 $this->service->save($data);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }

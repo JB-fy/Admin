@@ -10,7 +10,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 class Cross extends \Hyperf\Di\Aop\AbstractAspect
 {
     //执行优先级（大值优先）
-    public ?int $priority = 50;
+    public ?int $priority = 40;
 
     //切入的类
     public array $classes = [

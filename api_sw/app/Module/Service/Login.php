@@ -41,13 +41,13 @@ class Login extends AbstractService
                 /**--------验证账号密码 开始--------**/
                 $info = getDao(Admin::class)->where(['accountOrPhone' => $account])->getInfo();
                 if (empty($info)) {
-                    throwFailJson('39990000');
+                    throwFailJson(39990000);
                 }
                 if ($info->isStop) {
-                    throwFailJson('39990001');
+                    throwFailJson(39990001);
                 }
                 if (!$this->logic->checkPassword($info->password, $password, $account, $sceneCode)) {
-                    throwFailJson('39990000');
+                    throwFailJson(39990000);
                 }
                 /**--------验证账号密码 结束--------**/
 
@@ -66,7 +66,7 @@ class Login extends AbstractService
                 throwSuccessJson(['token' => $token]);
                 break;
             default:
-                throwFailJson('39999001');
+                throwFailJson(39999001);
                 break;
         }
     }
@@ -84,7 +84,7 @@ class Login extends AbstractService
                 /**--------验证token 开始--------**/
                 $token = $this->logic->getCurrentToken($sceneCode);
                 if (empty($token)) {
-                    throwFailJson('39994000');
+                    throwFailJson(39994000);
                 }
                 $jwt = make($sceneCode . 'Jwt');
                 $payload = $jwt->verifyToken($token);
@@ -95,7 +95,7 @@ class Login extends AbstractService
                 $cacheLogin->setTokenKey($payload['id'], $sceneCode);
                 $checkToken = $cacheLogin->getToken();
                 if ($checkToken != $token) {
-                    throwFailJson('39994002');
+                    throwFailJson(39994002);
                 }
                 /**--------选做。限制多地登录，多设备登录等情况下可用（前提必须在登录时做过token缓存） 结束--------**/
 
@@ -105,10 +105,10 @@ class Login extends AbstractService
                     ->where(['adminId' => $payload['id']])
                     ->getInfo();
                 if (empty($info)) {
-                    throwFailJson('39994003');
+                    throwFailJson(39994003);
                 }
                 if ($info->isStop) {
-                    throwFailJson('39994004');
+                    throwFailJson(39994004);
                 }
                 unset($info->password);
                 unset($info->isStop);
@@ -128,7 +128,7 @@ class Login extends AbstractService
                 /**--------选做。如果token即将过期，刷新token 结束--------**/
                 break;
             default:
-                throwFailJson('39999001');
+                throwFailJson(39999001);
                 break;
         }
     }

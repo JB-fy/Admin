@@ -166,7 +166,7 @@ const upload = reactive({
         emits('update:modelValue', upload.value)
     },
     onSuccess: (res: any, file: any, fileList: any) => {
-        if (upload.signInfo?.callback && res.code !== '00000000') {    //如有回调服务器且有报错，则默认失败
+        if (upload.signInfo?.callback && res.code !== 0) {    //如有回调服务器且有报错，则默认失败
             ElMessage.error(t('common.tip.uploadFail'))
             fileList.splice(fileList.indexOf(file), 1)
             return

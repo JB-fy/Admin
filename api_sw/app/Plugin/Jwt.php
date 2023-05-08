@@ -52,22 +52,22 @@ class Jwt
     {
         $tokenList = explode('.', $token);
         if (count($tokenList) != 3) {
-            throwFailJson('39994001');
+            throwFailJson(39994001);
         }
         list($encodeHeader, $encodePayload, $sign) = $tokenList;
         //获取算法
         $decodeHeader = json_decode($this->decode($encodeHeader), true);
         if (empty($decodeHeader['signType'])) {
-            throwFailJson('39994001');
+            throwFailJson(39994001);
         }
         //签名验证
         if (self::encode($this->sign($encodeHeader . '.' . $encodePayload, $this->config['signKey'], $decodeHeader['signType'])) !== $sign) {
-            throwFailJson('39994001');
+            throwFailJson(39994001);
         }
         $payload = json_decode($this->decode($encodePayload), true);
         //过期时间小宇当前服务器时间验证失败
         if (isset($payload['expireTime']) && $payload['expireTime'] < time()) {
-            throwFailJson('39994001');
+            throwFailJson(39994001);
         }
         return $payload;
     }
@@ -114,7 +114,7 @@ class Jwt
             case 'HS512':
                 $sign = hash_hmac(str_replace('HS', 'SHA', $signType), $str, $signKey, true);
                 if (!$sign) {
-                    throwFailJson('39999002');
+                    throwFailJson(39999002);
                 }
                 return $sign;
             case 'RS256':
@@ -122,11 +122,11 @@ class Jwt
             case 'RS512':
                 $sign = '';
                 if (!openssl_sign($str, $sign, $signKey, str_replace('HS', 'SHA', $signType))) {
-                    throwFailJson('39999002');
+                    throwFailJson(39999002);
                 }
                 return $sign;
             default:
-                throwFailJson('39999003');
+                throwFailJson(39999003);
         }
     }
 }

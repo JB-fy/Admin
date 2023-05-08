@@ -6,18 +6,18 @@ namespace App\Exception;
 
 class Json extends AbstractException
 {
-    protected string $apiCode;
+    protected int $apiCode;
     protected string $apiMsg;
     protected array $apiData;
 
     /**
      * 构造函数
      *
-     * @param string $code
+     * @param int $code
      * @param string $msg
      * @param array $data
      */
-    public function __construct(string $code = '00000000', string $msg = '', array $data = [])
+    public function __construct(int $code = 0, string $msg = '', array $data = [])
     {
         $this->apiCode = $code;
         $this->apiMsg = $msg === '' ? trans('code.' . $code) : $msg;

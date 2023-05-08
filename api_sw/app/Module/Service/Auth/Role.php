@@ -24,10 +24,10 @@ class Role extends AbstractService
     {
         if (isset($data['menuIdArr']) && count($data['menuIdArr']) != getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
             //$count = getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
-            throwFailJson('89999998');
+            throwFailJson(89999998);
         }
         if (isset($data['actionIdArr']) && count($data['actionIdArr']) != getDao(ActionRelToScene::class)->where(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
-            throwFailJson('89999998');
+            throwFailJson(89999998);
         }
 
         $id = $this->getDao()->insert($data)->saveInsert();
@@ -56,14 +56,14 @@ class Role extends AbstractService
             $oldInfo = $this->getDao()->where($where)->getInfo();
             if (isset($data['menuIdArr'])) {
                 if (count($data['menuIdArr']) != getDao(Menu::class)->where(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
-                    throwFailJson('89999998');
+                    throwFailJson(89999998);
                 }
                 $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
                 $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改menuIdArr
             }
             if (isset($data['actionIdArr'])) {
                 if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->where(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
-                    throwFailJson('89999998');
+                    throwFailJson(89999998);
                 }
                 $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
                 $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改actionIdArr

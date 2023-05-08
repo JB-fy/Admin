@@ -30,7 +30,7 @@ class Admin extends AbstractController
                 $this->service->listWithCount(...$data);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }
@@ -57,7 +57,7 @@ class Admin extends AbstractController
                 $this->service->info(['id' => $data['id']], $data['field']);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }
@@ -78,7 +78,7 @@ class Admin extends AbstractController
                 $this->service->create($data);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }
@@ -96,14 +96,14 @@ class Admin extends AbstractController
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 //不能修改平台超级管理员
                 if ($data['id'] == getConfig('app.superPlatformAdminId')) {
-                    throwFailJson('39990004');
+                    throwFailJson(39990004);
                 }
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->update($data, ['id' => $data['idArr']]);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }
@@ -121,14 +121,14 @@ class Admin extends AbstractController
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 //不能删除平台超级管理员
                 if (in_array(getConfig('app.superPlatformAdminId'), $data['idArr'])) {
-                    throwFailJson('39990005');
+                    throwFailJson(39990005);
                 }
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->delete(['id' => $data['idArr']]);
                 break;
             default:
-                throwFailJson('39999999');
+                throwFailJson(39999999);
                 break;
         }
     }

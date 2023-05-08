@@ -37,15 +37,15 @@ class Scene extends \Hyperf\Di\Aop\AbstractAspect
         $logicAuthScene = getContainer()->get(\App\Module\Logic\Auth\Scene::class);
         $sceneCode = $logicAuthScene->getCurrentSceneCode();
         if (empty($sceneCode)) {
-            throwFailJson('39999999');
+            throwFailJson(39999999);
         }
 
         $sceneInfo = getConfig('inDb.authScene.' . $sceneCode);
         if (empty($sceneInfo)) {
-            throwFailJson('39999999');
+            throwFailJson(39999999);
         }
         if ($sceneInfo->isStop) {
-            throwFailJson('39999998');
+            throwFailJson(39999998);
         }
         $logicAuthScene->setCurrentInfo($sceneInfo);
         try {

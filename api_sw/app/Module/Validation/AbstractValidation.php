@@ -120,7 +120,7 @@ abstract class AbstractValidation
         }
         if (!isset($scene[$sceneName])) {
             //return $rule;
-            throwFailJson('89999997');
+            throwFailJson(89999997);
         }
         if (empty($scene[$sceneName])) {
             return $rule;
