@@ -65,9 +65,6 @@ class Login extends AbstractService
 
                 throwSuccessJson(['token' => $token]);
                 break;
-            default:
-                throwFailJson(39999001);
-                break;
         }
     }
 
@@ -113,22 +110,8 @@ class Login extends AbstractService
                 unset($info->password);
                 unset($info->isStop);
 
-                $this->logic->setCurrentInfo($info, $sceneCode);    //用户信息保存在请求对象内
+                $this->logic->setCurrentInfo($info, $sceneCode);    //用户信息保存在协程上下文
                 /**--------获取用户信息并验证 结束--------**/
-
-                /**--------选做。如果token即将过期，刷新token 开始--------**/
-                /* if ($payload['expireTime'] - time() < 5 * 60) {
-                    $refreshToken = $jwt->getToken($payload);
-                    //缓存token（选做。限制多地登录，多设备登录等情况下可用）
-                    $cacheLogin->setToken($refreshToken, $sceneCode);
-
-                    //refreshToken保存在请求对象内（在exception\handler\Handler内返回给前端，用于刷新token）
-                    $request->newPlatformAdminToken = $refreshToken;
-                } */
-                /**--------选做。如果token即将过期，刷新token 结束--------**/
-                break;
-            default:
-                throwFailJson(39999001);
                 break;
         }
     }
