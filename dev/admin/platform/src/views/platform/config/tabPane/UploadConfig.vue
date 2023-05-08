@@ -28,7 +28,7 @@ const saveForm = reactive({
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {
-            const res = await request('platform/config/get', param)
+            const res = await request('/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
                 ...res.data.config
@@ -43,7 +43,7 @@ const saveForm = reactive({
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
-                await request('platform/config/save', param, true)
+                await request('/platform/config/save', param, true)
             } catch (error) { }
             saveForm.loading = false
         })

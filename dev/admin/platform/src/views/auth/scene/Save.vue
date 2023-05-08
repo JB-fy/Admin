@@ -70,9 +70,9 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
                 if (param?.idArr?.length > 0) {
-                    await request('auth/scene/update', param, true)
+                    await request('/auth/scene/update', param, true)
                 } else {
-                    await request('auth/scene/create', param, true)
+                    await request('/auth/scene/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false

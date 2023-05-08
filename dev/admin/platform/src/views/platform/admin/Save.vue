@@ -48,9 +48,9 @@ const saveForm = reactive({
             param.password ? param.password = md5(param.password) : delete param.password
             try {
                 if (param?.idArr?.length > 0) {
-                    await request('platform/admin/update', param, true)
+                    await request('/platform/admin/update', param, true)
                 } else {
-                    await request('platform/admin/create', param, true)
+                    await request('/platform/admin/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false

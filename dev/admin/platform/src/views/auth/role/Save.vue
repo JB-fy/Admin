@@ -46,9 +46,9 @@ const saveForm = reactive({
             })
             try {
                 if (param?.idArr?.length > 0) {
-                    await request('auth/role/update', param, true)
+                    await request('/auth/role/update', param, true)
                 } else {
-                    await request('auth/role/create', param, true)
+                    await request('/auth/role/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false

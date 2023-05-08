@@ -82,7 +82,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request('platform/server/list', param)
+        const res = await request('/platform/server/list', param)
         table.data = res.data.list
         pagination.total = res.data.count
     } catch (error) { }
