@@ -21,9 +21,6 @@ class Login extends AbstractController
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->service->encryptStr($data['account'], $sceneCode);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 
@@ -40,9 +37,6 @@ class Login extends AbstractController
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->service->login($data['account'], $data['password'], $sceneCode);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 
@@ -58,9 +52,6 @@ class Login extends AbstractController
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
                 throwSuccessJson(['info' => $loginInfo]);
-                break;
-            default:
-                throwFailJson(39999999);
                 break;
         }
     }
@@ -82,9 +73,6 @@ class Login extends AbstractController
 
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
                 $this->container->get(\App\Module\Service\Platform\Admin::class)->update($data, ['id' => $loginInfo->adminId]);
-                break;
-            default:
-                throwFailJson(39999999);
                 break;
         }
     }
@@ -111,9 +99,6 @@ class Login extends AbstractController
                     'showMenu'
                 ];
                 $this->container->get(Menu::class)->tree($field, $where);
-                break;
-            default:
-                throwFailJson(39999999);
                 break;
         }
     }

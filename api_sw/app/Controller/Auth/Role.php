@@ -34,9 +34,6 @@ class Role extends AbstractController
 
                 $this->service->listWithCount(...$data);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 
@@ -61,9 +58,6 @@ class Role extends AbstractController
 
                 $this->service->info(['id' => $data['id']], $data['field']);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 
@@ -81,9 +75,6 @@ class Role extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->create($data);
-                break;
-            default:
-                throwFailJson(39999999);
                 break;
         }
     }
@@ -103,9 +94,6 @@ class Role extends AbstractController
 
                 $this->service->update($data, ['id' => $data['idArr']]);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 
@@ -123,9 +111,6 @@ class Role extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
                 $this->service->delete(['id' => $data['idArr']]);
-                break;
-            default:
-                throwFailJson(39999999);
                 break;
         }
     }

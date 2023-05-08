@@ -29,9 +29,6 @@ class Request extends AbstractController
 
                 $this->service->listWithCount(...$data);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 }

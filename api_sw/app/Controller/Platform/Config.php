@@ -22,9 +22,6 @@ class Config extends AbstractController
                 $this->checkAuth(__FUNCTION__, $sceneCode);
                 $this->service->get(empty($data['configKeyArr']) ? [] : ['configKey' => $data['configKeyArr']]);
                 break;
-            default:
-                throwFailJson(39999999);
-                break;
         }
     }
 
@@ -41,9 +38,6 @@ class Config extends AbstractController
                 $data = $this->validate(__FUNCTION__, $sceneCode);  //新增配置时，需要在验证文件内新增对应的配置验证。否则数据会被过滤掉
                 $this->checkAuth(__FUNCTION__, $sceneCode);
                 $this->service->save($data);
-                break;
-            default:
-                throwFailJson(39999999);
                 break;
         }
     }
