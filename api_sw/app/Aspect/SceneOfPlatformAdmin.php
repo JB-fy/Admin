@@ -9,9 +9,6 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 //#[\Hyperf\Di\Annotation\Aspect]
 class SceneOfPlatformAdmin extends \Hyperf\Di\Aop\AbstractAspect
 {
-    #[\Hyperf\Di\Annotation\Inject]
-    protected \Psr\Container\ContainerInterface $container;
-
     //执行优先级（大值优先）
     public ?int $priority = 19;
 
@@ -40,9 +37,10 @@ class SceneOfPlatformAdmin extends \Hyperf\Di\Aop\AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         try {
-            $sceneCode = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
+            $container = getContainer();
+            $sceneCode = $container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
             if ($sceneCode == 'platformAdmin') {
-                $this->container->get(\App\Module\Service\Login::class)->verifyToken($sceneCode);
+                $container->get(\App\Module\Service\Login::class)->verifyToken($sceneCode);
             }
             $response = $proceedingJoinPoint->process();
             return $response;

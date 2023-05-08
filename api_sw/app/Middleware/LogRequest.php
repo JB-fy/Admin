@@ -10,9 +10,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class LogRequest implements \Psr\Http\Server\MiddlewareInterface
 {
-    #[\Hyperf\Di\Annotation\Inject]
-    protected \Psr\Container\ContainerInterface $container;
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {

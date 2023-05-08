@@ -9,9 +9,6 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 //#[\Hyperf\Di\Annotation\Aspect]
 class Cross extends \Hyperf\Di\Aop\AbstractAspect
 {
-    #[\Hyperf\Di\Annotation\Inject]
-    protected \Psr\Container\ContainerInterface $container;
-
     //执行优先级（大值优先）
     public ?int $priority = 50;
 

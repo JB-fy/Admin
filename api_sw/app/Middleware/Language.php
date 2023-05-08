@@ -10,13 +10,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class Language implements \Psr\Http\Server\MiddlewareInterface
 {
-    #[\Hyperf\Di\Annotation\Inject]
-    protected \Psr\Container\ContainerInterface $container;
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $language = getRequest()->header('Language', 'zh-cn');
-        $this->container->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
+        getContainer()->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
 
         try {
             $response = $handler->handle($request);

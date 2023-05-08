@@ -9,9 +9,6 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 //#[\Hyperf\Di\Annotation\Aspect]
 class Language extends \Hyperf\Di\Aop\AbstractAspect
 {
-    #[\Hyperf\Di\Annotation\Inject]
-    protected \Psr\Container\ContainerInterface $container;
-
     //执行优先级（大值优先）
     public ?int $priority = 40;
 
@@ -42,7 +39,7 @@ class Language extends \Hyperf\Di\Aop\AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $language = getRequest()->header('Language', 'zh-cn');
-        $this->container->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
+        getContainer()->get(\Hyperf\Contract\TranslatorInterface::class)->setLocale($language);
 
         try {
             $response = $proceedingJoinPoint->process();

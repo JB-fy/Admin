@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace App\Aspect;
 
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 //#[\Hyperf\Di\Annotation\Aspect]
 class Scene extends \Hyperf\Di\Aop\AbstractAspect
 {
-    #[Inject]
-    protected \Psr\Container\ContainerInterface $container;
-
-    #[Inject]
-    protected \App\Module\Logic\Auth\Scene $logicAuthScene;
-
     //执行优先级（大值优先）
     public ?int $priority = 20;
 
@@ -41,7 +34,8 @@ class Scene extends \Hyperf\Di\Aop\AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $sceneCode = $this->logicAuthScene->getCurrentSceneCode();
+        $logicAuthScene = getContainer()->get(\App\Module\Logic\Auth\Scene::class);
+        $sceneCode = $logicAuthScene->getCurrentSceneCode();
         if (empty($sceneCode)) {
             throwFailJson('39999999');
         }
@@ -53,7 +47,7 @@ class Scene extends \Hyperf\Di\Aop\AbstractAspect
         if ($sceneInfo->isStop) {
             throwFailJson('39999998');
         }
-        $this->logicAuthScene->setCurrentInfo($sceneInfo);
+        $logicAuthScene->setCurrentInfo($sceneInfo);
         try {
             $response = $proceedingJoinPoint->process();
             return $response;
