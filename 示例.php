@@ -18,18 +18,15 @@ url组成部分：scheme://host:port/path?query#anchor
     启动服务
         php bin/hyperf.php start
         php bin/hyperf.php server:watch //热更新
-    快速生成模型类，需先修改AbstractModel继承自\Hyperf\DbConnection\Model\Model（--pool对应哪个库）
+    快速生成模型类（--pool对应哪个库）
         php bin/hyperf.php gen:model --pool=default 
     快速生成Dao类，需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再修改
         php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
     
 框架使用规范：
-    1：使用容器和依赖注入功能时，需要特别注意对象是否含有状态。以下为带有状态的类
-        app\Module\Db\Dao内的类（内部的属性几乎都含有状态）
-        app\Module\Db\Model内的类（如果继承\Hyperf\DbConnection\Model\Model模型的话，且要切换连接或表时，$connection和$table带有状态）
-        app\Module\Cache内的类（当要切换连接时，$cache带有状态）
-    2：禁止在任何地方使用app\Module\Db\Model类，防止改变其状态，否则会对app\Module\Db\Dao的使用造成影响
-    3：只使用app\Module\Db\Dao或Hyperf\DbConnection\Db做数据库处理
-    4：app\Module\Db\Dao文件夹内的类统一使用getDao方法实例化
-    5：app\Module\Cache文件夹内的类统一使用getCache方法实例化
+    1：使用容器和依赖注入功能时，需要特别注意对象是否含有状态。以下带有状态的类严禁使用容器获取实例，如使用则必须以new className()或make(className::class)的方式生成实例
+        app\Module\Db\Model内的类（如果继承\Hyperf\DbConnection\Model\Model模型的话，且要切换连接或表时，$connection和$table带有状态），建议统一使用getModel方法生成实例
+        app\Module\Db\Dao内的类（内部的属性几乎都含有状态），建议统一使用getDao方法生成实例
+        app\Module\Cache内的类（当要切换连接时，$cache带有状态），建议统一使用getCache方法生成实例
+    2：建议只使用app\Module\Db\Dao或Hyperf\DbConnection\Db做数据库处理
  */

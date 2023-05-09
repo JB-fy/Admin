@@ -41,7 +41,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         //子类未定义$model时会自动设置。注意：Dao类目录和Model目录的对应关系
         if (empty($this->model)) {
             $modelClassName = str_replace('\\Dao\\', '\\Model\\', get_class($this));
-            $this->model = getContainer()->get($modelClassName);
+            $this->model = getModel($modelClassName);
         }
     }
 

@@ -184,11 +184,22 @@ if (!function_exists('getContainer')) {
     }
 }
 
+if (!function_exists('getModel')) {
+    /**
+     * 获取Model对象（建议app\Module\Db\Model文件夹内的类统一使用此方法生成实例。防止误使用容器获取，容器获取的实例状态改变会污染框架环境）
+     *
+     * @param string $className
+     * @return object
+     */
+    function getModel(string $className): object
+    {
+        return make($className);
+    }
+}
+
 if (!function_exists('getDao')) {
     /**
-     * 获取Dao对象
-     *  注意：
-     *      app\Module\Db\Dao文件夹内的类统一使用此方法实例化。防止误使用容器获取，容器获取的实例状态改变会污染框架环境
+     * 获取Dao对象（建议app\Module\Db\Dao文件夹内的类统一使用此方法生成实例。防止误使用容器获取，容器获取的实例状态改变会污染框架环境）
      *
      * @param string $className
      * @return object
@@ -201,9 +212,8 @@ if (!function_exists('getDao')) {
 
 if (!function_exists('getCache')) {
     /**
-     * 获取Cache对象
-     *  注意：
-     *      当确定使用的缓存对象一定不会切换连接库时（即不改变app\Module\Cache\AbstractCache类的$cache变量），可使用容器缓存获取
+     * 获取Cache对象（当确定使用的缓存对象一定不会切换连接库时（即不改变app\Module\Cache\AbstractCache类的$cache变量），可使用容器缓存获取）
+     * 
      * @param string $className
      * @return object
      */
