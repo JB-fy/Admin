@@ -77,19 +77,14 @@ if (!function_exists('dbTablePartition')) {
         $table = $dao->getTable();
         $db = \Hyperf\DbConnection\Db::connection($connection);
 
-        /**--------查询分区（不是分区表或无分区，查询结果都会有一项，且第一项内PARTITION_NAME值为null） 开始--------**/
-        $partitionSelSql = 'SELECT PARTITION_NAME FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA = SCHEMA() AND TABLE_NAME = \'' . $table . '\'';
-        $partitionResult = $db->select($partitionSelSql, [], false);
-        $partitionList = [];
-        if ($partitionResult[0]->PARTITION_NAME !== null) {
-            foreach ($partitionResult as $v) {
-                $partitionList[] = $v->PARTITION_NAME;
-            }
-        }
-        /**--------查询分区（不是分区表或无分区，查询结果都会有一项，且第一项内PARTITION_NAME值为null） 结束--------**/
+        /**--------查询分区 开始--------**/
+        $partitionSelSql = 'SELECT MAX(PARTITION_NAME) AS maxPartitionName FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA = SCHEMA() AND TABLE_NAME = \'' . $table . '\'';
+        $partitionResult = $db->select($partitionSelSql, [], false);    //不是分区表或无分区，查询结果都会有一项，且第一项maxPartitionName值为null
+        $maxPartitionName = $partitionResult[0]->maxPartitionName;
+        /**--------查询分区 结束--------**/
 
         /**--------无分区则建立当前分区 开始--------**/
-        if (empty($partitionList)) {
+        if (empty($maxPartitionName)) {
             $ltTime = time() + $partitionTime;
             $ltDate = date('Y-m-d', $ltTime);
             $partitionName = date('Ymd', $ltTime - 24 * 60 * 60); //该分区的最大日期作为分区名
@@ -97,9 +92,6 @@ if (!function_exists('dbTablePartition')) {
             $partitionCreateSql = 'ALTER TABLE `' . $table . '` PARTITION BY RANGE (TO_DAYS( ' . $partitionField . ' )) ( ' . $partitionCreateSql . ' )';
             $db->update($partitionCreateSql);
             $maxPartitionName = $partitionName;
-        } else {
-            //$maxPartitionName = $partitionList[count($partitionList) - 1];
-            $maxPartitionName = $partitionList[0];
         }
         /**--------无分区则建立当前分区 结束--------**/
 
