@@ -51,12 +51,12 @@ if (!function_exists('dbTablePartition')) {
      * 建议：分区间隔时间，分区数量设置后，两者总时长要比定时器间隔多几天时间，方便分区失败时，有时间让技术人工处理
      *
      * @param string $daoClassName  数据库表对应的dao类。示例：App\Module\Db\Dao\Log\Request::class
-     * @param string $partitionField    分区字段，即根据该字段做分区
-     * @param integer $partitionTime    间隔多长时间创建一个分区，单位：秒
      * @param integer $partitionNumber  当前时间后面，需要新增的分区数量
+     * @param integer $partitionTime    间隔多长时间创建一个分区，单位：秒
+     * @param string $partitionField    分区字段，即根据该字段做分区
      * @return void
      */
-    function dbTablePartition(string $daoClassName, int $partitionTime = 24 * 60 * 60, int $partitionNumber = 1, string $partitionField = 'createTime')
+    function dbTablePartition(string $daoClassName, int $partitionNumber = 1, int $partitionTime = 24 * 60 * 60, string $partitionField = 'createTime')
     {
         /* //查看分区
         SELECT PARTITION_NAME, PARTITION_EXPRESSION, PARTITION_DESCRIPTION, TABLE_ROWS
