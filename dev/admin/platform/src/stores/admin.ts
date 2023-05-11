@@ -135,7 +135,6 @@ export const useAdminStore = defineStore('admin', {
           menuTabOfIndex.title = useLanguageStore().getMenuTitle(menuOfIndex)
           menuTabOfIndex.icon = menuOfIndex.icon
         }
-        //menuTabOfIndex.title = useLanguageStore().getMenuTitle(menuTabOfIndex)
         menuTabList.unshift({ ...menuTabOfIndex })
       }
       /*--------增加首页的菜单标签并置顶 结束--------*/
@@ -307,8 +306,8 @@ export const useAdminStore = defineStore('admin', {
         return menuTreeTmp
       }
       const res = await request('/login/menuTree')
-      const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
-      this.menuTree = handleMenuTree(tree)
+      this.menuTree = handleMenuTree(res.data.tree)
+      import.meta.env.DEV ? this.menuTree.push(this.menuTreeOfDev) : null
     },
     /**
      * 退出登录
