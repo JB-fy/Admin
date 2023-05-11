@@ -22,7 +22,7 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         menuUrl: [
-            { type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
+            { type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
         ],
         sceneId: [
             { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
@@ -74,7 +74,7 @@ const saveForm = reactive({
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
-                if (param?.idArr.length > 0) {
+                if (param?.idArr?.length > 0) {
                     await request('/auth/menu/update', param, true)
                 } else {
                     await request('/auth/menu/create', param, true)
