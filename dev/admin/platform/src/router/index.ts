@@ -191,7 +191,6 @@ router.beforeEach(async (to: any) => {
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致pinia数据全部重置） 结束--------**/
 
     /**--------设置菜单标签 开始--------**/
-    //404不放入菜单标签中
     if (to.meta.isAuth) {
         adminStore.pushMenuTabList({
             keepAlive: to.meta?.keepAlive ?? false,
