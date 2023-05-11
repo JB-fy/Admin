@@ -162,7 +162,7 @@ export const useAdminStore = defineStore('admin', {
         menuTab.title = menu.title
         menuTab.icon = menu.icon
       }
-      /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 开始--------*/
+      /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 结束--------*/
       this.menuTabList.push({
         ...menuTab,
         closable: true,
