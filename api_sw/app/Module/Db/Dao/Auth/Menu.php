@@ -12,9 +12,11 @@ use Hyperf\DbConnection\Db;
  * @property int $sceneId 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
  * @property int $pid 父ID
  * @property string $menuName 名称
+ * @property string $menuIcon 图标
+ * @property string $menuUrl 链接
  * @property int $level 层级
  * @property string $pidPath 层级路径
- * @property string $extraData 额外数据。（json格式：{"title（多语言时设置，未设置以menuName返回）": {"语言标识":"标题",...},"icon": "图标","url": "链接地址",...}）
+ * @property string $extraData 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
  * @property int $sort 排序值（从小到大排序，默认50，范围0-100）
  * @property int $isStop 是否停用：0否 1是
  * @property string $updateTime 更新时间
@@ -61,10 +63,10 @@ class Menu extends AbstractDao
                 return true;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
                 $this->field['select'][] = $this->getTable() . '.' . 'menuName';
-                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.title")) AS title'); //不知道怎么直接转成对象返回
-                $this->field['select'][] = $this->getTable() . '.' . 'extraData->title AS title';
-                $this->field['select'][] = $this->getTable() . '.' . 'extraData->url AS url';
-                $this->field['select'][] = $this->getTable() . '.' . 'extraData->icon AS icon';
+                $this->field['select'][] = $this->getTable() . '.' . 'menuIcon';
+                $this->field['select'][] = $this->getTable() . '.' . 'menuUrl';
+                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.i18n")) AS i18n'); //不知道怎么直接转成对象返回
+                $this->field['select'][] = $this->getTable() . '.' . 'extraData->i18n AS i18n';
 
                 $this->afterField[] = 'showMenu';
                 return true;
@@ -243,9 +245,7 @@ class Menu extends AbstractDao
     {
         switch ($key) {
             case 'showMenu':
-                $info->title = $info->title ? json_decode($info->title, true) : [];
-                $info->icon = $info->icon ?? '';
-                $info->url = $info->url ?? '';
+                $info->i18n = $info->i18n ? json_decode($info->i18n, true) : ['title' => ['zh-cn' => $info->menuName]];
                 return true;
         }
         return false;

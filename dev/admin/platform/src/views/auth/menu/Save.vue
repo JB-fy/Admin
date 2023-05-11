@@ -17,6 +17,13 @@ const saveForm = reactive({
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
+        menuIcon: [
+            { type: 'string', min: 0, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+        ],
+        menuUrl: [
+            { type: 'string', min: 0, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+        ],
         sceneId: [
             { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
         ],
@@ -113,6 +120,14 @@ const saveDrawer = reactive({
                 <ElFormItem :label="t('common.name.auth.menu.menuName')" prop="menuName">
                     <ElInput v-model="saveForm.data.menuName" :placeholder="t('common.name.auth.menu.menuName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.auth.menu.menuIcon')" prop="menuIcon">
+                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('common.name.auth.menu.menuIcon')"
+                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('common.name.auth.menu.menuUrl')" prop="menuUrl">
+                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('common.name.auth.menu.menuUrl')"
+                        minlength="1" maxlength="120" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId"

@@ -7,12 +7,13 @@ import Layout from '@/layout/default/Index.vue'
  *      keepAlive: true,    //是否可以缓存
  *      componentName: string,    //组件名称
  *      menu: { 
- *          menuName: '菜单名称',
- *          title: {    //标题，多语言时设置，未设置以menuName为准
- *              'en': 'homepage',
- *              'zh-cn': '主页',...
+ *          i18n: {    //标题，多语言时设置，未设置以name为准
+ *              title: {
+ *                  'en': 'homepage',
+ *                  'zh-cn': '主页',...
+ *              },
  *          },
- *          icon:'图标'
+ *          icon: '图标',
  *      }
  */
 const initRouteList = [
@@ -117,14 +118,14 @@ const initRouteList = [
                     component.default.name = '/profile'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { menuName: '个人中心', title: { 'en': 'Profile', 'zh-cn': '个人中心' }, icon: 'AutoiconEpUserFilled' } }
+                meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { i18n: { title: { 'en': 'Profile', 'zh-cn': '个人中心' } }, icon: 'AutoiconEpUserFilled' } }
             },
             {
                 path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.gitee.io/zh-CN/
                 component: () => import('@/views/ThirdSite.vue'),
                 meta: { isAuth: true, keepAlive: false }
             },
-            /* {
+            {
                 //待解决bug。带参数的路由，所有符合条件的下级路由，由于组件是同一个，如果其中一个下级路由页面刷新时，会删除所有下级路由的缓存
                 //带参数的路由，要么不设置缓存；要么忽略这个bug，毕竟没啥影响
                 //要解决这个bug，除非可以动态设置组件name，这点貌似无法实现
@@ -134,19 +135,19 @@ const initRouteList = [
                     name: '/test',
                     template: '<input />',
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/test', menu: { menuName: '测试', title: { 'en': 'test', 'zh-cn': '测试' }, icon: 'AutoiconEpBicycle' } }
-            }, */
+                meta: { isAuth: true, keepAlive: true, componentName: '/test', menu: { i18n: { title: { 'en': 'test', 'zh-cn': '测试' } } }, icon: 'AutoiconEpBicycle' }
+            },
         ]
     },
     {
         path: '/login',
         component: () => import('@/views/Login.vue'),
-        meta: { isAuth: false, keepAlive: false, menu: { menuName: '登录', title: { 'en': 'Login', 'zh-cn': '登录' } } }
+        meta: { isAuth: false, keepAlive: false, menu: { i18n: { title: { 'en': 'Login', 'zh-cn': '登录' } } } }
     },
     {
         path: '/:pathMatch(.*)*',
         component: () => import('@/views/404.vue'),
-        meta: { isAuth: false, keepAlive: false, menu: { menuName: '404', title: { 'en': '404', 'zh-cn': '404' } } }
+        meta: { isAuth: false, keepAlive: false, menu: { i18n: { title: { 'en': '404', 'zh-cn': '404' } } } }
     },
 ]
 

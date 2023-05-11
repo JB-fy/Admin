@@ -6,72 +6,78 @@ export const useAdminStore = defineStore('admin', {
   state: () => {
     return {
       info: {} as { account: string, phone: string, nickname: string, avatar: string, [propName: string]: any }, //用户信息
-      menuTree: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, children: [子集]}
-      menuList: [] as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, menuChain: { [propName: string]: any }[] }[],   //菜单列表。单个菜单格式：{menuName: 菜单名称（title不存在时默认该字段作标题）, title: {"i18n语言标识":"语言标题",...}, url: 地址, icon: 图标, menuChain: [菜单链（包含自身）]}
-      menuTabList: [] as { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string, closable: boolean }[], //菜单标签列表
+      menuTree: [] as { i18n: { title: { [propName: string]: string } }, icon: string, url: string, children: { [propName: string]: any }[] }[],   //菜单树。单个菜单格式：{ i18n: { title: {"语言标识":"标题",...} }, icon: 图标, url: 链接地址, children: [子集]}
+      menuList: [] as { i18n: { title: { [propName: string]: string } }, icon: string, url: string, menuChain: { [propName: string]: any }[] }[],   //菜单列表。单个菜单格式：{ i18n: { title: {"语言标识":"标题",...} }, icon: 图标, url: 链接地址, menuChain: [菜单链（包含自身）]}
+      menuTabList: [] as { keepAlive: boolean, componentName: string, i18n: { title: { [propName: string]: string } }, icon: string, url: string, closable: boolean }[], //菜单标签列表
       //开发工具菜单。只在开发模式显示（即import.meta.env.DEV为true）
       menuTreeOfDev: {
-        "menuName": "开发工具",
-        "title": {
-          "en": "Dev Tool",
-          "zh-cn": "开发工具"
+        "i18n": {
+          "title": {
+            "en": "Dev Tool",
+            "zh-cn": "开发工具"
+          }
         },
-        "url": "",
         "icon": "AutoiconEpHelpFilled",
+        "url": "",
         "children": [
           /* {
-            "menuName": "说明文档",
-            "title": {
-              "en": "Document",
-              "zh-cn": "说明文档"
+            "i18n": {
+              "title": {
+                "en": "Document",
+                "zh-cn": "说明文档"
+              },
             },
+            "icon": "AutoiconEpDocument",
             //"url": "https://www.baidu.com/",  //新窗口打开
             "url": "/thirdSite?url=https://www.baidu.com/", //标签页打开
-            "icon": "AutoiconEpDocument",
             "children": []
           }, */
           {
-            "menuName": "Hyperf",
-            "title": {
-              "en": "Hyperf",
-              "zh-cn": "Hyperf"
+            "i18n": {
+              "title": {
+                "en": "Hyperf",
+                "zh-cn": "Hyperf"
+              },
             },
+            "icon": "AutoiconEpChromeFilled",
             "url": "https://www.hyperf.io/",
-            "icon": "AutoiconEpChromeFilled",
             "children": []
           },
           {
-            "menuName": "ElementPlus",
-            "title": {
-              "en": "Element Plus",
-              "zh-cn": "Element Plus"
+            "i18n": {
+              "title": {
+                "en": "Element Plus",
+                "zh-cn": "Element Plus"
+              },
             },
-            "url": "https://element-plus.gitee.io/zh-CN/",
             "icon": "AutoiconEpElementPlus",
+            "url": "https://element-plus.gitee.io/zh-CN/",
             "children": []
           },
           {
-            "menuName": "Vant4",
-            "title": {
-              "en": "Vant 4",
-              "zh-cn": "Vant 4"
+            "i18n": {
+              "title": {
+                "en": "Vant 4",
+                "zh-cn": "Vant 4"
+              },
             },
-            "url": "https://vant-contrib.gitee.io/vant/#/zh-CN",
             "icon": "Vant-wechat-moments",
+            "url": "https://vant-contrib.gitee.io/vant/#/zh-CN",
             "children": []
           },
           {
-            "menuName": "Vue",
-            "title": {
-              "en": "Vue",
-              "zh-cn": "Vue"
+            "i18n": {
+              "title": {
+                "en": "Vue",
+                "zh-cn": "Vue"
+              },
             },
-            "url": "https://cn.vuejs.org/api/",
             "icon": "AutoiconEpChromeFilled",
+            "url": "https://cn.vuejs.org/api/",
             "children": []
           }
         ]
-      } as { menuName: string, title: { [propName: string]: any }, url: string, icon: string, children: { [propName: string]: any }[] },
+      } as { i18n: { title: { [propName: string]: string } }, icon: string, url: string, children: { [propName: string]: any }[] },
     }
   },
   getters: {
@@ -118,20 +124,18 @@ export const useAdminStore = defineStore('admin', {
         const menuTabOfIndex = {
           componentName: routeOfIndex.meta.componentName,
           url: routeOfIndex.path,
-          closable: false,  //首页的菜单标签不能关闭
-          menuName: routeOfIndex.meta?.menu?.menuName,
-          title: routeOfIndex.meta?.menu?.title,
+          title: useLanguageStore().getMenuTitle(routeOfIndex.meta?.menu),
           icon: routeOfIndex.meta?.menu?.icon,
+          closable: false,  //首页的菜单标签不能关闭
         }
         const menuOfIndex = state.menuList.find((item) => {
           return item.url == routeOfIndex.path
         })
         if (menuOfIndex) {
-          menuTabOfIndex.menuName = menuOfIndex.menuName
-          menuTabOfIndex.title = menuOfIndex.title
+          menuTabOfIndex.title = useLanguageStore().getMenuTitle(menuOfIndex)
           menuTabOfIndex.icon = menuOfIndex.icon
         }
-        menuTabOfIndex.title = useLanguageStore().getMenuTitle(menuTabOfIndex)
+        //menuTabOfIndex.title = useLanguageStore().getMenuTitle(menuTabOfIndex)
         menuTabList.unshift({ ...menuTabOfIndex })
       }
       /*--------增加首页的菜单标签并置顶 结束--------*/
@@ -143,7 +147,7 @@ export const useAdminStore = defineStore('admin', {
      * 推入菜单标签列表
      * @param menuTab 
      */
-    pushMenuTabList(menuTab: { keepAlive: boolean, componentName: string, url: string, menuName: string, title: { [propName: string]: string }, icon: string }) {
+    pushMenuTabList(menuTab: { keepAlive: boolean, componentName: string, url: string, i18n: { title: { [propName: string]: string } }, icon: string }) {
       if (menuTab.url == '/') {
         return
       }
@@ -158,8 +162,7 @@ export const useAdminStore = defineStore('admin', {
         return item.url == menuTab.url
       })
       if (menu) {
-        menuTab.menuName = menu.menuName
-        menuTab.title = menu.title
+        menuTab.i18n = menu.i18n
         menuTab.icon = menu.icon
       }
       /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 结束--------*/
@@ -275,27 +278,24 @@ export const useAdminStore = defineStore('admin', {
         const menuTreeTmp: any = []
         for (let i = 0; i < menuTree.length; i++) {
           menuTreeTmp[i] = {
-            menuName: menuTree[i].menuName,
-            title: menuTree[i].title,
-            url: menuTree[i].url,
-            icon: menuTree[i].icon,
+            i18n: menuTree[i].i18n,
+            icon: menuTree[i].menuIcon,
+            url: menuTree[i].menuUrl,
             children: [],
           }
           if (menuTree[i].children.length) {
             menuChain.push({
-              menuName: menuTree[i].menuName,
-              title: menuTree[i].title,
-              url: menuTree[i].url,
-              icon: menuTree[i].icon,
+              i18n: menuTree[i].i18n,
+              icon: menuTree[i].menuIcon,
+              url: menuTree[i].menuUrl,
             })
             menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, [...menuChain])
             menuChain.pop()
           } else {
             const menu = {
-              menuName: menuTree[i].menuName,
-              title: menuTree[i].title,
-              url: menuTree[i].url,
-              icon: menuTree[i].icon
+              i18n: menuTree[i].i18n,
+              icon: menuTree[i].menuIcon,
+              url: menuTree[i].menuUrl,
             }
             //设置菜单列表
             this.menuList.push({

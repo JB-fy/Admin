@@ -62,6 +62,20 @@ const table = reactive({
         width: 150,
     },
     {
+        dataKey: 'menuIcon',
+        title: t('common.name.auth.menu.menuIcon'),
+        key: 'menuIcon',
+        align: 'center',
+        width: 150,
+    },
+    {
+        dataKey: 'menuUrl',
+        title: t('common.name.auth.menu.menuUrl'),
+        key: 'menuUrl',
+        align: 'center',
+        width: 150,
+    },
+    {
         dataKey: 'sceneName',
         title: t('common.name.rel.sceneId'),
         key: 'sceneId',

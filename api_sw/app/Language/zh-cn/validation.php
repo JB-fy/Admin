@@ -225,6 +225,8 @@ return [
         'actionCode' => '操作标识',
 
         'menuName' => '菜单名称',
+        'menuUrl' => '菜单链接',
+        'menuIcon' => '菜单图标',
 
         'roleName' => '角色名称',
 
