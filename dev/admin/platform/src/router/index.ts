@@ -123,7 +123,7 @@ const initRouteList = [
             {
                 path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.gitee.io/zh-CN/
                 component: () => import('@/views/ThirdSite.vue'),
-                meta: { isAuth: true, keepAlive: false }
+                meta: { isAuth: true, keepAlive: false, menu: { i18n: { title: { 'en': 'Third Site', 'zh-cn': '第三方站点' } }, icon: 'AutoiconEpChromeFilled' } }
             },
             {
                 //待解决bug。带参数的路由，所有符合条件的下级路由，由于组件是同一个，如果其中一个下级路由页面刷新时，会删除所有下级路由的缓存
@@ -135,7 +135,7 @@ const initRouteList = [
                     name: '/test',
                     template: '<input />',
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/test', menu: { i18n: { title: { 'en': 'test', 'zh-cn': '测试' } } }, icon: 'AutoiconEpBicycle' }
+                meta: { isAuth: true, keepAlive: true, componentName: '/test', menu: { i18n: { title: { 'en': 'test', 'zh-cn': '测试' } }, icon: 'AutoiconEpBicycle' } }
             },
         ]
     },

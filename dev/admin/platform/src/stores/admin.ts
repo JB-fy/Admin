@@ -278,23 +278,23 @@ export const useAdminStore = defineStore('admin', {
         for (let i = 0; i < menuTree.length; i++) {
           menuTreeTmp[i] = {
             i18n: menuTree[i].i18n,
-            icon: menuTree[i].menuIcon,
-            url: menuTree[i].menuUrl,
+            icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
+            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
             children: [],
           }
           if (menuTree[i].children.length) {
             menuChain.push({
               i18n: menuTree[i].i18n,
-              icon: menuTree[i].menuIcon,
-              url: menuTree[i].menuUrl,
+              icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
+              url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
             })
             menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, [...menuChain])
             menuChain.pop()
           } else {
             const menu = {
               i18n: menuTree[i].i18n,
-              icon: menuTree[i].menuIcon,
-              url: menuTree[i].menuUrl,
+              icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
+              url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
             }
             //设置菜单列表
             this.menuList.push({
@@ -306,8 +306,8 @@ export const useAdminStore = defineStore('admin', {
         return menuTreeTmp
       }
       const res = await request('/login/menuTree')
-      this.menuTree = handleMenuTree(res.data.tree)
-      import.meta.env.DEV ? this.menuTree.push(this.menuTreeOfDev) : null
+      const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
+      this.menuTree = handleMenuTree(tree)
     },
     /**
      * 退出登录

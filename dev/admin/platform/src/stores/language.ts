@@ -52,7 +52,8 @@ export const useLanguageStore = defineStore('language', {
     //获取页面标题
     getMenuTitle(menu: any) {
       if (menu) {
-        return menu?.i18n?.title?.[i18n.global.locale.value] ?? menu?.i18n?.title['zh-cn']
+        console.log(menu)
+        return menu.i18n.title[i18n.global.locale.value] ?? menu.i18n.title['zh-cn']
       }
       return ''
     },

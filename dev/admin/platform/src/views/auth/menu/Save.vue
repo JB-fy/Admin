@@ -18,11 +18,11 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         menuIcon: [
-            { type: 'string', min: 0, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         menuUrl: [
-            { type: 'string', min: 0, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
         ],
         sceneId: [
             { type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
