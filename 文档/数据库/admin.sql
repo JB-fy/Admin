@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地-8.0.32
+ Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
- Source Server Version : 80032 (8.0.32)
- Source Host           : 192.168.0.16:3306
- Source Schema         : admin_raw
+ Source Server Version : 80033 (8.0.33)
+ Source Host           : 192.168.2.200:3306
+ Source Schema         : admin
 
  Target Server Type    : MySQL
- Target Server Version : 80032 (8.0.32)
+ Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 29/04/2023 09:55:44
+ Date: 11/05/2023 18:30:41
 */
 
 SET NAMES utf8mb4;
@@ -112,9 +112,11 @@ CREATE TABLE `auth_menu`  (
   `sceneId` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）',
   `pid` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '父ID',
   `menuName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `menuIcon` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '图标',
+  `menuUrl` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '链接',
   `level` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '层级',
   `pidPath` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '层级路径',
-  `extraData` json NULL COMMENT '额外数据。（json格式：{\"title（多语言时设置，未设置以menuName返回）\": {\"语言标识\":\"标题\",...},\"icon\": \"图标\",\"url\": \"链接地址\",...}）',
+  `extraData` json NULL COMMENT '额外数据。（json格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}）',
   `sort` tinyint UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序值（从小到大排序，默认50，范围0-100）',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
   `updateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -127,19 +129,19 @@ CREATE TABLE `auth_menu`  (
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', 1, '0-1', '{\"url\": \"/\", \"icon\": \"AutoiconEpHomeFilled\", \"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}', 0, 0, '2023-01-12 22:20:27', '2022-12-25 23:28:45');
-INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', 2, '0-2', '{\"icon\": \"AutoiconEpLock\", \"title\": {\"en\": \"Auth Manage \", \"zh-cn\": \"权限管理\"}}', 100, 0, '2023-01-12 22:13:54', '2022-12-25 23:31:28');
-INSERT INTO `auth_menu` VALUES (3, 1, 2, '场景', 2, '0-2-3', '{\"url\": \"/auth/scene\", \"icon\": \"AutoiconEpFlag\", \"title\": {\"en\": \"Scene \", \"zh-cn\": \"场景\"}}', 100, 0, '2023-01-12 22:07:31', '2022-12-25 23:37:07');
-INSERT INTO `auth_menu` VALUES (4, 1, 2, '操作', 2, '0-2-4', '{\"url\": \"/auth/action\", \"icon\": \"AutoiconEpCoordinate\", \"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}', 90, 0, '2023-01-12 22:08:31', '2022-12-26 21:12:00');
-INSERT INTO `auth_menu` VALUES (5, 1, 2, '菜单', 2, '0-2-5', '{\"url\": \"/auth/menu\", \"icon\": \"AutoiconEpMenu\", \"title\": {\"en\": \"Menu \", \"zh-cn\": \"菜单\"}}', 80, 0, '2023-01-12 22:08:32', '2022-12-25 23:35:48');
-INSERT INTO `auth_menu` VALUES (6, 1, 2, '角色', 2, '0-2-6', '{\"url\": \"/auth/role\", \"icon\": \"AutoiconEpView\", \"title\": {\"en\": \"Role \", \"zh-cn\": \"角色\"}}', 70, 0, '2023-01-12 22:08:34', '2022-12-25 23:35:57');
-INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 2, '0-2-7', '{\"url\": \"/platform/admin\", \"icon\": \"AutoiconEpUserFilled\", \"title\": {\"en\": \"Platform Admin \", \"zh-cn\": \"平台管理员\"}}', 60, 0, '2023-01-12 22:08:35', '2022-12-25 23:35:16');
-INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 1, '0-8', '{\"icon\": \"AutoiconEpPlatform\", \"title\": {\"en\": \"System Manage \", \"zh-cn\": \"系统管理\"}}', 90, 0, '2023-01-12 22:30:25', '2022-12-25 23:36:04');
-INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 2, '0-8-9', '{\"icon\": \"AutoiconEpSetting\", \"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}', 100, 0, '2023-01-12 22:30:32', '2023-01-12 22:16:29');
-INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', 3, '0-8-9-10', '{\"url\": \"/platform/config\", \"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}', 50, 0, '2023-01-12 22:30:46', '2022-12-25 23:36:33');
-INSERT INTO `auth_menu` VALUES (11, 1, 0, '日志管理', 1, '0-11', '{\"icon\": \"AutoiconEpDataAnalysis\", \"title\": {\"en\": \"Log Manage \", \"zh-cn\": \"日志管理\"}}', 80, 0, '2023-01-12 22:30:51', '2022-12-25 23:36:38');
-INSERT INTO `auth_menu` VALUES (12, 1, 11, '请求日志', 2, '0-11-12', '{\"url\": \"/log/request\", \"icon\": \"AutoiconEpReading\", \"title\": {\"en\": \"Request Log \", \"zh-cn\": \"请求日志\"}}', 50, 0, '2023-01-12 22:30:57', '2022-12-25 23:36:45');
-INSERT INTO `auth_menu` VALUES (13, 1, 8, '服务器', 2, '0-8-13', '{\"url\": \"/platform/server\", \"icon\": \"AutoiconEpCpu\", \"title\": {\"en\": \"Server \", \"zh-cn\": \"服务器\"}}', 100, 0, '2023-02-12 23:33:42', '2023-02-12 23:33:42');
+INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', 'AutoiconEpHomeFilled', '/', 1, '0-1', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 0, 0, '2023-05-11 17:40:12', '2022-12-25 23:28:45');
+INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', 'AutoiconEpLock', '', 2, '0-2', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage \", \"zh-cn\": \"权限管理\"}}}', 100, 0, '2023-05-11 17:40:21', '2022-12-25 23:31:28');
+INSERT INTO `auth_menu` VALUES (3, 1, 2, '场景', 'AutoiconEpFlag', '/auth/scene', 2, '0-2-3', '{\"i18n\": {\"title\": {\"en\": \"Scene \", \"zh-cn\": \"场景\"}}}', 100, 0, '2023-05-11 17:40:27', '2022-12-25 23:37:07');
+INSERT INTO `auth_menu` VALUES (4, 1, 2, '操作', 'AutoiconEpCoordinate', '/auth/action', 2, '0-2-4', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 90, 0, '2023-05-11 17:40:37', '2022-12-26 21:12:00');
+INSERT INTO `auth_menu` VALUES (5, 1, 2, '菜单', 'AutoiconEpMenu', '/auth/menu', 2, '0-2-5', '{\"i18n\": {\"title\": {\"en\": \"Menu \", \"zh-cn\": \"菜单\"}}}', 80, 0, '2023-05-11 17:40:45', '2022-12-25 23:35:48');
+INSERT INTO `auth_menu` VALUES (6, 1, 2, '角色', 'AutoiconEpView', '/auth/role', 2, '0-2-6', '{\"i18n\": {\"title\": {\"en\": \"Role \", \"zh-cn\": \"角色\"}}}', 70, 0, '2023-05-11 17:41:55', '2022-12-25 23:35:57');
+INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'AutoiconEpUserFilled', '/platform/admin', 2, '0-2-7', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin \", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-05-11 17:42:04', '2022-12-25 23:35:16');
+INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage \", \"zh-cn\": \"系统管理\"}}}', 90, 0, '2023-05-11 17:42:09', '2022-12-25 23:36:04');
+INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-05-11 17:42:15', '2023-01-12 22:16:29');
+INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-05-11 17:42:22', '2022-12-25 23:36:33');
+INSERT INTO `auth_menu` VALUES (11, 1, 0, '日志管理', 'AutoiconEpDataAnalysis', '', 1, '0-11', '{\"i18n\": {\"title\": {\"en\": \"Log Manage \", \"zh-cn\": \"日志管理\"}}}', 80, 0, '2023-05-11 17:42:29', '2022-12-25 23:36:38');
+INSERT INTO `auth_menu` VALUES (12, 1, 11, '请求日志', 'AutoiconEpReading', '/log/request', 2, '0-11-12', '{\"i18n\": {\"title\": {\"en\": \"Request Log \", \"zh-cn\": \"请求日志\"}}}', 50, 0, '2023-05-11 17:42:36', '2022-12-25 23:36:45');
+INSERT INTO `auth_menu` VALUES (13, 1, 8, '服务器', 'AutoiconEpCpu', '/platform/server', 2, '0-8-13', '{\"i18n\": {\"title\": {\"en\": \"Server \", \"zh-cn\": \"服务器\"}}}', 100, 0, '2023-05-11 18:23:25', '2023-02-12 23:33:42');
 
 -- ----------------------------
 -- Table structure for auth_role
