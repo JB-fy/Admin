@@ -14,7 +14,7 @@ class Action extends AbstractValidation
         'actionCode' => 'sometimes|required|alpha_dash|between:1,30',
         'sceneIdArr' => 'sometimes|required_if_null|array|min:1',
         'sceneIdArr.*' => 'sometimes|required|integer|min:1|distinct',
-        'remark' => 'string|between:0,120',
+        'remark' => 'string|between:1,120',
         'isStop' => 'sometimes|required|integer|in:0,1',
 
         'sceneId' => 'sometimes|required|integer|min:1',
