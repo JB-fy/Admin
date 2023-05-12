@@ -2,12 +2,13 @@ package hello
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	v1 "api/api/hello/v1"
-	dao "api/internal/dao/auth"
+	dao "api/internal/dao/log"
 )
 
 type Controller struct{}
@@ -23,7 +24,9 @@ func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err e
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
-	dao.Menu.PrimaryKey()
+	res, _ := dao.Request.Ctx(r.GetCtx()).Where("logId", 5).Delete()
+	fmt.Println(res.RowsAffected())
+	fmt.Println(res.LastInsertId())
 	//fmt.Println(r.GetCtx())
 	r.Response.Writeln("Test")
 }
