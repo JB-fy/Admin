@@ -6,7 +6,6 @@ package dao
 
 import (
 	"api/internal/dao/auth/internal"
-	"fmt"
 )
 
 // internalMenuDao is internal type for wrapping internal DAO implements.
@@ -27,6 +26,5 @@ var (
 
 // Fill with you ideas below.
 func (dao *menuDao) Key() string {
-	fmt.Println(dao.DB())
 	return dao.Columns().MenuId
 }

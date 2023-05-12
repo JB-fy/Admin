@@ -17,8 +17,8 @@ func New() *Controller {
 }
 
 func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err error) {
-	//fmt.Println(ctx)
 	dao.Menu.Key()
+	//fmt.Println(ctx)
 	g.RequestFromCtx(ctx).Response.Writeln("Hello World!")
 	return
 }
