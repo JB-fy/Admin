@@ -3,7 +3,7 @@ const props = defineProps({
     icon: {
         type: String,
         required: true,
-        default: ''
+        default: '' //参数示例：Element Plus(AutoiconEpXxxx或EpXxxx)；Vant(Vant-xxxx)；其他(AutoiconXxxx，参考https://github.com/antfu/unplugin-icons)
     },
     color: {
         type: String,
