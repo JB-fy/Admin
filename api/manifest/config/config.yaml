@@ -10,7 +10,7 @@ logger:
 database:
   default:
     - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
-      role: "master"
+      role: "master" #主从配置(master/slave)
       #weight: "100" #负载均衡权重，用于负载均衡控制，不使用应用层的负载均衡机制请置空
       #prefix: ""
       #charset: "utf8"
@@ -19,7 +19,4 @@ database:
       #maxOpen: "10" #连接池最大打开的连接数
       #maxLifetime: "30s" #连接对象可重复使用的时间长度
       debug: true #开启调试模式
-      dryRun: true #ORM空跑(只读不写)
-    - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
-      role: "slave"
-      debug: true
+      dryRun: false #ORM空跑(只读不写)
