@@ -2,12 +2,12 @@ package hello
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	v1 "api/api/hello/v1"
+	dao "api/internal/dao/auth"
 )
 
 type Controller struct{}
@@ -17,12 +17,13 @@ func New() *Controller {
 }
 
 func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err error) {
-	fmt.Println(ctx)
+	//fmt.Println(ctx)
+	dao.Menu.Key()
 	g.RequestFromCtx(ctx).Response.Writeln("Hello World!")
 	return
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
-	fmt.Println(r.GetCtx())
+	//fmt.Println(r.GetCtx())
 	r.Response.Writeln("Test")
 }
