@@ -70,7 +70,7 @@ const table = reactive({
         cellRenderer: (props: any): any => {
             return [
                 h(MyIconDynamic as any, {
-                    icon: 'props.rowData.menuIcon',
+                    icon: props.rowData.menuIcon,
                     size: '18px'
                 })
             ]
