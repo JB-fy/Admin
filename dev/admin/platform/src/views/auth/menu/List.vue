@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElInputNumber } from 'element-plus';
+import MyIconDynamic from '@/components/MyIconDynamic.vue';
 
 const { t } = useI18n()
 
@@ -66,7 +66,15 @@ const table = reactive({
         title: t('common.name.auth.menu.menuIcon'),
         key: 'menuIcon',
         align: 'center',
-        width: 150,
+        width: 100,
+        cellRenderer: (props: any): any => {
+            return [
+                h(MyIconDynamic as any, {
+                    icon: props.rowData.menuIcon,
+                    size: '18px'
+                })
+            ]
+        },
     },
     {
         dataKey: 'menuUrl',

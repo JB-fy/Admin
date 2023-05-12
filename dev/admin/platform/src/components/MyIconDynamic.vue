@@ -4,7 +4,15 @@ const props = defineProps({
         type: String,
         required: true,
         default: ''
-    }
+    },
+    color: {
+        type: String,
+        default: ''
+    },
+    size: {
+        type: [Number, String],
+        default: ''
+    },
 })
 const prefix = computed(() => {
     return props.icon.slice(0, props.icon.indexOf('-')).toLowerCase()
@@ -18,7 +26,7 @@ const iconCode = computed(() => {
 </script>
 
 <template>
-    <ElIcon v-if="icon">
+    <ElIcon v-if="icon" :color="color" :size="size">
         <VanIcon v-if="prefix === 'vant'" :name="iconCode" />
         <component v-else :is="iconCode" />
         <!-- <component v-else-if="icon.indexOf('ep-') === 0" :is="iconCode" />
