@@ -25,6 +25,6 @@ var (
 )
 
 // Fill with you ideas below.
-func (dao *menuDao) Key() string {
+func (dao *menuDao) PrimaryKey() string {
 	return dao.Columns().MenuId
 }

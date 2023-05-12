@@ -23,7 +23,7 @@ func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err e
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
-	dao.Menu.Key()
+	dao.Menu.PrimaryKey()
 	//fmt.Println(r.GetCtx())
 	r.Response.Writeln("Test")
 }
