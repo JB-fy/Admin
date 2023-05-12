@@ -847,9 +847,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      *
      * @return integer
      */
-    final public function delete(): int
+    final public function delete(int $offset = 0, int $limit = 0): int
     {
         $this->getBuilder();
+        $this->handleLimit($offset, $limit);
         return $this->builder->delete();
     }
 
