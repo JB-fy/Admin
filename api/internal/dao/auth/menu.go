@@ -6,6 +6,9 @@ package dao
 
 import (
 	"api/internal/dao/auth/internal"
+
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 // internalMenuDao is internal type for wrapping internal DAO implements.
@@ -25,6 +28,22 @@ var (
 )
 
 // Fill with you ideas below.
-func (dao *menuDao) PrimaryKey() string {
-	return dao.Columns().MenuId
+func (dao *menuDao) PrimaryKey() (primaryKey string) {
+	//primaryKey = reflect.ValueOf(dao.Columns()).Field(0).String()
+	primaryKey = dao.Columns().MenuId
+	return
+}
+
+func (dao *menuDao) Filter(filter g.MapStrAny) func(m *gdb.Model) *gdb.Model {
+	return func(m *gdb.Model) *gdb.Model {
+		for k, v := range filter {
+			switch k {
+			case "id":
+				m = m.Where(dao.PrimaryKey(), v)
+			default:
+				m = m.Where(k, v)
+			}
+		}
+		return m
+	}
 }
