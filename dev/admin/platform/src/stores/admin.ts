@@ -75,6 +75,17 @@ export const useAdminStore = defineStore('admin', {
             "icon": "AutoiconEpChromeFilled",
             "url": "https://cn.vuejs.org/api/",
             "children": []
+          },
+          {
+            "i18n": {
+              "title": {
+                "en": "Icon",
+                "zh-cn": "图标"
+              },
+            },
+            "icon": "AutoiconEpHelp",
+            "url": "https://github.com/antfu/unplugin-icons",
+            "children": []
           }
         ]
       } as { i18n: { title: { [propName: string]: string } }, icon: string, url: string, children: { [propName: string]: any }[] },

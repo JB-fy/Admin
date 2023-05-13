@@ -123,11 +123,15 @@ const saveDrawer = reactive({
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.auth.menu.menuIcon')" prop="menuIcon">
                     <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('common.name.auth.menu.menuIcon')"
-                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+                    <label>
+                        <ElAlert :title="t('view.auth.menu.tip.menuIcon')" type="info" :show-icon="true"
+                            :closable="false" />
+                    </label>
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.auth.menu.menuUrl')" prop="menuUrl">
-                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('common.name.auth.menu.menuUrl')"
-                        minlength="1" maxlength="120" :show-word-limit="true" :clearable="true" />
+                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('common.name.auth.menu.menuUrl')" minlength="1"
+                        maxlength="120" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId"
@@ -140,8 +144,7 @@ const saveDrawer = reactive({
                         :defaultOptions="[{ id: 0, menuName: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.extraData')" prop="extraData">
-                    <ElAlert :title="t('view.auth.menu.tip.extraData')" type="info" :show-icon="true"
-                        :closable="false" />
+                    <ElAlert :title="t('view.auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
                     <ElInput v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.sort')" prop="sort">

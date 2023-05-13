@@ -22,8 +22,4 @@ export default {
     closeRight: 'Close Right',
     closeAll: 'Close All',
     upTop: 'UpTop',
-
-    tip: {
-        pleaseSelect: 'please select',
-    },
 }
