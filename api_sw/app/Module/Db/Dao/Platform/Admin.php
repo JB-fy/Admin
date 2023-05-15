@@ -31,7 +31,7 @@ class Admin extends AbstractDao
         switch ($key) {
             case 'roleIdArr':
                 //需要id字段
-                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+                $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
 
                 $this->afterField[] = $key;
                 return true;
@@ -53,20 +53,20 @@ class Admin extends AbstractDao
         switch ($key) {
             case 'accountOrPhone':
                 if (is_numeric($value)) {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . 'phone', $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->builder->where($this->getTable() . '.' . 'phone', $operator ?? '=', $value, $boolean ?? 'and');
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . 'account', $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->builder->where($this->getTable() . '.' . 'account', $operator ?? '=', $value, $boolean ?? 'and');
                 }
                 return true;
             case 'roleId':
                 if (is_array($value)) {
                     if (count($value) === 1) {
-                        $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
+                        $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and');
                     } else {
-                        $this->where[] = ['method' => 'whereIn', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                        $this->builder->whereIn(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $value, $boolean ?? 'and');
                     }
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
 
                 $this->joinOfAlone('roleRelOfPlatformAdmin');
@@ -88,16 +88,9 @@ class Admin extends AbstractDao
             case 'roleRelOfPlatformAdmin':
                 $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
                 $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
-                if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
-                    $this->join[$roleRelOfPlatformAdminDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $roleRelOfPlatformAdminDaoTable,
-                            $roleRelOfPlatformAdminDaoTable . '.adminId',
-                            '=',
-                            $this->getTable() . '.' . $this->getKey()
-                        ]
-                    ];
+                if (!in_array($roleRelOfPlatformAdminDaoTable, $this->joinCode)) {
+                    $this->joinCode[] = $roleRelOfPlatformAdminDaoTable;
+                    $this->builder->leftJoin($roleRelOfPlatformAdminDaoTable, $roleRelOfPlatformAdminDaoTable . '.adminId', '=', $this->getTable() . '.' . $this->getKey());
                 }
                 return true;
         }

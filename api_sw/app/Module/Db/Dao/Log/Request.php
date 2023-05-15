@@ -31,10 +31,10 @@ class Request extends AbstractDao
     {
         switch ($key) {
             case 'minRunTime':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.runTime', $operator ?? '>=', $value, $boolean ?? 'and']];
+                $this->builder->where($this->getTable() . '.runTime', $operator ?? '>=', $value, $boolean ?? 'and');
                 return true;
             case 'maxRunTime':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.runTime', $operator ?? '<=', $value, $boolean ?? 'and']];
+                $this->builder->where($this->getTable() . '.runTime', $operator ?? '<=', $value, $boolean ?? 'and');
                 return true;
         }
         return false;

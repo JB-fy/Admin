@@ -27,14 +27,14 @@ class Role extends AbstractDao
     {
         switch ($key) {
             case 'sceneName':
-                $this->field['select'][] = getDao(Scene::class)->getTable() . '.' . $key;
+                $this->builder->addSelect(getDao(Scene::class)->getTable() . '.' . $key);
 
                 $this->joinOfAlone('scene');
                 return true;
             case 'menuIdArr':
             case 'actionIdArr':
                 //需要id字段
-                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+                $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
 
                 $this->afterField[] = $key;
                 return true;
@@ -55,16 +55,9 @@ class Role extends AbstractDao
             case 'scene':
                 $sceneDao = getDao(Scene::class);
                 $sceneDaoTable = $sceneDao->getTable();
-                if (!isset($this->join[$sceneDaoTable])) {
-                    $this->join[$sceneDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $sceneDaoTable,
-                            $sceneDaoTable . '.sceneId',
-                            '=',
-                            $this->getTable() . '.sceneId'
-                        ]
-                    ];
+                if (!in_array($sceneDaoTable, $this->joinCode)) {
+                    $this->joinCode[] = $sceneDaoTable;
+                    $this->builder->leftJoin($sceneDaoTable, $sceneDaoTable . '.sceneId', '=', $this->getTable() . '.sceneId');
                 }
                 return true;
         }

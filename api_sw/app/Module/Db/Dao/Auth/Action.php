@@ -28,7 +28,7 @@ class Action extends AbstractDao
         switch ($key) {
             case 'sceneIdArr':
                 //需要id字段
-                $this->field['select'][] = $this->getTable() . '.' . $this->getKey();
+                $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
 
                 $this->afterField[] = $key;
                 return true;
@@ -51,12 +51,12 @@ class Action extends AbstractDao
             case 'sceneId':
                 if (is_array($value)) {
                     if (count($value) === 1) {
-                        $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
+                        $this->builder->where(getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and');
                     } else {
-                        $this->where[] = ['method' => 'whereIn', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                        $this->builder->whereIn(getDao(ActionRelToScene::class)->getTable() . '.' . $key, $value, $boolean ?? 'and');
                     }
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->builder->where(getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
 
                 $this->joinOfAlone('actionRelToScene');
@@ -64,16 +64,16 @@ class Action extends AbstractDao
             case 'selfAction': //获取当前登录身份可用的操作。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();    //当开启切面\App\Aspect\Scene时有值
                 $sceneId = $sceneInfo === null ? getDao(Scene::class)->where(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.isStop', '=', 0, 'and']];
-                $this->where[] = ['method' => 'where', 'param' => [getDao(ActionRelToScene::class)->getTable() . '.sceneId', '=', $sceneId, 'and']];
+                $this->builder->where($this->getTable() . '.isStop', '=', 0, 'and');
+                $this->builder->where(getDao(ActionRelToScene::class)->getTable() . '.sceneId', '=', $sceneId, 'and');
                 $this->joinOfAlone('actionRelToScene');
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':
                         if ($value['loginId'] === getConfig('app.superPlatformAdminId')) { //平台超级管理员，不再需要其他条件
                             return true;
                         }
-                        $this->where[] = ['method' => 'where', 'param' => [getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and']];
-                        $this->where[] = ['method' => 'where', 'param' => [getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and']];
+                        $this->builder->where(getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and');
+                        $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and');
 
                         $this->joinOfAlone('roleRelToAction');
                         $this->joinOfAlone('role');
@@ -100,31 +100,17 @@ class Action extends AbstractDao
             case 'actionRelToScene':
                 $actionRelToSceneDao = getDao(ActionRelToScene::class);
                 $actionRelToSceneDaoTable = $actionRelToSceneDao->getTable();
-                if (!isset($this->join[$actionRelToSceneDaoTable])) {
-                    $this->join[$actionRelToSceneDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $actionRelToSceneDaoTable,
-                            $actionRelToSceneDaoTable . '.actionId',
-                            '=',
-                            $this->getTable() . '.actionId'
-                        ]
-                    ];
+                if (!in_array($actionRelToSceneDaoTable, $this->joinCode)) {
+                    $this->joinCode[] = $actionRelToSceneDaoTable;
+                    $this->builder->leftJoin($actionRelToSceneDaoTable, $actionRelToSceneDaoTable . '.actionId', '=', $this->getTable() . '.actionId');
                 }
                 return true;
             case 'roleRelToAction':
                 $roleRelToActionDao = getDao(RoleRelToAction::class);
                 $roleRelToActionDaoTable = $roleRelToActionDao->getTable();
-                if (!isset($this->join[$roleRelToActionDaoTable])) {
-                    $this->join[$roleRelToActionDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $roleRelToActionDaoTable,
-                            $roleRelToActionDaoTable . '.actionId',
-                            '=',
-                            $this->getTable() . '.actionId'
-                        ]
-                    ];
+                if (!in_array($roleRelToActionDaoTable, $this->joinCode)) {
+                    $this->joinCode[] = $roleRelToActionDaoTable;
+                    $this->builder->leftJoin($roleRelToActionDaoTable, $roleRelToActionDaoTable . '.actionId', '=', $this->getTable() . '.actionId');
                 }
                 return true;
             case 'role':
@@ -133,16 +119,9 @@ class Action extends AbstractDao
 
                 $roleDao = getDao(Role::class);
                 $roleDaoTable = $roleDao->getTable();
-                if (!isset($this->join[$roleDaoTable])) {
-                    $this->join[$roleDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $roleDaoTable,
-                            $roleDaoTable . '.roleId',
-                            '=',
-                            $roleRelToActionDaoTable . '.roleId'
-                        ]
-                    ];
+                if (!in_array($roleDaoTable, $this->joinCode)) {
+                    $this->joinCode[] = $roleDaoTable;
+                    $this->builder->leftJoin($roleDaoTable, $roleDaoTable . '.roleId', '=', $roleRelToActionDaoTable . '.roleId');
                 }
                 return true;
             case 'roleRelOfPlatformAdmin':
@@ -151,16 +130,9 @@ class Action extends AbstractDao
 
                 $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
                 $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
-                if (!isset($this->join[$roleRelOfPlatformAdminDaoTable])) {
-                    $this->join[$roleRelOfPlatformAdminDaoTable] = [
-                        'method' => 'leftJoin',
-                        'param' => [
-                            $roleRelOfPlatformAdminDaoTable,
-                            $roleRelOfPlatformAdminDaoTable . '.roleId',
-                            '=',
-                            $roleRelToActionDaoTable . '.roleId'
-                        ]
-                    ];
+                if (!in_array($roleRelOfPlatformAdminDaoTable, $this->joinCode)) {
+                    $this->joinCode[] = $roleRelOfPlatformAdminDaoTable;
+                    $this->builder->leftJoin($roleRelOfPlatformAdminDaoTable, $roleRelOfPlatformAdminDaoTable . '.roleId', '=', $roleRelToActionDaoTable . '.roleId');
                 }
                 return true;
         }

@@ -33,9 +33,9 @@ class Scene extends AbstractDao
         switch ($key) {
             case 'sceneName':
                 if ($operator === null) {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, 'like', '%' . $value . '%', $boolean ?? 'and']];
+                    $this->builder->where($this->getTable() . '.' . $key, 'like', '%' . $value . '%', $boolean ?? 'and');
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator, $value, $boolean ?? 'and']];
+                    $this->builder->where($this->getTable() . '.' . $key, $operator, $value, $boolean ?? 'and');
                 }
                 return true;
         }

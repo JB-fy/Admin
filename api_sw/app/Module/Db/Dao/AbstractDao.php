@@ -29,7 +29,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
 
     //#[Inject(value: \App\Module\Db\Model\Platform\Admin::class)]
     protected \App\Module\Db\Model\AbstractModel $model;   //模型
-    protected \Hyperf\Database\Query\Builder $builder; //构造器
+    protected ?\Hyperf\Database\Query\Builder $builder; //构造器
 
     public function __construct()
     {
@@ -115,11 +115,14 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function initBuilder(string $tableRaw = ''): self
     {
-        if (empty($tableRaw)) {
-            $this->builder = Db::connection($this->getConnection())->table($this->getTable());
-        } else {
-            $tableRaw = str_replace('__TABLE__', $this->getTable(), $tableRaw);
-            $this->builder = Db::connection($this->getConnection())->table(Db::raw($tableRaw));
+        var_dump($this->builder);
+        if (empty($this->builder)) {
+            if (empty($tableRaw)) {
+                $this->builder = Db::connection($this->getConnection())->table($this->getTable());
+            } else {
+                $tableRaw = str_replace('__TABLE__', $this->getTable(), $tableRaw);
+                $this->builder = Db::connection($this->getConnection())->table(Db::raw($tableRaw));
+            }
         }
         return $this;
     }
@@ -127,9 +130,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     /**
      * 获取Db构造器
      *
-     * @return self
+     * @return \Hyperf\Database\Query\Builder
      */
-    final public function getBuilder(callable $a ): \Hyperf\Database\Query\Builder
+    final public function getBuilder(): \Hyperf\Database\Query\Builder
     {
         return $this->builder;
     }
@@ -142,6 +145,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function insert(array $insert): self
     {
+        $this->initBuilder();
         if (isset($insert[0]) && is_array($insert[0])) {
             foreach ($insert as $k => $v) {
                 foreach ($v as $k1 => $v1) {
@@ -168,6 +172,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function update(array $update): self
     {
+        $this->initBuilder();
         foreach ($update as $k => $v) {
             if (!$this->updateOfAlone($k, $v)) {
                 $this->updateOfCommon($k, $v);
@@ -184,6 +189,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function field(array $field): self
     {
+        $this->initBuilder();
         foreach ($field as $v) {
             if (!$this->fieldOfAlone($v)) {
                 $this->fieldOfCommon($v);
@@ -200,6 +206,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function where(array $where): self
     {
+        $this->initBuilder();
         foreach ($where as $k => $v) {
             if (is_numeric($k) && is_array($v)) {
                 if (!$this->whereOfAlone(...$v)) {
@@ -222,6 +229,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function group(array $group): self
     {
+        $this->initBuilder();
         foreach ($group as $v) {
             if (!$this->groupOfAlone($v)) {
                 $this->groupOfCommon($v);
@@ -238,6 +246,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function having(array $having): self
     {
+        $this->initBuilder();
         foreach ($having as $k => $v) {
             if (is_numeric($k) && is_array($v)) {
                 if (!$this->havingOfAlone(...$v)) {
@@ -260,6 +269,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function order(array $order): self
     {
+        $this->initBuilder();
         foreach ($order as $k => $v) {
             if (!$this->orderOfAlone($k, $v)) {
                 $this->orderOfCommon($k, $v);
@@ -646,7 +656,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      */
     final public function isJoin(): bool
     {
-        return !empty($this->join);
+        return !empty($this->joinCode);
     }
     /*----------------解析 结束----------------*/
 
