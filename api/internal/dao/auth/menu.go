@@ -34,16 +34,35 @@ func (dao *menuDao) PrimaryKey() (primaryKey string) {
 	return
 }
 
-func (dao *menuDao) Filter(filter g.MapStrAny) func(m *gdb.Model) *gdb.Model {
+func (dao *menuDao) Filter(filter g.MapStrAny, joinCode *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
+			/* if (is_numeric($k) && is_array($v)) {
+			       if (!$this->whereOfAlone(...$v)) {
+			           $this->whereOfCommon(...$v);
+			       }
+			   } else {
+			       if (!$this->whereOfAlone($k, null, $v)) {
+			           $this->whereOfCommon($k, null, $v);
+			       }
+			   } */
 			switch k {
 			case "id":
-				m = m.Where(dao.PrimaryKey(), v)
+				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
 			default:
 				m = m.Where(k, v)
 			}
 		}
 		return m
 	}
+}
+
+func (dao *menuDao) filterOfCommon(m *gdb.Model, key string, operator string, value g.Map, boolean string) *gdb.Model {
+	switch key {
+	case "id":
+		m = m.Where(dao.Table()+"."+dao.PrimaryKey(), value)
+	default:
+		m = m.Where(key, value)
+	}
+	return m
 }
