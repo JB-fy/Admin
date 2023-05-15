@@ -18,15 +18,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     protected ?string $connection/*  = 'default' */;  //分库情况下，解析后所确定的连接
     protected ?string $table;   //分表情况下，解析后所确定的表
 
-    protected string $tableRaw = '';    //表的原生表达式。当需要强制索引等特殊情况时使用。示例：Db::raw('table AS alias FORCE INDEX (索引)')。
     protected array $insert = [];   //解析后的insert。格式：[['字段' => '值',...],...]。无顺序要求
     protected array $update = [];   //解析后的update。格式：['字段' => '值',...]。无顺序要求
-    protected array $field = [];   //解析后的field。格式：['select' => [字段,...], 'selectRaw' => [[字段（填selectRaw方法所需参数）],...]]。无顺序要求
-    protected array $where = [];   //解析后的where。格式：[['method'=>'where', 'param'=>[参数]],...]。有顺序要求，必须与原来一致，改变顺序可能造成索引使用不同
-    protected array $group = [];   //解析后的group。格式：[['method'=>'groupBy', 'param'=>[参数]],...]。有顺序要求，必须与原来一致，改变顺序会造成分组结果不同
-    protected array $having = [];  //解析后的having。格式：['having'=>[[条件],...], 'havingRaw'=>[[条件],...]]。无顺序要求
-    protected array $order = [];   //解析后的order。格式：[['method'=>'orderBy', 'param'=>[参数]],...]。有顺序要求，必须与原来一致，改变顺序会造成排序结果不同
-    protected array $join = [];    //解析后的join。格式：[['method'=>'join', 'param'=>[参数]],...]。无顺序要求
+
+    protected array $joinCode = [];    //已联表标识。格式：['joinCode',...]
 
     protected array $afterField = [];    //获取数据后，再处理的字段
 
@@ -113,18 +108,30 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 解析表的原生表达式
+     * 初始化Db构造器
      *
      * @param string $tableRaw  表的原生表达式。当需要强制索引等特殊情况时使用。示例：'__TABLE__ FORCE INDEX (索引)')。
      * @return self
      */
-    public function tableRaw(string $tableRaw = ''): self
+    final public function initBuilder(string $tableRaw = ''): self
     {
-        if (!empty($tableRaw)) {
+        if (empty($tableRaw)) {
+            $this->builder = Db::connection($this->getConnection())->table($this->getTable());
+        } else {
             $tableRaw = str_replace('__TABLE__', $this->getTable(), $tableRaw);
-            $this->tableRaw = Db::raw($tableRaw);
+            $this->builder = Db::connection($this->getConnection())->table(Db::raw($tableRaw));
         }
         return $this;
+    }
+
+    /**
+     * 获取Db构造器
+     *
+     * @return self
+     */
+    final public function getBuilder(callable $a ): \Hyperf\Database\Query\Builder
+    {
+        return $this->builder;
     }
 
     /**
@@ -341,16 +348,16 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case '*':
-                $this->field['select'][] = $key;
+                $this->builder->addSelect($key);
                 return true;
             case 'id':
-                $this->field['select'][] = $this->getTable() . '.' . $this->getKey() . ' AS ' . $key;
+                $this->builder->addSelect($this->getTable() . '.' . $this->getKey() . ' AS ' . $key);
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
-                    $this->field['select'][] = $this->getTable() . '.' . $key;
+                    $this->builder->addSelect($this->getTable() . '.' . $key);
                 } else {
-                    $this->field['select'][] = $key;
+                    $this->builder->addSelect($key);
                 }
                 return true;
         }
@@ -372,30 +379,30 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 if (is_array($value)) {
                     if (count($value) === 1) {
-                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', array_shift($value), $boolean ?? 'and']];
+                        $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '=', array_shift($value), $boolean ?? 'and');
                     } else {
-                        $this->where[] = ['method' => 'whereIn', 'param' => [$this->getTable() . '.' . $this->getKey(), $value, $boolean ?? 'and']];
+                        $this->builder->whereIn($this->getTable() . '.' . $this->getKey(), $value, $boolean ?? 'and');
                     }
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and');
                 }
                 return true;
             case 'excId':
                 if (is_array($value)) {
                     if (count($value) === 1) {
-                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', array_shift($value), $boolean ?? 'and']];
+                        $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '<>', array_shift($value), $boolean ?? 'and');
                     } else {
-                        $this->where[] = ['method' => 'whereNotIn', 'param' => [$this->getTable() . '.' . $this->getKey(), $value, $boolean ?? 'and']];
+                        $this->builder->whereNotIn($this->getTable() . '.' . $this->getKey(), $value, $boolean ?? 'and');
                     }
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and']];
+                    $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and');
                 }
                 return true;
             case 'startTime':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.createTime', $operator ?? '>=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and']];
+                $this->builder->where($this->getTable() . '.createTime', $operator ?? '>=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
             case 'endTime':
-                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.createTime', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and']];
+                $this->builder->where($this->getTable() . '.createTime', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -403,18 +410,18 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     if (strtolower(substr($key, -2)) === 'id' || in_array($key, ['configKey'])) {
                         if (is_array($value)) {
                             if (count($value) === 1) {
-                                $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and']];
+                                $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and');
                             } else {
-                                $this->where[] = ['method' => 'whereIn', 'param' => [$this->getTable() . '.' . $key, $value, $boolean ?? 'and']];
+                                $this->builder->whereIn($this->getTable() . '.' . $key, $value, $boolean ?? 'and');
                             }
                         } else {
-                            $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                            $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                         }
                     } else {
-                        $this->where[] = ['method' => 'where', 'param' => [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and']];
+                        $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                     }
                 } else {
-                    $this->where[] = ['method' => 'where', 'param' => [$key, $operator ?? '=', $value, $boolean ?? 'and']];
+                    $this->builder->where($key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
                 return true;
         }
@@ -431,13 +438,13 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-                $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTable() . '.' . $this->getKey()]];
+                $this->builder->groupBy($this->getTable() . '.' . $this->getKey());
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
-                    $this->group[] = ['method' => 'groupBy', 'param' => [$this->getTable() . '.' . $key]];
+                    $this->builder->groupBy($this->getTable() . '.' . $key);
                 } else {
-                    $this->group[] = ['method' => 'groupBy', 'param' => [$key]];
+                    $this->builder->groupBy($key);
                 }
                 return true;
         }
@@ -455,13 +462,13 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-                $this->having['having'][] = [$this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and'];
+                $this->builder->having($this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and');
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
-                    $this->having['having'][] = [$this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and'];
+                    $this->builder->having($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                 } else {
-                    $this->having['having'][] = [$key, $operator ?? '=', $value, $boolean ?? 'and'];
+                    $this->builder->having($key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
                 return true;
         }
@@ -479,13 +486,13 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-                $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . $this->getKey(), $value]];
+                $this->builder->orderBy($this->getTable() . '.' . $this->getKey(), $value);
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
-                    $this->order[] = ['method' => 'orderBy', 'param' => [$this->getTable() . '.' . $key, $value]];
+                    $this->builder->orderBy($this->getTable() . '.' . $key, $value);
                 } else {
-                    $this->order[] = ['method' => 'orderBy', 'param' => [$key, $value]];
+                    $this->builder->orderBy($key, $value);
                 }
                 return true;
         }
@@ -537,9 +544,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         /* switch ($key) {
             case 'xxxx':
-                $this->field['select'][] = $key;
-                //$this->field['select'][] = Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.' . $key . '")) AS ' . $key);    //不能防sql注入
-                //$this->field['selectRaw'][] = ['IFNULL(字段名, \'\') AS ?', [$key]];  //能防sql注入
+                $this->builder->addSelect($key);
+                //$this->builder->addSelect(Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.' . $key . '")) AS ' . $key));   //不能防sql注入
+                //$this->builder->selectRaw('IFNULL(字段名, \'\') AS ?', [$key]); //能防sql注入
                 return true;
         } */
         return false;
@@ -558,8 +565,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         /* switch ($key) {
             case 'xxxx':
-                $this->where[] = ['method' => 'where', 'param' => [$key, $operator ?? '=', $value, $boolean ?? 'and']];
-                //$this->where[] = ['method' => 'whereRaw', 'param' => [':key > :value', ['key' => $key, 'value' => $value], $boolean ?? 'and']];
+                $this->builder->where($key, $operator ?? '=', $value, $boolean ?? 'and');
+                //$this->builder->whereRaw(':key > :value', ['key' => $key, 'value' => $value], $boolean ?? 'and');
                 return true;
         } */
         return false;
@@ -575,8 +582,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         /* switch ($key) {
             case 'xxxx':
-                $this->group[] = ['method' => 'groupBy', 'param' => [$key]];
-                //$this->group[] = ['method'=>'groupByRaw', 'param'=>[':key', ['key' => $key]]];
+                $this->builder->groupBy($key);
+                //$this->builder->groupByRaw(':key', ['key' => $key]);
                 return true;
         } */
         return false;
@@ -595,8 +602,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         /* switch ($key) {
             case 'xxxx':
-                $this->having['having'][] = [$key, '=', $value];
-                //$this->having['havingRaw'][] = [':key > :value', ['key' => $key, 'value' => $value], 'and'];
+                $this->builder->having($key, '=', $value, $boolean ?? 'and');
+                //$this->builder->havingRaw(':key > :value', ['key' => $key, 'value' => $value], $boolean ?? 'and');
                 return true;
         } */
         return false;
@@ -613,8 +620,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         /* switch ($key) {
             case 'xxxx':
-                $this->order[] = ['method' => 'orderBy', 'param' => [$key, $value]];
-                //$this->order[] = ['method'=>'orderByRaw', 'param'=>[':key ' . $value, ['key' => $key]]];
+                $this->builder->orderBy($key, $value);
+                //$this->builder->orderByRaw(':key ' . $value, ['key' => $key]);
                 return true;
         } */
         return false;
@@ -641,176 +648,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         return !empty($this->join);
     }
-
-    /**
-     * 重置解析数据，用于复用对象，为了不影响下一条sql生成执行（可选，依情况使用）
-     *
-     * @return self
-     */
-    final public function resetParseData(): self
-    {
-        $this->tableRaw = '';
-        $this->insert = [];
-        $this->update = [];
-        $this->field = [];
-        $this->where = [];
-        $this->group = [];
-        $this->having = [];
-        $this->order = [];
-        $this->join = [];
-
-        $this->afterField = [];
-        return $this;
-    }
-
-    /**
-     * 重置分表分库数据，用于复用对象，为了不影响下一条sql生成执行（可选，依情况使用）
-     *
-     * @return self
-     */
-    final public function resetSelectData(): self
-    {
-        $this->connection = '';
-        $this->table = '';
-        return $this;
-    }
     /*----------------解析 结束----------------*/
-
-    /*----------------解析后处理 开始----------------*/
-    /**
-     * 获取Db构造器
-     *
-     * @return \Hyperf\Database\Query\Builder
-     */
-    final public function getBuilder(): \Hyperf\Database\Query\Builder
-    {
-        if (empty($this->tableRaw)) {
-            $this->builder = Db::connection($this->getConnection())->table($this->getTable());
-        } else {
-            $this->builder = Db::connection($this->getConnection())->table($this->tableRaw);
-        }
-        if (!empty($this->field)) {
-            $this->handleField();
-        }
-        if (!empty($this->where)) {
-            $this->handleWhere();
-        }
-        if (!empty($this->group)) {
-            $this->handleGroup();
-        }
-        if (!empty($this->having)) {
-            $this->handleHaving();
-        }
-        if (!empty($this->order)) {
-            $this->handleOrder();
-        }
-        if (!empty($this->join)) {
-            $this->handleJoin();
-        }
-        return $this->builder;
-    }
-
-    /**
-     * 处理field
-     * 
-     * @return self
-     */
-    final protected function handleField(): self
-    {
-        foreach ($this->field as $k => $v) {
-            switch ($k) {
-                case 'select':
-                    //$this->builder->{$k}(...$v);
-                    //$this->builder->{$k}($v);
-                    $this->builder->{$k}(array_unique($v));
-                    break;
-                case 'selectRaw':
-                    foreach ($v as $v1) {
-                        $this->builder->{$k}(...$v1);
-                    }
-                    break;
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * 处理where
-     *
-     * @return self
-     */
-    final protected function handleWhere(): self
-    {
-        foreach ($this->where as $v) {
-            $this->builder->{$v['method']}(...$v['param']);
-        }
-        return $this;
-    }
-
-    /**
-     * 处理group
-     *
-     * @return self
-     */
-    final protected function handleGroup(): self
-    {
-        foreach ($this->group as $v) {
-            $this->builder->{$v['method']}(...$v['param']);
-        }
-        return $this;
-    }
-
-    /**
-     * 处理having
-     *
-     * @return self
-     */
-    final protected function handleHaving(): self
-    {
-        foreach ($this->having as $k => $v) {
-            foreach ($v as $v1) {
-                $this->builder->{$k}(...$v1);
-            }
-            /* switch ($k) {
-                case 'having':
-                    $this->builder->{$k}($v);
-                    break;
-                case 'havingRaw':
-                    foreach ($v as $v1) {
-                        $this->builder->{$k}(...$v1);
-                    }
-                    break;
-            } */
-        }
-        return $this;
-    }
-
-    /**
-     * 处理order
-     *
-     * @return self
-     */
-    final protected function handleOrder(): self
-    {
-        foreach ($this->order as $v) {
-            $this->builder->{$v['method']}(...$v['param']);
-        }
-        return $this;
-    }
-
-    /**
-     * 处理join
-     *
-     * @return self
-     */
-    final protected function handleJoin(): self
-    {
-        foreach ($this->join as $v) {
-            $this->builder->{$v['method']}(...$v['param']);
-        }
-        return $this;
-    }
-    /*----------------解析后处理 结束----------------*/
 
     /*----------------封装部分方法方便使用 开始----------------*/
     /**
