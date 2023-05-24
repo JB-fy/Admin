@@ -148,7 +148,6 @@ const table = reactive({
     order: { key: 'id', order: 'desc' } as any,
     handleOrder: (order: any) => {
         table.order = order
-        table.data = table.data.reverse()
         getList()
     },
 })
