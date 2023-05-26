@@ -31,16 +31,15 @@ var (
 
 func (dao actionRelToSceneDao) ParseField(field []string, afterField *[]string, joinCode *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		for k, v := range filter {
-			switch k {
+		for _, v := range field {
+			switch v {
 			case "id":
-				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
+				m = m.Fields(dao.Table() + "." + dao.PrimaryKey())
 			default:
-				kArr := strings.Split(k, " ")
-				if garray.NewStrArrayFromCopy(dao.Column()).Contains(kArr[0]) {
-					m = m.Where(dao.Table()+"."+k, v)
+				if garray.NewStrArrayFrom(dao.Column()).Contains(v) {
+					m = m.Fields(dao.Table() + "." + v)
 				} else {
-					m = m.Where(k, v)
+					m = m.Fields(v)
 				}
 			}
 		}
@@ -56,7 +55,7 @@ func (dao actionRelToSceneDao) ParseFilter(filter g.MapStrAny, joinCode *[]strin
 				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
 			default:
 				kArr := strings.Split(k, " ")
-				if garray.NewStrArrayFromCopy(dao.Column()).Contains(kArr[0]) {
+				if garray.NewStrArrayFrom(dao.Column()).Contains(kArr[0]) {
 					m = m.Where(dao.Table()+"."+k, v)
 				} else {
 					m = m.Where(k, v)
