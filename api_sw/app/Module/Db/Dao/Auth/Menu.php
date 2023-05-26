@@ -116,7 +116,7 @@ class Menu extends AbstractDao
                         break;
                 }
 
-                $this->groupOfCommon('id');
+                $this->group(['id']);
                 return true;
         }
         return false;

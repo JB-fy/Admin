@@ -232,28 +232,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 解析having（入口）
-     *
-     * @param array $having 格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
-     * @return self
-     */
-    final public function having(array $having): self
-    {
-        foreach ($having as $k => $v) {
-            if (is_numeric($k) && is_array($v)) {
-                if (!$this->havingOfAlone(...$v)) {
-                    $this->havingOfCommon(...$v);
-                }
-            } else {
-                if (!$this->havingOfAlone($k, null, $v)) {
-                    $this->havingOfCommon($k, null, $v);
-                }
-            }
-        }
-        return $this;
-    }
-
-    /**
      * 解析order（入口）
      *
      * @param array $order  格式：['字段' => 'asc或desc',...]
@@ -453,30 +431,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 解析having（公共的）
-     *
-     * @param string $key
-     * @param [type] $value
-     * @return boolean
-     */
-    final protected function havingOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
-    {
-        switch ($key) {
-            case 'id':
-                $this->builder->having($this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and');
-                return true;
-            default:
-                if (in_array($key, $this->getAllColumn())) {
-                    $this->builder->having($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
-                } else {
-                    $this->builder->having($key, $operator ?? '=', $value, $boolean ?? 'and');
-                }
-                return true;
-        }
-        return false;
-    }
-
-    /**
      * 解析order（公共的）
      *
      * @param string $key
@@ -585,26 +539,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'xxxx':
                 $this->builder->groupBy($key);
                 //$this->builder->groupByRaw(':key', ['key' => $key]);
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析having（独有的）
-     *
-     * @param string $key
-     * @param string|null $operator
-     * @param [type] $value
-     * @param string|null $boolean
-     * @return boolean
-     */
-    protected function havingOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->builder->having($key, '=', $value, $boolean ?? 'and');
-                //$this->builder->havingRaw(':key > :value', ['key' => $key, 'value' => $value], $boolean ?? 'and');
                 return true;
         } */
         return false;
