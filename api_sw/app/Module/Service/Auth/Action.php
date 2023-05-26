@@ -42,9 +42,9 @@ class Action extends AbstractService
             foreach ($idArr as $id) {
                 $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
             }
-            $this->getDao()->where($where)->update($data)->saveUpdate();    //有可能只改sceneIdArr
+            $this->getDao()->filter($where)->update($data)->saveUpdate();    //有可能只改sceneIdArr
         } else {
-            $result = $this->getDao()->where($where)->update($data)->saveUpdate();
+            $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
             if (empty($result)) {
                 throwFailJson();
             }
@@ -61,11 +61,11 @@ class Action extends AbstractService
     public function delete(array $where)
     {
         $idArr = $this->getIdArr($where);
-        $result = $this->getDao()->where($where)->delete();
+        $result = $this->getDao()->filter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(ActionRelToScene::class)->where(['actionId' => $idArr])->delete();
+        getDao(ActionRelToScene::class)->filter(['actionId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

@@ -18,7 +18,7 @@ class Menu extends AbstractService
     public function create(array $data)
     {
         if (!empty($data['pid'])) {
-            $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->getInfo();
+            $pInfo = $this->getDao()->field(['pidPath', 'level'])->filter(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->getInfo();
             if (empty($pInfo)) {
                 throwFailJson(29999998);
             }
@@ -34,7 +34,7 @@ class Menu extends AbstractService
             $update['pidPath'] = '0-' . $id;
             $update['level'] = 1;
         }
-        $this->getDao()->where(['id' => $id])->update($update)->saveUpdate();
+        $this->getDao()->filter(['id' => $id])->update($update)->saveUpdate();
         throwSuccessJson();
     }
 
@@ -48,7 +48,7 @@ class Menu extends AbstractService
     public function update(array $data, array $where)
     {
         if (isset($data['pid'])) {
-            $oldInfo = $this->getDao()->where($where)->getInfo();
+            $oldInfo = $this->getDao()->filter($where)->getInfo();
             if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
                 throwFailJson(29999997);
             }
@@ -56,7 +56,7 @@ class Menu extends AbstractService
                 unset($data['pid']);    //未修改则删除，更新后就不用处理$data['pid']
             } else {
                 if ($data['pid'] > 0) {
-                    $pInfo = $this->getDao()->field(['pidPath', 'level'])->where(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
+                    $pInfo = $this->getDao()->field(['pidPath', 'level'])->filter(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
                     if (empty($pInfo)) {
                         throwFailJson(29999998);
                     }
@@ -71,13 +71,13 @@ class Menu extends AbstractService
                 }
             }
         }
-        $result = $this->getDao()->where($where)->update($data)->saveUpdate();
+        $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
         if (empty($result)) {
             throwFailJson();
         }
         //修改pid时，更新所有子孙级的pidPath和level
         if (isset($data['pid'])) {
-            $this->getDao()->where([['pidPath', 'like', $oldInfo->pidPath . '%']])
+            $this->getDao()->filter([['pidPath', 'like', $oldInfo->pidPath . '%']])
                 ->update([
                     'pidPathOfChild' => [
                         'newVal' => $data['pidPath'],
@@ -102,10 +102,10 @@ class Menu extends AbstractService
     public function delete(array $where)
     {
         $idArr = $this->getIdArr($where);
-        if ($this->getDao()->where(['pid' => $idArr])->getBuilder()->exists()) {
+        if ($this->getDao()->filter(['pid' => $idArr])->getBuilder()->exists()) {
             throwFailJson(29999995);
         }
-        $result = $this->getDao()->where($where)->delete();
+        $result = $this->getDao()->filter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
@@ -121,7 +121,7 @@ class Menu extends AbstractService
      */
     public function tree(array $field = [], array $where = [])
     {
-        $list = $this->getDao()->field($field)->where($where)->getList();
+        $list = $this->getDao()->field($field)->filter($where)->getList();
 
         $tree = $this->container->get(LogicAuthMenu::class)->tree($list);
         throwSuccessJson(['tree' => $tree]);

@@ -194,21 +194,21 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 解析where（入口）
+     * 解析filter（入口）
      *
-     * @param array $where  格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
+     * @param array $filter  格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
-    final public function where(array $where): self
+    final public function filter(array $where): self
     {
         foreach ($where as $k => $v) {
             if (is_numeric($k) && is_array($v)) {
-                if (!$this->whereOfAlone(...$v)) {
-                    $this->whereOfCommon(...$v);
+                if (!$this->filterOfAlone(...$v)) {
+                    $this->filterOfCommon(...$v);
                 }
             } else {
-                if (!$this->whereOfAlone($k, null, $v)) {
-                    $this->whereOfCommon($k, null, $v);
+                if (!$this->filterOfAlone($k, null, $v)) {
+                    $this->filterOfCommon($k, null, $v);
                 }
             }
         }
@@ -352,7 +352,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string|null $boolean
      * @return boolean
      */
-    final protected function whereOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
+    final protected function filterOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'id':
@@ -516,7 +516,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string|null $boolean
      * @return boolean
      */
-    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         /* switch ($key) {
             case 'xxxx':

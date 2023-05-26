@@ -28,7 +28,7 @@ class Scene extends AbstractDao
      * @param string|null $boolean
      * @return boolean
      */
-    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'sceneName':

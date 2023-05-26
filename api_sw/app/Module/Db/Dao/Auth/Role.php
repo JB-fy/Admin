@@ -75,10 +75,10 @@ class Role extends AbstractDao
     {
         switch ($key) {
             case 'menuIdArr':
-                $info->{$key} = getDao(RoleRelToMenu::class)->where(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
+                $info->{$key} = getDao(RoleRelToMenu::class)->filter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
                 return true;
             case 'actionIdArr':
-                $info->{$key} = getDao(RoleRelToAction::class)->where(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
+                $info->{$key} = getDao(RoleRelToAction::class)->filter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
                 return true;
         }
         return false;

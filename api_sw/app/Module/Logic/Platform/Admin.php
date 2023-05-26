@@ -18,7 +18,7 @@ class Admin extends AbstractLogic
      */
     public function saveRelRole(array $roleIdArr, int $id = 0)
     {
-        $roleIdArrOfOld = getDao(RoleRelOfPlatformAdmin::class)->where(['adminId' => $id])->getBuilder()->pluck('roleId')->toArray();
+        $roleIdArrOfOld = getDao(RoleRelOfPlatformAdmin::class)->filter(['adminId' => $id])->getBuilder()->pluck('roleId')->toArray();
         /**----新增关联角色 开始----**/
         $insertRoleIdArr = array_diff($roleIdArr, $roleIdArrOfOld);
         if (!empty($insertRoleIdArr)) {
@@ -36,7 +36,7 @@ class Admin extends AbstractLogic
         /**----删除关联角色 开始----**/
         $deleteRoleIdArr = array_diff($roleIdArrOfOld, $roleIdArr);
         if (!empty($deleteRoleIdArr)) {
-            getDao(RoleRelOfPlatformAdmin::class)->where(['adminId' => $id, 'roleId' => $deleteRoleIdArr])->delete();
+            getDao(RoleRelOfPlatformAdmin::class)->filter(['adminId' => $id, 'roleId' => $deleteRoleIdArr])->delete();
         }
         /**----删除关联角色 结束----**/
     }

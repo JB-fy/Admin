@@ -46,7 +46,7 @@ abstract class AbstractService
     public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $dao = $this->getDao();
-        $dao->where($where);
+        $dao->filter($where);
         $offset = ($page - 1) * $limit;
 
         empty($order) ? $order = ['id' => 'DESC'] : null;
@@ -84,7 +84,7 @@ abstract class AbstractService
     {
         $offset = ($page - 1) * $limit;
         $dao = $this->getDao();
-        $dao->where($where);
+        $dao->filter($where);
         if ($offset == 0 && $limit == 0) {  //是否先获取$list，再通过count($list)计算$count
             empty($order) ? $order = ['id' => 'DESC'] : null;
             $dao->field($field)->order($order);
@@ -122,7 +122,7 @@ abstract class AbstractService
      */
     public function info(array $where, array $field = [])
     {
-        $info = $this->getDao()->field($field)->where($where)->getInfo();
+        $info = $this->getDao()->field($field)->filter($where)->getInfo();
         if (empty($info)) {
             throwFailJson(29999999);
         }
@@ -167,7 +167,7 @@ abstract class AbstractService
      */
     public function update(array $data, array $where)
     {
-        $result = $this->getDao()->where($where)->update($data)->saveUpdate();
+        $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
         if (empty($result)) {
             throwFailJson();
         }
@@ -182,7 +182,7 @@ abstract class AbstractService
      */
     public function delete(array $where)
     {
-        $result = $this->getDao()->where($where)->delete();
+        $result = $this->getDao()->filter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
@@ -198,7 +198,7 @@ abstract class AbstractService
     final protected function getIdArr(array $where): array
     {
         $dao = $this->getDao();
-        return $dao->where($where)->getBuilder()->pluck($dao->getKey())->toArray();
+        return $dao->filter($where)->getBuilder()->pluck($dao->getKey())->toArray();
         if (isset($where['id']) && count($where) == 1) {
             return is_array($where['id']) ? $where['id'] : [$where['id']];
         }

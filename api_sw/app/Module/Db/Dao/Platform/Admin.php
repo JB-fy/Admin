@@ -48,7 +48,7 @@ class Admin extends AbstractDao
      * @param string|null $boolean
      * @return boolean
      */
-    protected function whereOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'accountOrPhone':
@@ -108,7 +108,7 @@ class Admin extends AbstractDao
     {
         switch ($key) {
             case 'roleIdArr':
-                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->where(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
+                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->filter(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
                 return true;
         }
         return false;

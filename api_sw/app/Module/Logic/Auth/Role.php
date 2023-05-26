@@ -19,7 +19,7 @@ class Role extends AbstractLogic
      */
     public function saveRelMenu(array $menuIdArr, int $id = 0)
     {
-        $menuIdArrOfOld = getDao(RoleRelToMenu::class)->where(['roleId' => $id])->getBuilder()->pluck('menuId')->toArray();
+        $menuIdArrOfOld = getDao(RoleRelToMenu::class)->filter(['roleId' => $id])->getBuilder()->pluck('menuId')->toArray();
         /**----新增关联菜单 开始----**/
         $insertMenuIdArr = array_diff($menuIdArr, $menuIdArrOfOld);
         if (!empty($insertMenuIdArr)) {
@@ -37,7 +37,7 @@ class Role extends AbstractLogic
         /**----删除关联菜单 开始----**/
         $deleteMenuIdArr = array_diff($menuIdArrOfOld, $menuIdArr);
         if (!empty($deleteMenuIdArr)) {
-            getDao(RoleRelToMenu::class)->where(['roleId' => $id, 'menuId' => $deleteMenuIdArr])->delete();
+            getDao(RoleRelToMenu::class)->filter(['roleId' => $id, 'menuId' => $deleteMenuIdArr])->delete();
         }
         /**----删除关联菜单 结束----**/
     }
@@ -51,7 +51,7 @@ class Role extends AbstractLogic
      */
     public function saveRelAction(array $actionIdArr, int $id = 0)
     {
-        $actionIdArrOfOld = getDao(RoleRelToAction::class)->where(['roleId' => $id])->getBuilder()->pluck('actionId')->toArray();
+        $actionIdArrOfOld = getDao(RoleRelToAction::class)->filter(['roleId' => $id])->getBuilder()->pluck('actionId')->toArray();
         /**----新增关联操作 开始----**/
         $insertActionIdArr = array_diff($actionIdArr, $actionIdArrOfOld);
         if (!empty($insertActionIdArr)) {
@@ -69,7 +69,7 @@ class Role extends AbstractLogic
         /**----删除关联操作 开始----**/
         $deleteActionIdArr = array_diff($actionIdArrOfOld, $actionIdArr);
         if (!empty($deleteActionIdArr)) {
-            getDao(RoleRelToAction::class)->where(['roleId' => $id, 'actionId' => $deleteActionIdArr])->delete();
+            getDao(RoleRelToAction::class)->filter(['roleId' => $id, 'actionId' => $deleteActionIdArr])->delete();
         }
         /**----删除关联操作 结束----**/
     }
