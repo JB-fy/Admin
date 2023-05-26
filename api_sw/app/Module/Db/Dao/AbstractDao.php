@@ -199,9 +199,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $filter  格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
-    final public function filter(array $where): self
+    final public function filter(array $filter): self
     {
-        foreach ($where as $k => $v) {
+        foreach ($filter as $k => $v) {
             if (is_numeric($k) && is_array($v)) {
                 if (!$this->filterOfAlone(...$v)) {
                     $this->filterOfCommon(...$v);

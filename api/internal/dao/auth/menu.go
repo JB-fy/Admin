@@ -38,12 +38,12 @@ func (dao *menuDao) Filter(filter g.MapStrAny, joinCode *[]string) func(m *gdb.M
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			/* if (is_numeric($k) && is_array($v)) {
-			       if (!$this->whereOfAlone(...$v)) {
-			           $this->whereOfCommon(...$v);
+			       if (!$this->filterOfAlone(...$v)) {
+			           $this->filterOfCommon(...$v);
 			       }
 			   } else {
-			       if (!$this->whereOfAlone($k, null, $v)) {
-			           $this->whereOfCommon($k, null, $v);
+			       if (!$this->filterOfAlone($k, null, $v)) {
+			           $this->filterOfCommon($k, null, $v);
 			       }
 			   } */
 			switch k {
