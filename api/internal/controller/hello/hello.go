@@ -31,11 +31,11 @@ func (c *Controller) Test(r *ghttp.Request) {
 	//daoLog.Request.Ctx(r.GetCtx()).Data("runTime", 2, "requestUrl", "1").Insert()
 	//daoLog.Request.Ctx(r.GetCtx()).Data(g.Map{"requestUrl": "1", "runTime": 2}).Where("logId", 6).Update()
 	joinCode := []string{}
-	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.Filter(g.MapStrAny{"id": 2}, &joinCode)).All()
+	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.ParseFilter(g.MapStrAny{"id": 2}, &joinCode)).All()
 	fmt.Println(daoAuth.Menu.Column())
 	fmt.Println(daoAuth.Menu.Columns())
+	fmt.Println(gconv.Map(daoAuth.Menu.Columns()))
 	fmt.Println(gmap.NewStrAnyMapFrom(gconv.Map(daoAuth.Menu.Columns())).Values())
-
 	/* res, _ := daoLog.Request.Ctx(r.GetCtx()).Where("logId", 6).All()
 	fmt.Println(res) */
 	//fmt.Println(r.GetCtx())

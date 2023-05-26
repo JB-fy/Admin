@@ -29,7 +29,26 @@ var (
 	}
 )
 
-func (dao serverDao) Filter(filter g.MapStrAny, joinCode *[]string) func(m *gdb.Model) *gdb.Model {
+func (dao serverDao) ParseField(field []string, afterField *[]string, joinCode *[]string) func(m *gdb.Model) *gdb.Model {
+	return func(m *gdb.Model) *gdb.Model {
+		for k, v := range filter {
+			switch k {
+			case "id":
+				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
+			default:
+				kArr := strings.Split(k, " ")
+				if garray.NewStrArrayFromCopy(dao.Column()).Contains(kArr[0]) {
+					m = m.Where(dao.Table()+"."+k, v)
+				} else {
+					m = m.Where(k, v)
+				}
+			}
+		}
+		return m
+	}
+}
+
+func (dao serverDao) ParseFilter(filter g.MapStrAny, joinCode *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
