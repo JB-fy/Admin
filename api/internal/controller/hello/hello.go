@@ -27,11 +27,11 @@ func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err e
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
-	daoLog.Request.Ctx(r.GetCtx()).Fields("logId").Fields("createTime").Where("logId", 6).Order("logId").OrderAsc("createTime").All()
+	daoLog.Request.Ctx(r.GetCtx()).Fields("logId").Where("logId", 6).Order("logId", "Desc").OrderAsc("createTime").All()
 	//daoLog.Request.Ctx(r.GetCtx()).Data("runTime", 2, "requestUrl", "1").Insert()
 	//daoLog.Request.Ctx(r.GetCtx()).Data(g.Map{"requestUrl": "1", "runTime": 2}).Where("logId", 6).Update()
 	joinCode := []string{}
-	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.ParseFilter(g.MapStrAny{"id": 2}, &joinCode)).All()
+	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.ParseField([]string{"id", "createTime"}, &[]string{}, &joinCode), daoAuth.Menu.ParseFilter(g.MapStrAny{"id": 2, "menuId > ?": 22}, &joinCode)).All()
 	fmt.Println(daoAuth.Menu.Column())
 	fmt.Println(daoAuth.Menu.Columns())
 	fmt.Println(gconv.Map(daoAuth.Menu.Columns()))

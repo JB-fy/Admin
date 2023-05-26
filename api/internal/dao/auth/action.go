@@ -66,4 +66,22 @@ func (dao actionDao) ParseFilter(filter g.MapStrAny, joinCode *[]string) func(m 
 	}
 }
 
+func (dao actionDao) ParseOrder(order [][2]string, joinCode *[]string) func(m *gdb.Model) *gdb.Model {
+	return func(m *gdb.Model) *gdb.Model {
+		for _, v := range order {
+			switch v[0] {
+			case "id":
+				m = m.Fields(dao.Table() + "." + dao.PrimaryKey())
+			default:
+				if garray.NewStrArrayFrom(dao.Column()).Contains(v[0]) {
+					m = m.Order(dao.Table()+"."+v[0], v[1])
+				} else {
+					m = m.Order(v[0], v[1])
+				}
+			}
+		}
+		return m
+	}
+}
+
 // Fill with you ideas below.
