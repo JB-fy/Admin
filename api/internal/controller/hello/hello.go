@@ -2,9 +2,12 @@ package hello
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/gogf/gf/v2/container/gmap"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/util/gconv"
 
 	v1 "api/api/hello/v1"
 	daoAuth "api/internal/dao/auth"
@@ -29,6 +32,10 @@ func (c *Controller) Test(r *ghttp.Request) {
 	//daoLog.Request.Ctx(r.GetCtx()).Data(g.Map{"requestUrl": "1", "runTime": 2}).Where("logId", 6).Update()
 	joinCode := []string{}
 	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.Filter(g.MapStrAny{"id": 2}, &joinCode)).All()
+	fmt.Println(daoAuth.Menu.Column())
+	fmt.Println(daoAuth.Menu.Columns())
+	fmt.Println(gmap.NewStrAnyMapFrom(gconv.Map(daoAuth.Menu.Columns())).Values())
+
 	/* res, _ := daoLog.Request.Ctx(r.GetCtx()).Where("logId", 6).All()
 	fmt.Println(res) */
 	//fmt.Println(r.GetCtx())

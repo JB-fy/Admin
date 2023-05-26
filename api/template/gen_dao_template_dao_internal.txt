@@ -6,6 +6,7 @@ package internal
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -74,5 +75,16 @@ func (dao *{TplTableNameCamelCase}Dao) Transaction(ctx context.Context, f func(c
 
 // PrimaryKey returns the primary key name of current dao.
 func (dao *{TplTableNameCamelCase}Dao) PrimaryKey() string {
-	return reflect.ValueOf(dao.Columns()).Field(0).String()
+	return reflect.ValueOf(dao.columns).Field(0).String()
+}
+
+// Column returns all column names of current dao.
+func (dao *{TplTableNameCamelCase}Dao) Column() []string {
+	v := reflect.ValueOf(dao.columns)
+	count := v.NumField()
+	column := make([]string, count)
+	for i := 0; i < count; i++ {
+		column[i] = v.Field(i).String()
+	}
+	return column
 }

@@ -6,7 +6,9 @@ package dao
 
 import (
 	"{TplImportPrefix}/internal"
+	"strings"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -34,7 +36,12 @@ func (dao {TplTableNameCamelLowerCase}Dao) Filter(filter g.MapStrAny, joinCode *
 			case "id":
 				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
 			default:
-				m = m.Where(dao.Table()+"."+k, v)
+				kArr := strings.Split(k, " ")
+				if garray.NewStrArrayFromCopy(dao.Column()).Contains(kArr[0]) {
+					m = m.Where(dao.Table()+"."+k, v)
+				} else {
+					m = m.Where(k, v)
+				}
 			}
 		}
 		return m
