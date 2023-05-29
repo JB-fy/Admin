@@ -8,6 +8,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -81,13 +82,13 @@ func (dao *ServerDao) Transaction(ctx context.Context, f func(ctx context.Contex
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
-// PrimaryKey returns the primary key name of current dao.
+// 主键ID
 func (dao *ServerDao) PrimaryKey() string {
 	return reflect.ValueOf(dao.columns).Field(0).String()
 }
 
-// Column returns all column names of current dao.
-func (dao *ServerDao) Column() []string {
+// 所有字段的数组
+func (dao *ServerDao) ColumnArr() []string {
 	v := reflect.ValueOf(dao.columns)
 	count := v.NumField()
 	column := make([]string, count)
@@ -95,4 +96,9 @@ func (dao *ServerDao) Column() []string {
 		column[i] = v.Field(i).String()
 	}
 	return column
+}
+
+// 所有字段的数组（返回的格式更方便使用）
+func (dao *ServerDao) ColumnGarr() *garray.StrArray {
+	return garray.NewStrArrayFrom(dao.ColumnArr())
 }

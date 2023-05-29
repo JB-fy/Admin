@@ -8,6 +8,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -79,13 +80,13 @@ func (dao *RoleRelToMenuDao) Transaction(ctx context.Context, f func(ctx context
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
-// PrimaryKey returns the primary key name of current dao.
+// 主键ID
 func (dao *RoleRelToMenuDao) PrimaryKey() string {
 	return reflect.ValueOf(dao.columns).Field(0).String()
 }
 
-// Column returns all column names of current dao.
-func (dao *RoleRelToMenuDao) Column() []string {
+// 所有字段的数组
+func (dao *RoleRelToMenuDao) ColumnArr() []string {
 	v := reflect.ValueOf(dao.columns)
 	count := v.NumField()
 	column := make([]string, count)
@@ -93,4 +94,9 @@ func (dao *RoleRelToMenuDao) Column() []string {
 		column[i] = v.Field(i).String()
 	}
 	return column
+}
+
+// 所有字段的数组（返回的格式更方便使用）
+func (dao *RoleRelToMenuDao) ColumnGarr() *garray.StrArray {
+	return garray.NewStrArrayFrom(dao.ColumnArr())
 }

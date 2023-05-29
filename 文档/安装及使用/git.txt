@@ -25,4 +25,8 @@ git pull origin 分支名	//拉取远程仓库到本地（直接合并，相当�
 git fetch origin 分支名	//拉取远程仓库到本地（需要确认是否合并）
 git checkout 分支名 //切换分支
 git merge 分支名    //将该分支合并到当前分支中
+git diff 分支1 分支2    //显示两个版本之间的差异
+
+
+git diff 分支1 分支2 --name-only | xargs zip update.zip //将两个版本之间的差异文件导出
 /**----------------Git常用命令 结束----------------**/

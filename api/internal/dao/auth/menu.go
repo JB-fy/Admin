@@ -39,7 +39,7 @@ func (dao *menuDao) ParseInsert(insert ...map[string]interface{}) func(m *gdb.Mo
 					insertData[index][dao.PrimaryKey()] = v
 				default:
 					/* //数据库不存在的字段过滤掉
-					if !garray.NewStrArrayFrom(dao.Column()).Contains(k) {
+					if !garray.NewStrArrayFrom(dao.ColumnArr()).Contains(k) {
 						continue
 					} */
 					insertData[index][k] = v
@@ -65,7 +65,7 @@ func (dao *menuDao) ParseUpdate(update map[string]interface{}) func(m *gdb.Model
 				updateData[dao.Table()+"."+dao.PrimaryKey()] = v
 			default:
 				/* //数据库不存在的字段过滤掉
-				if !garray.NewStrArrayFrom(dao.Column()).Contains(k) {
+				if !garray.NewStrArrayFrom(dao.ColumnArr()).Contains(k) {
 						continue
 				} */
 				updateData[dao.Table()+"."+k] = v
@@ -84,7 +84,7 @@ func (dao *menuDao) ParseField(field []string, afterField *[]string, joinCodeArr
 			case "id":
 				m = m.Fields(dao.Table() + "." + dao.PrimaryKey())
 			default:
-				if garray.NewStrArrayFrom(dao.Column()).Contains(v) {
+				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(v) {
 					m = m.Fields(dao.Table() + "." + v)
 				} else {
 					m = m.Fields(v)
@@ -111,7 +111,7 @@ func (dao *menuDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]st
 				m = m.WhereLTE(dao.Table()+".createTime", v)
 			default:
 				kArr := strings.Split(k, " ")
-				if garray.NewStrArrayFrom(dao.Column()).Contains(kArr[0]) {
+				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(kArr[0]) {
 					m = m.Where(dao.Table()+"."+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -130,7 +130,7 @@ func (dao *menuDao) ParseGroup(group []string, joinCodeArr *[]string) func(m *gd
 			case "id":
 				m = m.Group(dao.Table() + "." + dao.PrimaryKey())
 			default:
-				if garray.NewStrArrayFrom(dao.Column()).Contains(v) {
+				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(v) {
 					m = m.Group(dao.Table() + "." + v)
 				} else {
 					m = m.Group(v)
@@ -149,7 +149,7 @@ func (dao *menuDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m 
 			case "id":
 				m = m.Order(dao.Table()+"."+dao.PrimaryKey(), v[1])
 			default:
-				if garray.NewStrArrayFrom(dao.Column()).Contains(v[0]) {
+				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(v[0]) {
 					m = m.Order(dao.Table()+"."+v[0], v[1])
 				} else {
 					m = m.Order(v[0], v[1])
