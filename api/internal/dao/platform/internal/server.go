@@ -99,6 +99,6 @@ func (dao *ServerDao) ColumnArr() []string {
 }
 
 // 所有字段的数组（返回的格式更方便使用）
-func (dao *ServerDao) ColumnGarr() *garray.StrArray {
+func (dao *ServerDao) ColumnArrG() *garray.StrArray {
 	return garray.NewStrArrayFrom(dao.ColumnArr())
 }

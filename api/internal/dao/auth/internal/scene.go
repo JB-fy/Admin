@@ -103,6 +103,6 @@ func (dao *SceneDao) ColumnArr() []string {
 }
 
 // 所有字段的数组（返回的格式更方便使用）
-func (dao *SceneDao) ColumnGarr() *garray.StrArray {
+func (dao *SceneDao) ColumnArrG() *garray.StrArray {
 	return garray.NewStrArrayFrom(dao.ColumnArr())
 }

@@ -90,6 +90,6 @@ func (dao *{TplTableNameCamelCase}Dao) ColumnArr() []string {
 }
 
 // 所有字段的数组（返回的格式更方便使用）
-func (dao *{TplTableNameCamelCase}Dao) ColumnGarr() *garray.StrArray {
+func (dao *{TplTableNameCamelCase}Dao) ColumnArrG() *garray.StrArray {
 	return garray.NewStrArrayFrom(dao.ColumnArr())
 }

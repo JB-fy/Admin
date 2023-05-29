@@ -97,6 +97,6 @@ func (dao *RoleRelOfPlatformAdminDao) ColumnArr() []string {
 }
 
 // 所有字段的数组（返回的格式更方便使用）
-func (dao *RoleRelOfPlatformAdminDao) ColumnGarr() *garray.StrArray {
+func (dao *RoleRelOfPlatformAdminDao) ColumnArrG() *garray.StrArray {
 	return garray.NewStrArrayFrom(dao.ColumnArr())
 }
