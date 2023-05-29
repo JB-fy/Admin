@@ -173,4 +173,14 @@ func (dao *serverDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *
 	}
 }
 
+// 获取数据后，再处理的字段
+func (dao *serverDao) afterField(info map[string]interface{}, afterField []string) {
+	for _, v := range afterField {
+		switch v {
+		/* case "xxxx":
+		info[v] = "" */
+		}
+	}
+}
+
 // Fill with you ideas below.

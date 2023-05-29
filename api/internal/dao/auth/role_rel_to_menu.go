@@ -173,4 +173,14 @@ func (dao *roleRelToMenuDao) ParseJoin(joinCode string, joinCodeArr *[]string) f
 	}
 }
 
+// 获取数据后，再处理的字段
+func (dao *roleRelToMenuDao) afterField(info map[string]interface{}, afterField []string) {
+	for _, v := range afterField {
+		switch v {
+		/* case "xxxx":
+		info[v] = "" */
+		}
+	}
+}
+
 // Fill with you ideas below.
