@@ -15,9 +15,12 @@ import (
 
 // ActionDao is the data access object for table auth_action.
 type ActionDao struct {
-	table   string        // table is the underlying table name of the DAO.
-	group   string        // group is the database configuration group name of current DAO.
-	columns ActionColumns // columns contains all the column names of Table for convenient usage.
+	table      string        // table is the underlying table name of the DAO.
+	group      string        // group is the database configuration group name of current DAO.
+	columns    ActionColumns // columns contains all the column names of Table for convenient usage.
+	primaryKey string
+	columnArr  []string
+	columnArrG *garray.StrArray
 }
 
 // ActionColumns defines and stores column names for table auth_action.
@@ -48,6 +51,27 @@ func NewActionDao() *ActionDao {
 		group:   "default",
 		table:   "auth_action",
 		columns: actionColumns,
+		primaryKey: func() string {
+			return reflect.ValueOf(actionColumns).Field(0).String()
+		}(),
+		columnArr: func() []string {
+			v := reflect.ValueOf(actionColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return column
+		}(),
+		columnArrG: func() *garray.StrArray {
+			v := reflect.ValueOf(actionColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return garray.NewStrArrayFrom(column)
+		}(),
 	}
 }
 
@@ -88,21 +112,15 @@ func (dao *ActionDao) Transaction(ctx context.Context, f func(ctx context.Contex
 
 // 主键ID
 func (dao *ActionDao) PrimaryKey() string {
-	return reflect.ValueOf(dao.columns).Field(0).String()
+	return dao.primaryKey
 }
 
 // 所有字段的数组
 func (dao *ActionDao) ColumnArr() []string {
-	v := reflect.ValueOf(dao.columns)
-	count := v.NumField()
-	column := make([]string, count)
-	for i := 0; i < count; i++ {
-		column[i] = v.Field(i).String()
-	}
-	return column
+	return dao.columnArr
 }
 
 // 所有字段的数组（返回的格式更方便使用）
 func (dao *ActionDao) ColumnArrG() *garray.StrArray {
-	return garray.NewStrArrayFrom(dao.ColumnArr())
+	return dao.columnArrG
 }

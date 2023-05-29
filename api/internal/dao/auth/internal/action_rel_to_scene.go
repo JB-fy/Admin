@@ -15,9 +15,12 @@ import (
 
 // ActionRelToSceneDao is the data access object for table auth_action_rel_to_scene.
 type ActionRelToSceneDao struct {
-	table   string                  // table is the underlying table name of the DAO.
-	group   string                  // group is the database configuration group name of current DAO.
-	columns ActionRelToSceneColumns // columns contains all the column names of Table for convenient usage.
+	table      string                  // table is the underlying table name of the DAO.
+	group      string                  // group is the database configuration group name of current DAO.
+	columns    ActionRelToSceneColumns // columns contains all the column names of Table for convenient usage.
+	primaryKey string
+	columnArr  []string
+	columnArrG *garray.StrArray
 }
 
 // ActionRelToSceneColumns defines and stores column names for table auth_action_rel_to_scene.
@@ -42,6 +45,27 @@ func NewActionRelToSceneDao() *ActionRelToSceneDao {
 		group:   "default",
 		table:   "auth_action_rel_to_scene",
 		columns: actionRelToSceneColumns,
+		primaryKey: func() string {
+			return reflect.ValueOf(actionRelToSceneColumns).Field(0).String()
+		}(),
+		columnArr: func() []string {
+			v := reflect.ValueOf(actionRelToSceneColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return column
+		}(),
+		columnArrG: func() *garray.StrArray {
+			v := reflect.ValueOf(actionRelToSceneColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return garray.NewStrArrayFrom(column)
+		}(),
 	}
 }
 
@@ -82,21 +106,15 @@ func (dao *ActionRelToSceneDao) Transaction(ctx context.Context, f func(ctx cont
 
 // 主键ID
 func (dao *ActionRelToSceneDao) PrimaryKey() string {
-	return reflect.ValueOf(dao.columns).Field(0).String()
+	return dao.primaryKey
 }
 
 // 所有字段的数组
 func (dao *ActionRelToSceneDao) ColumnArr() []string {
-	v := reflect.ValueOf(dao.columns)
-	count := v.NumField()
-	column := make([]string, count)
-	for i := 0; i < count; i++ {
-		column[i] = v.Field(i).String()
-	}
-	return column
+	return dao.columnArr
 }
 
 // 所有字段的数组（返回的格式更方便使用）
 func (dao *ActionRelToSceneDao) ColumnArrG() *garray.StrArray {
-	return garray.NewStrArrayFrom(dao.ColumnArr())
+	return dao.columnArrG
 }

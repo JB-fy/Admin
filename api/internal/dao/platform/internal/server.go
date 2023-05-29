@@ -15,9 +15,12 @@ import (
 
 // ServerDao is the data access object for table platform_server.
 type ServerDao struct {
-	table   string        // table is the underlying table name of the DAO.
-	group   string        // group is the database configuration group name of current DAO.
-	columns ServerColumns // columns contains all the column names of Table for convenient usage.
+	table      string        // table is the underlying table name of the DAO.
+	group      string        // group is the database configuration group name of current DAO.
+	columns    ServerColumns // columns contains all the column names of Table for convenient usage.
+	primaryKey string
+	columnArr  []string
+	columnArrG *garray.StrArray
 }
 
 // ServerColumns defines and stores column names for table platform_server.
@@ -44,6 +47,27 @@ func NewServerDao() *ServerDao {
 		group:   "default",
 		table:   "platform_server",
 		columns: serverColumns,
+		primaryKey: func() string {
+			return reflect.ValueOf(serverColumns).Field(0).String()
+		}(),
+		columnArr: func() []string {
+			v := reflect.ValueOf(serverColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return column
+		}(),
+		columnArrG: func() *garray.StrArray {
+			v := reflect.ValueOf(serverColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return garray.NewStrArrayFrom(column)
+		}(),
 	}
 }
 
@@ -84,21 +108,15 @@ func (dao *ServerDao) Transaction(ctx context.Context, f func(ctx context.Contex
 
 // 主键ID
 func (dao *ServerDao) PrimaryKey() string {
-	return reflect.ValueOf(dao.columns).Field(0).String()
+	return dao.primaryKey
 }
 
 // 所有字段的数组
 func (dao *ServerDao) ColumnArr() []string {
-	v := reflect.ValueOf(dao.columns)
-	count := v.NumField()
-	column := make([]string, count)
-	for i := 0; i < count; i++ {
-		column[i] = v.Field(i).String()
-	}
-	return column
+	return dao.columnArr
 }
 
 // 所有字段的数组（返回的格式更方便使用）
 func (dao *ServerDao) ColumnArrG() *garray.StrArray {
-	return garray.NewStrArrayFrom(dao.ColumnArr())
+	return dao.columnArrG
 }

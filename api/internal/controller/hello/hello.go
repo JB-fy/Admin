@@ -32,7 +32,7 @@ func (c *Controller) Test(r *ghttp.Request) {
 	//daoLog.Request.Ctx(r.GetCtx()).Data(g.Map{"requestUrl": "1", "runTime": 2}).Where("logId", 6).Update()
 	joinCode := []string{}
 	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.ParseField([]string{"id", "createTime"}, &[]string{}, &joinCode), daoAuth.Menu.ParseFilter(g.MapStrAny{"id": 2, "menuId > ?": 22}, &joinCode)).All()
-	fmt.Println(daoAuth.Menu.Column())
+	fmt.Println(daoAuth.Menu.ColumnArr())
 	fmt.Println(daoAuth.Menu.Columns())
 	fmt.Println(gconv.Map(daoAuth.Menu.Columns()))
 	fmt.Println(gmap.NewStrAnyMapFrom(gconv.Map(daoAuth.Menu.Columns())).Values())

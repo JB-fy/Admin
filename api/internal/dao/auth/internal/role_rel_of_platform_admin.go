@@ -15,9 +15,12 @@ import (
 
 // RoleRelOfPlatformAdminDao is the data access object for table auth_role_rel_of_platform_admin.
 type RoleRelOfPlatformAdminDao struct {
-	table   string                        // table is the underlying table name of the DAO.
-	group   string                        // group is the database configuration group name of current DAO.
-	columns RoleRelOfPlatformAdminColumns // columns contains all the column names of Table for convenient usage.
+	table      string                        // table is the underlying table name of the DAO.
+	group      string                        // group is the database configuration group name of current DAO.
+	columns    RoleRelOfPlatformAdminColumns // columns contains all the column names of Table for convenient usage.
+	primaryKey string
+	columnArr  []string
+	columnArrG *garray.StrArray
 }
 
 // RoleRelOfPlatformAdminColumns defines and stores column names for table auth_role_rel_of_platform_admin.
@@ -42,6 +45,27 @@ func NewRoleRelOfPlatformAdminDao() *RoleRelOfPlatformAdminDao {
 		group:   "default",
 		table:   "auth_role_rel_of_platform_admin",
 		columns: roleRelOfPlatformAdminColumns,
+		primaryKey: func() string {
+			return reflect.ValueOf(roleRelOfPlatformAdminColumns).Field(0).String()
+		}(),
+		columnArr: func() []string {
+			v := reflect.ValueOf(roleRelOfPlatformAdminColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return column
+		}(),
+		columnArrG: func() *garray.StrArray {
+			v := reflect.ValueOf(roleRelOfPlatformAdminColumns)
+			count := v.NumField()
+			column := make([]string, count)
+			for i := 0; i < count; i++ {
+				column[i] = v.Field(i).String()
+			}
+			return garray.NewStrArrayFrom(column)
+		}(),
 	}
 }
 
@@ -82,21 +106,15 @@ func (dao *RoleRelOfPlatformAdminDao) Transaction(ctx context.Context, f func(ct
 
 // 主键ID
 func (dao *RoleRelOfPlatformAdminDao) PrimaryKey() string {
-	return reflect.ValueOf(dao.columns).Field(0).String()
+	return dao.primaryKey
 }
 
 // 所有字段的数组
 func (dao *RoleRelOfPlatformAdminDao) ColumnArr() []string {
-	v := reflect.ValueOf(dao.columns)
-	count := v.NumField()
-	column := make([]string, count)
-	for i := 0; i < count; i++ {
-		column[i] = v.Field(i).String()
-	}
-	return column
+	return dao.columnArr
 }
 
 // 所有字段的数组（返回的格式更方便使用）
 func (dao *RoleRelOfPlatformAdminDao) ColumnArrG() *garray.StrArray {
-	return garray.NewStrArrayFrom(dao.ColumnArr())
+	return dao.columnArrG
 }
