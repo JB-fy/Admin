@@ -21,7 +21,7 @@ if (!function_exists('getConfig')) {
                     $keyOfDynamic = []; //想要动态获取的configKey
                     if (env('PLATFORM_CONFIG_DYNAMIC_ENABLE', false) || in_array($keyArr[2],  $keyOfDynamic)) {
                         return getDao(\App\Module\Db\Dao\Platform\Config::class)
-                            ->filter(['configKey' => $keyArr[2]])
+                            ->parseFilter(['configKey' => $keyArr[2]])
                             ->getBuilder()
                             ->value('configValue') ?? $default;
                     }
@@ -29,8 +29,8 @@ if (!function_exists('getConfig')) {
                 case 'authScene':
                     if (env('AUTH_SCENE_DYNAMIC_ENABLE', false)) {
                         $sceneInfo = getDao(\App\Module\Db\Dao\Auth\Scene::class)
-                            ->filter(['sceneCode' => $keyArr[2]])
-                            ->getInfo();
+                            ->parseFilter(['sceneCode' => $keyArr[2]])
+                            ->info();
                         if (empty($sceneInfo)) {
                             return $default;
                         }

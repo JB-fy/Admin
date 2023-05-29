@@ -18,7 +18,7 @@ class Admin extends AbstractService
      */
     public function create(array $data)
     {
-        $id = $this->getDao()->insert($data)->saveInsert();
+        $id = $this->getDao()->parseInsert($data)->insert();
         if (empty($id)) {
             throwFailJson();
         }
@@ -37,7 +37,7 @@ class Admin extends AbstractService
      */
     public function update(array $data, array $where)
     {
-        if (isset($data['checkPassword']) && $data['checkPassword'] != $this->getDao()->filter($where)->getBuilder()->value('password')) {
+        if (isset($data['checkPassword']) && $data['checkPassword'] != $this->getDao()->parseFilter($where)->getBuilder()->value('password')) {
             throwFailJson(39990003);
         }
 
@@ -46,9 +46,9 @@ class Admin extends AbstractService
             foreach ($idArr as $id) {
                 $this->container->get(PlatformAdmin::class)->saveRelRole($data['roleIdArr'], $id);
             }
-            $this->getDao()->filter($where)->update($data)->saveUpdate();    //有可能只改roleIdArr
+            $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改roleIdArr
         } else {
-            $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
+            $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
             if (empty($result)) {
                 throwFailJson();
             }
@@ -65,11 +65,11 @@ class Admin extends AbstractService
     public function delete(array $where)
     {
         $idArr = $this->getIdArr($where);
-        $result = $this->getDao()->filter($where)->delete();
+        $result = $this->getDao()->parseFilter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(RoleRelOfPlatformAdmin::class)->filter(['adminId' => $idArr])->delete();
+        getDao(RoleRelOfPlatformAdmin::class)->parseFilter(['adminId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

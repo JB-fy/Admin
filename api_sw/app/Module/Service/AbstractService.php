@@ -46,15 +46,15 @@ abstract class AbstractService
     public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $dao = $this->getDao();
-        $dao->filter($where);
+        $dao->parseFilter($where);
         $offset = ($page - 1) * $limit;
 
         empty($order) ? $order = ['id' => 'DESC'] : null;
-        $dao->field($field)->order($order);
+        $dao->parseField($field)->parseOrder($order);
         if ($dao->isJoin()) {
-            $dao->group(['id']);
+            $dao->parseGroup(['id']);
         }
-        $list = $dao->getList($offset, $limit);
+        $list = $dao->list($offset, $limit);
         throwSuccessJson(['list' => $list]);
     }
     /* //重新定义示例
@@ -84,14 +84,14 @@ abstract class AbstractService
     {
         $offset = ($page - 1) * $limit;
         $dao = $this->getDao();
-        $dao->filter($where);
+        $dao->parseFilter($where);
         if ($offset == 0 && $limit == 0) {  //是否先获取$list，再通过count($list)计算$count
             empty($order) ? $order = ['id' => 'DESC'] : null;
-            $dao->field($field)->order($order);
+            $dao->parseField($field)->parseOrder($order);
             if ($dao->isJoin()) {
-                $dao->group(['id']);
+                $dao->parseGroup(['id']);
             }
-            $list = $dao->getList($offset, $limit);
+            $list = $dao->list($offset, $limit);
             $count = count($list);
         } else {
             if ($dao->isJoin()) {
@@ -103,11 +103,11 @@ abstract class AbstractService
             $list = [];
             if ($count > $offset) {
                 empty($order) ? $order = ['id' => 'DESC'] : null;
-                $dao->field($field)->order($order);
+                $dao->parseField($field)->parseOrder($order);
                 if ($dao->isJoin()) {
-                    $dao->group(['id']);
+                    $dao->parseGroup(['id']);
                 }
-                $list = $dao->getList($offset, $limit);
+                $list = $dao->list($offset, $limit);
             }
         }
         throwSuccessJson(['count' => $count, 'list' => $list]);
@@ -122,7 +122,7 @@ abstract class AbstractService
      */
     public function info(array $where, array $field = [])
     {
-        $info = $this->getDao()->field($field)->filter($where)->getInfo();
+        $info = $this->getDao()->parseField($field)->parseFilter($where)->info();
         if (empty($info)) {
             throwFailJson(29999999);
         }
@@ -137,10 +137,10 @@ abstract class AbstractService
      */
     public function create(array $data)
     {
-        $id = $this->getDao()->insert($data)->saveInsert();
+        $id = $this->getDao()->parseInsert($data)->insert();
         /* //重复索引错误已在\App\Exception\Handler\AppExceptionHandler处理
         try {
-            $id = $this->getDao()->insert($data)->saveInsert();
+            $id = $this->getDao()->parseInsert($data)->insert();
         } catch (\Hyperf\Database\Exception\QueryException $th) {
             if (preg_match('/^SQLSTATE.*1062 Duplicate.*\.([^\']*)\'/', $th->getMessage(), $matches) === 1) {
                 $nameKey = 'validation.attributes.' . $matches[1];
@@ -167,7 +167,7 @@ abstract class AbstractService
      */
     public function update(array $data, array $where)
     {
-        $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
+        $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
         if (empty($result)) {
             throwFailJson();
         }
@@ -182,7 +182,7 @@ abstract class AbstractService
      */
     public function delete(array $where)
     {
-        $result = $this->getDao()->filter($where)->delete();
+        $result = $this->getDao()->parseFilter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
@@ -198,7 +198,7 @@ abstract class AbstractService
     final protected function getIdArr(array $where): array
     {
         $dao = $this->getDao();
-        return $dao->filter($where)->getBuilder()->pluck($dao->getKey())->toArray();
+        return $dao->parseFilter($where)->getBuilder()->pluck($dao->getKey())->toArray();
         if (isset($where['id']) && count($where) == 1) {
             return is_array($where['id']) ? $where['id'] : [$where['id']];
         }

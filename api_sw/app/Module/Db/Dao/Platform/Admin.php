@@ -26,7 +26,7 @@ class Admin extends AbstractDao
      * @param string $key
      * @return boolean
      */
-    protected function fieldOfAlone(string $key): bool
+    protected function parseFieldOfAlone(string $key): bool
     {
         switch ($key) {
             case 'roleIdArr':
@@ -48,7 +48,7 @@ class Admin extends AbstractDao
      * @param string|null $boolean
      * @return boolean
      */
-    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'accountOrPhone':
@@ -69,7 +69,7 @@ class Admin extends AbstractDao
                     $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
 
-                $this->joinOfAlone('roleRelOfPlatformAdmin');
+                $this->parseJoinOfAlone('roleRelOfPlatformAdmin');
                 return true;
         }
         return false;
@@ -82,7 +82,7 @@ class Admin extends AbstractDao
      * @param [type] $value 值，用于确定关联表
      * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'roleRelOfPlatformAdmin':
@@ -108,7 +108,7 @@ class Admin extends AbstractDao
     {
         switch ($key) {
             case 'roleIdArr':
-                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->filter(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
+                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->parseFilter(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
                 return true;
         }
         return false;

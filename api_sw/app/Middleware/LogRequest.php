@@ -68,6 +68,6 @@ class LogRequest implements \Psr\Http\Server\MiddlewareInterface
             'runTime' => round(($endTime - $startTime) * 1000, 3),
             'responseBody' => $responseBody,
         ];
-        getDao(\App\Module\Db\Dao\Log\Request::class)->insert($LogData)->saveInsert();
+        getDao(\App\Module\Db\Dao\Log\Request::class)->parseInsert($LogData)->insert();
     }
 }

@@ -39,7 +39,7 @@ class Login extends AbstractService
         switch ($sceneCode) {
             case 'platformAdmin':
                 /**--------验证账号密码 开始--------**/
-                $info = getDao(Admin::class)->filter(['accountOrPhone' => $account])->getInfo();
+                $info = getDao(Admin::class)->parseFilter(['accountOrPhone' => $account])->info();
                 if (empty($info)) {
                     throwFailJson(39990000);
                 }
@@ -98,9 +98,9 @@ class Login extends AbstractService
 
                 /**--------获取登录用户信息并验证 开始--------**/
                 $info = getDao(Admin::class)
-                    //->field(['adminId', 'nickname', 'avatar', 'isStop'])
-                    ->filter(['adminId' => $payload['id']])
-                    ->getInfo();
+                    //->parseField(['adminId', 'nickname', 'avatar', 'isStop'])
+                    ->parseFilter(['adminId' => $payload['id']])
+                    ->info();
                 if (empty($info)) {
                     throwFailJson(39994003);
                 }

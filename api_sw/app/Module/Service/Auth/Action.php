@@ -18,7 +18,7 @@ class Action extends AbstractService
      */
     public function create(array $data)
     {
-        $id = $this->getDao()->insert($data)->saveInsert();
+        $id = $this->getDao()->parseInsert($data)->insert();
         if (empty($id)) {
             throwFailJson();
         }
@@ -42,9 +42,9 @@ class Action extends AbstractService
             foreach ($idArr as $id) {
                 $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
             }
-            $this->getDao()->filter($where)->update($data)->saveUpdate();    //有可能只改sceneIdArr
+            $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改sceneIdArr
         } else {
-            $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
+            $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
             if (empty($result)) {
                 throwFailJson();
             }
@@ -61,11 +61,11 @@ class Action extends AbstractService
     public function delete(array $where)
     {
         $idArr = $this->getIdArr($where);
-        $result = $this->getDao()->filter($where)->delete();
+        $result = $this->getDao()->parseFilter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(ActionRelToScene::class)->filter(['actionId' => $idArr])->delete();
+        getDao(ActionRelToScene::class)->parseFilter(['actionId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

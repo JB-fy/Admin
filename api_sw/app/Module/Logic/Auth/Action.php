@@ -19,7 +19,7 @@ class Action extends AbstractLogic
      */
     public function saveRelScene(array $sceneIdArr, int $id = 0)
     {
-        $sceneIdArrOfOld = getDao(ActionRelToScene::class)->filter(['actionId' => $id])->getBuilder()->pluck('sceneId')->toArray();
+        $sceneIdArrOfOld = getDao(ActionRelToScene::class)->parseFilter(['actionId' => $id])->getBuilder()->pluck('sceneId')->toArray();
         /**----新增关联场景 开始----**/
         $insertSceneIdArr = array_diff($sceneIdArr, $sceneIdArrOfOld);
         if (!empty($insertSceneIdArr)) {
@@ -30,14 +30,14 @@ class Action extends AbstractLogic
                     'sceneId' => $v
                 ];
             }
-            getDao(ActionRelToScene::class)->insert($insertList)->saveInsert();
+            getDao(ActionRelToScene::class)->parseInsert($insertList)->insert();
         }
         /**----新增关联场景 结束----**/
 
         /**----删除关联场景 开始----**/
         $deleteSceneIdArr = array_diff($sceneIdArrOfOld, $sceneIdArr);
         if (!empty($deleteSceneIdArr)) {
-            getDao(ActionRelToScene::class)->filter(['actionId' => $id, 'sceneId' => $deleteSceneIdArr])->delete();
+            getDao(ActionRelToScene::class)->parseFilter(['actionId' => $id, 'sceneId' => $deleteSceneIdArr])->delete();
         }
         /**----删除关联场景 结束----**/
     }
@@ -70,7 +70,7 @@ class Action extends AbstractLogic
             default:
                 break;
         }
-        if (empty(getDao(AuthAction::class)->filter($where)->getBuilder()->count())) {
+        if (empty(getDao(AuthAction::class)->parseFilter($where)->getBuilder()->count())) {
             if ($isThrow) {
                 throwFailJson(39990002);
             } else {

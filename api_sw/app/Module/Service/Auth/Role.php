@@ -22,15 +22,15 @@ class Role extends AbstractService
      */
     public function create(array $data)
     {
-        if (isset($data['menuIdArr']) && count($data['menuIdArr']) != getDao(Menu::class)->filter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
-            //$count = getDao(Menu::class)->filter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getInfo();
+        if (isset($data['menuIdArr']) && count($data['menuIdArr']) != getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
+            //$count = getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->info();
             throwFailJson(89999998);
         }
-        if (isset($data['actionIdArr']) && count($data['actionIdArr']) != getDao(ActionRelToScene::class)->filter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
+        if (isset($data['actionIdArr']) && count($data['actionIdArr']) != getDao(ActionRelToScene::class)->parseFilter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId']])->getBuilder()->count()) {
             throwFailJson(89999998);
         }
 
-        $id = $this->getDao()->insert($data)->saveInsert();
+        $id = $this->getDao()->parseInsert($data)->insert();
         if (empty($id)) {
             throwFailJson();
         }
@@ -53,23 +53,23 @@ class Role extends AbstractService
     public function update(array $data, array $where)
     {
         if (isset($data['menuIdArr']) || isset($data['actionIdArr'])) {
-            $oldInfo = $this->getDao()->filter($where)->getInfo();
+            $oldInfo = $this->getDao()->parseFilter($where)->info();
             if (isset($data['menuIdArr'])) {
-                if (count($data['menuIdArr']) != getDao(Menu::class)->filter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                if (count($data['menuIdArr']) != getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
                     throwFailJson(89999998);
                 }
                 $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
-                $this->getDao()->filter($where)->update($data)->saveUpdate();    //有可能只改menuIdArr
+                $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改menuIdArr
             }
             if (isset($data['actionIdArr'])) {
-                if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->filter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->parseFilter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
                     throwFailJson(89999998);
                 }
                 $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
-                $this->getDao()->filter($where)->update($data)->saveUpdate();    //有可能只改actionIdArr
+                $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改actionIdArr
             }
         } else {
-            $result = $this->getDao()->filter($where)->update($data)->saveUpdate();
+            $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
             if (empty($result)) {
                 throwFailJson();
             }
@@ -86,13 +86,13 @@ class Role extends AbstractService
     public function delete(array $where)
     {
         $idArr = $this->getIdArr($where);
-        $result = $this->getDao()->filter($where)->delete();
+        $result = $this->getDao()->parseFilter($where)->delete();
         if (empty($result)) {
             throwFailJson();
         }
-        getDao(RoleRelToMenu::class)->filter(['roleId' => $idArr])->delete();
-        getDao(RoleRelToAction::class)->filter(['roleId' => $idArr])->delete();
-        getDao(RoleRelOfPlatformAdmin::class)->filter(['roleId' => $idArr])->delete();
+        getDao(RoleRelToMenu::class)->parseFilter(['roleId' => $idArr])->delete();
+        getDao(RoleRelToAction::class)->parseFilter(['roleId' => $idArr])->delete();
+        getDao(RoleRelOfPlatformAdmin::class)->parseFilter(['roleId' => $idArr])->delete();
         throwSuccessJson();
     }
 }

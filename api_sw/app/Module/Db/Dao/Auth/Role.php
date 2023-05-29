@@ -23,13 +23,13 @@ class Role extends AbstractDao
      * @param string $key
      * @return boolean
      */
-    protected function fieldOfAlone(string $key): bool
+    protected function parseFieldOfAlone(string $key): bool
     {
         switch ($key) {
             case 'sceneName':
                 $this->builder->addSelect(getDao(Scene::class)->getTable() . '.' . $key);
 
-                $this->joinOfAlone('scene');
+                $this->parseJoinOfAlone('scene');
                 return true;
             case 'menuIdArr':
             case 'actionIdArr':
@@ -49,7 +49,7 @@ class Role extends AbstractDao
      * @param [type] $value 值，用于确定关联表
      * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'scene':
@@ -75,10 +75,10 @@ class Role extends AbstractDao
     {
         switch ($key) {
             case 'menuIdArr':
-                $info->{$key} = getDao(RoleRelToMenu::class)->filter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
+                $info->{$key} = getDao(RoleRelToMenu::class)->parseFilter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
                 return true;
             case 'actionIdArr':
-                $info->{$key} = getDao(RoleRelToAction::class)->filter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
+                $info->{$key} = getDao(RoleRelToAction::class)->parseFilter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
                 return true;
         }
         return false;

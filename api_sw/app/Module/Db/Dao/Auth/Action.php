@@ -23,7 +23,7 @@ class Action extends AbstractDao
      * @param string $key
      * @return boolean
      */
-    protected function fieldOfAlone(string $key): bool
+    protected function parseFieldOfAlone(string $key): bool
     {
         switch ($key) {
             case 'sceneIdArr':
@@ -45,7 +45,7 @@ class Action extends AbstractDao
      * @param string|null $boolean
      * @return boolean
      */
-    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'sceneId':
@@ -59,14 +59,14 @@ class Action extends AbstractDao
                     $this->builder->where(getDao(ActionRelToScene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
 
-                $this->joinOfAlone('actionRelToScene');
+                $this->parseJoinOfAlone('actionRelToScene');
                 return true;
             case 'selfAction': //获取当前登录身份可用的操作。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();    //当开启切面\App\Aspect\Scene时有值
-                $sceneId = $sceneInfo === null ? getDao(Scene::class)->filter(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
+                $sceneId = $sceneInfo === null ? getDao(Scene::class)->parseFilter(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
                 $this->builder->where($this->getTable() . '.isStop', '=', 0, 'and');
                 $this->builder->where(getDao(ActionRelToScene::class)->getTable() . '.sceneId', '=', $sceneId, 'and');
-                $this->joinOfAlone('actionRelToScene');
+                $this->parseJoinOfAlone('actionRelToScene');
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':
                         if ($value['loginId'] === getConfig('app.superPlatformAdminId')) { //平台超级管理员，不再需要其他条件
@@ -75,13 +75,13 @@ class Action extends AbstractDao
                         $this->builder->where(getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and');
                         $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and');
 
-                        $this->joinOfAlone('roleRelToAction');
-                        $this->joinOfAlone('role');
-                        $this->joinOfAlone('roleRelOfPlatformAdmin');
+                        $this->parseJoinOfAlone('roleRelToAction');
+                        $this->parseJoinOfAlone('role');
+                        $this->parseJoinOfAlone('roleRelOfPlatformAdmin');
                         break;
                 }
 
-                $this->group(['id']);
+                $this->parseGroup(['id']);
                 return true;
         }
         return false;
@@ -94,7 +94,7 @@ class Action extends AbstractDao
      * @param [type] $value 值，用于确定关联表
      * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'actionRelToScene':
@@ -150,7 +150,7 @@ class Action extends AbstractDao
     {
         switch ($key) {
             case 'sceneIdArr':
-                $info->{$key} = getDao(ActionRelToScene::class)->filter(['actionId' => $info->{$this->getKey()}])->getBuilder()->pluck('sceneId')->toArray();
+                $info->{$key} = getDao(ActionRelToScene::class)->parseFilter(['actionId' => $info->{$this->getKey()}])->getBuilder()->pluck('sceneId')->toArray();
                 return true;
         }
         return false;

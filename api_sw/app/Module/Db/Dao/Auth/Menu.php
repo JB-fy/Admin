@@ -33,7 +33,7 @@ class Menu extends AbstractDao
      * @param [type] $value
      * @return boolean
      */
-    protected function updateOfAlone(string $key, $value = null): bool
+    protected function parseUpdateOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'pidPathOfChild':  //更新所有子孙级的pidPath。参数：['newVal'=>父级新pidPath, 'oldVal'=>父级旧pidPath]
@@ -52,14 +52,14 @@ class Menu extends AbstractDao
      * @param string $key
      * @return boolean
      */
-    protected function fieldOfAlone(string $key): bool
+    protected function parseFieldOfAlone(string $key): bool
     {
         switch ($key) {
             case 'menuTree':    //树状需要以下字段和排序方式
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
                 $this->builder->addSelect($this->getTable() . '.' . 'pid');
 
-                $this->orderOfAlone('menuTree');    //排序方式
+                $this->parseOrderOfAlone('menuTree');    //排序方式
                 return true;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
                 $this->builder->addSelect($this->getTable() . '.' . 'menuName');
@@ -73,12 +73,12 @@ class Menu extends AbstractDao
             case 'sceneName':
                 $this->builder->addSelect(getDao(Scene::class)->getTable() . '.' . $key);
 
-                $this->joinOfAlone('scene');
+                $this->parseJoinOfAlone('scene');
                 return true;
             case 'pMenuName':
                 $this->builder->addSelect('p_' . $this->getTable() . '.menuName AS pMenuName');
 
-                $this->joinOfAlone('pMenu');
+                $this->parseJoinOfAlone('pMenu');
                 return true;
         }
         return false;
@@ -93,12 +93,12 @@ class Menu extends AbstractDao
      * @param string|null $boolean
      * @return boolean
      */
-    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'selfMenu': //获取当前登录身份可用的菜单。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
                 $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();    //当开启切面\App\Aspect\Scene时有值
-                $sceneId = $sceneInfo === null ? getDao(Scene::class)->filter(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
+                $sceneId = $sceneInfo === null ? getDao(Scene::class)->parseFilter(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
 
                 $this->builder->where($this->getTable() . '.sceneId', '=', $sceneId, 'and');
                 $this->builder->where($this->getTable() . '.isStop', '=', 0, 'and');
@@ -110,13 +110,13 @@ class Menu extends AbstractDao
                         $this->builder->where(getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and');
                         $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and');
 
-                        $this->joinOfAlone('roleRelToMenu');
-                        $this->joinOfAlone('role');
-                        $this->joinOfAlone('roleRelOfPlatformAdmin');
+                        $this->parseJoinOfAlone('roleRelToMenu');
+                        $this->parseJoinOfAlone('role');
+                        $this->parseJoinOfAlone('roleRelOfPlatformAdmin');
                         break;
                 }
 
-                $this->group(['id']);
+                $this->parseGroup(['id']);
                 return true;
         }
         return false;
@@ -129,7 +129,7 @@ class Menu extends AbstractDao
      * @param [type] $value
      * @return boolean
      */
-    protected function orderOfAlone(string $key, $value = null): bool
+    protected function parseOrderOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'menuTree':
@@ -148,7 +148,7 @@ class Menu extends AbstractDao
      * @param [type] $value 值，用于确定关联表
      * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
             case 'scene':

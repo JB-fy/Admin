@@ -141,20 +141,20 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $insert 格式：['字段' => '值',...] 或 [['字段' => '值',...],...]
      * @return self
      */
-    final public function insert(array $insert): self
+    final public function parseInsert(array $insert): self
     {
         if (isset($insert[0]) && is_array($insert[0])) {
             foreach ($insert as $k => $v) {
                 foreach ($v as $k1 => $v1) {
-                    if (!$this->insertOfAlone($k1, $v1, $k)) {
-                        $this->insertOfCommon($k1, $v1, $k);
+                    if (!$this->parseInsertOfAlone($k1, $v1, $k)) {
+                        $this->parseInsertOfCommon($k1, $v1, $k);
                     }
                 }
             }
         } else {
             foreach ($insert as $k => $v) {
-                if (!$this->insertOfAlone($k, $v)) {
-                    $this->insertOfCommon($k, $v);
+                if (!$this->parseInsertOfAlone($k, $v)) {
+                    $this->parseInsertOfCommon($k, $v);
                 }
             }
         }
@@ -167,11 +167,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $update 格式：['字段' => '值',...]
      * @return self
      */
-    final public function update(array $update): self
+    final public function parseUpdate(array $update): self
     {
         foreach ($update as $k => $v) {
-            if (!$this->updateOfAlone($k, $v)) {
-                $this->updateOfCommon($k, $v);
+            if (!$this->parseUpdateOfAlone($k, $v)) {
+                $this->parseUpdateOfCommon($k, $v);
             }
         }
         return $this;
@@ -183,11 +183,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $field  格式：['字段',...]
      * @return self
      */
-    final public function field(array $field): self
+    final public function parseField(array $field): self
     {
         foreach ($field as $v) {
-            if (!$this->fieldOfAlone($v)) {
-                $this->fieldOfCommon($v);
+            if (!$this->parseFieldOfAlone($v)) {
+                $this->parseFieldOfCommon($v);
             }
         }
         return $this;
@@ -199,16 +199,16 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $filter  格式：['字段' => '值', ['字段'，'运算符', '值', 'and|or'],...]
      * @return self
      */
-    final public function filter(array $filter): self
+    final public function parseFilter(array $filter): self
     {
         foreach ($filter as $k => $v) {
             if (is_numeric($k) && is_array($v)) {
-                if (!$this->filterOfAlone(...$v)) {
-                    $this->filterOfCommon(...$v);
+                if (!$this->parseFilterOfAlone(...$v)) {
+                    $this->parseFilterOfCommon(...$v);
                 }
             } else {
-                if (!$this->filterOfAlone($k, null, $v)) {
-                    $this->filterOfCommon($k, null, $v);
+                if (!$this->parseFilterOfAlone($k, null, $v)) {
+                    $this->parseFilterOfCommon($k, null, $v);
                 }
             }
         }
@@ -221,11 +221,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $group  格式：['字段',...]
      * @return self
      */
-    final public function group(array $group): self
+    final public function parseGroup(array $group): self
     {
         foreach ($group as $v) {
-            if (!$this->groupOfAlone($v)) {
-                $this->groupOfCommon($v);
+            if (!$this->parseGroupOfAlone($v)) {
+                $this->parseGroupOfCommon($v);
             }
         }
         return $this;
@@ -237,11 +237,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param array $order  格式：['字段' => 'asc或desc',...]
      * @return self
      */
-    final public function order(array $order): self
+    final public function parseOrder(array $order): self
     {
         foreach ($order as $k => $v) {
-            if (!$this->orderOfAlone($k, $v)) {
-                $this->orderOfCommon($k, $v);
+            if (!$this->parseOrderOfAlone($k, $v)) {
+                $this->parseOrderOfCommon($k, $v);
             }
         }
         return $this;
@@ -255,7 +255,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param integer $index
      * @return boolean
      */
-    final protected function insertOfCommon(string $key, $value, int $index = 0): bool
+    final protected function parseInsertOfCommon(string $key, $value, int $index = 0): bool
     {
         switch ($key) {
             case 'id':
@@ -286,14 +286,14 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value
      * @return boolean
      */
-    final protected function updateOfCommon(string $key, $value): bool
+    final protected function parseUpdateOfCommon(string $key, $value): bool
     {
         switch ($key) {
             case 'id':
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             default:
-                /* //暂时不考虑其他复杂字段。复杂字段建议直接写入updateOfAlone方法
+                /* //暂时不考虑其他复杂字段。复杂字段建议直接写入parseUpdateOfAlone方法
                 list($realKey) = explode('->', $key);   //json情况
                 list($realKey) = explode(' AS ', $realKey); //别名情况
                 list($realKey) = explode(' as ', $realKey); //别名情况
@@ -323,7 +323,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string $key
      * @return boolean
      */
-    final protected function fieldOfCommon(string $key): bool
+    final protected function parseFieldOfCommon(string $key): bool
     {
         switch ($key) {
             case '*':
@@ -352,7 +352,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string|null $boolean
      * @return boolean
      */
-    final protected function filterOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
+    final protected function parseFilterOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
             case 'id':
@@ -413,7 +413,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string $key
      * @return boolean
      */
-    final protected function groupOfCommon(string $key): bool
+    final protected function parseGroupOfCommon(string $key): bool
     {
         switch ($key) {
             case 'id':
@@ -437,7 +437,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value
      * @return boolean
      */
-    final protected function orderOfCommon(string $key, $value): bool
+    final protected function parseOrderOfCommon(string $key, $value): bool
     {
         switch ($key) {
             case 'id':
@@ -462,7 +462,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param integer $index
      * @return boolean
      */
-    protected function insertOfAlone(string $key, $value, int $index = 0): bool
+    protected function parseInsertOfAlone(string $key, $value, int $index = 0): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -479,7 +479,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value
      * @return boolean
      */
-    protected function updateOfAlone(string $key, $value = null): bool
+    protected function parseUpdateOfAlone(string $key, $value = null): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -495,7 +495,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string $key
      * @return self
      */
-    protected function fieldOfAlone(string $key): bool
+    protected function parseFieldOfAlone(string $key): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -516,7 +516,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string|null $boolean
      * @return boolean
      */
-    protected function filterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -533,7 +533,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param string $key
      * @return boolean
      */
-    protected function groupOfAlone(string $key): bool
+    protected function parseGroupOfAlone(string $key): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -551,7 +551,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value
      * @return boolean
      */
-    protected function orderOfAlone(string $key, $value = null): bool
+    protected function parseOrderOfAlone(string $key, $value = null): bool
     {
         /* switch ($key) {
             case 'xxxx':
@@ -569,7 +569,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value 值，用于确定关联表
      * @return boolean
      */
-    protected function joinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOfAlone(string $key, $value = null): bool
     {
         return false;
     }
@@ -587,12 +587,12 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
 
     /*----------------封装部分方法方便使用 开始----------------*/
     /**
-     * 保存插入
+     * 插入
      *
      * @param boolean $isGetId
      * @return boolean|integer
      */
-    final public function saveInsert(bool $isGetId = true): bool|int
+    final public function insert(bool $isGetId = true): bool|int
     {
         $this->getBuilder();
         if (count($this->insert) > 1 || !$isGetId) {
@@ -602,13 +602,13 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 保存更新
+     * 更新
      *
      * @param integer $offset
      * @param integer $limit
      * @return integer
      */
-    final public function saveUpdate(int $offset = 0, int $limit = 0): int
+    final public function update(int $offset = 0, int $limit = 0): int
     {
         $this->getBuilder();
         $this->handleLimit($offset, $limit);
@@ -633,7 +633,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param boolean $isUseWriter
      * @return object|null
      */
-    final public function getInfo(bool $isUseWriter = false): object|null
+    final public function info(bool $isUseWriter = false): object|null
     {
         $this->getBuilder();
         if ($isUseWriter) {
@@ -655,7 +655,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param boolean $isUseWriter  读写分离时，是否使用写库读（因读写分离有延迟，有些时候需要使用写库读取）
      * @return array
      */
-    final public function getList(int $offset = 0, int $limit = 0, bool $isUseWriter = false): array
+    final public function list(int $offset = 0, int $limit = 0, bool $isUseWriter = false): array
     {
         $this->getBuilder();
         if ($isUseWriter) {

@@ -32,7 +32,7 @@ class BeforeStartCallback
 
         /**--------将数据库内的配置设置到config中（方便使用） 开始--------**/
         //场景列表（即表auth_scene数据）
-        $allScene = getDao(\App\Module\Db\Dao\Auth\Scene::class)->getList();
+        $allScene = getDao(\App\Module\Db\Dao\Auth\Scene::class)->list();
         $allScene = array_combine(array_column($allScene, 'sceneCode'), $allScene);
         foreach ($allScene as &$v) {
             $v->sceneConfig = $v->sceneConfig === null ? [] : json_decode($v->sceneConfig, true);
