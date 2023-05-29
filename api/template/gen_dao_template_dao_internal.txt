@@ -79,7 +79,7 @@ func (dao *{TplTableNameCamelCase}Dao) PrimaryKey() string {
 }
 
 // Column returns all column names of current dao.
-func (dao *{TplTableNameCamelCase}Dao) Column() []string {
+func (dao *{TplTableNameCamelCase}Dao) ColumnArr() []string {
 	v := reflect.ValueOf(dao.columns)
 	count := v.NumField()
 	column := make([]string, count)
