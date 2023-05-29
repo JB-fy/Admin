@@ -29,7 +29,7 @@ var (
 )
 
 // 解析insert
-func (dao *sceneDao) ParseInsert(insert ...map[string]interface{}) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseInsert(insert []map[string]interface{}, fill ...bool) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := []map[string]interface{}{}
 		for index, item := range insert {
@@ -38,10 +38,10 @@ func (dao *sceneDao) ParseInsert(insert ...map[string]interface{}) func(m *gdb.M
 				case "id":
 					insertData[index][dao.PrimaryKey()] = v
 				default:
-					/* //数据库不存在的字段过滤掉
-					if !garray.NewStrArrayFrom(dao.ColumnArr()).Contains(k) {
+					//数据库不存在的字段过滤掉
+					if len(fill) > 0 && fill[0] && !dao.ColumnArrG().Contains(k) {
 						continue
-					} */
+					}
 					insertData[index][k] = v
 				}
 			}
@@ -56,7 +56,7 @@ func (dao *sceneDao) ParseInsert(insert ...map[string]interface{}) func(m *gdb.M
 }
 
 // 解析update
-func (dao *sceneDao) ParseUpdate(update map[string]interface{}) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseUpdate(update map[string]interface{}, fill ...bool) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
@@ -64,10 +64,10 @@ func (dao *sceneDao) ParseUpdate(update map[string]interface{}) func(m *gdb.Mode
 			case "id":
 				updateData[dao.Table()+"."+dao.PrimaryKey()] = v
 			default:
-				/* //数据库不存在的字段过滤掉
-				if !garray.NewStrArrayFrom(dao.ColumnArr()).Contains(k) {
-						continue
-				} */
+				//数据库不存在的字段过滤掉
+				if len(fill) > 0 && fill[0] && !dao.ColumnArrG().Contains(k) {
+					continue
+				}
 				updateData[dao.Table()+"."+k] = v
 			}
 		}
@@ -84,7 +84,7 @@ func (dao *sceneDao) ParseField(field []string, afterField *[]string, joinCodeAr
 			case "id":
 				m = m.Fields(dao.Table() + "." + dao.PrimaryKey())
 			default:
-				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(v) {
+				if dao.ColumnArrG().Contains(v) {
 					m = m.Fields(dao.Table() + "." + v)
 				} else {
 					m = m.Fields(v)
@@ -103,7 +103,6 @@ func (dao *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]s
 			case "id":
 				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
 			case "excId":
-				//m = m.Where(dao.Table()+"."+dao.PrimaryKey()+" <> ?", v)
 				m = m.WhereNot(dao.Table()+"."+dao.PrimaryKey(), v)
 			case "startTime":
 				m = m.WhereGTE(dao.Table()+".createTime", v)
@@ -111,7 +110,7 @@ func (dao *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]s
 				m = m.WhereLTE(dao.Table()+".createTime", v)
 			default:
 				kArr := strings.Split(k, " ")
-				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(kArr[0]) {
+				if dao.ColumnArrG().Contains(kArr[0]) {
 					m = m.Where(dao.Table()+"."+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -130,7 +129,7 @@ func (dao *sceneDao) ParseGroup(group []string, joinCodeArr *[]string) func(m *g
 			case "id":
 				m = m.Group(dao.Table() + "." + dao.PrimaryKey())
 			default:
-				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(v) {
+				if dao.ColumnArrG().Contains(v) {
 					m = m.Group(dao.Table() + "." + v)
 				} else {
 					m = m.Group(v)
@@ -149,7 +148,7 @@ func (dao *sceneDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m
 			case "id":
 				m = m.Order(dao.Table()+"."+dao.PrimaryKey(), v[1])
 			default:
-				if garray.NewStrArrayFrom(dao.ColumnArr()).Contains(v[0]) {
+				if dao.ColumnArrG().Contains(v[0]) {
 					m = m.Order(dao.Table()+"."+v[0], v[1])
 				} else {
 					m = m.Order(v[0], v[1])
