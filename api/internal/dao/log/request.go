@@ -203,16 +203,16 @@ func (dao *requestDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // 详情
-func (dao *requestDao) Info(ctx context.Context, field []string, filter map[string]interface{}) (info gdb.Record) {
+func (dao *requestDao) Info(ctx context.Context, field []string, filter map[string]interface{}) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
-	info, _ = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).One()
+	info, err = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).One()
 	return
 }
 
 // 列表
-func (dao *requestDao) List(ctx context.Context, field []string, filter map[string]interface{}) (list gdb.Result) {
+func (dao *requestDao) List(ctx context.Context, field []string, filter map[string]interface{}) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
-	list, _ = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).All()
+	list, err = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).All()
 	return
 }
 
