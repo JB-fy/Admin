@@ -15,12 +15,12 @@ import (
 
 // AdminDao is the data access object for table platform_admin.
 type AdminDao struct {
-	table      string       // table is the underlying table name of the DAO.
-	group      string       // group is the database configuration group name of current DAO.
-	columns    AdminColumns // columns contains all the column names of Table for convenient usage.
-	primaryKey string
-	columnArr  []string
-	columnArrG *garray.StrArray
+	table      string           // table is the underlying table name of the DAO.
+	group      string           // group is the database configuration group name of current DAO.
+	columns    AdminColumns     // columns contains all the column names of Table for convenient usage.
+	primaryKey string           // 主键ID
+	columnArr  []string         // 所有字段的数组
+	columnArrG *garray.StrArray // 所有字段的数组（该格式更方便使用）
 }
 
 // AdminColumns defines and stores column names for table platform_admin.
@@ -124,7 +124,7 @@ func (dao *AdminDao) ColumnArr() []string {
 	return dao.columnArr
 }
 
-// 所有字段的数组（返回的格式更方便使用）
+// 所有字段的数组（该格式更方便使用）
 func (dao *AdminDao) ColumnArrG() *garray.StrArray {
 	return dao.columnArrG
 }

@@ -18,9 +18,9 @@ type ActionRelToSceneDao struct {
 	table      string                  // table is the underlying table name of the DAO.
 	group      string                  // group is the database configuration group name of current DAO.
 	columns    ActionRelToSceneColumns // columns contains all the column names of Table for convenient usage.
-	primaryKey string
-	columnArr  []string
-	columnArrG *garray.StrArray
+	primaryKey string                  // 主键ID
+	columnArr  []string                // 所有字段的数组
+	columnArrG *garray.StrArray        // 所有字段的数组（该格式更方便使用）
 }
 
 // ActionRelToSceneColumns defines and stores column names for table auth_action_rel_to_scene.
@@ -114,7 +114,7 @@ func (dao *ActionRelToSceneDao) ColumnArr() []string {
 	return dao.columnArr
 }
 
-// 所有字段的数组（返回的格式更方便使用）
+// 所有字段的数组（该格式更方便使用）
 func (dao *ActionRelToSceneDao) ColumnArrG() *garray.StrArray {
 	return dao.columnArrG
 }

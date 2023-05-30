@@ -6,6 +6,7 @@ package dao
 
 import (
 	"api/internal/dao/auth/internal"
+	"context"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -29,7 +30,7 @@ var (
 )
 
 // 解析insert
-func (dao *sceneDao) ParseInsert(insert []map[string]interface{}, fill ...bool) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := []map[string]interface{}{}
 		for index, item := range insert {
@@ -56,7 +57,7 @@ func (dao *sceneDao) ParseInsert(insert []map[string]interface{}, fill ...bool) 
 }
 
 // 解析update
-func (dao *sceneDao) ParseUpdate(update map[string]interface{}, fill ...bool) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
@@ -77,10 +78,13 @@ func (dao *sceneDao) ParseUpdate(update map[string]interface{}, fill ...bool) fu
 }
 
 // 解析field
-func (dao *sceneDao) ParseField(field []string, afterField *[]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		afterField := []string{}
 		for _, v := range field {
 			switch v {
+			/* case "xxxx":
+			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(dao.Table() + "." + dao.PrimaryKey())
 			default:
@@ -91,12 +95,15 @@ func (dao *sceneDao) ParseField(field []string, afterField *[]string, joinCodeAr
 				}
 			}
 		}
+		if len(afterField) > 0 {
+			m = m.Hook(dao.AfterField(afterField))
+		}
 		return m
 	}
 }
 
 // 解析filter
-func (dao *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -122,7 +129,7 @@ func (dao *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]s
 }
 
 // 解析group
-func (dao *sceneDao) ParseGroup(group []string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (dao *sceneDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -174,13 +181,39 @@ func (dao *sceneDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *g
 }
 
 // 获取数据后，再处理的字段
-func (dao *sceneDao) afterField(info map[string]interface{}, afterField []string) {
-	for _, v := range afterField {
-		switch v {
-		/* case "xxxx":
-		info[v] = "" */
-		}
+func (dao *sceneDao) AfterField(afterField []string) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for i, record := range result {
+				for _, v := range afterField {
+					switch v {
+					/* case "xxxx":
+					record[v] = gvar.New("") */
+					}
+				}
+				result[i] = record
+			}
+			return
+		},
 	}
+}
+
+// 详情
+func (dao *sceneDao) Info(ctx context.Context, field []string, filter map[string]interface{}) (info gdb.Record) {
+	joinCodeArr := []string{}
+	info, _ = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).One()
+	return
+}
+
+// 列表
+func (dao *sceneDao) List(ctx context.Context, field []string, filter map[string]interface{}) (list gdb.Result) {
+	joinCodeArr := []string{}
+	list, _ = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).All()
+	return
 }
 
 // Fill with you ideas below.

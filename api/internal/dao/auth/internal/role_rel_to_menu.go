@@ -18,9 +18,9 @@ type RoleRelToMenuDao struct {
 	table      string               // table is the underlying table name of the DAO.
 	group      string               // group is the database configuration group name of current DAO.
 	columns    RoleRelToMenuColumns // columns contains all the column names of Table for convenient usage.
-	primaryKey string
-	columnArr  []string
-	columnArrG *garray.StrArray
+	primaryKey string               // 主键ID
+	columnArr  []string             // 所有字段的数组
+	columnArrG *garray.StrArray     // 所有字段的数组（该格式更方便使用）
 }
 
 // RoleRelToMenuColumns defines and stores column names for table auth_role_rel_to_menu.
@@ -114,7 +114,7 @@ func (dao *RoleRelToMenuDao) ColumnArr() []string {
 	return dao.columnArr
 }
 
-// 所有字段的数组（返回的格式更方便使用）
+// 所有字段的数组（该格式更方便使用）
 func (dao *RoleRelToMenuDao) ColumnArrG() *garray.StrArray {
 	return dao.columnArrG
 }
