@@ -183,4 +183,13 @@ func (dao *{TplTableNameCamelLowerCase}Dao) afterField(info map[string]interface
 	}
 }
 
+// 获取数据后，再处理的字段
+func (dao *{TplTableNameCamelLowerCase}Dao) info(ctx context.Context, field []string, filter map[string]interface{}) Record, error {
+	joinCodeArr := []string{}
+	afterField := []string{}
+	info, _ := dao.Ctx(ctx).Handler(dao.ParseField(field, &afterField, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).One()
+	if len(info)==0{
+
+	}
+}
 // Fill with you ideas below.
