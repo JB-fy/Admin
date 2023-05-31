@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gogf/gf/v2/container/gmap"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/util/gconv"
 
 	v1 "api/api/hello/v1"
 	daoAuth "api/internal/dao/auth"
@@ -31,8 +29,7 @@ func (c *Controller) Test(r *ghttp.Request) {
 
 	joinCodeArr := []string{}
 	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.ParseField([]string{"id", "createTime"}, &joinCodeArr), daoAuth.Menu.ParseFilter(g.Map{"id": 2, "menuId > ?": 22}, &joinCodeArr)).All()
-	fmt.Println(gconv.Map(daoAuth.Menu.Columns()))
-	fmt.Println(gmap.NewStrAnyMapFrom(gconv.Map(daoAuth.Menu.Columns())).Values())
+
 	/* res, _ := daoLog.Request.Ctx(r.GetCtx()).Where("logId", 6).All()
 	fmt.Println(res) */
 	//fmt.Println(r.GetCtx())

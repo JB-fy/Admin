@@ -39,8 +39,8 @@ func (dao *actionDao) ParseInsert(insert []map[string]interface{}, fill ...bool)
 				case "id":
 					insertData[index][dao.PrimaryKey()] = v
 				default:
-					//数据库不存在的字段过滤掉
-					if len(fill) > 0 && fill[0] && !dao.ColumnArrG().Contains(k) {
+					//数据库不存在的字段过滤掉，未传值默认true
+					if (len(fill) == 0 || fill[0]) && !dao.ColumnArrG().Contains(k) {
 						continue
 					}
 					insertData[index][k] = v
@@ -65,8 +65,8 @@ func (dao *actionDao) ParseUpdate(update map[string]interface{}, fill ...bool) g
 			case "id":
 				updateData[dao.Table()+"."+dao.PrimaryKey()] = v
 			default:
-				//数据库不存在的字段过滤掉
-				if len(fill) > 0 && fill[0] && !dao.ColumnArrG().Contains(k) {
+				//数据库不存在的字段过滤掉，未传值默认true
+				if (len(fill) == 0 || fill[0]) && !dao.ColumnArrG().Contains(k) {
 					continue
 				}
 				updateData[dao.Table()+"."+k] = v
