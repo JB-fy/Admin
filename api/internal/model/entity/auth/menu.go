@@ -14,9 +14,11 @@ type Menu struct {
 	SceneId    uint        `json:"sceneId"    ` // 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
 	Pid        uint        `json:"pid"        ` // 父ID
 	MenuName   string      `json:"menuName"   ` // 名称
+	MenuIcon   string      `json:"menuIcon"   ` // 图标
+	MenuUrl    string      `json:"menuUrl"    ` // 链接
 	Level      uint        `json:"level"      ` // 层级
 	PidPath    string      `json:"pidPath"    ` // 层级路径
-	ExtraData  string      `json:"extraData"  ` // 额外数据。（json格式：{"title（多语言时设置，未设置以menuName返回）": {"语言标识":"标题",...},"icon": "图标","url": "链接地址",...}）
+	ExtraData  string      `json:"extraData"  ` // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
 	Sort       uint        `json:"sort"       ` // 排序值（从小到大排序，默认50，范围0-100）
 	IsStop     uint        `json:"isStop"     ` // 是否停用：0否 1是
 	UpdateTime *gtime.Time `json:"updateTime" ` // 更新时间

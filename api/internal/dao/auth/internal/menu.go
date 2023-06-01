@@ -29,9 +29,11 @@ type MenuColumns struct {
 	SceneId    string // 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
 	Pid        string // 父ID
 	MenuName   string // 名称
+	MenuIcon   string // 图标
+	MenuUrl    string // 链接
 	Level      string // 层级
 	PidPath    string // 层级路径
-	ExtraData  string // 额外数据。（json格式：{"title（多语言时设置，未设置以menuName返回）": {"语言标识":"标题",...},"icon": "图标","url": "链接地址",...}）
+	ExtraData  string // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
 	Sort       string // 排序值（从小到大排序，默认50，范围0-100）
 	IsStop     string // 是否停用：0否 1是
 	UpdateTime string // 更新时间
@@ -44,6 +46,8 @@ var menuColumns = MenuColumns{
 	SceneId:    "sceneId",
 	Pid:        "pid",
 	MenuName:   "menuName",
+	MenuIcon:   "menuIcon",
+	MenuUrl:    "menuUrl",
 	Level:      "level",
 	PidPath:    "pidPath",
 	ExtraData:  "extraData",

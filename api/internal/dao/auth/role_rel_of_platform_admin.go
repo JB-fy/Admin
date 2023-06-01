@@ -203,16 +203,36 @@ func (dao *roleRelOfPlatformAdminDao) AfterField(afterField []string) gdb.HookHa
 }
 
 // 详情
-func (dao *roleRelOfPlatformAdminDao) Info(ctx context.Context, field []string, filter map[string]interface{}) (info gdb.Record, err error) {
+func (dao *roleRelOfPlatformAdminDao) Info(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
-	info, err = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).One()
+	model := dao.Ctx(ctx)
+	if len(field) > 0 {
+		model = model.Handler(dao.ParseField(field, &joinCodeArr))
+	}
+	if len(filter) > 0 {
+		model = model.Handler(dao.ParseFilter(filter, &joinCodeArr))
+	}
+	if len(order) > 0 {
+		model = model.Handler(dao.ParseOrder(order, &joinCodeArr))
+	}
+	info, err = model.One()
 	return
 }
 
 // 列表
-func (dao *roleRelOfPlatformAdminDao) List(ctx context.Context, field []string, filter map[string]interface{}) (list gdb.Result, err error) {
+func (dao *roleRelOfPlatformAdminDao) List(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
-	list, err = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).All()
+	model := dao.Ctx(ctx)
+	if len(field) > 0 {
+		model = model.Handler(dao.ParseField(field, &joinCodeArr))
+	}
+	if len(filter) > 0 {
+		model = model.Handler(dao.ParseFilter(filter, &joinCodeArr))
+	}
+	if len(order) > 0 {
+		model = model.Handler(dao.ParseOrder(order, &joinCodeArr))
+	}
+	list, err = model.All()
 	return
 }
 

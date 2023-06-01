@@ -203,16 +203,36 @@ func (dao *menuDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // 详情
-func (dao *menuDao) Info(ctx context.Context, field []string, filter map[string]interface{}) (info gdb.Record, err error) {
+func (dao *menuDao) Info(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
-	info, err = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).One()
+	model := dao.Ctx(ctx)
+	if len(field) > 0 {
+		model = model.Handler(dao.ParseField(field, &joinCodeArr))
+	}
+	if len(filter) > 0 {
+		model = model.Handler(dao.ParseFilter(filter, &joinCodeArr))
+	}
+	if len(order) > 0 {
+		model = model.Handler(dao.ParseOrder(order, &joinCodeArr))
+	}
+	info, err = model.One()
 	return
 }
 
 // 列表
-func (dao *menuDao) List(ctx context.Context, field []string, filter map[string]interface{}) (list gdb.Result, err error) {
+func (dao *menuDao) List(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
-	list, err = dao.Ctx(ctx).Handler(dao.ParseField(field, &joinCodeArr), dao.ParseFilter(filter, &joinCodeArr)).All()
+	model := dao.Ctx(ctx)
+	if len(field) > 0 {
+		model = model.Handler(dao.ParseField(field, &joinCodeArr))
+	}
+	if len(filter) > 0 {
+		model = model.Handler(dao.ParseFilter(filter, &joinCodeArr))
+	}
+	if len(order) > 0 {
+		model = model.Handler(dao.ParseOrder(order, &joinCodeArr))
+	}
+	list, err = model.All()
 	return
 }
 
