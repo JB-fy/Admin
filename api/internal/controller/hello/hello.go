@@ -25,6 +25,11 @@ func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err e
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
+
+	var req *v1.Req
+	err := r.Parse(&req)
+	fmt.Println(err)
+
 	fmt.Println(daoLog.Request.Info(r.GetCtx(), []string{"logId", "createTime"}, g.Map{"logId": 6}, [][2]string{}))
 
 	joinCodeArr := []string{}
