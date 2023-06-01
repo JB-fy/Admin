@@ -19,6 +19,7 @@ var (
 			s := g.Server()
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(ghttp.MiddlewareHandlerResponse)
+				//group.Middleware(middleware.Cross)
 				group.Bind(
 					hello.New(),
 				)
