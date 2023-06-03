@@ -38,7 +38,9 @@ func (c *Scene) List(r *ghttp.Request) {
 		// }
 		// $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
 		// /**--------参数处理 结束--------**/
+		fmt.Println(*param.Filter.SceneId)
 		filter := gconv.Map(param.Filter) //条件过滤
+		fmt.Println(filter)
 		count, err := service.Scene().Count(r.Context(), filter)
 		list, err := service.Scene().List(r.Context(), filter, param.Field, [2]string{}, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
