@@ -18,7 +18,7 @@ func Scene(r *ghttp.Request) {
 		})
 		return
 	}
-	sceneInfo, _ := dao.Scene.Info(r.GetCtx(), []string{}, map[string]interface{}{"sceneCode": sceneCode}, [][2]string{})
+	sceneInfo, _ := dao.Scene.Info(r.GetCtx(), map[string]interface{}{"sceneCode": sceneCode}, []string{})
 	if sceneInfo.IsEmpty() {
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 39999999,
