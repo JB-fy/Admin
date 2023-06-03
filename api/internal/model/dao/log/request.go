@@ -5,7 +5,7 @@
 package dao
 
 import (
-	"api/internal/dao/platform/internal"
+	"api/internal/model/dao/log/internal"
 	"context"
 	"strings"
 
@@ -13,24 +13,24 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
-// internalAdminDao is internal type for wrapping internal DAO implements.
-type internalAdminDao = *internal.AdminDao
+// internalRequestDao is internal type for wrapping internal DAO implements.
+type internalRequestDao = *internal.RequestDao
 
-// adminDao is the data access object for table platform_admin.
+// requestDao is the data access object for table log_request.
 // You can define custom methods on it to extend its functionality as you wish.
-type adminDao struct {
-	internalAdminDao
+type requestDao struct {
+	internalRequestDao
 }
 
 var (
-	// Admin is globally public accessible object for table platform_admin operations.
-	Admin = adminDao{
-		internal.NewAdminDao(),
+	// Request is globally public accessible object for table log_request operations.
+	Request = requestDao{
+		internal.NewRequestDao(),
 	}
 )
 
 // 解析insert
-func (dao *adminDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (dao *requestDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := []map[string]interface{}{}
 		for index, item := range insert {
@@ -57,7 +57,7 @@ func (dao *adminDao) ParseInsert(insert []map[string]interface{}, fill ...bool) 
 }
 
 // 解析update
-func (dao *adminDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (dao *requestDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
@@ -78,7 +78,7 @@ func (dao *adminDao) ParseUpdate(update map[string]interface{}, fill ...bool) gd
 }
 
 // 解析field
-func (dao *adminDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (dao *requestDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
@@ -103,7 +103,7 @@ func (dao *adminDao) ParseField(field []string, joinCodeArr *[]string) gdb.Model
 }
 
 // 解析filter
-func (dao *adminDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
+func (dao *requestDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -129,7 +129,7 @@ func (dao *adminDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]s
 }
 
 // 解析group
-func (dao *adminDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (dao *requestDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -148,7 +148,7 @@ func (dao *adminDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.Model
 }
 
 // 解析order
-func (dao *adminDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (dao *requestDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -167,7 +167,7 @@ func (dao *adminDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m
 }
 
 // 解析join
-func (dao *adminDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (dao *requestDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		if garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
 			*joinCodeArr = append(*joinCodeArr, joinCode)
@@ -181,7 +181,7 @@ func (dao *adminDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *g
 }
 
 // 获取数据后，再处理的字段
-func (dao *adminDao) AfterField(afterField []string) gdb.HookHandler {
+func (dao *requestDao) AfterField(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -203,7 +203,7 @@ func (dao *adminDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // 详情
-func (dao *adminDao) Info(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (info gdb.Record, err error) {
+func (dao *requestDao) Info(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
 	model := dao.Ctx(ctx)
 	if len(field) > 0 {
@@ -220,7 +220,7 @@ func (dao *adminDao) Info(ctx context.Context, field []string, filter map[string
 }
 
 // 列表
-func (dao *adminDao) List(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (list gdb.Result, err error) {
+func (dao *requestDao) List(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
 	model := dao.Ctx(ctx)
 	if len(field) > 0 {
