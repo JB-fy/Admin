@@ -13,7 +13,6 @@ func NewScene() *sScene {
 }
 
 func init() {
-	fmt.Println("Scene")
 	service.RegisterScene(NewScene())
 }
 

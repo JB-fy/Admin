@@ -10,10 +10,10 @@ import (
 )
 
 type (
-	IMenu interface {
+	IScene interface {
 		List(ctx context.Context)
 	}
-	IScene interface {
+	IMenu interface {
 		List(ctx context.Context)
 	}
 )
@@ -22,17 +22,6 @@ var (
 	localMenu  IMenu
 	localScene IScene
 )
-
-func Menu() IMenu {
-	if localMenu == nil {
-		panic("implement not found for interface IMenu, forgot register?")
-	}
-	return localMenu
-}
-
-func RegisterMenu(i IMenu) {
-	localMenu = i
-}
 
 func Scene() IScene {
 	if localScene == nil {
@@ -43,4 +32,15 @@ func Scene() IScene {
 
 func RegisterScene(i IScene) {
 	localScene = i
+}
+
+func Menu() IMenu {
+	if localMenu == nil {
+		panic("implement not found for interface IMenu, forgot register?")
+	}
+	return localMenu
+}
+
+func RegisterMenu(i IMenu) {
+	localMenu = i
 }

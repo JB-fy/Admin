@@ -13,7 +13,6 @@ func NewMenu() *sMenu {
 }
 
 func init() {
-	fmt.Println("Menu")
 	service.RegisterMenu(NewMenu())
 }
 
