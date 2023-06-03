@@ -47,29 +47,29 @@ class Role extends AbstractService
      * 更新
      *
      * @param array $data
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function update(array $data, array $where)
+    public function update(array $data, array $filter)
     {
         if (isset($data['menuIdArr']) || isset($data['actionIdArr'])) {
-            $oldInfo = $this->getDao()->parseFilter($where)->info();
+            $oldInfo = $this->getDao()->parseFilter($filter)->info();
             if (isset($data['menuIdArr'])) {
                 if (count($data['menuIdArr']) != getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
                     throwFailJson(89999998);
                 }
                 $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
-                $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改menuIdArr
+                $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改menuIdArr
             }
             if (isset($data['actionIdArr'])) {
                 if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->parseFilter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
                     throwFailJson(89999998);
                 }
                 $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
-                $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改actionIdArr
+                $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改actionIdArr
             }
         } else {
-            $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
+            $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
             if (empty($result)) {
                 throwFailJson();
             }
@@ -80,13 +80,13 @@ class Role extends AbstractService
     /**
      * 删除
      *
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function delete(array $where)
+    public function delete(array $filter)
     {
-        $idArr = $this->getIdArr($where);
-        $result = $this->getDao()->parseFilter($where)->delete();
+        $idArr = $this->getIdArr($filter);
+        $result = $this->getDao()->parseFilter($filter)->delete();
         if (empty($result)) {
             throwFailJson();
         }

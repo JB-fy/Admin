@@ -12,7 +12,7 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。
+     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。
      *      transform：非必须。接口返回数据转换方法。当有字段转化时必须
      */
     api: {
@@ -35,16 +35,16 @@ const exportButton = reactive({
         return props.headerList
     }),
     api: {
-        param: computed((): { field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
+        param: computed((): { field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
             const param = {
                 field: [],
-                where: {},
+                filter: {},
                 order: { id: 'desc' },
                 page: 1,
                 limit: useSettingStore().exportButton.limit,
                 ...props.api.param,
             }
-            param.where = removeEmptyOfObj(param.where)
+            param.filter = removeEmptyOfObj(param.filter)
             return param
         }),
         transform: computed(() => {
@@ -120,9 +120,9 @@ const exportButton = reactive({
 
     <!-------- 使用示例 开始-------->
     <!-- <MyExportButton :headerList="table.columns"
-        :api="{ code: 'log/request/list', param: { where: queryCommon.data, order: { [table.order.key]: table.order.order } } }" />
+        :api="{ code: 'log/request/list', param: { filter: queryCommon.data, order: { [table.order.key]: table.order.order } } }" />
 
     <MyExportButton fileName="文件名.xlsx" :headerList="table.columns"
-        :api="{ code: 'log/request/list', param: { where: queryCommon.data, order: { [table.order.key]: table.order.order } }, limit: 0 }" /> -->
+        :api="{ code: 'log/request/list', param: { filter: queryCommon.data, order: { [table.order.key]: table.order.order } }, limit: 0 }" /> -->
     <!-------- 使用示例 结束-------->
 </template>

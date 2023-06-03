@@ -10,9 +10,9 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
+     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
      *      transform：非必须。接口返回数据转换方法
-     *      pidField：非必须。动态加载时用于获取子级，接口参数where中使用的字段名
+     *      pidField：非必须。动态加载时用于获取子级，接口参数filter中使用的字段名
      */
     api: {
         type: Object,
@@ -75,9 +75,9 @@ const cascader = reactive({
         lazy: false,    //不建议使用动态加载模式，使用体验很差
         lazyLoad: (node: any, resolve: any) => {
             if (node.level == 0) {
-                cascader.api.param.where[cascader.api.pidField] = 0
+                cascader.api.param.filter[cascader.api.pidField] = 0
             } else {
-                cascader.api.param.where[cascader.api.pidField] = node.data.id
+                cascader.api.param.filter[cascader.api.pidField] = node.data.id
             }
             cascader.api.getOptions().then((options) => {
                 if (options?.length === 0) {
@@ -85,7 +85,7 @@ const cascader = reactive({
                 }
                 resolve(options)
             }).catch((error) => { })
-            delete cascader.api.param.where[cascader.api.pidField]
+            delete cascader.api.param.filter[cascader.api.pidField]
         },
         value: props.props.value ?? props.api.param.field[0] ?? 'value',
         label: props.props.label ?? props.api.param.field[1] ?? 'label',
@@ -103,10 +103,10 @@ const cascader = reactive({
     },
     api: {
         loading: false,
-        param: computed((): { field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
+        param: computed((): { field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
             return {
                 field: [],
-                where: {} as { [propName: string]: any },
+                filter: {} as { [propName: string]: any },
                 order: { id: 'desc' },
                 page: 1,
                 limit: 0,
@@ -176,8 +176,8 @@ if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) 
     cascader.initOptions()
 }
 
-//当外部环境where变化时，重置options
-watch(() => props.api.param.where, (newVal: any, oldVal: any) => {
+//当外部环境filter变化时，重置options
+watch(() => props.api.param.filter, (newVal: any, oldVal: any) => {
     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
         cascader.resetOptions()
         cascader.api.addOptions()
@@ -199,13 +199,13 @@ watch(() => props.api.param.where, (newVal: any, oldVal: any) => {
 
     <!-------- 使用示例 开始-------->
     <!-- <MyCascader v-model="saveCommon.data.menuIdArr"
-        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
+        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], filter: { sceneId: saveCommon.data.sceneId } } }"
         :isPanel="true" :props="{ multiple: true }" />
 
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }" />
+        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], filter: { sceneId: saveCommon.data.sceneId } } }" />
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: 'auth/menu/list', param: { field: ['id', 'menuName'], where: { sceneId: saveCommon.data.sceneId } } }"
+        :api="{ code: 'auth/menu/list', param: { field: ['id', 'menuName'], filter: { sceneId: saveCommon.data.sceneId } } }"
         :props="{ lazy: true }" />
 
     <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"

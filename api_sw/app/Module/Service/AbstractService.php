@@ -37,16 +37,16 @@ abstract class AbstractService
      * 列表（通用。需要特殊处理的，子类重新定义即可）
      * 
      * @param array $field
-     * @param array $where
+     * @param array $filter
      * @param array $order
      * @param integer $page
      * @param integer $limit
      * @return void
      */
-    public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
+    public function list(array $field = [], array $filter = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $dao = $this->getDao();
-        $dao->parseFilter($where);
+        $dao->parseFilter($filter);
         $offset = ($page - 1) * $limit;
 
         empty($order) ? $order = ['id' => 'DESC'] : null;
@@ -58,7 +58,7 @@ abstract class AbstractService
         throwSuccessJson(['list' => $list]);
     }
     /* //重新定义示例
-    public function list(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
+    public function list(array $field = [], array $filter = [], array $order = [], int $page = 1, int $limit = 10)
     {
         try {
             parent::list(...func_get_args());
@@ -74,17 +74,17 @@ abstract class AbstractService
      * 列表，带总数（通用。需要特殊处理的，子类重新定义即可）
      * 
      * @param array $field
-     * @param array $where
+     * @param array $filter
      * @param array $order
      * @param integer $page
      * @param integer $limit
      * @return void
      */
-    public function listWithCount(array $field = [], array $where = [], array $order = [], int $page = 1, int $limit = 10)
+    public function listWithCount(array $field = [], array $filter = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $offset = ($page - 1) * $limit;
         $dao = $this->getDao();
-        $dao->parseFilter($where);
+        $dao->parseFilter($filter);
         if ($offset == 0 && $limit == 0) {  //是否先获取$list，再通过count($list)计算$count
             empty($order) ? $order = ['id' => 'DESC'] : null;
             $dao->parseField($field)->parseOrder($order);
@@ -116,13 +116,13 @@ abstract class AbstractService
     /**
      * 详情（通用。需要特殊处理的，子类重新定义即可）
      *
-     * @param array $where
+     * @param array $filter
      * @param array $field
      * @return void
      */
-    public function info(array $where, array $field = [])
+    public function info(array $filter, array $field = [])
     {
-        $info = $this->getDao()->parseField($field)->parseFilter($where)->info();
+        $info = $this->getDao()->parseField($field)->parseFilter($filter)->info();
         if (empty($info)) {
             throwFailJson(29999999);
         }
@@ -162,12 +162,12 @@ abstract class AbstractService
      * 更新（通用。需要特殊处理的，子类重新定义即可）
      *
      * @param array $data
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function update(array $data, array $where)
+    public function update(array $data, array $filter)
     {
-        $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
+        $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
         if (empty($result)) {
             throwFailJson();
         }
@@ -177,12 +177,12 @@ abstract class AbstractService
     /**
      * 删除（通用。需要特殊处理的，子类重新定义即可）
      *
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function delete(array $where)
+    public function delete(array $filter)
     {
-        $result = $this->getDao()->parseFilter($where)->delete();
+        $result = $this->getDao()->parseFilter($filter)->delete();
         if (empty($result)) {
             throwFailJson();
         }
@@ -192,18 +192,18 @@ abstract class AbstractService
     /**
      * 获取更新|删除的id数组
      *
-     * @param array $where
+     * @param array $filter
      * @return array
      */
-    final protected function getIdArr(array $where): array
+    final protected function getIdArr(array $filter): array
     {
         $dao = $this->getDao();
-        return $dao->parseFilter($where)->getBuilder()->pluck($dao->getKey())->toArray();
-        if (isset($where['id']) && count($where) == 1) {
-            return is_array($where['id']) ? $where['id'] : [$where['id']];
+        return $dao->parseFilter($filter)->getBuilder()->pluck($dao->getKey())->toArray();
+        if (isset($filter['id']) && count($filter) == 1) {
+            return is_array($filter['id']) ? $filter['id'] : [$filter['id']];
         }
-        if (isset($where['idArr']) && count($where) == 1) {
-            return is_array($where['idArr']) ? $where['idArr'] : [$where['idArr']];
+        if (isset($filter['idArr']) && count($filter) == 1) {
+            return is_array($filter['idArr']) ? $filter['idArr'] : [$filter['idArr']];
         }
     }
 }

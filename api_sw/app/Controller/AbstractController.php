@@ -71,8 +71,8 @@ abstract class AbstractController
                     !isset($data['page']) ?: $data['page'] = (int)$data['page'];
                     !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
 
-                    if (!empty($data['where'])) {
-                        $data['where'] = $this->validation->make($data['where'], $sceneName)->validate();
+                    if (!empty($data['filter'])) {
+                        $data['filter'] = $this->validation->make($data['filter'], $sceneName)->validate();
                     }
                 }
                 break;

@@ -96,7 +96,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     const param = {
         field: [],
-        where: removeEmptyOfObj(queryCommon.data),
+        filter: removeEmptyOfObj(queryCommon.data),
         order: { [table.order.key]: table.order.order },
         page: pagination.page,
         limit: pagination.size
@@ -127,7 +127,7 @@ defineExpose({
         <ElCol :span="8" style="text-align: right;">
             <ElSpace :size="10" style="height: 100%;">
                 <MyExportButton :headerList="table.columns"
-                    :api="{ code: 'log/request/list', param: { where: queryCommon.data, order: { [table.order.key]: table.order.order } } }" />
+                    :api="{ code: 'log/request/list', param: { filter: queryCommon.data, order: { [table.order.key]: table.order.order } } }" />
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
                         <AutoiconEpHide />

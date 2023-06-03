@@ -344,7 +344,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 解析where（公共的）
+     * 解析filter（公共的）
      *
      * @param string $key
      * @param string|null $operator
@@ -508,7 +508,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     }
 
     /**
-     * 解析where（独有的）
+     * 解析filter（独有的）
      *
      * @param string $key
      * @param string|null $operator

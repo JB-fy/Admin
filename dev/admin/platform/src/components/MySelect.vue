@@ -10,10 +10,10 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
+     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
      *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
-     *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数where中使用的字段名。默认：props.api.param.field[0]
-     *      searchField：非必须。当用户输入关键字做查询时，接口参数where中使用的字段名。默认：props.api.param.field[1]
+     *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数filter中使用的字段名。默认：props.api.param.field[0]
+     *      searchField：非必须。当用户输入关键字做查询时，接口参数filter中使用的字段名。默认：props.api.param.field[1]
      */
     api: {
         type: Object,
@@ -70,9 +70,9 @@ const select = reactive({
     }),
     options: [...props.defaultOptions] as any,
     initOptions: () => {
-        select.api.param.where[select.api.selectedField] = props.modelValue
+        select.api.param.filter[select.api.selectedField] = props.modelValue
         select.api.addOptions()
-        delete select.api.param.where[select.api.selectedField]
+        delete select.api.param.filter[select.api.selectedField]
     },
     resetOptions: () => {
         select.options = [...props.defaultOptions] as any
@@ -90,10 +90,10 @@ const select = reactive({
     api: {
         isEnd: false,
         loading: false,
-        param: computed((): { field: string[], where: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
+        param: computed((): { field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
             return {
                 field: [],
-                where: {} as { [propName: string]: any },
+                filter: {} as { [propName: string]: any },
                 order: { id: 'desc' },
                 page: 1,
                 limit: useSettingStore().scrollSize,
@@ -154,16 +154,16 @@ const select = reactive({
     visibleChange: (val: boolean) => {
         //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {  //每次打开都重新加载
-            delete select.api.param.where[select.api.searchField]
+            delete select.api.param.filter[select.api.searchField]
             select.resetOptions()
             select.api.addOptions()
         }
     },
     remoteMethod: (keyword: string) => {
         if (keyword) {
-            select.api.param.where[select.api.searchField] = keyword
+            select.api.param.filter[select.api.searchField] = keyword
         } else {
-            delete select.api.param.where[select.api.searchField]
+            delete select.api.param.filter[select.api.searchField]
         }
         select.resetOptions()
         select.api.addOptions()

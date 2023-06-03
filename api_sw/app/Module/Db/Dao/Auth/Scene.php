@@ -20,7 +20,7 @@ class Scene extends AbstractDao
     protected array $jsonField = ['sceneConfig']; //json类型字段。这些字段创建|更新时，需要特殊处理
 
     /**
-     * 解析where（独有的）
+     * 解析filter（独有的）
      *
      * @param string $key
      * @param string|null $operator

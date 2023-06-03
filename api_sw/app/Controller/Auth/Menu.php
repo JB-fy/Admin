@@ -136,7 +136,7 @@ class Menu extends AbstractController
                 }
                 $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
 
-                $data['where'] = array_merge($data['where'], ['isStop' => 0]);  //补充条件
+                $data['filter'] = array_merge($data['filter'], ['isStop' => 0]);  //补充条件
                 $data['field'] = array_merge($data['field'], ['menuTree']); //补充字段（树状菜单所需）
                 /**--------参数处理 结束--------**/
 

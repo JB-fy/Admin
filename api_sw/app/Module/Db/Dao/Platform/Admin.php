@@ -40,7 +40,7 @@ class Admin extends AbstractDao
     }
 
     /**
-     * 解析where（独有的）
+     * 解析filter（独有的）
      *
      * @param string $key
      * @param string|null $operator

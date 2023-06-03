@@ -32,19 +32,19 @@ class Action extends AbstractService
      * 更新
      *
      * @param array $data
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function update(array $data, array $where)
+    public function update(array $data, array $filter)
     {
         if (isset($data['sceneIdArr'])) {
-            $idArr = $this->getIdArr($where);
+            $idArr = $this->getIdArr($filter);
             foreach ($idArr as $id) {
                 $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
             }
-            $this->getDao()->parseFilter($where)->parseUpdate($data)->update();    //有可能只改sceneIdArr
+            $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改sceneIdArr
         } else {
-            $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
+            $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
             if (empty($result)) {
                 throwFailJson();
             }
@@ -55,13 +55,13 @@ class Action extends AbstractService
     /**
      * 删除
      *
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function delete(array $where)
+    public function delete(array $filter)
     {
-        $idArr = $this->getIdArr($where);
-        $result = $this->getDao()->parseFilter($where)->delete();
+        $idArr = $this->getIdArr($filter);
+        $result = $this->getDao()->parseFilter($filter)->delete();
         if (empty($result)) {
             throwFailJson();
         }

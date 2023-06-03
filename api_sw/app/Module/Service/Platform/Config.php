@@ -11,12 +11,12 @@ class Config extends AbstractService
     /**
      * 获取
      *
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function get(array $where = [])
+    public function get(array $filter = [])
     {
-        $config = $this->getDao()->parseFilter($where)->getBuilder()->pluck('configValue', 'configKey')->toArray();
+        $config = $this->getDao()->parseFilter($filter)->getBuilder()->pluck('configValue', 'configKey')->toArray();
         throwSuccessJson(['config' => $config]);
     }
 

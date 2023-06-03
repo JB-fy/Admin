@@ -53,7 +53,7 @@ class Action extends AbstractLogic
     public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
     {
         $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-        $where = [
+        $filter = [
             'actionCode' => $actionCode,
             'selfAction' => [
                 'sceneCode' => $sceneCode,
@@ -65,12 +65,12 @@ class Action extends AbstractLogic
                 if ($loginInfo->adminId == getConfig('app.superPlatformAdminId')) { //平台超级管理员，无权限限制
                     return true;
                 }
-                //$where['selfAction']['loginId'] = $loginInfo->adminId;
+                //$filter['selfAction']['loginId'] = $loginInfo->adminId;
                 break;
             default:
                 break;
         }
-        if (empty(getDao(AuthAction::class)->parseFilter($where)->getBuilder()->count())) {
+        if (empty(getDao(AuthAction::class)->parseFilter($filter)->getBuilder()->count())) {
             if ($isThrow) {
                 throwFailJson(39990002);
             } else {

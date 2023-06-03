@@ -350,7 +350,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     const param = {
         field: [],
-        where: removeEmptyOfObj(queryCommon.data),
+        filter: removeEmptyOfObj(queryCommon.data),
         order: { [table.order.key]: table.order.order },
         page: pagination.page,
         limit: pagination.size

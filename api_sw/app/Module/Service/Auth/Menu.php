@@ -42,13 +42,13 @@ class Menu extends AbstractService
      * 更新
      *
      * @param array $data
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function update(array $data, array $where)
+    public function update(array $data, array $filter)
     {
         if (isset($data['pid'])) {
-            $oldInfo = $this->getDao()->parseFilter($where)->info();
+            $oldInfo = $this->getDao()->parseFilter($filter)->info();
             if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
                 throwFailJson(29999997);
             }
@@ -71,7 +71,7 @@ class Menu extends AbstractService
                 }
             }
         }
-        $result = $this->getDao()->parseFilter($where)->parseUpdate($data)->update();
+        $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
         if (empty($result)) {
             throwFailJson();
         }
@@ -96,16 +96,16 @@ class Menu extends AbstractService
     /**
      * 删除
      *
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function delete(array $where)
+    public function delete(array $filter)
     {
-        $idArr = $this->getIdArr($where);
+        $idArr = $this->getIdArr($filter);
         if ($this->getDao()->parseFilter(['pid' => $idArr])->getBuilder()->exists()) {
             throwFailJson(29999995);
         }
-        $result = $this->getDao()->parseFilter($where)->delete();
+        $result = $this->getDao()->parseFilter($filter)->delete();
         if (empty($result)) {
             throwFailJson();
         }
@@ -116,12 +116,12 @@ class Menu extends AbstractService
      * 获取树状权限菜单
      *
      * @param array $field
-     * @param array $where
+     * @param array $filter
      * @return void
      */
-    public function tree(array $field = [], array $where = [])
+    public function tree(array $field = [], array $filter = [])
     {
-        $list = $this->getDao()->parseField($field)->parseFilter($where)->list();
+        $list = $this->getDao()->parseField($field)->parseFilter($filter)->list();
 
         $tree = $this->container->get(LogicAuthMenu::class)->tree($list);
         throwSuccessJson(['tree' => $tree]);
