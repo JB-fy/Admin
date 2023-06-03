@@ -10,8 +10,6 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	v1 "api/api/hello/v1"
-	daoAuth "api/internal/model/dao/auth"
-	daoLog "api/internal/model/dao/log"
 )
 
 type Controller struct{}
@@ -33,30 +31,20 @@ func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err e
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
-	panic(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
-	fmt.Println(1)
-	//fmt.Println(r.GetCtx())
-	//fmt.Println(r.Context())
+	fmt.Println(g.I18n().T(r.GetCtx(), "0"))
+	fmt.Println(g.I18n().T(r.GetCtx(), "99999999"))
+	fmt.Println(g.I18n().Tf(r.GetCtx(), "29991063", "phone"))
 	var req *v1.TestReq
 	err := r.Parse(&req)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
 	}
-	fmt.Println(req)
 
-	r.SetCtxVar("a", "aaa")
-	fmt.Println(r.GetCtxVar("a"))
-	fmt.Println(r.Context().Value("a"))
-
-	r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
+	/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
 	r.Response.WriteJson(map[string]interface{}{
 		"code": 0,
 		"msg":  "成功",
 		"data": map[string]interface{}{},
-	})
-
-	daoLog.Request.Info(r.GetCtx(), []string{"logId", "createTime"}, g.Map{"logId": 6}, [][2]string{})
-	joinCodeArr := []string{}
-	daoAuth.Menu.Ctx(r.GetCtx()).Handler(daoAuth.Menu.ParseField([]string{"id", "createTime"}, &joinCodeArr), daoAuth.Menu.ParseFilter(g.Map{"id": 2, "menuId > ?": 22}, &joinCodeArr)).All()
+	}) */
 }

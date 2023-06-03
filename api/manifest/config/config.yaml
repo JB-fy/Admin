@@ -7,6 +7,10 @@ logger:
   level: "all"
   stdout: true
 
+i18n:
+  path: "resource/i18n"
+  language: "zh-cn"
+
 database:
   default:
     - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
