@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -19,8 +18,6 @@ type DefaultHandlerResponse struct {
 // MiddlewareHandlerResponse is the default middleware handling handler response object and its error.
 func HandlerResponse(r *ghttp.Request) {
 	r.Middleware.Next()
-
-	fmt.Println("1111", r.GetHandlerResponse())
 	// There's custom buffer content, it then exits current handler.
 	if r.Response.BufferLength() > 0 {
 		return

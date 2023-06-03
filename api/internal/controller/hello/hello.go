@@ -33,6 +33,8 @@ func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err e
 }
 
 func (c *Controller) Test(r *ghttp.Request) {
+	panic(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
+	fmt.Println(1)
 	//fmt.Println(r.GetCtx())
 	//fmt.Println(r.Context())
 	var req *v1.TestReq
