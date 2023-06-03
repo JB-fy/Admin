@@ -7,11 +7,14 @@ package service
 
 import (
 	"context"
+
+	"github.com/gogf/gf/v2/database/gdb"
 )
 
 type (
 	IScene interface {
-		List(ctx context.Context)
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, field []string, filter map[string]interface{}, order [2]string, offset int, limit int) (list gdb.Result, err error)
 	}
 	IMenu interface {
 		List(ctx context.Context)
@@ -23,17 +26,6 @@ var (
 	localScene IScene
 )
 
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
-	}
-	return localScene
-}
-
-func RegisterScene(i IScene) {
-	localScene = i
-}
-
 func Menu() IMenu {
 	if localMenu == nil {
 		panic("implement not found for interface IMenu, forgot register?")
@@ -43,4 +35,15 @@ func Menu() IMenu {
 
 func RegisterMenu(i IMenu) {
 	localMenu = i
+}
+
+func Scene() IScene {
+	if localScene == nil {
+		panic("implement not found for interface IScene, forgot register?")
+	}
+	return localScene
+}
+
+func RegisterScene(i IScene) {
+	localScene = i
 }
