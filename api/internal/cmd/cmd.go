@@ -26,6 +26,7 @@ var (
 				group.Middleware(middleware.HandlerResponse)
 				group.Middleware(middleware.Cross)
 				group.Middleware(middleware.I18n)
+				group.Middleware(middleware.Log)
 				group.Bind(
 					hello.New(),
 				)

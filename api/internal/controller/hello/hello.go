@@ -40,6 +40,9 @@ func (c *Controller) Test(r *ghttp.Request) {
 		r.Response.Writeln(err.Error())
 		return
 	}
+	fmt.Println(req)
+	param := r.GetMap()
+	fmt.Println(param)
 
 	/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
 	r.Response.WriteJson(map[string]interface{}{
