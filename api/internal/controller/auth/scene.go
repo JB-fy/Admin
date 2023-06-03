@@ -14,7 +14,7 @@ func NewScene() *Scene {
 }
 
 func (c *Scene) List(r *ghttp.Request) {
-	var param *api.ReqList
+	var param *api.ReqSceneList
 	err := r.Parse(&param)
 	if err != nil {
 		r.Response.Writeln(err.Error())

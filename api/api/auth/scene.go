@@ -1,7 +1,17 @@
 package api
 
-type ReqList struct {
-	Field    []string `p:"field"  v:"required|length:4,30"`
-	Filter   []string `p:"field"  v:"required|length:4,30"`
-	UserName string   `p:"username"  v:"required|length:4,30#请输入账号|账号长度为:{min}到:{max}位"`
+type ReqSceneList struct {
+	Field  *[]string           `p:"field"  v:"foreach|gt:0"`
+	Filter *ReqSceneListFilter `p:"filter"  v:"required|length:4,30"`
+	Order  *[]string           `p:"order"  v:"required|length:4,30"`
+	Page   *uint               `p:"page"  v:"gt:0"`
+	Limit  *uint               `p:"limit"  v:""`
+}
+
+type ReqSceneListFilter struct {
+	SceneId     *uint   `p:"sceneId"  v:"min:1"`
+	SceneName   *string `p:"sceneName"  v:"between:1,30|regex:[\p{L}\p{M}\p{N}_-]+"`
+	SceneCode   *string `p:"sceneCode"  v:"between:1,30|regex:[\p{L}\p{M}\p{N}_-]+"`
+	IsStop      *uint   `p:"isStop"  v:"in:0,1"`
+	SceneConfig *string `p:"sceneConfig"  v:"json"`
 }
