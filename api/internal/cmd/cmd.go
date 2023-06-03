@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 
+	controller "api/internal/controller/auth"
 	"api/internal/controller/hello"
 	"api/internal/middleware"
 )
@@ -32,18 +33,19 @@ var (
 
 			/**--------平台后台接口 开始--------**/
 			s.Group("/platformAdmin", func(group *ghttp.RouterGroup) {
+				group.ALL("/test", hello.New().Test)
 				//不做日志记录
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(middleware.Scene)
 					//需验证登录身份
 					group.Group("", func(group *ghttp.RouterGroup) {
 						group.Middleware(middleware.SceneLoginOfPlatformAdmin)
-						//group.ALL("/test", hello.New().Test)
 						group.ALLMap(g.Map{
 							"/log/request": hello.New().Test,
 						})
 					})
 				})
+
 				//做日志记录
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(middleware.Log)
@@ -106,7 +108,7 @@ var (
 
 						group.Group("/auth/scene", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   hello.New().Test,
+								"/list":   controller.NewScene().List,
 								"/info":   hello.New().Test,
 								"/create": hello.New().Test,
 								"/update": hello.New().Test,

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	dao "api/internal/model/dao/log"
+	"fmt"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
@@ -22,6 +22,7 @@ func Log(r *ghttp.Request) {
 		//"responseBody":  gjson.MustEncodeString(map[string]interface{}{}),
 		"responseBody": map[string]interface{}{},
 	}
+	fmt.Sprintln(data)
 	//dao.Request.Ctx(r.GetCtx()).Handler(dao.Request.ParseInsert(data))
-	dao.Request.Ctx(r.GetCtx()).Data(data).Insert()
+	//dao.Request.Ctx(r.GetCtx()).Data(data).Insert()
 }
