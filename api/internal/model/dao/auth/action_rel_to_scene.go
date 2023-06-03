@@ -203,7 +203,7 @@ func (dao *actionRelToSceneDao) AfterField(afterField []string) gdb.HookHandler 
 }
 
 // 详情
-func (dao *actionRelToSceneDao) Info(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (info gdb.Record, err error) {
+func (dao *actionRelToSceneDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
 	model := dao.Ctx(ctx)
 	if len(field) > 0 {
@@ -220,7 +220,7 @@ func (dao *actionRelToSceneDao) Info(ctx context.Context, field []string, filter
 }
 
 // 列表
-func (dao *actionRelToSceneDao) List(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (list gdb.Result, err error) {
+func (dao *actionRelToSceneDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
 	model := dao.Ctx(ctx)
 	if len(field) > 0 {

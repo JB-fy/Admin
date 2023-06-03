@@ -203,7 +203,7 @@ func (dao *roleRelOfPlatformAdminDao) AfterField(afterField []string) gdb.HookHa
 }
 
 // 详情
-func (dao *roleRelOfPlatformAdminDao) Info(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (info gdb.Record, err error) {
+func (dao *roleRelOfPlatformAdminDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
 	model := dao.Ctx(ctx)
 	if len(field) > 0 {
@@ -220,7 +220,7 @@ func (dao *roleRelOfPlatformAdminDao) Info(ctx context.Context, field []string, 
 }
 
 // 列表
-func (dao *roleRelOfPlatformAdminDao) List(ctx context.Context, field []string, filter map[string]interface{}, order [][2]string) (list gdb.Result, err error) {
+func (dao *roleRelOfPlatformAdminDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
 	model := dao.Ctx(ctx)
 	if len(field) > 0 {

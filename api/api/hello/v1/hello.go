@@ -9,7 +9,7 @@ type Req struct {
 }
 type Res struct {
 	g.Meta   `mime:"text/html" example:"string"`
-	UserName string
+	UserName string `p:"username"  v:"required|length:4,30#请输入账号|账号长度为:{min}到:{max}位"`
 }
 
 type TestReq struct {
