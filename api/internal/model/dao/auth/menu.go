@@ -73,7 +73,17 @@ func (daoMenu *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 				updateData[daoMenu.Table()+"."+k] = v
 			}
 		}
-		m = m.Data(updateData)
+		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
+		//解决字段被解析成`table.xxxx`的BUG
+		fieldArr := []string{}
+		valueArr := []interface{}{}
+		for k, v := range updateData {
+			fieldArr = append(fieldArr, k+" = ?")
+			valueArr = append(valueArr, v)
+		}
+		data := []interface{}{strings.Join(fieldArr, ",")}
+		data = append(data, valueArr...)
+		m = m.Data(data)
 		return m
 	}
 }
