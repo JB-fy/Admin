@@ -2,13 +2,13 @@ package api
 
 import "api/api"
 
-type Req{TplTableNameCamelCase}List struct {
-	Filter Req{TplTableNameCamelCase}ListFilter `p:"filter"`
-	api.ReqCommonList
+type {TplTableNameCamelCase}ListReq struct {
+	Filter {TplTableNameCamelCase}ListFilterReq `p:"filter"`
+	api.CommonListReq
 }
 
-type Req{TplTableNameCamelCase}ListFilter struct {
-	api.ReqCommonListFilter `c:",omitempty"`
+type {TplTableNameCamelCase}ListFilterReq struct {
+	api.CommonListFilterReq `c:",omitempty"`
     // 下面根据自己需求修改
 	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 	{TplTableNameCamelCase}Id     *uint  `c:"{TplTableName}Id,omitempty" p:"{TplTableName}Id" v:"min:1"`

@@ -2,19 +2,19 @@ package api
 
 import "github.com/gogf/gf/v2/frame/g"
 
-type ReqOrderBy struct {
+type OrderByReq struct {
 	Key   string `p:"key" v:"min:1"`
 	Order string `p:"order" v:""` //传0取全部
 }
 
-type ReqCommonList struct {
+type CommonListReq struct {
 	Field []string `p:"field" v:"foreach|min-length:1"`
 	Order []string `p:"order"`
 	Page  uint     `p:"page" v:"min:1"`
 	Limit uint     `p:"limit"` //可传0取全部
 }
 
-type ReqCommonListFilter struct {
+type CommonListFilterReq struct {
 	Id        *uint  `c:"id,omitempty" p:"id" v:"min:1"`
 	IdArr     []uint `c:"idArr,omitempty" p:"idArr" v:"foreach|min:1"`
 	ExcId     *uint  `c:"excId,omitempty" p:"excId" v:"min:1"`
