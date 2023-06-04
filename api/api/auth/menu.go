@@ -49,7 +49,6 @@ type MenuCreateReq struct {
 
 type MenuUpdateReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	MenuId                               *uint   `c:"menuId,omitempty" p:"menuId" v:"min:1"`
 	SceneId                              *uint   `c:"sceneId,omitempty" p:"sceneId" v:"min:1"`
 	Pid                                  *uint   `c:"sceneId,omitempty" p:"sceneId" v:"min:0"`
 	MenuName                             *string `c:"menuName,omitempty" p:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`

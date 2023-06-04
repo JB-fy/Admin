@@ -80,13 +80,13 @@ func (logic *sMenu) Info(ctx context.Context, filter map[string]interface{}, fie
 }
 
 // 创建
-func (logic *sMenu) Create(ctx context.Context, insert []map[string]interface{}) (id int64, err error) {
+func (logic *sMenu) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	daoMenu := daoAuth.Menu
 	model := daoMenu.Ctx(ctx)
-	if len(insert) > 0 {
-		model = model.Handler(daoMenu.ParseInsert(insert))
+	if len(data) > 0 {
+		model = model.Handler(daoMenu.ParseInsert(data))
 	}
-	if len(insert) == 1 {
+	if len(data) == 1 {
 		id, err = model.InsertAndGetId()
 		return
 	}
@@ -99,12 +99,12 @@ func (logic *sMenu) Create(ctx context.Context, insert []map[string]interface{})
 }
 
 // 更新
-func (logic *sMenu) Update(ctx context.Context, update map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logic *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoMenu := daoAuth.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)
-	if len(update) > 0 {
-		model = model.Handler(daoMenu.ParseUpdate(update))
+	if len(data) > 0 {
+		model = model.Handler(daoMenu.ParseUpdate(data))
 	}
 	if len(filter) > 0 {
 		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))

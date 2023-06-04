@@ -18,14 +18,16 @@ func NewScene() *Scene {
 	return &Scene{}
 }
 
+// 列表
 func (c *Scene) List(r *ghttp.Request) {
+	/**--------参数处理 开始--------**/
 	var param *apiAuth.SceneListReq
 	err := r.Parse(&param)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
 	}
-	filter := gconv.Map(param.Filter) //条件过滤
+	filter := gconv.Map(param.Filter)
 	order := [][2]string{{"id", "DESC"}}
 	if param.Sort.Key != "" {
 		order[0][0] = param.Sort.Key
@@ -39,16 +41,17 @@ func (c *Scene) List(r *ghttp.Request) {
 	if param.Limit <= 0 {
 		param.Limit = 10
 	}
+	/**--------参数处理 结束--------**/
 
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
-		//isAuth := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		/**--------权限验证 开始--------**/
+		//isAuth, _ := $this->checkAuth(__FUNCTION__, $sceneCode, false);
 		isAuth := true
-		/**--------参数处理 开始--------**/
 		allowField := []string{"sceneId", "sceneName", "id"}
 		if isAuth {
-			allowField = daoAuth.Menu.ColumnArr()
+			allowField = daoAuth.Scene.ColumnArr()
 			allowField = append(allowField, "id")
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
@@ -59,7 +62,8 @@ func (c *Scene) List(r *ghttp.Request) {
 				field = allowField
 			}
 		}
-		/**--------参数处理 结束--------**/
+		/**--------权限验证 结束--------**/
+
 		count, err := service.Scene().Count(r.Context(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
@@ -79,5 +83,150 @@ func (c *Scene) List(r *ghttp.Request) {
 				"list": list,
 			},
 		}) */
+	}
+}
+
+// 详情
+func (c *Scene) Info(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		/**--------参数处理 开始--------**/
+		var param *apiAuth.SceneInfoReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+
+		allowField := daoAuth.Scene.ColumnArr()
+		allowField = append(allowField, "id")
+		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		field := allowField
+		if len(param.Field) > 0 {
+			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+			if len(field) == 0 {
+				field = allowField
+			}
+		}
+		filter := map[string]interface{}{"id": param.Id}
+		/**--------参数处理 结束--------**/
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		info, err := service.Scene().Info(r.Context(), filter, field, [][2]string{})
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0, "")
+	}
+}
+
+// 创建
+func (c *Scene) Create(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		/**--------参数处理 开始--------**/
+		var param *apiAuth.SceneCreateReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		data := gconv.Map(param)
+		/**--------参数处理 结束--------**/
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		_, err = service.Scene().Create(r.Context(), []map[string]interface{}{data})
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+	}
+}
+
+// 更新
+func (c *Scene) Update(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		/**--------参数处理 开始--------**/
+		var param *apiAuth.SceneUpdateReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		data := gconv.Map(param)
+		delete(data, "idArr")
+		if len(data) == 0 {
+			utils.HttpFailJson(r, 89999999, "", map[string]interface{}{})
+			return
+		}
+		filter := map[string]interface{}{"id": param.IdArr}
+		/**--------参数处理 结束--------**/
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		_, err = service.Scene().Update(r.Context(), data, filter, [][2]string{}, 0, 0)
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+	}
+}
+
+// 删除
+func (c *Scene) Delete(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		/**--------参数处理 开始--------**/
+		var param *apiAuth.SceneDeleteReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		filter := map[string]interface{}{"id": param.IdArr}
+		/**--------参数处理 结束--------**/
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		_, err = service.Scene().Delete(r.Context(), filter, [][2]string{}, 0, 0)
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
 	}
 }

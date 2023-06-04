@@ -80,13 +80,13 @@ func (logic *sScene) Info(ctx context.Context, filter map[string]interface{}, fi
 }
 
 // 创建
-func (logic *sScene) Create(ctx context.Context, insert []map[string]interface{}) (id int64, err error) {
+func (logic *sScene) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	daoScene := daoAuth.Scene
 	model := daoScene.Ctx(ctx)
-	if len(insert) > 0 {
-		model = model.Handler(daoScene.ParseInsert(insert))
+	if len(data) > 0 {
+		model = model.Handler(daoScene.ParseInsert(data))
 	}
-	if len(insert) == 1 {
+	if len(data) == 1 {
 		id, err = model.InsertAndGetId()
 		return
 	}
@@ -99,12 +99,12 @@ func (logic *sScene) Create(ctx context.Context, insert []map[string]interface{}
 }
 
 // 更新
-func (logic *sScene) Update(ctx context.Context, update map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logic *sScene) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoScene := daoAuth.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)
-	if len(update) > 0 {
-		model = model.Handler(daoScene.ParseUpdate(update))
+	if len(data) > 0 {
+		model = model.Handler(daoScene.ParseUpdate(data))
 	}
 	if len(filter) > 0 {
 		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))

@@ -15,5 +15,27 @@ type {TplTableNameCamelCase}ListFilterReq struct {
 	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 	{TplTableNameCamelCase}Id     *uint  `c:"{TplTableName}Id,omitempty" p:"{TplTableName}Id" v:"min:1"`
 	{TplTableNameCamelCase}Name   string `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-    /* {TplStructDefine} */
+}
+
+/* {TplStructDefine} */
+
+type {TplTableNameCamelCase}InfoReq struct {
+	apiCommon.CommonInfoReq `c:",omitempty"`
+}
+
+type {TplTableNameCamelCase}CreateReq struct {
+	{TplTableNameCamelCase}Name  string  `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Sort      *uint   `c:"sort,omitempty" p:"sort" v:"between:0,100"`
+	IsStop    *uint   `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
+}
+
+type {TplTableNameCamelCase}UpdateReq struct {
+	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	{TplTableNameCamelCase}Name			*string `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Sort      *uint   `c:"sort,omitempty" p:"sort" v:"between:0,100"`
+	IsStop	  *uint   `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
+}
+
+type {TplTableNameCamelCase}DeleteReq struct {
+	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
 }
