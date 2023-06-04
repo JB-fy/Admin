@@ -18,13 +18,13 @@ gfcli:
         overwriteDao: true
         tables: "auth_scene"
         # 下面用于生成api,controller,logic
-        daoPath: "../api/auth"
-        tplDaoIndexPath: "resource/template/gen_dao_template_api.txt"
+        daoPath: "controller/auth"
+        tplDaoIndexPath: "resource/template/gen_dao_template_controller.txt"
         tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
         doPath: "logic/auth"
         tplDaoDoPath: "resource/template/gen_dao_template_logic.txt"
-        entityPath: "controller/auth"
-        tplDaoEntityPath: "resource/template/gen_dao_template_controller.txt"
+        entityPath: "../api/auth"
+        tplDaoEntityPath: "resource/template/gen_dao_template_api.txt"
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         group: "default"
         tables: "platform_admin,platform_config,platform_server"
