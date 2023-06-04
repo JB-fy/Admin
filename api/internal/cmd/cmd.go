@@ -7,8 +7,8 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 
-	controller "api/internal/controller/auth"
-	"api/internal/controller/hello"
+	"api/internal/controller"
+	controllerAuth "api/internal/controller/auth"
 	"api/internal/middleware"
 )
 
@@ -26,14 +26,14 @@ var (
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				//group.Middleware(ghttp.MiddlewareHandlerResponse)
 				group.Bind(
-					//hello.New().Test, //这样不会根据方法名自动设置路由
-					hello.New(),
+					//controller.NewTest().Test, //这样不会根据方法名自动设置路由
+					controller.NewTest(),
 				)
 			})
 
 			/**--------平台后台接口 开始--------**/
 			s.Group("/platformAdmin", func(group *ghttp.RouterGroup) {
-				group.ALL("/test", hello.New().Test)
+				group.ALL("/test", controller.NewTest().Test)
 				//不做日志记录
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(middleware.Scene)
@@ -41,7 +41,7 @@ var (
 					group.Group("", func(group *ghttp.RouterGroup) {
 						group.Middleware(middleware.SceneLoginOfPlatformAdmin)
 						group.ALLMap(g.Map{
-							"/log/request": hello.New().Test,
+							"/log/request": controller.NewTest().Test,
 						})
 					})
 				})
@@ -53,8 +53,8 @@ var (
 					//无需验证登录身份
 					group.Group("/login", func(group *ghttp.RouterGroup) {
 						group.ALLMap(g.Map{
-							"/encryptStr": hello.New().Test,
-							"/":           hello.New().Test,
+							"/encryptStr": controller.NewTest().Test,
+							"/":           controller.NewTest().Test,
 						})
 					})
 
@@ -64,78 +64,78 @@ var (
 
 						group.Group("/upload", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/sign": hello.New().Test,
+								"/sign": controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/login", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/info":     hello.New().Test,
-								"/update":   hello.New().Test,
-								"/menuTree": hello.New().Test,
+								"/info":     controller.NewTest().Test,
+								"/update":   controller.NewTest().Test,
+								"/menuTree": controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/auth/action", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   hello.New().Test,
-								"/info":   hello.New().Test,
-								"/create": hello.New().Test,
-								"/update": hello.New().Test,
-								"/del":    hello.New().Test,
+								"/list":   controller.NewTest().Test,
+								"/info":   controller.NewTest().Test,
+								"/create": controller.NewTest().Test,
+								"/update": controller.NewTest().Test,
+								"/del":    controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/auth/menu", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   hello.New().Test,
-								"/info":   hello.New().Test,
-								"/create": hello.New().Test,
-								"/update": hello.New().Test,
-								"/del":    hello.New().Test,
-								"/tree":   hello.New().Test,
+								"/list":   controller.NewTest().Test,
+								"/info":   controller.NewTest().Test,
+								"/create": controller.NewTest().Test,
+								"/update": controller.NewTest().Test,
+								"/del":    controller.NewTest().Test,
+								"/tree":   controller.NewTest().Test,
 							})
 						})
 						group.Group("/auth/role", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   hello.New().Test,
-								"/info":   hello.New().Test,
-								"/create": hello.New().Test,
-								"/update": hello.New().Test,
-								"/del":    hello.New().Test,
+								"/list":   controller.NewTest().Test,
+								"/info":   controller.NewTest().Test,
+								"/create": controller.NewTest().Test,
+								"/update": controller.NewTest().Test,
+								"/del":    controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/auth/scene", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   controller.NewScene().List,
-								"/info":   hello.New().Test,
-								"/create": hello.New().Test,
-								"/update": hello.New().Test,
-								"/del":    hello.New().Test,
+								"/list":   controllerAuth.NewScene().List,
+								"/info":   controller.NewTest().Test,
+								"/create": controller.NewTest().Test,
+								"/update": controller.NewTest().Test,
+								"/del":    controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/auth/admin", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   hello.New().Test,
-								"/info":   hello.New().Test,
-								"/create": hello.New().Test,
-								"/update": hello.New().Test,
-								"/del":    hello.New().Test,
+								"/list":   controller.NewTest().Test,
+								"/info":   controller.NewTest().Test,
+								"/create": controller.NewTest().Test,
+								"/update": controller.NewTest().Test,
+								"/del":    controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/platform/config", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/get":  hello.New().Test,
-								"/save": hello.New().Test,
+								"/get":  controller.NewTest().Test,
+								"/save": controller.NewTest().Test,
 							})
 						})
 
 						group.Group("/platform/server", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list": hello.New().Test,
+								"/list": controller.NewTest().Test,
 							})
 						})
 

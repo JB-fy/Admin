@@ -15,20 +15,23 @@ type ReqCommonList struct {
 }
 
 type ReqCommonListFilter struct {
-	Id       *uint  `c:"id,omitempty" p:"id" v:"min:1"`
-	IdArr    []uint `c:"idArr,omitempty" p:"idArr" v:"foreach|min:1"`
-	ExcId    *uint  `c:"excId,omitempty" p:"excId" v:"min:1"`
-	ExcIdArr []uint `c:"excIdArr,omitempty" p:"excIdArr" v:"foreach|min:1"`
-	//StartTime *gtime.Time `c:"startTime,omitempty" p:"startTime" v:"date-format:Y-m-d H:i:s"`
-	StartTime string `c:"startTime,omitempty" p:"startTime" v:"date-format:Y-m-d H:i:s"`
+	Id        *uint  `c:"id,omitempty" p:"id" v:"min:1"`
+	IdArr     []uint `c:"idArr,omitempty" p:"idArr" v:"foreach|min:1"`
+	ExcId     *uint  `c:"excId,omitempty" p:"excId" v:"min:1"`
+	ExcIdArr  []uint `c:"excIdArr,omitempty" p:"excIdArr" v:"foreach|min:1"`
+	StartTime string `c:"startTime,omitempty" p:"startTime" v:"date-format:Y-m-d H:i:s"` //不建议用*gtime.Time类型。传空字符串时，gconv.Map转换会报错
 	EndTime   string `c:"endTime,omitempty" p:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime"`
 }
 
-type ReqTest struct {
-	g.Meta `path:"/test" tags:"Test" method:"get" summary:"测试"`
+type TestMetaReq struct {
+	g.Meta `path:"/testMeta" tags:"TestMeta" method:"get" summary:"测试"`
 }
 
-type ResTest struct {
+type TestMetaRes struct {
 	g.Meta   `mime:"text/html" example:"string"`
+	UserName string `p:"username"  v:"required|length:4,30#请输入账号|账号长度为:{min}到:{max}位"`
+}
+
+type TestReq struct {
 	UserName string `p:"username"  v:"required|length:4,30#请输入账号|账号长度为:{min}到:{max}位"`
 }
