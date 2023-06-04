@@ -7,6 +7,7 @@ package dao
 import (
 	"api/internal/model/dao/auth/internal"
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -70,9 +71,12 @@ func (dao *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb
 				if (len(fill) == 0 || fill[0]) && !dao.ColumnArrG().Contains(k) {
 					continue
 				}
-				updateData[dao.Table()+"."+k] = v
+				//updateData[dao.Table()+"."+k] = v
+				updateData["`"+dao.Table()+"`."+k] = v
+				//updateData[gdb.Raw("`"+dao.Table()+"`."+k)] = v
 			}
 		}
+		fmt.Println(m.Where("menuId", 16).Update(updateData))
 		m = m.Data(updateData)
 		return m
 	}
@@ -88,6 +92,12 @@ func (dao *menuDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelH
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(dao.Table() + "." + dao.PrimaryKey() + " AS " + v)
+			case "sceneName":
+				m = m.Fields(Scene.Table() + "." + v)
+				m = dao.ParseJoin("scene", joinCodeArr)(m)
+			case "pMenuName":
+				m = m.Fields("p_" + dao.Table() + ".menuName AS " + v)
+				m = dao.ParseJoin("pMenu", joinCodeArr)(m)
 			default:
 				if dao.ColumnArrG().Contains(v) {
 					m = m.Fields(dao.Table() + "." + v)
@@ -170,11 +180,16 @@ func (dao *menuDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m 
 // 解析join
 func (dao *menuDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
+		if !garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
 			*joinCodeArr = append(*joinCodeArr, joinCode)
 			switch joinCode {
 			/* case "xxxx":
 			m = m.LeftJoin("xxxx", "xxxx."+dao.PrimaryKey()+" = "+dao.Table()+"."+dao.PrimaryKey()) */
+			case "scene":
+				m = m.LeftJoin(Scene.Table(), Scene.Table()+"."+Scene.PrimaryKey()+" = "+dao.Table()+"."+Scene.PrimaryKey())
+			case "pMenu":
+				pMenuTable := "p_" + dao.Table()
+				m = m.LeftJoin(dao.Table()+" AS "+pMenuTable, pMenuTable+"."+dao.PrimaryKey()+" = "+dao.Table()+".pid")
 			}
 		}
 		return m

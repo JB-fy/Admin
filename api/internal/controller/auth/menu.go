@@ -52,7 +52,7 @@ func (c *Menu) List(r *ghttp.Request) {
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()
-			allowField = append(allowField, "id")
+			allowField = append(allowField, "id", "pMenuName")
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
 		field := allowField
