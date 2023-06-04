@@ -20,7 +20,7 @@ gfcli:
         # 下面用于生成api,controller,logic
         daoPath: "../api/auth"
         tplDaoIndexPath: "resource/template/gen_dao_template_api.txt"
-        tplDaoInternalPath: "resource/template/gen_dao_template_dao_internal.txt"
+        tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
         doPath: "logic/auth"
         tplDaoDoPath: "resource/template/gen_dao_template_logic.txt"
         entityPath: "controller/auth"
