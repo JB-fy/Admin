@@ -30,7 +30,7 @@ var (
 )
 
 // 解析insert
-func (dao *serverDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoServer *serverDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := make([]map[string]interface{}, len(insert))
 		for index, item := range insert {
@@ -38,10 +38,10 @@ func (dao *serverDao) ParseInsert(insert []map[string]interface{}, fill ...bool)
 			for k, v := range item {
 				switch k {
 				case "id":
-					insertData[index][dao.PrimaryKey()] = v
+					insertData[index][daoServer.PrimaryKey()] = v
 				default:
 					//数据库不存在的字段过滤掉，未传值默认true
-					if (len(fill) == 0 || fill[0]) && !dao.ColumnArrG().Contains(k) {
+					if (len(fill) == 0 || fill[0]) && !daoServer.ColumnArrG().Contains(k) {
 						continue
 					}
 					insertData[index][k] = v
@@ -58,19 +58,19 @@ func (dao *serverDao) ParseInsert(insert []map[string]interface{}, fill ...bool)
 }
 
 // 解析update
-func (dao *serverDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoServer *serverDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case "id":
-				updateData[dao.Table()+"."+dao.PrimaryKey()] = v
+				updateData[daoServer.Table()+"."+daoServer.PrimaryKey()] = v
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
-				if (len(fill) == 0 || fill[0]) && !dao.ColumnArrG().Contains(k) {
+				if (len(fill) == 0 || fill[0]) && !daoServer.ColumnArrG().Contains(k) {
 					continue
 				}
-				updateData[dao.Table()+"."+k] = v
+				updateData[daoServer.Table()+"."+k] = v
 			}
 		}
 		m = m.Data(updateData)
@@ -79,48 +79,48 @@ func (dao *serverDao) ParseUpdate(update map[string]interface{}, fill ...bool) g
 }
 
 // 解析field
-func (dao *serverDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoServer *serverDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = dao.ParseJoin("xxxx", joinCodeArr)(m)
+			m = daoServer.ParseJoin("xxxx", joinCodeArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
-				m = m.Fields(dao.Table() + "." + dao.PrimaryKey() + " AS " + v)
+				m = m.Fields(daoServer.Table() + "." + daoServer.PrimaryKey() + " AS " + v)
 			default:
-				if dao.ColumnArrG().Contains(v) {
-					m = m.Fields(dao.Table() + "." + v)
+				if daoServer.ColumnArrG().Contains(v) {
+					m = m.Fields(daoServer.Table() + "." + v)
 				} else {
 					m = m.Fields(v)
 				}
 			}
 		}
 		if len(afterField) > 0 {
-			m = m.Hook(dao.AfterField(afterField))
+			m = m.Hook(daoServer.AfterField(afterField))
 		}
 		return m
 	}
 }
 
 // 解析filter
-func (dao *serverDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoServer *serverDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
 			case "id":
-				m = m.Where(dao.Table()+"."+dao.PrimaryKey(), v)
+				m = m.Where(daoServer.Table()+"."+daoServer.PrimaryKey(), v)
 			case "excId":
-				m = m.WhereNot(dao.Table()+"."+dao.PrimaryKey(), v)
+				m = m.WhereNot(daoServer.Table()+"."+daoServer.PrimaryKey(), v)
 			case "startTime":
-				m = m.WhereGTE(dao.Table()+".createTime", v)
+				m = m.WhereGTE(daoServer.Table()+".createTime", v)
 			case "endTime":
-				m = m.WhereLTE(dao.Table()+".createTime", v)
+				m = m.WhereLTE(daoServer.Table()+".createTime", v)
 			default:
 				kArr := strings.Split(k, " ")
-				if dao.ColumnArrG().Contains(kArr[0]) {
-					m = m.Where(dao.Table()+"."+k, v)
+				if daoServer.ColumnArrG().Contains(kArr[0]) {
+					m = m.Where(daoServer.Table()+"."+k, v)
 				} else {
 					m = m.Where(k, v)
 				}
@@ -131,15 +131,15 @@ func (dao *serverDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]
 }
 
 // 解析group
-func (dao *serverDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoServer *serverDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
 			case "id":
-				m = m.Group(dao.Table() + "." + dao.PrimaryKey())
+				m = m.Group(daoServer.Table() + "." + daoServer.PrimaryKey())
 			default:
-				if dao.ColumnArrG().Contains(v) {
-					m = m.Group(dao.Table() + "." + v)
+				if daoServer.ColumnArrG().Contains(v) {
+					m = m.Group(daoServer.Table() + "." + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -150,15 +150,15 @@ func (dao *serverDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.Mode
 }
 
 // 解析order
-func (dao *serverDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoServer *serverDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
 			case "id":
-				m = m.Order(dao.Table()+"."+dao.PrimaryKey(), v[1])
+				m = m.Order(daoServer.Table()+"."+daoServer.PrimaryKey(), v[1])
 			default:
-				if dao.ColumnArrG().Contains(v[0]) {
-					m = m.Order(dao.Table()+"."+v[0], v[1])
+				if daoServer.ColumnArrG().Contains(v[0]) {
+					m = m.Order(daoServer.Table()+"."+v[0], v[1])
 				} else {
 					m = m.Order(v[0], v[1])
 				}
@@ -169,13 +169,13 @@ func (dao *serverDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(
 }
 
 // 解析join
-func (dao *serverDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoServer *serverDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		if !garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
 			*joinCodeArr = append(*joinCodeArr, joinCode)
 			switch joinCode {
 			/* case "xxxx":
-			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+dao.Table()+"."+xxxx.PrimaryKey()) */
+			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+daoServer.Table()+"."+xxxx.PrimaryKey()) */
 			}
 		}
 		return m
@@ -183,7 +183,7 @@ func (dao *serverDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *
 }
 
 // 获取数据后，再处理的字段
-func (dao *serverDao) AfterField(afterField []string) gdb.HookHandler {
+func (daoServer *serverDao) AfterField(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -205,34 +205,34 @@ func (dao *serverDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // 详情
-func (dao *serverDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
+func (daoServer *serverDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
 	joinCodeArr := []string{}
-	model := dao.Ctx(ctx)
+	model := daoServer.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(dao.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoServer.ParseField(field, &joinCodeArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(dao.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoServer.ParseFilter(filter, &joinCodeArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(dao.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoServer.ParseOrder(order, &joinCodeArr))
 	}
 	info, err = model.One()
 	return
 }
 
 // 列表
-func (dao *serverDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
+func (daoServer *serverDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
 	joinCodeArr := []string{}
-	model := dao.Ctx(ctx)
+	model := daoServer.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(dao.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoServer.ParseField(field, &joinCodeArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(dao.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoServer.ParseFilter(filter, &joinCodeArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(dao.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoServer.ParseOrder(order, &joinCodeArr))
 	}
 	list, err = model.All()
 	return
