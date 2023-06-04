@@ -83,7 +83,7 @@ func (daoActionRelToScene *actionRelToSceneDao) ParseUpdate(update map[string]in
 		}
 		data := []interface{}{strings.Join(fieldArr, ",")}
 		data = append(data, valueArr...)
-		m = m.Data(data)
+		m = m.Data(data...)
 		return m
 	}
 }

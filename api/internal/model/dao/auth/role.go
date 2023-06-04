@@ -83,7 +83,7 @@ func (daoRole *roleDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 		}
 		data := []interface{}{strings.Join(fieldArr, ",")}
 		data = append(data, valueArr...)
-		m = m.Data(data)
+		m = m.Data(data...)
 		return m
 	}
 }
