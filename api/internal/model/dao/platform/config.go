@@ -86,7 +86,7 @@ func (dao *configDao) ParseField(field []string, joinCodeArr *[]string) gdb.Mode
 			/* case "xxxx":
 			afterField = append(afterField, v) */
 			case "id":
-				m = m.Fields(dao.Table() + "." + dao.PrimaryKey())
+				m = m.Fields(dao.Table() + "." + dao.PrimaryKey() + " AS " + v)
 			default:
 				if dao.ColumnArrG().Contains(v) {
 					m = m.Fields(dao.Table() + "." + v)
