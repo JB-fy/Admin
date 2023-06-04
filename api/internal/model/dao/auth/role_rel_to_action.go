@@ -85,6 +85,7 @@ func (dao *roleRelToActionDao) ParseField(field []string, joinCodeArr *[]string)
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
+			m = dao.ParseJoin("xxxx", joinCodeArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(dao.Table() + "." + dao.PrimaryKey() + " AS " + v)
@@ -170,11 +171,11 @@ func (dao *roleRelToActionDao) ParseOrder(order [][2]string, joinCodeArr *[]stri
 // 解析join
 func (dao *roleRelToActionDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
+		if !garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
 			*joinCodeArr = append(*joinCodeArr, joinCode)
 			switch joinCode {
 			/* case "xxxx":
-			m = m.LeftJoin("xxxx", "xxxx."+dao.PrimaryKey()+" = "+dao.Table()+"."+dao.PrimaryKey()) */
+			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+dao.Table()+"."+xxxx.PrimaryKey()) */
 			}
 		}
 		return m

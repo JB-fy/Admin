@@ -7,7 +7,6 @@ package dao
 import (
 	"api/internal/model/dao/auth/internal"
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -76,7 +75,6 @@ func (dao *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb
 				//updateData[gdb.Raw("`"+dao.Table()+"`."+k)] = v
 			}
 		}
-		fmt.Println(m.Where("menuId", 16).Update(updateData))
 		m = m.Data(updateData)
 		return m
 	}
