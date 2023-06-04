@@ -10,7 +10,7 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
+     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, sort: { key: string, order: string }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
      *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
      *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数filter中使用的字段名。默认：props.api.param.field[0]
      *      searchField：非必须。当用户输入关键字做查询时，接口参数filter中使用的字段名。默认：props.api.param.field[1]
@@ -90,11 +90,11 @@ const select = reactive({
     api: {
         isEnd: false,
         loading: false,
-        param: computed((): { field: string[], filter: { [propName: string]: any }, order: { [propName: string]: any }, page: number, limit: number } => {
+        param: computed((): { field: string[], filter: { [propName: string]: any }, sort: { key: string, order: string }, page: number, limit: number } => {
             return {
                 field: [],
                 filter: {} as { [propName: string]: any },
-                order: { id: 'desc' },
+                sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: useSettingStore().scrollSize,
                 ...props.api.param

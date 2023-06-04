@@ -187,9 +187,10 @@ const table = reactive({
     }] as any,
     data: [],
     loading: false,
-    order: { key: 'id', order: 'desc' } as any,
-    handleOrder: (order: any) => {
-        table.order = order
+    sort: { key: 'id', order: 'desc' } as any,
+    handleSort: (sort: any) => {
+        table.sort.key = sort.key
+        table.sort.order = sort.order
         getList()
     },
 })
@@ -276,7 +277,7 @@ const getList = async (resetPage: boolean = false) => {
     const param = {
         field: [],
         filter: removeEmptyOfObj(queryCommon.data),
-        order: { [table.order.key]: table.order.order },
+        sort: table.sort,
         page: pagination.page,
         limit: pagination.size
     }
@@ -331,8 +332,8 @@ defineExpose({
     <ElMain>
         <ElAutoResizer>
             <template #default="{ height, width }">
-                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.order"
-                    @column-sort="table.handleOrder" :width="width" :height="height" :fixed="true" :row-height="50">
+                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort"
+                    @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
                         <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
                             <AutoiconEpLoading />

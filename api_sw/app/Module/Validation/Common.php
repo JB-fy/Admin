@@ -11,8 +11,9 @@ class Common extends AbstractValidation
         'field.*' => 'sometimes|required',
         'filter' => 'sometimes|required_if_null|array',
         'filter.*' => 'sometimes|required',
-        'order' => 'sometimes|required_if_null|array',
-        'order.*' => 'sometimes|required|in:asc,desc,ASC,DESC',
+        'sort' => 'sometimes|required_if_null|array',
+        'sort.key' => 'sometimes|required',
+        'sort.order' => 'sometimes|required|in:asc,desc,ASC,DESC',
         'page' => 'sometimes|required|integer|min:1',
         'limit' => 'sometimes|required|integer|min:0',
     ];

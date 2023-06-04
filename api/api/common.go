@@ -2,14 +2,14 @@ package api
 
 import "github.com/gogf/gf/v2/frame/g"
 
-type OrderByReq struct {
-	Key   string `p:"key" v:"min:1"`
-	Order string `p:"order" v:""` //传0取全部
+type SortReq struct {
+	Key   string `p:"key" v:"min-length:1"`
+	Order string `p:"order" v:"in:asc,desc,ASC,DESC"`
 }
 
 type CommonListReq struct {
 	Field []string `p:"field" v:"foreach|min-length:1"`
-	Order []string `p:"order"`
+	Sort  SortReq  `p:"sort"`
 	Page  uint     `p:"page" v:"min:1"`
 	Limit uint     `p:"limit"` //可传0取全部
 }

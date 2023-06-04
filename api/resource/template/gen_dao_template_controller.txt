@@ -1,11 +1,12 @@
 package controller
 
 import (
-	api "api/api/auth"
+	apiAuth "api/api/auth"
+	daoAuth "api/internal/model/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
-	"fmt"
 
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -18,15 +19,16 @@ func New{TplTableNameCamelCase}() *{TplTableNameCamelCase} {
 }
 
 func (c *{TplTableNameCamelCase}) List(r *ghttp.Request) {
-	var param *api.{TplTableNameCamelCase}ListReq
+	var param *apiAuth.{TplTableNameCamelCase}ListReq
 	err := r.Parse(&param)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
 	}
 	filter := gconv.Map(param.Filter) //条件过滤
-	if len(param.Order) == 0 {
-		param.Order = []string{"id", "DESC"}
+	order := [2]string{"id", "DESC"}
+	if param.Sort.Key != "" {
+		order = [2]string{param.Sort.Key, param.Sort.Order}
 	}
 	if param.Page <= 0 {
 		param.Page = 1
@@ -36,24 +38,26 @@ func (c *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 	}
 
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
-	fmt.Println(sceneCode)
 	switch sceneCode {
 	case "platformAdmin":
-		// $isAuth = $this->checkAuth(__FUNCTION__, $sceneCode, false);
-		// /**--------参数处理 开始--------**/
-		// if ($isAuth) {
-		//     $allowField = $this->getAllowField(AuthScene::class);
-		// } else {
-		//     $allowField = ['sceneId', 'sceneName', 'id'];
-		// }
-		// $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
-		// /**--------参数处理 结束--------**/
+		//isAuth := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		isAuth := true
+		/**--------参数处理 开始--------**/
+		field := []string{"sceneId", "sceneName", "id"}
+		if isAuth {
+			field = daoAuth.{TplTableNameCamelCase}.ColumnArr()
+			//field = append(field, "", "", "", "")
+		}
+		if len(param.Field) > 0 {
+			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(field)).Slice()
+		}
+		/**--------参数处理 结束--------**/
 		count, err := service.{TplTableNameCamelCase}().Count(r.Context(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return
 		}
-		list, err := service.{TplTableNameCamelCase}().List(r.Context(), filter, param.Field, [2]string{}, int((param.Page-1)*param.Limit), int(param.Limit))
+		list, err := service.{TplTableNameCamelCase}().List(r.Context(), filter, field, order, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return
