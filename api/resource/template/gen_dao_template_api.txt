@@ -5,9 +5,11 @@ import (
 )
 
 type {TplTableNameCamelCase}ListReq struct {
+	apiCommon.CommonListReq `c:",omitempty"`
 	Filter {TplTableNameCamelCase}ListFilterReq `p:"filter"`
-	apiCommon.CommonListReq
 }
+
+/* {TplStructDefine} */
 
 type {TplTableNameCamelCase}ListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
@@ -16,8 +18,6 @@ type {TplTableNameCamelCase}ListFilterReq struct {
 	{TplTableNameCamelCase}Id     *uint  `c:"{TplTableName}Id,omitempty" p:"{TplTableName}Id" v:"min:1"`
 	{TplTableNameCamelCase}Name   string `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 }
-
-/* {TplStructDefine} */
 
 type {TplTableNameCamelCase}InfoReq struct {
 	apiCommon.CommonInfoReq `c:",omitempty"`
