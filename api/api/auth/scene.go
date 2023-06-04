@@ -9,9 +9,12 @@ type ReqSceneList struct {
 
 type ReqSceneListFilter struct {
 	api.ReqCommonListFilter
-	IsStop    *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
-	SceneId   *uint  `c:"{TplTableNameCamelLowerCase}Id,omitempty" p:"{TplTableNameCamelLowerCase}Id" v:"min:1"`
-	SceneName string `c:"{TplTableNameCamelLowerCase}Name,omitempty" p:"{TplTableNameCamelLowerCase}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	// 下面根据自己需求修改
+	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
+	SceneId     *uint  `c:"{TplTableNameCamelLowerCase}Id,omitempty" p:"{TplTableNameCamelLowerCase}Id" v:"min:1"`
+	SceneName   string `c:"{TplTableNameCamelLowerCase}Name,omitempty" p:"{TplTableNameCamelLowerCase}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneCode   string `c:"sceneCode,omitempty" p:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneConfig string `c:"sceneConfig,omitempty" p:"sceneConfig" v:"json"`
 	/* type Scene struct {
 	    SceneId     uint        `json:"sceneId"     `// 权限场景ID
 	    SceneCode   string      `json:"sceneCode"   `// 标识（代码中用于识别调用接口的所在场景，做对应的身份鉴定及权力鉴定。如已在代码中使用，不建议更改）
