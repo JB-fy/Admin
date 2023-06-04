@@ -32,8 +32,9 @@ var (
 // 解析insert
 func (dao *sceneDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := []map[string]interface{}{}
+		insertData := make([]map[string]interface{}, len(insert))
 		for index, item := range insert {
+			insertData[index] = map[string]interface{}{}
 			for k, v := range item {
 				switch k {
 				case "id":
