@@ -46,13 +46,18 @@ func (c *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 		//isAuth := $this->checkAuth(__FUNCTION__, $sceneCode, false);
 		isAuth := true
 		/**--------参数处理 开始--------**/
-		field := []string{"sceneId", "sceneName", "id"}
+		allowField := []string{"{TplTableNameCamelLowerCase}Id", "{TplTableNameCamelLowerCase}Name", "id"}
 		if isAuth {
-			field = daoAuth.{TplTableNameCamelCase}.ColumnArr()
-			//field = append(field, "", "", "", "")
+			allowField = daoAuth.Menu.ColumnArr()
+			allowField = append(allowField, "id")
+			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
+		field := allowField
 		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(field)).Slice()
+			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+			if len(field) == 0 {
+				field = allowField
+			}
 		}
 		/**--------参数处理 结束--------**/
 		count, err := service.{TplTableNameCamelCase}().Count(r.Context(), filter)

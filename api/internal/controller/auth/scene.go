@@ -46,13 +46,18 @@ func (c *Scene) List(r *ghttp.Request) {
 		//isAuth := $this->checkAuth(__FUNCTION__, $sceneCode, false);
 		isAuth := true
 		/**--------参数处理 开始--------**/
-		field := []string{"sceneId", "sceneName", "id"}
+		allowField := []string{"sceneId", "sceneName", "id"}
 		if isAuth {
-			field = daoAuth.Scene.ColumnArr()
-			//field = append(field, "", "", "", "")
+			allowField = daoAuth.Menu.ColumnArr()
+			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice()
+			allowField = append(allowField, "id")
 		}
+		field := allowField
 		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(field)).Slice()
+			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+			if len(field) == 0 {
+				field = allowField
+			}
 		}
 		/**--------参数处理 结束--------**/
 		count, err := service.Scene().Count(r.Context(), filter)
