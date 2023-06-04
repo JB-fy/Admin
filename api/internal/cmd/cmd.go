@@ -87,13 +87,14 @@ var (
 						})
 
 						group.Group("/auth/menu", func(group *ghttp.RouterGroup) {
+							controllerAuthMenu := controllerAuth.NewMenu()
 							group.ALLMap(g.Map{
-								"/list":   controllerAuth.NewMenu().List,
-								"/info":   controller.NewTest().Test,
-								"/create": controller.NewTest().Test,
-								"/update": controller.NewTest().Test,
-								"/del":    controller.NewTest().Test,
-								"/tree":   controller.NewTest().Test,
+								"/list":   controllerAuthMenu.List,
+								"/info":   controllerAuthMenu.Info,
+								"/create": controllerAuthMenu.Create,
+								"/update": controllerAuthMenu.Update,
+								"/del":    controllerAuthMenu.Delete,
+								"/tree":   controllerAuthMenu.List,
 							})
 						})
 						group.Group("/auth/role", func(group *ghttp.RouterGroup) {
@@ -107,12 +108,13 @@ var (
 						})
 
 						group.Group("/auth/scene", func(group *ghttp.RouterGroup) {
+							controllerAuthScene := controllerAuth.NewScene()
 							group.ALLMap(g.Map{
-								"/list":   controllerAuth.NewScene().List,
-								"/info":   controller.NewTest().Test,
-								"/create": controller.NewTest().Test,
-								"/update": controller.NewTest().Test,
-								"/del":    controller.NewTest().Test,
+								"/list":   controllerAuthScene.List,
+								"/info":   controllerAuthScene.Info,
+								"/create": controllerAuthScene.Create,
+								"/update": controllerAuthScene.Update,
+								"/del":    controllerAuthScene.Delete,
 							})
 						})
 

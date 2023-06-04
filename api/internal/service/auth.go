@@ -15,16 +15,24 @@ type (
 	IMenu interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		Create(ctx context.Context, insert []map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, update map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
 	}
 	IScene interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		Create(ctx context.Context, insert []map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, update map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
 	}
 )
 
 var (
-	localScene IScene
 	localMenu  IMenu
+	localScene IScene
 )
 
 func Menu() IMenu {
