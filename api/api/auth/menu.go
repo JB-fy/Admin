@@ -28,9 +28,11 @@ type MenuListReq struct {
 type MenuListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
 	// 下面根据自己需求修改
-	IsStop   *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 	MenuId   *uint  `c:"menuId,omitempty" p:"menuId" v:"min:1"`
+	SceneId  *uint  `c:"sceneId,omitempty" p:"sceneId" v:"min:1"`
+	Pid      *uint  `c:"pid,omitempty" p:"pid" v:"min:0"`
 	MenuName string `c:"menuName,omitempty" p:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	IsStop   *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 }
 
 type MenuInfoReq struct {
