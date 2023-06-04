@@ -24,7 +24,14 @@ class Admin extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 $allowField = $this->getAllowField(PlatformAdmin::class);
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->listWithCount(...$data);
@@ -48,7 +55,14 @@ class Admin extends AbstractController
                 /**--------参数处理 开始--------**/
                 $allowField = $this->getAllowField(PlatformAdmin::class);
                 $allowField = array_merge($allowField, ['roleIdArr']);
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->info(['id' => $data['id']], $data['field']);

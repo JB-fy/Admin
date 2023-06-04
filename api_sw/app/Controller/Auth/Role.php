@@ -29,7 +29,14 @@ class Role extends AbstractController
                 } else {
                     $allowField = ['roleId', 'roleName', 'id'];
                 }
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->listWithCount(...$data);
@@ -53,7 +60,14 @@ class Role extends AbstractController
                 /**--------参数处理 开始--------**/
                 $allowField = $this->getAllowField(AuthRole::class);
                 $allowField = array_merge($allowField, ['sceneName', 'menuIdArr', 'actionIdArr']);
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->info(['id' => $data['id']], $data['field']);

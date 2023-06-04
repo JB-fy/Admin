@@ -29,7 +29,14 @@ class Menu extends AbstractController
                 } else {
                     $allowField = ['menuId', 'menuName', 'id'];
                 }
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->listWithCount(...$data);
@@ -52,7 +59,14 @@ class Menu extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 $allowField = $this->getAllowField(AuthMenu::class);
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->info(['id' => $data['id']], $data['field']);
@@ -134,7 +148,14 @@ class Menu extends AbstractController
                 } else {
                     $allowField = ['menuId', 'menuName', 'id'];
                 }
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
 
                 $data['filter'] = array_merge($data['filter'], ['isStop' => 0]);  //补充条件
                 $data['field'] = array_merge($data['field'], ['menuTree']); //补充字段（树状菜单所需）

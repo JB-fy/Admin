@@ -24,7 +24,14 @@ class Server extends AbstractController
 
                 /**--------参数处理 开始--------**/
                 $allowField = $this->getAllowField(PlatformServer::class);
-                $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
+                if (empty($data['field'])) {
+                    $data['field'] = $allowField;
+                } else {
+                    $data['field'] = array_intersect($data['field'], $allowField);
+                    if (empty($data['field'])) {
+                        $data['field'] = $allowField;
+                    }
+                }
                 /**--------参数处理 结束--------**/
 
                 $this->service->listWithCount(...$data);
