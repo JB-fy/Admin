@@ -11,7 +11,7 @@ type Req{TplTableNameCamelCase}ListFilter struct {
 	api.ReqCommonListFilter
     // 下面根据自己需求修改
 	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
-	{TplTableNameCamelCase}Id     *uint  `c:"{TplTableNameCamelLowerCase}Id,omitempty" p:"{TplTableNameCamelLowerCase}Id" v:"min:1"`
-	{TplTableNameCamelCase}Name   string `c:"{TplTableNameCamelLowerCase}Name,omitempty" p:"{TplTableNameCamelLowerCase}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	{TplTableNameCamelCase}Id     *uint  `c:"{TplTableName}Id,omitempty" p:"{TplTableName}Id" v:"min:1"`
+	{TplTableNameCamelCase}Name   string `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
     /* {TplStructDefine} */
 }
