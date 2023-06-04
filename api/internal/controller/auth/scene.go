@@ -49,6 +49,10 @@ func (c *Scene) List(r *ghttp.Request) {
 		// $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
 		// /**--------参数处理 结束--------**/
 		count, err := service.Scene().Count(r.Context(), filter)
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
 		list, err := service.Scene().List(r.Context(), filter, param.Field, [2]string{}, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
