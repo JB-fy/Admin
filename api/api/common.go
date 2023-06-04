@@ -23,6 +23,15 @@ type CommonListFilterReq struct {
 	EndTime   string `c:"endTime,omitempty" p:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime"`
 }
 
+type CommonInfoReq struct {
+	Id    uint     `p:"id" v:"required|integer|min:1"`
+	Field []string `p:"field" v:"foreach|min-length:1"`
+}
+
+type CommonDeleteReq struct {
+	IdArr []uint `c:"id,omitempty" p:"idArr" v:"required|foreach|min:1"`
+}
+
 type TestMetaReq struct {
 	g.Meta `path:"/testMeta" tags:"TestMeta" method:"get" summary:"测试"`
 }

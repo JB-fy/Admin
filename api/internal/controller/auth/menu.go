@@ -18,6 +18,7 @@ func NewMenu() *Menu {
 	return &Menu{}
 }
 
+// 列表
 func (c *Menu) List(r *ghttp.Request) {
 	var param *apiAuth.MenuListReq
 	err := r.Parse(&param)
@@ -43,7 +44,7 @@ func (c *Menu) List(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
-		//isAuth := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		//isAuth, _ := $this->checkAuth(__FUNCTION__, $sceneCode, false);
 		isAuth := true
 		/**--------参数处理 开始--------**/
 		allowField := []string{"menuId", "menuName", "id"}
@@ -79,5 +80,72 @@ func (c *Menu) List(r *ghttp.Request) {
 				"list": list,
 			},
 		}) */
+	}
+}
+
+// 详情
+func (c *Menu) Info(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		var param *apiAuth.MenuInfoReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------参数处理 开始--------**/
+		allowField := daoAuth.Menu.ColumnArr()
+		allowField = append(allowField, "id")
+		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		field := allowField
+		if len(param.Field) > 0 {
+			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+			if len(field) == 0 {
+				field = allowField
+			}
+		}
+		/**--------参数处理 结束--------**/
+		info, err := service.Menu().Info(r.Context(), map[string]interface{}{"id": param.Id}, field, [][2]string{})
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0, "")
+	}
+}
+
+// 创建
+func (c *Menu) Create(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		var param *apiAuth.MenuCreateReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------参数处理 开始--------**/
+		insert := gconv.Map(param) //条件过滤
+		/**--------参数处理 结束--------**/
+		_, err = service.Menu().Create(r.Context(), []map[string]interface{}{insert})
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
 	}
 }
