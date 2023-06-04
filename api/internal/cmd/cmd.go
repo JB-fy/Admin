@@ -88,7 +88,7 @@ var (
 
 						group.Group("/auth/menu", func(group *ghttp.RouterGroup) {
 							group.ALLMap(g.Map{
-								"/list":   controller.NewTest().Test,
+								"/list":   controllerAuth.NewMenu().List,
 								"/info":   controller.NewTest().Test,
 								"/create": controller.NewTest().Test,
 								"/update": controller.NewTest().Test,

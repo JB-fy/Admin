@@ -17,7 +17,7 @@ gfcli:
         # # tplDaoEntityPath: "resource/template/gen_dao_template_entity.txt"
         # 下面用于生成api,controller,logic
         overwriteDao: true
-        tables: "auth_scene"  #设置哪些表要生成
+        tables: "auth_scene,auth_menu"  #设置哪些表要生成
         daoPath: "controller/auth"
         tplDaoIndexPath: "resource/template/gen_dao_template_controller.txt"
         # tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"

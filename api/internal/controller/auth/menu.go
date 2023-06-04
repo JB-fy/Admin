@@ -12,14 +12,14 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Scene struct{}
+type Menu struct{}
 
-func NewScene() *Scene {
-	return &Scene{}
+func NewMenu() *Menu {
+	return &Menu{}
 }
 
-func (c *Scene) List(r *ghttp.Request) {
-	var param *apiAuth.SceneListReq
+func (c *Menu) List(r *ghttp.Request) {
+	var param *apiAuth.MenuListReq
 	err := r.Parse(&param)
 	if err != nil {
 		r.Response.Writeln(err.Error())
@@ -48,19 +48,19 @@ func (c *Scene) List(r *ghttp.Request) {
 		/**--------参数处理 开始--------**/
 		field := []string{"sceneId", "sceneName", "id"}
 		if isAuth {
-			field = daoAuth.Scene.ColumnArr()
+			field = daoAuth.Menu.ColumnArr()
 			//field = append(field, "", "", "", "")
 		}
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(field)).Slice()
 		}
 		/**--------参数处理 结束--------**/
-		count, err := service.Scene().Count(r.Context(), filter)
+		count, err := service.Menu().Count(r.Context(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return
 		}
-		list, err := service.Scene().List(r.Context(), filter, field, order, int((param.Page-1)*param.Limit), int(param.Limit))
+		list, err := service.Menu().List(r.Context(), filter, field, order, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return

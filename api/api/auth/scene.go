@@ -1,14 +1,16 @@
 package api
 
-import "api/api"
+import (
+	apiCommon "api/api"
+)
 
 type SceneListReq struct {
 	Filter SceneListFilterReq `p:"filter"`
-	api.CommonListReq
+	apiCommon.CommonListReq
 }
 
 type SceneListFilterReq struct {
-	api.CommonListFilterReq `c:",omitempty"`
+	apiCommon.CommonListFilterReq `c:",omitempty"`
 	// 下面根据自己需求修改
 	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 	SceneId     *uint  `c:"sceneId,omitempty" p:"sceneId" v:"min:1"`

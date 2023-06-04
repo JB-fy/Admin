@@ -12,6 +12,10 @@ import (
 )
 
 type (
+	IMenu interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [2]string, offset int, limit int) (list gdb.Result, err error)
+	}
 	IScene interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [2]string, offset int, limit int) (list gdb.Result, err error)
@@ -20,7 +24,19 @@ type (
 
 var (
 	localScene IScene
+	localMenu  IMenu
 )
+
+func Menu() IMenu {
+	if localMenu == nil {
+		panic("implement not found for interface IMenu, forgot register?")
+	}
+	return localMenu
+}
+
+func RegisterMenu(i IMenu) {
+	localMenu = i
+}
 
 func Scene() IScene {
 	if localScene == nil {
