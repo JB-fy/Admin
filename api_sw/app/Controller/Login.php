@@ -98,7 +98,7 @@ class Login extends AbstractController
                     'menuTree',
                     'showMenu'
                 ];
-                $this->container->get(Menu::class)->tree($field, $filter);
+                $this->container->get(Menu::class)->tree($filter, $field);
                 break;
         }
     }

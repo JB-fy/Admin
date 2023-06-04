@@ -115,11 +115,11 @@ class Menu extends AbstractService
     /**
      * 获取树状权限菜单
      *
-     * @param array $field
      * @param array $filter
+     * @param array $field
      * @return void
      */
-    public function tree(array $field = [], array $filter = [])
+    public function tree(array $filter = [], array $field = [])
     {
         $list = $this->getDao()->parseField($field)->parseFilter($filter)->list();
 

@@ -13,6 +13,7 @@ class Common extends AbstractValidation
         'filter.*' => 'sometimes|required',
         'sort' => 'sometimes|required_if_null|array',
         'sort.key' => 'sometimes|required',
+        //'sort.order' => 'required_with:sort.key|in:asc,desc,ASC,DESC',
         'sort.order' => 'sometimes|required|in:asc,desc,ASC,DESC',
         'page' => 'sometimes|required|integer|min:1',
         'limit' => 'sometimes|required|integer|min:0',

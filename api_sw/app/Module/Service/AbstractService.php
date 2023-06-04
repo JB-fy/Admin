@@ -36,14 +36,14 @@ abstract class AbstractService
     /**
      * 列表（通用。需要特殊处理的，子类重新定义即可）
      * 
-     * @param array $field
      * @param array $filter
+     * @param array $field
      * @param array $order
      * @param integer $page
      * @param integer $limit
      * @return void
      */
-    public function list(array $field = [], array $filter = [], array $order = [], int $page = 1, int $limit = 10)
+    public function list(array $filter = [], array $field = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $dao = $this->getDao();
         $dao->parseFilter($filter);
@@ -58,7 +58,7 @@ abstract class AbstractService
         throwSuccessJson(['list' => $list]);
     }
     /* //重新定义示例
-    public function list(array $field = [], array $filter = [], array $order = [], int $page = 1, int $limit = 10)
+    public function list(array $filter = [], array $field = [], array $order = [], int $page = 1, int $limit = 10)
     {
         try {
             parent::list(...func_get_args());
@@ -73,14 +73,14 @@ abstract class AbstractService
     /**
      * 列表，带总数（通用。需要特殊处理的，子类重新定义即可）
      * 
-     * @param array $field
      * @param array $filter
+     * @param array $field
      * @param array $order
      * @param integer $page
      * @param integer $limit
      * @return void
      */
-    public function listWithCount(array $field = [], array $filter = [], array $order = [], int $page = 1, int $limit = 10)
+    public function listWithCount(array $filter = [], array $field = [], array $order = [], int $page = 1, int $limit = 10)
     {
         $offset = ($page - 1) * $limit;
         $dao = $this->getDao();

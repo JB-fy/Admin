@@ -70,7 +70,7 @@ abstract class AbstractController
                     $data =  $this->container->get(\App\Module\Validation\Common::class)->make($data, $funcName)->validate();
                     !isset($data['page']) ?: $data['page'] = (int)$data['page'];
                     !isset($data['limit']) ?: $data['limit'] = (int)$data['limit'];
-                    !isset($data['sort']) ?: $data['order'] = [$data['sort']['key']=>$data['sort']['order']];
+                    !isset($data['sort']) ?: $data['order'] = [$data['sort']['key']=>$data['sort']['order']??'desc'];
                     unset($data['sort']);
                     if (!empty($data['filter'])) {
                         $data['filter'] = $this->validation->make($data['filter'], $sceneName)->validate();
