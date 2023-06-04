@@ -8,12 +8,7 @@ type ReqSceneList struct {
 }
 
 type ReqSceneListFilter struct {
-	Id        *uint  `c:"id,omitempty" p:"id" v:"min:1"`
-	IdArr     []uint `c:"idArr,omitempty" p:"idArr" v:"foreach|min:1"`
-	ExcId     *uint  `c:"excId,omitempty" p:"excId" v:"min:1"`
-	ExcIdArr  []uint `c:"excIdArr,omitempty" p:"excIdArr" v:"foreach|min:1"`
-	StartTime string `c:"startTime,omitempty" p:"startTime" v:"date-format:Y-m-d H:i:s"`
-	EndTime   string `c:"endTime,omitempty" p:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime"`
+	api.ReqCommonListFilter `c:",omitempty"`
 	// 下面根据自己需求修改
 	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 	SceneId     *uint  `c:"sceneId,omitempty" p:"sceneId" v:"min:1"`
