@@ -1,8 +1,8 @@
 package api
 
 type ReqSceneList struct {
-	Field  []string           `p:"field"  v:"foreach|min-length:1"`
 	Filter ReqSceneListFilter `p:"filter"  v:""`
+	Field  []string           `p:"field"  v:"foreach|min-length:1"`
 	Order  []string           `p:"order"  v:""`
 	Page   uint               `p:"page"  v:"min:1"`
 	Limit  uint               `p:"limit"  v:""` //传0取全部

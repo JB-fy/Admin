@@ -21,10 +21,20 @@ func (c *Scene) List(r *ghttp.Request) {
 	var param *api.ReqSceneList
 	err := r.Parse(&param)
 	if err != nil {
-		fmt.Println(err)
 		r.Response.Writeln(err.Error())
 		return
 	}
+	filter := gconv.Map(param.Filter) //条件过滤
+	if len(param.Order) == 0 {
+		param.Order = []string{"id", "DESC"}
+	}
+	if param.Page <= 0 {
+		param.Page = 1
+	}
+	if param.Limit <= 0 {
+		param.Limit = 10
+	}
+
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	fmt.Println(sceneCode)
 	switch sceneCode {
@@ -38,9 +48,6 @@ func (c *Scene) List(r *ghttp.Request) {
 		// }
 		// $data['field'] = empty($data['field']) ? $allowField : array_intersect($data['field'], $allowField);
 		// /**--------参数处理 结束--------**/
-		fmt.Println(*param.Filter.SceneId)
-		filter := gconv.Map(param.Filter) //条件过滤
-		fmt.Println(filter)
 		count, err := service.Scene().Count(r.Context(), filter)
 		list, err := service.Scene().List(r.Context(), filter, param.Field, [2]string{}, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
