@@ -28,8 +28,8 @@ type CommonInfoReq struct {
 	Field []string `p:"field" v:"foreach|min-length:1"`
 }
 
-type CommonDeleteReq struct {
-	IdArr []uint `c:"id,omitempty" p:"idArr" v:"required|foreach|min:1"`
+type CommonUpdateDeleteIdArrReq struct {
+	IdArr []uint `c:"idArr,omitempty" p:"idArr" v:"required|foreach|min:1"`
 }
 
 type TestMetaReq struct {

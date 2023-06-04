@@ -20,13 +20,14 @@ func NewMenu() *Menu {
 
 // 列表
 func (c *Menu) List(r *ghttp.Request) {
+	/**--------参数处理 开始--------**/
 	var param *apiAuth.MenuListReq
 	err := r.Parse(&param)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
 	}
-	filter := gconv.Map(param.Filter) //条件过滤
+	filter := gconv.Map(param.Filter)
 	order := [][2]string{{"id", "DESC"}}
 	if param.Sort.Key != "" {
 		order[0][0] = param.Sort.Key
@@ -40,13 +41,14 @@ func (c *Menu) List(r *ghttp.Request) {
 	if param.Limit <= 0 {
 		param.Limit = 10
 	}
+	/**--------参数处理 结束--------**/
 
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
+		/**--------权限验证 开始--------**/
 		//isAuth, _ := $this->checkAuth(__FUNCTION__, $sceneCode, false);
 		isAuth := true
-		/**--------参数处理 开始--------**/
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()
@@ -60,7 +62,8 @@ func (c *Menu) List(r *ghttp.Request) {
 				field = allowField
 			}
 		}
-		/**--------参数处理 结束--------**/
+		/**--------权限验证 结束--------**/
+
 		count, err := service.Menu().Count(r.Context(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
@@ -88,6 +91,7 @@ func (c *Menu) Info(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
+		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuInfoReq
 		err := r.Parse(&param)
 		if err != nil {
@@ -95,12 +99,6 @@ func (c *Menu) Info(r *ghttp.Request) {
 			return
 		}
 
-		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
-		if err != nil {
-			r.Response.Writeln(err.Error())
-			return
-		}
-		/**--------参数处理 开始--------**/
 		allowField := daoAuth.Menu.ColumnArr()
 		allowField = append(allowField, "id")
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
@@ -111,8 +109,18 @@ func (c *Menu) Info(r *ghttp.Request) {
 				field = allowField
 			}
 		}
+		filter := map[string]interface{}{"id": param.Id}
 		/**--------参数处理 结束--------**/
-		info, err := service.Menu().Info(r.Context(), map[string]interface{}{"id": param.Id}, field, [][2]string{})
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		info, err := service.Menu().Info(r.Context(), filter, field, [][2]string{})
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return
@@ -126,22 +134,95 @@ func (c *Menu) Create(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
+		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuCreateReq
 		err := r.Parse(&param)
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
 		}
+		data := gconv.Map(param)
+		/**--------参数处理 结束--------**/
 
+		/**--------权限验证 开始--------**/
 		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
 		}
+		/**--------权限验证 结束--------**/
+
+		_, err = service.Menu().Create(r.Context(), []map[string]interface{}{data})
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+	}
+}
+
+// 更新
+func (c *Menu) Update(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
 		/**--------参数处理 开始--------**/
-		insert := gconv.Map(param) //条件过滤
+		var param *apiAuth.MenuUpdateReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		data := gconv.Map(param)
+		delete(data, "idArr")
+		if len(data) == 0 {
+			utils.HttpFailJson(r, 89999999, "", map[string]interface{}{})
+			return
+		}
+		filter := map[string]interface{}{"id": param.IdArr}
 		/**--------参数处理 结束--------**/
-		_, err = service.Menu().Create(r.Context(), []map[string]interface{}{insert})
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		_, err = service.Menu().Update(r.Context(), data, filter, [][2]string{}, 0, 0)
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+	}
+}
+
+// 删除
+func (c *Menu) Delete(r *ghttp.Request) {
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		/**--------参数处理 开始--------**/
+		var param *apiAuth.MenuDeleteReq
+		err := r.Parse(&param)
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		filter := map[string]interface{}{"id": param.IdArr}
+		/**--------参数处理 结束--------**/
+
+		/**--------权限验证 开始--------**/
+		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		if err != nil {
+			r.Response.Writeln(err.Error())
+			return
+		}
+		/**--------权限验证 结束--------**/
+
+		_, err = service.Menu().Delete(r.Context(), filter, [][2]string{}, 0, 0)
 		if err != nil {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return
