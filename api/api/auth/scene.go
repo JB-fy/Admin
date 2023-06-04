@@ -22,11 +22,10 @@ type SceneListReq struct {
 type SceneListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
 	// 下面根据自己需求修改
-	IsStop      *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
-	SceneId     *uint  `c:"sceneId,omitempty" p:"sceneId" v:"min:1"`
-	SceneName   string `c:"sceneName,omitempty" p:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneCode   string `c:"sceneCode,omitempty" p:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneConfig string `c:"sceneConfig,omitempty" p:"sceneConfig" v:"json"`
+	SceneId   *uint  `c:"sceneId,omitempty" p:"sceneId" v:"min:1"`
+	SceneCode string `c:"sceneCode,omitempty" p:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneName string `c:"sceneName,omitempty" p:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	IsStop    *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 }
 
 type SceneInfoReq struct {
@@ -34,15 +33,17 @@ type SceneInfoReq struct {
 }
 
 type SceneCreateReq struct {
-	SceneName string `c:"sceneName,omitempty" p:"sceneName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Sort      *uint  `c:"sort,omitempty" p:"sort" v:"between:0,100"`
-	IsStop    *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
+	SceneCode   *string `c:"sceneCode,omitempty" p:"sceneCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneName   *string `c:"sceneName,omitempty" p:"sceneName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneConfig *string `c:"sceneConfig,omitempty" p:"sceneConfig" v:"json"`
+	IsStop      *uint   `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 }
 
 type SceneUpdateReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	SceneCode                            *string `c:"sceneCode,omitempty" p:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	SceneName                            *string `c:"sceneName,omitempty" p:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Sort                                 *uint   `c:"sort,omitempty" p:"sort" v:"between:0,100"`
+	SceneConfig                          *string `c:"sceneConfig,omitempty" p:"sceneConfig" v:"json"`
 	IsStop                               *uint   `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 }
 

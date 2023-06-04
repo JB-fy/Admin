@@ -38,9 +38,9 @@ type MenuInfoReq struct {
 }
 
 type MenuCreateReq struct {
-	SceneId   uint    `c:"sceneId,omitempty" p:"sceneId" v:"required|min:1"`
+	SceneId   *uint   `c:"sceneId,omitempty" p:"sceneId" v:"required|min:1"`
 	Pid       *uint   `c:"sceneId,omitempty" p:"sceneId" v:"min:0"`
-	MenuName  string  `c:"menuName,omitempty" p:"menuName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	MenuName  *string `c:"menuName,omitempty" p:"menuName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	MenuIcon  *string `c:"menuIcon,omitempty" p:"menuIcon" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	MenuUrl   *string `c:"menuUrl,omitempty" p:"menuUrl" v:"length:1,120"`
 	ExtraData *string `c:"extraData,omitempty" p:"extraData" v:"json"`
