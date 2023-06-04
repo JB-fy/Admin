@@ -33,7 +33,7 @@ func (logic *sScene) Count(ctx context.Context, filter map[string]interface{}) (
 	return
 }
 
-func (logic *sScene) List(ctx context.Context, filter map[string]interface{}, field []string, order [2]string, offset int, limit int) (list gdb.Result, err error) {
+func (logic *sScene) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoScene := dao.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)
@@ -44,7 +44,7 @@ func (logic *sScene) List(ctx context.Context, filter map[string]interface{}, fi
 		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoScene.ParseOrder([][2]string{order}, &joinCodeArr))
+		model = model.Handler(daoScene.ParseOrder(order, &joinCodeArr))
 	}
 	if len(joinCodeArr) > 0 {
 		model = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinCodeArr))

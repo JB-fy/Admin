@@ -33,7 +33,7 @@ func (logic *sMenu) Count(ctx context.Context, filter map[string]interface{}) (c
 	return
 }
 
-func (logic *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [2]string, offset int, limit int) (list gdb.Result, err error) {
+func (logic *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoMenu := dao.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)
@@ -44,7 +44,7 @@ func (logic *sMenu) List(ctx context.Context, filter map[string]interface{}, fie
 		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoMenu.ParseOrder([][2]string{order}, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseOrder(order, &joinCodeArr))
 	}
 	if len(joinCodeArr) > 0 {
 		model = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinCodeArr))

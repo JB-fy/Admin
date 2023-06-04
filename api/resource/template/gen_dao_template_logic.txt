@@ -33,7 +33,7 @@ func (logic *s{TplTableNameCamelCase}) Count(ctx context.Context, filter map[str
 	return
 }
 
-func (logic *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[string]interface{}, field []string, order [2]string, offset int, limit int) (list gdb.Result, err error) {
+func (logic *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	dao{TplTableNameCamelCase} := dao.{TplTableNameCamelCase}
 	joinCodeArr := []string{}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)
@@ -44,7 +44,7 @@ func (logic *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[stri
 		model = model.Handler(dao{TplTableNameCamelCase}.ParseFilter(filter, &joinCodeArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseOrder([][2]string{order}, &joinCodeArr))
+		model = model.Handler(dao{TplTableNameCamelCase}.ParseOrder(order, &joinCodeArr))
 	}
 	if len(joinCodeArr) > 0 {
 		model = model.Handler(dao{TplTableNameCamelCase}.ParseGroup([]string{"id"}, &joinCodeArr))

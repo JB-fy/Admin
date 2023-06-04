@@ -26,12 +26,12 @@ func (c *Menu) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter) //条件过滤
-	order := [2]string{"id", "DESC"}
+	order := [][2]string{{"id", "DESC"}}
 	if param.Sort.Key != "" {
-		order[0] = param.Sort.Key
+		order[0][0] = param.Sort.Key
 	}
 	if param.Sort.Order != "" {
-		order[1] = param.Sort.Order
+		order[0][1] = param.Sort.Order
 	}
 	if param.Page <= 0 {
 		param.Page = 1
