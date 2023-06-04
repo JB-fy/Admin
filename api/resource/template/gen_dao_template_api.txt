@@ -3,7 +3,7 @@ package api
 import "api/api"
 
 type Req{TplTableNameCamelCase}List struct {
-	Filter Req{TplTableNameCamelCase}ListFilter `p:"filter"  v:""`
+	Filter Req{TplTableNameCamelCase}ListFilter `p:"filter"`
 	api.ReqCommonList
 }
 

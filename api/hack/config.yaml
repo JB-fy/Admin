@@ -20,7 +20,7 @@ gfcli:
         tables: "auth_scene"  #设置哪些表要生成
         daoPath: "controller/auth"
         tplDaoIndexPath: "resource/template/gen_dao_template_controller.txt"
-        tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
+        # tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
         doPath: "logic/auth"
         tplDaoDoPath: "resource/template/gen_dao_template_logic.txt"
         entityPath: "../api/auth"

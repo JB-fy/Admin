@@ -1,6 +1,0 @@
-package api
-
-type Req{TplTableNameCamelCase}ListFilter struct {
-	{TplColumnDefine}
-	/* {TplColumnNames} */
-}
