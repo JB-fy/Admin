@@ -47,8 +47,7 @@ func (cScene *Scene) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		//isAuth, _ := $this->checkAuth(__FUNCTION__, $sceneCode, false);
-		isAuth := true
+		isAuth, _ := service.Action().CheckAuth(r.Context(), "authSceneLook", sceneCode)
 		allowField := []string{"sceneId", "sceneName", "id"}
 		if isAuth {
 			allowField = daoAuth.Scene.ColumnArr()
@@ -113,7 +112,7 @@ func (cScene *Scene) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneLook", sceneCode)
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
@@ -145,7 +144,7 @@ func (cScene *Scene) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneCreate", sceneCode)
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
@@ -183,7 +182,7 @@ func (cScene *Scene) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneUpdate", sceneCode)
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
@@ -215,7 +214,7 @@ func (cScene *Scene) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		//isAuth, err := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneDelete", sceneCode)
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
