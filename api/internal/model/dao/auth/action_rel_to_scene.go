@@ -119,14 +119,26 @@ func (daoActionRelToScene *actionRelToSceneDao) ParseFilter(filter map[string]in
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id":
+			case "id", "idArr":
 				m = m.Where(daoActionRelToScene.Table()+"."+daoActionRelToScene.PrimaryKey(), v)
 			case "excId":
 				m = m.WhereNot(daoActionRelToScene.Table()+"."+daoActionRelToScene.PrimaryKey(), v)
+			case "excIdArr":
+				m = m.WhereNotIn(daoActionRelToScene.Table()+"."+daoActionRelToScene.PrimaryKey(), v)
 			case "startTime":
 				m = m.WhereGTE(daoActionRelToScene.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoActionRelToScene.Table()+".createTime", v)
+			case "keyword":
+				keywordField := strings.ReplaceAll(daoActionRelToScene.PrimaryKey(), "Id", "Name")
+				switch v := v.(type) {
+				case *string:
+					m = m.WhereLike(daoActionRelToScene.Table()+"."+keywordField, *v)
+				case string:
+					m = m.WhereLike(daoActionRelToScene.Table()+"."+keywordField, v)
+				default:
+					m = m.Where(daoActionRelToScene.Table()+"."+keywordField, v)
+				}
 			default:
 				kArr := strings.Split(k, " ")
 				if daoActionRelToScene.ColumnArrG().Contains(kArr[0]) {

@@ -119,14 +119,26 @@ func (daoRoleRelToMenu *roleRelToMenuDao) ParseFilter(filter map[string]interfac
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id":
+			case "id", "idArr":
 				m = m.Where(daoRoleRelToMenu.Table()+"."+daoRoleRelToMenu.PrimaryKey(), v)
 			case "excId":
 				m = m.WhereNot(daoRoleRelToMenu.Table()+"."+daoRoleRelToMenu.PrimaryKey(), v)
+			case "excIdArr":
+				m = m.WhereNotIn(daoRoleRelToMenu.Table()+"."+daoRoleRelToMenu.PrimaryKey(), v)
 			case "startTime":
 				m = m.WhereGTE(daoRoleRelToMenu.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoRoleRelToMenu.Table()+".createTime", v)
+			case "keyword":
+				keywordField := strings.ReplaceAll(daoRoleRelToMenu.PrimaryKey(), "Id", "Name")
+				switch v := v.(type) {
+				case *string:
+					m = m.WhereLike(daoRoleRelToMenu.Table()+"."+keywordField, *v)
+				case string:
+					m = m.WhereLike(daoRoleRelToMenu.Table()+"."+keywordField, v)
+				default:
+					m = m.Where(daoRoleRelToMenu.Table()+"."+keywordField, v)
+				}
 			default:
 				kArr := strings.Split(k, " ")
 				if daoRoleRelToMenu.ColumnArrG().Contains(kArr[0]) {

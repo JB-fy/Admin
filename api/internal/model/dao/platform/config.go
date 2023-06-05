@@ -119,14 +119,26 @@ func (daoConfig *configDao) ParseFilter(filter map[string]interface{}, joinCodeA
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id":
+			case "id", "idArr":
 				m = m.Where(daoConfig.Table()+"."+daoConfig.PrimaryKey(), v)
 			case "excId":
 				m = m.WhereNot(daoConfig.Table()+"."+daoConfig.PrimaryKey(), v)
+			case "excIdArr":
+				m = m.WhereNotIn(daoConfig.Table()+"."+daoConfig.PrimaryKey(), v)
 			case "startTime":
 				m = m.WhereGTE(daoConfig.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoConfig.Table()+".createTime", v)
+			case "keyword":
+				keywordField := strings.ReplaceAll(daoConfig.PrimaryKey(), "Id", "Name")
+				switch v := v.(type) {
+				case *string:
+					m = m.WhereLike(daoConfig.Table()+"."+keywordField, *v)
+				case string:
+					m = m.WhereLike(daoConfig.Table()+"."+keywordField, v)
+				default:
+					m = m.Where(daoConfig.Table()+"."+keywordField, v)
+				}
 			default:
 				kArr := strings.Split(k, " ")
 				if daoConfig.ColumnArrG().Contains(kArr[0]) {

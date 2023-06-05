@@ -119,14 +119,26 @@ func (daoScene *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id":
+			case "id", "idArr":
 				m = m.Where(daoScene.Table()+"."+daoScene.PrimaryKey(), v)
 			case "excId":
 				m = m.WhereNot(daoScene.Table()+"."+daoScene.PrimaryKey(), v)
+			case "excIdArr":
+				m = m.WhereNotIn(daoScene.Table()+"."+daoScene.PrimaryKey(), v)
 			case "startTime":
 				m = m.WhereGTE(daoScene.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoScene.Table()+".createTime", v)
+			case "keyword":
+				keywordField := strings.ReplaceAll(daoScene.PrimaryKey(), "Id", "Name")
+				switch v := v.(type) {
+				case *string:
+					m = m.WhereLike(daoScene.Table()+"."+keywordField, *v)
+				case string:
+					m = m.WhereLike(daoScene.Table()+"."+keywordField, v)
+				default:
+					m = m.Where(daoScene.Table()+"."+keywordField, v)
+				}
 			default:
 				kArr := strings.Split(k, " ")
 				if daoScene.ColumnArrG().Contains(kArr[0]) {

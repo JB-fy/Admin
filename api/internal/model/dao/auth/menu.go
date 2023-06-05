@@ -136,14 +136,14 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinCodeArr *
 			case "endTime":
 				m = m.WhereLTE(daoMenu.Table()+".createTime", v)
 			case "keyword":
-				field := strings.ReplaceAll(daoMenu.PrimaryKey(), "Id", "Name")
+				keywordField := strings.ReplaceAll(daoMenu.PrimaryKey(), "Id", "Name")
 				switch v := v.(type) {
 				case *string:
-					m = m.WhereLike(daoMenu.Table()+"."+field, *v)
+					m = m.WhereLike(daoMenu.Table()+"."+keywordField, *v)
 				case string:
-					m = m.WhereLike(daoMenu.Table()+"."+field, v)
+					m = m.WhereLike(daoMenu.Table()+"."+keywordField, v)
 				default:
-					m = m.Where(daoMenu.Table()+"."+field, v)
+					m = m.Where(daoMenu.Table()+"."+keywordField, v)
 				}
 			default:
 				kArr := strings.Split(k, " ")
