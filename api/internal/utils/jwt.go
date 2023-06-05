@@ -9,26 +9,28 @@ import (
 
 type JWT struct {
 	SigningKey []byte
+	ExpireTime uint
 }
 
-func NewJWT() *JWT {
+func NewPlatformAdminJWT() *JWT {
 	return &JWT{
-		//[]byte(global.GVA_CONFIG.JWT.SigningKey),
+		SigningKey: []byte("123456"),
+		ExpireTime: 2 * 60 * 60,
 	}
 }
 
 type CustomClaims struct {
 	LoginId  uint   `json:"loginId"`
 	Account  string `json:"account"`
-	NickName string `json:"nickName"`
+	Nickname string `json:"nickname"`
 	jwt.RegisteredClaims
 }
 
 // 创建一个token
 func (j *JWT) CreateToken(claims CustomClaims) (tokenString string, err error) {
-	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(2 * time.Hour)) // 过期时间2小时
-	claims.IssuedAt = jwt.NewNumericDate(time.Now())                     // 签发时间
-	claims.NotBefore = jwt.NewNumericDate(time.Now())                    // 生效时间
+	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(j.ExpireTime) * time.Second)) // 过期时间
+	claims.IssuedAt = jwt.NewNumericDate(time.Now())                                                 // 签发时间
+	claims.NotBefore = jwt.NewNumericDate(time.Now())                                                // 生效时间
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err = token.SignedString(j.SigningKey)
 	return

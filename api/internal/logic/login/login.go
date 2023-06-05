@@ -26,7 +26,6 @@ func init() {
 func (logicThis *sLogin) EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error) {
 	encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
 	encryptStr = utils.RandomStr(8)
-	fmt.Println(encryptStr)
 	g.Redis().SetEX(ctx, encryptStrKey, encryptStr, 5)
 	return
 }
@@ -53,18 +52,17 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 		}
 		/**--------验证账号密码 结束--------**/
 
-		/* $payload = [
-		       'id' => $info->adminId
-		   ];
-		   $jwt = make($sceneCode . 'Jwt');
-		   $token = $jwt->createToken($payload);
-
-		   //缓存token（选做。限制多地登录，多设备登录等情况下可用）
-		   $cacheLogin = getCache(CacheLogin::class);
-		   $cacheLogin->setTokenKey($payload['id'], $sceneCode);
-		   $cacheLogin->setToken($token, $jwt->getConfig()['expireTime']);
-
-		   throwSuccessJson(['token' => $token]); */
+		claims := utils.CustomClaims{
+			LoginId:  info["adminId"].Uint(),
+			Account:  info["account"].String(),
+			Nickname: info["nickname"].String(),
+		}
+		jwt := utils.NewPlatformAdminJWT()
+		token, err = jwt.CreateToken(claims)
+		/* //缓存token（选做。限制多地登录，多设备登录等情况下可用）
+		TokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.Account)
+		g.Redis().SetEX(ctx, TokenKey, token, int64(jwt.ExpireTime)) */
+		return
 	}
 	return
 }
