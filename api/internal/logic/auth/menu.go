@@ -144,3 +144,9 @@ func (logicMenu *sMenu) Delete(ctx context.Context, filter map[string]interface{
 	row, err = result.RowsAffected()
 	return
 }
+
+// 菜单树
+func (logicMenu *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (row int64, err error) {
+
+	return
+}

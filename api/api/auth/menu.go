@@ -48,3 +48,8 @@ type MenuUpdateReq struct {
 type MenuDeleteReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq
 }
+
+type MenuTreeReq struct {
+	Field  []string          `p:"field" v:"foreach|min-length:1"`
+	Filter MenuListFilterReq `p:"filter"`
+}

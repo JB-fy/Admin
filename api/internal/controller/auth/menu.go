@@ -52,7 +52,7 @@ func (cMenu *Menu) List(r *ghttp.Request) {
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()
-			allowField = append(allowField, "id")
+			allowField = append(allowField, "id", "sceneName", "pMenuName")
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
 		field := allowField
@@ -228,5 +228,59 @@ func (cMenu *Menu) Delete(r *ghttp.Request) {
 			return
 		}
 		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+	}
+}
+
+// 菜单树
+func (cMenu *Menu) Tree(r *ghttp.Request) {
+	/**--------参数处理 开始--------**/
+	var param *apiAuth.MenuTreeReq
+	err := r.Parse(&param)
+	if err != nil {
+		r.Response.Writeln(err.Error())
+		return
+	}
+	filter := gconv.Map(param.Filter)
+	/**--------参数处理 结束--------**/
+
+	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	switch sceneCode {
+	case "platformAdmin":
+		/**--------权限验证 开始--------**/
+		//isAuth, _ := $this->checkAuth(__FUNCTION__, $sceneCode, false);
+		isAuth := true
+		allowField := []string{"menuId", "menuName", "id"}
+		if isAuth {
+			allowField = daoAuth.Menu.ColumnArr()
+			allowField = append(allowField, "id", "sceneName", "pMenuName")
+			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		}
+		field := allowField
+		if len(param.Field) > 0 {
+			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+			if len(field) == 0 {
+				field = allowField
+			}
+		}
+
+		filter["isStop"] = 0              //补充条件
+		field = append(field, "menuTree") //补充字段（树状菜单所需）
+		/**--------权限验证 结束--------**/
+
+		list, err := service.Menu().List(r.Context(), filter, field, [][2]string{}, 0, 0)
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		service.Menu().Tree(r.Context(), list, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{"tree": list}, 0, "")
+		/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
+		r.Response.WriteJson(map[string]interface{}{
+			"code": 0,
+			"msg":  g.I18n().Tf(r.GetCtx(), "0"),
+			"data": map[string]interface{}{
+				"list": list,
+			},
+		}) */
 	}
 }
