@@ -9,7 +9,6 @@ import (
 	"context"
 	"strings"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 )
@@ -95,6 +94,9 @@ func (daoRole *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
+			/* case "xxxx":
+			m = daoRole.ParseJoin("xxxx", joinTableArr)(m)
+			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoRole.Table() + "." + daoRole.PrimaryKey() + " AS " + v)
 			case "sceneName":
@@ -200,12 +202,15 @@ func (daoRole *roleDao) ParseOrder(order [][2]string, joinTableArr *[]string) fu
 // 解析join
 func (daoRole *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-			*joinTableArr = append(*joinTableArr, joinCode)
-			switch joinCode {
-			case "scene":
-				m = m.LeftJoin(Scene.Table(), Scene.Table()+"."+Scene.PrimaryKey()+" = "+daoRole.Table()+"."+Scene.PrimaryKey())
-			}
+		switch joinCode {
+		/* case "xxxx":
+		xxxxTable := xxxx.Table()
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
+			*joinTableArr = append(*joinTableArr, xxxxTable)
+			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoRole.PrimaryKey()+" = "+daoRole.Table()+"."+daoRole.PrimaryKey())
+		} */
+		case "scene":
+			m = m.LeftJoin(Scene.Table(), Scene.Table()+"."+Scene.PrimaryKey()+" = "+daoRole.Table()+"."+Scene.PrimaryKey())
 		}
 		return m
 	}

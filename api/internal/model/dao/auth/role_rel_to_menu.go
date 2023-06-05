@@ -9,7 +9,6 @@ import (
 	"context"
 	"strings"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
@@ -193,12 +192,13 @@ func (daoRoleRelToMenu *roleRelToMenuDao) ParseOrder(order [][2]string, joinTabl
 // 解析join
 func (daoRoleRelToMenu *roleRelToMenuDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-			*joinTableArr = append(*joinTableArr, joinCode)
-			switch joinCode {
-			/* case "xxxx":
-			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+daoRoleRelToMenu.Table()+"."+xxxx.PrimaryKey()) */
-			}
+		switch joinCode {
+		/* case "xxxx":
+		xxxxTable := xxxx.Table()
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
+			*joinTableArr = append(*joinTableArr, xxxxTable)
+			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoRoleRelToMenu.PrimaryKey()+" = "+daoRoleRelToMenu.Table()+"."+daoRoleRelToMenu.PrimaryKey())
+		} */
 		}
 		return m
 	}

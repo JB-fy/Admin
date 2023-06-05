@@ -248,42 +248,41 @@ func (daoMenu *menuDao) ParseOrder(order [][2]string, joinTableArr *[]string) fu
 // 解析join
 func (daoMenu *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		joinTableArrG := garray.NewStrArrayFrom(*joinTableArr)
 		switch joinCode {
 		/* case "xxxx":
 		xxxxTable := xxxx.Table()
-		if !joinTableArrG.Contains(xxxxTable) {
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
 			*joinTableArr = append(*joinTableArr, xxxxTable)
 			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoMenu.PrimaryKey()+" = "+daoMenu.Table()+"."+daoMenu.PrimaryKey())
 		} */
 		case "scene":
 			sceneTable := Scene.Table()
-			if !joinTableArrG.Contains(sceneTable) {
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(sceneTable) {
 				*joinTableArr = append(*joinTableArr, sceneTable)
 				m = m.LeftJoin(sceneTable, sceneTable+"."+Scene.PrimaryKey()+" = "+daoMenu.Table()+"."+Scene.PrimaryKey())
 			}
 		case "pMenu":
 			pMenuTable := "p_" + daoMenu.Table()
-			if !joinTableArrG.Contains(pMenuTable) {
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(pMenuTable) {
 				*joinTableArr = append(*joinTableArr, pMenuTable)
 				m = m.LeftJoin(daoMenu.Table()+" AS "+pMenuTable, pMenuTable+"."+daoMenu.PrimaryKey()+" = "+daoMenu.Table()+".pid")
 			}
 		case "roleRelToMenu":
 			roleRelToMenuTable := RoleRelToMenu.Table()
-			if !joinTableArrG.Contains(roleRelToMenuTable) {
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelToMenuTable) {
 				*joinTableArr = append(*joinTableArr, roleRelToMenuTable)
 				m = m.LeftJoin(roleRelToMenuTable, roleRelToMenuTable+"."+daoMenu.PrimaryKey()+" = "+daoMenu.Table()+"."+daoMenu.PrimaryKey())
 			}
 		case "role":
 			roleTable := Role.Table()
-			if !joinTableArrG.Contains(roleTable) {
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleTable) {
 				*joinTableArr = append(*joinTableArr, roleTable)
 				roleRelToMenuTable := RoleRelToMenu.Table()
 				m = m.LeftJoin(roleTable, roleTable+"."+Role.PrimaryKey()+" = "+roleRelToMenuTable+"."+Role.PrimaryKey())
 			}
 		case "roleRelOfPlatformAdmin":
 			roleRelOfPlatformAdminTable := RoleRelOfPlatformAdmin.Table()
-			if !joinTableArrG.Contains(roleRelOfPlatformAdminTable) {
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
 				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
 				roleRelToMenuTable := RoleRelToMenu.Table()
 				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+"."+Role.PrimaryKey()+" = "+roleRelToMenuTable+"."+Role.PrimaryKey())

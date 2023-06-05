@@ -192,11 +192,10 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseOrder(or
 // 解析join
 func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		joinTableArrG := garray.NewStrArrayFrom(*joinTableArr)
 		switch joinCode {
 		/* case "xxxx":
 		xxxxTable := xxxx.Table()
-		if !joinTableArrG.Contains(xxxxTable) {
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
 			*joinTableArr = append(*joinTableArr, xxxxTable)
 			m = m.LeftJoin(xxxxTable, xxxxTable+"."+dao{TplTableNameCamelCase}.PrimaryKey()+" = "+dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey())
 		} */
