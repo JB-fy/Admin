@@ -73,7 +73,7 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 						"/create": controllerThis.Create,
 						"/update": controllerThis.Update,
 						"/del":    controllerThis.Delete,
-						"/tree":   controllerThis.List,
+						"/tree":   controllerThis.Tree,
 					})
 				})
 				group.Group("/auth/role", func(group *ghttp.RouterGroup) {

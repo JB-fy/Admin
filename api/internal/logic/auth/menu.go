@@ -5,6 +5,7 @@ import (
 	"api/internal/service"
 	"context"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
@@ -145,8 +146,19 @@ func (logicMenu *sMenu) Delete(ctx context.Context, filter map[string]interface{
 	return
 }
 
+/* func (logicMenu *sMenu) Tree(ctx context.Context, filter map[string]interface{}, field []string) (row int64, err error) {
+	list, err := logicMenu.List(ctx, filter, field, [][2]string{}, 0, 0)
+	return
+} */
 // 菜单树
-func (logicMenu *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (row int64, err error) {
-
+func (logicMenu *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error) {
+	for _, v := range list {
+		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
+		if v["pid"].Int() == menuId {
+			children, _ := logicMenu.Tree(ctx, list, v["menuId"].Int())
+			v["children"] = gvar.New(children)
+			tree = append(tree, v)
+		}
+	}
 	return
 }

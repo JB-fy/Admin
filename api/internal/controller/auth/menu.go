@@ -241,6 +241,9 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
+	if filter == nil {
+		filter = map[string]interface{}{}
+	}
 	/**--------参数处理 结束--------**/
 
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
@@ -264,7 +267,7 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 		}
 
 		filter["isStop"] = 0              //补充条件
-		field = append(field, "menuTree") //补充字段（树状菜单所需）
+		field = append(field, "menuTree") //补充字段（菜单树所需）
 		/**--------权限验证 结束--------**/
 
 		list, err := service.Menu().List(r.Context(), filter, field, [][2]string{}, 0, 0)
@@ -272,8 +275,12 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
 			return
 		}
-		service.Menu().Tree(r.Context(), list, 0)
-		utils.HttpSuccessJson(r, map[string]interface{}{"tree": list}, 0, "")
+		tree, err := service.Menu().Tree(r.Context(), list, 0)
+		if err != nil {
+			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{"tree": tree}, 0, "")
 		/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 0,
