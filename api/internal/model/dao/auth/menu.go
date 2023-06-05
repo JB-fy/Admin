@@ -125,14 +125,26 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinCodeArr *
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id":
+			case "id", "idArr":
 				m = m.Where(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
 			case "excId":
 				m = m.WhereNot(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
+			case "excIdArr":
+				m = m.WhereNotIn(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
 			case "startTime":
 				m = m.WhereGTE(daoMenu.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoMenu.Table()+".createTime", v)
+			case "keyword":
+				field := strings.ReplaceAll(daoMenu.PrimaryKey(), "Id", "Name")
+				switch v := v.(type) {
+				case *string:
+					m = m.WhereLike(daoMenu.Table()+"."+field, *v)
+				case string:
+					m = m.WhereLike(daoMenu.Table()+"."+field, v)
+				default:
+					m = m.Where(daoMenu.Table()+"."+field, v)
+				}
 			default:
 				kArr := strings.Split(k, " ")
 				if daoMenu.ColumnArrG().Contains(kArr[0]) {
