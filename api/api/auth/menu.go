@@ -5,8 +5,8 @@ import (
 )
 
 type MenuListReq struct {
-	apiCommon.CommonListReq `c:",omitempty"`
-	Filter                  MenuListFilterReq `p:"filter"`
+	apiCommon.CommonListReq
+	Filter MenuListFilterReq `p:"filter"`
 }
 
 type MenuListFilterReq struct {
@@ -19,7 +19,7 @@ type MenuListFilterReq struct {
 }
 
 type MenuInfoReq struct {
-	apiCommon.CommonInfoReq `c:",omitempty"`
+	apiCommon.CommonInfoReq
 }
 
 type MenuCreateReq struct {
@@ -46,5 +46,5 @@ type MenuUpdateReq struct {
 }
 
 type MenuDeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	apiCommon.CommonUpdateDeleteIdArrReq
 }

@@ -5,8 +5,8 @@ import (
 )
 
 type ActionListReq struct {
-	apiCommon.CommonListReq `c:",omitempty"`
-	Filter                  ActionListFilterReq `p:"filter"`
+	apiCommon.CommonListReq
+	Filter ActionListFilterReq `p:"filter"`
 }
 
 /* type Action struct {
@@ -27,7 +27,7 @@ type ActionListFilterReq struct {
 }
 
 type ActionInfoReq struct {
-	apiCommon.CommonInfoReq `c:",omitempty"`
+	apiCommon.CommonInfoReq
 }
 
 type ActionCreateReq struct {
@@ -42,5 +42,5 @@ type ActionUpdateReq struct {
 }
 
 type ActionDeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	apiCommon.CommonUpdateDeleteIdArrReq
 }

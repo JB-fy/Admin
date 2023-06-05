@@ -5,8 +5,8 @@ import (
 )
 
 type RoleListReq struct {
-	apiCommon.CommonListReq `c:",omitempty"`
-	Filter                  RoleListFilterReq `p:"filter"`
+	apiCommon.CommonListReq
+	Filter RoleListFilterReq `p:"filter"`
 }
 
 /* type Role struct {
@@ -27,7 +27,7 @@ type RoleListFilterReq struct {
 }
 
 type RoleInfoReq struct {
-	apiCommon.CommonInfoReq `c:",omitempty"`
+	apiCommon.CommonInfoReq
 }
 
 type RoleCreateReq struct {
@@ -42,5 +42,5 @@ type RoleUpdateReq struct {
 }
 
 type RoleDeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	apiCommon.CommonUpdateDeleteIdArrReq
 }
