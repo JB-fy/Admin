@@ -12,7 +12,23 @@ import (
 )
 
 type (
+	IAction interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+	}
 	IMenu interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+	}
+	IRole interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
@@ -31,19 +47,21 @@ type (
 )
 
 var (
-	localMenu  IMenu
-	localScene IScene
+	localAction IAction
+	localMenu   IMenu
+	localRole   IRole
+	localScene  IScene
 )
 
-func Menu() IMenu {
-	if localMenu == nil {
-		panic("implement not found for interface IMenu, forgot register?")
+func Role() IRole {
+	if localRole == nil {
+		panic("implement not found for interface IRole, forgot register?")
 	}
-	return localMenu
+	return localRole
 }
 
-func RegisterMenu(i IMenu) {
-	localMenu = i
+func RegisterRole(i IRole) {
+	localRole = i
 }
 
 func Scene() IScene {
@@ -55,4 +73,26 @@ func Scene() IScene {
 
 func RegisterScene(i IScene) {
 	localScene = i
+}
+
+func Action() IAction {
+	if localAction == nil {
+		panic("implement not found for interface IAction, forgot register?")
+	}
+	return localAction
+}
+
+func RegisterAction(i IAction) {
+	localAction = i
+}
+
+func Menu() IMenu {
+	if localMenu == nil {
+		panic("implement not found for interface IMenu, forgot register?")
+	}
+	return localMenu
+}
+
+func RegisterMenu(i IMenu) {
+	localMenu = i
 }
