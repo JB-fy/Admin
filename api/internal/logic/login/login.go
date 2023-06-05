@@ -9,7 +9,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gogf/gf/v2/database/gredis"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type sLogin struct{}
@@ -26,7 +26,8 @@ func init() {
 func (logicThis *sLogin) EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error) {
 	encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
 	encryptStr = utils.RandomStr(8)
-	gredis.Instance().SetEX(ctx, encryptStrKey, encryptStr, 5)
+	fmt.Println(encryptStr)
+	g.Redis().SetEX(ctx, encryptStrKey, encryptStr, 5)
 	return
 }
 
@@ -45,13 +46,8 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 			return
 		}
 		encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
-		encryptStr, errTmp := gredis.Instance().Get(ctx, encryptStrKey)
-		fmt.Println(errTmp)
-		if errTmp != nil {
-			err = errors.New("39990000")
-			return
-		}
-		if utils.Md5(info["password"].String()+encryptStr.String()) != password {
+		encryptStr, _ := g.Redis().Get(ctx, encryptStrKey)
+		if encryptStr.String() == "" || utils.Md5(info["password"].String()+encryptStr.String()) != password {
 			err = errors.New("39990000")
 			return
 		}

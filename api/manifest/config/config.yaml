@@ -7,6 +7,10 @@ logger:
   level: "all"
   stdout: true
 
+i18n:
+  path: "resource/i18n"
+  language: "zh-cn"
+
 database:
   default:
     - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
@@ -22,10 +26,6 @@ database:
       dryRun: false #ORM空跑(只读不写)
 redis:
   default:
-    address: 0.0.0.0:6379
+    address: "0.0.0.0:6379"
     # db:      0
     # pass:    ""
-
-i18n:
-  path: "resource/i18n"
-  language: "zh-cn"
