@@ -19,7 +19,7 @@ func NewMenu() *Menu {
 }
 
 // 列表
-func (c *Menu) List(r *ghttp.Request) {
+func (cMenu *Menu) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *apiAuth.MenuListReq
 	err := r.Parse(&param)
@@ -52,7 +52,7 @@ func (c *Menu) List(r *ghttp.Request) {
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()
-			allowField = append(allowField, "id", "pMenuName")
+			allowField = append(allowField, "id")
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
 		field := allowField
@@ -87,7 +87,7 @@ func (c *Menu) List(r *ghttp.Request) {
 }
 
 // 详情
-func (c *Menu) Info(r *ghttp.Request) {
+func (cMenu *Menu) Info(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -130,7 +130,7 @@ func (c *Menu) Info(r *ghttp.Request) {
 }
 
 // 创建
-func (c *Menu) Create(r *ghttp.Request) {
+func (cMenu *Menu) Create(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -162,7 +162,7 @@ func (c *Menu) Create(r *ghttp.Request) {
 }
 
 // 更新
-func (c *Menu) Update(r *ghttp.Request) {
+func (cMenu *Menu) Update(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -200,7 +200,7 @@ func (c *Menu) Update(r *ghttp.Request) {
 }
 
 // 删除
-func (c *Menu) Delete(r *ghttp.Request) {
+func (cMenu *Menu) Delete(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":

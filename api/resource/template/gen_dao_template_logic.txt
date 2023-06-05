@@ -19,7 +19,7 @@ func init() {
 }
 
 // 总数
-func (logic *s{TplTableNameCamelCase}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logic{TplTableNameCamelCase} *s{TplTableNameCamelCase}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	dao{TplTableNameCamelCase} := daoAuth.{TplTableNameCamelCase}
 	joinCodeArr := []string{}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)
@@ -35,7 +35,7 @@ func (logic *s{TplTableNameCamelCase}) Count(ctx context.Context, filter map[str
 }
 
 // 列表
-func (logic *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
+func (logic{TplTableNameCamelCase} *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	dao{TplTableNameCamelCase} := daoAuth.{TplTableNameCamelCase}
 	joinCodeArr := []string{}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)
@@ -59,7 +59,7 @@ func (logic *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[stri
 }
 
 // 详情
-func (logic *s{TplTableNameCamelCase}) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
+func (logic{TplTableNameCamelCase} *s{TplTableNameCamelCase}) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	dao{TplTableNameCamelCase} := daoAuth.{TplTableNameCamelCase}
 	joinCodeArr := []string{}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)
@@ -80,7 +80,7 @@ func (logic *s{TplTableNameCamelCase}) Info(ctx context.Context, filter map[stri
 }
 
 // 创建
-func (logic *s{TplTableNameCamelCase}) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
+func (logic{TplTableNameCamelCase} *s{TplTableNameCamelCase}) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	dao{TplTableNameCamelCase} := daoAuth.{TplTableNameCamelCase}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)
 	if len(data) > 0 {
@@ -99,7 +99,7 @@ func (logic *s{TplTableNameCamelCase}) Create(ctx context.Context, data []map[st
 }
 
 // 更新
-func (logic *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logic{TplTableNameCamelCase} *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	dao{TplTableNameCamelCase} := daoAuth.{TplTableNameCamelCase}
 	joinCodeArr := []string{}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)
@@ -124,7 +124,7 @@ func (logic *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[stri
 }
 
 // 删除
-func (logic *s{TplTableNameCamelCase}) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logic{TplTableNameCamelCase} *s{TplTableNameCamelCase}) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	dao{TplTableNameCamelCase} := daoAuth.{TplTableNameCamelCase}
 	joinCodeArr := []string{}
 	model := dao{TplTableNameCamelCase}.Ctx(ctx)

@@ -19,7 +19,7 @@ func init() {
 }
 
 // 总数
-func (logic *sMenu) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logicMenu *sMenu) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoMenu := daoAuth.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)
@@ -35,7 +35,7 @@ func (logic *sMenu) Count(ctx context.Context, filter map[string]interface{}) (c
 }
 
 // 列表
-func (logic *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
+func (logicMenu *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoMenu := daoAuth.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)
@@ -59,7 +59,7 @@ func (logic *sMenu) List(ctx context.Context, filter map[string]interface{}, fie
 }
 
 // 详情
-func (logic *sMenu) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
+func (logicMenu *sMenu) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	daoMenu := daoAuth.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)
@@ -80,7 +80,7 @@ func (logic *sMenu) Info(ctx context.Context, filter map[string]interface{}, fie
 }
 
 // 创建
-func (logic *sMenu) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
+func (logicMenu *sMenu) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	daoMenu := daoAuth.Menu
 	model := daoMenu.Ctx(ctx)
 	if len(data) > 0 {
@@ -99,7 +99,7 @@ func (logic *sMenu) Create(ctx context.Context, data []map[string]interface{}) (
 }
 
 // 更新
-func (logic *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logicMenu *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoMenu := daoAuth.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)
@@ -124,7 +124,7 @@ func (logic *sMenu) Update(ctx context.Context, data map[string]interface{}, fil
 }
 
 // 删除
-func (logic *sMenu) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logicMenu *sMenu) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoMenu := daoAuth.Menu
 	joinCodeArr := []string{}
 	model := daoMenu.Ctx(ctx)

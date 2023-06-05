@@ -19,7 +19,7 @@ func NewScene() *Scene {
 }
 
 // 列表
-func (c *Scene) List(r *ghttp.Request) {
+func (cScene *Scene) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *apiAuth.SceneListReq
 	err := r.Parse(&param)
@@ -87,7 +87,7 @@ func (c *Scene) List(r *ghttp.Request) {
 }
 
 // 详情
-func (c *Scene) Info(r *ghttp.Request) {
+func (cScene *Scene) Info(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -130,7 +130,7 @@ func (c *Scene) Info(r *ghttp.Request) {
 }
 
 // 创建
-func (c *Scene) Create(r *ghttp.Request) {
+func (cScene *Scene) Create(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -162,7 +162,7 @@ func (c *Scene) Create(r *ghttp.Request) {
 }
 
 // 更新
-func (c *Scene) Update(r *ghttp.Request) {
+func (cScene *Scene) Update(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -200,7 +200,7 @@ func (c *Scene) Update(r *ghttp.Request) {
 }
 
 // 删除
-func (c *Scene) Delete(r *ghttp.Request) {
+func (cScene *Scene) Delete(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":

@@ -19,7 +19,7 @@ func init() {
 }
 
 // 总数
-func (logic *sScene) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logicScene *sScene) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoScene := daoAuth.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)
@@ -35,7 +35,7 @@ func (logic *sScene) Count(ctx context.Context, filter map[string]interface{}) (
 }
 
 // 列表
-func (logic *sScene) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
+func (logicScene *sScene) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoScene := daoAuth.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)
@@ -59,7 +59,7 @@ func (logic *sScene) List(ctx context.Context, filter map[string]interface{}, fi
 }
 
 // 详情
-func (logic *sScene) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
+func (logicScene *sScene) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	daoScene := daoAuth.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)
@@ -80,7 +80,7 @@ func (logic *sScene) Info(ctx context.Context, filter map[string]interface{}, fi
 }
 
 // 创建
-func (logic *sScene) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
+func (logicScene *sScene) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	daoScene := daoAuth.Scene
 	model := daoScene.Ctx(ctx)
 	if len(data) > 0 {
@@ -99,7 +99,7 @@ func (logic *sScene) Create(ctx context.Context, data []map[string]interface{}) 
 }
 
 // 更新
-func (logic *sScene) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logicScene *sScene) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoScene := daoAuth.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)
@@ -124,7 +124,7 @@ func (logic *sScene) Update(ctx context.Context, data map[string]interface{}, fi
 }
 
 // 删除
-func (logic *sScene) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
+func (logicScene *sScene) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoScene := daoAuth.Scene
 	joinCodeArr := []string{}
 	model := daoScene.Ctx(ctx)

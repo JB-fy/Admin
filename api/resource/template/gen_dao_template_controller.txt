@@ -19,7 +19,7 @@ func New{TplTableNameCamelCase}() *{TplTableNameCamelCase} {
 }
 
 // 列表
-func (c *{TplTableNameCamelCase}) List(r *ghttp.Request) {
+func (c{TplTableNameCamelCase} *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *apiAuth.{TplTableNameCamelCase}ListReq
 	err := r.Parse(&param)
@@ -87,7 +87,7 @@ func (c *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 }
 
 // 详情
-func (c *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
+func (c{TplTableNameCamelCase} *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -130,7 +130,7 @@ func (c *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
 }
 
 // 创建
-func (c *{TplTableNameCamelCase}) Create(r *ghttp.Request) {
+func (c{TplTableNameCamelCase} *{TplTableNameCamelCase}) Create(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -162,7 +162,7 @@ func (c *{TplTableNameCamelCase}) Create(r *ghttp.Request) {
 }
 
 // 更新
-func (c *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
+func (c{TplTableNameCamelCase} *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
@@ -200,7 +200,7 @@ func (c *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 }
 
 // 删除
-func (c *{TplTableNameCamelCase}) Delete(r *ghttp.Request) {
+func (c{TplTableNameCamelCase} *{TplTableNameCamelCase}) Delete(r *ghttp.Request) {
 	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
 	switch sceneCode {
 	case "platformAdmin":
