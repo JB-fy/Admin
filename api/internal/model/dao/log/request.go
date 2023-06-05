@@ -138,6 +138,10 @@ func (daoRequest *requestDao) ParseFilter(filter map[string]interface{}, joinTab
 				default:
 					m = m.Where(daoRequest.Table()+"."+keywordField, v)
 				}
+			case "minRunTime":
+				m = m.WhereGTE(daoRequest.Table()+".runTime", v)
+			case "maxRunTime":
+				m = m.WhereLTE(daoRequest.Table()+".runTime", v)
 			default:
 				kArr := strings.Split(k, " ")
 				if daoRequest.ColumnArrG().Contains(kArr[0]) {

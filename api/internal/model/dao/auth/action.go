@@ -9,6 +9,8 @@ import (
 	"context"
 	"strings"
 
+	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
@@ -98,6 +100,10 @@ func (daoAction *actionDao) ParseField(field []string, joinTableArr *[]string) g
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoAction.Table() + "." + daoAction.PrimaryKey() + " AS " + v)
+			case "sceneIdArr":
+				//需要id字段
+				m = m.Fields(daoAction.Table() + "." + daoAction.PrimaryKey())
+				afterField = append(afterField, v)
 			default:
 				if daoAction.ColumnArrG().Contains(v) {
 					m = m.Fields(daoAction.Table() + "." + v)
@@ -138,6 +144,39 @@ func (daoAction *actionDao) ParseFilter(filter map[string]interface{}, joinTable
 				default:
 					m = m.Where(daoAction.Table()+"."+keywordField, v)
 				}
+			case "sceneId":
+				m = m.Where(ActionRelToScene.Table()+"."+k, v)
+
+				m = daoAction.ParseJoin("actionRelToScene", joinTableArr)(m)
+			case "selfAction": //获取当前登录身份可用的操作。参数：map[string]interface{}{"sceneCode": "场景标识", "loginId": 登录身份id}
+				val := v.(map[string]interface{})
+				ctx := m.GetCtx()
+				sceneInfo := m.GetCtx().Value("sceneInfo").(gdb.Record)
+				sceneId := 0
+				if len(sceneInfo) == 0 {
+					sceneIdTmp, _ := Scene.Ctx(ctx).Where("sceneCode", val["sceneCode"]).Value("sceneId")
+					sceneId = sceneIdTmp.Int()
+				} else {
+					sceneId = sceneInfo["sceneId"].Int()
+				}
+				m = m.Where(daoAction.Table()+".isStop", 0)
+				m = m.Where(ActionRelToScene.Table()+".sceneId", sceneId)
+				m = daoAction.ParseJoin("actionRelToScene", joinTableArr)(m)
+
+				switch val["sceneCode"].(string) {
+				case "platformAdmin":
+					//if val["loginId"] === getConfig('app.superPlatformAdminId') { //平台超级管理员，不再需要其他条件
+					if val["loginId"] == 1 { //平台超级管理员，不再需要其他条件
+						return m
+					}
+					m = m.Where(Role.Table()+".isStop", 0)
+					m = m.Where(RoleRelOfPlatformAdmin.Table()+".adminId", val["loginId"])
+
+					m = daoAction.ParseJoin("roleRelToAction", joinTableArr)(m)
+					m = daoAction.ParseJoin("role", joinTableArr)(m)
+					m = daoAction.ParseJoin("roleRelOfPlatformAdmin", joinTableArr)(m)
+				}
+				m = daoAction.ParseGroup([]string{"id"}, joinTableArr)(m)
 			default:
 				kArr := strings.Split(k, " ")
 				if daoAction.ColumnArrG().Contains(kArr[0]) {
@@ -199,6 +238,32 @@ func (daoAction *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) f
 			*joinTableArr = append(*joinTableArr, xxxxTable)
 			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoAction.PrimaryKey()+" = "+daoAction.Table()+"."+daoAction.PrimaryKey())
 		} */
+		case "actionRelToScene":
+			actionRelToSceneTable := ActionRelToScene.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(actionRelToSceneTable) {
+				*joinTableArr = append(*joinTableArr, actionRelToSceneTable)
+				m = m.LeftJoin(actionRelToSceneTable, actionRelToSceneTable+"."+daoAction.PrimaryKey()+" = "+daoAction.Table()+"."+daoAction.PrimaryKey())
+			}
+		case "roleRelToAction":
+			roleRelToActionTable := RoleRelToAction.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelToActionTable) {
+				*joinTableArr = append(*joinTableArr, roleRelToActionTable)
+				m = m.LeftJoin(roleRelToActionTable, roleRelToActionTable+"."+daoAction.PrimaryKey()+" = "+daoAction.Table()+"."+daoAction.PrimaryKey())
+			}
+		case "role":
+			roleTable := Role.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleTable) {
+				*joinTableArr = append(*joinTableArr, roleTable)
+				roleRelToActionTable := RoleRelToAction.Table()
+				m = m.LeftJoin(roleTable, roleTable+"."+Role.PrimaryKey()+" = "+roleRelToActionTable+"."+Role.PrimaryKey())
+			}
+		case "roleRelOfPlatformAdmin":
+			roleRelOfPlatformAdminTable := RoleRelOfPlatformAdmin.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
+				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
+				roleRelToActionTable := RoleRelToAction.Table()
+				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+"."+Role.PrimaryKey()+" = "+roleRelToActionTable+"."+Role.PrimaryKey())
+			}
 		}
 		return m
 	}
@@ -217,6 +282,9 @@ func (daoAction *actionDao) AfterField(afterField []string) gdb.HookHandler {
 					switch v {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
+					case "sceneIdArr":
+						sceneIdArr, _ := RoleRelToMenu.Ctx(ctx).Where("actionId", record[daoAction.PrimaryKey()]).Fields("sceneId").Array()
+						record[v] = gvar.New(sceneIdArr)
 					}
 				}
 				result[i] = record

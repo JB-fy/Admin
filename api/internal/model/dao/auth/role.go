@@ -9,6 +9,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 )
@@ -102,8 +103,7 @@ func (daoRole *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			case "sceneName":
 				m = m.Fields(Scene.Table() + "." + v)
 				m = daoRole.ParseJoin("scene", joinTableArr)(m)
-			case "menuIdArr":
-			case "actionIdArr":
+			case "menuIdArr", "actionIdArr":
 				//需要id字段
 				m = m.Fields(daoRole.Table() + "." + daoRole.PrimaryKey())
 
@@ -210,7 +210,11 @@ func (daoRole *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) func(
 			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoRole.PrimaryKey()+" = "+daoRole.Table()+"."+daoRole.PrimaryKey())
 		} */
 		case "scene":
-			m = m.LeftJoin(Scene.Table(), Scene.Table()+"."+Scene.PrimaryKey()+" = "+daoRole.Table()+"."+Scene.PrimaryKey())
+			sceneTable := Scene.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(sceneTable) {
+				*joinTableArr = append(*joinTableArr, sceneTable)
+				m = m.LeftJoin(sceneTable, sceneTable+"."+Scene.PrimaryKey()+" = "+daoRole.Table()+"."+Scene.PrimaryKey())
+			}
 		}
 		return m
 	}

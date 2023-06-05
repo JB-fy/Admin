@@ -5,11 +5,15 @@
 package dao
 
 import (
+	daoAuth "api/internal/model/dao/auth"
 	"api/internal/model/dao/platform/internal"
 	"context"
 	"strings"
 
+	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 // internalAdminDao is internal type for wrapping internal DAO implements.
@@ -98,6 +102,10 @@ func (daoAdmin *adminDao) ParseField(field []string, joinTableArr *[]string) gdb
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoAdmin.Table() + "." + daoAdmin.PrimaryKey() + " AS " + v)
+			case "roleIdArr":
+				//需要id字段
+				m = m.Fields(daoAdmin.Table() + "." + daoAdmin.PrimaryKey())
+				afterField = append(afterField, v)
 			default:
 				if daoAdmin.ColumnArrG().Contains(v) {
 					m = m.Fields(daoAdmin.Table() + "." + v)
@@ -138,6 +146,15 @@ func (daoAdmin *adminDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				default:
 					m = m.Where(daoAdmin.Table()+"."+keywordField, v)
 				}
+			case "accountOrPhone":
+				if g.Validator().Rules("required|integer").Data(v).Run(m.GetCtx()) == nil {
+					m = m.Where(daoAdmin.Table()+".phone", v)
+				} else {
+					m = m.Where(daoAdmin.Table()+".account", v)
+				}
+			case "roleId":
+				m = m.Where(daoAuth.RoleRelOfPlatformAdmin.Table()+"."+k, v)
+				m = daoAdmin.ParseJoin("roleRelOfPlatformAdmin", joinTableArr)(m)
 			default:
 				kArr := strings.Split(k, " ")
 				if daoAdmin.ColumnArrG().Contains(kArr[0]) {
@@ -199,6 +216,12 @@ func (daoAdmin *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) fun
 			*joinTableArr = append(*joinTableArr, xxxxTable)
 			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoAdmin.PrimaryKey()+" = "+daoAdmin.Table()+"."+daoAdmin.PrimaryKey())
 		} */
+		case "roleRelOfPlatformAdmin":
+			roleRelOfPlatformAdminTable := daoAuth.RoleRelOfPlatformAdmin.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
+				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
+				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+"."+daoAdmin.PrimaryKey()+" = "+daoAdmin.Table()+"."+daoAdmin.PrimaryKey())
+			}
 		}
 		return m
 	}
@@ -217,6 +240,9 @@ func (daoAdmin *adminDao) AfterField(afterField []string) gdb.HookHandler {
 					switch v {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
+					case "roleIdArr":
+						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.Ctx(ctx).Where("adminId", record[daoAdmin.PrimaryKey()]).Fields("roleId").Array()
+						record[v] = gvar.New(idArr)
 					}
 				}
 				result[i] = record

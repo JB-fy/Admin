@@ -8,8 +8,8 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 
 	"api/internal/controller"
-	controllerAuth "api/internal/controller/auth"
 	"api/internal/middleware"
+	"api/internal/router"
 )
 
 var (
@@ -30,121 +30,7 @@ var (
 					controller.NewTest(),
 				)
 			})
-
-			/**--------平台后台接口 开始--------**/
-			s.Group("/platformAdmin", func(group *ghttp.RouterGroup) {
-				group.ALL("/test", controller.NewTest().Test)
-				//不做日志记录
-				group.Group("", func(group *ghttp.RouterGroup) {
-					group.Middleware(middleware.Scene)
-					//需验证登录身份
-					group.Group("", func(group *ghttp.RouterGroup) {
-						group.Middleware(middleware.SceneLoginOfPlatformAdmin)
-						group.ALLMap(g.Map{
-							"/log/request": controller.NewTest().Test,
-						})
-					})
-				})
-
-				//做日志记录
-				group.Group("", func(group *ghttp.RouterGroup) {
-					group.Middleware(middleware.Log)
-					group.Middleware(middleware.Scene)
-					//无需验证登录身份
-					group.Group("/login", func(group *ghttp.RouterGroup) {
-						group.ALLMap(g.Map{
-							"/encryptStr": controller.NewTest().Test,
-							"/":           controller.NewTest().Test,
-						})
-					})
-
-					//需验证登录身份
-					group.Group("", func(group *ghttp.RouterGroup) {
-						group.Middleware(middleware.SceneLoginOfPlatformAdmin)
-
-						group.Group("/upload", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/sign": controller.NewTest().Test,
-							})
-						})
-
-						group.Group("/login", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/info":     controller.NewTest().Test,
-								"/update":   controller.NewTest().Test,
-								"/menuTree": controller.NewTest().Test,
-							})
-						})
-
-						group.Group("/auth/action", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/list":   controller.NewTest().Test,
-								"/info":   controller.NewTest().Test,
-								"/create": controller.NewTest().Test,
-								"/update": controller.NewTest().Test,
-								"/del":    controller.NewTest().Test,
-							})
-						})
-
-						group.Group("/auth/menu", func(group *ghttp.RouterGroup) {
-							controllerAuthMenu := controllerAuth.NewMenu()
-							group.ALLMap(g.Map{
-								"/list":   controllerAuthMenu.List,
-								"/info":   controllerAuthMenu.Info,
-								"/create": controllerAuthMenu.Create,
-								"/update": controllerAuthMenu.Update,
-								"/del":    controllerAuthMenu.Delete,
-								"/tree":   controllerAuthMenu.List,
-							})
-						})
-						group.Group("/auth/role", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/list":   controller.NewTest().Test,
-								"/info":   controller.NewTest().Test,
-								"/create": controller.NewTest().Test,
-								"/update": controller.NewTest().Test,
-								"/del":    controller.NewTest().Test,
-							})
-						})
-
-						group.Group("/auth/scene", func(group *ghttp.RouterGroup) {
-							controllerAuthScene := controllerAuth.NewScene()
-							group.ALLMap(g.Map{
-								"/list":   controllerAuthScene.List,
-								"/info":   controllerAuthScene.Info,
-								"/create": controllerAuthScene.Create,
-								"/update": controllerAuthScene.Update,
-								"/del":    controllerAuthScene.Delete,
-							})
-						})
-
-						group.Group("/auth/admin", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/list":   controller.NewTest().Test,
-								"/info":   controller.NewTest().Test,
-								"/create": controller.NewTest().Test,
-								"/update": controller.NewTest().Test,
-								"/del":    controller.NewTest().Test,
-							})
-						})
-
-						group.Group("/platform/config", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/get":  controller.NewTest().Test,
-								"/save": controller.NewTest().Test,
-							})
-						})
-
-						group.Group("/platform/server", func(group *ghttp.RouterGroup) {
-							group.ALLMap(g.Map{
-								"/list": controller.NewTest().Test,
-							})
-						})
-
-					})
-				})
-			})
-			/**--------平台后台接口 结束--------**/
+			router.InitRouterPlatformAdmin(s) //平台后台接口注册
 			s.Run()
 			return nil
 		},

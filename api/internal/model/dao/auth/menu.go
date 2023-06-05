@@ -7,10 +7,12 @@ package dao
 import (
 	"api/internal/model/dao/auth/internal"
 	"context"
+	"encoding/json"
 	"strconv"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
@@ -162,7 +164,7 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				default:
 					m = m.Where(daoMenu.Table()+"."+keywordField, v)
 				}
-			case "selfMenu": //获取当前登录身份可用的菜单。参数：map[string]interface{}{"sceneCode": "场景标识", "loginId":"登录身份id"}
+			case "selfMenu": //获取当前登录身份可用的菜单。参数：map[string]interface{}{"sceneCode": "场景标识", "loginId": 登录身份id}
 				val := v.(map[string]interface{})
 				ctx := m.GetCtx()
 				sceneInfo := m.GetCtx().Value("sceneInfo").(gdb.Record)
@@ -176,7 +178,7 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 
 				m = m.Where(daoMenu.Table()+".sceneId", sceneId)
 				m = m.Where(daoMenu.Table()+".isStop", 0)
-				switch v.(map[string]interface{})["sceneCode"] {
+				switch val["sceneCode"].(string) {
 				case "platformAdmin":
 					//if val["loginId"] === getConfig('app.superPlatformAdminId') { //平台超级管理员，不再需要其他条件
 					if val["loginId"] == 1 { //平台超级管理员，不再需要其他条件
@@ -305,6 +307,14 @@ func (daoMenu *menuDao) AfterField(afterField []string) gdb.HookHandler {
 					switch v {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
+					case "showMenu":
+						if record["i18n"] == nil {
+							record["i18n"] = gvar.New(map[string]interface{}{"title": map[string]interface{}{"zh-cn": record["menuName"]}})
+						} else {
+							i18n := map[string]interface{}{}
+							json.Unmarshal([]byte(record["i18n"].String()), &i18n)
+							record["i18n"] = gvar.New(i18n)
+						}
 					}
 				}
 				result[i] = record
