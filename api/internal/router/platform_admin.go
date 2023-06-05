@@ -11,7 +11,7 @@ import (
 
 func InitRouterPlatformAdmin(s *ghttp.Server) {
 	s.Group("/platformAdmin", func(group *ghttp.RouterGroup) {
-		group.ALL("/test", controller.NewTest().Test)
+		group.Middleware(middleware.HandlerResponse, middleware.Cross, middleware.I18n)
 		//不做日志记录
 		group.Group("", func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.Scene)
@@ -48,10 +48,11 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 				})
 
 				group.Group("/login", func(group *ghttp.RouterGroup) {
+					controllerThis := controller.NewLogin()
 					group.ALLMap(g.Map{
-						"/info":     controller.NewTest().Test,
-						"/update":   controller.NewTest().Test,
-						"/menuTree": controller.NewTest().Test,
+						"/info":     controllerThis.Info,
+						"/update":   controllerThis.Update,
+						"/menuTree": controllerThis.MenuTree,
 					})
 				})
 

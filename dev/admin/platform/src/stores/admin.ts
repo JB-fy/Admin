@@ -293,7 +293,7 @@ export const useAdminStore = defineStore('admin', {
             url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
             children: [],
           }
-          if (menuTree[i].children.length) {
+          if (menuTree[i].children?.length) {
             menuChain.push({
               i18n: menuTree[i].i18n,
               icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,

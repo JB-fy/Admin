@@ -115,7 +115,7 @@ func (daoMenu *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				m = m.Fields(daoMenu.Table() + ".menuName")
 				m = m.Fields(daoMenu.Table() + ".menuIcon")
 				m = m.Fields(daoMenu.Table() + ".menuUrl")
-				m = m.Fields(daoMenu.Table() + ".extraData->i18n AS i18n")
+				m = m.Fields(daoMenu.Table() + ".extraData->'$.i18n' AS i18n")
 				//m = m.Fields(gdb.Raw("JSON_UNQUOTE(JSON_EXTRACT(extraData, \"$.i18n\")) AS i18n"))//mysql不能直接转成对象返回
 				afterField = append(afterField, v)
 			case "sceneName":
@@ -181,7 +181,7 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				switch val["sceneCode"].(string) {
 				case "platformAdmin":
 					//if val["loginId"] === getConfig('app.superPlatformAdminId') { //平台超级管理员，不再需要其他条件
-					if val["loginId"] == 1 { //平台超级管理员，不再需要其他条件
+					if gvar.New(val["loginId"]).Int() == 1 { //平台超级管理员，不再需要其他条件
 						return m
 					}
 					m = m.Where(Role.Table()+".isStop", 0)
