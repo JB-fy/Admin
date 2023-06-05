@@ -89,13 +89,13 @@ func (daoRoleRelToAction *roleRelToActionDao) ParseUpdate(update map[string]inte
 }
 
 // 解析field
-func (daoRoleRelToAction *roleRelToActionDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoRoleRelToAction *roleRelToActionDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = daoRoleRelToAction.ParseJoin("xxxx", joinCodeArr)(m)
+			m = daoRoleRelToAction.ParseJoin("xxxx", joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoRoleRelToAction.Table() + "." + daoRoleRelToAction.PrimaryKey() + " AS " + v)
@@ -115,7 +115,7 @@ func (daoRoleRelToAction *roleRelToActionDao) ParseField(field []string, joinCod
 }
 
 // 解析filter
-func (daoRoleRelToAction *roleRelToActionDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoRoleRelToAction *roleRelToActionDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -153,7 +153,7 @@ func (daoRoleRelToAction *roleRelToActionDao) ParseFilter(filter map[string]inte
 }
 
 // 解析group
-func (daoRoleRelToAction *roleRelToActionDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoRoleRelToAction *roleRelToActionDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -172,7 +172,7 @@ func (daoRoleRelToAction *roleRelToActionDao) ParseGroup(group []string, joinCod
 }
 
 // 解析order
-func (daoRoleRelToAction *roleRelToActionDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoRoleRelToAction *roleRelToActionDao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -191,10 +191,10 @@ func (daoRoleRelToAction *roleRelToActionDao) ParseOrder(order [][2]string, join
 }
 
 // 解析join
-func (daoRoleRelToAction *roleRelToActionDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoRoleRelToAction *roleRelToActionDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if !garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
-			*joinCodeArr = append(*joinCodeArr, joinCode)
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			*joinTableArr = append(*joinTableArr, joinCode)
 			switch joinCode {
 			/* case "xxxx":
 			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+daoRoleRelToAction.Table()+"."+xxxx.PrimaryKey()) */
@@ -228,16 +228,16 @@ func (daoRoleRelToAction *roleRelToActionDao) AfterField(afterField []string) gd
 
 // 详情
 func (daoRoleRelToAction *roleRelToActionDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRoleRelToAction.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoRoleRelToAction.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoRoleRelToAction.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRoleRelToAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRoleRelToAction.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRoleRelToAction.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRoleRelToAction.ParseOrder(order, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -245,16 +245,16 @@ func (daoRoleRelToAction *roleRelToActionDao) Info(ctx context.Context, filter m
 
 // 列表
 func (daoRoleRelToAction *roleRelToActionDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRoleRelToAction.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoRoleRelToAction.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoRoleRelToAction.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRoleRelToAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRoleRelToAction.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRoleRelToAction.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRoleRelToAction.ParseOrder(order, &joinTableArr))
 	}
 	list, err = model.All()
 	return

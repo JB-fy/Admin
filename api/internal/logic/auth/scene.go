@@ -21,13 +21,13 @@ func init() {
 // 总数
 func (logicScene *sScene) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoScene := daoAuth.Scene
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoScene.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoScene.ParseFilter(filter, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		count, err = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinCodeArr)).Distinct().Count(daoScene.PrimaryKey())
+	if len(joinTableArr) > 0 {
+		count, err = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinTableArr)).Distinct().Count(daoScene.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -37,19 +37,19 @@ func (logicScene *sScene) Count(ctx context.Context, filter map[string]interface
 // 列表
 func (logicScene *sScene) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoScene := daoAuth.Scene
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoScene.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoScene.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoScene.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoScene.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoScene.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoScene.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -61,19 +61,19 @@ func (logicScene *sScene) List(ctx context.Context, filter map[string]interface{
 // 详情
 func (logicScene *sScene) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	daoScene := daoAuth.Scene
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoScene.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoScene.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoScene.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoScene.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoScene.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoScene.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoScene.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -101,16 +101,16 @@ func (logicScene *sScene) Create(ctx context.Context, data []map[string]interfac
 // 更新
 func (logicScene *sScene) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoScene := daoAuth.Scene
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoScene.Ctx(ctx)
 	if len(data) > 0 {
 		model = model.Handler(daoScene.ParseUpdate(data))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoScene.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoScene.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoScene.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -126,13 +126,13 @@ func (logicScene *sScene) Update(ctx context.Context, data map[string]interface{
 // 删除
 func (logicScene *sScene) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoScene := daoAuth.Scene
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoScene.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoScene.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoScene.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoScene.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoScene.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)

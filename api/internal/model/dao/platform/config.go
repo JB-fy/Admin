@@ -89,13 +89,13 @@ func (daoConfig *configDao) ParseUpdate(update map[string]interface{}, fill ...b
 }
 
 // 解析field
-func (daoConfig *configDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoConfig *configDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = daoConfig.ParseJoin("xxxx", joinCodeArr)(m)
+			m = daoConfig.ParseJoin("xxxx", joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoConfig.Table() + "." + daoConfig.PrimaryKey() + " AS " + v)
@@ -115,7 +115,7 @@ func (daoConfig *configDao) ParseField(field []string, joinCodeArr *[]string) gd
 }
 
 // 解析filter
-func (daoConfig *configDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoConfig *configDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -153,7 +153,7 @@ func (daoConfig *configDao) ParseFilter(filter map[string]interface{}, joinCodeA
 }
 
 // 解析group
-func (daoConfig *configDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoConfig *configDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -172,7 +172,7 @@ func (daoConfig *configDao) ParseGroup(group []string, joinCodeArr *[]string) gd
 }
 
 // 解析order
-func (daoConfig *configDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoConfig *configDao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -191,10 +191,10 @@ func (daoConfig *configDao) ParseOrder(order [][2]string, joinCodeArr *[]string)
 }
 
 // 解析join
-func (daoConfig *configDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoConfig *configDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if !garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
-			*joinCodeArr = append(*joinCodeArr, joinCode)
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			*joinTableArr = append(*joinTableArr, joinCode)
 			switch joinCode {
 			/* case "xxxx":
 			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+daoConfig.Table()+"."+xxxx.PrimaryKey()) */
@@ -228,16 +228,16 @@ func (daoConfig *configDao) AfterField(afterField []string) gdb.HookHandler {
 
 // 详情
 func (daoConfig *configDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoConfig.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoConfig.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoConfig.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoConfig.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoConfig.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoConfig.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoConfig.ParseOrder(order, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -245,16 +245,16 @@ func (daoConfig *configDao) Info(ctx context.Context, filter map[string]interfac
 
 // 列表
 func (daoConfig *configDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoConfig.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoConfig.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoConfig.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoConfig.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoConfig.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoConfig.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoConfig.ParseOrder(order, &joinTableArr))
 	}
 	list, err = model.All()
 	return

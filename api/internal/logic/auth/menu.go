@@ -21,13 +21,13 @@ func init() {
 // 总数
 func (logicMenu *sMenu) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoMenu := daoAuth.Menu
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoMenu.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseFilter(filter, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		count, err = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinCodeArr)).Distinct().Count(daoMenu.PrimaryKey())
+	if len(joinTableArr) > 0 {
+		count, err = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinTableArr)).Distinct().Count(daoMenu.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -37,19 +37,19 @@ func (logicMenu *sMenu) Count(ctx context.Context, filter map[string]interface{}
 // 列表
 func (logicMenu *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoMenu := daoAuth.Menu
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoMenu.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoMenu.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoMenu.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -61,19 +61,19 @@ func (logicMenu *sMenu) List(ctx context.Context, filter map[string]interface{},
 // 详情
 func (logicMenu *sMenu) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	daoMenu := daoAuth.Menu
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoMenu.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoMenu.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoMenu.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoMenu.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -101,16 +101,16 @@ func (logicMenu *sMenu) Create(ctx context.Context, data []map[string]interface{
 // 更新
 func (logicMenu *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoMenu := daoAuth.Menu
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoMenu.Ctx(ctx)
 	if len(data) > 0 {
 		model = model.Handler(daoMenu.ParseUpdate(data))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoMenu.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -126,13 +126,13 @@ func (logicMenu *sMenu) Update(ctx context.Context, data map[string]interface{},
 // 删除
 func (logicMenu *sMenu) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoMenu := daoAuth.Menu
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoMenu.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoMenu.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoMenu.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoMenu.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)

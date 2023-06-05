@@ -21,13 +21,13 @@ func init() {
 // 总数
 func (logicAction *sAction) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoAction := daoAuth.Action
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoAction.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		count, err = model.Handler(daoAction.ParseGroup([]string{"id"}, &joinCodeArr)).Distinct().Count(daoAction.PrimaryKey())
+	if len(joinTableArr) > 0 {
+		count, err = model.Handler(daoAction.ParseGroup([]string{"id"}, &joinTableArr)).Distinct().Count(daoAction.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -37,19 +37,19 @@ func (logicAction *sAction) Count(ctx context.Context, filter map[string]interfa
 // 列表
 func (logicAction *sAction) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoAction := daoAuth.Action
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoAction.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoAction.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoAction.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoAction.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoAction.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoAction.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoAction.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -61,19 +61,19 @@ func (logicAction *sAction) List(ctx context.Context, filter map[string]interfac
 // 详情
 func (logicAction *sAction) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	daoAction := daoAuth.Action
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoAction.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoAction.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoAction.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoAction.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoAction.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoAction.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoAction.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -101,16 +101,16 @@ func (logicAction *sAction) Create(ctx context.Context, data []map[string]interf
 // 更新
 func (logicAction *sAction) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoAction := daoAuth.Action
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoAction.Ctx(ctx)
 	if len(data) > 0 {
 		model = model.Handler(daoAction.ParseUpdate(data))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoAction.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoAction.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -126,13 +126,13 @@ func (logicAction *sAction) Update(ctx context.Context, data map[string]interfac
 // 删除
 func (logicAction *sAction) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoAction := daoAuth.Action
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoAction.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoAction.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoAction.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)

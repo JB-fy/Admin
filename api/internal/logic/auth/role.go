@@ -21,13 +21,13 @@ func init() {
 // 总数
 func (logicRole *sRole) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoRole := daoAuth.Role
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRole.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoRole.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRole.ParseFilter(filter, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		count, err = model.Handler(daoRole.ParseGroup([]string{"id"}, &joinCodeArr)).Distinct().Count(daoRole.PrimaryKey())
+	if len(joinTableArr) > 0 {
+		count, err = model.Handler(daoRole.ParseGroup([]string{"id"}, &joinTableArr)).Distinct().Count(daoRole.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -37,19 +37,19 @@ func (logicRole *sRole) Count(ctx context.Context, filter map[string]interface{}
 // 列表
 func (logicRole *sRole) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error) {
 	daoRole := daoAuth.Role
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRole.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoRole.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoRole.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRole.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRole.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRole.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRole.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoRole.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoRole.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -61,19 +61,19 @@ func (logicRole *sRole) List(ctx context.Context, filter map[string]interface{},
 // 详情
 func (logicRole *sRole) Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error) {
 	daoRole := daoAuth.Role
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRole.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoRole.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoRole.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRole.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRole.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRole.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRole.ParseOrder(order, &joinTableArr))
 	}
-	if len(joinCodeArr) > 0 {
-		model = model.Handler(daoRole.ParseGroup([]string{"id"}, &joinCodeArr))
+	if len(joinTableArr) > 0 {
+		model = model.Handler(daoRole.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -101,16 +101,16 @@ func (logicRole *sRole) Create(ctx context.Context, data []map[string]interface{
 // 更新
 func (logicRole *sRole) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoRole := daoAuth.Role
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRole.Ctx(ctx)
 	if len(data) > 0 {
 		model = model.Handler(daoRole.ParseUpdate(data))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRole.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRole.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRole.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRole.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)
@@ -126,13 +126,13 @@ func (logicRole *sRole) Update(ctx context.Context, data map[string]interface{},
 // 删除
 func (logicRole *sRole) Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error) {
 	daoRole := daoAuth.Role
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRole.Ctx(ctx)
 	if len(filter) > 0 {
-		model = model.Handler(daoRole.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRole.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRole.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRole.ParseOrder(order, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset(offset).Limit(limit)

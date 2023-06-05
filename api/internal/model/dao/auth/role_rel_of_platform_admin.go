@@ -89,13 +89,13 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseUpdate(update m
 }
 
 // 解析field
-func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseField(field []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = daoRoleRelOfPlatformAdmin.ParseJoin("xxxx", joinCodeArr)(m)
+			m = daoRoleRelOfPlatformAdmin.ParseJoin("xxxx", joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoRoleRelOfPlatformAdmin.Table() + "." + daoRoleRelOfPlatformAdmin.PrimaryKey() + " AS " + v)
@@ -115,7 +115,7 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseField(field []s
 }
 
 // 解析filter
-func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interface{}, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -153,7 +153,7 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseFilter(filter m
 }
 
 // 解析group
-func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseGroup(group []string, joinCodeArr *[]string) gdb.ModelHandler {
+func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -172,7 +172,7 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseGroup(group []s
 }
 
 // 解析order
-func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseOrder(order [][2]string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -191,10 +191,10 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseOrder(order [][
 }
 
 // 解析join
-func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseJoin(joinCode string, joinCodeArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
-		if !garray.NewStrArrayFrom(*joinCodeArr).Contains(joinCode) {
-			*joinCodeArr = append(*joinCodeArr, joinCode)
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			*joinTableArr = append(*joinTableArr, joinCode)
 			switch joinCode {
 			/* case "xxxx":
 			m = m.LeftJoin(xxxx.Table(), xxxx.Table()+"."+xxxx.PrimaryKey()+" = "+daoRoleRelOfPlatformAdmin.Table()+"."+xxxx.PrimaryKey()) */
@@ -228,16 +228,16 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) AfterField(afterFiel
 
 // 详情
 func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRoleRelOfPlatformAdmin.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseOrder(order, &joinTableArr))
 	}
 	info, err = model.One()
 	return
@@ -245,16 +245,16 @@ func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) Info(ctx context.Con
 
 // 列表
 func (daoRoleRelOfPlatformAdmin *roleRelOfPlatformAdminDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
-	joinCodeArr := []string{}
+	joinTableArr := []string{}
 	model := daoRoleRelOfPlatformAdmin.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseField(field, &joinCodeArr))
+		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseFilter(filter, &joinCodeArr))
+		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseOrder(order, &joinCodeArr))
+		model = model.Handler(daoRoleRelOfPlatformAdmin.ParseOrder(order, &joinTableArr))
 	}
 	list, err = model.All()
 	return
