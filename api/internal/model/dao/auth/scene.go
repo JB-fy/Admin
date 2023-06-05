@@ -139,6 +139,15 @@ func (daoScene *sceneDao) ParseFilter(filter map[string]interface{}, joinCodeArr
 				default:
 					m = m.Where(daoScene.Table()+"."+keywordField, v)
 				}
+			case "sceneName":
+				switch v := v.(type) {
+				case *string:
+					m = m.WhereLike(daoScene.Table()+"."+k, *v)
+				case string:
+					m = m.WhereLike(daoScene.Table()+"."+k, v)
+				default:
+					m = m.Where(daoScene.Table()+"."+k, v)
+				}
 			default:
 				kArr := strings.Split(k, " ")
 				if daoScene.ColumnArrG().Contains(kArr[0]) {

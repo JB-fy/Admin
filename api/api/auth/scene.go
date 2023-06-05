@@ -5,8 +5,8 @@ import (
 )
 
 type SceneListReq struct {
-	apiCommon.CommonListReq `c:",omitempty"`
-	Filter                  SceneListFilterReq `p:"filter"`
+	apiCommon.CommonListReq
+	Filter SceneListFilterReq `p:"filter"`
 }
 
 type SceneListFilterReq struct {
@@ -18,7 +18,7 @@ type SceneListFilterReq struct {
 }
 
 type SceneInfoReq struct {
-	apiCommon.CommonInfoReq `c:",omitempty"`
+	apiCommon.CommonInfoReq
 }
 
 type SceneCreateReq struct {
@@ -37,5 +37,5 @@ type SceneUpdateReq struct {
 }
 
 type SceneDeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	apiCommon.CommonUpdateDeleteIdArrReq
 }
