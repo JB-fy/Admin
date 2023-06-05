@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 
 	"api/internal/controller"
+	"api/internal/middleware"
 	"api/internal/router"
 )
 
@@ -24,13 +25,14 @@ var (
 			s.BindHandler("/", func(r *ghttp.Request) {
 				r.Response.RedirectTo("/view/admin/platform")
 			})
-			s.BindHandler("/test", controller.NewTest().Test)
-			/* s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Bind(
+			s.Group("", func(group *ghttp.RouterGroup) {
+				group.Middleware(middleware.HandlerResponse, middleware.Cross, middleware.I18n)
+				group.ALL("/test", controller.NewTest().Test)
+				/* group.Bind(
 					//controller.NewTest().Test, //这样不会根据方法名自动设置路由
 					controller.NewTest(),
-				)
-			}) */
+				) */
+			})
 			router.InitRouterPlatformAdmin(s) //平台后台接口注册
 			s.Run()
 			return nil

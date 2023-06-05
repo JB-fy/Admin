@@ -4,7 +4,9 @@ import (
 	daoAuth "api/internal/model/dao/auth"
 	"api/internal/service"
 	"context"
+	"errors"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
@@ -142,5 +144,36 @@ func (logicAction *sAction) Delete(ctx context.Context, filter map[string]interf
 		return
 	}
 	row, err = result.RowsAffected()
+	return
+}
+
+// 判断操作权限
+func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string, sceneCode string) (isAuth bool, err error) {
+	infoTmp := ctx.Value(sceneCode + "Info")
+	info := gvar.New(infoTmp).Map()
+	filter := map[string]interface{}{
+		"actionCode": actionCode,
+	}
+	filter["selfAction"] = map[string]interface{}{
+		"sceneCode": sceneCode,
+		"loginId":   info["adminId"],
+	}
+
+	switch sceneCode {
+	case "platformAdmin":
+		//if ($loginInfo->adminId == getConfig('app.superPlatformAdminId')) { //平台超级管理员，无权限限制
+		if gvar.New(info["adminId"]).Int() == 1 { //平台超级管理员，不再需要其他条件
+			isAuth = true
+			return
+		}
+		//filter["selfAction"].(map[string]interface{})["loginId"] = info["adminId"]
+	}
+	daoAction := daoAuth.Action
+	count, err := daoAction.Ctx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
+	if count == 0 {
+		err = errors.New("39990002")
+		return
+	}
+	isAuth = true
 	return
 }
