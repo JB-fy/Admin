@@ -153,9 +153,6 @@ func (logicMenu *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (
 		if v["pid"].Int() == menuId {
 			children, _ := logicMenu.Tree(ctx, list, v["menuId"].Int())
 			v["children"] = gvar.New(children)
-			/* if len(children) == 0 {
-				v["children"] = gvar.New(gdb.Result{})
-			} */
 			tree = append(tree, v)
 		}
 	}
