@@ -30,9 +30,10 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 			group.Middleware(middleware.Scene)
 			//无需验证登录身份
 			group.Group("/login", func(group *ghttp.RouterGroup) {
+				controllerThis := controller.NewLogin()
 				group.ALLMap(g.Map{
-					"/encryptStr": controller.NewTest().Test,
-					"/":           controller.NewTest().Test,
+					"/encryptStr": controllerThis.EncryptStr,
+					"/":           controllerThis.Login,
 				})
 			})
 

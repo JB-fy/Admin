@@ -7,10 +7,6 @@ logger:
   level: "all"
   stdout: true
 
-i18n:
-  path: "resource/i18n"
-  language: "zh-cn"
-
 database:
   default:
     - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
@@ -24,3 +20,12 @@ database:
       #maxLifetime: "30s" #连接对象可重复使用的时间长度
       debug: true #开启调试模式
       dryRun: false #ORM空跑(只读不写)
+redis:
+  default:
+    address: 0.0.0.0:6379
+    # db:      0
+    # pass:    ""
+
+i18n:
+  path: "resource/i18n"
+  language: "zh-cn"
