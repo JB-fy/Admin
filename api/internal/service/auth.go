@@ -35,6 +35,7 @@ type (
 		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		CheckAuth(ctx context.Context, actionCode string, sceneCode string) (isAuth bool, err error)
 	}
 	IMenu interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
@@ -48,22 +49,11 @@ type (
 )
 
 var (
-	localAction IAction
-	localMenu   IMenu
 	localRole   IRole
 	localScene  IScene
+	localAction IAction
+	localMenu   IMenu
 )
-
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
-	}
-	return localScene
-}
-
-func RegisterScene(i IScene) {
-	localScene = i
-}
 
 func Action() IAction {
 	if localAction == nil {
@@ -96,4 +86,15 @@ func Role() IRole {
 
 func RegisterRole(i IRole) {
 	localRole = i
+}
+
+func Scene() IScene {
+	if localScene == nil {
+		panic("implement not found for interface IScene, forgot register?")
+	}
+	return localScene
+}
+
+func RegisterScene(i IScene) {
+	localScene = i
 }
