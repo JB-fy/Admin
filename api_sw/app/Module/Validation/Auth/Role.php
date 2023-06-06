@@ -33,7 +33,6 @@ class Role extends AbstractValidation
             'remove' => [
                 'roleName' => ['sometimes'],
                 'sceneId' => ['sometimes'],
-                'roleCode' => ['sometimes'],
                 'menuIdArr' => ['sometimes'],
                 'actionIdArr' => ['sometimes'],
             ]
