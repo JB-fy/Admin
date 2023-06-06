@@ -8,25 +8,23 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-// DefaultHandlerResponse is the default implementation of HandlerResponse.
 type DefaultHandlerResponse struct {
 	Code    int         `json:"code"    dc:"Error code"`
 	Message string      `json:"message" dc:"Error message"`
 	Data    interface{} `json:"data"    dc:"Result data for certain request according API definition"`
 }
 
-// MiddlewareHandlerResponse is the default middleware handling handler response object and its error.
 func HandlerResponse(r *ghttp.Request) {
 	r.Middleware.Next()
-	// There's custom buffer content, it then exits current handler.
+
 	if r.Response.BufferLength() > 0 {
 		return
 	}
 
 	var (
-		msg  string
-		err  = r.GetError()
-		res  = r.GetHandlerResponse()
+		msg string
+		err = r.GetError()
+		//res  = r.GetHandlerResponse()
 		code = gerror.Code(err)
 	)
 	if err != nil {
@@ -53,14 +51,14 @@ func HandlerResponse(r *ghttp.Request) {
 		}
 	}
 
-	r.Response.WriteJson(DefaultHandlerResponse{
+	/* r.Response.WriteJson(DefaultHandlerResponse{
 		Code:    code.Code(),
 		Message: msg,
 		Data:    res,
-	})
-	/* r.Response.WriteJson(map[string]interface{}{
+	}) */
+	r.Response.WriteJson(map[string]interface{}{
 		"code": code.Code(),
 		"msg":  code.Message(),
 		"data": code.Detail(),
-	}) */
+	})
 }

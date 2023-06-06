@@ -2,6 +2,7 @@ package controller
 
 import (
 	"api/api"
+	"api/internal/utils"
 	"context"
 	"fmt"
 
@@ -30,21 +31,16 @@ func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.Tes
 }
 
 func (c *Test) Test(r *ghttp.Request) {
-	fmt.Println(g.I18n().T(r.GetCtx(), "0"))
-	fmt.Println(g.I18n().T(r.GetCtx(), "99999999"))
-	fmt.Println(g.I18n().Tf(r.GetCtx(), "29991063", "phone"))
-	var req *api.TestReq
+	/* var req *api.TestReq
 	err := r.Parse(&req)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
 	}
-	fmt.Println(req)
-	param := r.GetMap()
-	fmt.Println(param)
-
-	/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
-	r.Response.WriteJson(map[string]interface{}{
+	fmt.Println(req) */
+	err := utils.NewErrorCode(r.GetCtx(), 99999999, "")
+	utils.HttpFailJson(r, err)
+	/* r.Response.WriteJson(map[string]interface{}{
 		"code": 0,
 		"msg":  "成功",
 		"data": map[string]interface{}{},

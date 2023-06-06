@@ -12,6 +12,7 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // internalActionDao is internal type for wrapping internal DAO implements.
@@ -166,7 +167,7 @@ func (daoAction *actionDao) ParseFilter(filter map[string]interface{}, joinTable
 				switch val["sceneCode"].(string) {
 				case "platformAdmin":
 					//if val["loginId"] === getConfig('app.superPlatformAdminId') { //平台超级管理员，不再需要其他条件
-					if gvar.New(val["loginId"]).Int() == 1 { //平台超级管理员，不再需要其他条件
+					if gconv.Int(val["loginId"]) == 1 { //平台超级管理员，不再需要其他条件
 						return m
 					}
 					m = m.Where(Role.Table()+".isStop", 0)

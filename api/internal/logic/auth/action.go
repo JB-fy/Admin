@@ -8,6 +8,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sAction struct{}
@@ -162,7 +163,7 @@ func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string, sc
 	switch sceneCode {
 	case "platformAdmin":
 		//if ($loginInfo->adminId == getConfig('app.superPlatformAdminId')) { //平台超级管理员，无权限限制
-		if gvar.New(info["adminId"]).Int() == 1 { //平台超级管理员，不再需要其他条件
+		if gconv.Int(info["adminId"]) == 1 { //平台超级管理员，不再需要其他条件
 			isAuth = true
 			return
 		}

@@ -66,15 +66,15 @@ func (cMenu *Menu) List(r *ghttp.Request) {
 
 		count, err := service.Menu().Count(r.Context(), filter)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
 		list, err := service.Menu().List(r.Context(), filter, field, order, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0)
 		/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 0,
@@ -122,10 +122,10 @@ func (cMenu *Menu) Info(r *ghttp.Request) {
 
 		info, err := service.Menu().Info(r.Context(), filter, field, [][2]string{})
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
 	}
 }
 
@@ -154,10 +154,10 @@ func (cMenu *Menu) Create(r *ghttp.Request) {
 
 		_, err = service.Menu().Create(r.Context(), []map[string]interface{}{data})
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -176,7 +176,7 @@ func (cMenu *Menu) Update(r *ghttp.Request) {
 		data := gconv.Map(param)
 		delete(data, "idArr")
 		if len(data) == 0 {
-			utils.HttpFailJson(r, 89999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}
@@ -192,10 +192,10 @@ func (cMenu *Menu) Update(r *ghttp.Request) {
 
 		_, err = service.Menu().Update(r.Context(), data, filter, [][2]string{}, 0, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -224,10 +224,10 @@ func (cMenu *Menu) Delete(r *ghttp.Request) {
 
 		_, err = service.Menu().Delete(r.Context(), filter, [][2]string{}, 0, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -272,15 +272,15 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 
 		list, err := service.Menu().List(r.Context(), filter, field, [][2]string{}, 0, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
 		tree, err := service.Menu().Tree(r.Context(), list, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"tree": tree}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"tree": tree}, 0)
 		/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 0,

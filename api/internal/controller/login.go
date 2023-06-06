@@ -31,10 +31,10 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 
 		encryptStr, err := service.Login().EncryptStr(r.Context(), sceneCode, param.Account)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"encryptStr": encryptStr}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"encryptStr": encryptStr}, 0)
 	}
 }
 
@@ -54,10 +54,10 @@ func (c *Login) Login(r *ghttp.Request) {
 
 		token, err := service.Login().Login(r.Context(), sceneCode, param.Account, param.Password)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"token": token}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"token": token}, 0)
 	}
 }
 
@@ -67,7 +67,7 @@ func (c *Login) Info(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		info := r.GetCtxVar("platformAdminInfo")
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
 	}
 }
 
@@ -101,14 +101,14 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 
 		list, err := service.Menu().List(r.Context(), filter, field, [][2]string{}, 0, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
 		tree, err := service.Menu().Tree(r.Context(), list, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"tree": tree}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"tree": tree}, 0)
 	}
 }

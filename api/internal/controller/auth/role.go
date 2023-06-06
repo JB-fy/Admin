@@ -66,15 +66,15 @@ func (cRole *Role) List(r *ghttp.Request) {
 
 		count, err := service.Role().Count(r.Context(), filter)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
 		list, err := service.Role().List(r.Context(), filter, field, order, int((param.Page-1)*param.Limit), int(param.Limit))
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0)
 		/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 0,
@@ -122,10 +122,10 @@ func (cRole *Role) Info(r *ghttp.Request) {
 
 		info, err := service.Role().Info(r.Context(), filter, field, [][2]string{})
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
 	}
 }
 
@@ -154,10 +154,10 @@ func (cRole *Role) Create(r *ghttp.Request) {
 
 		_, err = service.Role().Create(r.Context(), []map[string]interface{}{data})
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -176,7 +176,7 @@ func (cRole *Role) Update(r *ghttp.Request) {
 		data := gconv.Map(param)
 		delete(data, "idArr")
 		if len(data) == 0 {
-			utils.HttpFailJson(r, 89999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}
@@ -192,10 +192,10 @@ func (cRole *Role) Update(r *ghttp.Request) {
 
 		_, err = service.Role().Update(r.Context(), data, filter, [][2]string{}, 0, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -224,9 +224,9 @@ func (cRole *Role) Delete(r *ghttp.Request) {
 
 		_, err = service.Role().Delete(r.Context(), filter, [][2]string{}, 0, 0)
 		if err != nil {
-			utils.HttpFailJson(r, 99999999, "", map[string]interface{}{})
+			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0, "")
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
