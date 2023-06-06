@@ -3,9 +3,12 @@ package logic
 import (
 	daoAuth "api/internal/model/dao/auth"
 	"api/internal/service"
+	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sRole struct{}
@@ -77,7 +80,32 @@ func (logicThis *sRole) Info(ctx context.Context, filter map[string]interface{},
 // 创建
 func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Role
+	_, okMenuIdArr := data["menuIdArr"]
+	if okMenuIdArr {
+		menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(g.Map{"menuId": data["menuIdArr"], "sceneId": data["sceneId"]}).Count()
+		if len(gconv.SliceInt(data["menuIdArr"])) != menuIdArrCount {
+			err = utils.NewErrorCode(ctx, 89999998, "")
+			return
+		}
+	}
+	_, okActionIdArr := data["actionIdArr"]
+	if okActionIdArr {
+		actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(g.Map{"actionId": data["actionIdArr"], "sceneId": data["sceneId"]}).Count()
+		if len(gconv.SliceInt(data["actionIdArr"])) != actionIdArrCount {
+			err = utils.NewErrorCode(ctx, 89999998, "")
+			return
+		}
+	}
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
+	if err != nil {
+		return
+	}
+	/* if (isset($data['menuIdArr'])) {
+		$this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $id);
+	}
+	if (isset($data['actionIdArr'])) {
+		$this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $id);
+	} */
 	return
 }
 

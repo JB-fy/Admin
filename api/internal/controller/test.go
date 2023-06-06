@@ -2,6 +2,7 @@ package controller
 
 import (
 	"api/api"
+	daoAuth "api/internal/model/dao/auth"
 	"api/internal/utils"
 	"context"
 	"fmt"
@@ -43,6 +44,8 @@ func (c *Test) Test(r *ghttp.Request) {
 		"msg":  "成功",
 		"data": map[string]interface{}{},
 	}) */
+
+	fmt.Println(daoAuth.RoleRelToMenu.ParseDbCtx(r.GetCtx()).Where("roleId", 1).Array("menuId"))
 	fmt.Println(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int())
 	utils.HttpSuccessJson(r, map[string]interface{}{
 		"list": []map[string]interface{}{},

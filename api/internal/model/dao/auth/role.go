@@ -281,10 +281,10 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
 					case "menuIdArr":
-						menuIdArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where("roleId", record[daoThis.PrimaryKey()]).Fields("menuId").Array()
+						menuIdArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where("roleId", record[daoThis.PrimaryKey()]).Array("menuId")
 						record[v] = gvar.New(menuIdArr)
 					case "actionIdArr":
-						actionIdArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where("roleId", record[daoThis.PrimaryKey()]).Fields("actionId").Array()
+						actionIdArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where("roleId", record[daoThis.PrimaryKey()]).Array("actionId")
 						record[v] = gvar.New(actionIdArr)
 					}
 				}
@@ -296,3 +296,29 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // Fill with you ideas below.
+
+// 保存关联菜单
+func (daoThis *roleDao) SaveRelMenu(ctx context.Context, menuIdArr []int, id int) {
+	//menuIdArrOfOld, _ := RoleRelToMenu.ParseDbCtx(ctx).Where("roleId", id).Array("menuId")
+
+	/**----新增关联菜单 开始----**/
+	// $insertMenuIdArr = array_diff($menuIdArr, $menuIdArrOfOld);
+	// if (!empty($insertMenuIdArr)) {
+	// 	$insertList = [];
+	// 	foreach ($insertMenuIdArr as $v) {
+	// 		$insertList[] = [
+	// 			'roleId' => $id,
+	// 			'menuId' => $v
+	// 		];
+	// 	}
+	// 	getDao(RoleRelToMenu::class)->parseInsert($insertList)->insert();
+	// }
+	// /**----新增关联菜单 结束----**/
+
+	// /**----删除关联菜单 开始----**/
+	// $deleteMenuIdArr = array_diff($menuIdArrOfOld, $menuIdArr);
+	// if (!empty($deleteMenuIdArr)) {
+	// 	getDao(RoleRelToMenu::class)->parseFilter(['roleId' => $id, 'menuId' => $deleteMenuIdArr])->delete();
+	// }
+	// /**----删除关联菜单 结束----**/
+}
