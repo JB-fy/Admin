@@ -117,31 +117,45 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseField(field []string, joinT
 func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
-			switch k {
-			case "id", "idArr":
-				m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+			kArr := strings.Split(k, " ")	//为支持"id > ?"的key
+			switch kArr[0] {
+			case "id":
+				val := gvar.New(v)
+				if val.IsSlice() && len(val.Slice()) == 1 {
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val.Slice()[0])
+				} else {
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+				}
 			case "excId":
-				m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
-			case "excIdArr":
-				m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+				val := gvar.New(v)
+				if val.IsSlice() {
+					if len(val.Slice()) == 1 {
+						m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), val.Slice()[0])
+					} else {
+						m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					}
+				} else {
+					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+				}
 			case "startTime":
 				m = m.WhereGTE(daoThis.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoThis.Table()+".createTime", v)
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
-				switch v := v.(type) {
-				case *string:
-					m = m.WhereLike(daoThis.Table()+"."+keywordField, *v)
-				case string:
-					m = m.WhereLike(daoThis.Table()+"."+keywordField, v)
-				default:
-					m = m.Where(daoThis.Table()+"."+keywordField, v)
-				}
+				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
 			default:
-				kArr := strings.Split(k, " ")
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
-					m = m.Where(daoThis.Table()+"."+k, v)
+					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
+						val := gvar.New(v)
+						if val.IsSlice() && len(val.Slice()) == 1 {
+							m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+						} else {
+							m = m.Where(daoThis.Table()+"."+k, v)
+						}
+					} else {
+						m = m.Where(daoThis.Table()+"."+k, v)
+					}
 				} else {
 					m = m.Where(k, v)
 				}

@@ -15,6 +15,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -145,27 +146,33 @@ func (daoMenu *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
-			switch k {
-			case "id", "idArr":
-				m = m.Where(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
+			kArr := strings.Split(k, " ")
+			switch kArr[0] {
+			case "id":
+				val := gvar.New(v)
+				if val.IsSlice() && len(val.Slice()) == 1 {
+					m = m.Where(daoMenu.Table()+"."+daoMenu.PrimaryKey(), val.Slice()[0])
+				} else {
+					m = m.Where(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
+				}
 			case "excId":
-				m = m.WhereNot(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
-			case "excIdArr":
-				m = m.WhereNotIn(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
+				val := gvar.New(v)
+				if val.IsSlice() {
+					if len(val.Slice()) == 1 {
+						m = m.WhereNot(daoMenu.Table()+"."+daoMenu.PrimaryKey(), val.Slice()[0])
+					} else {
+						m = m.WhereNotIn(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
+					}
+				} else {
+					m = m.WhereNot(daoMenu.Table()+"."+daoMenu.PrimaryKey(), v)
+				}
 			case "startTime":
 				m = m.WhereGTE(daoMenu.Table()+".createTime", v)
 			case "endTime":
 				m = m.WhereLTE(daoMenu.Table()+".createTime", v)
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoMenu.PrimaryKey(), "Id", "Name")
-				switch v := v.(type) {
-				case *string:
-					m = m.WhereLike(daoMenu.Table()+"."+keywordField, *v)
-				case string:
-					m = m.WhereLike(daoMenu.Table()+"."+keywordField, v)
-				default:
-					m = m.Where(daoMenu.Table()+"."+keywordField, v)
-				}
+				m = m.WhereLike(daoMenu.Table()+"."+keywordField, gconv.String(v))
 			case "selfMenu": //获取当前登录身份可用的菜单。参数：map[string]interface{}{"sceneCode": "场景标识", "sceneId": 场景id, "loginId": 登录身份id}
 				val := v.(map[string]interface{})
 
@@ -185,9 +192,17 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 				m = daoMenu.ParseGroup([]string{"id"}, joinTableArr)(m)
 			default:
-				kArr := strings.Split(k, " ")
 				if daoMenu.ColumnArrG().Contains(kArr[0]) {
-					m = m.Where(daoMenu.Table()+"."+k, v)
+					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
+						val := gvar.New(v)
+						if val.IsSlice() && len(val.Slice()) == 1 {
+							m = m.Where(daoMenu.Table()+"."+k, val.Slice()[0])
+						} else {
+							m = m.Where(daoMenu.Table()+"."+k, v)
+						}
+					} else {
+						m = m.Where(daoMenu.Table()+"."+k, v)
+					}
 				} else {
 					m = m.Where(k, v)
 				}
