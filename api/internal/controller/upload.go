@@ -14,7 +14,7 @@ func NewUpload() *Upload {
 	return &Upload{}
 }
 
-// 登录
+// 获取签名
 func (c *Upload) Sign(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
@@ -28,7 +28,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		}
 		/**--------参数处理 结束--------**/
 
-		token, err := service.Upload().Sign(r.Context(), sceneCode, param.Account, param.Password)
+		token, err := service.Upload().Sign(r.Context(), sceneCode, param.Type)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -37,25 +37,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 	}
 }
 
-// 获取登录加密字符串(前端登录操作用于加密密码后提交)
+// 回调
 func (c *Upload) Notify(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case "platformAdmin":
-		/**--------参数处理 开始--------**/
-		var param *api.UploadNotifyReq
-		err := r.Parse(&param)
-		if err != nil {
-			r.Response.Writeln(err.Error())
-			return
-		}
-		/**--------参数处理 结束--------**/
 
-		encryptStr, err := service.Upload().Notify(r.Context(), sceneCode, param.Account)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"encryptStr": encryptStr}, 0)
-	}
 }
