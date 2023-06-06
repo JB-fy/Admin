@@ -127,23 +127,19 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id":
-				val := gvar.New(v)
-				if val.IsSlice() && len(val.Slice()) == 1 {
-					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val.Slice()[0])
+			case "id", "idArr":
+				val := gconv.SliceInt(v)
+				if len(val) == 1 {
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val[0])
 				} else {
-					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val)
 				}
-			case "excId":
-				val := gvar.New(v)
-				if val.IsSlice() {
-					if len(val.Slice()) == 1 {
-						m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), val.Slice()[0])
-					} else {
-						m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
-					}
+			case "excId", "excIdArr":
+				val := gconv.SliceInt(v)
+				if len(val) == 1 {
+					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), val[0])
 				} else {
-					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), val)
 				}
 			case "startTime":
 				m = m.WhereGTE(daoThis.Table()+".createTime", v)
@@ -180,11 +176,11 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					if len(kArr) == 1 {
 						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
-							val := gvar.New(v)
-							if val.IsSlice() && len(val.Slice()) == 1 {
-								m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+							val := gconv.SliceInt(v)
+							if len(val) == 1 {
+								m = m.Where(daoThis.Table()+"."+k, val[0])
 							} else {
-								m = m.Where(daoThis.Table()+"."+k, v)
+								m = m.Where(daoThis.Table()+"."+k, val)
 							}
 						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
 							m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
