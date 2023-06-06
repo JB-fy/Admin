@@ -7,6 +7,7 @@ import (
 	"api/internal/controller"
 	controllerAuth "api/internal/controller/auth"
 	controllerLog "api/internal/controller/log"
+	controllerPlatform "api/internal/controller/platform"
 	"api/internal/middleware"
 )
 
@@ -47,8 +48,9 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 				group.Middleware(middleware.SceneLoginOfPlatformAdmin)
 
 				group.Group("/upload", func(group *ghttp.RouterGroup) {
+					controllerThis := controller.NewUpload()
 					group.ALLMap(g.Map{
-						"/sign": controller.NewTest().Test,
+						"/sign": controllerThis.Sign,
 					})
 				})
 
@@ -106,28 +108,28 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 				})
 
 				group.Group("/platform/admin", func(group *ghttp.RouterGroup) {
-					controllerThis := controller.NewTest()
+					controllerThis := controllerPlatform.NewAdmin()
 					group.ALLMap(g.Map{
-						"/list":   controllerThis.Test,
-						"/info":   controllerThis.Test,
-						"/create": controllerThis.Test,
-						"/update": controllerThis.Test,
-						"/del":    controllerThis.Test,
+						"/list":   controllerThis.List,
+						"/info":   controllerThis.Info,
+						"/create": controllerThis.Create,
+						"/update": controllerThis.Update,
+						"/del":    controllerThis.Delete,
 					})
 				})
 
 				group.Group("/platform/config", func(group *ghttp.RouterGroup) {
-					controllerThis := controller.NewTest()
+					controllerThis := controllerPlatform.NewConfig()
 					group.ALLMap(g.Map{
-						"/get":  controllerThis.Test,
-						"/save": controllerThis.Test,
+						"/get":  controllerThis.Get,
+						"/save": controllerThis.Save,
 					})
 				})
 
 				group.Group("/platform/server", func(group *ghttp.RouterGroup) {
-					controllerThis := controller.NewTest()
+					controllerThis := controllerPlatform.NewServer()
 					group.ALLMap(g.Map{
-						"/list": controllerThis.Test,
+						"/list": controllerThis.List,
 					})
 				})
 

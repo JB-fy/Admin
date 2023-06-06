@@ -25,6 +25,9 @@ var (
 			s.BindHandler("/", func(r *ghttp.Request) {
 				r.Response.RedirectTo("/view/admin/platform")
 			})
+			s.Group("/upload", func(group *ghttp.RouterGroup) {
+				group.ALL("/notify", controller.NewUpload().Notify)
+			})
 			s.Group("", func(group *ghttp.RouterGroup) {
 				//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
 				group.Middleware(middleware.Cross, middleware.I18n)

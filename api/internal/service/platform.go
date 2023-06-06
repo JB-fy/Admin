@@ -21,7 +21,8 @@ type (
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 	IConfig interface {
-		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Get(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
+		Save(ctx context.Context, data []map[string]interface{}) (id int64, err error)
 	}
 	IServer interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
