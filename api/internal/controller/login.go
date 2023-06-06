@@ -5,7 +5,6 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -17,7 +16,7 @@ func NewLogin() *Login {
 
 // 获取登录加密字符串(前端登录操作用于加密密码后提交)
 func (c *Login) EncryptStr(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
@@ -40,7 +39,7 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 
 // 登录
 func (c *Login) Login(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
@@ -63,17 +62,17 @@ func (c *Login) Login(r *ghttp.Request) {
 
 // 登录用户详情
 func (c *Login) Info(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
-		info := r.GetCtxVar("platformAdminInfo")
+		info := utils.GetCtxLoginInfo(r.GetCtx())
 		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
 	}
 }
 
 // 修改个人信息
 func (c *Login) Update(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		// /**--------参数验证并处理 开始--------**/
@@ -88,10 +87,10 @@ func (c *Login) Update(r *ghttp.Request) {
 
 // 用户菜单树
 func (c *Login) MenuTree(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
-		info := r.GetCtxVar("platformAdminInfo")
+		info := utils.GetCtxLoginInfo(r.GetCtx())
 		filter := map[string]interface{}{}
 		filter["selfMenu"] = map[string]interface{}{
 			"sceneCode": sceneCode,

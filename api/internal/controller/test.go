@@ -43,6 +43,8 @@ func (c *Test) Test(r *ghttp.Request) {
 		"msg":  "成功",
 		"data": map[string]interface{}{},
 	}) */
+	fmt.Println(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int())
+
 	utils.HttpSuccessJson(r, map[string]interface{}{
 		"list": []map[string]interface{}{},
 	}, 0)

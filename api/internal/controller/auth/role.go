@@ -7,7 +7,6 @@ import (
 	"api/internal/utils"
 
 	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -43,7 +42,7 @@ func (cRole *Role) List(r *ghttp.Request) {
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
@@ -88,7 +87,7 @@ func (cRole *Role) List(r *ghttp.Request) {
 
 // 详情
 func (cRole *Role) Info(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
@@ -131,7 +130,7 @@ func (cRole *Role) Info(r *ghttp.Request) {
 
 // 创建
 func (cRole *Role) Create(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
@@ -163,7 +162,7 @@ func (cRole *Role) Create(r *ghttp.Request) {
 
 // 更新
 func (cRole *Role) Update(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
@@ -201,7 +200,7 @@ func (cRole *Role) Update(r *ghttp.Request) {
 
 // 删除
 func (cRole *Role) Delete(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo").Val().(gdb.Record)["sceneCode"].String()
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/

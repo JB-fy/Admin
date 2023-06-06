@@ -14,6 +14,7 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -181,8 +182,7 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.Where(daoMenu.Table()+".isStop", 0)
 				switch val["sceneCode"].(string) {
 				case "platformAdmin":
-					//if val["loginId"] === getConfig('app.superPlatformAdminId') { //平台超级管理员，不再需要其他条件
-					if gconv.Int(val["loginId"]) == 1 { //平台超级管理员，不再需要其他条件
+					if gconv.Int(val["loginId"]) == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
 						return m
 					}
 					m = m.Where(Role.Table()+".isStop", 0)

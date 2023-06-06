@@ -2,6 +2,7 @@ package middleware
 
 import (
 	dao "api/internal/model/dao/auth"
+	"api/internal/utils"
 	"strings"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -35,8 +36,7 @@ func Scene(r *ghttp.Request) {
 		})
 		return
 	}
-	/* $logicAuthScene = getContainer()->get(\App\Module\Logic\Auth\Scene::class);
-	$logicAuthScene->setCurrentSceneInfo($sceneInfo); */
-	r.SetCtxVar("sceneInfo", sceneInfo)
+
+	utils.SetCtxSceneInfo(r, sceneInfo)
 	r.Middleware.Next()
 }

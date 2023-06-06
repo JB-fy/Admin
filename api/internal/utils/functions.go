@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -53,6 +54,26 @@ func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, ms
 		resData["msg"] = msg[0]
 	}
 	r.Response.WriteJsonExit(resData)
+}
+
+func SetCtxSceneInfo(r *ghttp.Request, info gdb.Record) {
+	r.SetCtxVar(consts.ConstCtxSceneInfoName, info)
+}
+
+func GetCtxSceneInfo(ctx context.Context) gdb.Record {
+	return ctx.Value(consts.ConstCtxSceneInfoName).(gdb.Record)
+}
+
+func GetCtxSceneCode(ctx context.Context) string {
+	return GetCtxSceneInfo(ctx)["sceneCode"].String()
+}
+
+func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
+	r.SetCtxVar(consts.ConstCtxLoginInfoName, info)
+}
+
+func GetCtxLoginInfo(ctx context.Context) gdb.Record {
+	return ctx.Value(consts.ConstCtxLoginInfoName).(gdb.Record)
 }
 
 func RandomStr(length int) string {

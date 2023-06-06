@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"api/internal/utils"
-	"fmt"
 
 	daoPlatform "api/internal/model/dao/platform"
 
@@ -10,8 +9,6 @@ import (
 )
 
 func SceneLoginOfPlatformAdmin(r *ghttp.Request) {
-	sceneCode := r.GetCtxVar("sceneInfo")
-	fmt.Println(sceneCode)
 	/**--------验证token 开始--------**/
 	token := r.Header.Get("PlatformAdminToken")
 	if token == "" {
@@ -71,7 +68,7 @@ func SceneLoginOfPlatformAdmin(r *ghttp.Request) {
 	delete(info, "password")
 	delete(info, "isStop")
 
-	r.SetCtxVar("platformAdminInfo", info) //用户信息保存在协程上下文
+	utils.SetCtxLoginInfo(r, info) //用户信息保存在协程上下文
 	/**--------获取用户信息并验证 结束--------**/
 	r.Middleware.Next()
 }

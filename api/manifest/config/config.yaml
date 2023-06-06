@@ -3,6 +3,9 @@ server:
   openapiPath: "/api.json"
   swaggerPath: "/swagger"
 
+#指定平台超级管理员ID
+superPlatformAdminId: 1
+
 logger:
   level: "all"
   stdout: true
