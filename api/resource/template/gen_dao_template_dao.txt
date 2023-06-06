@@ -29,7 +29,7 @@ var (
 )
 
 // 解析insert
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := make([]map[string]interface{}, len(insert))
 		for index, item := range insert {
@@ -37,10 +37,10 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseInsert(i
 			for k, v := range item {
 				switch k {
 				case "id":
-					insertData[index][dao{TplTableNameCamelCase}.PrimaryKey()] = v
+					insertData[index][daoThis.PrimaryKey()] = v
 				default:
 					//数据库不存在的字段过滤掉，未传值默认true
-					if (len(fill) == 0 || fill[0]) && !dao{TplTableNameCamelCase}.ColumnArrG().Contains(k) {
+					if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
 						continue
 					}
 					insertData[index][k] = v
@@ -57,19 +57,19 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseInsert(i
 }
 
 // 解析update
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case "id":
-				updateData[dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey()] = v
+				updateData[daoThis.Table()+"."+daoThis.PrimaryKey()] = v
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
-				if (len(fill) == 0 || fill[0]) && !dao{TplTableNameCamelCase}.ColumnArrG().Contains(k) {
+				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
 					continue
 				}
-				updateData[dao{TplTableNameCamelCase}.Table()+"."+k] = v
+				updateData[daoThis.Table()+"."+k] = v
 			}
 		}
 		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
@@ -88,60 +88,60 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseUpdate(u
 }
 
 // 解析field
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = dao{TplTableNameCamelCase}.ParseJoin("xxxx", joinTableArr)(m)
+			m = daoThis.ParseJoin("xxxx", joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
-				m = m.Fields(dao{TplTableNameCamelCase}.Table() + "." + dao{TplTableNameCamelCase}.PrimaryKey() + " AS " + v)
+				m = m.Fields(daoThis.Table() + "." + daoThis.PrimaryKey() + " AS " + v)
 			default:
-				if dao{TplTableNameCamelCase}.ColumnArrG().Contains(v) {
-					m = m.Fields(dao{TplTableNameCamelCase}.Table() + "." + v)
+				if daoThis.ColumnArrG().Contains(v) {
+					m = m.Fields(daoThis.Table() + "." + v)
 				} else {
 					m = m.Fields(v)
 				}
 			}
 		}
 		if len(afterField) > 0 {
-			m = m.Hook(dao{TplTableNameCamelCase}.AfterField(afterField))
+			m = m.Hook(daoThis.AfterField(afterField))
 		}
 		return m
 	}
 }
 
 // 解析filter
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
 			case "id", "idArr":
-				m = m.Where(dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey(), v)
+				m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 			case "excId":
-				m = m.WhereNot(dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey(), v)
+				m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 			case "excIdArr":
-				m = m.WhereNotIn(dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey(), v)
+				m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 			case "startTime":
-				m = m.WhereGTE(dao{TplTableNameCamelCase}.Table()+".createTime", v)
+				m = m.WhereGTE(daoThis.Table()+".createTime", v)
 			case "endTime":
-				m = m.WhereLTE(dao{TplTableNameCamelCase}.Table()+".createTime", v)
+				m = m.WhereLTE(daoThis.Table()+".createTime", v)
 			case "keyword":
-				keywordField := strings.ReplaceAll(dao{TplTableNameCamelCase}.PrimaryKey(), "Id", "Name")
+				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				switch v := v.(type) {
 				case *string:
-					m = m.WhereLike(dao{TplTableNameCamelCase}.Table()+"."+keywordField, *v)
+					m = m.WhereLike(daoThis.Table()+"."+keywordField, *v)
 				case string:
-					m = m.WhereLike(dao{TplTableNameCamelCase}.Table()+"."+keywordField, v)
+					m = m.WhereLike(daoThis.Table()+"."+keywordField, v)
 				default:
-					m = m.Where(dao{TplTableNameCamelCase}.Table()+"."+keywordField, v)
+					m = m.Where(daoThis.Table()+"."+keywordField, v)
 				}
 			default:
 				kArr := strings.Split(k, " ")
-				if dao{TplTableNameCamelCase}.ColumnArrG().Contains(kArr[0]) {
-					m = m.Where(dao{TplTableNameCamelCase}.Table()+"."+k, v)
+				if daoThis.ColumnArrG().Contains(kArr[0]) {
+					m = m.Where(daoThis.Table()+"."+k, v)
 				} else {
 					m = m.Where(k, v)
 				}
@@ -152,15 +152,15 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseFilter(f
 }
 
 // 解析group
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
 			case "id":
-				m = m.Group(dao{TplTableNameCamelCase}.Table() + "." + dao{TplTableNameCamelCase}.PrimaryKey())
+				m = m.Group(daoThis.Table() + "." + daoThis.PrimaryKey())
 			default:
-				if dao{TplTableNameCamelCase}.ColumnArrG().Contains(v) {
-					m = m.Group(dao{TplTableNameCamelCase}.Table() + "." + v)
+				if daoThis.ColumnArrG().Contains(v) {
+					m = m.Group(daoThis.Table() + "." + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -171,15 +171,15 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseGroup(gr
 }
 
 // 解析order
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
 			case "id":
-				m = m.Order(dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey(), v[1])
+				m = m.Order(daoThis.Table()+"."+daoThis.PrimaryKey(), v[1])
 			default:
-				if dao{TplTableNameCamelCase}.ColumnArrG().Contains(v[0]) {
-					m = m.Order(dao{TplTableNameCamelCase}.Table()+"."+v[0], v[1])
+				if daoThis.ColumnArrG().Contains(v[0]) {
+					m = m.Order(daoThis.Table()+"."+v[0], v[1])
 				} else {
 					m = m.Order(v[0], v[1])
 				}
@@ -190,14 +190,14 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseOrder(or
 }
 
 // 解析join
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		/* case "xxxx":
 		xxxxTable := xxxx.Table()
 		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
 			*joinTableArr = append(*joinTableArr, xxxxTable)
-			m = m.LeftJoin(xxxxTable, xxxxTable+"."+dao{TplTableNameCamelCase}.PrimaryKey()+" = "+dao{TplTableNameCamelCase}.Table()+"."+dao{TplTableNameCamelCase}.PrimaryKey())
+			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoThis.PrimaryKey()+" = "+daoThis.Table()+"."+daoThis.PrimaryKey())
 		} */
 		}
 		return m
@@ -205,7 +205,7 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) ParseJoin(joi
 }
 
 // 获取数据后，再处理的字段
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) AfterField(afterField []string) gdb.HookHandler {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) AfterField(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -227,34 +227,34 @@ func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) AfterField(af
 }
 
 // 详情
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
 	joinTableArr := []string{}
-	model := dao{TplTableNameCamelCase}.Ctx(ctx)
+	model := daoThis.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseField(field, &joinTableArr))
+		model = model.Handler(daoThis.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseFilter(filter, &joinTableArr))
+		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseOrder(order, &joinTableArr))
+		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	info, err = model.One()
 	return
 }
 
 // 列表
-func (dao{TplTableNameCamelCase} *{TplTableNameCamelLowerCase}Dao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
 	joinTableArr := []string{}
-	model := dao{TplTableNameCamelCase}.Ctx(ctx)
+	model := daoThis.Ctx(ctx)
 	if len(field) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseField(field, &joinTableArr))
+		model = model.Handler(daoThis.ParseField(field, &joinTableArr))
 	}
 	if len(filter) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseFilter(filter, &joinTableArr))
+		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(order) > 0 {
-		model = model.Handler(dao{TplTableNameCamelCase}.ParseOrder(order, &joinTableArr))
+		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	list, err = model.All()
 	return
