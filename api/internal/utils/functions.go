@@ -38,10 +38,10 @@ func HttpFailJson(r *ghttp.Request, err error) {
 		resData["code"] = code.Code()
 		resData["data"] = code.Detail()
 	}
-	r.Response.WriteJson(resData)
+	r.Response.WriteJsonExit(resData)
 }
 
-func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, msg ...string) (err error) {
+func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, msg ...string) {
 	resData := map[string]interface{}{
 		"code": code,
 		"msg":  "",
@@ -52,8 +52,7 @@ func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, ms
 	} else {
 		resData["msg"] = msg[0]
 	}
-	r.Response.WriteJson(resData)
-	return
+	r.Response.WriteJsonExit(resData)
 }
 
 func RandomStr(length int) string {

@@ -38,11 +38,14 @@ func (c *Test) Test(r *ghttp.Request) {
 		return
 	}
 	fmt.Println(req) */
-	err := utils.NewErrorCode(r.GetCtx(), 99999999, "")
-	utils.HttpFailJson(r, err)
 	/* r.Response.WriteJson(map[string]interface{}{
 		"code": 0,
 		"msg":  "成功",
 		"data": map[string]interface{}{},
 	}) */
+	utils.HttpSuccessJson(r, map[string]interface{}{
+		"list": []map[string]interface{}{},
+	}, 0)
+	err := utils.NewErrorCode(r.GetCtx(), 99999999, "")
+	utils.HttpFailJson(r, err)
 }

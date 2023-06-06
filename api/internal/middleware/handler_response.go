@@ -8,12 +8,6 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-type DefaultHandlerResponse struct {
-	Code    int         `json:"code"    dc:"Error code"`
-	Message string      `json:"message" dc:"Error message"`
-	Data    interface{} `json:"data"    dc:"Result data for certain request according API definition"`
-}
-
 func HandlerResponse(r *ghttp.Request) {
 	r.Middleware.Next()
 
@@ -22,9 +16,9 @@ func HandlerResponse(r *ghttp.Request) {
 	}
 
 	var (
-		msg string
-		err = r.GetError()
-		//res  = r.GetHandlerResponse()
+		msg  string
+		err  = r.GetError()
+		res  = r.GetHandlerResponse()
 		code = gerror.Code(err)
 	)
 	if err != nil {
@@ -43,7 +37,6 @@ func HandlerResponse(r *ghttp.Request) {
 			default:
 				code = gcode.CodeUnknown
 			}
-			// It creates error as it can be retrieved by other middlewares.
 			err = gerror.NewCode(code, msg)
 			r.SetError(err)
 		} else {
@@ -51,14 +44,9 @@ func HandlerResponse(r *ghttp.Request) {
 		}
 	}
 
-	/* r.Response.WriteJson(DefaultHandlerResponse{
-		Code:    code.Code(),
-		Message: msg,
-		Data:    res,
-	}) */
 	r.Response.WriteJson(map[string]interface{}{
 		"code": code.Code(),
-		"msg":  code.Message(),
-		"data": code.Detail(),
+		"msg":  msg,
+		"data": res,
 	})
 }
