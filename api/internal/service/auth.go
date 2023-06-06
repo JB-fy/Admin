@@ -16,7 +16,7 @@ type (
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
@@ -25,7 +25,7 @@ type (
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 		Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error)
@@ -34,7 +34,7 @@ type (
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
@@ -42,40 +42,18 @@ type (
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 )
 
 var (
+	localRole   IRole
 	localScene  IScene
 	localAction IAction
 	localMenu   IMenu
-	localRole   IRole
 )
-
-func Role() IRole {
-	if localRole == nil {
-		panic("implement not found for interface IRole, forgot register?")
-	}
-	return localRole
-}
-
-func RegisterRole(i IRole) {
-	localRole = i
-}
-
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
-	}
-	return localScene
-}
-
-func RegisterScene(i IScene) {
-	localScene = i
-}
 
 func Action() IAction {
 	if localAction == nil {
@@ -97,4 +75,26 @@ func Menu() IMenu {
 
 func RegisterMenu(i IMenu) {
 	localMenu = i
+}
+
+func Role() IRole {
+	if localRole == nil {
+		panic("implement not found for interface IRole, forgot register?")
+	}
+	return localRole
+}
+
+func RegisterRole(i IRole) {
+	localRole = i
+}
+
+func Scene() IScene {
+	if localScene == nil {
+		panic("implement not found for interface IScene, forgot register?")
+	}
+	return localScene
+}
+
+func RegisterScene(i IScene) {
+	localScene = i
 }

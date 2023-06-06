@@ -76,19 +76,9 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 }
 
 // 创建
-func (logicThis *sMenu) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
+func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
-	model := daoThis.ParseDbCtx(ctx)
-	model = model.Handler(daoThis.ParseInsert(data))
-	if len(data) == 1 {
-		id, err = model.InsertAndGetId()
-		return
-	}
-	result, err := model.Insert()
-	if err != nil {
-		return
-	}
-	id, err = result.RowsAffected()
+	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
 	return
 }
 
