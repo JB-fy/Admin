@@ -84,8 +84,7 @@ func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}
 // 更新
 func (logicThis *sScene) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
-	joinTableArr := []string{}
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &joinTableArr)).Update()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
 		return
 	}
@@ -96,8 +95,7 @@ func (logicThis *sScene) Update(ctx context.Context, data map[string]interface{}
 // 删除
 func (logicThis *sScene) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
-	joinTableArr := []string{}
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &joinTableArr)).Delete()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
