@@ -108,8 +108,13 @@ func (daoThis *requestDao) ParseUpdate(update map[string]interface{}, fill ...bo
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
-			fieldArr = append(fieldArr, k+" = ?")
-			valueArr = append(valueArr, v)
+			_, ok := v.(gdb.Raw)
+			if ok {
+				fieldArr = append(fieldArr, k+" = "+gconv.String(v))
+			} else {
+				fieldArr = append(fieldArr, k+" = ?")
+				valueArr = append(valueArr, v)
+			}
 		}
 		data := []interface{}{strings.Join(fieldArr, ",")}
 		data = append(data, valueArr...)

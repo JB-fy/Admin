@@ -5,6 +5,7 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
+	"fmt"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -83,9 +84,11 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 // 创建
 func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
-
 	var pInfo gdb.Record
-	if gconv.Int(data["pid"]) > 0 {
+	fmt.Println(data["pid"])
+	fmt.Println(gconv.Int(data["pid"]))
+	pid := gconv.Int(data["pid"])
+	if pid > 0 {
 		joinTableArr := []string{}
 		field := []string{"pidPath", "level"}
 		filterTmp := g.Map{"menuId": data["pid"], "sceneId": data["sceneId"]}
@@ -105,7 +108,7 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 		"pidPath": "0-" + gconv.String(id),
 		"level":   1,
 	}
-	if gconv.Int(data["pid"]) > 0 {
+	if pid > 0 {
 		update = map[string]interface{}{
 			"pidPath": pInfo["pidPath"].String() + "-" + gconv.String(id),
 			"level":   pInfo["level"].Int() + 1,
