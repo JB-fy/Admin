@@ -23,7 +23,7 @@ func (controllerThis *Scene) List(r *ghttp.Request) {
 	var param *apiAuth.SceneListReq
 	err := r.Parse(&param)
 	if err != nil {
-		r.Response.Writeln(err.Error())
+		utils.HttpFailJson(r, err)
 		return
 	}
 	filter := gconv.Map(param.Filter)
@@ -73,14 +73,6 @@ func (controllerThis *Scene) List(r *ghttp.Request) {
 			return
 		}
 		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0)
-		/* r.SetError(gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"})))
-		r.Response.WriteJson(map[string]interface{}{
-			"code": 0,
-			"msg":  g.I18n().Tf(r.GetCtx(), "0"),
-			"data": map[string]interface{}{
-				"list": list,
-			},
-		}) */
 	}
 }
 
@@ -93,7 +85,7 @@ func (controllerThis *Scene) Info(r *ghttp.Request) {
 		var param *apiAuth.SceneInfoReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 
@@ -113,7 +105,7 @@ func (controllerThis *Scene) Info(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.Context(), "authSceneLook")
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
@@ -136,7 +128,7 @@ func (controllerThis *Scene) Create(r *ghttp.Request) {
 		var param *apiAuth.SceneCreateReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		data := gconv.Map(param)
@@ -145,7 +137,7 @@ func (controllerThis *Scene) Create(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.Context(), "authSceneCreate")
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
@@ -168,7 +160,7 @@ func (controllerThis *Scene) Update(r *ghttp.Request) {
 		var param *apiAuth.SceneUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		data := gconv.Map(param)
@@ -183,7 +175,7 @@ func (controllerThis *Scene) Update(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.Context(), "authSceneUpdate")
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
@@ -206,7 +198,7 @@ func (controllerThis *Scene) Delete(r *ghttp.Request) {
 		var param *apiAuth.SceneDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}
@@ -215,7 +207,7 @@ func (controllerThis *Scene) Delete(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.Context(), "authSceneDelete")
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
