@@ -35,7 +35,7 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------验证账号密码 开始--------**/
-		info, _ := daoPlatform.Admin.Ctx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{"accountOrPhone": account}, &[]string{})).One()
+		info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{"accountOrPhone": account}, &[]string{})).One()
 		if len(info) == 0 {
 			err = errors.New("39990000")
 			return

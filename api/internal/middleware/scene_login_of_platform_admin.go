@@ -46,9 +46,7 @@ func SceneLoginOfPlatformAdmin(r *ghttp.Request) {
 	/**--------选做。限制多地登录，多设备登录等情况下可用（前提必须在登录时做过token缓存） 结束--------**/
 
 	/**--------获取登录用户信息并验证 开始--------**/
-
-	info, _ := daoPlatform.Admin.Ctx(r.GetCtx()).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{"adminId": claims.LoginId}, &[]string{})).One()
-
+	info, _ := daoPlatform.Admin.ParseDbCtx(r.GetCtx()).Where("adminId", claims.LoginId).One()
 	if len(info) == 0 {
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 39994003,
@@ -70,5 +68,6 @@ func SceneLoginOfPlatformAdmin(r *ghttp.Request) {
 
 	utils.SetCtxLoginInfo(r, info) //用户信息保存在协程上下文
 	/**--------获取用户信息并验证 结束--------**/
+
 	r.Middleware.Next()
 }

@@ -25,7 +25,7 @@ func init() {
 func (logicThis *sAction) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := daoAuth.Action
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
@@ -41,7 +41,7 @@ func (logicThis *sAction) Count(ctx context.Context, filter map[string]interface
 func (logicThis *sAction) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoAuth.Action
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
@@ -65,7 +65,7 @@ func (logicThis *sAction) List(ctx context.Context, filter map[string]interface{
 func (logicThis *sAction) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := daoAuth.Action
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	if len(field) > 0 && len(field[0]) > 0 {
 		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
@@ -80,7 +80,7 @@ func (logicThis *sAction) Info(ctx context.Context, filter map[string]interface{
 // 创建
 func (logicThis *sAction) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Action
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseInsert(data))
 	if len(data) == 1 {
 		id, err = model.InsertAndGetId()
@@ -98,7 +98,7 @@ func (logicThis *sAction) Create(ctx context.Context, data []map[string]interfac
 func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseUpdate(data))
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	result, err := model.Update()
@@ -113,7 +113,7 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	result, err := model.Delete()
 	if err != nil {
@@ -146,7 +146,7 @@ func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (i
 		//filter["selfAction"].(map[string]interface{})["loginId"] = loginInfo["adminId"]
 	}
 	daoAction := daoAuth.Action
-	count, err := daoAction.Ctx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
+	count, err := daoAction.ParseDbCtx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
 	if count == 0 {
 		err = errors.New("39990002")
 		return

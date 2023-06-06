@@ -287,7 +287,7 @@ func (daoThis *adminDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
 					case "roleIdArr":
-						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.Ctx(ctx).Where("adminId", record[daoThis.PrimaryKey()]).Fields("roleId").Array()
+						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where("adminId", record[daoThis.PrimaryKey()]).Fields("roleId").Array()
 						record[v] = gvar.New(idArr)
 					}
 				}

@@ -320,7 +320,7 @@ func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
 					case "sceneIdArr":
-						sceneIdArr, _ := RoleRelToMenu.Ctx(ctx).Where("actionId", record[daoThis.PrimaryKey()]).Fields("sceneId").Array()
+						sceneIdArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where("actionId", record[daoThis.PrimaryKey()]).Fields("sceneId").Array()
 						record[v] = gvar.New(sceneIdArr)
 					}
 				}

@@ -23,7 +23,7 @@ func init() {
 func (logicThis *sMenu) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
@@ -39,7 +39,7 @@ func (logicThis *sMenu) Count(ctx context.Context, filter map[string]interface{}
 func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
@@ -63,7 +63,7 @@ func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{},
 func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	if len(field) > 0 && len(field[0]) > 0 {
 		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
@@ -78,7 +78,7 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 // 创建
 func (logicThis *sMenu) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseInsert(data))
 	if len(data) == 1 {
 		id, err = model.InsertAndGetId()
@@ -96,7 +96,7 @@ func (logicThis *sMenu) Create(ctx context.Context, data []map[string]interface{
 func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseUpdate(data))
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	result, err := model.Update()
@@ -111,7 +111,7 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
+	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	result, err := model.Delete()
 	if err != nil {

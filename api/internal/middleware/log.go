@@ -23,6 +23,5 @@ func Log(r *ghttp.Request) {
 		"responseBody": map[string]interface{}{},
 	}
 	fmt.Sprintln(data)
-	//dao.Request.Ctx(r.GetCtx()).Handler(dao.Request.ParseInsert(data))
-	//dao.Request.Ctx(r.GetCtx()).Data(data).Insert()
+	//dao.Request.ParseDbCtx(r.GetCtx()).Data(data).Insert()
 }
