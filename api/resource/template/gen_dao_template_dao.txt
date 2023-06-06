@@ -227,7 +227,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) AfterField(afterField []string) 
 }
 
 // 详情
-func (daoThis *{TplTableNameCamelLowerCase}Dao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) Info(ctx context.Context, filter map[string]interface{}, field []string) (info gdb.Record, err error) {
 	joinTableArr := []string{}
 	model := daoThis.Ctx(ctx)
 	if len(field) > 0 {
@@ -235,9 +235,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) Info(ctx context.Context, filter
 	}
 	if len(filter) > 0 {
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	}
-	if len(order) > 0 {
-		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	info, err = model.One()
 	return

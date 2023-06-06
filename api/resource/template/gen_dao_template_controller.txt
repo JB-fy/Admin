@@ -67,7 +67,7 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.{TplTableNameCamelCase}().List(r.Context(), filter, field, order, int((param.Page-1)*param.Limit), int(param.Limit))
+		list, err := service.{TplTableNameCamelCase}().List(r.Context(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -110,7 +110,7 @@ func (controllerThis *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.{TplTableNameCamelCase}().Info(r.Context(), filter, field, [][2]string{})
+		info, err := service.{TplTableNameCamelCase}().Info(r.Context(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -180,7 +180,7 @@ func (controllerThis *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCamelCase}().Update(r.Context(), data, filter, [][2]string{}, 0, 0)
+		_, err = service.{TplTableNameCamelCase}().Update(r.Context(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -212,7 +212,7 @@ func (controllerThis *{TplTableNameCamelCase}) Delete(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCamelCase}().Delete(r.Context(), filter, [][2]string{}, 0, 0)
+		_, err = service.{TplTableNameCamelCase}().Delete(r.Context(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

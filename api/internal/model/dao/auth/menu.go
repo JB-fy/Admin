@@ -98,13 +98,16 @@ func (daoMenu *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 }
 
 // 解析field
-func (daoMenu *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoMenu *menuDao) ParseField(field []string, joinTableArr ...*[]string) gdb.ModelHandler {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{{}}
+	}
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = daoMenu.ParseJoin("xxxx", joinTableArr)(m)
+			m = daoMenu.ParseJoin("xxxx", joinTableArr...)(m)
 			afterField = append(afterField, v) */
 			case "id":
 				m = m.Fields(daoMenu.Table() + "." + daoMenu.PrimaryKey() + " AS " + v)
@@ -112,7 +115,7 @@ func (daoMenu *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				m = m.Fields(daoMenu.Table() + "." + daoMenu.PrimaryKey())
 				m = m.Fields(daoMenu.Table() + ".pid")
 
-				m = daoMenu.ParseOrder([][2]string{{"menuTree", ""}}, joinTableArr)(m) //排序方式
+				m = daoMenu.ParseOrder([][2]string{{"menuTree", ""}}, joinTableArr...)(m) //排序方式
 			case "showMenu": //前端显示菜单需要以下字段，且title需要转换
 				m = m.Fields(daoMenu.Table() + ".menuName")
 				m = m.Fields(daoMenu.Table() + ".menuIcon")
@@ -122,10 +125,10 @@ func (daoMenu *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				afterField = append(afterField, v)
 			case "sceneName":
 				m = m.Fields(Scene.Table() + "." + v)
-				m = daoMenu.ParseJoin("scene", joinTableArr)(m)
+				m = daoMenu.ParseJoin("scene", joinTableArr...)(m)
 			case "pMenuName":
 				m = m.Fields("p_" + daoMenu.Table() + ".menuName AS " + v)
-				m = daoMenu.ParseJoin("pMenu", joinTableArr)(m)
+				m = daoMenu.ParseJoin("pMenu", joinTableArr...)(m)
 			default:
 				if daoMenu.ColumnArrG().Contains(v) {
 					m = m.Fields(daoMenu.Table() + "." + v)
@@ -142,7 +145,10 @@ func (daoMenu *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 }
 
 // 解析filter
-func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
+func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr ...*[]string) gdb.ModelHandler {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{{}}
+	}
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -179,11 +185,11 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 					m = m.Where(Role.Table()+".isStop", 0)
 					m = m.Where(RoleRelOfPlatformAdmin.Table()+".adminId", val["loginId"])
 
-					m = daoMenu.ParseJoin("roleRelToMenu", joinTableArr)(m)
-					m = daoMenu.ParseJoin("role", joinTableArr)(m)
-					m = daoMenu.ParseJoin("roleRelOfPlatformAdmin", joinTableArr)(m)
+					m = daoMenu.ParseJoin("roleRelToMenu", joinTableArr...)(m)
+					m = daoMenu.ParseJoin("role", joinTableArr...)(m)
+					m = daoMenu.ParseJoin("roleRelOfPlatformAdmin", joinTableArr...)(m)
 				}
-				m = daoMenu.ParseGroup([]string{"id"}, joinTableArr)(m)
+				m = daoMenu.ParseGroup([]string{"id"}, joinTableArr...)(m)
 			default:
 				kArr := strings.Split(k, " ")
 				if daoMenu.ColumnArrG().Contains(kArr[0]) {
@@ -198,7 +204,10 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 }
 
 // 解析group
-func (daoMenu *menuDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoMenu *menuDao) ParseGroup(group []string, joinTableArr ...*[]string) gdb.ModelHandler {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{{}}
+	}
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -217,7 +226,10 @@ func (daoMenu *menuDao) ParseGroup(group []string, joinTableArr *[]string) gdb.M
 }
 
 // 解析order
-func (daoMenu *menuDao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoMenu *menuDao) ParseOrder(order [][2]string, joinTableArr ...*[]string) func(m *gdb.Model) *gdb.Model {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{{}}
+	}
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -240,7 +252,10 @@ func (daoMenu *menuDao) ParseOrder(order [][2]string, joinTableArr *[]string) fu
 }
 
 // 解析join
-func (daoMenu *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoMenu *menuDao) ParseJoin(joinCode string, joinTableArr ...*[]string) func(m *gdb.Model) *gdb.Model {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{&([]string{})}
+	}
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		/* case "xxxx":
@@ -251,33 +266,33 @@ func (daoMenu *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) func(
 		} */
 		case "scene":
 			sceneTable := Scene.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(sceneTable) {
-				*joinTableArr = append(*joinTableArr, sceneTable)
+			if !garray.NewStrArrayFrom(*joinTableArr[0]).Contains(sceneTable) {
+				*joinTableArr[0] = append(*joinTableArr[0], sceneTable)
 				m = m.LeftJoin(sceneTable, sceneTable+"."+Scene.PrimaryKey()+" = "+daoMenu.Table()+"."+Scene.PrimaryKey())
 			}
 		case "pMenu":
 			pMenuTable := "p_" + daoMenu.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(pMenuTable) {
-				*joinTableArr = append(*joinTableArr, pMenuTable)
+			if !garray.NewStrArrayFrom(*joinTableArr[0]).Contains(pMenuTable) {
+				*joinTableArr[0] = append(*joinTableArr[0], pMenuTable)
 				m = m.LeftJoin(daoMenu.Table()+" AS "+pMenuTable, pMenuTable+"."+daoMenu.PrimaryKey()+" = "+daoMenu.Table()+".pid")
 			}
 		case "roleRelToMenu":
 			roleRelToMenuTable := RoleRelToMenu.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelToMenuTable) {
-				*joinTableArr = append(*joinTableArr, roleRelToMenuTable)
+			if !garray.NewStrArrayFrom(*joinTableArr[0]).Contains(roleRelToMenuTable) {
+				*joinTableArr[0] = append(*joinTableArr[0], roleRelToMenuTable)
 				m = m.LeftJoin(roleRelToMenuTable, roleRelToMenuTable+"."+daoMenu.PrimaryKey()+" = "+daoMenu.Table()+"."+daoMenu.PrimaryKey())
 			}
 		case "role":
 			roleTable := Role.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleTable) {
-				*joinTableArr = append(*joinTableArr, roleTable)
+			if !garray.NewStrArrayFrom(*joinTableArr[0]).Contains(roleTable) {
+				*joinTableArr[0] = append(*joinTableArr[0], roleTable)
 				roleRelToMenuTable := RoleRelToMenu.Table()
 				m = m.LeftJoin(roleTable, roleTable+"."+Role.PrimaryKey()+" = "+roleRelToMenuTable+"."+Role.PrimaryKey())
 			}
 		case "roleRelOfPlatformAdmin":
 			roleRelOfPlatformAdminTable := RoleRelOfPlatformAdmin.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
-				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
+			if !garray.NewStrArrayFrom(*joinTableArr[0]).Contains(roleRelOfPlatformAdminTable) {
+				*joinTableArr[0] = append(*joinTableArr[0], roleRelOfPlatformAdminTable)
 				roleRelToMenuTable := RoleRelToMenu.Table()
 				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+"."+Role.PrimaryKey()+" = "+roleRelToMenuTable+"."+Role.PrimaryKey())
 			}

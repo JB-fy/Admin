@@ -8,8 +8,8 @@ type SortReq struct {
 type CommonListReq struct {
 	Field []string `p:"field" v:"foreach|min-length:1"`
 	Sort  SortReq  `p:"sort"`
-	Page  uint     `p:"page" v:"min:1"`
-	Limit uint     `p:"limit"` //可传0取全部
+	Page  int      `p:"page" v:"min:1"`
+	Limit int      `p:"limit" v:"min:0"` //可传0取全部
 }
 
 type CommonListFilterReq struct {
