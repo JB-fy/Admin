@@ -3,10 +3,10 @@ package logic
 import (
 	daoAuth "api/internal/model/dao/auth"
 	"api/internal/service"
+	"api/internal/utils"
 	"context"
 	"errors"
 
-	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -151,23 +151,24 @@ func (logicAction *sAction) Delete(ctx context.Context, filter map[string]interf
 
 // 判断操作权限
 func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string, sceneCode string) (isAuth bool, err error) {
-	infoTmp := ctx.Value(sceneCode + "Info")
-	info := gvar.New(infoTmp).Map()
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	filter := map[string]interface{}{
 		"actionCode": actionCode,
 	}
 	filter["selfAction"] = map[string]interface{}{
 		"sceneCode": sceneCode,
-		"loginId":   info["adminId"],
+		"sceneId":   sceneInfo["sceneId"],
+		"loginId":   loginInfo["adminId"],
 	}
 
 	switch sceneCode {
 	case "platformAdmin":
-		if gconv.Int(info["adminId"]) == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
+		if gconv.Int(loginInfo["adminId"]) == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
 			isAuth = true
 			return
 		}
-		//filter["selfAction"].(map[string]interface{})["loginId"] = info["adminId"]
+		//filter["selfAction"].(map[string]interface{})["loginId"] = loginInfo["adminId"]
 	}
 	daoAction := daoAuth.Action
 	count, err := daoAction.Ctx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()

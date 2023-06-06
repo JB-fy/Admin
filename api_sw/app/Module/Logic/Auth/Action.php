@@ -53,10 +53,12 @@ class Action extends AbstractLogic
     public function checkAuth(string $actionCode, string $sceneCode, bool $isThrow = true): bool
     {
         $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
+        $sceneInfo = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();
         $filter = [
             'actionCode' => $actionCode,
             'selfAction' => [
                 'sceneCode' => $sceneCode,
+                'sceneId' => $sceneInfo->sceneId,
                 'loginId' => $loginInfo->adminId
             ],
         ];

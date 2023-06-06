@@ -88,9 +88,11 @@ class Login extends AbstractController
         switch ($sceneCode) {
             case 'platformAdmin':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
+                $sceneInfo = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();
                 $filter = [
                     'selfMenu' => [
                         'sceneCode' => $sceneCode,
+                        'sceneId' => $sceneInfo->sceneId,
                         'loginId' => $loginInfo->adminId
                     ]
                 ];

@@ -65,8 +65,8 @@ func (c *Login) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
-		info := utils.GetCtxLoginInfo(r.GetCtx())
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
+		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
+		utils.HttpSuccessJson(r, map[string]interface{}{"info": loginInfo}, 0)
 	}
 }
 
@@ -90,11 +90,13 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
-		info := utils.GetCtxLoginInfo(r.GetCtx())
+		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
+		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
 		filter := map[string]interface{}{}
 		filter["selfMenu"] = map[string]interface{}{
 			"sceneCode": sceneCode,
-			"loginId":   info.Map()["adminId"],
+			"sceneId":   sceneInfo["sceneId"],
+			"loginId":   loginInfo["adminId"],
 		}
 		field := []string{"menuTree", "showMenu"}
 

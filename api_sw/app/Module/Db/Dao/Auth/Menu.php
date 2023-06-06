@@ -96,11 +96,8 @@ class Menu extends AbstractDao
     protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
-            case 'selfMenu': //获取当前登录身份可用的菜单。参数：['sceneCode'=>场景标识, 'loginId'=>登录身份id]
-                $sceneInfo = getContainer()->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();    //当开启切面\App\Aspect\Scene时有值
-                $sceneId = $sceneInfo === null ? getDao(Scene::class)->parseFilter(['sceneCode' => $value['sceneCode']])->getBuilder()->value('sceneId') : $sceneInfo->sceneId;
-
-                $this->builder->where($this->getTable() . '.sceneId', '=', $sceneId, 'and');
+            case 'selfMenu': //获取当前登录身份可用的菜单。参数：['sceneCode'=>场景标识, 'sceneId'=>场景id, 'loginId'=>登录身份id]
+                $this->builder->where($this->getTable() . '.sceneId', '=', $value['sceneId'], 'and');
                 $this->builder->where($this->getTable() . '.isStop', '=', 0, 'and');
                 switch ($value['sceneCode']) {
                     case 'platformAdmin':

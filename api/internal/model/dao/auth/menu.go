@@ -166,23 +166,14 @@ func (daoMenu *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				default:
 					m = m.Where(daoMenu.Table()+"."+keywordField, v)
 				}
-			case "selfMenu": //获取当前登录身份可用的菜单。参数：map[string]interface{}{"sceneCode": "场景标识", "loginId": 登录身份id}
+			case "selfMenu": //获取当前登录身份可用的菜单。参数：map[string]interface{}{"sceneCode": "场景标识", "sceneId": 场景id, "loginId": 登录身份id}
 				val := v.(map[string]interface{})
-				ctx := m.GetCtx()
-				sceneInfo := m.GetCtx().Value("sceneInfo").(gdb.Record)
-				sceneId := 0
-				if len(sceneInfo) == 0 {
-					sceneIdTmp, _ := Scene.Ctx(ctx).Where("sceneCode", val["sceneCode"]).Value("sceneId")
-					sceneId = sceneIdTmp.Int()
-				} else {
-					sceneId = sceneInfo["sceneId"].Int()
-				}
 
-				m = m.Where(daoMenu.Table()+".sceneId", sceneId)
+				m = m.Where(daoMenu.Table()+".sceneId", val["sceneId"])
 				m = m.Where(daoMenu.Table()+".isStop", 0)
 				switch val["sceneCode"].(string) {
 				case "platformAdmin":
-					if gconv.Int(val["loginId"]) == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
+					if gconv.Int(val["loginId"]) == g.Cfg().MustGet(m.GetCtx(), "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
 						return m
 					}
 					m = m.Where(Role.Table()+".isStop", 0)
