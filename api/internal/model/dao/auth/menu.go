@@ -146,8 +146,7 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
-			kArr := strings.Split(k, " ") //为支持"id > ?"的key
-			switch kArr[0] {
+			switch k {
 			case "id":
 				val := gvar.New(v)
 				if val.IsSlice() && len(val.Slice()) == 1 {
@@ -192,11 +191,18 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 				m = daoThis.ParseGroup([]string{"id"}, joinTableArr)(m)
 			default:
+				kArr := strings.Split(k, " ") //支持"id > ?"等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
-					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
-						val := gvar.New(v)
-						if val.IsSlice() && len(val.Slice()) == 1 {
-							m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+					if len(kArr) == 1 {
+						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
+							val := gvar.New(v)
+							if val.IsSlice() && len(val.Slice()) == 1 {
+								m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+							} else {
+								m = m.Where(daoThis.Table()+"."+k, v)
+							}
+						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
+							m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
 						} else {
 							m = m.Where(daoThis.Table()+"."+k, v)
 						}

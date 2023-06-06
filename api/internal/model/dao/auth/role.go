@@ -129,8 +129,7 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
-			kArr := strings.Split(k, " ") //为支持"id > ?"的key
-			switch kArr[0] {
+			switch k {
 			case "id":
 				val := gvar.New(v)
 				if val.IsSlice() && len(val.Slice()) == 1 {
@@ -157,7 +156,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
 			default:
-				kArr := strings.Split(k, " ") //为支持"id > ?"的key
+				kArr := strings.Split(k, " ") //支持"id > ?"等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					if len(kArr) == 1 {
 						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
@@ -254,6 +253,8 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 			for i, record := range result {
 				for _, v := range afterField {
 					switch v {
+					/* case "xxxx":
+					record[v] = gvar.New("") */
 					case "menuIdArr":
 						menuIdArr, _ := RoleRelToMenu.Ctx(ctx).Where("roleId", record[daoThis.PrimaryKey()]).Fields("menuId").Array()
 						record[v] = gvar.New(menuIdArr)
