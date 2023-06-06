@@ -8,8 +8,10 @@ import (
 	"{TplImportPrefix}/internal"
 	"strings"
 
-	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // internal{TplTableNameCamelCase}Dao is internal type for wrapping internal DAO implements.

@@ -9,10 +9,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -33,7 +34,7 @@ var (
 )
 
 // 解析insert
-func (daoAction *actionDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *actionDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := make([]map[string]interface{}, len(insert))
 		for index, item := range insert {
@@ -41,10 +42,10 @@ func (daoAction *actionDao) ParseInsert(insert []map[string]interface{}, fill ..
 			for k, v := range item {
 				switch k {
 				case "id":
-					insertData[index][daoAction.PrimaryKey()] = v
+					insertData[index][daoThis.PrimaryKey()] = v
 				default:
 					//数据库不存在的字段过滤掉，未传值默认true
-					if (len(fill) == 0 || fill[0]) && !daoAction.ColumnArrG().Contains(k) {
+					if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
 						continue
 					}
 					insertData[index][k] = v
@@ -61,19 +62,19 @@ func (daoAction *actionDao) ParseInsert(insert []map[string]interface{}, fill ..
 }
 
 // 解析update
-func (daoAction *actionDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case "id":
-				updateData[daoAction.Table()+"."+daoAction.PrimaryKey()] = v
+				updateData[daoThis.Table()+"."+daoThis.PrimaryKey()] = v
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
-				if (len(fill) == 0 || fill[0]) && !daoAction.ColumnArrG().Contains(k) {
+				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
 					continue
 				}
-				updateData[daoAction.Table()+"."+k] = v
+				updateData[daoThis.Table()+"."+k] = v
 			}
 		}
 		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
@@ -92,70 +93,77 @@ func (daoAction *actionDao) ParseUpdate(update map[string]interface{}, fill ...b
 }
 
 // 解析field
-func (daoAction *actionDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case "xxxx":
-			m = daoAction.ParseJoin("xxxx", joinTableArr)(m)
+			m = daoThis.ParseJoin("xxxx", joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case "id":
-				m = m.Fields(daoAction.Table() + "." + daoAction.PrimaryKey() + " AS " + v)
+				m = m.Fields(daoThis.Table() + "." + daoThis.PrimaryKey() + " AS " + v)
+
 			case "sceneIdArr":
 				//需要id字段
-				m = m.Fields(daoAction.Table() + "." + daoAction.PrimaryKey())
+				m = m.Fields(daoThis.Table() + "." + daoThis.PrimaryKey())
 				afterField = append(afterField, v)
 			default:
-				if daoAction.ColumnArrG().Contains(v) {
-					m = m.Fields(daoAction.Table() + "." + v)
+				if daoThis.ColumnArrG().Contains(v) {
+					m = m.Fields(daoThis.Table() + "." + v)
 				} else {
 					m = m.Fields(v)
 				}
 			}
 		}
 		if len(afterField) > 0 {
-			m = m.Hook(daoAction.AfterField(afterField))
+			m = m.Hook(daoThis.AfterField(afterField))
 		}
 		return m
 	}
 }
 
 // 解析filter
-func (daoAction *actionDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
-			switch k {
-			case "id", "idArr":
-				m = m.Where(daoAction.Table()+"."+daoAction.PrimaryKey(), v)
-			case "excId":
-				m = m.WhereNot(daoAction.Table()+"."+daoAction.PrimaryKey(), v)
-			case "excIdArr":
-				m = m.WhereNotIn(daoAction.Table()+"."+daoAction.PrimaryKey(), v)
-			case "startTime":
-				m = m.WhereGTE(daoAction.Table()+".createTime", v)
-			case "endTime":
-				m = m.WhereLTE(daoAction.Table()+".createTime", v)
-			case "keyword":
-				keywordField := strings.ReplaceAll(daoAction.PrimaryKey(), "Id", "Name")
-				switch v := v.(type) {
-				case *string:
-					m = m.WhereLike(daoAction.Table()+"."+keywordField, *v)
-				case string:
-					m = m.WhereLike(daoAction.Table()+"."+keywordField, v)
-				default:
-					m = m.Where(daoAction.Table()+"."+keywordField, v)
+			kArr := strings.Split(k, " ") //为支持"id > ?"的key
+			switch kArr[0] {
+			case "id":
+				val := gvar.New(v)
+				if val.IsSlice() && len(val.Slice()) == 1 {
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val.Slice()[0])
+				} else {
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 				}
+			case "excId":
+				val := gvar.New(v)
+				if val.IsSlice() {
+					if len(val.Slice()) == 1 {
+						m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), val.Slice()[0])
+					} else {
+						m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					}
+				} else {
+					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+				}
+			case "startTime":
+				m = m.WhereGTE(daoThis.Table()+".createTime", v)
+			case "endTime":
+				m = m.WhereLTE(daoThis.Table()+".createTime", v)
+			case "keyword":
+				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
+				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
 			case "sceneId":
 				m = m.Where(ActionRelToScene.Table()+"."+k, v)
 
-				m = daoAction.ParseJoin("actionRelToScene", joinTableArr)(m)
+				m = daoThis.ParseJoin("actionRelToScene", joinTableArr)(m)
 			case "selfAction": //获取当前登录身份可用的操作。参数：map[string]interface{}{"sceneCode": "场景标识", "sceneId"=>场景id, "loginId": 登录身份id}
 				val := v.(map[string]interface{})
 
-				m = m.Where(daoAction.Table()+".isStop", 0)
+				m = m.Where(daoThis.Table()+".isStop", 0)
 				m = m.Where(ActionRelToScene.Table()+".sceneId", val["sceneId"])
-				m = daoAction.ParseJoin("actionRelToScene", joinTableArr)(m)
+				m = daoThis.ParseJoin("actionRelToScene", joinTableArr)(m)
 				switch val["sceneCode"].(string) {
 				case "platformAdmin":
 					if gconv.Int(val["loginId"]) == g.Cfg().MustGet(m.GetCtx(), "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
@@ -164,15 +172,23 @@ func (daoAction *actionDao) ParseFilter(filter map[string]interface{}, joinTable
 					m = m.Where(Role.Table()+".isStop", 0)
 					m = m.Where(RoleRelOfPlatformAdmin.Table()+".adminId", val["loginId"])
 
-					m = daoAction.ParseJoin("roleRelToAction", joinTableArr)(m)
-					m = daoAction.ParseJoin("role", joinTableArr)(m)
-					m = daoAction.ParseJoin("roleRelOfPlatformAdmin", joinTableArr)(m)
+					m = daoThis.ParseJoin("roleRelToAction", joinTableArr)(m)
+					m = daoThis.ParseJoin("role", joinTableArr)(m)
+					m = daoThis.ParseJoin("roleRelOfPlatformAdmin", joinTableArr)(m)
 				}
-				m = daoAction.ParseGroup([]string{"id"}, joinTableArr)(m)
+				m = daoThis.ParseGroup([]string{"id"}, joinTableArr)(m)
 			default:
-				kArr := strings.Split(k, " ")
-				if daoAction.ColumnArrG().Contains(kArr[0]) {
-					m = m.Where(daoAction.Table()+"."+k, v)
+				if daoThis.ColumnArrG().Contains(kArr[0]) {
+					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
+						val := gvar.New(v)
+						if val.IsSlice() && len(val.Slice()) == 1 {
+							m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+						} else {
+							m = m.Where(daoThis.Table()+"."+k, v)
+						}
+					} else {
+						m = m.Where(daoThis.Table()+"."+k, v)
+					}
 				} else {
 					m = m.Where(k, v)
 				}
@@ -183,15 +199,15 @@ func (daoAction *actionDao) ParseFilter(filter map[string]interface{}, joinTable
 }
 
 // 解析group
-func (daoAction *actionDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *actionDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
 			case "id":
-				m = m.Group(daoAction.Table() + "." + daoAction.PrimaryKey())
+				m = m.Group(daoThis.Table() + "." + daoThis.PrimaryKey())
 			default:
-				if daoAction.ColumnArrG().Contains(v) {
-					m = m.Group(daoAction.Table() + "." + v)
+				if daoThis.ColumnArrG().Contains(v) {
+					m = m.Group(daoThis.Table() + "." + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -202,15 +218,15 @@ func (daoAction *actionDao) ParseGroup(group []string, joinTableArr *[]string) g
 }
 
 // 解析order
-func (daoAction *actionDao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoThis *actionDao) ParseOrder(order [][2]string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
 			case "id":
-				m = m.Order(daoAction.Table()+"."+daoAction.PrimaryKey(), v[1])
+				m = m.Order(daoThis.Table()+"."+daoThis.PrimaryKey(), v[1])
 			default:
-				if daoAction.ColumnArrG().Contains(v[0]) {
-					m = m.Order(daoAction.Table()+"."+v[0], v[1])
+				if daoThis.ColumnArrG().Contains(v[0]) {
+					m = m.Order(daoThis.Table()+"."+v[0], v[1])
 				} else {
 					m = m.Order(v[0], v[1])
 				}
@@ -221,26 +237,26 @@ func (daoAction *actionDao) ParseOrder(order [][2]string, joinTableArr *[]string
 }
 
 // 解析join
-func (daoAction *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		/* case "xxxx":
 		xxxxTable := xxxx.Table()
 		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
 			*joinTableArr = append(*joinTableArr, xxxxTable)
-			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoAction.PrimaryKey()+" = "+daoAction.Table()+"."+daoAction.PrimaryKey())
+			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoThis.PrimaryKey()+" = "+daoThis.Table()+"."+daoThis.PrimaryKey())
 		} */
 		case "actionRelToScene":
 			actionRelToSceneTable := ActionRelToScene.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(actionRelToSceneTable) {
 				*joinTableArr = append(*joinTableArr, actionRelToSceneTable)
-				m = m.LeftJoin(actionRelToSceneTable, actionRelToSceneTable+"."+daoAction.PrimaryKey()+" = "+daoAction.Table()+"."+daoAction.PrimaryKey())
+				m = m.LeftJoin(actionRelToSceneTable, actionRelToSceneTable+"."+daoThis.PrimaryKey()+" = "+daoThis.Table()+"."+daoThis.PrimaryKey())
 			}
 		case "roleRelToAction":
 			roleRelToActionTable := RoleRelToAction.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelToActionTable) {
 				*joinTableArr = append(*joinTableArr, roleRelToActionTable)
-				m = m.LeftJoin(roleRelToActionTable, roleRelToActionTable+"."+daoAction.PrimaryKey()+" = "+daoAction.Table()+"."+daoAction.PrimaryKey())
+				m = m.LeftJoin(roleRelToActionTable, roleRelToActionTable+"."+daoThis.PrimaryKey()+" = "+daoThis.Table()+"."+daoThis.PrimaryKey())
 			}
 		case "role":
 			roleTable := Role.Table()
@@ -262,7 +278,7 @@ func (daoAction *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) f
 }
 
 // 获取数据后，再处理的字段
-func (daoAction *actionDao) AfterField(afterField []string) gdb.HookHandler {
+func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -275,7 +291,7 @@ func (daoAction *actionDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case "xxxx":
 					record[v] = gvar.New("") */
 					case "sceneIdArr":
-						sceneIdArr, _ := RoleRelToMenu.Ctx(ctx).Where("actionId", record[daoAction.PrimaryKey()]).Fields("sceneId").Array()
+						sceneIdArr, _ := RoleRelToMenu.Ctx(ctx).Where("actionId", record[daoThis.PrimaryKey()]).Fields("sceneId").Array()
 						record[v] = gvar.New(sceneIdArr)
 					}
 				}
@@ -286,38 +302,17 @@ func (daoAction *actionDao) AfterField(afterField []string) gdb.HookHandler {
 	}
 }
 
-// 详情
-func (daoAction *actionDao) Info(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (info gdb.Record, err error) {
-	joinTableArr := []string{}
-	model := daoAction.Ctx(ctx)
+// 常用方法（用filter和field查询）
+func (daoThis *actionDao) CommonModel(ctx context.Context, filter map[string]interface{}, field []string, joinTableArr ...*[]string) *gdb.Model {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{{}}
+	}
+	model := daoThis.Ctx(ctx)
+	model = model.Handler(daoThis.ParseFilter(filter, joinTableArr[0]))
 	if len(field) > 0 {
-		model = model.Handler(daoAction.ParseField(field, &joinTableArr))
+		model = model.Handler(daoThis.ParseField(field, joinTableArr[0]))
 	}
-	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
-	}
-	if len(order) > 0 {
-		model = model.Handler(daoAction.ParseOrder(order, &joinTableArr))
-	}
-	info, err = model.One()
-	return
-}
-
-// 列表
-func (daoAction *actionDao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
-	joinTableArr := []string{}
-	model := daoAction.Ctx(ctx)
-	if len(field) > 0 {
-		model = model.Handler(daoAction.ParseField(field, &joinTableArr))
-	}
-	if len(filter) > 0 {
-		model = model.Handler(daoAction.ParseFilter(filter, &joinTableArr))
-	}
-	if len(order) > 0 {
-		model = model.Handler(daoAction.ParseOrder(order, &joinTableArr))
-	}
-	list, err = model.All()
-	return
+	return model
 }
 
 // Fill with you ideas below.
