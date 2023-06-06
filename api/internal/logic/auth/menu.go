@@ -86,10 +86,7 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.ParseDbCtx(ctx)
-	model = model.Handler(daoThis.ParseUpdate(data))
-	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	result, err := model.Update()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &joinTableArr)).Update()
 	if err != nil {
 		return
 	}
@@ -101,9 +98,7 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
-	model := daoThis.ParseDbCtx(ctx)
-	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	result, err := model.Delete()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &joinTableArr)).Delete()
 	if err != nil {
 		return
 	}
