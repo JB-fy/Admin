@@ -83,7 +83,7 @@ func (controllerThis *Config) Save(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Config().Save(r.Context(), []map[string]interface{}{data})
+		_, err = service.Config().Save(r.Context(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

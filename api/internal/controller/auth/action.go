@@ -142,7 +142,7 @@ func (controllerThis *Action) Create(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Action().Create(r.Context(), []map[string]interface{}{data})
+		_, err = service.Action().Create(r.Context(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
