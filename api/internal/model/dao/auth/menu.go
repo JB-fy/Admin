@@ -195,9 +195,9 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					if len(kArr) == 1 {
 						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
-							val := gvar.New(v)
-							if val.IsSlice() && len(val.Slice()) == 1 {
-								m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+							val := gconv.SliceInt(v)
+							if len(val) == 1 {
+								m = m.Where(daoThis.Table()+"."+k, val[0])
 							} else {
 								m = m.Where(daoThis.Table()+"."+k, v)
 							}

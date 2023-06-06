@@ -14,37 +14,37 @@ import (
 type (
 	IAction interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
 	}
 	IMenu interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 		Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error)
 	}
 	IRole interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 	IScene interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, offset int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string) (info gdb.Record, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}, order [][2]string, offset int, limit int) (row int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 )
 

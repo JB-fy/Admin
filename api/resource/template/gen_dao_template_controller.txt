@@ -47,7 +47,7 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.Context(), "auth{TplTableNameCamelCase}Look")
-		allowField := []string{"sceneId", "sceneName", "id"}
+		allowField := []string{"{TplTableNameCamelLowerCase}Id", "{TplTableNameCamelLowerCase}Name", "id"}
 		if isAuth {
 			allowField = daoAuth.{TplTableNameCamelCase}.ColumnArr()
 			allowField = append(allowField, "id")
