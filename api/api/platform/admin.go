@@ -9,23 +9,19 @@ type AdminListReq struct {
 	Filter AdminListFilterReq `p:"filter"`
 }
 
-/* type Admin struct {
-    AdminId    uint        `json:"adminId"    `// 管理员ID
-    Account    string      `json:"account"    `// 账号
-    Phone      string      `json:"phone"      `// 电话号码
-    Password   string      `json:"password"   `// 密码（md5保存）
-    Nickname   string      `json:"nickname"   `// 昵称
-    Avatar     string      `json:"avatar"     `// 头像
-    IsStop     uint        `json:"isStop"     `// 是否停用：0否 1是
-    UpdateTime *gtime.Time `json:"updateTime" `// 更新时间
-    CreateTime *gtime.Time `json:"createTime" `// 创建时间
-} */
-
 type AdminListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
 	AdminId                       *uint  `c:"adminId,omitempty" p:"adminId" v:"min:1"`
-	AdminName                     string `c:"adminName,omitempty" p:"adminName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Account                       string `c:"account,omitempty" p:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Phone                         string `c:"phone,omitempty" p:"phone" v:"phone"`
+	Nickname                      string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	IsStop                        *uint  `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
+	Avatar                        string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
+	RoleIdArr                     []uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"foreach|min:1"`
+	RoleId                        *uint  `c:"roleId,omitempty" p:"roleId" v:"min:1"`
+
+	Password      string `c:"password,omitempty" p:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	CheckPassword string `c:"checkPassword,omitempty" p:"checkPassword" v:"required_with:account,phone,password|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
 }
 
 type AdminInfoReq struct {
@@ -33,13 +29,23 @@ type AdminInfoReq struct {
 }
 
 type AdminCreateReq struct {
-	AdminName *string `c:"adminName,omitempty" p:"adminName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Account   *string `c:"account,omitempty" p:"account" v:"required_without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Phone     *string `c:"phone,omitempty" p:"phone" v:"required_without:Account|phone"`
+	Password  *string `c:"password,omitempty" p:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	RoleIdArr *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"required|foreach|min:1"`
+	Nickname  *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Avatar    *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
 	IsStop    *uint   `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 }
 
 type AdminUpdateReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	AdminName                            *string `c:"adminName,omitempty" p:"adminName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Account                              *string `c:"account,omitempty" p:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Phone                                *string `c:"phone,omitempty" p:"phone" v:"phone"`
+	Password                             *string `c:"password,omitempty" p:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	RoleIdArr                            *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"foreach|min:1"`
+	Nickname                             *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Avatar                               *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
 	IsStop                               *uint   `c:"isStop,omitempty" p:"isStop" v:"in:0,1"`
 }
 

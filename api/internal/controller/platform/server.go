@@ -1,8 +1,8 @@
 package controller
 
 import (
-	apiAuth "api/api/auth"
-	daoAuth "api/internal/model/dao/auth"
+	apiPlatform "api/api/platform"
+	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 
@@ -20,7 +20,7 @@ func NewServer() *Server {
 // 列表
 func (controllerThis *Server) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
-	var param *apiAuth.ServerListReq
+	var param *apiPlatform.ServerListReq
 	err := r.Parse(&param)
 	if err != nil {
 		utils.HttpFailJson(r, err)
@@ -49,7 +49,7 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 		isAuth, _ := service.Action().CheckAuth(r.Context(), "authServerLook")
 		allowField := []string{"serverId", "serverName", "id"}
 		if isAuth {
-			allowField = daoAuth.Server.ColumnArr()
+			allowField = daoPlatform.Server.ColumnArr()
 			allowField = append(allowField, "id")
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
@@ -73,150 +73,5 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 			return
 		}
 		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0)
-	}
-}
-
-// 详情
-func (controllerThis *Server) Info(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case "platformAdmin":
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.ServerInfoReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-
-		allowField := daoAuth.Server.ColumnArr()
-		allowField = append(allowField, "id")
-		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		filter := map[string]interface{}{"id": param.Id}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authServerLook")
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		info, err := service.Server().Info(r.Context(), filter, field)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
-	}
-}
-
-// 创建
-func (controllerThis *Server) Create(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case "platformAdmin":
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.ServerCreateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		data := gconv.Map(param)
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authServerCreate")
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Server().Create(r.Context(), []map[string]interface{}{data})
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
-	}
-}
-
-// 更新
-func (controllerThis *Server) Update(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case "platformAdmin":
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.ServerUpdateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		data := gconv.Map(param)
-		delete(data, "idArr")
-		if len(data) == 0 {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		filter := map[string]interface{}{"id": param.IdArr}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authServerUpdate")
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Server().Update(r.Context(), data, filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
-	}
-}
-
-// 删除
-func (controllerThis *Server) Delete(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case "platformAdmin":
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.ServerDeleteReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		filter := map[string]interface{}{"id": param.IdArr}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authServerDelete")
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Server().Delete(r.Context(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }

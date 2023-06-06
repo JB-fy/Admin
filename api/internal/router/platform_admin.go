@@ -6,6 +6,7 @@ import (
 
 	"api/internal/controller"
 	controllerAuth "api/internal/controller/auth"
+	controllerLog "api/internal/controller/log"
 	"api/internal/middleware"
 )
 
@@ -19,8 +20,11 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 			//需验证登录身份
 			group.Group("", func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.SceneLoginOfPlatformAdmin)
-				group.ALLMap(g.Map{
-					"/log/request": controller.NewTest().Test,
+				group.Group("/log/request", func(group *ghttp.RouterGroup) {
+					controllerThis := controllerLog.NewRequest()
+					group.ALLMap(g.Map{
+						"/list": controllerThis.List,
+					})
 				})
 			})
 		})

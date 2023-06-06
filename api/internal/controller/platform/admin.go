@@ -1,8 +1,8 @@
 package controller
 
 import (
-	apiAuth "api/api/auth"
-	daoAuth "api/internal/model/dao/auth"
+	apiPlatform "api/api/platform"
+	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 
@@ -20,7 +20,7 @@ func NewAdmin() *Admin {
 // 列表
 func (controllerThis *Admin) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
-	var param *apiAuth.AdminListReq
+	var param *apiPlatform.AdminListReq
 	err := r.Parse(&param)
 	if err != nil {
 		utils.HttpFailJson(r, err)
@@ -46,10 +46,10 @@ func (controllerThis *Admin) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "authAdminLook")
+		isAuth, _ := service.Action().CheckAuth(r.Context(), "platformAdminLook")
 		allowField := []string{"adminId", "adminName", "id"}
 		if isAuth {
-			allowField = daoAuth.Admin.ColumnArr()
+			allowField = daoPlatform.Admin.ColumnArr()
 			allowField = append(allowField, "id")
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
@@ -82,14 +82,14 @@ func (controllerThis *Admin) Info(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
-		var param *apiAuth.AdminInfoReq
+		var param *apiPlatform.AdminInfoReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 
-		allowField := daoAuth.Admin.ColumnArr()
+		allowField := daoPlatform.Admin.ColumnArr()
 		allowField = append(allowField, "id")
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		field := allowField
@@ -103,7 +103,7 @@ func (controllerThis *Admin) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authAdminLook")
+		_, err = service.Action().CheckAuth(r.Context(), "platformAdminLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -125,7 +125,7 @@ func (controllerThis *Admin) Create(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
-		var param *apiAuth.AdminCreateReq
+		var param *apiPlatform.AdminCreateReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, err)
@@ -135,7 +135,7 @@ func (controllerThis *Admin) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authAdminCreate")
+		_, err = service.Action().CheckAuth(r.Context(), "platformAdminCreate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -157,7 +157,7 @@ func (controllerThis *Admin) Update(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
-		var param *apiAuth.AdminUpdateReq
+		var param *apiPlatform.AdminUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, err)
@@ -173,7 +173,7 @@ func (controllerThis *Admin) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authAdminUpdate")
+		_, err = service.Action().CheckAuth(r.Context(), "platformAdminUpdate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -195,7 +195,7 @@ func (controllerThis *Admin) Delete(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------参数处理 开始--------**/
-		var param *apiAuth.AdminDeleteReq
+		var param *apiPlatform.AdminDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, err)
@@ -205,7 +205,7 @@ func (controllerThis *Admin) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authAdminDelete")
+		_, err = service.Action().CheckAuth(r.Context(), "platformAdminDelete")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

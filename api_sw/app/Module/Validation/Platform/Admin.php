@@ -34,7 +34,6 @@ class Admin extends AbstractValidation
                 'avatar',
                 'roleIdArr',
                 'roleIdArr.*',
-                'remark',
                 'isStop',
             ],
             'remove' => [
@@ -59,7 +58,6 @@ class Admin extends AbstractValidation
                 'avatar',
                 'roleIdArr',
                 'roleIdArr.*',
-                'remark',
                 'isStop',
             ],
             'remove' => [

@@ -1,7 +1,7 @@
 package logic
 
 import (
-	daoAuth "api/internal/model/dao/auth"
+	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/service"
 	"context"
 
@@ -20,7 +20,7 @@ func init() {
 
 // 总数
 func (logicThis *sAdmin) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
-	daoThis := daoAuth.Admin
+	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -36,7 +36,7 @@ func (logicThis *sAdmin) Count(ctx context.Context, filter map[string]interface{
 
 // 列表
 func (logicThis *sAdmin) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
-	daoThis := daoAuth.Admin
+	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -60,7 +60,7 @@ func (logicThis *sAdmin) List(ctx context.Context, filter map[string]interface{}
 
 // 详情
 func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
-	daoThis := daoAuth.Admin
+	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
@@ -76,7 +76,7 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 
 // 创建
 func (logicThis *sAdmin) Create(ctx context.Context, data []map[string]interface{}) (id int64, err error) {
-	daoThis := daoAuth.Admin
+	daoThis := daoPlatform.Admin
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseInsert(data))
 	if len(data) == 1 {
@@ -93,7 +93,7 @@ func (logicThis *sAdmin) Create(ctx context.Context, data []map[string]interface
 
 // 更新
 func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
-	daoThis := daoAuth.Admin
+	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseUpdate(data))
@@ -108,7 +108,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 
 // 删除
 func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
-	daoThis := daoAuth.Admin
+	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
