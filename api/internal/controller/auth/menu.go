@@ -240,8 +240,7 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		//isAuth, _ := $this->checkAuth(__FUNCTION__, $sceneCode, false);
-		isAuth := true
+		isAuth, _ := service.Action().CheckAuth(r.Context(), "authMenuLook")
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()

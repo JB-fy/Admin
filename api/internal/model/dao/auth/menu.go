@@ -8,7 +8,6 @@ import (
 	"api/internal/model/dao/auth/internal"
 	"context"
 	"encoding/json"
-	"strconv"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -99,10 +98,12 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 			switch k {
 			case "id":
 				updateData[daoThis.Table()+"."+daoThis.PrimaryKey()] = v
-			case "pidPathOfChild": //更新所有子孙级的pidPath。参数：map[string]string{"newVal": "父级新pidPath", "oldVal":"父级旧pidPath"}
-				updateData[daoThis.Table()+".pidPath"] = gdb.Raw("REPLACE(" + daoThis.Table() + ".pidPath, '" + v.(map[string]string)["oldVal"] + "', '" + v.(map[string]string)["newVal"] + "')")
-			case "levelOfChild": //更新所有子孙级的level。参数：map[string]int{"newVal": 父级新level, "oldVal":父级旧level}
-				updateData[daoThis.Table()+".level"] = gdb.Raw(daoThis.Table() + ".level + " + strconv.Itoa(v.(map[string]int)["newVal"]-v.(map[string]int)["oldVal"]))
+			case "pidPathOfChild": //更新所有子孙级的pidPath。参数：map[string]interface{}{"newVal": "父级新pidPath", "oldVal":"父级旧pidPath"}
+				val := gconv.Map(v)
+				updateData[daoThis.Table()+".pidPath"] = gdb.Raw("REPLACE(" + daoThis.Table() + ".pidPath, '" + gconv.String(val["oldVal"]) + "', '" + gconv.String(val["newVal"]) + "')")
+			case "levelOfChild": //更新所有子孙级的level。参数：map[string]interface{}{"newVal": 父级新level, "oldVal":父级旧level}
+				val := gconv.Map(v)
+				updateData[daoThis.Table()+".level"] = gdb.Raw(daoThis.Table() + ".level + " + gconv.String(gconv.Int(val["newVal"])-gconv.Int(val["oldVal"])))
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {

@@ -83,8 +83,8 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 	_, okMenuIdArr := data["menuIdArr"]
 	if okMenuIdArr {
 		menuIdArr := gconv.SliceInt(data["menuIdArr"])
-		filter := g.Map{"menuId": data["menuIdArr"], "sceneId": data["sceneId"]}
-		menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Handler(daoAuth.Menu.ParseFilter(filter, &[]string{})).Count()
+		filterTmp := g.Map{"menuId": data["menuIdArr"], "sceneId": data["sceneId"]}
+		menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Handler(daoAuth.Menu.ParseFilter(filterTmp, &[]string{})).Count()
 		if len(menuIdArr) != menuIdArrCount {
 			err = utils.NewErrorCode(ctx, 89999998, "")
 			return
@@ -93,8 +93,8 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 	_, okActionIdArr := data["actionIdArr"]
 	if okActionIdArr {
 		actionIdArr := gconv.SliceInt(data["actionIdArr"])
-		filter := g.Map{"actionId": data["actionIdArr"], "sceneId": data["sceneId"]}
-		actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filter, &[]string{})).Count()
+		filterTmp := g.Map{"actionId": data["actionIdArr"], "sceneId": data["sceneId"]}
+		actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filterTmp, &[]string{})).Count()
 		if len(actionIdArr) != actionIdArrCount {
 			err = utils.NewErrorCode(ctx, 89999998, "")
 			return
@@ -124,12 +124,12 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 		oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).One()
 		if okMenuIdArr {
 			menuIdArr := gconv.SliceInt(data["menuIdArr"])
-			filter := g.Map{"menuId": data["menuIdArr"], "sceneId": oldInfo["sceneId"]}
+			filterTmp := g.Map{"menuId": data["menuIdArr"], "sceneId": oldInfo["sceneId"]}
 			_, okSceneId := data["sceneId"]
 			if okSceneId {
-				filter["sceneId"] = data["sceneId"]
+				filterTmp["sceneId"] = data["sceneId"]
 			}
-			menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Handler(daoAuth.Menu.ParseFilter(filter, &[]string{})).Count()
+			menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Handler(daoAuth.Menu.ParseFilter(filterTmp, &[]string{})).Count()
 			if len(menuIdArr) != menuIdArrCount {
 				err = utils.NewErrorCode(ctx, 89999998, "")
 				return
@@ -140,12 +140,12 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 
 		if okActionIdArr {
 			actionIdArr := gconv.SliceInt(data["actionIdArr"])
-			filter := g.Map{"actionId": data["actionIdArr"], "sceneId": oldInfo["sceneId"]}
+			filterTmp := g.Map{"actionId": data["actionIdArr"], "sceneId": oldInfo["sceneId"]}
 			_, okSceneId := data["sceneId"]
 			if okSceneId {
-				filter["sceneId"] = data["sceneId"]
+				filterTmp["sceneId"] = data["sceneId"]
 			}
-			actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filter, &[]string{})).Count()
+			actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filterTmp, &[]string{})).Count()
 			if len(actionIdArr) != actionIdArrCount {
 				err = utils.NewErrorCode(ctx, 89999998, "")
 				return
@@ -166,7 +166,7 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 // 删除
 func (logicThis *sRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
-	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array("roleId")
+	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
