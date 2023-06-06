@@ -121,7 +121,7 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			kArr := strings.Split(k, " ") //为支持"id > ?"的key
-			switch kArr[0] {
+			switch k {
 			case "id":
 				val := gvar.New(v)
 				if val.IsSlice() && len(val.Slice()) == 1 {
@@ -148,14 +148,7 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
 			case "sceneName":
-				switch v := v.(type) {
-				case *string:
-					m = m.WhereLike(daoThis.Table()+"."+k, *v)
-				case string:
-					m = m.WhereLike(daoThis.Table()+"."+k, v)
-				default:
-					m = m.Where(daoThis.Table()+"."+k, v)
-				}
+				m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
 			default:
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
