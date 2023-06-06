@@ -11,7 +11,8 @@ import (
 
 func InitRouterPlatformAdmin(s *ghttp.Server) {
 	s.Group("/platformAdmin", func(group *ghttp.RouterGroup) {
-		group.Middleware(middleware.HandlerResponse, middleware.Cross, middleware.I18n)
+		//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
+		group.Middleware(middleware.Cross, middleware.I18n)
 		//不做日志记录
 		group.Group("", func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.Scene)

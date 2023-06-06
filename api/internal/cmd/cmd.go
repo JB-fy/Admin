@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 
 	"api/internal/controller"
+	"api/internal/middleware"
 	"api/internal/router"
 )
 
@@ -25,7 +26,8 @@ var (
 				r.Response.RedirectTo("/view/admin/platform")
 			})
 			s.Group("", func(group *ghttp.RouterGroup) {
-				//group.Middleware(middleware.HandlerResponse, middleware.Cross, middleware.I18n)
+				//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
+				group.Middleware(middleware.Cross, middleware.I18n)
 				group.ALL("/test", controller.NewTest().Test)
 				/* group.Bind(
 					//controller.NewTest().Test, //这样不会根据方法名自动设置路由
