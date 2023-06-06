@@ -33,6 +33,34 @@ var (
 	}
 )
 
+// 解析分库
+func (daoThis *actionDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
+	group := daoThis.Group()
+	if len(dbGroupSeldata) > 0 { //分库逻辑
+	}
+	return group
+}
+
+// 解析分表
+func (daoThis *actionDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
+	table := daoThis.Table()
+	if len(dbTableSelData) > 0 { //分表逻辑
+	}
+	return table
+}
+
+// 解析分库分表（对外暴露使用）
+func (daoThis *actionDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
+	switch len(dbSelDataList) {
+	case 1:
+		return g.DB(daoThis.ParseDbGroup(dbSelDataList[0])).Model(daoThis.Table()).Safe().Ctx(ctx)
+	case 2:
+		return g.DB(daoThis.ParseDbGroup(dbSelDataList[0])).Model(daoThis.ParseDbTable(dbSelDataList[1])).Safe().Ctx(ctx)
+	default:
+		return daoThis.Ctx(ctx)
+	}
+}
+
 // 解析insert
 func (daoThis *actionDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -304,14 +332,11 @@ func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // 常用方法（用filter和field查询）
-func (daoThis *actionDao) CommonModel(ctx context.Context, filter map[string]interface{}, field []string, joinTableArr ...*[]string) *gdb.Model {
-	if len(joinTableArr) == 0 {
-		joinTableArr = []*[]string{{}}
-	}
-	model := daoThis.Ctx(ctx)
-	model = model.Handler(daoThis.ParseFilter(filter, joinTableArr[0]))
+func (daoThis *actionDao) CommonDbCtx(ctx context.Context, filter map[string]interface{}, field []string, joinTableArr *[]string, dbSelDataList ...map[string]interface{}) *gdb.Model {
+	model := daoThis.ParseDbCtx(ctx, dbSelDataList...)
+	model = model.Handler(daoThis.ParseFilter(filter, joinTableArr))
 	if len(field) > 0 {
-		model = model.Handler(daoThis.ParseField(field, joinTableArr[0]))
+		model = model.Handler(daoThis.ParseField(field, joinTableArr))
 	}
 	return model
 }
