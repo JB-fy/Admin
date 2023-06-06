@@ -95,8 +95,8 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 		filter := map[string]interface{}{}
 		filter["selfMenu"] = map[string]interface{}{
 			"sceneCode": sceneCode,
-			"sceneId":   sceneInfo["sceneId"],
-			"loginId":   loginInfo["adminId"],
+			"sceneId":   sceneInfo["sceneId"].Int(),
+			"loginId":   loginInfo["adminId"].Int(),
 		}
 		field := []string{"menuTree", "showMenu"}
 

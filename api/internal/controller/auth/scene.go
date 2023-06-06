@@ -46,7 +46,7 @@ func (controllerThis *Scene) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "authSceneLook", sceneCode)
+		isAuth, _ := service.Action().CheckAuth(r.Context(), "authSceneLook")
 		allowField := []string{"sceneId", "sceneName", "id"}
 		if isAuth {
 			allowField = daoAuth.Scene.ColumnArr()
@@ -111,7 +111,7 @@ func (controllerThis *Scene) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authSceneLook", sceneCode)
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneLook")
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
@@ -143,7 +143,7 @@ func (controllerThis *Scene) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authSceneCreate", sceneCode)
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneCreate")
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
@@ -181,7 +181,7 @@ func (controllerThis *Scene) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authSceneUpdate", sceneCode)
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneUpdate")
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return
@@ -213,7 +213,7 @@ func (controllerThis *Scene) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authSceneDelete", sceneCode)
+		_, err = service.Action().CheckAuth(r.Context(), "authSceneDelete")
 		if err != nil {
 			r.Response.Writeln(err.Error())
 			return

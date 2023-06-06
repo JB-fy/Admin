@@ -9,7 +9,6 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sAction struct{}
@@ -150,21 +149,22 @@ func (logicAction *sAction) Delete(ctx context.Context, filter map[string]interf
 }
 
 // 判断操作权限
-func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string, sceneCode string) (isAuth bool, err error) {
+func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo["sceneCode"].String()
 	filter := map[string]interface{}{
 		"actionCode": actionCode,
 	}
 	filter["selfAction"] = map[string]interface{}{
 		"sceneCode": sceneCode,
-		"sceneId":   sceneInfo["sceneId"],
-		"loginId":   loginInfo["adminId"],
+		"sceneId":   sceneInfo["sceneId"].Int(),
+		"loginId":   loginInfo["adminId"].Int(),
 	}
 
 	switch sceneCode {
 	case "platformAdmin":
-		if gconv.Int(loginInfo["adminId"]) == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
+		if loginInfo["adminId"].Int() == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
 			isAuth = true
 			return
 		}
