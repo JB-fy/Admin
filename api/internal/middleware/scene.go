@@ -5,7 +5,6 @@ import (
 	"api/internal/utils"
 	"strings"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -20,7 +19,7 @@ func Scene(r *ghttp.Request) {
 		})
 		return
 	}
-	sceneInfo, _ := dao.Scene.CommonDbCtx(r.GetCtx(), g.Map{"sceneCode": sceneCode}, []string{}, &[]string{}).One()
+	sceneInfo, _ := dao.Scene.ParseDbCtx(r.GetCtx()).Where("sceneCode", sceneCode).One()
 	if sceneInfo.IsEmpty() {
 		r.Response.WriteJson(map[string]interface{}{
 			"code": 39999999,

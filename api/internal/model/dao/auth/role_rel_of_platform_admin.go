@@ -273,14 +273,4 @@ func (daoThis *roleRelOfPlatformAdminDao) AfterField(afterField []string) gdb.Ho
 	}
 }
 
-// 常用方法（用filter和field查询）
-func (daoThis *roleRelOfPlatformAdminDao) CommonDbCtx(ctx context.Context, filter map[string]interface{}, field []string, joinTableArr *[]string, dbSelDataList ...map[string]interface{}) *gdb.Model {
-	model := daoThis.ParseDbCtx(ctx, dbSelDataList...)
-	model = model.Handler(daoThis.ParseFilter(filter, joinTableArr))
-	if len(field) > 0 {
-		model = model.Handler(daoThis.ParseField(field, joinTableArr))
-	}
-	return model
-}
-
 // Fill with you ideas below.

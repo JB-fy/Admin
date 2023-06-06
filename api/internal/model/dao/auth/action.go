@@ -331,14 +331,4 @@ func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 	}
 }
 
-// 常用方法（用filter和field查询）
-func (daoThis *actionDao) CommonDbCtx(ctx context.Context, filter map[string]interface{}, field []string, joinTableArr *[]string, dbSelDataList ...map[string]interface{}) *gdb.Model {
-	model := daoThis.ParseDbCtx(ctx, dbSelDataList...)
-	model = model.Handler(daoThis.ParseFilter(filter, joinTableArr))
-	if len(field) > 0 {
-		model = model.Handler(daoThis.ParseField(field, joinTableArr))
-	}
-	return model
-}
-
 // Fill with you ideas below.
