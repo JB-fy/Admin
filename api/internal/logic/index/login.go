@@ -57,7 +57,7 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 			Account:  info["account"].String(),
 			Nickname: info["nickname"].String(),
 		}
-		jwt := utils.NewPlatformAdminJWT()
+		jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)["sceneConfig"].Map())
 		token, err = jwt.CreateToken(claims)
 		/* //缓存token（选做。限制多地登录，多设备登录等情况下可用）
 		TokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.Account)

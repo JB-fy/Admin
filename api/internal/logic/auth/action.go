@@ -5,7 +5,6 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-	"errors"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -148,7 +147,7 @@ func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (i
 	daoAction := daoAuth.Action
 	count, err := daoAction.ParseDbCtx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
 	if count == 0 {
-		err = errors.New("39990002")
+		err = utils.NewErrorCode(ctx, 39990002, "")
 		return
 	}
 	isAuth = true

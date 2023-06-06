@@ -12,28 +12,16 @@ func Scene(r *ghttp.Request) {
 	pathArr := strings.Split(r.URL.Path, "/")
 	sceneCode := pathArr[1]
 	if sceneCode == "" {
-		r.Response.WriteJson(map[string]interface{}{
-			"code": 39999999,
-			"msg":  "成功",
-			"data": map[string]interface{}{},
-		})
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39999999, ""))
 		return
 	}
 	sceneInfo, _ := dao.Scene.ParseDbCtx(r.GetCtx()).Where("sceneCode", sceneCode).One()
 	if sceneInfo.IsEmpty() {
-		r.Response.WriteJson(map[string]interface{}{
-			"code": 39999999,
-			"msg":  "成功",
-			"data": map[string]interface{}{},
-		})
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39999999, ""))
 		return
 	}
 	if sceneInfo["isStop"].Int() > 0 {
-		r.Response.WriteJson(map[string]interface{}{
-			"code": 39999998,
-			"msg":  "成功",
-			"data": map[string]interface{}{},
-		})
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39999998, ""))
 		return
 	}
 
