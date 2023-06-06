@@ -171,7 +171,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseGroup(group []string, joinT
 }
 
 // 解析order
-func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseOrder(order [][2]string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseOrder(order [][2]string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -190,7 +190,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseOrder(order [][2]string, jo
 }
 
 // 解析join
-func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseJoin(joinCode string, joinTableArr *[]string) func(m *gdb.Model) *gdb.Model {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		/* case "xxxx":
@@ -226,35 +226,17 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) AfterField(afterField []string) 
 	}
 }
 
-// 详情
-func (daoThis *{TplTableNameCamelLowerCase}Dao) Info(ctx context.Context, filter map[string]interface{}, field []string) (info gdb.Record, err error) {
-	joinTableArr := []string{}
+// 常用方法（用filter和field查询）
+func (daoThis *{TplTableNameCamelLowerCase}Dao) CommonModel(ctx context.Context, filter map[string]interface{}, field []string, joinTableArr ...*[]string) *gdb.Model {
+	if len(joinTableArr) == 0 {
+		joinTableArr = []*[]string{{}}
+	}
 	model := daoThis.Ctx(ctx)
+	model = model.Handler(daoThis.ParseFilter(filter, joinTableArr[0]))
 	if len(field) > 0 {
-		model = model.Handler(daoThis.ParseField(field, &joinTableArr))
+		model = model.Handler(daoThis.ParseField(field, joinTableArr[0]))
 	}
-	if len(filter) > 0 {
-		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	}
-	info, err = model.One()
-	return
-}
-
-// 列表
-func (daoThis *{TplTableNameCamelLowerCase}Dao) List(ctx context.Context, filter map[string]interface{}, field []string, order ...[2]string) (list gdb.Result, err error) {
-	joinTableArr := []string{}
-	model := daoThis.Ctx(ctx)
-	if len(field) > 0 {
-		model = model.Handler(daoThis.ParseField(field, &joinTableArr))
-	}
-	if len(filter) > 0 {
-		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	}
-	if len(order) > 0 {
-		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
-	}
-	list, err = model.All()
-	return
+	return model
 }
 
 // Fill with you ideas below.
