@@ -12,16 +12,7 @@ import (
 )
 
 type (
-	IMenu interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-		Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error)
-	}
-	IRole interface {
+	IAdmin interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
@@ -29,7 +20,7 @@ type (
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
-	IScene interface {
+	IConfig interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
@@ -37,64 +28,51 @@ type (
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
-	IAction interface {
+	IServer interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data []map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
 	}
 )
 
 var (
-	localAction IAction
-	localMenu   IMenu
-	localRole   IRole
-	localScene  IScene
+	localAdmin  IAdmin
+	localConfig IConfig
+	localServer IServer
 )
 
-func Action() IAction {
-	if localAction == nil {
-		panic("implement not found for interface IAction, forgot register?")
+func Server() IServer {
+	if localServer == nil {
+		panic("implement not found for interface IServer, forgot register?")
 	}
-	return localAction
+	return localServer
 }
 
-func RegisterAction(i IAction) {
-	localAction = i
+func RegisterServer(i IServer) {
+	localServer = i
 }
 
-func Menu() IMenu {
-	if localMenu == nil {
-		panic("implement not found for interface IMenu, forgot register?")
+func Admin() IAdmin {
+	if localAdmin == nil {
+		panic("implement not found for interface IAdmin, forgot register?")
 	}
-	return localMenu
+	return localAdmin
 }
 
-func RegisterMenu(i IMenu) {
-	localMenu = i
+func RegisterAdmin(i IAdmin) {
+	localAdmin = i
 }
 
-func Role() IRole {
-	if localRole == nil {
-		panic("implement not found for interface IRole, forgot register?")
+func Config() IConfig {
+	if localConfig == nil {
+		panic("implement not found for interface IConfig, forgot register?")
 	}
-	return localRole
+	return localConfig
 }
 
-func RegisterRole(i IRole) {
-	localRole = i
-}
-
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
-	}
-	return localScene
-}
-
-func RegisterScene(i IScene) {
-	localScene = i
+func RegisterConfig(i IConfig) {
+	localConfig = i
 }
