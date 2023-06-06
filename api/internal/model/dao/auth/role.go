@@ -157,11 +157,18 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
 			default:
+				kArr := strings.Split(k, " ") //为支持"id > ?"的key
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
-					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
-						val := gvar.New(v)
-						if val.IsSlice() && len(val.Slice()) == 1 {
-							m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+					if len(kArr) == 1 {
+						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
+							val := gvar.New(v)
+							if val.IsSlice() && len(val.Slice()) == 1 {
+								m = m.Where(daoThis.Table()+"."+k, val.Slice()[0])
+							} else {
+								m = m.Where(daoThis.Table()+"."+k, v)
+							}
+						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
+							m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
 						} else {
 							m = m.Where(daoThis.Table()+"."+k, v)
 						}

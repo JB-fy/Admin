@@ -147,8 +147,6 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
-			case "sceneName":
-				m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
 			default:
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
