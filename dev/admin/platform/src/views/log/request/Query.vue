@@ -14,14 +14,12 @@ queryCommon.data = {
         ]
     })(),
     startTime: computed(() => {
-        //return queryCommon.data.timeRange?.length ? queryCommon.data.timeRange[0] : '' //如果接口接受任何日期格式，不需要转换
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
     }),
     endTime: computed(() => {
-        //return queryCommon.data.timeRange?.length ? queryCommon.data.timeRange[1] : '' //如果接口接受任何日期格式，不需要转换
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
         }
