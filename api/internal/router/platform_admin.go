@@ -32,8 +32,7 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 
 		//做日志记录
 		group.Group("", func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.Log)
-			group.Middleware(middleware.Scene)
+			group.Middleware(middleware.Log, middleware.Scene)
 			//无需验证登录身份
 			group.Group("/login", func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewLogin()
