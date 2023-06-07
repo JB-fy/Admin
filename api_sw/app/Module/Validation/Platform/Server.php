@@ -10,7 +10,8 @@ class Server extends AbstractValidation
 {
     protected array $rule = [
         'serverId' => 'sometimes|required|integer|min:1',
-        'networkIp' => 'sometimes|required|string'
+        'networkIp' => 'sometimes|required|string',
+        'localIp' => 'sometimes|required|string',
     ];
 
     protected array $scene = [];
