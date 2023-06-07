@@ -46,13 +46,14 @@ func (controllerThis *Request) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "logRequestLook")
-		allowField := []string{"requestId", "requestName", "id"}
-		if isAuth {
-			allowField = daoLog.Request.ColumnArr()
-			allowField = append(allowField, "id")
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		_, err := service.Action().CheckAuth(r.Context(), "logRequestLook")
+		if err != nil {
+			utils.HttpFailJson(r, err)
+			return
 		}
+		allowField := daoLog.Request.ColumnArr()
+		allowField = append(allowField, "id")
+		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

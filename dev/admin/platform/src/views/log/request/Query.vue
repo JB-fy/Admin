@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import dayjs from 'dayjs'
+
 const { t, tm } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
@@ -12,16 +14,18 @@ queryCommon.data = {
         ]
     })(),
     startTime: computed(() => {
-        /* //接口接受任何日期格式，不需要转换
+        //return queryCommon.data.timeRange?.length ? queryCommon.data.timeRange[0] : '' //如果接口接受任何日期格式，不需要转换
         if (queryCommon.data.timeRange?.length) {
-            const date = queryCommon.data.timeRange[0]
-            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+            return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
         }
-        return '' */
-        return queryCommon.data.timeRange?.length ? queryCommon.data.timeRange[0] : ''
+        return ''
     }),
     endTime: computed(() => {
-        return queryCommon.data.timeRange?.length ? queryCommon.data.timeRange[1] : ''
+        //return queryCommon.data.timeRange?.length ? queryCommon.data.timeRange[1] : '' //如果接口接受任何日期格式，不需要转换
+        if (queryCommon.data.timeRange?.length) {
+            return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
+        }
+        return ''
     })
 }
 const listCommon = inject('listCommon') as { ref: any }

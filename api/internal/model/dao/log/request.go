@@ -175,6 +175,10 @@ func (daoThis *requestDao) ParseFilter(filter map[string]interface{}, joinTableA
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
+			case "minRunTime":
+				m = m.WhereGTE(daoThis.Table()+".runTime", v)
+			case "maxRunTime":
+				m = m.WhereLTE(daoThis.Table()+".runTime", v)
 			default:
 				kArr := strings.Split(k, " ") //支持"id > ?"等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
