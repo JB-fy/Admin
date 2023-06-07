@@ -116,10 +116,13 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 
 	_, okRoleIdArr := data["roleIdArr"]
 	if okRoleIdArr {
+		_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改roleIdArr
+		if err != nil {
+			return
+		}
 		for _, v := range idArr {
 			daoThis.SaveRelRole(ctx, gconv.SliceInt(data["roleIdArr"]), v.Int())
 		}
-		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改roleIdArr
 		return
 	}
 

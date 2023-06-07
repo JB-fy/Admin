@@ -125,6 +125,10 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 		for _, v := range idArr {
 			filterOne := map[string]interface{}{daoThis.PrimaryKey(): v}
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterOne, &[]string{})).One()
+			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
+			if err != nil {
+				return
+			}
 			if okMenuIdArr {
 				menuIdArr := gconv.SliceInt(data["menuIdArr"])
 				filterTmp := g.Map{"menuId": data["menuIdArr"], "sceneId": oldInfo["sceneId"]}
@@ -154,8 +158,6 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 				}
 				daoThis.SaveRelAction(ctx, actionIdArr, oldInfo["roleId"].Int())
 			}
-
-			daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
 		}
 		return
 	}

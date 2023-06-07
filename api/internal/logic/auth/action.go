@@ -98,10 +98,13 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 	_, okSceneIdArr := data["sceneIdArr"]
 	if okSceneIdArr {
 		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+		_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改sceneIdArr
+		if err != nil {
+			return
+		}
 		for _, v := range idArr {
 			daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), v.Int())
 		}
-		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改sceneIdArr
 		return
 	}
 

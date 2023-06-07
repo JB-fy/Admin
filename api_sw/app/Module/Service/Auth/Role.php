@@ -57,6 +57,7 @@ class Role extends AbstractService
             foreach ($idArr as $id) {
                 $filterOne = ['roleId'=>$id];
                 $oldInfo = $this->getDao()->parseFilter($filterOne)->info();
+                $this->getDao()->parseFilter($filterOne)->parseUpdate($data)->update();    //有可能只改menuIdArr或actionIdArr
                 if (isset($data['menuIdArr'])) {
                     if (count($data['menuIdArr']) != getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
                         throwFailJson(89999998);
@@ -69,7 +70,6 @@ class Role extends AbstractService
                     }
                     $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
                 }
-                $this->getDao()->parseFilter($filterOne)->parseUpdate($data)->update();    //有可能只改menuIdArr或actionIdArr
             }
         } else {
             $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();

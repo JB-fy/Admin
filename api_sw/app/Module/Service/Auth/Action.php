@@ -39,10 +39,10 @@ class Action extends AbstractService
     {
         if (isset($data['sceneIdArr'])) {
             $idArr = $this->getIdArr($filter);
+            $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改sceneIdArr
             foreach ($idArr as $id) {
                 $this->container->get(AuthAction::class)->saveRelScene($data['sceneIdArr'], $id);
             }
-            $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改sceneIdArr
         } else {
             $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
             if (empty($result)) {

@@ -52,10 +52,10 @@ class Admin extends AbstractService
         }
 
         if (isset($data['roleIdArr'])) {
+            $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改roleIdArr
             foreach ($idArr as $id) {
                 $this->container->get(PlatformAdmin::class)->saveRelRole($data['roleIdArr'], $id);
             }
-            $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改roleIdArr
         } else {
             $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
             if (empty($result)) {
