@@ -155,6 +155,7 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 		}
 		return
 	}
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
 		return

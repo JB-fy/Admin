@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -337,3 +338,30 @@ func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // Fill with you ideas below.
+
+// 保存关联场景
+func (daoThis *actionDao) SaveRelScene(ctx context.Context, sceneIdArr []int, id int) {
+	sceneIdArrOfOldTmp, _ := ActionRelToScene.ParseDbCtx(ctx).Where("actionId", id).Array("sceneId")
+	sceneIdArrOfOld := gconv.SliceInt(sceneIdArrOfOldTmp)
+
+	/**----新增关联场景 开始----**/
+	inserttSceneIdArr := gset.NewIntSetFrom(sceneIdArr).Diff(gset.NewIntSetFrom(sceneIdArrOfOld)).Slice()
+	if len(inserttSceneIdArr) > 0 {
+		insertList := []map[string]interface{}{}
+		for _, v := range inserttSceneIdArr {
+			insertList = append(insertList, map[string]interface{}{
+				"actionId": id,
+				"sceneId":  v,
+			})
+		}
+		ActionRelToScene.ParseDbCtx(ctx).Data(insertList).Insert()
+	}
+	/**----新增关联场景 结束----**/
+
+	/**----删除关联场景 开始----**/
+	deleteSceneIdArr := gset.NewIntSetFrom(sceneIdArrOfOld).Diff(gset.NewIntSetFrom(sceneIdArr)).Slice()
+	if len(deleteSceneIdArr) > 0 {
+		ActionRelToScene.ParseDbCtx(ctx).Where("actionId", id).Where("sceneId", deleteSceneIdArr).Delete()
+	}
+	/**----删除关联场景 结束----**/
+}

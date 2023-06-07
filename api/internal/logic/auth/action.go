@@ -8,6 +8,7 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sAction struct{}
@@ -80,12 +81,30 @@ func (logicThis *sAction) Info(ctx context.Context, filter map[string]interface{
 func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Action
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
+	if err != nil {
+		return
+	}
+
+	_, okSceneIdArr := data["sceneIdArr"]
+	if okSceneIdArr {
+		daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), int(id))
+	}
 	return
 }
 
 // 更新
 func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
+	_, okSceneIdArr := data["sceneIdArr"]
+	if okSceneIdArr {
+		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+		for _, v := range idArr {
+			daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), v.Int())
+		}
+		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改sceneIdArr
+		return
+	}
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
 		return
@@ -97,11 +116,15 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 // 删除
 func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
+	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
 	row, err = result.RowsAffected()
+	if row > 0 {
+		daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where("actionId", idArr).Delete()
+	}
 	return
 }
 

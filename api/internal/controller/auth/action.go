@@ -90,7 +90,7 @@ func (controllerThis *Action) Info(r *ghttp.Request) {
 		}
 
 		allowField := daoAuth.Action.ColumnArr()
-		allowField = append(allowField, "id")
+		allowField = append(allowField, "id", "sceneIdArr")
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {

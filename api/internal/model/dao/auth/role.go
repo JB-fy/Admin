@@ -302,6 +302,7 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // Fill with you ideas below.
+
 // 保存关联菜单
 func (daoThis *roleDao) SaveRelMenu(ctx context.Context, menuIdArr []int, id int) {
 	menuIdArrOfOldTmp, _ := RoleRelToMenu.ParseDbCtx(ctx).Where("roleId", id).Array("menuId")
@@ -323,7 +324,7 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, menuIdArr []int, id int
 	/**----删除关联菜单 开始----**/
 	deleteMenuIdArr := gset.NewIntSetFrom(menuIdArrOfOld).Diff(gset.NewIntSetFrom(menuIdArr)).Slice()
 	if len(deleteMenuIdArr) > 0 {
-		RoleRelToMenu.ParseDbCtx(ctx).Where(g.Map{"roleId": id, "menuId": deleteMenuIdArr}).Delete()
+		RoleRelToMenu.ParseDbCtx(ctx).Where("roleId", id).Where("menuId", deleteMenuIdArr).Delete()
 	}
 	/**----删除关联菜单 结束----**/
 }
@@ -334,7 +335,6 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, actionIdArr []int, id
 	actionIdArrOfOld := gconv.SliceInt(actionIdArrOfOldTmp)
 
 	/**----新增关联操作 开始----**/
-
 	inserttActionIdArr := gset.NewIntSetFrom(actionIdArr).Diff(gset.NewIntSetFrom(actionIdArrOfOld)).Slice()
 	if len(inserttActionIdArr) > 0 {
 		insertList := []map[string]interface{}{}
@@ -346,11 +346,12 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, actionIdArr []int, id
 		}
 		RoleRelToAction.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
+	/**----新增关联操作 开始----**/
 
-	/**----删除关联操作 开始----**/
+	/**----删除关联操作 结束----**/
 	deleteActionIdArr := gset.NewIntSetFrom(actionIdArrOfOld).Diff(gset.NewIntSetFrom(actionIdArr)).Slice()
 	if len(deleteActionIdArr) > 0 {
-		RoleRelToAction.ParseDbCtx(ctx).Where(g.Map{"roleId": id, "actionId": deleteActionIdArr}).Delete()
+		RoleRelToAction.ParseDbCtx(ctx).Where("roleId", id).Where("actionId", deleteActionIdArr).Delete()
 	}
 	/**----删除关联操作 结束----**/
 }
