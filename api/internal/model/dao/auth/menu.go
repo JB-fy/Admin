@@ -201,7 +201,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.WhereLTE(daoThis.Table()+".createTime", v)
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
-				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
+				m = m.WhereLike(daoThis.Table()+"."+keywordField, "%"+gconv.String(v)+"%")
 			case "selfMenu": //获取当前登录身份可用的菜单。参数：map[string]interface{}{"sceneCode": "场景标识", "sceneId": 场景id, "loginId": 登录身份id}
 				val := v.(map[string]interface{})
 
@@ -232,7 +232,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 								m = m.Where(daoThis.Table()+"."+k, val)
 							}
 						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
-							m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
+							m = m.WhereLike(daoThis.Table()+"."+k, "%"+gconv.String(v)+"%")
 						} else {
 							m = m.Where(daoThis.Table()+"."+k, v)
 						}

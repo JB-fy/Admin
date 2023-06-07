@@ -174,7 +174,7 @@ func (daoThis *requestDao) ParseFilter(filter map[string]interface{}, joinTableA
 				m = m.WhereLTE(daoThis.Table()+".createTime", v)
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
-				m = m.WhereLike(daoThis.Table()+"."+keywordField, gconv.String(v))
+				m = m.WhereLike(daoThis.Table()+"."+keywordField, "%"+gconv.String(v)+"%")
 			case "minRunTime":
 				m = m.WhereGTE(daoThis.Table()+".runTime", v)
 			case "maxRunTime":
@@ -191,7 +191,7 @@ func (daoThis *requestDao) ParseFilter(filter map[string]interface{}, joinTableA
 								m = m.Where(daoThis.Table()+"."+k, val)
 							}
 						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
-							m = m.WhereLike(daoThis.Table()+"."+k, gconv.String(v))
+							m = m.WhereLike(daoThis.Table()+"."+k, "%"+gconv.String(v)+"%")
 						} else {
 							m = m.Where(daoThis.Table()+"."+k, v)
 						}
