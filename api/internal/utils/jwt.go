@@ -58,6 +58,7 @@ func (jwtThis *JWT) ParseToken(tokenString string) (claims *CustomClaims, err er
 		return jwtThis.SignKey, nil
 	})
 	if err != nil {
+		err = NewErrorCode(jwtThis.Ctx, 39994001, err.Error())
 		return
 	}
 	if !token.Valid {
