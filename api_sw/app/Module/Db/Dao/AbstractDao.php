@@ -383,6 +383,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'endTime':
                 $this->builder->where($this->getTable() . '.createTime', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
+            case 'keyword':
+                $keywordField = str_replace('Id', 'Name', $this->getKey());
+                $this->builder->where($this->getTable() . '.'.$keywordField, $operator ?? 'Like', '%'.$value.'%', $boolean ?? 'and');
+                return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     //id类型字段和部分字段，可通过传递数组做查询
@@ -396,6 +400,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                         } else {
                             $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                         }
+                    } else if (strtolower(substr($key, -4)) === 'name') {
+                        $this->builder->where($this->getTable() . '.'.$key, $operator ?? 'like', '%'.$value.'%', $boolean ?? 'and');
                     } else {
                         $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                     }
