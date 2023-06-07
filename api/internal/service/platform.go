@@ -31,9 +31,9 @@ type (
 )
 
 var (
+	localAdmin  IAdmin
 	localConfig IConfig
 	localServer IServer
-	localAdmin  IAdmin
 )
 
 func Admin() IAdmin {

@@ -17,30 +17,27 @@ class AliyunOss extends AbstractUpload
     /**
      * 创建签名（web前端直传用）
      *
-     * @param array $option
+     * @param array $option 
      * @return void
      */
     public function createSign(array $option = [])
     {
-        /*--------初始化配置 开始--------*/
-        mt_srand();
-        $defaultOption = [
-            'callbackEnable' => env('UPLOAD_CALLBACK_ENABLE', true), //是否回调服务器
+        /*--------配置示例 开始--------*/
+        /* $option = [
+            'callbackUrl' => "", //是否回调服务器。空字符串不回调
             'expireTime' => 15 * 60, //签名有效时间。单位：秒
             'dir' => 'common/' . date('Y/m/d/His') . '_' . mt_rand(1000, 9999) . '_',    //上传的文件前缀
             'minSize' => 0,    //限制上传的文件大小。单位：字节
             'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
-        ];
-        $option = array_merge($defaultOption, $option);
-        /*--------初始化配置 结束--------*/
-
+        ]; */
+        /*--------配置示例 结束--------*/
         $signInfo = [
             'accessid' => $this->config['accessKeyId'],
             'host' => $this->getBucketHost(),
             'dir' => $option['dir'],
             'expire' => time() + $option['expireTime'],
         ];
-        if ($option['callbackEnable']) {
+        if (!empty($option['callbackUrl'])) {
             $callbackUrl = getRequestUrl() . '/upload/notify';
             $callback_param = [
                 'callbackUrl' => $callbackUrl,
@@ -59,7 +56,7 @@ class AliyunOss extends AbstractUpload
             'expiration' => $expiration,
             'conditions' => [
                 ['content-length-range', $option['minSize'], $option['maxSize']],
-                ['starts-with', '$key', $signInfo['dir']]
+                ['starts-with', '$key', $option['dir']]
             ]
         ]));
         $signInfo['signature'] = base64_encode(hash_hmac('sha1', $signInfo['policy'], $this->config['accessKeySecret'], true));

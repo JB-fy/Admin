@@ -14,15 +14,10 @@ type (
 		EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error)
 		Login(ctx context.Context, sceneCode string, account string, password string) (token string, err error)
 	}
-	IUpload interface {
-		Sign(ctx context.Context, sceneCode string, account string) (encryptStr string, err error)
-		Notify(ctx context.Context, sceneCode string, account string, password string) (token string, err error)
-	}
 )
 
 var (
-	localLogin  ILogin
-	localUpload IUpload
+	localLogin ILogin
 )
 
 func Login() ILogin {
@@ -34,15 +29,4 @@ func Login() ILogin {
 
 func RegisterLogin(i ILogin) {
 	localLogin = i
-}
-
-func Upload() IUpload {
-	if localUpload == nil {
-		panic("implement not found for interface IUpload, forgot register?")
-	}
-	return localUpload
-}
-
-func RegisterUpload(i IUpload) {
-	localUpload = i
 }
