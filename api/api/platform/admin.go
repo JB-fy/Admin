@@ -53,5 +53,5 @@ type AdminUpdateSelfReq struct {
 	Nickname      *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	Avatar        *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
 	Password      *string `c:"password,omitempty" p:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$|different:CheckPassword"`
-	CheckPassword *string `c:"checkPassword,omitempty" p:"checkPassword" v:"required_with:account,phone,password|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	CheckPassword *string `c:"checkPassword,omitempty" p:"checkPassword" v:"required-with:account,phone,password|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
 }
