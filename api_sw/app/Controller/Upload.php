@@ -16,6 +16,7 @@ class Upload extends AbstractController
         switch ($type) {
             default:
                 $option = [
+                    //'callbackUrl' => getRequestUrl() . '/upload/notify', //是否回调服务器。空字符串不回调
                     'callbackUrl' => '', //是否回调服务器。空字符串不回调
                     'expireTime' => 5 * 60, //签名有效时间
                     'dir' => 'common/' . date('Y/m/d/His') . mt_rand(1000, 9999) . '_',    //上传的文件前缀

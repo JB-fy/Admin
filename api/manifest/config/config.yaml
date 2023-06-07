@@ -3,8 +3,9 @@ server:
   openapiPath: "/api.json"
   swaggerPath: "/swagger"
 
-#指定平台超级管理员ID
-superPlatformAdminId: 1
+uploadCallbackEnable: false #上传插件是否回调服务器。建议：线上(true)，本地(false) 
+
+superPlatformAdminId: 1 #指定平台超级管理员ID
 
 logger:
   level: "all"
