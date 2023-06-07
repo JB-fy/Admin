@@ -21,8 +21,8 @@ return [
     //上传组件
     'upload' => function (ContainerInterface $container) {
         $config = [
-            'accessId' =>  getConfig('inDb.platformConfig.aliyunOssAccessId'),  //LTAI5tHx81H64BRJA971DPZF  |   LTAI5tSjYikt3bX33riHezmk
-            'accessSecret' => getConfig('inDb.platformConfig.aliyunOssAccessSecret'),   //nJyNpTtUuIgZqx21FF4G2zi0WHOn51    |   k4uRZU6flv73yz1j4LJu9VY5eNlHas
+            'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),  //LTAI5tHx81H64BRJA971DPZF  |   LTAI5tSjYikt3bX33riHezmk
+            'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),   //nJyNpTtUuIgZqx21FF4G2zi0WHOn51    |   k4uRZU6flv73yz1j4LJu9VY5eNlHas
             'host' => getConfig('inDb.platformConfig.aliyunOssHost'),   //http://oss-cn-hongkong.aliyuncs.com    |   https://oss-cn-hangzhou.aliyuncs.com
             'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),   //4724382110    |   gamemt
         ];

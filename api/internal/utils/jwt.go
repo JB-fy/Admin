@@ -2,7 +2,6 @@ package utils
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -11,14 +10,13 @@ import (
 
 type JWT struct {
 	Ctx        context.Context
-	SignKey    []byte
-	ExpireTime uint
-	SignType   string
+	SignKey    []byte `c:"signKey"`
+	ExpireTime uint   `c:"expireTime"`
+	SignType   string `c:"signType"`
 	SignMethod *jwt.SigningMethodHMAC
 }
 
 func NewJWT(ctx context.Context, config map[string]interface{}) *JWT {
-	fmt.Println(config)
 	jwtObj := JWT{
 		Ctx: ctx,
 	}
@@ -30,8 +28,9 @@ func NewJWT(ctx context.Context, config map[string]interface{}) *JWT {
 		jwtObj.SignMethod = jwt.SigningMethodHS384
 	case "S512":
 		jwtObj.SignMethod = jwt.SigningMethodHS512
+	default:
+		jwtObj.SignMethod = jwt.SigningMethodHS256
 	}
-	fmt.Println(jwtObj)
 	return &jwtObj
 }
 

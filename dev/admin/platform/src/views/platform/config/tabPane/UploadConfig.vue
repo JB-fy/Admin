@@ -5,17 +5,17 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
-        aliyunOssAccessId: '',
-        aliyunOssAccessSecret: '',
+        aliyunOssAccessKeyId: '',
+        aliyunOssAccessKeySecret: '',
         aliyunOssHost: '',
         aliyunOssBucket: '',
     } as { [propName: string]: any },
     rules: {
-        aliyunOssAccessId: [
+        aliyunOssAccessKeyId: [
             //{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
-        aliyunOssAccessSecret: [
+        aliyunOssAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         aliyunOssHost: [
@@ -60,16 +60,16 @@ saveForm.initData()
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssAccessId')" prop="aliyunOssAccessId">
-            <!-- <ElInput v-model="saveForm.data.aliyunOssAccessId"
-                :placeholder="t('view.platform.config.name.aliyunOssAccessId')" minlength="1" maxlength="30"
+        <ElFormItem :label="t('view.platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
+            <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
+                :placeholder="t('view.platform.config.name.aliyunOssAccessKeyId')" minlength="1" maxlength="30"
                 :show-word-limit="true" :clearable="true" /> -->
-            <ElInput v-model="saveForm.data.aliyunOssAccessId"
-                :placeholder="t('view.platform.config.name.aliyunOssAccessId')" :clearable="true" />
+            <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
+                :placeholder="t('view.platform.config.name.aliyunOssAccessKeyId')" :clearable="true" />
         </ElFormItem>
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssAccessSecret')" prop="aliyunOssAccessSecret">
-            <ElInput v-model="saveForm.data.aliyunOssAccessSecret"
-                :placeholder="t('view.platform.config.name.aliyunOssAccessSecret')" :clearable="true" />
+        <ElFormItem :label="t('view.platform.config.name.aliyunOssAccessKeySecret')" prop="aliyunOssAccessKeySecret">
+            <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
+                :placeholder="t('view.platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
         </ElFormItem>
         <ElFormItem :label="t('view.platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
             <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('view.platform.config.name.aliyunOssHost')"

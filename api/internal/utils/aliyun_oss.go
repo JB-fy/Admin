@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"crypto"
 	"crypto/hmac"
 	"crypto/md5"
@@ -19,17 +20,24 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type AliyunOss struct {
-	AccessKeyId     string
-	AccessKeySecret string
-	Host            string
-	Bucket          string
+	Ctx             context.Context
+	AccessKeyId     string `c:"aliyunOssAccessKeyId"`
+	AccessKeySecret string `c:"aliyunOssAccessKeySecret"`
+	Host            string `c:"aliyunOssHost"`
+	Bucket          string `c:"aliyunOssBucket"`
 	//BucketHost      string //http://4724382110.oss-cn-hongkong.aliyuncs.com  //web前端直传地址（内部用getBucketHost方法获取）
 }
 
-func NewAliyunOss() *AliyunOss {
+func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss {
+	aliyunOssObj := JWT{
+		Ctx: ctx,
+	}
+	gconv.Struct(config, &aliyunOssObj)
 	return &AliyunOss{
 		AccessKeyId:     "LTAI5tHx81H64BRJA971DPZF",            //LTAI5tSjYikt3bX33riHezmk
 		AccessKeySecret: "nJyNpTtUuIgZqx21FF4G2zi0WHOn51",      //k4uRZU6flv73yz1j4LJu9VY5eNlHas

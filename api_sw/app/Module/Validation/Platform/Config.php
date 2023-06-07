@@ -12,8 +12,8 @@ class Config extends AbstractValidation
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
         'configKeyArr.*' => 'sometimes|required|string|between:1,30|distinct',
 
-        'aliyunOssAccessId' => 'alpha_dash',
-        'aliyunOssAccessSecret' => 'alpha_dash',
+        'aliyunOssAccessKeyId' => 'alpha_dash',
+        'aliyunOssAccessKeySecret' => 'alpha_dash',
         'aliyunOssHost' => 'url',
         'aliyunOssBucket' => 'string',
     ];
@@ -27,8 +27,8 @@ class Config extends AbstractValidation
         ],
         'save' => [
             'only' => [
-                'aliyunOssAccessId',
-                'aliyunOssAccessSecret',
+                'aliyunOssAccessKeyId',
+                'aliyunOssAccessKeySecret',
                 'aliyunOssHost',
                 'aliyunOssBucket',
             ]
