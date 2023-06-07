@@ -30,6 +30,10 @@ const queryForm = reactive({
             <ElInput v-model="queryCommon.data.networkIp" :placeholder="t('common.name.platform.server.networkIp')"
                 :clearable="true" />
         </ElFormItem>
+        <ElFormItem prop="localIp">
+            <ElInput v-model="queryCommon.data.localIp" :placeholder="t('common.name.platform.server.localIp')"
+                :clearable="true" />
+        </ElFormItem>
         <ElFormItem>
             <ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
                 <AutoiconEpSearch />{{ t('common.query') }}
