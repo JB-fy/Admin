@@ -16,12 +16,21 @@ import (
 )
 
 func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]interface{}) error {
-	if msg == "" {
-		msg = g.I18n().Tf(ctx, gconv.String(code))
-	}
 	dataTmp := map[string]interface{}{}
 	if len(data) > 0 && data[0] != nil {
 		dataTmp = data[0]
+	}
+	if msg == "" {
+		switch code {
+		case 29991063:
+			msg = g.I18n().Tf(ctx, gconv.String(code), dataTmp["uniqueField"])
+			delete(dataTmp, "uniqueField")
+		case 89999996:
+			msg = g.I18n().Tf(ctx, gconv.String(code), gconv.String(dataTmp["paramField"]))
+			delete(dataTmp, "paramField")
+		default:
+			msg = g.I18n().Tf(ctx, gconv.String(code))
+		}
 	}
 	return gerror.NewCode(gcode.New(code, "", dataTmp), msg)
 }

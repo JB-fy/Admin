@@ -121,6 +121,8 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 // 更新
 func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
+
+	//该字段只支持单个更新，调用该方法需注意
 	_, okPid := data["pid"]
 	var oldInfo gdb.Record
 	if okPid {
@@ -164,7 +166,7 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 		return
 	}
 	row, err = result.RowsAffected()
-	if row == 0 || err != nil {
+	if row == 0 {
 		return
 	}
 

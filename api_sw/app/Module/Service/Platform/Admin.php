@@ -37,13 +37,21 @@ class Admin extends AbstractService
      */
     public function update(array $data, array $filter)
     {
-        //这个字段是个人信息修改（不支持批量，由调用位置控制即可）
-        if (isset($data['checkPassword']) && $data['checkPassword'] != $this->getDao()->parseFilter($filter)->getBuilder()->value('password')) {
-            throwFailJson(39990003);
+        $idArr = $this->getIdArr($filter);
+        if (empty($idArr)) {
+            throwFailJson(99999999);
+        }
+
+        if (isset($data['checkPassword'])) {
+            if (count($idArr) > 1) { //该字段只支持单个更新
+                throwFailJson(89999996, trans('code.29991063', ['name' => 'checkPassword']));
+            }
+            if ($data['checkPassword'] != $this->getDao()->parseFilter($filter)->getBuilder()->value('password')) {
+                throwFailJson(39990003);
+            }
         }
 
         if (isset($data['roleIdArr'])) {
-            $idArr = $this->getIdArr($filter);
             foreach ($idArr as $id) {
                 $this->container->get(PlatformAdmin::class)->saveRelRole($data['roleIdArr'], $id);
             }

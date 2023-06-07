@@ -199,11 +199,5 @@ abstract class AbstractService
     {
         $dao = $this->getDao();
         return $dao->parseFilter($filter)->getBuilder()->pluck($dao->getKey())->toArray();
-        if (isset($filter['id']) && count($filter) == 1) {
-            return is_array($filter['id']) ? $filter['id'] : [$filter['id']];
-        }
-        if (isset($filter['idArr']) && count($filter) == 1) {
-            return is_array($filter['idArr']) ? $filter['idArr'] : [$filter['idArr']];
-        }
     }
 }

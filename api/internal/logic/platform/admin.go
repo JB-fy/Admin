@@ -95,9 +95,18 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 // 更新
 func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
+	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	if len(idArr) == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, "")
+		return
+	}
 
 	_, okCheckPassword := data["checkPassword"]
-	if okCheckPassword { //这个字段是个人信息修改（不支持批量，由调用位置控制即可）
+	if okCheckPassword {
+		if len(idArr) > 1 { //该字段只支持单个更新
+			err = utils.NewErrorCode(ctx, 89999996, "", map[string]interface{}{"paramField": "checkPassword"})
+			return
+		}
 		password, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Value("password")
 		if gconv.String(data["checkPassword"]) != password.String() {
 			err = utils.NewErrorCode(ctx, 39990003, "")
@@ -107,7 +116,6 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 
 	_, okRoleIdArr := data["roleIdArr"]
 	if okRoleIdArr {
-		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 		for _, v := range idArr {
 			daoThis.SaveRelRole(ctx, gconv.SliceInt(data["roleIdArr"]), v.Int())
 		}
