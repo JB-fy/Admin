@@ -249,7 +249,7 @@ const getList = async (resetPage: boolean = false) => {
     table.loading = true
     try {
         const res = await request('/auth/scene/list', param)
-        table.data = res.data.list
+        table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
     } catch (error) { }
     table.loading = false
