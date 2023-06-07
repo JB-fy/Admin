@@ -53,20 +53,23 @@ class Role extends AbstractService
     public function update(array $data, array $filter)
     {
         if (isset($data['menuIdArr']) || isset($data['actionIdArr'])) {
-            $oldInfo = $this->getDao()->parseFilter($filter)->info();
-            if (isset($data['menuIdArr'])) {
-                if (count($data['menuIdArr']) != getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
-                    throwFailJson(89999998);
+            $idArr = $this->getIdArr($filter);
+            foreach ($idArr as $id) {
+                $filterOne = ['roleId'=>$id];
+                $oldInfo = $this->getDao()->parseFilter($filterOne)->info();
+                if (isset($data['menuIdArr'])) {
+                    if (count($data['menuIdArr']) != getDao(Menu::class)->parseFilter(['id' => $data['menuIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                        throwFailJson(89999998);
+                    }
+                    $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
                 }
-                $this->container->get(AuthRole::class)->saveRelMenu($data['menuIdArr'], $oldInfo->roleId);
-                $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改menuIdArr
-            }
-            if (isset($data['actionIdArr'])) {
-                if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->parseFilter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
-                    throwFailJson(89999998);
+                if (isset($data['actionIdArr'])) {
+                    if (count($data['actionIdArr']) != getDao(ActionRelToScene::class)->parseFilter(['actionId' => $data['actionIdArr'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->getBuilder()->count()) {
+                        throwFailJson(89999998);
+                    }
+                    $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
                 }
-                $this->container->get(AuthRole::class)->saveRelAction($data['actionIdArr'], $oldInfo->roleId);
-                $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();    //有可能只改actionIdArr
+                $this->getDao()->parseFilter($filterOne)->parseUpdate($data)->update();    //有可能只改menuIdArr或actionIdArr
             }
         } else {
             $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();

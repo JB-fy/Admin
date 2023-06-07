@@ -97,7 +97,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 	daoThis := daoPlatform.Admin
 
 	_, okCheckPassword := data["checkPassword"]
-	if okCheckPassword {
+	if okCheckPassword { //这个字段是个人信息修改（不支持批量，由调用位置控制即可）
 		password, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Value("password")
 		if gconv.String(data["checkPassword"]) != password.String() {
 			err = utils.NewErrorCode(ctx, 39990003, "")

@@ -37,6 +37,7 @@ class Admin extends AbstractService
      */
     public function update(array $data, array $filter)
     {
+        //这个字段是个人信息修改（不支持批量，由调用位置控制即可）
         if (isset($data['checkPassword']) && $data['checkPassword'] != $this->getDao()->parseFilter($filter)->getBuilder()->value('password')) {
             throwFailJson(39990003);
         }
