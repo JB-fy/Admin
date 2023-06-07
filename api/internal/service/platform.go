@@ -21,8 +21,8 @@ type (
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 	IConfig interface {
-		Get(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Save(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Get(ctx context.Context, filter map[string]interface{}) (config map[string]interface{}, err error)
+		Save(ctx context.Context, data map[string]interface{}) (err error)
 	}
 	IServer interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
@@ -31,9 +31,9 @@ type (
 )
 
 var (
+	localConfig IConfig
 	localServer IServer
 	localAdmin  IAdmin
-	localConfig IConfig
 )
 
 func Admin() IAdmin {

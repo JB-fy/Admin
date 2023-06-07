@@ -49,11 +49,22 @@ type (
 )
 
 var (
-	localRole   IRole
-	localScene  IScene
 	localAction IAction
 	localMenu   IMenu
+	localRole   IRole
+	localScene  IScene
 )
+
+func Scene() IScene {
+	if localScene == nil {
+		panic("implement not found for interface IScene, forgot register?")
+	}
+	return localScene
+}
+
+func RegisterScene(i IScene) {
+	localScene = i
+}
 
 func Action() IAction {
 	if localAction == nil {
@@ -86,15 +97,4 @@ func Role() IRole {
 
 func RegisterRole(i IRole) {
 	localRole = i
-}
-
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
-	}
-	return localScene
-}
-
-func RegisterScene(i IScene) {
-	localScene = i
 }

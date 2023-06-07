@@ -5,7 +5,7 @@ import (
 	"api/internal/service"
 	"context"
 
-	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type sConfig struct{}
@@ -19,24 +19,21 @@ func init() {
 }
 
 // 获取
-func (logicThis *sConfig) Get(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+func (logicThis *sConfig) Get(ctx context.Context, filter map[string]interface{}) (config map[string]interface{}, err error) {
 	daoThis := daoPlatform.Config
-	joinTableArr := []string{}
-	model := daoThis.ParseDbCtx(ctx)
-	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	if len(field) > 0 && len(field[0]) > 0 {
-		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Fields("configValue", "configKey").All()
+	config = map[string]interface{}{}
+	for _, v := range result {
+		config[v["configKey"].String()] = v["configValue"]
 	}
-	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
-	}
-	info, err = model.One()
 	return
 }
 
 // 保存
-func (logicThis *sConfig) Save(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sConfig) Save(ctx context.Context, data map[string]interface{}) (err error) {
 	daoThis := daoPlatform.Config
-	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
+	for k, v := range data {
+		daoThis.ParseDbCtx(ctx).Data(g.Map{"configKey": k, "configValue": v}).Save()
+	}
 	return
 }
