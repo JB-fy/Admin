@@ -70,7 +70,7 @@ func (aliyunOssThis *AliyunOss) CreateSign(option map[string]interface{}) (signI
 	policy := map[string]interface{}{
 		"expiration": aliyunOssThis.GetGmtIso8601(expireEnd),
 		"conditions": [][]string{
-			{"content-length-range", gconv.String(option["minSize"]), gconv.String(option["maxSize"])},
+			//{"content-length-range", gconv.String(option["minSize"]), gconv.String(option["maxSize"])},
 			{"starts-with", "$key", gconv.String(option["dir"])},
 		},
 	}
@@ -97,7 +97,7 @@ func (aliyunOssThis *AliyunOss) GetBucketHost() string {
 	if gstr.Pos(aliyunOssThis.Host, "https://") == -1 {
 		scheme = "http://"
 	}
-	return gstr.Replace(aliyunOssThis.Host, scheme, scheme+aliyunOssThis.Bucket, 1)
+	return gstr.Replace(aliyunOssThis.Host, scheme, scheme+aliyunOssThis.Bucket+".", 1)
 }
 
 func (aliyunOssThis *AliyunOss) GetGmtIso8601(expireEnd int64) string {
