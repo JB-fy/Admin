@@ -35,11 +35,11 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		switch param.UploadType {
 		default:
 			option = map[string]interface{}{
-				"callbackUrl": "",                                                                                   //是否回调服务器。空字符串不回调
-				"expireTime":  15 * 60,                                                                              //签名有效时间。单位：秒
-				"dir":         fmt.Sprintf("common/%s_%d_", gtime.Now().Format("Y-m-d H:i:s"), grand.N(1000, 9999)), //上传的文件前缀
-				"minSize":     0,                                                                                    //限制上传的文件大小。单位：字节
-				"maxSize":     100 * 1024 * 1024,                                                                    //限制上传的文件大小。单位：字节
+				"callbackUrl": "",                                                                                 //是否回调服务器。空字符串不回调
+				"expireTime":  15 * 60,                                                                            //签名有效时间。单位：秒
+				"dir":         fmt.Sprintf("common/%s_%d_", gtime.Now().Format("Y/m/d/His"), grand.N(1000, 9999)), //上传的文件前缀
+				"minSize":     0,                                                                                  //限制上传的文件大小。单位：字节
+				"maxSize":     100 * 1024 * 1024,                                                                  //限制上传的文件大小。单位：字节
 			}
 		}
 

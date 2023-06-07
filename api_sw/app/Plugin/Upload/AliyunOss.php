@@ -17,7 +17,7 @@ class AliyunOss extends AbstractUpload
     /**
      * 创建签名（web前端直传用）
      *
-     * @param array $option 
+     * @param array $option
      * @return void
      */
     public function createSign(array $option = [])

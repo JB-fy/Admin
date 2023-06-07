@@ -28,15 +28,13 @@ class Config extends AbstractService
      */
     public function save(array $data)
     {
-        $dao = $this->getDao();
         foreach ($data as $k => $v) {
-            $dao->getBuilder()->updateOrInsert(['configKey' => $k], ['configValue' => $v]);
+            $this->getDao()->getBuilder()->updateOrInsert(['configKey' => $k], ['configValue' => $v]);
         }
         /* Db::beginTransaction();
         try {
-            $dao = $this->getDao();
             foreach ($data as $k => $v) {
-                $dao->getBuilder()->updateOrInsert(['configKey' => $k], ['configValue' => $v]);
+                $this->getDao()->getBuilder()->updateOrInsert(['configKey' => $k], ['configValue' => $v]);
             }
             Db::commit();
         } catch (\Throwable $e) {
