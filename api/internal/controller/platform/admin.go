@@ -6,7 +6,9 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -47,11 +49,11 @@ func (controllerThis *Admin) List(r *ghttp.Request) {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.Context(), "platformAdminLook")
-		allowField := []string{"adminId", "adminName", "id"}
+		allowField := []string{"adminId", "nickname", "id"}
 		if isAuth {
 			allowField = daoPlatform.Admin.ColumnArr()
 			allowField = append(allowField, "id")
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		}
 		field := allowField
 		if len(param.Field) > 0 {
@@ -85,13 +87,13 @@ func (controllerThis *Admin) Info(r *ghttp.Request) {
 		var param *apiPlatform.AdminInfoReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
 		allowField := daoPlatform.Admin.ColumnArr()
-		allowField = append(allowField, "id")
-		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		allowField = append(allowField, "id", "roleIdArr")
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -128,7 +130,7 @@ func (controllerThis *Admin) Create(r *ghttp.Request) {
 		var param *apiPlatform.AdminCreateReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
@@ -160,17 +162,24 @@ func (controllerThis *Admin) Update(r *ghttp.Request) {
 		var param *apiPlatform.AdminUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
 		delete(data, "idArr")
 		if len(data) == 0 {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ""))
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}
 		/**--------参数处理 结束--------**/
+
+		/**--------不能修改平台超级管理员 开始--------**/
+		if garray.NewIntArrayFrom(gconv.SliceInt(filter["id"])).Contains(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int()) {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39990004, ""))
+			return
+		}
+		/**--------不能修改平台超级管理员 结束--------**/
 
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.Context(), "platformAdminUpdate")
@@ -198,11 +207,18 @@ func (controllerThis *Admin) Delete(r *ghttp.Request) {
 		var param *apiPlatform.AdminDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}
 		/**--------参数处理 结束--------**/
+
+		/**--------不能删除平台超级管理员 开始--------**/
+		if garray.NewIntArrayFrom(gconv.SliceInt(filter["id"])).Contains(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int()) {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39990005, ""))
+			return
+		}
+		/**--------不能删除平台超级管理员 结束--------**/
 
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.Context(), "platformAdminDelete")

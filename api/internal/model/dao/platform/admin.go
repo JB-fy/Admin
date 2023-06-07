@@ -10,6 +10,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/gogf/gf/container/gset"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -304,3 +305,30 @@ func (daoThis *adminDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // Fill with you ideas below.
+
+// 保存关联角色
+func (daoThis *adminDao) SaveRelRole(ctx context.Context, roleIdArr []int, id int) {
+	roleIdArrOfOldTmp, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where("adminId", id).Array("roleId")
+	roleIdArrOfOld := gconv.SliceInt(roleIdArrOfOldTmp)
+
+	/**----新增关联角色 开始----**/
+	inserttRoleIdArr := gset.NewIntSetFrom(roleIdArr).Diff(gset.NewIntSetFrom(roleIdArrOfOld)).Slice()
+	if len(inserttRoleIdArr) > 0 {
+		insertList := []map[string]interface{}{}
+		for _, v := range inserttRoleIdArr {
+			insertList = append(insertList, map[string]interface{}{
+				"adminId": id,
+				"roleId":  v,
+			})
+		}
+		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Data(insertList).Insert()
+	}
+	/**----新增关联角色 结束----**/
+
+	/**----删除关联角色 开始----**/
+	deleteRoleIdArr := gset.NewIntSetFrom(roleIdArrOfOld).Diff(gset.NewIntSetFrom(roleIdArr)).Slice()
+	if len(deleteRoleIdArr) > 0 {
+		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where("adminId", id).Where("roleId", deleteRoleIdArr).Delete()
+	}
+	/**----删除关联角色 结束----**/
+}

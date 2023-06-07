@@ -45,11 +45,19 @@ func (c *Test) Test(r *ghttp.Request) {
 		"data": map[string]interface{}{},
 	}) */
 
+	//garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable)
+
+	//gset.NewIntSetFrom(sceneIdArr).Diff(gset.NewIntSetFrom(sceneIdArrOfOld)).Slice()
+
 	fmt.Println(daoAuth.RoleRelToMenu.ParseDbCtx(r.GetCtx()).Where("roleId", 1).Array("menuId"))
+
 	fmt.Println(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int())
+
+	fmt.Println(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int())
+
 	utils.HttpSuccessJson(r, map[string]interface{}{
 		"list": []map[string]interface{}{},
 	}, 0)
-	err := utils.NewErrorCode(r.GetCtx(), 99999999, "")
-	utils.HttpFailJson(r, err)
+
+	utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 99999999, ""))
 }

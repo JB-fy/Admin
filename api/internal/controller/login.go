@@ -2,9 +2,11 @@ package controller
 
 import (
 	"api/api"
+	apiPlatform "api/api/platform"
 	"api/internal/service"
 	"api/internal/utils"
 
+	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -75,13 +77,28 @@ func (c *Login) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case "platformAdmin":
-		// /**--------参数验证并处理 开始--------**/
-		// $data = $this->request->all();
-		// $data = $this->container->get(\App\Module\Validation\Platform\Admin::class)->make($data, 'updateSelf')->validate();
-		// /**--------参数验证并处理 结束--------**/
+		/**--------参数处理 开始--------**/
+		var param *apiPlatform.AdminUpdateSelfReq
+		err := r.Parse(&param)
+		if err != nil {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			return
+		}
+		data := gconv.Map(param)
+		if len(data) == 0 {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ""))
+			return
+		}
+		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
+		filter := map[string]interface{}{"id": loginInfo["adminId"]}
+		/**--------参数处理 结束--------**/
 
-		// $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-		// $this->container->get(\App\Module\Service\Platform\Admin::class)->update($data, ['id' => $loginInfo->adminId]);
+		_, err = service.Admin().Update(r.Context(), data, filter)
+		if err != nil {
+			utils.HttpFailJson(r, err)
+			return
+		}
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 

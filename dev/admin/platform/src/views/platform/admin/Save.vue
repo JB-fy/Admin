@@ -22,7 +22,7 @@ const saveForm = reactive({
             { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') }
         ],
         password: [
-            { type: 'string', required: computed((): boolean => { return saveForm.data.id ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
         roleIdArr: [
             { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }

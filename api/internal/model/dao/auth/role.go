@@ -307,6 +307,7 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 func (daoThis *roleDao) SaveRelMenu(ctx context.Context, menuIdArr []int, id int) {
 	menuIdArrOfOldTmp, _ := RoleRelToMenu.ParseDbCtx(ctx).Where("roleId", id).Array("menuId")
 	menuIdArrOfOld := gconv.SliceInt(menuIdArrOfOldTmp)
+
 	/**----新增关联菜单 开始----**/
 	insertMenuIdArr := gset.NewIntSetFrom(menuIdArr).Diff(gset.NewIntSetFrom(menuIdArrOfOld)).Slice()
 	if len(insertMenuIdArr) > 0 {

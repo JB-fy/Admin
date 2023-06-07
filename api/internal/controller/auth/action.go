@@ -85,7 +85,7 @@ func (controllerThis *Action) Info(r *ghttp.Request) {
 		var param *apiAuth.ActionInfoReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
@@ -128,7 +128,7 @@ func (controllerThis *Action) Create(r *ghttp.Request) {
 		var param *apiAuth.ActionCreateReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
@@ -160,13 +160,13 @@ func (controllerThis *Action) Update(r *ghttp.Request) {
 		var param *apiAuth.ActionUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
 		delete(data, "idArr")
 		if len(data) == 0 {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ""))
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}
@@ -198,7 +198,7 @@ func (controllerThis *Action) Delete(r *ghttp.Request) {
 		var param *apiAuth.ActionDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		filter := map[string]interface{}{"id": param.IdArr}

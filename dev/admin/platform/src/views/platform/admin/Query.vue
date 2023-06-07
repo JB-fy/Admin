@@ -29,6 +29,9 @@ const queryForm = reactive({
         <ElFormItem prop="account">
             <ElInput v-model="queryCommon.data.account" :placeholder="t('common.name.account')" :clearable="true" />
         </ElFormItem>
+        <ElFormItem prop="phone">
+            <ElInput v-model="queryCommon.data.phone" :placeholder="t('common.name.phone')" :clearable="true" />
+        </ElFormItem>
         <ElFormItem prop="roleId">
             <MySelect v-model="queryCommon.data.roleId" :placeholder="t('common.name.rel.roleId')"
                 :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />

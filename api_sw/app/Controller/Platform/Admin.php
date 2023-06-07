@@ -100,7 +100,7 @@ class Admin extends AbstractController
             case 'platformAdmin':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 //不能修改平台超级管理员
-                if ($data['id'] == getConfig('app.superPlatformAdminId')) {
+                if (in_array(getConfig('app.superPlatformAdminId'), $data['idArr'])) {
                     throwFailJson(39990004);
                 }
                 $this->checkAuth(__FUNCTION__, $sceneCode);
