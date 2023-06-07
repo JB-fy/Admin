@@ -2,7 +2,6 @@ package controller
 
 import (
 	"api/api"
-	aliyunOss "api/internal/packed"
 	"api/internal/service"
 	"api/internal/utils"
 	"fmt"
@@ -34,7 +33,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 			return
 		}
 		/**--------参数处理 结束--------**/
-		option := aliyunOss.AliyunOssSignOption{
+		option := utils.AliyunOssSignOption{
 			CallbackUrl: "",
 			ExpireTime:  15 * 60,
 			Dir:         fmt.Sprintf("common/%s_%d_", gtime.Now().Format("Y/m/d/His"), grand.N(1000, 9999)),
@@ -52,7 +51,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 			"configKey": []string{"aliyunOssAccessKeyId", "aliyunOssAccessKeySecret", "aliyunOssHost", "aliyunOssBucket"},
 		}
 		config, _ := service.Config().Get(r.Context(), filter)
-		upload := aliyunOss.NewAliyunOss(r.GetCtx(), config)
+		upload := utils.NewAliyunOss(r.GetCtx(), config)
 		signInfo, _ := upload.CreateSign(option)
 		utils.HttpSuccessJson(r, signInfo, 0)
 	}
@@ -64,7 +63,7 @@ func (c *Upload) Notify(r *ghttp.Request) {
 		"configKey": []string{"aliyunOssAccessKeyId", "aliyunOssAccessKeySecret", "aliyunOssHost", "aliyunOssBucket"},
 	}
 	config, _ := service.Config().Get(r.Context(), filter)
-	upload := aliyunOss.NewAliyunOss(r.GetCtx(), config)
+	upload := utils.NewAliyunOss(r.GetCtx(), config)
 	err := upload.Notify(r)
 	if err != nil {
 		utils.HttpFailJson(r, err)
