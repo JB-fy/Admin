@@ -20,10 +20,10 @@ class BeforeStartCallback
     public function onBeforeStart()
     {
         /**--------设置当前服务器IP并记录 开始--------**/
-        $serverLocalIp = getServerLocalIp();
         $serverNetworkIp = getServerNetworkIp();
-        $this->config->set('server.localIp', $serverLocalIp);   //设置服务器内网ip
+        $serverLocalIp = getServerLocalIp();
         $this->config->set('server.networkIp', $serverNetworkIp);   //设置服务器外网ip
+        $this->config->set('server.localIp', $serverLocalIp);   //设置服务器内网ip
         try {
             getDao(\App\Module\Db\Dao\Platform\Server::class)->getBuilder()->updateOrInsert(['networkIp' => $serverNetworkIp], ['localIp' => $serverLocalIp]);
         } catch (\Throwable $th) {
