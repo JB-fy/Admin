@@ -23,7 +23,7 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 	var param *apiPlatform.ServerListReq
 	err := r.Parse(&param)
 	if err != nil {
-		utils.HttpFailJson(r, err)
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 		return
 	}
 	filter := gconv.Map(param.Filter)

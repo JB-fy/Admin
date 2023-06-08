@@ -29,7 +29,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		var param *api.UploadSignReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		/**--------参数处理 结束--------**/

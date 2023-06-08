@@ -25,7 +25,7 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 		var param *api.LoginEncryptReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		/**--------参数处理 结束--------**/
@@ -48,7 +48,7 @@ func (c *Login) Login(r *ghttp.Request) {
 		var param *api.LoginLoginReq
 		err := r.Parse(&param)
 		if err != nil {
-			r.Response.Writeln(err.Error())
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		/**--------参数处理 结束--------**/

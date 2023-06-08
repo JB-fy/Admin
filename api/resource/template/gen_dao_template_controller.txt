@@ -22,10 +22,10 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *apiAuth.{TplTableNameCamelCase}ListReq
 	err := r.Parse(&param)
-	if err != nil {
-		utils.HttpFailJson(r, err)
-		return
-	}
+		if err != nil {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			return
+		}
 	filter := gconv.Map(param.Filter)
 	order := [][2]string{{"id", "DESC"}}
 	if param.Sort.Key != "" {
