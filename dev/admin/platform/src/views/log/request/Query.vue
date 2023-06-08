@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 
-const { t, tm } = useI18n()
+const { t } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
@@ -64,7 +64,7 @@ const queryForm = reactive({
             <ElInput v-model="queryCommon.data.maxRunTime" :placeholder="t('common.name.max')" />
         </ElFormItem>
         <ElFormItem prop="timeRange">
-            <ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-"
+            <ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="queryCommon.data.timeRange"
                 :start-placeholder="t('common.name.startTime')" :end-placeholder="t('common.name.endTime')">
             </ElDatePicker>
         </ElFormItem>
