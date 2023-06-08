@@ -10,8 +10,8 @@ import (
 
 // RoleRelOfPlatformAdmin is the golang structure for table role_rel_of_platform_admin.
 type RoleRelOfPlatformAdmin struct {
-	RoleId     uint        `json:"roleId"     ` // 权限角色ID
-	AdminId    uint        `json:"adminId"    ` // 平台管理员ID
+	RoleId   uint        `json:"roleId"   ` // 权限角色ID
+	AdminId  uint        `json:"adminId"  ` // 平台管理员ID
 	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
 	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
 }

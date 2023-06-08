@@ -11,14 +11,14 @@ import (
 
 // Admin is the golang structure of table platform_admin for DAO operations like Where/Data.
 type Admin struct {
-	g.Meta     `orm:"table:platform_admin, do:true"`
-	AdminId    interface{} // 管理员ID
-	Account    interface{} // 账号
-	Phone      interface{} // 电话号码
-	Password   interface{} // 密码（md5保存）
-	Nickname   interface{} // 昵称
-	Avatar     interface{} // 头像
-	IsStop     interface{} // 是否停用：0否 1是
+	g.Meta   `orm:"table:platform_admin, do:true"`
+	AdminId  interface{} // 管理员ID
+	Account  interface{} // 账号
+	Phone    interface{} // 电话号码
+	Password interface{} // 密码（md5保存）
+	Nickname interface{} // 昵称
+	Avatar   interface{} // 头像
+	IsStop   interface{} // 是否停用：0否 1是
 	UpdateAt *gtime.Time // 更新时间
 	CreateAt *gtime.Time // 创建时间
 }

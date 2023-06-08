@@ -10,17 +10,17 @@ import (
 
 // Menu is the golang structure for table menu.
 type Menu struct {
-	MenuId     uint        `json:"menuId"     ` // 权限菜单ID
-	SceneId    uint        `json:"sceneId"    ` // 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
-	Pid        uint        `json:"pid"        ` // 父ID
-	MenuName   string      `json:"menuName"   ` // 名称
-	MenuIcon   string      `json:"menuIcon"   ` // 图标
-	MenuUrl    string      `json:"menuUrl"    ` // 链接
-	Level      uint        `json:"level"      ` // 层级
-	PidPath    string      `json:"pidPath"    ` // 层级路径
-	ExtraData  string      `json:"extraData"  ` // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
-	Sort       uint        `json:"sort"       ` // 排序值（从小到大排序，默认50，范围0-100）
-	IsStop     uint        `json:"isStop"     ` // 是否停用：0否 1是
-	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
-	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
+	MenuId    uint        `json:"menuId"    ` // 权限菜单ID
+	SceneId   uint        `json:"sceneId"   ` // 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
+	Pid       uint        `json:"pid"       ` // 父ID
+	MenuName  string      `json:"menuName"  ` // 名称
+	MenuIcon  string      `json:"menuIcon"  ` // 图标
+	MenuUrl   string      `json:"menuUrl"   ` // 链接
+	Level     uint        `json:"level"     ` // 层级
+	PidPath   string      `json:"pidPath"   ` // 层级路径
+	ExtraData string      `json:"extraData" ` // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
+	Sort      uint        `json:"sort"      ` // 排序值（从小到大排序，默认50，范围0-100）
+	IsStop    uint        `json:"isStop"    ` // 是否停用：0否 1是
+	UpdateAt  *gtime.Time `json:"updateAt"  ` // 更新时间
+	CreateAt  *gtime.Time `json:"createAt"  ` // 创建时间
 }

@@ -10,9 +10,9 @@ import (
 
 // Server is the golang structure for table server.
 type Server struct {
-	ServerId   uint        `json:"serverId"   ` // 服务器ID
-	NetworkIp  string      `json:"networkIp"  ` // 公网IP
-	LocalIp    string      `json:"localIp"    ` // 内网IP
-	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
-	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
+	ServerId  uint        `json:"serverId"  ` // 服务器ID
+	NetworkIp string      `json:"networkIp" ` // 公网IP
+	LocalIp   string      `json:"localIp"   ` // 内网IP
+	UpdateAt  *gtime.Time `json:"updateAt"  ` // 更新时间
+	CreateAt  *gtime.Time `json:"createAt"  ` // 创建时间
 }

@@ -31,8 +31,8 @@ type RequestColumns struct {
 	RequestData   string // 请求数据
 	ResponseBody  string // 响应体
 	RunTime       string // 运行时间（单位：毫秒）
-	UpdateAt    string // 更新时间
-	CreateAt    string // 创建时间
+	UpdateAt      string // 更新时间
+	CreateAt      string // 创建时间
 }
 
 // requestColumns holds the columns for table log_request.
@@ -43,8 +43,8 @@ var requestColumns = RequestColumns{
 	RequestData:   "requestData",
 	ResponseBody:  "responseBody",
 	RunTime:       "runTime",
-	UpdateAt:    "updateAt",
-	CreateAt:    "createAt",
+	UpdateAt:      "updateAt",
+	CreateAt:      "createAt",
 }
 
 // NewRequestDao creates and returns a new DAO object for table data access.

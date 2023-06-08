@@ -28,8 +28,8 @@ type ConfigColumns struct {
 	ConfigId    string // 配置ID
 	ConfigKey   string // 配置项Key
 	ConfigValue string // 配置项值（设置大点。以后可能需要保存富文本内容，如公司简介或协议等等）
-	UpdateAt  string // 更新时间
-	CreateAt  string // 创建时间
+	UpdateAt    string // 更新时间
+	CreateAt    string // 创建时间
 }
 
 // configColumns holds the columns for table platform_config.
@@ -37,8 +37,8 @@ var configColumns = ConfigColumns{
 	ConfigId:    "configId",
 	ConfigKey:   "configKey",
 	ConfigValue: "configValue",
-	UpdateAt:  "updateAt",
-	CreateAt:  "createAt",
+	UpdateAt:    "updateAt",
+	CreateAt:    "createAt",
 }
 
 // NewConfigDao creates and returns a new DAO object for table data access.

@@ -11,9 +11,9 @@ import (
 
 // RoleRelOfPlatformAdmin is the golang structure of table auth_role_rel_of_platform_admin for DAO operations like Where/Data.
 type RoleRelOfPlatformAdmin struct {
-	g.Meta     `orm:"table:auth_role_rel_of_platform_admin, do:true"`
-	RoleId     interface{} // 权限角色ID
-	AdminId    interface{} // 平台管理员ID
+	g.Meta   `orm:"table:auth_role_rel_of_platform_admin, do:true"`
+	RoleId   interface{} // 权限角色ID
+	AdminId  interface{} // 平台管理员ID
 	UpdateAt *gtime.Time // 更新时间
 	CreateAt *gtime.Time // 创建时间
 }

@@ -10,8 +10,8 @@ import (
 
 // RoleRelToMenu is the golang structure for table role_rel_to_menu.
 type RoleRelToMenu struct {
-	RoleId     uint        `json:"roleId"     ` // 权限角色ID
-	MenuId     uint        `json:"menuId"     ` // 权限菜单ID
+	RoleId   uint        `json:"roleId"   ` // 权限角色ID
+	MenuId   uint        `json:"menuId"   ` // 权限菜单ID
 	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
 	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
 }
