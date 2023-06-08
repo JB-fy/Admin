@@ -48,7 +48,7 @@ func (controllerThis *Admin) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "platformAdminLook")
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "platformAdminLook")
 		allowField := []string{"adminId", "nickname", "id"}
 		if isAuth {
 			allowField = daoPlatform.Admin.ColumnArr()
@@ -64,12 +64,12 @@ func (controllerThis *Admin) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Admin().Count(r.Context(), filter)
+		count, err := service.Admin().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Admin().List(r.Context(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Admin().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -105,14 +105,14 @@ func (controllerThis *Admin) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "platformAdminLook")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "platformAdminLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.Admin().Info(r.Context(), filter, field)
+		info, err := service.Admin().Info(r.GetCtx(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -137,14 +137,14 @@ func (controllerThis *Admin) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "platformAdminCreate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "platformAdminCreate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Admin().Create(r.Context(), data)
+		_, err = service.Admin().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -182,14 +182,14 @@ func (controllerThis *Admin) Update(r *ghttp.Request) {
 		/**--------不能修改平台超级管理员 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "platformAdminUpdate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "platformAdminUpdate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Admin().Update(r.Context(), data, filter)
+		_, err = service.Admin().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -221,14 +221,14 @@ func (controllerThis *Admin) Delete(r *ghttp.Request) {
 		/**--------不能删除平台超级管理员 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "platformAdminDelete")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "platformAdminDelete")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Admin().Delete(r.Context(), filter)
+		_, err = service.Admin().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

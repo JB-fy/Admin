@@ -46,7 +46,7 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "authActionLook")
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "authActionLook")
 		allowField := []string{"actionId", "actionName", "id"}
 		if isAuth {
 			allowField = daoAuth.Action.ColumnArr()
@@ -62,12 +62,12 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Action().Count(r.Context(), filter)
+		count, err := service.Action().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Action().List(r.Context(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Action().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -103,14 +103,14 @@ func (controllerThis *Action) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authActionLook")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authActionLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.Action().Info(r.Context(), filter, field)
+		info, err := service.Action().Info(r.GetCtx(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -135,14 +135,14 @@ func (controllerThis *Action) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authActionCreate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authActionCreate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Action().Create(r.Context(), data)
+		_, err = service.Action().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -173,14 +173,14 @@ func (controllerThis *Action) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authActionUpdate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authActionUpdate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Action().Update(r.Context(), data, filter)
+		_, err = service.Action().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -205,14 +205,14 @@ func (controllerThis *Action) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authActionDelete")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authActionDelete")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Action().Delete(r.Context(), filter)
+		_, err = service.Action().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

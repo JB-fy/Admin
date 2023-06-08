@@ -46,7 +46,7 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "authRoleLook")
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "authRoleLook")
 		allowField := []string{"roleId", "roleName", "id"}
 		if isAuth {
 			allowField = daoAuth.Role.ColumnArr()
@@ -62,12 +62,12 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Role().Count(r.Context(), filter)
+		count, err := service.Role().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Role().List(r.Context(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Role().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -103,14 +103,14 @@ func (controllerThis *Role) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authRoleLook")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.Role().Info(r.Context(), filter, field)
+		info, err := service.Role().Info(r.GetCtx(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -135,14 +135,14 @@ func (controllerThis *Role) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authRoleCreate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleCreate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Role().Create(r.Context(), data)
+		_, err = service.Role().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -173,14 +173,14 @@ func (controllerThis *Role) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authRoleUpdate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleUpdate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Role().Update(r.Context(), data, filter)
+		_, err = service.Role().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -205,14 +205,14 @@ func (controllerThis *Role) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authRoleDelete")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleDelete")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Role().Delete(r.Context(), filter)
+		_, err = service.Role().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

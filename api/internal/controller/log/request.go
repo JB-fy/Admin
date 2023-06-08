@@ -46,7 +46,7 @@ func (controllerThis *Request) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		_, err := service.Action().CheckAuth(r.Context(), "logRequestLook")
+		_, err := service.Action().CheckAuth(r.GetCtx(), "logRequestLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -63,12 +63,12 @@ func (controllerThis *Request) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Request().Count(r.Context(), filter)
+		count, err := service.Request().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Request().List(r.Context(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Request().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

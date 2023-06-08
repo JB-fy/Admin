@@ -36,14 +36,14 @@ func (controllerThis *Config) Get(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "platformConfigLook")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "platformConfigLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		config, err := service.Config().Get(r.Context(), filter)
+		config, err := service.Config().Get(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -74,14 +74,14 @@ func (controllerThis *Config) Save(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "platformConfigSave")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "platformConfigSave")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		err = service.Config().Save(r.Context(), data)
+		err = service.Config().Save(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

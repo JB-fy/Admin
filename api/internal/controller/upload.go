@@ -50,7 +50,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		filter := map[string]interface{}{
 			"configKey": []string{"aliyunOssAccessKeyId", "aliyunOssAccessKeySecret", "aliyunOssHost", "aliyunOssBucket"},
 		}
-		config, _ := service.Config().Get(r.Context(), filter)
+		config, _ := service.Config().Get(r.GetCtx(), filter)
 		upload := utils.NewAliyunOss(r.GetCtx(), config)
 		signInfo, _ := upload.CreateSign(option)
 		utils.HttpSuccessJson(r, signInfo, 0)
@@ -62,7 +62,7 @@ func (c *Upload) Notify(r *ghttp.Request) {
 	filter := map[string]interface{}{
 		"configKey": []string{"aliyunOssAccessKeyId", "aliyunOssAccessKeySecret", "aliyunOssHost", "aliyunOssBucket"},
 	}
-	config, _ := service.Config().Get(r.Context(), filter)
+	config, _ := service.Config().Get(r.GetCtx(), filter)
 	upload := utils.NewAliyunOss(r.GetCtx(), config)
 	err := upload.Notify(r)
 	if err != nil {

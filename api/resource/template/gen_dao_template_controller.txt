@@ -46,7 +46,7 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "auth{TplTableNameCamelCase}Look")
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "auth{TplTableNameCamelCase}Look")
 		allowField := []string{"{TplTableNameCamelLowerCase}Id", "{TplTableNameCamelLowerCase}Name", "id"}
 		if isAuth {
 			allowField = daoAuth.{TplTableNameCamelCase}.ColumnArr()
@@ -62,12 +62,12 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.{TplTableNameCamelCase}().Count(r.Context(), filter)
+		count, err := service.{TplTableNameCamelCase}().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.{TplTableNameCamelCase}().List(r.Context(), filter, field, order, param.Page, param.Limit)
+		list, err := service.{TplTableNameCamelCase}().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -103,14 +103,14 @@ func (controllerThis *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "auth{TplTableNameCamelCase}Look")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "auth{TplTableNameCamelCase}Look")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.{TplTableNameCamelCase}().Info(r.Context(), filter, field)
+		info, err := service.{TplTableNameCamelCase}().Info(r.GetCtx(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -135,14 +135,14 @@ func (controllerThis *{TplTableNameCamelCase}) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "auth{TplTableNameCamelCase}Create")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "auth{TplTableNameCamelCase}Create")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCamelCase}().Create(r.Context(), data)
+		_, err = service.{TplTableNameCamelCase}().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -173,14 +173,14 @@ func (controllerThis *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "auth{TplTableNameCamelCase}Update")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "auth{TplTableNameCamelCase}Update")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCamelCase}().Update(r.Context(), data, filter)
+		_, err = service.{TplTableNameCamelCase}().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -205,14 +205,14 @@ func (controllerThis *{TplTableNameCamelCase}) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "auth{TplTableNameCamelCase}Delete")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "auth{TplTableNameCamelCase}Delete")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCamelCase}().Delete(r.Context(), filter)
+		_, err = service.{TplTableNameCamelCase}().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

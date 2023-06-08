@@ -46,7 +46,7 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "authMenuLook")
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "authMenuLook")
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()
@@ -62,12 +62,12 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Menu().Count(r.Context(), filter)
+		count, err := service.Menu().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Menu().List(r.Context(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Menu().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -103,14 +103,14 @@ func (controllerThis *Menu) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authMenuLook")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authMenuLook")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.Menu().Info(r.Context(), filter, field)
+		info, err := service.Menu().Info(r.GetCtx(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -135,14 +135,14 @@ func (controllerThis *Menu) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authMenuCreate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authMenuCreate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Menu().Create(r.Context(), data)
+		_, err = service.Menu().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -173,14 +173,14 @@ func (controllerThis *Menu) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authMenuUpdate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authMenuUpdate")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Menu().Update(r.Context(), data, filter)
+		_, err = service.Menu().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -205,14 +205,14 @@ func (controllerThis *Menu) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.Context(), "authMenuDelete")
+		_, err = service.Action().CheckAuth(r.GetCtx(), "authMenuDelete")
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Menu().Delete(r.Context(), filter)
+		_, err = service.Menu().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -240,7 +240,7 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 	switch sceneCode {
 	case "platformAdmin":
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.Context(), "authMenuLook")
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "authMenuLook")
 		allowField := []string{"menuId", "menuName", "id"}
 		if isAuth {
 			allowField = daoAuth.Menu.ColumnArr()
@@ -259,12 +259,12 @@ func (cMenu *Menu) Tree(r *ghttp.Request) {
 		field = append(field, "menuTree") //补充字段（菜单树所需）
 		/**--------权限验证 结束--------**/
 
-		list, err := service.Menu().List(r.Context(), filter, field, [][2]string{}, 0, 0)
+		list, err := service.Menu().List(r.GetCtx(), filter, field, [][2]string{}, 0, 0)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		tree, err := service.Menu().Tree(r.Context(), list, 0)
+		tree, err := service.Menu().Tree(r.GetCtx(), list, 0)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

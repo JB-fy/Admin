@@ -30,7 +30,7 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 		}
 		/**--------参数处理 结束--------**/
 
-		encryptStr, err := service.Login().EncryptStr(r.Context(), sceneCode, param.Account)
+		encryptStr, err := service.Login().EncryptStr(r.GetCtx(), sceneCode, param.Account)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -53,7 +53,7 @@ func (c *Login) Login(r *ghttp.Request) {
 		}
 		/**--------参数处理 结束--------**/
 
-		token, err := service.Login().Login(r.Context(), sceneCode, param.Account, param.Password)
+		token, err := service.Login().Login(r.GetCtx(), sceneCode, param.Account, param.Password)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -93,7 +93,7 @@ func (c *Login) Update(r *ghttp.Request) {
 		filter := map[string]interface{}{"id": loginInfo["adminId"]}
 		/**--------参数处理 结束--------**/
 
-		_, err = service.Admin().Update(r.Context(), data, filter)
+		_, err = service.Admin().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -117,12 +117,12 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 		}
 		field := []string{"menuTree", "showMenu"}
 
-		list, err := service.Menu().List(r.Context(), filter, field, [][2]string{}, 0, 0)
+		list, err := service.Menu().List(r.GetCtx(), filter, field, [][2]string{}, 0, 0)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		tree, err := service.Menu().Tree(r.Context(), list, 0)
+		tree, err := service.Menu().Tree(r.GetCtx(), list, 0)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
