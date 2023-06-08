@@ -166,14 +166,17 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				if len(val) == 1 {
 					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val[0])
 				} else {
-					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val)
+					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 				}
 			case "excId", "excIdArr":
 				val := gconv.SliceInt(v)
-				if len(val) == 1 {
+				switch len(val) {
+				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
+					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+				case 1:
 					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), val[0])
-				} else {
-					m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), val)
+				default:
+					m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 				}
 			case "startTime":
 				m = m.WhereGTE(daoThis.Table()+".createTime", v)
@@ -214,7 +217,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 							if len(val) == 1 {
 								m = m.Where(daoThis.Table()+"."+k, val[0])
 							} else {
-								m = m.Where(daoThis.Table()+"."+k, val)
+								m = m.Where(daoThis.Table()+"."+k, v)
 							}
 						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
 							m = m.WhereLike(daoThis.Table()+"."+k, "%"+gconv.String(v)+"%")
