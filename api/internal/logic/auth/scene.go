@@ -73,6 +73,12 @@ func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}
 		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
+	if err != nil {
+		return
+	}
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, "")
+	}
 	fmt.Println(info)
 	fmt.Println(err)
 	if err != nil {
