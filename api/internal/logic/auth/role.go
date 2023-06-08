@@ -122,8 +122,8 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 	_, okActionIdArr := data["actionIdArr"]
 	if okMenuIdArr || okActionIdArr {
 		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
-		for _, v := range idArr {
-			filterOne := map[string]interface{}{daoThis.PrimaryKey(): v}
+		for _, id := range idArr {
+			filterOne := map[string]interface{}{daoThis.PrimaryKey(): id}
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterOne, &[]string{})).One()
 			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
 			if err != nil {

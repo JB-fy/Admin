@@ -47,48 +47,50 @@ class Menu extends AbstractService
      */
     public function update(array $data, array $filter)
     {
-        if (isset($data['pid'])) {
-            $oldInfo = $this->getDao()->parseFilter($filter)->info();
-            if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
-                throwFailJson(29999997);
-            }
-            if ($data['pid'] == $oldInfo->pid) {
-                unset($data['pid']);    //未修改则删除，更新后就不用处理$data['pid']
-            } else {
-                if ($data['pid'] > 0) {
-                    $pInfo = $this->getDao()->parseField(['pidPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->info();
-                    if (empty($pInfo)) {
-                        throwFailJson(29999998);
-                    }
-                    if (in_array($oldInfo->menuId, explode('-',  $pInfo->pidPath))) {   //父级不能是自身的子孙级
-                        throwFailJson(29999996);
-                    }
-                    $data['pidPath'] =  $pInfo->pidPath . '-' . $oldInfo->menuId;
-                    $data['level'] = $pInfo->level + 1;
-                } else {
-                    $data['pidPath'] = '0-' . $oldInfo->menuId;
-                    $data['level'] = 1;
+        if (isset($data['pid'])) { //存在pid则只能一个个循环更新
+            $idArr = $this->getIdArr($filter);
+            foreach ($idArr as $id) {
+                $filterOne = ['id' => $id];
+                $oldInfo = $this->getDao()->parseFilter($filterOne)->info();
+                if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
+                    throwFailJson(29999997);
                 }
+                if ($data['pid'] != $oldInfo->pid) {
+                    if ($data['pid'] > 0) {
+                        $pInfo = $this->getDao()->parseField(['pidPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->info();
+                        if (empty($pInfo)) {
+                            throwFailJson(29999998);
+                        }
+                        if (in_array($oldInfo->menuId, explode('-',  $pInfo->pidPath))) {   //父级不能是自身的子孙级
+                            throwFailJson(29999996);
+                        }
+                        $data['pidPath'] =  $pInfo->pidPath . '-' . $oldInfo->menuId;
+                        $data['level'] = $pInfo->level + 1;
+                    } else {
+                        $data['pidPath'] = '0-' . $oldInfo->menuId;
+                        $data['level'] = 1;
+                    }
+                }
+                $this->getDao()->parseFilter($filterOne)->parseUpdate($data)->update();
+                //修改pid时，更新所有子孙级的pidPath和level
+                $this->getDao()->parseFilter([['pidPath', 'like', $oldInfo->pidPath . '%']])
+                    ->parseUpdate([
+                        'pidPathOfChild' => [
+                            'newVal' => $data['pidPath'],
+                            'oldVal' => $oldInfo->pidPath
+                        ],
+                        'levelOfChild' => [
+                            'newVal' => $data['level'],
+                            'oldVal' => $oldInfo->level
+                        ]
+                    ])
+                    ->update();
             }
-        }
-        $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
-        if (empty($result)) {
-            throwFailJson();
-        }
-        //修改pid时，更新所有子孙级的pidPath和level
-        if (isset($data['pid'])) {
-            $this->getDao()->parseFilter([['pidPath', 'like', $oldInfo->pidPath . '%']])
-                ->parseUpdate([
-                    'pidPathOfChild' => [
-                        'newVal' => $data['pidPath'],
-                        'oldVal' => $oldInfo->pidPath
-                    ],
-                    'levelOfChild' => [
-                        'newVal' => $data['level'],
-                        'oldVal' => $oldInfo->level
-                    ]
-                ])
-                ->update();
+        } else {
+            $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();
+            if (empty($result)) {
+                throwFailJson();
+            }
         }
         throwSuccessJson();
     }

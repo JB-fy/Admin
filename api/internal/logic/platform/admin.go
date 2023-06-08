@@ -120,8 +120,8 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 		if err != nil {
 			return
 		}
-		for _, v := range idArr {
-			daoThis.SaveRelRole(ctx, gconv.SliceInt(data["roleIdArr"]), v.Int())
+		for _, id := range idArr {
+			daoThis.SaveRelRole(ctx, gconv.SliceInt(data["roleIdArr"]), id.Int())
 		}
 		return
 	}

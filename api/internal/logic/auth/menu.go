@@ -122,43 +122,61 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 
-	//该字段只支持单个更新，调用该方法需注意
 	_, okPid := data["pid"]
-	var oldInfo gdb.Record
-	if okPid {
-		pid := gconv.Int(data["pid"])
-		oldInfo, _ = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).One()
-		if pid == oldInfo["menuId"].Int() { //父级不能是自身
-			err = utils.NewErrorCode(ctx, 29999997, "")
-			return
-		}
-		if pid != oldInfo["pid"].Int() {
-			if pid > 0 {
-				joinTableArr := []string{}
-				field := []string{"pidPath", "level"}
-				filterTmp := g.Map{"menuId": data["pid"], "sceneId": oldInfo["sceneId"]}
-				_, okSceneId := data["sceneId"]
-				if okSceneId {
-					filterTmp["sceneId"] = data["sceneId"]
-				}
-				pInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterTmp, &joinTableArr), daoThis.ParseField(field, &joinTableArr)).One()
-				if len(pInfo) == 0 {
-					err = utils.NewErrorCode(ctx, 29999998, "")
-					return
-				}
-				if garray.NewStrArrayFrom(gstr.Split(pInfo["pidPath"].String(), "-")).Contains(oldInfo["menuId"].String()) { //父级不能是自身的子孙级
-					err = utils.NewErrorCode(ctx, 29999996, "")
-					return
-				}
-				data["pidPath"] = pInfo["pidPath"].String() + "-" + oldInfo["menuId"].String()
-				data["level"] = pInfo["level"].Int() + 1
-			} else {
-				data["pidPath"] = "0-" + oldInfo["menuId"].String()
-				data["level"] = 1
+	if okPid { //存在pid则只能一个个循环更新
+		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+		for _, id := range idArr {
+			filterOne := map[string]interface{}{daoThis.PrimaryKey(): id}
+			oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterOne, &[]string{})).One()
+			pid := gconv.Int(data["pid"])
+			if pid == oldInfo["menuId"].Int() { //父级不能是自身
+				err = utils.NewErrorCode(ctx, 29999997, "")
+				return
 			}
-		} else {
-			delete(data, "pid") //未修改则删除，更新后就不用处理data['pid']
+			if pid != oldInfo["pid"].Int() {
+				if pid > 0 {
+					joinTableArr := []string{}
+					field := []string{"pidPath", "level"}
+					filterTmp := g.Map{"menuId": data["pid"], "sceneId": oldInfo["sceneId"]}
+					_, okSceneId := data["sceneId"]
+					if okSceneId {
+						filterTmp["sceneId"] = data["sceneId"]
+					}
+					pInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterTmp, &joinTableArr), daoThis.ParseField(field, &joinTableArr)).One()
+					if len(pInfo) == 0 {
+						err = utils.NewErrorCode(ctx, 29999998, "")
+						return
+					}
+					if garray.NewStrArrayFrom(gstr.Split(pInfo["pidPath"].String(), "-")).Contains(oldInfo["menuId"].String()) { //父级不能是自身的子孙级
+						err = utils.NewErrorCode(ctx, 29999996, "")
+						return
+					}
+					data["pidPath"] = pInfo["pidPath"].String() + "-" + oldInfo["menuId"].String()
+					data["level"] = pInfo["level"].Int() + 1
+				} else {
+					data["pidPath"] = "0-" + oldInfo["menuId"].String()
+					data["level"] = 1
+				}
+			}
+			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
+			if err != nil {
+				return
+			}
+			//修改pid时，更新所有子孙级的pidPath和level
+			update := map[string]interface{}{
+				"pidPathOfChild": map[string]interface{}{
+					"newVal": data["pidPath"],
+					"oldVal": oldInfo["pidPath"],
+				},
+				"levelOfChild": map[string]interface{}{
+					"newVal": data["level"],
+					"oldVal": oldInfo["level"],
+				},
+			}
+			filterPidPath := map[string]interface{}{"pidPath Like ?": oldInfo["pidPath"].String() + "%"}
+			daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filterPidPath, &[]string{})).Update()
 		}
+		return
 	}
 
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
@@ -166,26 +184,6 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 		return
 	}
 	row, err = result.RowsAffected()
-	if row == 0 {
-		return
-	}
-
-	//修改pid时，更新所有子孙级的pidPath和level
-	_, okPid1 := data["pid"]
-	if okPid1 {
-		update := map[string]interface{}{
-			"pidPathOfChild": map[string]interface{}{
-				"newVal": data["pidPath"],
-				"oldVal": oldInfo["pidPath"],
-			},
-			"levelOfChild": map[string]interface{}{
-				"newVal": data["level"],
-				"oldVal": oldInfo["level"],
-			},
-		}
-		filter := map[string]interface{}{"pidPath Like ?": oldInfo["pidPath"].String() + "%"}
-		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filter, &[]string{})).Update()
-	}
 	return
 }
 

@@ -102,8 +102,8 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 		if err != nil {
 			return
 		}
-		for _, v := range idArr {
-			daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), v.Int())
+		for _, id := range idArr {
+			daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), id.Int())
 		}
 		return
 	}

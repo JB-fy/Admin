@@ -55,7 +55,7 @@ class Role extends AbstractService
         if (isset($data['menuIdArr']) || isset($data['actionIdArr'])) {
             $idArr = $this->getIdArr($filter);
             foreach ($idArr as $id) {
-                $filterOne = ['roleId'=>$id];
+                $filterOne = ['id'=>$id];
                 $oldInfo = $this->getDao()->parseFilter($filterOne)->info();
                 $this->getDao()->parseFilter($filterOne)->parseUpdate($data)->update();    //有可能只改menuIdArr或actionIdArr
                 if (isset($data['menuIdArr'])) {
