@@ -22,7 +22,10 @@ var (
 		Usage: "main",
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			gtime.SetTimeZone("Asia/Shanghai") // 设置进程全局时区
+			/**--------时区设置 开始--------**/
+			gtime.SetTimeZone("Asia/Shanghai")
+			/**--------时区设置 结束--------**/
+
 			/**--------多语言设置 开始--------**/
 			g.I18n().SetPath(g.Cfg().MustGet(ctx, "i18n.path").String())         //设置资源目录
 			g.I18n().SetLanguage(g.Cfg().MustGet(ctx, "i18n.language").String()) //设置默认为中文（原默认为英文en）
@@ -36,9 +39,9 @@ var (
 			daoPlatform.Server.ParseDbCtx(ctx).Data(g.Map{"networkIp": serverNetworkIp, "localIp": serverLocalIp}).Save()
 			/**--------设置当前服务器IP并记录 结束--------**/
 
-			/**--------执行请求日志表分区任务 开始--------**/
-			utils.DbTablePartition(ctx, daoLog.Request.Group(), daoLog.Request.Table(), 7, 24*60*60, `createAt`)
-			/**--------执行请求日志表分区任务 结束--------**/
+			/**--------数据库表分区 开始--------**/
+			utils.DbTablePartition(ctx, daoLog.Request.Group(), daoLog.Request.Table(), 7, 24*60*60, `createAt`) //请求日志
+			/**--------数据库表分区 结束--------**/
 
 			/*--------启动http服务 开始--------*/
 			s := g.Server()

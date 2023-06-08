@@ -44,8 +44,8 @@ class BeforeStartCallback
         $this->config->set('inDb.platformConfig', $allPlatformConfig);
         /**--------将数据库内的配置设置到config中（方便使用） 结束--------**/
 
-        /**--------执行请求日志表分区任务 开始--------**/
-        $this->container->get(\App\Crontab\LogRequest::class)->partition();
-        /**--------执行请求日志表分区任务 结束--------**/
+        /**--------数据库表分区 开始--------**/
+        $this->container->get(\App\Crontab\LogRequest::class)->partition(); //请求日志
+        /**--------数据库表分区 结束--------**/
     }
 }
