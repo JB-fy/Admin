@@ -35,6 +35,17 @@ export const useAdminStore = defineStore('admin', {
           {
             "i18n": {
               "title": {
+                "en": "GoFrame",
+                "zh-cn": "GoFrame"
+              },
+            },
+            "icon": "AutoiconEpChromeFilled",
+            "url": "https://goframe.org/#all-updates",
+            "children": []
+          },
+          {
+            "i18n": {
+              "title": {
                 "en": "Hyperf",
                 "zh-cn": "Hyperf"
               },
