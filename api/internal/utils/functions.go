@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
-	"math/rand"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -83,23 +82,6 @@ func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
 
 func GetCtxLoginInfo(ctx context.Context) gdb.Record {
 	return ctx.Value(consts.ConstCtxLoginInfoName).(gdb.Record)
-}
-
-func RandomStr(length int) string {
-	/* var ConstStrArr = []string{
-		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
-		"l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-		"w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G",
-		"H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
-		"S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2",
-		"3", "4", "5", "6", "7", "8", "9",
-	} */
-	str := ""
-	max := len(consts.ConstStrArr)
-	for i := 0; i < length; i++ {
-		str += consts.ConstStrArr[rand.Intn(max)]
-	}
-	return str
 }
 
 func Md5(rawStr string) string {

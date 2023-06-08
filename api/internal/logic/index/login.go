@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 type sLogin struct{}
@@ -25,7 +26,7 @@ func init() {
 // 获取登录加密字符串(前端登录操作用于加密密码后提交)
 func (logicThis *sLogin) EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error) {
 	encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
-	encryptStr = utils.RandomStr(8)
+	encryptStr = grand.S(8)
 	g.Redis().SetEX(ctx, encryptStrKey, encryptStr, 5)
 	return
 }
