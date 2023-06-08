@@ -5,9 +5,9 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/text/gregex"
 )
 
 type sScene struct{}
@@ -80,15 +80,6 @@ func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}
 		err = utils.NewErrorCode(ctx, 29999999, "")
 		return
 	}
-	fmt.Println(info)
-	fmt.Println(err)
-	if err != nil {
-		return
-	}
-	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, "")
-		return
-	}
 	return
 }
 
@@ -96,6 +87,13 @@ func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}
 func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Scene
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
+	if err != nil {
+		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+		if len(match) > 0 {
+			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			return
+		}
+	}
 	return
 }
 

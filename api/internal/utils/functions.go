@@ -20,7 +20,12 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 	if msg == "" {
 		switch code {
 		case 29991063:
-			msg = g.I18n().Tf(ctx, gconv.String(code), dataTmp["uniqueField"])
+			_, ok := dataTmp["uniqueField"]
+			if ok {
+				msg = g.I18n().Tf(ctx, gconv.String(code), dataTmp["uniqueField"])
+			} else {
+				msg = g.I18n().T(ctx, `29991062`)
+			}
 			delete(dataTmp, "uniqueField")
 		case 89999996:
 			msg = g.I18n().Tf(ctx, gconv.String(code), gconv.String(dataTmp["paramField"]))
