@@ -36,10 +36,8 @@ func HttpFailJson(r *ghttp.Request, err error) {
 	resData := map[string]interface{}{
 		"code": 99999999,
 		"msg":  err.Error(),
-		"data": g.I18n().Tf(r.GetCtx(), "99999999"),
+		"data": map[string]interface{}{},
 	}
-	/* _, ok := err.(*gerror.Error)
-	if ok { */
 	code := gerror.Code(err)
 	if code.Code() > 0 {
 		resData["code"] = code.Code()
