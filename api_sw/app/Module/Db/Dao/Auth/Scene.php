@@ -12,8 +12,8 @@ use App\Module\Db\Dao\AbstractDao;
  * @property string $sceneName 名称
  * @property string $sceneConfig 配置（内容自定义。json格式：{"alg": "算法","key": "密钥","expTime": "签名有效时间",...}）
  * @property int $isStop 是否停用：0否 1是
- * @property string $updateTime 更新时间
- * @property string $createTime 创建时间
+ * @property string $updateAt 更新时间
+ * @property string $createAt 创建时间
  */
 class Scene extends AbstractDao
 {

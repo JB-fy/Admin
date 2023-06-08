@@ -48,17 +48,17 @@ const table = reactive({
         sortable: true,
     },
     {
-        dataKey: 'updateTime',
-        title: t('common.name.updateTime'),
-        key: 'updateTime',
+        dataKey: 'updateAt',
+        title: t('common.name.updateAt'),
+        key: 'updateAt',
         align: 'center',
         width: 150,
         sortable: true,
     },
     {
-        dataKey: 'createTime',
-        title: t('common.name.createTime'),
-        key: 'createTime',
+        dataKey: 'createAt',
+        title: t('common.name.createAt'),
+        key: 'createAt',
         align: 'center',
         width: 150,
         sortable: true

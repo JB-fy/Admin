@@ -19,6 +19,6 @@ type Admin struct {
 	Nickname   interface{} // 昵称
 	Avatar     interface{} // 头像
 	IsStop     interface{} // 是否停用：0否 1是
-	UpdateTime *gtime.Time // 更新时间
-	CreateTime *gtime.Time // 创建时间
+	UpdateAt *gtime.Time // 更新时间
+	CreateAt *gtime.Time // 创建时间
 }

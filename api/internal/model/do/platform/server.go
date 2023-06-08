@@ -15,6 +15,6 @@ type Server struct {
 	ServerId   interface{} // 服务器ID
 	NetworkIp  interface{} // 公网IP
 	LocalIp    interface{} // 内网IP
-	UpdateTime *gtime.Time // 更新时间
-	CreateTime *gtime.Time // 创建时间
+	UpdateAt *gtime.Time // 更新时间
+	CreateAt *gtime.Time // 创建时间
 }

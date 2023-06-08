@@ -13,6 +13,6 @@ type Server struct {
 	ServerId   uint        `json:"serverId"   ` // 服务器ID
 	NetworkIp  string      `json:"networkIp"  ` // 公网IP
 	LocalIp    string      `json:"localIp"    ` // 内网IP
-	UpdateTime *gtime.Time `json:"updateTime" ` // 更新时间
-	CreateTime *gtime.Time `json:"createTime" ` // 创建时间
+	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
+	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
 }

@@ -56,7 +56,7 @@ if (!function_exists('dbTablePartition')) {
      * @param string $partitionField    分区字段，即根据该字段做分区
      * @return void
      */
-    function dbTablePartition(string $daoClassName, int $partitionNumber = 1, int $partitionTime = 24 * 60 * 60, string $partitionField = 'createTime')
+    function dbTablePartition(string $daoClassName, int $partitionNumber = 1, int $partitionTime = 24 * 60 * 60, string $partitionField = 'createAt')
     {
         /* //查看分区
         SELECT PARTITION_NAME, PARTITION_EXPRESSION, PARTITION_DESCRIPTION, TABLE_ROWS

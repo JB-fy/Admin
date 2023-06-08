@@ -12,6 +12,6 @@ import (
 type ActionRelToScene struct {
 	ActionId   uint        `json:"actionId"   ` // 权限操作ID
 	SceneId    uint        `json:"sceneId"    ` // 权限场景ID
-	UpdateTime *gtime.Time `json:"updateTime" ` // 更新时间
-	CreateTime *gtime.Time `json:"createTime" ` // 创建时间
+	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
+	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
 }

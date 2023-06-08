@@ -17,6 +17,6 @@ type Role struct {
 	TableId    interface{} // 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
 	RoleName   interface{} // 名称
 	IsStop     interface{} // 是否停用：0否 1是
-	UpdateTime *gtime.Time // 更新时间
-	CreateTime *gtime.Time // 创建时间
+	UpdateAt *gtime.Time // 更新时间
+	CreateAt *gtime.Time // 创建时间
 }

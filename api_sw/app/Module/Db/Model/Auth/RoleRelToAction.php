@@ -9,8 +9,8 @@ use App\Module\Db\Model\AbstractModel;
 /**
  * @property int $roleId 权限角色ID
  * @property int $actionId 权限操作ID
- * @property string $updateTime 更新时间
- * @property string $createTime 创建时间
+ * @property string $updateAt 更新时间
+ * @property string $createAt 创建时间
  */
 class RoleRelToAction extends AbstractModel
 {
@@ -22,7 +22,7 @@ class RoleRelToAction extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['roleId', 'actionId', 'updateTime', 'createTime'];
+    protected array $fillable = ['roleId', 'actionId', 'updateAt', 'createAt'];
 
     /**
      * The attributes that should be cast to native types.

@@ -16,6 +16,6 @@ type Request struct {
 	RequestData   string      `json:"requestData"   ` // 请求数据
 	ResponseBody  string      `json:"responseBody"  ` // 响应体
 	RunTime       float64     `json:"runTime"       ` // 运行时间（单位：毫秒）
-	UpdateTime    *gtime.Time `json:"updateTime"    ` // 更新时间
-	CreateTime    *gtime.Time `json:"createTime"    ` // 创建时间
+	UpdateAt    *gtime.Time `json:"updateAt"    ` // 更新时间
+	CreateAt    *gtime.Time `json:"createAt"    ` // 创建时间
 }

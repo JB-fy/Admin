@@ -12,6 +12,6 @@ import (
 type RoleRelToMenu struct {
 	RoleId     uint        `json:"roleId"     ` // 权限角色ID
 	MenuId     uint        `json:"menuId"     ` // 权限菜单ID
-	UpdateTime *gtime.Time `json:"updateTime" ` // 更新时间
-	CreateTime *gtime.Time `json:"createTime" ` // 创建时间
+	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
+	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
 }

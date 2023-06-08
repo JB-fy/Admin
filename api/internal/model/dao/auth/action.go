@@ -179,9 +179,9 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 					m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
 				}
 			case "startTime":
-				m = m.WhereGTE(daoThis.Table()+".createTime", v)
+				m = m.WhereGTE(daoThis.Table()+".createAt", v)
 			case "endTime":
-				m = m.WhereLTE(daoThis.Table()+".createTime", v)
+				m = m.WhereLTE(daoThis.Table()+".createAt", v)
 			case "keyword":
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
 				m = m.WhereLike(daoThis.Table()+"."+keywordField, "%"+gconv.String(v)+"%")

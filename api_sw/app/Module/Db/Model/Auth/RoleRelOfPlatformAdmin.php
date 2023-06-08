@@ -9,8 +9,8 @@ use App\Module\Db\Model\AbstractModel;
 /**
  * @property int $roleId 权限角色ID
  * @property int $adminId 平台管理员ID
- * @property string $updateTime 更新时间
- * @property string $createTime 创建时间
+ * @property string $updateAt 更新时间
+ * @property string $createAt 创建时间
  */
 class RoleRelOfPlatformAdmin extends AbstractModel
 {
@@ -22,7 +22,7 @@ class RoleRelOfPlatformAdmin extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['roleId', 'adminId', 'updateTime', 'createTime'];
+    protected array $fillable = ['roleId', 'adminId', 'updateAt', 'createAt'];
 
     /**
      * The attributes that should be cast to native types.

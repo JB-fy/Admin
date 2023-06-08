@@ -19,8 +19,8 @@ use Hyperf\DbConnection\Db;
  * @property string $extraData 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
  * @property int $sort 排序值（从小到大排序，默认50，范围0-100）
  * @property int $isStop 是否停用：0否 1是
- * @property string $updateTime 更新时间
- * @property string $createTime 创建时间
+ * @property string $updateAt 更新时间
+ * @property string $createAt 创建时间
  */
 class Menu extends AbstractDao
 {
