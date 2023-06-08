@@ -445,7 +445,7 @@ if (!function_exists('getServerNetworkIp')) {
      */
     function getServerNetworkIp(): string
     {
-        return exec('curl ifconfig.me');
+        return exec('curl -s ifconfig.me');
     }
 }
 /*----------------基于PHP封装的函数  结束----------------*/

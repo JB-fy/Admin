@@ -2,14 +2,9 @@ package controller
 
 import (
 	"api/api"
-	daoAuth "api/internal/model/dao/auth"
 	"api/internal/utils"
 	"context"
-	"fmt"
 
-	"github.com/gogf/gf/v2/errors/gcode"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -20,14 +15,7 @@ func NewTest() *Test {
 }
 
 func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.TestMetaRes, err error) {
-	//fmt.Println(ctx)
 	//g.RequestFromCtx(ctx).Response.Writeln("Hello World!")
-	res = &api.TestMetaRes{
-		UserName: "aaa",
-	}
-	err = gerror.NewCode(gcode.New(1, "aaaa", g.Map{"a": "a"}))
-	code := gerror.Code(err)
-	fmt.Println(code)
 	return
 }
 
@@ -51,9 +39,9 @@ func (c *Test) Test(r *ghttp.Request) {
 	// fmt.Println(grand.Letters(8)) //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 	// fmt.Println(grand.Symbols(8)) //!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~
 
-	fmt.Println(daoAuth.RoleRelToMenu.ParseDbCtx(r.GetCtx()).Where("roleId", 1).Array("menuId"))
+	// fmt.Println(daoAuth.RoleRelToMenu.ParseDbCtx(r.GetCtx()).Where("roleId", 1).Array("menuId"))
 
-	fmt.Println(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int())
+	// fmt.Println(g.Cfg().MustGet(r.GetCtx(), "superPlatformAdminId").Int())
 
 	/* r.Response.WriteJson(map[string]interface{}{
 		"code": 0,

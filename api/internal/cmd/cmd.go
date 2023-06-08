@@ -6,10 +6,14 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
+	"github.com/gogf/gf/v2/os/gtime"
 
 	"api/internal/controller"
 	"api/internal/middleware"
+	daoLog "api/internal/model/dao/log"
+	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/router"
+	"api/internal/utils"
 )
 
 var (
@@ -18,9 +22,25 @@ var (
 		Usage: "main",
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			gtime.SetTimeZone("Asia/Shanghai") // 设置进程全局时区
+			/**--------多语言设置 开始--------**/
 			g.I18n().SetPath(g.Cfg().MustGet(ctx, "i18n.path").String())         //设置资源目录
 			g.I18n().SetLanguage(g.Cfg().MustGet(ctx, "i18n.language").String()) //设置默认为中文（原默认为英文en）
+			/**--------多语言设置 结束--------**/
 
+			/**--------设置当前服务器IP并记录 开始--------**/
+			serverNetworkIp := utils.GetServerNetworkIp()
+			serverLocalIp := utils.GetServerLocalIp()
+			// g.Cfg().Set("server.networkIp", serverNetworkIp);   //设置服务器外网ip
+			// g.Cfg().Set("server.localIp", serverLocalIp);   //设置服务器内网ip
+			daoPlatform.Server.ParseDbCtx(ctx).Data(g.Map{"networkIp": serverNetworkIp, "localIp": serverLocalIp}).Save()
+			/**--------设置当前服务器IP并记录 结束--------**/
+
+			/**--------执行请求日志表分区任务 开始--------**/
+			utils.DbTablePartition(ctx, daoLog.Request.Group(), daoLog.Request.Table(), 7, 24*60*60, `createAt`)
+			/**--------执行请求日志表分区任务 结束--------**/
+
+			/*--------启动http服务 开始--------*/
 			s := g.Server()
 			s.BindHandler("/", func(r *ghttp.Request) {
 				r.Response.RedirectTo("/view/admin/platform")
@@ -39,6 +59,7 @@ var (
 			})
 			router.InitRouterPlatformAdmin(s) //平台后台接口注册
 			s.Run()
+			/*--------启动http服务 结束--------*/
 			return nil
 		},
 	}
