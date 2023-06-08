@@ -54,20 +54,11 @@ class AppExceptionHandler extends ExceptionHandler
             if (preg_match('/^SQLSTATE.*1062 Duplicate.*\.([^\']*)\'/', $throwable->getMessage(), $matches) === 1) {
                 $this->stopPropagation();   //阻止异常冒泡
                 $nameKey = 'validation.attributes.' . $matches[1];
-                $name =  trans($nameKey);
-                if ($name === $nameKey) {
-                    $responseData = [
-                        'code' => '29991062',
-                        'msg' => trans('code.29991062'),
-                        'data' => [],
-                    ];
-                } else {
-                    $responseData = [
-                        'code' => '29991063',
-                        'msg' => trans('code.29991063', ['name' => $name]),
-                        'data' => [],
-                    ];
-                }
+                $responseData = [
+                    'code' => '29991062',
+                    'msg' => trans('code.29991062', ['errField' => trans($nameKey)]),
+                    'data' => [],
+                ];
                 $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
                 return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
             }

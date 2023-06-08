@@ -144,12 +144,7 @@ abstract class AbstractService
         } catch (\Hyperf\Database\Exception\QueryException $th) {
             if (preg_match('/^SQLSTATE.*1062 Duplicate.*\.([^\']*)\'/', $th->getMessage(), $matches) === 1) {
                 $nameKey = 'validation.attributes.' . $matches[1];
-                $name =  trans($nameKey);
-                if ($name === $nameKey) {
-                    throwFailJson(29991062);
-                } else {
-                    throwFailJson(29991063, trans('code.29991063', ['name' => $name]));
-                }
+                throwFailJson(29991062, trans('code.29991062', ['errField' => trans($nameKey)]));
             }
         } */
         if (empty($id)) {

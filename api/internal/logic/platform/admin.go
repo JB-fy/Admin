@@ -92,7 +92,7 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 			return
 		}
 		return
@@ -117,7 +117,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 	_, okCheckPassword := data["checkPassword"]
 	if okCheckPassword {
 		if len(idArr) > 1 { //该字段只支持单个用户更新
-			err = utils.NewErrorCode(ctx, 89999996, "", map[string]interface{}{"paramField": "checkPassword"})
+			err = utils.NewErrorCode(ctx, 89999996, "", map[string]interface{}{"errField": "checkPassword"})
 			return
 		}
 		password, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Value("password")
@@ -133,7 +133,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 		if err != nil {
 			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 			if len(match) > 0 {
-				err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+				err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 				return
 			}
 			return
@@ -148,7 +148,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 			return
 		}
 		return

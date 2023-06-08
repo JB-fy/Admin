@@ -19,19 +19,11 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 	}
 	if msg == "" {
 		switch code {
-		case 29991063:
-			_, ok := dataTmp["uniqueField"]
-			if ok {
-				msg = g.I18n().Tf(ctx, gconv.String(code), dataTmp["uniqueField"])
-			} else {
-				msg = g.I18n().T(ctx, `29991062`)
-			}
-			delete(dataTmp, "uniqueField")
-		case 89999996:
-			msg = g.I18n().Tf(ctx, gconv.String(code), gconv.String(dataTmp["paramField"]))
-			delete(dataTmp, "paramField")
+		case 29991062, 89999996:
+			msg = g.I18n().Tf(ctx, gconv.String(code), gconv.String(dataTmp["errField"]))
+			delete(dataTmp, "errField")
 		default:
-			msg = g.I18n().Tf(ctx, gconv.String(code))
+			msg = g.I18n().T(ctx, gconv.String(code))
 		}
 	}
 	return gerror.NewCode(gcode.New(code, "", dataTmp), msg)
@@ -58,7 +50,7 @@ func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, ms
 		"data": data,
 	}
 	if len(msg) == 0 || msg[0] == "" {
-		resData["msg"] = g.I18n().Tf(r.GetCtx(), gconv.String(code))
+		resData["msg"] = g.I18n().T(r.GetCtx(), gconv.String(code))
 	} else {
 		resData["msg"] = msg[0]
 	}

@@ -88,7 +88,7 @@ func (logicThis *s{TplTableNameCamelCase}) Create(ctx context.Context, data map[
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 			return
 		}
 		return
@@ -103,7 +103,7 @@ func (logicThis *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 			return
 		}
 		return

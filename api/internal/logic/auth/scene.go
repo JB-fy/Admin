@@ -90,7 +90,7 @@ func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 			return
 		}
 		return
@@ -105,7 +105,7 @@ func (logicThis *sScene) Update(ctx context.Context, data map[string]interface{}
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
 			return
 		}
 		return
