@@ -79,6 +79,7 @@ func (logicThis *sRole) Info(ctx context.Context, filter map[string]interface{},
 	}
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 29999999, "")
+		return
 	}
 	return
 }

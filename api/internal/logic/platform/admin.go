@@ -79,6 +79,7 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 	}
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 29999999, "")
+		return
 	}
 	return
 }
@@ -109,7 +110,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 
 	_, okCheckPassword := data["checkPassword"]
 	if okCheckPassword {
-		if len(idArr) > 1 { //该字段只支持单个更新
+		if len(idArr) > 1 { //该字段只支持单个用户更新
 			err = utils.NewErrorCode(ctx, 89999996, "", map[string]interface{}{"paramField": "checkPassword"})
 			return
 		}
