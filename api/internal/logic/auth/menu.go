@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -108,6 +109,11 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
 	if err != nil {
+		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+		if len(match) > 0 {
+			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			return
+		}
 		return
 	}
 
@@ -167,6 +173,11 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 			}
 			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
 			if err != nil {
+				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+				if len(match) > 0 {
+					err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+					return
+				}
 				return
 			}
 			//修改pid时，更新所有子孙级的pidPath和level
@@ -188,6 +199,11 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
+		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+		if len(match) > 0 {
+			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			return
+		}
 		return
 	}
 	row, err = result.RowsAffected()

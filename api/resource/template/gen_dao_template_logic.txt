@@ -85,6 +85,14 @@ func (logicThis *s{TplTableNameCamelCase}) Info(ctx context.Context, filter map[
 func (logicThis *s{TplTableNameCamelCase}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.{TplTableNameCamelCase}
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
+	if err != nil {
+		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+		if len(match) > 0 {
+			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			return
+		}
+		return
+	}
 	return
 }
 
@@ -93,6 +101,11 @@ func (logicThis *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[
 	daoThis := daoAuth.{TplTableNameCamelCase}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
+		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+		if len(match) > 0 {
+			err = utils.NewErrorCode(ctx, 29991063, "", map[string]interface{}{"uniqueField": match[1]})
+			return
+		}
 		return
 	}
 	row, err = result.RowsAffected()
