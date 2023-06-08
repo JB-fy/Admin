@@ -3,8 +3,6 @@ package utils
 import (
 	"api/internal/consts"
 	"context"
-	"crypto/md5"
-	"fmt"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -82,13 +80,4 @@ func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
 
 func GetCtxLoginInfo(ctx context.Context) gdb.Record {
 	return ctx.Value(consts.ConstCtxLoginInfoName).(gdb.Record)
-}
-
-func Md5(rawStr string) string {
-	// h := md5.New()
-	// h.Write([]byte(rawStr))
-	// md5str := fmt.Printf("%x", h.Sum(nil))
-	h := md5.Sum([]byte(rawStr))
-	md5str := fmt.Sprintf("%x", h) //将[]byte转成16进制
-	return md5str
 }

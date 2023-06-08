@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
 )
@@ -47,7 +48,7 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 		}
 		encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
 		encryptStr, _ := g.Redis().Get(ctx, encryptStrKey)
-		if encryptStr.String() == "" || utils.Md5(info["password"].String()+encryptStr.String()) != password {
+		if encryptStr.String() == "" || gmd5.MustEncrypt(info["password"].String()+encryptStr.String()) != password {
 			err = errors.New("39990000")
 			return
 		}
