@@ -74,6 +74,12 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
+	if err != nil {
+		return
+	}
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, "")
+	}
 	return
 }
 
@@ -97,7 +103,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, "")
+		err = utils.NewErrorCode(ctx, 29999999, "")
 		return
 	}
 

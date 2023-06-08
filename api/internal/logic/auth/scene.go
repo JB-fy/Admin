@@ -3,7 +3,9 @@ package logic
 import (
 	daoAuth "api/internal/model/dao/auth"
 	"api/internal/service"
+	"api/internal/utils"
 	"context"
+	"fmt"
 
 	"github.com/gogf/gf/v2/database/gdb"
 )
@@ -71,6 +73,14 @@ func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}
 		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
 	}
 	info, err = model.One()
+	fmt.Println(info)
+	fmt.Println(err)
+	if err != nil {
+		return
+	}
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, "")
+	}
 	return
 }
 
