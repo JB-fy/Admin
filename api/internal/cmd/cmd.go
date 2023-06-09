@@ -42,7 +42,7 @@ var (
 			/**--------定时器设置 开始--------**/
 			corn.LogRequestPartition(ctx) //先执行一次请求日志分区
 
-			corn.InitCorn(ctx) //定时器启动
+			corn.InitCorn(ctx) //启动定时器
 			/**--------定时器设置 结束--------**/
 
 			/*--------启动http服务 开始--------*/
