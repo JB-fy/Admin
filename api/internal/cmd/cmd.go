@@ -3,10 +3,13 @@ package cmd
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gvalid"
 
 	"api/internal/controller"
 	"api/internal/corn"
@@ -44,6 +47,17 @@ var (
 
 			corn.InitCorn(ctx) //启动定时器
 			/**--------定时器设置 结束--------**/
+
+			/**--------自定义校验规则注册 开始--------**/
+			gvalid.RegisterRule(`distinct`, func(ctx context.Context, in gvalid.RuleFuncInput) (err error) {
+				val := in.Value.Array()
+				if len(val) != garray.NewFrom(val).Unique().Len() {
+					err = gerror.Newf(`%s字段具有重复值`, in.Field)
+					return
+				}
+				return
+			})
+			/**--------自定义校验规则注册 结束--------**/
 
 			/*--------启动http服务 开始--------*/
 			s := g.Server()

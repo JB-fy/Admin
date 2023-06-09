@@ -26,7 +26,7 @@ type AdminCreateReq struct {
 	Account   *string `c:"account,omitempty" p:"account" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	Phone     *string `c:"phone,omitempty" p:"phone" v:"required-without:Account|phone"`
 	Password  *string `c:"password,omitempty" p:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
-	RoleIdArr *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"required|foreach|integer|foreach|min:1"`
+	RoleIdArr *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"required|distinct|foreach|integer|foreach|min:1"`
 	Nickname  *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	Avatar    *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
 	IsStop    *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
@@ -37,7 +37,7 @@ type AdminUpdateReq struct {
 	Account                              *string `c:"account,omitempty" p:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	Phone                                *string `c:"phone,omitempty" p:"phone" v:"phone"`
 	Password                             *string `c:"password,omitempty" p:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$"`
-	RoleIdArr                            *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"foreach|integer|foreach|min:1"`
+	RoleIdArr                            *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"distinct|foreach|integer|foreach|min:1"`
 	Nickname                             *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	Avatar                               *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
 	IsStop                               *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
