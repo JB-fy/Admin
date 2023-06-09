@@ -43,19 +43,20 @@ func (c *Test) Test(r *ghttp.Request) {
 
 	// fmt.Println(daoAuth.RoleRelToMenu.ParseDbCtx(r.GetCtx()).Where(`roleId`, 1).Array(`menuId`))
 
+	// fmt.Println(genv.Set(`X_X`, `xx`))                     //key必须由大写和_组成
+	// fmt.Println(g.Cfg().MustGetWithEnv(r.GetCtx(), `X_X`)) //X_X或x_x或x.x方法都可以读取到
+
 	// fmt.Println(g.Cfg().MustGet(r.GetCtx(), `superPlatformAdminId`).Int())
+
+	//fmt.Println(ghttp.RestartAllServer(r.GetCtx()))
 
 	/* r.Response.WriteJson(map[string]interface{}{
 		`code`: 0,
 		`msg`:  `成功`,
 		`data`: map[string]interface{}{},
 	}) */
-
-	//fmt.Println(ghttp.RestartAllServer(r.GetCtx()))
-
 	utils.HttpSuccessJson(r, map[string]interface{}{
 		`list`: []map[string]interface{}{},
 	}, 0)
-
 	utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 99999999, ``))
 }
