@@ -13,7 +13,6 @@ func InitCorn(ctx context.Context) {
 	gcron.Add(ctx, `0 0 3 * * 1`, func(ctx context.Context) {
 		LogRequestPartition(ctx)
 	}, `LogRequestPartition`)
-	gcron.Remove(`LogRequestPartition`)
 }
 
 // 请求日志表每周新增分区
