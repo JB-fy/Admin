@@ -61,9 +61,11 @@ var (
 
 			/*--------启动http服务 开始--------*/
 			s := g.Server()
+			//首页
 			s.BindHandler(`/`, func(r *ghttp.Request) {
 				r.Response.RedirectTo(`/view/admin/platform`)
 			})
+			//上传回调
 			s.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				group.ALL(`/notify`, controller.NewUpload().Notify)
 			})
