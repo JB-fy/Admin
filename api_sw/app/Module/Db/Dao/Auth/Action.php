@@ -12,8 +12,8 @@ use App\Module\Db\Dao\AbstractDao;
  * @property string $actionCode 标识（代码中用于判断权限）
  * @property string $remark 备注
  * @property int $isStop 是否停用：0否 1是
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Action extends AbstractDao
 {

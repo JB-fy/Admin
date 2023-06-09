@@ -13,8 +13,8 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $requestData 请求数据
  * @property string $responseBody 响应体
  * @property string $runTime 运行时间（单位：毫秒）
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Request extends AbstractModel
 {
@@ -27,7 +27,7 @@ class Request extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['logId', 'requestUrl', 'requestHeader', 'requestData', 'responseBody', 'runTime', 'updateAt', 'createAt'];
+    protected array $fillable = ['logId', 'requestUrl', 'requestHeader', 'requestData', 'responseBody', 'runTime', 'updatedAt', 'createdAt'];
 
     /**
      * The attributes that should be cast to native types.

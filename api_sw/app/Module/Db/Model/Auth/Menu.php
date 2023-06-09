@@ -18,8 +18,8 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $extraData 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
  * @property int $sort 排序值（从小到大排序，默认50，范围0-100）
  * @property int $isStop 是否停用：0否 1是
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Menu extends AbstractModel
 {
@@ -32,7 +32,7 @@ class Menu extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['menuId', 'sceneId', 'pid', 'menuName', 'menuIcon', 'menuUrl', 'level', 'pidPath', 'extraData', 'sort', 'isStop', 'updateAt', 'createAt'];
+    protected array $fillable = ['menuId', 'sceneId', 'pid', 'menuName', 'menuIcon', 'menuUrl', 'level', 'pidPath', 'extraData', 'sort', 'isStop', 'updatedAt', 'createdAt'];
 
     /**
      * The attributes that should be cast to native types.

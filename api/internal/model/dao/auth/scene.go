@@ -172,9 +172,9 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
 			case `startTime`:
-				m = m.WhereGTE(daoThis.Table()+`.createAt`, v)
+				m = m.WhereGTE(daoThis.Table()+`.createdAt`, v)
 			case `endTime`:
-				m = m.WhereLTE(daoThis.Table()+`.createAt`, v)
+				m = m.WhereLTE(daoThis.Table()+`.createdAt`, v)
 			case `keyword`:
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)

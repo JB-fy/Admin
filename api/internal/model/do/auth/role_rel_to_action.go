@@ -14,6 +14,6 @@ type RoleRelToAction struct {
 	g.Meta   `orm:"table:auth_role_rel_to_action, do:true"`
 	RoleId   interface{} // 权限角色ID
 	ActionId interface{} // 权限操作ID
-	UpdateAt *gtime.Time // 更新时间
-	CreateAt *gtime.Time // 创建时间
+	UpdatedAt *gtime.Time // 更新时间
+	CreatedAt *gtime.Time // 创建时间
 }

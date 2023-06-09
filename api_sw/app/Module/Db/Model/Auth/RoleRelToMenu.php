@@ -9,8 +9,8 @@ use App\Module\Db\Model\AbstractModel;
 /**
  * @property int $roleId 权限角色ID
  * @property int $menuId 权限菜单ID
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class RoleRelToMenu extends AbstractModel
 {
@@ -22,7 +22,7 @@ class RoleRelToMenu extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['roleId', 'menuId', 'updateAt', 'createAt'];
+    protected array $fillable = ['roleId', 'menuId', 'updatedAt', 'createdAt'];
 
     /**
      * The attributes that should be cast to native types.

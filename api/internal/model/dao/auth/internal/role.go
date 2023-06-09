@@ -30,8 +30,8 @@ type RoleColumns struct {
 	TableId  string // 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
 	RoleName string // 名称
 	IsStop   string // 是否停用：0否 1是
-	UpdateAt string // 更新时间
-	CreateAt string // 创建时间
+	UpdatedAt string // 更新时间
+	CreatedAt string // 创建时间
 }
 
 // roleColumns holds the columns for table auth_role.
@@ -41,8 +41,8 @@ var roleColumns = RoleColumns{
 	TableId:  "tableId",
 	RoleName: "roleName",
 	IsStop:   "isStop",
-	UpdateAt: "updateAt",
-	CreateAt: "createAt",
+	UpdatedAt: "updatedAt",
+	CreatedAt: "createdAt",
 }
 
 // NewRoleDao creates and returns a new DAO object for table data access.

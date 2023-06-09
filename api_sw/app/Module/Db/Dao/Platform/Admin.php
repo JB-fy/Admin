@@ -15,8 +15,8 @@ use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
  * @property string $nickname 昵称
  * @property string $avatar 头像
  * @property int $isStop 是否停用：0否 1是
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Admin extends AbstractDao
 {

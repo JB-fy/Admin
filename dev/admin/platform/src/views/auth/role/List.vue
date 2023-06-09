@@ -96,17 +96,17 @@ const table = reactive({
         }
     },
     {
-        dataKey: 'updateAt',
-        title: t('common.name.updateAt'),
-        key: 'updateAt',
+        dataKey: 'updatedAt',
+        title: t('common.name.updatedAt'),
+        key: 'updatedAt',
         align: 'center',
         width: 150,
         sortable: true,
     },
     {
-        dataKey: 'createAt',
-        title: t('common.name.createAt'),
-        key: 'createAt',
+        dataKey: 'createdAt',
+        title: t('common.name.createdAt'),
+        key: 'createdAt',
         align: 'center',
         width: 150,
         sortable: true

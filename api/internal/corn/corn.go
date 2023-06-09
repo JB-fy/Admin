@@ -17,5 +17,5 @@ func InitCorn(ctx context.Context) {
 
 // 请求日志表每周新增分区
 func LogRequestPartition(ctx context.Context) {
-	utils.DbTablePartition(ctx, daoLog.Request.Group(), daoLog.Request.Table(), 7, 24*60*60, `createAt`)
+	utils.DbTablePartition(ctx, daoLog.Request.Group(), daoLog.Request.Table(), 7, 24*60*60, `createdAt`)
 }

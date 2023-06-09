@@ -21,6 +21,6 @@ type Menu struct {
 	ExtraData string      `json:"extraData" ` // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
 	Sort      uint        `json:"sort"      ` // 排序值（从小到大排序，默认50，范围0-100）
 	IsStop    uint        `json:"isStop"    ` // 是否停用：0否 1是
-	UpdateAt  *gtime.Time `json:"updateAt"  ` // 更新时间
-	CreateAt  *gtime.Time `json:"createAt"  ` // 创建时间
+	UpdatedAt  *gtime.Time `json:"updatedAt"  ` // 更新时间
+	CreatedAt  *gtime.Time `json:"createdAt"  ` // 创建时间
 }

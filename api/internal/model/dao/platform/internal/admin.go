@@ -32,8 +32,8 @@ type AdminColumns struct {
 	Nickname string // 昵称
 	Avatar   string // 头像
 	IsStop   string // 是否停用：0否 1是
-	UpdateAt string // 更新时间
-	CreateAt string // 创建时间
+	UpdatedAt string // 更新时间
+	CreatedAt string // 创建时间
 }
 
 // adminColumns holds the columns for table platform_admin.
@@ -45,8 +45,8 @@ var adminColumns = AdminColumns{
 	Nickname: "nickname",
 	Avatar:   "avatar",
 	IsStop:   "isStop",
-	UpdateAt: "updateAt",
-	CreateAt: "createAt",
+	UpdatedAt: "updatedAt",
+	CreatedAt: "createdAt",
 }
 
 // NewAdminDao creates and returns a new DAO object for table data access.

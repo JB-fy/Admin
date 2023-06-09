@@ -10,8 +10,8 @@ use App\Module\Db\Model\AbstractModel;
  * @property int $serverId 服务器ID
  * @property string $networkIp 公网IP
  * @property string $localIp 内网IP
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Server extends AbstractModel
 {
@@ -24,7 +24,7 @@ class Server extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['serverId', 'networkIp', 'localIp', 'updateAt', 'createAt'];
+    protected array $fillable = ['serverId', 'networkIp', 'localIp', 'updatedAt', 'createdAt'];
 
     /**
      * The attributes that should be cast to native types.

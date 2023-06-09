@@ -30,8 +30,8 @@ type ActionColumns struct {
 	ActionCode string // 标识（代码中用于判断权限）
 	Remark     string // 备注
 	IsStop     string // 是否停用：0否 1是
-	UpdateAt   string // 更新时间
-	CreateAt   string // 创建时间
+	UpdatedAt   string // 更新时间
+	CreatedAt   string // 创建时间
 }
 
 // actionColumns holds the columns for table auth_action.
@@ -41,8 +41,8 @@ var actionColumns = ActionColumns{
 	ActionCode: "actionCode",
 	Remark:     "remark",
 	IsStop:     "isStop",
-	UpdateAt:   "updateAt",
-	CreateAt:   "createAt",
+	UpdatedAt:   "updatedAt",
+	CreatedAt:   "createdAt",
 }
 
 // NewActionDao creates and returns a new DAO object for table data access.

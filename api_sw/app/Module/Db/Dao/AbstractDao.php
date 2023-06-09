@@ -378,10 +378,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 }
                 return true;
             case 'startTime':
-                $this->builder->where($this->getTable() . '.createAt', $operator ?? '>=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
+                $this->builder->where($this->getTable() . '.createdAt', $operator ?? '>=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
             case 'endTime':
-                $this->builder->where($this->getTable() . '.createAt', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
+                $this->builder->where($this->getTable() . '.createdAt', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
             case 'keyword':
                 $keywordField = str_replace('Id', 'Name', $this->getKey());

@@ -13,8 +13,8 @@ use App\Module\Db\Dao\AbstractDao;
  * @property string $requestData 请求数据
  * @property string $responseBody 响应体
  * @property string $runTime 运行时间（单位：毫秒）
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Request extends AbstractDao
 {

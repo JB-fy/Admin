@@ -12,8 +12,8 @@ use App\Module\Db\Dao\AbstractDao;
  * @property int $tableId 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
  * @property string $roleName 名称
  * @property int $isStop 是否停用：0否 1是
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Role extends AbstractDao
 {

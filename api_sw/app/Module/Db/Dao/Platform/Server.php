@@ -10,8 +10,8 @@ use App\Module\Db\Dao\AbstractDao;
  * @property int $serverId 服务器ID
  * @property string $networkIp 公网IP
  * @property string $localIp 内网IP
- * @property string $updateAt 更新时间
- * @property string $createAt 创建时间
+ * @property string $updatedAt 更新时间
+ * @property string $createdAt 创建时间
  */
 class Server extends AbstractDao
 {

@@ -1,7 +1,7 @@
 export default {
     action: '操作',
-    updateAt: '更新时间',
-    createAt: '创建时间',
+    updatedAt: '更新时间',
+    createdAt: '创建时间',
 
     without: '无',
     allTopLevel: '全部顶级',

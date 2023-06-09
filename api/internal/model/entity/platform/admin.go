@@ -17,6 +17,6 @@ type Admin struct {
 	Nickname string      `json:"nickname" ` // 昵称
 	Avatar   string      `json:"avatar"   ` // 头像
 	IsStop   uint        `json:"isStop"   ` // 是否停用：0否 1是
-	UpdateAt *gtime.Time `json:"updateAt" ` // 更新时间
-	CreateAt *gtime.Time `json:"createAt" ` // 创建时间
+	UpdatedAt *gtime.Time `json:"updatedAt" ` // 更新时间
+	CreatedAt *gtime.Time `json:"createdAt" ` // 创建时间
 }
