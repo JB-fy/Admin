@@ -48,8 +48,8 @@ var actionColumns = ActionColumns{
 // NewActionDao creates and returns a new DAO object for table data access.
 func NewActionDao() *ActionDao {
 	return &ActionDao{
-		group:   "default",
-		table:   "auth_action",
+		group:   `default`,
+		table:   `auth_action`,
 		columns: actionColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(actionColumns).Field(0).String()

@@ -52,8 +52,8 @@ var adminColumns = AdminColumns{
 // NewAdminDao creates and returns a new DAO object for table data access.
 func NewAdminDao() *AdminDao {
 	return &AdminDao{
-		group:   "default",
-		table:   "platform_admin",
+		group:   `default`,
+		table:   `platform_admin`,
 		columns: adminColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(adminColumns).Field(0).String()

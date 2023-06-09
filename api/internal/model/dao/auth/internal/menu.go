@@ -60,8 +60,8 @@ var menuColumns = MenuColumns{
 // NewMenuDao creates and returns a new DAO object for table data access.
 func NewMenuDao() *MenuDao {
 	return &MenuDao{
-		group:   "default",
-		table:   "auth_menu",
+		group:   `default`,
+		table:   `auth_menu`,
 		columns: menuColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(menuColumns).Field(0).String()

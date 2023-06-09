@@ -44,8 +44,8 @@ var serverColumns = ServerColumns{
 // NewServerDao creates and returns a new DAO object for table data access.
 func NewServerDao() *ServerDao {
 	return &ServerDao{
-		group:   "default",
-		table:   "platform_server",
+		group:   `default`,
+		table:   `platform_server`,
 		columns: serverColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(serverColumns).Field(0).String()

@@ -48,8 +48,8 @@ var sceneColumns = SceneColumns{
 // NewSceneDao creates and returns a new DAO object for table data access.
 func NewSceneDao() *SceneDao {
 	return &SceneDao{
-		group:   "default",
-		table:   "auth_scene",
+		group:   `default`,
+		table:   `auth_scene`,
 		columns: sceneColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(sceneColumns).Field(0).String()

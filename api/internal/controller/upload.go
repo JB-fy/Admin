@@ -23,7 +23,7 @@ func NewUpload() *Upload {
 func (c *Upload) Sign(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	//case "platformAdmin":
+	//case `platformAdmin`:
 	default:
 		/**--------参数处理 开始--------**/
 		var param *api.UploadSignReq
@@ -34,21 +34,21 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		}
 		/**--------参数处理 结束--------**/
 		option := utils.AliyunOssSignOption{
-			CallbackUrl: "",
+			CallbackUrl: ``,
 			ExpireTime:  15 * 60,
-			Dir:         fmt.Sprintf("common/%s_%d_", gtime.Now().Format("Y/m/d/His"), grand.N(1000, 9999)),
+			Dir:         fmt.Sprintf(`common/%s_%d_`, gtime.Now().Format(`Y/m/d/His`), grand.N(1000, 9999)),
 			MinSize:     0,
 			MaxSize:     100 * 1024 * 1024,
 		}
 		switch param.UploadType {
 		default:
-			if g.Cfg().MustGet(r.GetCtx(), "uploadCallbackEnable").Bool() {
-				option.CallbackUrl = gstr.Replace(r.GetUrl(), r.URL.Path, "/upload/notify", 1)
+			if g.Cfg().MustGet(r.GetCtx(), `uploadCallbackEnable`).Bool() {
+				option.CallbackUrl = gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
 			}
 		}
 
 		filter := map[string]interface{}{
-			"configKey": []string{"aliyunOssAccessKeyId", "aliyunOssAccessKeySecret", "aliyunOssHost", "aliyunOssBucket"},
+			`configKey`: []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`},
 		}
 		config, _ := service.Config().Get(r.GetCtx(), filter)
 		upload := utils.NewAliyunOss(r.GetCtx(), config)
@@ -60,7 +60,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 // 回调
 func (c *Upload) Notify(r *ghttp.Request) {
 	filter := map[string]interface{}{
-		"configKey": []string{"aliyunOssAccessKeyId", "aliyunOssAccessKeySecret", "aliyunOssHost", "aliyunOssBucket"},
+		`configKey`: []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`},
 	}
 	config, _ := service.Config().Get(r.GetCtx(), filter)
 	upload := utils.NewAliyunOss(r.GetCtx(), config)

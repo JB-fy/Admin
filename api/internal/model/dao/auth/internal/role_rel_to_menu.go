@@ -42,8 +42,8 @@ var roleRelToMenuColumns = RoleRelToMenuColumns{
 // NewRoleRelToMenuDao creates and returns a new DAO object for table data access.
 func NewRoleRelToMenuDao() *RoleRelToMenuDao {
 	return &RoleRelToMenuDao{
-		group:   "default",
-		table:   "auth_role_rel_to_menu",
+		group:   `default`,
+		table:   `auth_role_rel_to_menu`,
 		columns: roleRelToMenuColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(roleRelToMenuColumns).Field(0).String()

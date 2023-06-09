@@ -42,8 +42,8 @@ var roleRelOfPlatformAdminColumns = RoleRelOfPlatformAdminColumns{
 // NewRoleRelOfPlatformAdminDao creates and returns a new DAO object for table data access.
 func NewRoleRelOfPlatformAdminDao() *RoleRelOfPlatformAdminDao {
 	return &RoleRelOfPlatformAdminDao{
-		group:   "default",
-		table:   "auth_role_rel_of_platform_admin",
+		group:   `default`,
+		table:   `auth_role_rel_of_platform_admin`,
 		columns: roleRelOfPlatformAdminColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(roleRelOfPlatformAdminColumns).Field(0).String()

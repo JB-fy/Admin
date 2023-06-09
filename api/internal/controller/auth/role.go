@@ -27,11 +27,11 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
-	order := [][2]string{{"id", "DESC"}}
-	if param.Sort.Key != "" {
+	order := [][2]string{{`id`, `DESC`}}
+	if param.Sort.Key != `` {
 		order[0][0] = param.Sort.Key
 	}
-	if param.Sort.Order != "" {
+	if param.Sort.Order != `` {
 		order[0][1] = param.Sort.Order
 	}
 	if param.Page <= 0 {
@@ -44,14 +44,14 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), "authRoleLook")
-		allowField := []string{"roleId", "roleName", "id"}
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authRoleLook`)
+		allowField := []string{`roleId`, `roleName`, `id`}
 		if isAuth {
 			allowField = daoAuth.Role.ColumnArr()
-			allowField = append(allowField, "id", "sceneName")
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+			allowField = append(allowField, `id`, `sceneName`)
+			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		}
 		field := allowField
 		if len(param.Field) > 0 {
@@ -72,7 +72,7 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
 	}
 }
 
@@ -80,7 +80,7 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 func (controllerThis *Role) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.RoleInfoReq
 		err := r.Parse(&param)
@@ -90,8 +90,8 @@ func (controllerThis *Role) Info(r *ghttp.Request) {
 		}
 
 		allowField := daoAuth.Role.ColumnArr()
-		allowField = append(allowField, "id", "sceneName", "menuIdArr", "actionIdArr")
-		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		allowField = append(allowField, `id`, `sceneName`, `menuIdArr`, `actionIdArr`)
+		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -99,11 +99,11 @@ func (controllerThis *Role) Info(r *ghttp.Request) {
 				field = allowField
 			}
 		}
-		filter := map[string]interface{}{"id": param.Id}
+		filter := map[string]interface{}{`id`: param.Id}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleLook")
+		_, err = service.Action().CheckAuth(r.GetCtx(), `authRoleLook`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -115,7 +115,7 @@ func (controllerThis *Role) Info(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": info}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
 	}
 }
 
@@ -123,7 +123,7 @@ func (controllerThis *Role) Info(r *ghttp.Request) {
 func (controllerThis *Role) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.RoleCreateReq
 		err := r.Parse(&param)
@@ -135,7 +135,7 @@ func (controllerThis *Role) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleCreate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), `authRoleCreate`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -155,7 +155,7 @@ func (controllerThis *Role) Create(r *ghttp.Request) {
 func (controllerThis *Role) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.RoleUpdateReq
 		err := r.Parse(&param)
@@ -164,16 +164,16 @@ func (controllerThis *Role) Update(r *ghttp.Request) {
 			return
 		}
 		data := gconv.Map(param)
-		delete(data, "idArr")
+		delete(data, `idArr`)
 		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ""))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
 			return
 		}
-		filter := map[string]interface{}{"id": param.IdArr}
+		filter := map[string]interface{}{`id`: param.IdArr}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleUpdate")
+		_, err = service.Action().CheckAuth(r.GetCtx(), `authRoleUpdate`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -193,7 +193,7 @@ func (controllerThis *Role) Update(r *ghttp.Request) {
 func (controllerThis *Role) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.RoleDeleteReq
 		err := r.Parse(&param)
@@ -201,11 +201,11 @@ func (controllerThis *Role) Delete(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
-		filter := map[string]interface{}{"id": param.IdArr}
+		filter := map[string]interface{}{`id`: param.IdArr}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), "authRoleDelete")
+		_, err = service.Action().CheckAuth(r.GetCtx(), `authRoleDelete`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

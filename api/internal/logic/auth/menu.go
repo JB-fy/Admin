@@ -35,7 +35,7 @@ func (logicThis *sMenu) Count(ctx context.Context, filter map[string]interface{}
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		count, err = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
+		count, err = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -57,7 +57,7 @@ func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{},
 		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
+		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset((page - 1) * limit).Limit(limit)
@@ -76,14 +76,14 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
+		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr))
 	}
 	info, err = model.One()
 	if err != nil {
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, "")
+		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 	return
@@ -93,16 +93,16 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
 	var pInfo gdb.Record
-	fmt.Println(data["pid"])
-	fmt.Println(gconv.Int(data["pid"]))
-	pid := gconv.Int(data["pid"])
+	fmt.Println(data[`pid`])
+	fmt.Println(gconv.Int(data[`pid`]))
+	pid := gconv.Int(data[`pid`])
 	if pid > 0 {
 		joinTableArr := []string{}
-		field := []string{"pidPath", "level"}
-		filterTmp := g.Map{"menuId": data["pid"], "sceneId": data["sceneId"]}
+		field := []string{`pidPath`, `level`}
+		filterTmp := g.Map{`menuId`: data[`pid`], `sceneId`: data[`sceneId`]}
 		pInfo, _ = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterTmp, &joinTableArr), daoThis.ParseField(field, &joinTableArr)).One()
 		if len(pInfo) == 0 {
-			err = utils.NewErrorCode(ctx, 29999998, "")
+			err = utils.NewErrorCode(ctx, 29999998, ``)
 			return
 		}
 	}
@@ -111,20 +111,20 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
 	}
 
 	update := map[string]interface{}{
-		"pidPath": "0-" + gconv.String(id),
-		"level":   1,
+		`pidPath`: `0-` + gconv.String(id),
+		`level`:   1,
 	}
 	if pid > 0 {
 		update = map[string]interface{}{
-			"pidPath": pInfo["pidPath"].String() + "-" + gconv.String(id),
-			"level":   pInfo["level"].Int() + 1,
+			`pidPath`: pInfo[`pidPath`].String() + `-` + gconv.String(id),
+			`level`:   pInfo[`level`].Int() + 1,
 		}
 	}
 	daoThis.ParseDbCtx(ctx).Data(update).Where(daoThis.PrimaryKey(), id).Update()
@@ -135,63 +135,63 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 
-	_, okPid := data["pid"]
+	_, okPid := data[`pid`]
 	if okPid { //存在pid则只能一个个循环更新
 		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 		for _, id := range idArr {
 			filterOne := map[string]interface{}{daoThis.PrimaryKey(): id}
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterOne, &[]string{})).One()
-			pid := gconv.Int(data["pid"])
-			if pid == oldInfo["menuId"].Int() { //父级不能是自身
-				err = utils.NewErrorCode(ctx, 29999997, "")
+			pid := gconv.Int(data[`pid`])
+			if pid == oldInfo[`menuId`].Int() { //父级不能是自身
+				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			if pid != oldInfo["pid"].Int() {
+			if pid != oldInfo[`pid`].Int() {
 				if pid > 0 {
 					joinTableArr := []string{}
-					field := []string{"pidPath", "level"}
-					filterTmp := g.Map{"menuId": data["pid"], "sceneId": oldInfo["sceneId"]}
-					_, okSceneId := data["sceneId"]
+					field := []string{`pidPath`, `level`}
+					filterTmp := g.Map{`menuId`: data[`pid`], `sceneId`: oldInfo[`sceneId`]}
+					_, okSceneId := data[`sceneId`]
 					if okSceneId {
-						filterTmp["sceneId"] = data["sceneId"]
+						filterTmp[`sceneId`] = data[`sceneId`]
 					}
 					pInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterTmp, &joinTableArr), daoThis.ParseField(field, &joinTableArr)).One()
 					if len(pInfo) == 0 {
-						err = utils.NewErrorCode(ctx, 29999998, "")
+						err = utils.NewErrorCode(ctx, 29999998, ``)
 						return
 					}
-					if garray.NewStrArrayFrom(gstr.Split(pInfo["pidPath"].String(), "-")).Contains(oldInfo["menuId"].String()) { //父级不能是自身的子孙级
-						err = utils.NewErrorCode(ctx, 29999996, "")
+					if garray.NewStrArrayFrom(gstr.Split(pInfo[`pidPath`].String(), `-`)).Contains(oldInfo[`menuId`].String()) { //父级不能是自身的子孙级
+						err = utils.NewErrorCode(ctx, 29999996, ``)
 						return
 					}
-					data["pidPath"] = pInfo["pidPath"].String() + "-" + oldInfo["menuId"].String()
-					data["level"] = pInfo["level"].Int() + 1
+					data[`pidPath`] = pInfo[`pidPath`].String() + `-` + oldInfo[`menuId`].String()
+					data[`level`] = pInfo[`level`].Int() + 1
 				} else {
-					data["pidPath"] = "0-" + oldInfo["menuId"].String()
-					data["level"] = 1
+					data[`pidPath`] = `0-` + oldInfo[`menuId`].String()
+					data[`level`] = 1
 				}
 			}
 			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
 			if err != nil {
 				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 				if len(match) > 0 {
-					err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
+					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 					return
 				}
 				return
 			}
 			//修改pid时，更新所有子孙级的pidPath和level
 			update := map[string]interface{}{
-				"pidPathOfChild": map[string]interface{}{
-					"newVal": data["pidPath"],
-					"oldVal": oldInfo["pidPath"],
+				`pidPathOfChild`: map[string]interface{}{
+					`newVal`: data[`pidPath`],
+					`oldVal`: oldInfo[`pidPath`],
 				},
-				"levelOfChild": map[string]interface{}{
-					"newVal": data["level"],
-					"oldVal": oldInfo["level"],
+				`levelOfChild`: map[string]interface{}{
+					`newVal`: data[`level`],
+					`oldVal`: oldInfo[`level`],
 				},
 			}
-			filterPidPath := map[string]interface{}{"pidPath Like ?": oldInfo["pidPath"].String() + "%"}
+			filterPidPath := map[string]interface{}{`pidPath Like ?`: oldInfo[`pidPath`].String() + `%`}
 			daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filterPidPath, &[]string{})).Update()
 		}
 		return
@@ -201,7 +201,7 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
@@ -214,9 +214,9 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
-	count, _ := daoThis.ParseDbCtx(ctx).Where("pid", idArr).Count()
+	count, _ := daoThis.ParseDbCtx(ctx).Where(`pid`, idArr).Count()
 	if count > 0 {
-		err = utils.NewErrorCode(ctx, 29999995, "")
+		err = utils.NewErrorCode(ctx, 29999995, ``)
 		return
 	}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
@@ -231,9 +231,9 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 func (logicMenu *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error) {
 	for _, v := range list {
 		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
-		if v["pid"].Int() == menuId {
-			children, _ := logicMenu.Tree(ctx, list, v["menuId"].Int())
-			v["children"] = gvar.New(children)
+		if v[`pid`].Int() == menuId {
+			children, _ := logicMenu.Tree(ctx, list, v[`menuId`].Int())
+			v[`children`] = gvar.New(children)
 			tree = append(tree, v)
 		}
 	}

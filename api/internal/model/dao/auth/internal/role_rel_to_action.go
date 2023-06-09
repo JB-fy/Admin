@@ -42,8 +42,8 @@ var roleRelToActionColumns = RoleRelToActionColumns{
 // NewRoleRelToActionDao creates and returns a new DAO object for table data access.
 func NewRoleRelToActionDao() *RoleRelToActionDao {
 	return &RoleRelToActionDao{
-		group:   "default",
-		table:   "auth_role_rel_to_action",
+		group:   `default`,
+		table:   `auth_role_rel_to_action`,
 		columns: roleRelToActionColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(roleRelToActionColumns).Field(0).String()

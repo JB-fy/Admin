@@ -44,8 +44,8 @@ var configColumns = ConfigColumns{
 // NewConfigDao creates and returns a new DAO object for table data access.
 func NewConfigDao() *ConfigDao {
 	return &ConfigDao{
-		group:   "default",
-		table:   "platform_config",
+		group:   `default`,
+		table:   `platform_config`,
 		columns: configColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(configColumns).Field(0).String()

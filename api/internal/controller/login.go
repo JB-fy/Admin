@@ -20,7 +20,7 @@ func NewLogin() *Login {
 func (c *Login) EncryptStr(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *api.LoginEncryptReq
 		err := r.Parse(&param)
@@ -35,7 +35,7 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"encryptStr": encryptStr}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`encryptStr`: encryptStr}, 0)
 	}
 }
 
@@ -43,7 +43,7 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 func (c *Login) Login(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *api.LoginLoginReq
 		err := r.Parse(&param)
@@ -58,7 +58,7 @@ func (c *Login) Login(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"token": token}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`token`: token}, 0)
 	}
 }
 
@@ -66,9 +66,9 @@ func (c *Login) Login(r *ghttp.Request) {
 func (c *Login) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
-		utils.HttpSuccessJson(r, map[string]interface{}{"info": loginInfo}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`info`: loginInfo}, 0)
 	}
 }
 
@@ -76,7 +76,7 @@ func (c *Login) Info(r *ghttp.Request) {
 func (c *Login) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.AdminUpdateSelfReq
 		err := r.Parse(&param)
@@ -86,11 +86,11 @@ func (c *Login) Update(r *ghttp.Request) {
 		}
 		data := gconv.Map(param)
 		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ""))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
 			return
 		}
 		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
-		filter := map[string]interface{}{"id": loginInfo["adminId"]}
+		filter := map[string]interface{}{`id`: loginInfo[`adminId`]}
 		/**--------参数处理 结束--------**/
 
 		_, err = service.Admin().Update(r.GetCtx(), data, filter)
@@ -106,16 +106,16 @@ func (c *Login) Update(r *ghttp.Request) {
 func (c *Login) MenuTree(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
 		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
 		filter := map[string]interface{}{}
-		filter["selfMenu"] = map[string]interface{}{
-			"sceneCode": sceneCode,
-			"sceneId":   sceneInfo["sceneId"].Int(),
-			"loginId":   loginInfo["adminId"].Int(),
+		filter[`selfMenu`] = map[string]interface{}{
+			`sceneCode`: sceneCode,
+			`sceneId`:   sceneInfo[`sceneId`].Int(),
+			`loginId`:   loginInfo[`adminId`].Int(),
 		}
-		field := []string{"menuTree", "showMenu"}
+		field := []string{`menuTree`, `showMenu`}
 
 		list, err := service.Menu().List(r.GetCtx(), filter, field, [][2]string{}, 0, 0)
 		if err != nil {
@@ -127,6 +127,6 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"tree": tree}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`tree`: tree}, 0)
 	}
 }

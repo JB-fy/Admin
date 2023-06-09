@@ -31,7 +31,7 @@ func (logicThis *sAction) Count(ctx context.Context, filter map[string]interface
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		count, err = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
+		count, err = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -53,7 +53,7 @@ func (logicThis *sAction) List(ctx context.Context, filter map[string]interface{
 		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
+		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset((page - 1) * limit).Limit(limit)
@@ -72,14 +72,14 @@ func (logicThis *sAction) Info(ctx context.Context, filter map[string]interface{
 		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{"id"}, &joinTableArr))
+		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr))
 	}
 	info, err = model.One()
 	if err != nil {
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, "")
+		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 	return
@@ -92,15 +92,15 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
 	}
 
-	_, okSceneIdArr := data["sceneIdArr"]
+	_, okSceneIdArr := data[`sceneIdArr`]
 	if okSceneIdArr {
-		daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), int(id))
+		daoThis.SaveRelScene(ctx, gconv.SliceInt(data[`sceneIdArr`]), int(id))
 	}
 	return
 }
@@ -108,20 +108,20 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 // 更新
 func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
-	_, okSceneIdArr := data["sceneIdArr"]
+	_, okSceneIdArr := data[`sceneIdArr`]
 	if okSceneIdArr {
 		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 		_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改sceneIdArr
 		if err != nil {
 			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 			if len(match) > 0 {
-				err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
+				err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 				return
 			}
 			return
 		}
 		for _, id := range idArr {
-			daoThis.SaveRelScene(ctx, gconv.SliceInt(data["sceneIdArr"]), id.Int())
+			daoThis.SaveRelScene(ctx, gconv.SliceInt(data[`sceneIdArr`]), id.Int())
 		}
 		return
 	}
@@ -130,7 +130,7 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, "", map[string]interface{}{"errField": match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
@@ -149,7 +149,7 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 	}
 	row, err = result.RowsAffected()
 	if row > 0 {
-		daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where("actionId", idArr).Delete()
+		daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, idArr).Delete()
 	}
 	return
 }
@@ -158,28 +158,28 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo["sceneCode"].String()
+	sceneCode := sceneInfo[`sceneCode`].String()
 	filter := map[string]interface{}{
-		"actionCode": actionCode,
+		`actionCode`: actionCode,
 	}
-	filter["selfAction"] = map[string]interface{}{
-		"sceneCode": sceneCode,
-		"sceneId":   sceneInfo["sceneId"].Int(),
-		"loginId":   loginInfo["adminId"].Int(),
+	filter[`selfAction`] = map[string]interface{}{
+		`sceneCode`: sceneCode,
+		`sceneId`:   sceneInfo[`sceneId`].Int(),
+		`loginId`:   loginInfo[`adminId`].Int(),
 	}
 
 	switch sceneCode {
-	case "platformAdmin":
-		if loginInfo["adminId"].Int() == g.Cfg().MustGet(ctx, "superPlatformAdminId").Int() { //平台超级管理员，不再需要其他条件
+	case `platformAdmin`:
+		if loginInfo[`adminId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其他条件
 			isAuth = true
 			return
 		}
-		//filter["selfAction"].(map[string]interface{})["loginId"] = loginInfo["adminId"]
+		//filter[`selfAction`].(map[string]interface{})[`loginId`] = loginInfo[`adminId`]
 	}
 	daoAction := daoAuth.Action
 	count, err := daoAction.ParseDbCtx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
 	if count == 0 {
-		err = utils.NewErrorCode(ctx, 39990002, "")
+		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 	isAuth = true

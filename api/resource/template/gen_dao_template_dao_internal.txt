@@ -36,8 +36,8 @@ var {TplTableNameCamelLowerCase}Columns = {TplTableNameCamelCase}Columns{
 // New{TplTableNameCamelCase}Dao creates and returns a new DAO object for table data access.
 func New{TplTableNameCamelCase}Dao() *{TplTableNameCamelCase}Dao {
 	return &{TplTableNameCamelCase}Dao{
-		group:   "{TplGroupName}",
-		table:   "{TplTableName}",
+		group:   `{TplGroupName}`,
+		table:   `{TplTableName}`,
 		columns: {TplTableNameCamelLowerCase}Columns,
 		primaryKey: func() string {
 			return reflect.ValueOf({TplTableNameCamelLowerCase}Columns).Field(0).String()

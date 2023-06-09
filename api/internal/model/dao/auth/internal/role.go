@@ -48,8 +48,8 @@ var roleColumns = RoleColumns{
 // NewRoleDao creates and returns a new DAO object for table data access.
 func NewRoleDao() *RoleDao {
 	return &RoleDao{
-		group:   "default",
-		table:   "auth_role",
+		group:   `default`,
+		table:   `auth_role`,
 		columns: roleColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(roleColumns).Field(0).String()

@@ -50,8 +50,8 @@ var requestColumns = RequestColumns{
 // NewRequestDao creates and returns a new DAO object for table data access.
 func NewRequestDao() *RequestDao {
 	return &RequestDao{
-		group:   "default",
-		table:   "log_request",
+		group:   `default`,
+		table:   `log_request`,
 		columns: requestColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(requestColumns).Field(0).String()

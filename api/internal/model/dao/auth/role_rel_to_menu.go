@@ -67,7 +67,7 @@ func (daoThis *roleRelToMenuDao) ParseInsert(insert []map[string]interface{}, fi
 			insertData[index] = map[string]interface{}{}
 			for k, v := range item {
 				switch k {
-				case "id":
+				case `id`:
 					insertData[index][daoThis.PrimaryKey()] = v
 				default:
 					//数据库不存在的字段过滤掉，未传值默认true
@@ -93,14 +93,14 @@ func (daoThis *roleRelToMenuDao) ParseUpdate(update map[string]interface{}, fill
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
-			case "id":
-				updateData[daoThis.Table()+"."+daoThis.PrimaryKey()] = v
+			case `id`:
+				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
 					continue
 				}
-				updateData[daoThis.Table()+"."+k] = v
+				updateData[daoThis.Table()+`.`+k] = v
 			}
 		}
 		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
@@ -110,13 +110,13 @@ func (daoThis *roleRelToMenuDao) ParseUpdate(update map[string]interface{}, fill
 		for k, v := range updateData {
 			_, ok := v.(gdb.Raw)
 			if ok {
-				fieldArr = append(fieldArr, k+" = "+gconv.String(v))
+				fieldArr = append(fieldArr, k+` = `+gconv.String(v))
 			} else {
-				fieldArr = append(fieldArr, k+" = ?")
+				fieldArr = append(fieldArr, k+` = ?`)
 				valueArr = append(valueArr, v)
 			}
 		}
-		data := []interface{}{strings.Join(fieldArr, ",")}
+		data := []interface{}{strings.Join(fieldArr, `,`)}
 		data = append(data, valueArr...)
 		m = m.Data(data...)
 		return m
@@ -129,14 +129,14 @@ func (daoThis *roleRelToMenuDao) ParseField(field []string, joinTableArr *[]stri
 		afterField := []string{}
 		for _, v := range field {
 			switch v {
-			/* case "xxxx":
-			m = daoThis.ParseJoin("xxxx", joinTableArr)(m)
+			/* case `xxxx`:
+			m = daoThis.ParseJoin(`xxxx`, joinTableArr)(m)
 			afterField = append(afterField, v) */
-			case "id":
-				m = m.Fields(daoThis.Table() + "." + daoThis.PrimaryKey() + " AS " + v)
+			case `id`:
+				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Fields(daoThis.Table() + "." + v)
+					m = m.Fields(daoThis.Table() + `.` + v)
 				} else {
 					m = m.Fields(v)
 				}
@@ -154,48 +154,48 @@ func (daoThis *roleRelToMenuDao) ParseFilter(filter map[string]interface{}, join
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case "id", "idArr":
+			case `id`, `idArr`:
 				val := gconv.SliceInt(v)
 				if len(val) == 1 {
-					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), val[0])
+					m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), val[0])
 				} else {
-					m = m.Where(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case "excId", "excIdArr":
+			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
 				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
-					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				case 1:
-					m = m.WhereNot(daoThis.Table()+"."+daoThis.PrimaryKey(), val[0])
+					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), val[0])
 				default:
-					m = m.WhereNotIn(daoThis.Table()+"."+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case "startTime":
-				m = m.WhereGTE(daoThis.Table()+".createAt", v)
-			case "endTime":
-				m = m.WhereLTE(daoThis.Table()+".createAt", v)
-			case "keyword":
-				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), "Id", "Name")
-				m = m.WhereLike(daoThis.Table()+"."+keywordField, "%"+gconv.String(v)+"%")
+			case `startTime`:
+				m = m.WhereGTE(daoThis.Table()+`.createAt`, v)
+			case `endTime`:
+				m = m.WhereLTE(daoThis.Table()+`.createAt`, v)
+			case `keyword`:
+				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
+				m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
 			default:
-				kArr := strings.Split(k, " ") //支持"id > ?"等k
+				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					if len(kArr) == 1 {
-						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == "id" {
+						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == `id` {
 							val := gconv.SliceInt(v)
 							if len(val) == 1 {
-								m = m.Where(daoThis.Table()+"."+k, val[0])
+								m = m.Where(daoThis.Table()+`.`+k, val[0])
 							} else {
-								m = m.Where(daoThis.Table()+"."+k, v)
+								m = m.Where(daoThis.Table()+`.`+k, v)
 							}
-						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == "name" {
-							m = m.WhereLike(daoThis.Table()+"."+k, "%"+gconv.String(v)+"%")
+						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == `name` {
+							m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 						} else {
-							m = m.Where(daoThis.Table()+"."+k, v)
+							m = m.Where(daoThis.Table()+`.`+k, v)
 						}
 					} else {
-						m = m.Where(daoThis.Table()+"."+k, v)
+						m = m.Where(daoThis.Table()+`.`+k, v)
 					}
 				} else {
 					m = m.Where(k, v)
@@ -211,11 +211,11 @@ func (daoThis *roleRelToMenuDao) ParseGroup(group []string, joinTableArr *[]stri
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
-			case "id":
-				m = m.Group(daoThis.Table() + "." + daoThis.PrimaryKey())
+			case `id`:
+				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Group(daoThis.Table() + "." + v)
+					m = m.Group(daoThis.Table() + `.` + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -230,11 +230,11 @@ func (daoThis *roleRelToMenuDao) ParseOrder(order [][2]string, joinTableArr *[]s
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
-			case "id":
-				m = m.Order(daoThis.Table()+"."+daoThis.PrimaryKey(), v[1])
+			case `id`:
+				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), v[1])
 			default:
 				if daoThis.ColumnArrG().Contains(v[0]) {
-					m = m.Order(daoThis.Table()+"."+v[0], v[1])
+					m = m.Order(daoThis.Table()+`.`+v[0], v[1])
 				} else {
 					m = m.Order(v[0], v[1])
 				}
@@ -248,11 +248,11 @@ func (daoThis *roleRelToMenuDao) ParseOrder(order [][2]string, joinTableArr *[]s
 func (daoThis *roleRelToMenuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
-		/* case "xxxx":
+		/* case `xxxx`:
 		xxxxTable := xxxx.Table()
 		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
 			*joinTableArr = append(*joinTableArr, xxxxTable)
-			m = m.LeftJoin(xxxxTable, xxxxTable+"."+daoThis.PrimaryKey()+" = "+daoThis.Table()+"."+daoThis.PrimaryKey())
+			m = m.LeftJoin(xxxxTable, xxxxTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
 		}
 		return m
@@ -270,8 +270,8 @@ func (daoThis *roleRelToMenuDao) AfterField(afterField []string) gdb.HookHandler
 			for i, record := range result {
 				for _, v := range afterField {
 					switch v {
-					/* case "xxxx":
-					record[v] = gvar.New("") */
+					/* case `xxxx`:
+					record[v] = gvar.New(``) */
 					}
 				}
 				result[i] = record

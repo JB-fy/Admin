@@ -21,10 +21,10 @@ func init() {
 // 获取
 func (logicThis *sConfig) Get(ctx context.Context, filter map[string]interface{}) (config map[string]interface{}, err error) {
 	daoThis := daoPlatform.Config
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Fields("configValue", "configKey").All()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Fields(`configValue`, `configKey`).All()
 	config = map[string]interface{}{}
 	for _, v := range result {
-		config[v["configKey"].String()] = v["configValue"]
+		config[v[`configKey`].String()] = v[`configValue`]
 	}
 	return
 }
@@ -33,7 +33,7 @@ func (logicThis *sConfig) Get(ctx context.Context, filter map[string]interface{}
 func (logicThis *sConfig) Save(ctx context.Context, data map[string]interface{}) (err error) {
 	daoThis := daoPlatform.Config
 	for k, v := range data {
-		daoThis.ParseDbCtx(ctx).Data(g.Map{"configKey": k, "configValue": v}).Save()
+		daoThis.ParseDbCtx(ctx).Data(g.Map{`configKey`: k, `configValue`: v}).Save()
 	}
 	return
 }

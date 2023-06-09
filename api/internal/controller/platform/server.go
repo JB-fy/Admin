@@ -27,11 +27,11 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
-	order := [][2]string{{"id", "DESC"}}
-	if param.Sort.Key != "" {
+	order := [][2]string{{`id`, `DESC`}}
+	if param.Sort.Key != `` {
 		order[0][0] = param.Sort.Key
 	}
-	if param.Sort.Order != "" {
+	if param.Sort.Order != `` {
 		order[0][1] = param.Sort.Order
 	}
 	if param.Page <= 0 {
@@ -44,16 +44,16 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case "platformAdmin":
+	case `platformAdmin`:
 		/**--------权限验证 开始--------**/
-		_, err := service.Action().CheckAuth(r.GetCtx(), "platformServerLook")
+		_, err := service.Action().CheckAuth(r.GetCtx(), `platformServerLook`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		allowField := daoPlatform.Server.ColumnArr()
-		allowField = append(allowField, "id")
-		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{"password"})).Slice() //移除敏感字段
+		allowField = append(allowField, `id`)
+		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -73,6 +73,6 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{"count": count, "list": list}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
 	}
 }

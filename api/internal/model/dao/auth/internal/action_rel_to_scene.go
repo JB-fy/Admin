@@ -42,8 +42,8 @@ var actionRelToSceneColumns = ActionRelToSceneColumns{
 // NewActionRelToSceneDao creates and returns a new DAO object for table data access.
 func NewActionRelToSceneDao() *ActionRelToSceneDao {
 	return &ActionRelToSceneDao{
-		group:   "default",
-		table:   "auth_action_rel_to_scene",
+		group:   `default`,
+		table:   `auth_action_rel_to_scene`,
 		columns: actionRelToSceneColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(actionRelToSceneColumns).Field(0).String()
