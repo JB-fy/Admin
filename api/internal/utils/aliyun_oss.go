@@ -54,52 +54,52 @@ func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss
 func (aliyunOssThis *AliyunOss) CreateSign(option AliyunOssSignOption) (signInfo map[string]interface{}, err error) {
 	expireEnd := time.Now().Unix() + int64(option.ExpireTime)
 	signInfo = map[string]interface{}{
-		"accessid": aliyunOssThis.AccessKeyId,
-		"host":     aliyunOssThis.GetBucketHost(),
-		"dir":      option.Dir,
-		"expire":   expireEnd,
+		`accessid`: aliyunOssThis.AccessKeyId,
+		`host`:     aliyunOssThis.GetBucketHost(),
+		`dir`:      option.Dir,
+		`expire`:   expireEnd,
 	}
 
-	if option.CallbackUrl != "" {
+	if option.CallbackUrl != `` {
 		callbackParam := map[string]interface{}{
-			"callbackUrl":      option.CallbackUrl,
-			"callbackBody":     "filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}",
-			"callbackBodyType": "application/x-www-form-urlencoded",
+			`callbackUrl`:      option.CallbackUrl,
+			`callbackBody`:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
+			`callbackBodyType`: `application/x-www-form-urlencoded`,
 		}
 		callbackStr, _ := json.Marshal(callbackParam)
 		callbackBase64 := base64.StdEncoding.EncodeToString(callbackStr)
-		signInfo["callback"] = string(callbackBase64)
+		signInfo[`callback`] = string(callbackBase64)
 	}
 
 	policy := map[string]interface{}{
-		"expiration": aliyunOssThis.GetGmtIso8601(expireEnd),
-		"conditions": [][]interface{}{
-			{"content-length-range", option.MinSize, option.MaxSize},
-			{"starts-with", "$key", option.Dir},
+		`expiration`: aliyunOssThis.GetGmtIso8601(expireEnd),
+		`conditions`: [][]interface{}{
+			{`content-length-range`, option.MinSize, option.MaxSize},
+			{`starts-with`, `$key`, option.Dir},
 		},
 	}
 	policyStr, _ := json.Marshal(policy)
 	policyBase64 := base64.StdEncoding.EncodeToString(policyStr)
-	signInfo["policy"] = string(policyBase64)
+	signInfo[`policy`] = string(policyBase64)
 
 	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(aliyunOssThis.AccessKeySecret))
 	io.WriteString(h, policyBase64)
 	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
-	signInfo["signature"] = string(signedStr)
+	signInfo[`signature`] = string(signedStr)
 	return
 }
 
 // 回调
 func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 1.获取OSS的签名header和公钥url header
-	strAuthorizationBase64 := r.Header.Get("authorization")
-	if strAuthorizationBase64 == "" {
+	strAuthorizationBase64 := r.Header.Get(`authorization`)
+	if strAuthorizationBase64 == `` {
 		err = NewErrorCode(aliyunOssThis.Ctx, 40000000, err.Error())
 		return
 	}
-	publicKeyURLBase64 := r.Header.Get("x-oss-pub-key-url")
-	if publicKeyURLBase64 == "" {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000001, "")
+	publicKeyURLBase64 := r.Header.Get(`x-oss-pub-key-url`)
+	if publicKeyURLBase64 == `` {
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000001, ``)
 		return
 	}
 
@@ -134,11 +134,11 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 		return
 	}
 
-	strAuth := ""
-	if r.URL.RawQuery == "" {
-		strAuth = fmt.Sprintf("%s\n%s", strURLPathDecode, strCallbackBody)
+	strAuth := ``
+	if r.URL.RawQuery == `` {
+		strAuth = fmt.Sprintf(`%s\n%s`, strURLPathDecode, strCallbackBody)
 	} else {
-		strAuth = fmt.Sprintf("%s?%s\n%s", strURLPathDecode, r.URL.RawQuery, strCallbackBody)
+		strAuth = fmt.Sprintf(`%s?%s\n%s`, strURLPathDecode, r.URL.RawQuery, strCallbackBody)
 	}
 
 	md5Ctx := md5.New()
@@ -148,7 +148,7 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 5.拼接待签名字符串
 	pubBlock, _ := pem.Decode(bytePublicKey)
 	if pubBlock == nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, "")
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, ``)
 		return
 	}
 	pubInterface, err := x509.ParsePKIXPublicKey(pubBlock.Bytes)
@@ -169,15 +169,15 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 
 // 获取bucketHost
 func (aliyunOssThis *AliyunOss) GetBucketHost() string {
-	scheme := "https://"
-	if gstr.Pos(aliyunOssThis.Host, "https://") == -1 {
-		scheme = "http://"
+	scheme := `https://`
+	if gstr.Pos(aliyunOssThis.Host, `https://`) == -1 {
+		scheme = `http://`
 	}
-	return gstr.Replace(aliyunOssThis.Host, scheme, scheme+aliyunOssThis.Bucket+".", 1)
+	return gstr.Replace(aliyunOssThis.Host, scheme, scheme+aliyunOssThis.Bucket+`.`, 1)
 }
 
 func (aliyunOssThis *AliyunOss) GetGmtIso8601(expireEnd int64) string {
-	var tokenExpire = time.Unix(expireEnd, 0).UTC().Format("2006-01-02T15:04:05Z")
+	var tokenExpire = time.Unix(expireEnd, 0).UTC().Format(`2006-01-02T15:04:05Z`)
 	return tokenExpire
 }
 

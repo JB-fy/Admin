@@ -22,11 +22,11 @@ func NewJWT(ctx context.Context, config map[string]interface{}) *JWT {
 	}
 	gconv.Struct(config, &jwtObj)
 	switch jwtObj.SignType {
-	case "HS256":
+	case `HS256`:
 		jwtObj.SignMethod = jwt.SigningMethodHS256
-	case "HS384":
+	case `HS384`:
 		jwtObj.SignMethod = jwt.SigningMethodHS384
-	case "S512":
+	case `S512`:
 		jwtObj.SignMethod = jwt.SigningMethodHS512
 	default:
 		jwtObj.SignMethod = jwt.SigningMethodHS256
@@ -61,12 +61,12 @@ func (jwtThis *JWT) ParseToken(tokenString string) (claims *CustomClaims, err er
 		return
 	}
 	if !token.Valid {
-		err = NewErrorCode(jwtThis.Ctx, 39994001, "")
+		err = NewErrorCode(jwtThis.Ctx, 39994001, ``)
 		return
 	}
 	claims, ok := token.Claims.(*CustomClaims)
 	if !ok {
-		err = NewErrorCode(jwtThis.Ctx, 39994001, "")
+		err = NewErrorCode(jwtThis.Ctx, 39994001, ``)
 		return
 	}
 	return

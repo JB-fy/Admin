@@ -21,29 +21,29 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 	if len(data) > 0 && data[0] != nil {
 		dataTmp = data[0]
 	}
-	if msg == "" {
+	if msg == `` {
 		switch code {
 		case 29991062, 89999996:
-			msg = g.I18n().Tf(ctx, gconv.String(code), gconv.String(dataTmp["errField"]))
-			delete(dataTmp, "errField")
+			msg = g.I18n().Tf(ctx, gconv.String(code), gconv.String(dataTmp[`errField`]))
+			delete(dataTmp, `errField`)
 		default:
 			msg = g.I18n().T(ctx, gconv.String(code))
 		}
 	}
-	return gerror.NewCode(gcode.New(code, "", dataTmp), msg)
+	return gerror.NewCode(gcode.New(code, ``, dataTmp), msg)
 }
 
 // http接口调用失败返回json
 func HttpFailJson(r *ghttp.Request, err error) {
 	resData := map[string]interface{}{
-		"code": 99999999,
-		"msg":  err.Error(),
-		"data": map[string]interface{}{},
+		`code`: 99999999,
+		`msg`:  err.Error(),
+		`data`: map[string]interface{}{},
 	}
 	code := gerror.Code(err)
 	if code.Code() > 0 {
-		resData["code"] = code.Code()
-		resData["data"] = code.Detail()
+		resData[`code`] = code.Code()
+		resData[`data`] = code.Detail()
 	}
 	r.Response.WriteJsonExit(resData)
 }
@@ -51,14 +51,14 @@ func HttpFailJson(r *ghttp.Request, err error) {
 // http接口调用成功返回json
 func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, msg ...string) {
 	resData := map[string]interface{}{
-		"code": code,
-		"msg":  "",
-		"data": data,
+		`code`: code,
+		`msg`:  ``,
+		`data`: data,
 	}
-	if len(msg) == 0 || msg[0] == "" {
-		resData["msg"] = g.I18n().T(r.GetCtx(), gconv.String(code))
+	if len(msg) == 0 || msg[0] == `` {
+		resData[`msg`] = g.I18n().T(r.GetCtx(), gconv.String(code))
 	} else {
-		resData["msg"] = msg[0]
+		resData[`msg`] = msg[0]
 	}
 	r.Response.WriteJsonExit(resData)
 }
@@ -75,7 +75,7 @@ func GetCtxSceneInfo(ctx context.Context) gdb.Record {
 
 // 获取场景标识
 func GetCtxSceneCode(ctx context.Context) string {
-	return GetCtxSceneInfo(ctx)["sceneCode"].String()
+	return GetCtxSceneInfo(ctx)[`sceneCode`].String()
 }
 
 // 设置登录身份信息
@@ -90,14 +90,14 @@ func GetCtxLoginInfo(ctx context.Context) gdb.Record {
 
 // 设置服务器外网ip
 func GetServerNetworkIp() string {
-	cmd := exec.Command("/bin/bash", "-c", "curl -s ifconfig.me")
+	cmd := exec.Command(`/bin/bash`, `-c`, `curl -s ifconfig.me`)
 	output, _ := cmd.CombinedOutput()
 	return string(output)
 }
 
 // 设置服务器内网ip
 func GetServerLocalIp() string {
-	cmd := exec.Command("/bin/bash", "-c", "hostname -I")
+	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
 	return string(output)
 }
