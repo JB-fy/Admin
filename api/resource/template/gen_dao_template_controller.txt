@@ -28,10 +28,10 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 		}
 	filter := gconv.Map(param.Filter)
 	order := [][2]string{{`id`, `DESC`}}
-	if param.Sort.Key != ` {
+	if param.Sort.Key != `` {
 		order[0][0] = param.Sort.Key
 	}
-	if param.Sort.Order != ` {
+	if param.Sort.Order != `` {
 		order[0][1] = param.Sort.Order
 	}
 	if param.Page <= 0 {
@@ -166,7 +166,7 @@ func (controllerThis *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 		data := gconv.Map(param)
 		delete(data, `idArr`)
 		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, `))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
 			return
 		}
 		filter := map[string]interface{}{`id`: param.IdArr}
