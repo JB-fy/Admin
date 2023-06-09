@@ -5,6 +5,7 @@ import (
 	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -15,7 +16,8 @@ func NewTest() *Test {
 }
 
 func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.TestMetaRes, err error) {
-	//g.RequestFromCtx(ctx).Response.Writeln(`Hello World!`)
+	//time.Sleep(10 * time.Second)
+	g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
 	return
 }
 
@@ -48,6 +50,8 @@ func (c *Test) Test(r *ghttp.Request) {
 		`msg`:  `成功`,
 		`data`: map[string]interface{}{},
 	}) */
+
+	//fmt.Println(ghttp.RestartAllServer(r.GetCtx()))
 
 	utils.HttpSuccessJson(r, map[string]interface{}{
 		`list`: []map[string]interface{}{},

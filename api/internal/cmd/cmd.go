@@ -67,15 +67,19 @@ var (
 			s.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				group.ALL(`/notify`, controller.NewUpload().Notify)
 			})
+			// 测试使用
 			s.Group(``, func(group *ghttp.RouterGroup) {
 				//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
 				group.Middleware(middleware.Cross, middleware.I18n)
-				group.ALL(`/test`, controller.NewTest().Test)
-				/* group.Bind(
+				controllerThis := controller.NewTest()
+				group.ALL(`/test`, controllerThis.Test)
+				group.Bind(
+					controllerThis.TestMeta,
+					//controllerThis,
 					//controller.NewTest().Test, //这样不会根据方法名自动设置路由
-					controller.NewTest(),
-				) */
+				)
 			})
+
 			router.InitRouterPlatformAdmin(s) //平台后台接口注册
 			s.Run()
 			/*--------启动http服务 结束--------*/
