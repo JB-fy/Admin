@@ -11,9 +11,7 @@ type {TplTableNameCaseCamel}ListReq struct {
 
 type {TplTableNameCaseCamel}ListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
-	{TplTableNameCaseCamel}Id     *uint  `c:"{TplTableName}Id,omitempty" p:"{TplTableName}Id" v:"integer|min:1"`
-	{TplTableNameCaseCamel}Name   string `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	IsStop      				  *uint  `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	{TplApiFilterColumn}
 }
 
 type {TplTableNameCaseCamel}InfoReq struct {
@@ -21,14 +19,12 @@ type {TplTableNameCaseCamel}InfoReq struct {
 }
 
 type {TplTableNameCaseCamel}CreateReq struct {
-	{TplTableNameCaseCamel}Name  *string  `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	IsStop    					 *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	{TplApiSaveColumn}
 }
 
 type {TplTableNameCaseCamel}UpdateReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	{TplTableNameCaseCamel}Name			 *string `c:"{TplTableName}Name,omitempty" p:"{TplTableName}Name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	IsStop	  							 *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	{TplApiSaveColumn}
 }
 
 type {TplTableNameCaseCamel}DeleteReq struct {
