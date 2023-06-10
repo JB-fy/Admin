@@ -1,26 +1,28 @@
 package logic
 
 import (
-	daoAuth "api/internal/model/dao/auth"
+	dao{TplPathSuffixCaseCamel} "api/internal/model/dao/{TplPathSuffixCaseCamelLower}"
 	"api/internal/service"
+	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/text/gregex"
 )
 
-type s{TplTableNameCamelCase} struct{}
+type s{TplTableNameCaseCamel} struct{}
 
-func New{TplTableNameCamelCase}() *s{TplTableNameCamelCase} {
-	return &s{TplTableNameCamelCase}{}
+func New{TplTableNameCaseCamel}() *s{TplTableNameCaseCamel} {
+	return &s{TplTableNameCaseCamel}{}
 }
 
 func init() {
-	service.Register{TplTableNameCamelCase}(New{TplTableNameCamelCase}())
+	service.Register{TplTableNameCaseCamel}(New{TplTableNameCaseCamel}())
 }
 
 // 总数
-func (logicThis *s{TplTableNameCamelCase}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
-	daoThis := daoAuth.{TplTableNameCamelCase}
+func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -35,8 +37,8 @@ func (logicThis *s{TplTableNameCamelCase}) Count(ctx context.Context, filter map
 }
 
 // 列表
-func (logicThis *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
-	daoThis := daoAuth.{TplTableNameCamelCase}
+func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
+	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -59,8 +61,8 @@ func (logicThis *s{TplTableNameCamelCase}) List(ctx context.Context, filter map[
 }
 
 // 详情
-func (logicThis *s{TplTableNameCamelCase}) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
-	daoThis := daoAuth.{TplTableNameCamelCase}
+func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
@@ -82,8 +84,8 @@ func (logicThis *s{TplTableNameCamelCase}) Info(ctx context.Context, filter map[
 }
 
 // 创建
-func (logicThis *s{TplTableNameCamelCase}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
-	daoThis := daoAuth.{TplTableNameCamelCase}
+func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
@@ -97,8 +99,8 @@ func (logicThis *s{TplTableNameCamelCase}) Create(ctx context.Context, data map[
 }
 
 // 更新
-func (logicThis *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
-	daoThis := daoAuth.{TplTableNameCamelCase}
+func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
+	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
@@ -113,8 +115,8 @@ func (logicThis *s{TplTableNameCamelCase}) Update(ctx context.Context, data map[
 }
 
 // 删除
-func (logicThis *s{TplTableNameCamelCase}) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
-	daoThis := daoAuth.{TplTableNameCamelCase}
+func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return

@@ -12,6 +12,31 @@ import (
 )
 
 type (
+	IScene interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+	}
+	ITestScene interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+	}
+	IAction interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
+	}
 	IMenu interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
@@ -29,30 +54,14 @@ type (
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
-	IScene interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-	}
-	IAction interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
-	}
 )
 
 var (
-	localAction IAction
-	localMenu   IMenu
-	localRole   IRole
-	localScene  IScene
+	localAction    IAction
+	localMenu      IMenu
+	localRole      IRole
+	localScene     IScene
+	localTestScene ITestScene
 )
 
 func Scene() IScene {
@@ -64,6 +73,17 @@ func Scene() IScene {
 
 func RegisterScene(i IScene) {
 	localScene = i
+}
+
+func TestScene() ITestScene {
+	if localTestScene == nil {
+		panic("implement not found for interface ITestScene, forgot register?")
+	}
+	return localTestScene
+}
+
+func RegisterTestScene(i ITestScene) {
+	localTestScene = i
 }
 
 func Action() IAction {
