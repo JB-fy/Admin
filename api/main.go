@@ -14,7 +14,10 @@ import (
 )
 
 func main() {
-	// g.I18n().SetPath(g.Cfg().MustGet(context.TODO(), "i18n.path").String())         //设置资源目录
-	// g.I18n().SetLanguage(g.Cfg().MustGet(context.TODO(), "i18n.language").String()) //设置默认为中文（原默认为英文en）
-	cmd.Main.Run(gctx.New())
+	cmd.MyGen.Run(gctx.New())
+	// cmd.Http.Run(gctx.New())
+
+	// cmd.Main.AddCommand(&cmd.MyGen)
+	// cmd.Main.AddCommand(&cmd.Http)
+	// cmd.Main.Run(gctx.New())
 }

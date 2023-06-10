@@ -39,7 +39,7 @@ database:
       # maxOpen: "10" # 连接池最大打开的连接数
       # maxLifetime: "30s" # 连接对象可重复使用的时间长度
       debug: true # 开启调试模式
-      dryRun: false # ORM空跑(只读不写)
+      # dryRun: false # ORM空跑(只读不写)
 redis:
   default:
     address: "0.0.0.0:6379"
