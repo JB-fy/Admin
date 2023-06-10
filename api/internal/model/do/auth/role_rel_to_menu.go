@@ -11,9 +11,9 @@ import (
 
 // RoleRelToMenu is the golang structure of table auth_role_rel_to_menu for DAO operations like Where/Data.
 type RoleRelToMenu struct {
-	g.Meta   `orm:"table:auth_role_rel_to_menu, do:true"`
-	RoleId   interface{} // 权限角色ID
-	MenuId   interface{} // 权限菜单ID
+	g.Meta    `orm:"table:auth_role_rel_to_menu, do:true"`
+	RoleId    interface{} // 权限角色ID
+	MenuId    interface{} // 权限菜单ID
 	UpdatedAt *gtime.Time // 更新时间
 	CreatedAt *gtime.Time // 创建时间
 }

@@ -28,8 +28,8 @@ type ServerColumns struct {
 	ServerId  string // 服务器ID
 	NetworkIp string // 公网IP
 	LocalIp   string // 内网IP
-	UpdatedAt  string // 更新时间
-	CreatedAt  string // 创建时间
+	UpdatedAt string // 更新时间
+	CreatedAt string // 创建时间
 }
 
 // serverColumns holds the columns for table platform_server.
@@ -37,8 +37,8 @@ var serverColumns = ServerColumns{
 	ServerId:  "serverId",
 	NetworkIp: "networkIp",
 	LocalIp:   "localIp",
-	UpdatedAt:  "updatedAt",
-	CreatedAt:  "createdAt",
+	UpdatedAt: "updatedAt",
+	CreatedAt: "createdAt",
 }
 
 // NewServerDao creates and returns a new DAO object for table data access.

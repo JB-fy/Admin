@@ -15,6 +15,6 @@ type Scene struct {
 	SceneName   string      `json:"sceneName"   ` // 名称
 	SceneConfig string      `json:"sceneConfig" ` // 配置（内容自定义。json格式：{"alg": "算法","key": "密钥","expTime": "签名有效时间",...}）
 	IsStop      uint        `json:"isStop"      ` // 是否停用：0否 1是
-	UpdatedAt    *gtime.Time `json:"updatedAt"    ` // 更新时间
-	CreatedAt    *gtime.Time `json:"createdAt"    ` // 创建时间
+	UpdatedAt   *gtime.Time `json:"updatedAt"   ` // 更新时间
+	CreatedAt   *gtime.Time `json:"createdAt"   ` // 创建时间
 }

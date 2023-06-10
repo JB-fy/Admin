@@ -17,6 +17,6 @@ type Action struct {
 	ActionCode interface{} // 标识（代码中用于判断权限）
 	Remark     interface{} // 备注
 	IsStop     interface{} // 是否停用：0否 1是
-	UpdatedAt   *gtime.Time // 更新时间
-	CreatedAt   *gtime.Time // 创建时间
+	UpdatedAt  *gtime.Time // 更新时间
+	CreatedAt  *gtime.Time // 创建时间
 }

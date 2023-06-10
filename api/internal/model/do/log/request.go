@@ -18,6 +18,6 @@ type Request struct {
 	RequestData   interface{} // 请求数据
 	ResponseBody  interface{} // 响应体
 	RunTime       interface{} // 运行时间（单位：毫秒）
-	UpdatedAt      *gtime.Time // 更新时间
-	CreatedAt      *gtime.Time // 创建时间
+	UpdatedAt     *gtime.Time // 更新时间
+	CreatedAt     *gtime.Time // 创建时间
 }

@@ -15,6 +15,6 @@ type Action struct {
 	ActionCode string      `json:"actionCode" ` // 标识（代码中用于判断权限）
 	Remark     string      `json:"remark"     ` // 备注
 	IsStop     uint        `json:"isStop"     ` // 是否停用：0否 1是
-	UpdatedAt   *gtime.Time `json:"updatedAt"   ` // 更新时间
-	CreatedAt   *gtime.Time `json:"createdAt"   ` // 创建时间
+	UpdatedAt  *gtime.Time `json:"updatedAt"  ` // 更新时间
+	CreatedAt  *gtime.Time `json:"createdAt"  ` // 创建时间
 }
