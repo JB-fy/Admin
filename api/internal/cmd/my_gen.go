@@ -25,6 +25,7 @@ type MyGenOption struct {
 
 type MyGenTpl struct {
 	RawTableNameCaseCamelLower  string //原始表名（小驼峰）
+	TableNameCaseCamelLower     string //去除前缀表名（小驼峰）
 	TableNameCaseCamel          string //去除前缀表名（大驼峰）
 	TableNameCaseSnake          string //去除前缀表名（蛇形）
 	PathSuffixCaseCamelLower    string //路径后缀（小驼峰）
@@ -33,6 +34,9 @@ type MyGenTpl struct {
 	ApiSaveColumn               string //api创建更新
 	ControllerAlloweFieldAppend string //controller追加字段
 	ControllerAlloweFieldDiff   string //controller移除字段
+	ViewListColumn              string //view列表字段
+	ViewQueryField              string //view查询字段
+	ViewSaveField               string //view创建更新字段
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -166,7 +170,7 @@ noDeleteEnd:
 	return
 }
 
-// 模板变量获取
+// 模板变量处理
 func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	tpl = &MyGenTpl{
 		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
@@ -174,6 +178,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		PathSuffixCaseCamelLower:   gstr.CaseCamelLower(option.RemovePrefix),
 		PathSuffixCaseCamel:        gstr.CaseCamel(option.RemovePrefix),
 	}
+	tpl.TableNameCaseCamelLower = gstr.CaseCamelLower(tpl.TableNameCaseCamel)
 	tpl.TableNameCaseSnake = gstr.CaseSnakeFirstUpper(tpl.TableNameCaseCamel)
 
 	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
@@ -194,25 +199,155 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + column[`Comment`].String() + "\n"
-				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
 				continue
 			}
 			//id后缀
 			if gstr.ToLower(gstr.SubStr(field, -2)) == `id` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 150,
+	},`
+				if gstr.ToLower(field) == `pid` {
+
+				} else {
+					tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/list', param: { field: ['id', 'sceneName'] } }" />
+		</ElFormItem>`
+				}
 				continue
 			}
 			//status后缀
 			if gstr.ToLower(gstr.SubStr(field, -6)) == `status` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 100,
+	},`
 				continue
 			}
 			//is前缀
 			if gstr.ToLower(gstr.SubStr(field, 0, 2)) == `is` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 100,
+		cellRenderer: (props: any): any => {
+			return [
+				h(ElSwitch as any, {
+					'model-value': props.rowData.` + field + `,
+					'active-value': 1,
+					'inactive-value': 0,
+					'inline-prompt': true,
+					'active-text': t('common.yes'),
+					'inactive-text': t('common.no'),
+					style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',`
+				if !option.NoUpdate {
+					tpl.ViewListColumn += `
+					onChange: (val: number) => {
+						handleUpdate({
+							idArr: [props.rowData.id],
+							` + field + `: val
+						}).then((res) => {
+							props.rowData.` + field + ` = val
+						}).catch((error) => { })
+					}`
+				}
+				tpl.ViewListColumn += `
+				})
+			]
+		}
+	},`
+				continue
+			}
+			//含有sort和weight字符
+			if gstr.Pos(gstr.ToLower(field), `sort`) != -1 || gstr.Pos(gstr.ToLower(field), `weight`) != -1 {
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|between:0,100"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ApiSaveColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|between:0,100"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 100,
+		sortable: true,`
+				if !option.NoUpdate {
+					tpl.ViewListColumn += `
+		cellRenderer: (props: any): any => {
+			if (props.rowData.edit` + gstr.CaseCamel(field) + `) {
+				let currentRef: any
+				let currentVal = props.rowData.` + field + `
+				return [
+					h(ElInputNumber as any, {
+						'ref': (el: any) => { currentRef = el; el?.focus() },
+						'model-value': currentVal,
+						'placeholder': t('common.tip.` + field + `'),
+						'precision': 0,
+						'min': 0,
+						'max': 100,
+						'step': 1,
+						'step-strictly': true,
+						'controls': false,  //控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
+						'controls-position': 'right',
+						onChange: (val: number) => {
+							currentVal = val
+						},
+						onBlur: () => {
+							props.rowData.edit` + gstr.CaseCamel(field) + ` = false
+							if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + field + `) {
+								handleUpdate({
+									idArr: [props.rowData.id],
+									` + field + `: currentVal
+								}).then((res) => {
+									props.rowData.` + field + ` = currentVal
+								}).catch((error) => {
+								})
+							}
+						},
+						onKeydown: (event: any) => {
+							switch (event.keyCode) {
+								//case 27:    //Esc键：Escape
+								//case 32:    //空格键：" "
+								case 13:    //Enter键：Enter
+									//props.rowData.edit` + gstr.CaseCamel(field) + ` = false  //也会触发onBlur事件
+									currentRef?.blur()
+									break;
+							}
+						},
+					})
+				]
+			}
+			return [
+				h('div', {
+					class: 'inline-edit',
+					onClick: () => {
+						props.rowData.edit` + gstr.CaseCamel(field) + ` = true
+					}
+				}, {
+					default: () => props.rowData.` + field + `
+				})
+			]
+		}`
+				}
+				tpl.ViewListColumn += `
+	},`
 				continue
 			}
 			//name和code后缀
@@ -220,6 +355,18 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `')" :clearable="true" />
+		</ElFormItem>,`
 				continue
 			}
 			//ip后缀
@@ -227,6 +374,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 				continue
 			}
 			//含有mobile和phone字符
@@ -234,6 +389,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 				continue
 			}
 			//含有url和link字符
@@ -241,6 +404,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 300,
+		align: 'center',
+	},`
 				continue
 			}
 			//int类型
@@ -252,12 +423,28 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					tpl.ApiFilterColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + column[`Comment`].String() + "\n"
 					tpl.ApiSaveColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + column[`Comment`].String() + "\n"
 				}
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 				continue
 			}
 			//float类型
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"float"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"float"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 				continue
 			}
 			//varchar类型
@@ -265,6 +452,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 				continue
 			}
 			//char类型
@@ -272,40 +467,87 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"size:` + result[1] + `"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 				continue
 			}
 			//json类型
 			if gstr.Pos(column[`Type`].String(), `json`) != -1 {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"json"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"json"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 200,
+		align: 'center',
+        hidden: true
+	},`
 				continue
 			}
 			//date类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+        sortable: true
+	},`
 				continue
 			}
 			//date类型
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d"` + "` // " + column[`Comment`].String() + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+        sortable: true
+	},`
 				continue
 			}
 			//默认处理
 			tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + column[`Comment`].String() + "\n"
 			tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + column[`Comment`].String() + "\n"
+			tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
 		}
 	}
 	tpl.ApiFilterColumn = gstr.SubStr(tpl.ApiFilterColumn, 0, -len("\n"))
 	tpl.ApiSaveColumn = gstr.SubStr(tpl.ApiSaveColumn, 0, -len("\n"))
-	tpl.ControllerAlloweFieldAppend = gstr.SubStr(tpl.ApiFilterColumn, 0, -len(`, `))
-	tpl.ControllerAlloweFieldDiff = gstr.SubStr(tpl.ApiSaveColumn, 0, -len(`, `))
+	tpl.ControllerAlloweFieldAppend = gstr.SubStr(tpl.ControllerAlloweFieldAppend, 0, -len(`, `))
+	tpl.ControllerAlloweFieldDiff = gstr.SubStr(tpl.ControllerAlloweFieldDiff, 0, -len(`, `))
 	return
 }
 
 // api模板生成
 func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/api/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	if gfile.IsFile(saveFile) {
+		return
+	}
 	tplApi := `package api
 
 import (
@@ -364,13 +606,15 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 		`{TplApiSaveColumn}`:      tpl.ApiSaveColumn,
 	})
 
-	path := gfile.SelfDir()
-	saveApiPath := path + `/api/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	gfile.PutContents(saveApiPath, tplApi)
+	gfile.PutContents(saveFile, tplApi)
 }
 
 // logic模板生成
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/internal/logic/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	if gfile.IsFile(saveFile) {
+		return
+	}
 	tplLogic := `package logic
 
 import (
@@ -523,16 +767,15 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 		`{TplTableNameCaseCamel}`:       tpl.TableNameCaseCamel,
 	})
 
-	path := gfile.SelfDir()
-	saveLogicPath := path + `/internal/logic/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	gfile.PutContents(saveLogicPath, tplLogic)
+	gfile.PutContents(saveFile, tplLogic)
 }
 
 // controller模板生成
 func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	path := gfile.SelfDir()
-	//tplControllerPath := path + `/resource/template/gen_template_logic.txt`
-	//tplController := gfile.GetContents(tplControllerPath)
+	saveFile := gfile.SelfDir() + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	if gfile.IsFile(saveFile) {
+		return
+	}
 	tplController := `package controller
 
 import (
@@ -791,13 +1034,25 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 		`{TplControllerAlloweFieldAppend}`: tpl.ControllerAlloweFieldAppend,
 		`{TplControllerAlloweFieldDiff}`:   tpl.ControllerAlloweFieldDiff,
 	})
-
-	saveControllerPath := path + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	gfile.PutContents(saveControllerPath, tplController)
+	gfile.PutContents(saveFile, tplController)
 }
 
 // view模板生成
 func MyGenTplView(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	path := gfile.SelfDir()
+	saveViewPathPrefix := path + `/../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake
+	MyGenTplViewIndex(ctx, option, tpl, saveViewPathPrefix)
+	MyGenTplViewList(ctx, option, tpl, saveViewPathPrefix)
+	MyGenTplViewQuery(ctx, option, tpl, saveViewPathPrefix)
+	MyGenTplViewSave(ctx, option, tpl, saveViewPathPrefix)
+}
+
+// view模板生成Index
+func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
+	saveFile := saveViewPathPrefix + `/Index.vue`
+	if gfile.IsFile(saveFile) {
+		return
+	}
 	tplView := `<script setup lang="ts">
 import List from './List.vue'
 import Query from './Query.vue'`
@@ -849,14 +1104,472 @@ provide('saveCommon', saveCommon)`
 	</ElContainer>
 </template>`
 
+	gfile.PutContents(saveViewPathPrefix+`/Index.vue`, tplView)
+}
+
+// view模板生成List
+func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
+	saveFile := saveViewPathPrefix + `/List.vue`
+	if gfile.IsFile(saveFile) {
+		return
+	}
+	tplView := `<script setup lang="ts">
+const { t } = useI18n()
+
+const table = reactive({
+	columns: [{
+		dataKey: 'id',
+		title: t('common.name.id'),
+		key: 'id',
+		width: 200,
+		align: 'center',
+		fixed: 'left',
+		sortable: true,`
+	if !(option.NoUpdate && option.NoDelete) {
+		tplView += `
+		headerCellRenderer: () => {
+			const allChecked = table.data.every((item: any) => item.checked)
+			const someChecked = table.data.some((item: any) => item.checked)
+			return [
+				h('div', {
+					class: 'id-checkbox',
+					onClick: (event: any) => {
+						event.stopPropagation();    //阻止冒泡
+					},
+				}, {
+					default: () => [
+						h(ElCheckbox as any, {
+							'model-value': table.data.length ? allChecked : false,
+							indeterminate: someChecked && !allChecked,
+							onChange: (val: boolean) => {
+								table.data.forEach((item: any) => {
+									item.checked = val
+								})
+							}
+						})
+					]
+				}),
+				h('div', {}, {
+					default: () => t('common.name.id')
+				})
+			]
+		},
+		cellRenderer: (props: any): any => {
+			return [
+				h(ElCheckbox as any, {
+					class: 'id-checkbox',
+					'model-value': props.rowData.checked,
+					onChange: (val: boolean) => {
+						props.rowData.checked = val
+					}
+				}),
+				h('div', {}, {
+					default: () => props.rowData.id
+				})
+			]
+		},`
+	}
+	tplView += `
+	},{TplViewListColumn}
+	{
+		dataKey: 'updatedAt',
+		title: t('common.name.updatedAt'),
+		key: 'updatedAt',
+		align: 'center',
+		width: 150,
+		sortable: true,
+	},
+	{
+		dataKey: 'createdAt',
+		title: t('common.name.createdAt'),
+		key: 'createdAt',
+		align: 'center',
+		width: 150,
+		sortable: true
+	},`
+	if !(option.NoUpdate && option.NoDelete) {
+		tplView += `
+	{
+		title: t('common.name.action'),
+		key: 'action',
+		align: 'center',
+		fixed: 'right',
+		width: 250,
+		cellRenderer: (props: any): any => {
+			return [
+				h(ElButton, {
+					type: 'primary',
+					size: 'small',
+					onClick: () => handleEditCopy(props.rowData.id)
+				}, {
+					default: () => [h(AutoiconEpEdit), t('common.edit')]
+				}),
+				h(ElButton, {
+					type: 'danger',
+					size: 'small',
+					onClick: () => handleDelete([props.rowData.id])
+				}, {
+					default: () => [h(AutoiconEpDelete), t('common.delete')]
+				}),
+				h(ElButton, {
+					type: 'warning',
+					size: 'small',
+					onClick: () => handleEditCopy(props.rowData.id, 'copy')
+				}, {
+					default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
+				})
+			]
+		},
+	}] as any,`
+	}
+	tplView += `
+	data: [],
+	loading: false,
+	sort: { key: 'id', order: 'desc' } as any,
+	handleSort: (sort: any) => {
+		table.sort.key = sort.key
+		table.sort.order = sort.order
+		getList()
+	},
+})`
+	if !(option.NoCreate && option.NoUpdate) {
+		tplView += `
+
+const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }`
+	}
+	if !option.NoCreate {
+		tplView += `
+//新增
+const handleAdd = () => {
+	saveCommon.data = {}
+	saveCommon.title = t('common.add')
+	saveCommon.visible = true
+}`
+	}
+	if !option.NoDelete {
+		tplView += `
+//批量删除
+const handleBatchDelete = () => {
+	const idArr: number[] = [];
+	table.data.forEach((item: any) => {
+		if (item.checked) {
+			idArr.push(item.id)
+		}
+	})
+	if (idArr.length) {
+		handleDelete(idArr)
+	} else {
+		ElMessage.error(t('common.tip.selectDelete'))
+	}
+}`
+	}
+	if !(option.NoCreate && option.NoUpdate) {
+		tplView += `
+//编辑|复制
+const handleEditCopy = (id: number, type: string = 'edit') => {
+	request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/info', { id: id }).then((res) => {
+		saveCommon.data = { ...res.data.info }
+		switch (type) {
+			case 'edit':
+				saveCommon.data.idArr = [saveCommon.data.id]
+				delete saveCommon.data.id
+				saveCommon.title = t('common.edit')
+				break;
+			case 'copy':
+				delete saveCommon.data.id
+				saveCommon.title = t('common.copy')
+				break;
+		}
+		saveCommon.visible = true
+	}).catch(() => { })
+}`
+	}
+	if !option.NoDelete {
+		tplView += `
+//删除
+const handleDelete = (idArr: number[]) => {
+	ElMessageBox.confirm('', {
+		type: 'warning',
+		title: t('common.tip.configDelete'),
+		center: true,
+		showClose: false,
+	}).then(() => {
+		request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/del', { idArr: idArr }, true).then((res) => {
+			getList()
+		}).catch(() => { })
+	}).catch(() => { })
+}`
+	}
+	if !option.NoUpdate {
+		tplView += `
+//更新
+const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
+	await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/update', param, true)
+}`
+	}
+	tplView += `
+
+//分页
+const settingStore = useSettingStore()
+const pagination = reactive({
+	total: 0,
+	page: 1,
+	size: settingStore.pagination.size,
+	sizeList: settingStore.pagination.sizeList,
+	layout: settingStore.pagination.layout,
+	sizeChange: (val: number) => {
+		getList()
+	},
+	pageChange: (val: number) => {
+		getList()
+	}
+})
+
+const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+//列表
+const getList = async (resetPage: boolean = false) => {
+	if (resetPage) {
+		pagination.page = 1
+	}
+	const param = {
+		field: [],
+		filter: removeEmptyOfObj(queryCommon.data),
+		sort: table.sort,
+		page: pagination.page,
+		limit: pagination.size
+	}
+	table.loading = true
+	try {
+		const res = await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/list', param)
+		table.data = res.data.list?.length ? res.data.list : []
+		pagination.total = res.data.count
+	} catch (error) { }
+	table.loading = false
+}
+getList()
+
+//暴露组件接口给父组件
+defineExpose({
+	getList
+})
+</script>
+
+<template>
+	<ElRow class="main-table-tool">
+		<ElCol :span="16">
+			<ElSpace :size="10" style="height: 100%; margin-left: 10px;">`
+	if !option.NoCreate {
+		tplView += `
+				<ElButton type="primary" @click="handleAdd">
+					<AutoiconEpEditPen />{{ t('common.add') }}
+				</ElButton>`
+	}
+	if !option.NoDelete {
+		tplView += `
+				<ElButton type="danger" @click="handleBatchDelete">
+					<AutoiconEpDeleteFilled />{{ t('common.batchDelete') }}
+				</ElButton>`
+	}
+	tplView += `
+			</ElSpace>
+		</ElCol>
+		<ElCol :span="8" style="text-align: right;">
+			<ElSpace :size="10" style="height: 100%;">
+				<ElDropdown max-height="300" :hide-on-click="false">
+					<ElButton type="info" :circle="true">
+						<AutoiconEpHide />
+					</ElButton>
+					<template #dropdown>
+						<ElDropdownMenu>
+							<ElDropdownItem v-for="(item, key) in table.columns" :key="key">
+								<ElCheckbox v-model="item.hidden">
+									{{ item.title }}
+								</ElCheckbox>
+							</ElDropdownItem>
+						</ElDropdownMenu>
+					</template>
+				</ElDropdown>
+			</ElSpace>
+		</ElCol>
+	</ElRow>
+
+	<ElMain>
+		<ElAutoResizer>
+			<template #default="{ height, width }">
+				<ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort"
+					@column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
+					<template v-if="table.loading" #overlay>
+						<ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
+							<AutoiconEpLoading />
+						</ElIcon>
+					</template>
+				</ElTableV2>
+			</template>
+		</ElAutoResizer>
+	</ElMain>
+
+	<ElRow class="main-table-pagination">
+		<ElCol :span="24">
+			<ElPagination :total="pagination.total" v-model:currentPage="pagination.page"
+				v-model:page-size="pagination.size" @size-change="pagination.sizeChange"
+				@current-change="pagination.pageChange" :page-sizes="pagination.sizeList" :layout="pagination.layout"
+				:background="true" />
+		</ElCol>
+	</ElRow>
+</template>`
+
+	tplView = gstr.ReplaceByMap(tplView, map[string]string{
+		`{TplViewListColumn}`: tpl.ViewListColumn, //县替换这个！内部还有变量要替换
+	})
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
-		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
+		`{TplTableNameCaseCamelLower}`:    tpl.TableNameCaseCamelLower,
 		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
+		`{TplTableNameCaseSnake}`:         tpl.TableNameCaseSnake,
+		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
+		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
 	})
+	gfile.PutContents(saveFile, tplView)
+}
 
-	path := gfile.SelfDir()
-	saveViewPathPrefix := path + `../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake
-	gfile.PutContents(saveViewPathPrefix+`/Index.vue`, tplView)
+// view模板生成Query
+func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
+	saveFile := saveViewPathPrefix + `/Query.vue`
+	if gfile.IsFile(saveFile) {
+		return
+	}
+	tplView := `<script setup lang="ts">
+const { t, tm } = useI18n()
+
+const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+const listCommon = inject('listCommon') as { ref: any }
+const queryForm = reactive({
+	ref: null as any,
+	loading: false,
+	submit: () => {
+		queryForm.loading = true
+		listCommon.ref.getList(true).finally(() => {
+			queryForm.loading = false
+		})
+	},
+	reset: () => {
+		queryForm.ref.resetFields()
+		//queryForm.submit()
+	}
+})
+</script>
+
+<template>
+	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
+		@keyup.enter="queryForm.submit">
+		<ElFormItem prop="id">
+			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
+				:controls="false" />
+		</ElFormItem>
+		<ElFormItem prop="sceneName">
+			<ElInput v-model="queryCommon.data.sceneName" :placeholder="t('common.name.auth.scene.sceneName')"
+				:clearable="true" />
+		</ElFormItem>
+		<ElFormItem prop="sceneCode">
+			<ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('common.name.auth.scene.sceneCode')"
+				:clearable="true" />
+		</ElFormItem>
+		<ElFormItem prop="isStop" style="width: 100px;">
+			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
+				:placeholder="t('common.name.isStop')" :clearable="true" />
+		</ElFormItem>
+		<ElFormItem>
+			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
+				<AutoiconEpSearch />{{ t('common.query') }}
+			</ElButton>
+			<ElButton type="info" @click="queryForm.reset">
+				<AutoiconEpCircleClose />{{ t('common.reset') }}
+			</ElButton>
+		</ElFormItem>
+	</ElForm>
+</template>`
+
+	tplView = gstr.ReplaceByMap(tplView, map[string]string{
+		`{TplViewListColumn}`: tpl.ViewListColumn, //县替换这个！内部还有变量要替换
+	})
+	tplView = gstr.ReplaceByMap(tplView, map[string]string{
+		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
+		`{TplTableNameCaseCamelLower}`:    tpl.TableNameCaseCamelLower,
+		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
+		`{TplTableNameCaseSnake}`:         tpl.TableNameCaseSnake,
+		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
+		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+	})
+	gfile.PutContents(saveFile, tplView)
+}
+
+// view模板生成Save
+func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
+	saveFile := saveViewPathPrefix + `/Save.vue`
+	if gfile.IsFile(saveFile) {
+		return
+	}
+	tplView := `<script setup lang="ts">
+const { t, tm } = useI18n()
+
+const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+const listCommon = inject('listCommon') as { ref: any }
+const queryForm = reactive({
+	ref: null as any,
+	loading: false,
+	submit: () => {
+		queryForm.loading = true
+		listCommon.ref.getList(true).finally(() => {
+			queryForm.loading = false
+		})
+	},
+	reset: () => {
+		queryForm.ref.resetFields()
+		//queryForm.submit()
+	}
+})
+</script>
+
+<template>
+	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
+		@keyup.enter="queryForm.submit">
+		<ElFormItem prop="id">
+			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
+				:controls="false" />
+		</ElFormItem>
+		<ElFormItem prop="sceneName">
+			<ElInput v-model="queryCommon.data.sceneName" :placeholder="t('common.name.auth.scene.sceneName')"
+				:clearable="true" />
+		</ElFormItem>
+		<ElFormItem prop="sceneCode">
+			<ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('common.name.auth.scene.sceneCode')"
+				:clearable="true" />
+		</ElFormItem>
+		<ElFormItem prop="isStop" style="width: 100px;">
+			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
+				:placeholder="t('common.name.isStop')" :clearable="true" />
+		</ElFormItem>
+		<ElFormItem>
+			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
+				<AutoiconEpSearch />{{ t('common.query') }}
+			</ElButton>
+			<ElButton type="info" @click="queryForm.reset">
+				<AutoiconEpCircleClose />{{ t('common.reset') }}
+			</ElButton>
+		</ElFormItem>
+	</ElForm>
+</template>`
+
+	tplView = gstr.ReplaceByMap(tplView, map[string]string{
+		`{TplViewListColumn}`: tpl.ViewListColumn, //县替换这个！内部还有变量要替换
+	})
+	tplView = gstr.ReplaceByMap(tplView, map[string]string{
+		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
+		`{TplTableNameCaseCamelLower}`:    tpl.TableNameCaseCamelLower,
+		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
+		`{TplTableNameCaseSnake}`:         tpl.TableNameCaseSnake,
+		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
+		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+	})
+	gfile.PutContents(saveFile, tplView)
 }

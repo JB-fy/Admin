@@ -29,7 +29,7 @@ type MenuCreateReq struct {
 	MenuIcon  *string `c:"menuIcon,omitempty" p:"menuIcon" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	MenuUrl   *string `c:"menuUrl,omitempty" p:"menuUrl" v:"length:1,120"`
 	ExtraData *string `c:"extraData,omitempty" p:"extraData" v:"json"`
-	Sort      *uint   `c:"sort,omitempty" p:"sort" v:"between:0,100"`
+	Sort      *uint   `c:"sort,omitempty" p:"sort" v:"integer|between:0,100"`
 	IsStop    *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
 }
 
