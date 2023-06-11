@@ -132,6 +132,17 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 					})
 				})
 
+				group.Group("/platform/corn", func(group *ghttp.RouterGroup) {
+					controllerThis := controllerPlatform.NewCorn()
+					group.ALLMap(g.Map{
+						"/list":   controllerThis.List,
+						"/info":   controllerThis.Info,
+						"/create": controllerThis.Create,
+						"/update": controllerThis.Update,
+						"/del":    controllerThis.Delete,
+					})
+				})
+
 			})
 		})
 	})

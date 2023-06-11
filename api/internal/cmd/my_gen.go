@@ -605,7 +605,26 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ViewListColumn += `
+				if gstr.ToLower(field) == `remark` {
+					tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',,
+        hidden: true
+	},`
+					tpl.ViewSaveRule += `
+		` + field + `: [
+			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
+		],`
+					tpl.ViewSaveField += `
+				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
+				</ElFormItem>`
+				} else {
+					tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
 		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
@@ -613,18 +632,19 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		width: 150,
 		align: 'center',
 	},`
-				tpl.ViewQueryField += `
+					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
 		</ElFormItem>`
-				tpl.ViewSaveRule += `
+					tpl.ViewSaveRule += `
 		` + field + `: [
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
 		],`
-				tpl.ViewSaveField += `
+					tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
+				}
 				continue
 			}
 			//char类型
@@ -706,8 +726,6 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
-					<ElAlert :title="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.tip.` + field + `')" type="info" :show-icon="true"
-						:closable="false" />
 					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>`
 				continue
@@ -898,7 +916,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		count, err = model.Handler(daoThis.ParseGroup([]string{` + "`" + `id` + "`" + `}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
+		count, err = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
 	} else {
 		count, err = model.Count()
 	}
@@ -920,7 +938,7 @@ func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[
 		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{` + "`" + `id` + "`" + `}, &joinTableArr))
+		model = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr))
 	}
 	if limit > 0 {
 		model = model.Offset((page-1)*limit).Limit(limit)
@@ -942,7 +960,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{` + "`" + `id` + "`" + `}, &joinTableArr))
+		model = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr))
 	}
 	info, err = model.One()
 	if err != nil {
@@ -1057,7 +1075,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 			return
 		}
 	filter := gconv.Map(param.Filter)
-	order := [][2]string{{` + "`" + `id` + "`" + `, ` + "`" + `DESC` + "`" + `}}
+	order := [][2]string{{` + "`id`" + `, ` + "`" + `DESC` + "`" + `}}
 	if param.Sort.Key != ` + "`" + "`" + ` {
 		order[0][0] = param.Sort.Key
 	}
@@ -1077,10 +1095,10 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	case ` + "`" + `platformAdmin` + "`" + `:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
-		allowField := []string{{TplControllerAlloweFieldAppend}` + `, ` + "`" + `id` + "`" + `}
+		allowField := []string{` + "`id`, `keyword`, " + `{TplControllerAlloweFieldAppend}}
 		if isAuth {
 			allowField = dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
-			allowField = append(allowField, ` + "`" + `id` + "`" + `)`
+			allowField = append(allowField, ` + "`id`, `keyword`" + `)`
 		if tpl.ControllerAlloweFieldDiff != `` {
 			tplController += `
 			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段`
@@ -1127,7 +1145,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 		}
 
 		allowField := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
-		allowField = append(allowField, ` + "`" + `id` + "`" + `)`
+		allowField = append(allowField, ` + "`id`, `keyword`" + `)`
 		if tpl.ControllerAlloweFieldDiff != `` {
 			tplController += `
 			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段`
@@ -1140,7 +1158,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 				field = allowField
 			}
 		}
-		filter := map[string]interface{}{` + "`" + `id` + "`" + `: param.Id}
+		filter := map[string]interface{}{` + "`id`" + `: param.Id}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
@@ -1217,7 +1235,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ` + "`" + "`" + `))
 			return
 		}
-		filter := map[string]interface{}{` + "`" + `id` + "`" + `: param.IdArr}
+		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
@@ -1253,7 +1271,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
-		filter := map[string]interface{}{` + "`" + `id` + "`" + `: param.IdArr}
+		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
