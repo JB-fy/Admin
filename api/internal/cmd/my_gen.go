@@ -950,7 +950,7 @@ func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[
 		model = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr))
 	}
 	if limit > 0 {
-		model = model.Offset((page-1)*limit).Limit(limit)
+		model = model.Offset((page - 1) * limit).Limit(limit)
 	}
 	list, err = model.All()
 	return

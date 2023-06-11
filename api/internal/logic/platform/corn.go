@@ -54,7 +54,7 @@ func (logicThis *sCorn) List(ctx context.Context, filter map[string]interface{},
 		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr))
 	}
 	if limit > 0 {
-		model = model.Offset((page-1)*limit).Limit(limit)
+		model = model.Offset((page - 1) * limit).Limit(limit)
 	}
 	list, err = model.All()
 	return
@@ -124,4 +124,3 @@ func (logicThis *sCorn) Delete(ctx context.Context, filter map[string]interface{
 	row, err = result.RowsAffected()
 	return
 }
-
