@@ -448,7 +448,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
-		</ElFormItem>,`
+		</ElFormItem>`
 				tpl.ViewSaveRule += `
 		` + field + `: [
 			{ type: 'string', required: true, min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },

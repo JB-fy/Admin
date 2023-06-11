@@ -112,6 +112,15 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/server' }
             },
             {
+                path: '/platform/corn',
+                component: async () => {
+                    const component = await import('@/views/platform/corn/Index.vue')
+                    component.default.name = '/platform/corn'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/corn' }
+            },
+            {
                 path: '/profile',
                 component: async () => {
                     const component = await import('@/views/Profile.vue')
