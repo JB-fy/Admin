@@ -861,12 +861,20 @@ func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 import (
 	dao{TplPathSuffixCaseCamel} "api/internal/model/dao/{TplPathSuffixCaseCamelLower}"
-	"api/internal/service"
-	"api/internal/utils"
+	"api/internal/service"`
+	if !(option.NoCreate && option.NoUpdate) {
+		tplLogic += `
+	"api/internal/utils"`
+	}
+	tplLogic += `
 	"context"
 
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/text/gregex"
+	"github.com/gogf/gf/v2/database/gdb"`
+	if !(option.NoCreate && option.NoUpdate) {
+		tplLogic += `
+	"github.com/gogf/gf/v2/text/gregex"`
+	}
+	tplLogic += `
 )
 
 type s{TplTableNameCaseCamel} struct{}
