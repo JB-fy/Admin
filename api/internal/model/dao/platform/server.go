@@ -134,6 +134,13 @@ func (daoThis *serverDao) ParseField(field []string, joinTableArr *[]string) gdb
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+			case `keyword`:
+				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
+				if daoThis.ColumnArrG().Contains(v) {
+					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
+				} else {
+					m = m.Fields(v)
+				}
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -177,7 +184,11 @@ func (daoThis *serverDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.WhereLTE(daoThis.Table()+`.createdAt`, v)
 			case `keyword`:
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
+				if daoThis.ColumnArrG().Contains(keywordField) {
+					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
+				} else {
+					m = m.Where(`0 = 1`)
+				}
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {

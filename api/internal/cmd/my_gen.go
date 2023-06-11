@@ -183,7 +183,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			//允许字段
-			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment`) || gstr.ToLower(gstr.CaseCamelLower(field)) == gstr.ToLower(tpl.TableNameCaseCamel+`name`) || gstr.ToLower(field) == `account` {
+			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment`) || gstr.ToLower(gstr.CaseCamelLower(field)) == gstr.ToLower(tpl.TableNameCaseCamel+`name`) {
 				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
 			}
 			//排除字段

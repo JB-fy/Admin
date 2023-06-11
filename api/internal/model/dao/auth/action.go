@@ -137,6 +137,13 @@ func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+			case `keyword`:
+				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
+				if daoThis.ColumnArrG().Contains(v) {
+					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
+				} else {
+					m = m.Fields(v)
+				}
 			case `sceneIdArr`:
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
@@ -184,7 +191,11 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.WhereLTE(daoThis.Table()+`.createdAt`, v)
 			case `keyword`:
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
+				if daoThis.ColumnArrG().Contains(keywordField) {
+					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
+				} else {
+					m = m.Where(`0 = 1`)
+				}
 			case `sceneId`:
 				m = m.Where(ActionRelToScene.Table()+`.`+k, v)
 
