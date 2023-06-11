@@ -208,6 +208,9 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		switch fieldCaseCamel {
 		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
 		default:
+			if gstr.ToLower(field) == `remark` || gstr.ToLower(field) == `isstop` || gstr.ToLower(field) == `sort` || gstr.ToLower(field) == `account` || gstr.ToLower(field) == `password` || gstr.ToLower(field) == `phone` {
+
+			}
 			comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 				"\n", " ",
 				"\r", " ",
@@ -652,18 +655,6 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"size:` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ViewListColumn += `
-	{
-		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
-		key: '` + field + `',
-		width: 150,
-		align: 'center',
-	},`
-				tpl.ViewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
-		</ElFormItem>`
 				if gstr.ToLower(field) == `password` || gstr.ToLower(field) == `passwd` {
 					tpl.ViewSaveRule += `
 		` + field + `: [
@@ -679,6 +670,18 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
                     </label>
                 </ElFormItem>`
 				} else {
+					tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
+		key: '` + field + `',
+		width: 150,
+		align: 'center',
+	},`
+					tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 					tpl.ViewSaveRule += `
 		` + field + `: [
 			{ type: 'string', min: ` + result[1] + `, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: ` + result[1] + `, max: ` + result[1] + ` }) },
