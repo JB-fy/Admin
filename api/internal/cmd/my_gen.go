@@ -573,7 +573,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	switch sceneCode {
 	case ` + "`" + `platformAdmin` + "`" + `:
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `auth{TplTableNameCaseCamel}Look` + "`" + `)
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
 		allowField := []string{` + "`" + `{TplTableNameCamelLowerCase}Id` + "`" + `, ` + "`" + `{TplTableNameCamelLowerCase}Name` + "`" + `, ` + "`" + `id` + "`" + `}
 		if isAuth {
 			allowField = dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
@@ -633,7 +633,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `auth{TplTableNameCaseCamel}Look` + "`" + `)
+		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -668,7 +668,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `auth{TplTableNameCaseCamel}Create` + "`" + `)
+		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Create` + "`" + `)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -710,7 +710,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `auth{TplTableNameCaseCamel}Update` + "`" + `)
+		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Update` + "`" + `)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -746,7 +746,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `auth{TplTableNameCaseCamel}Delete` + "`" + `)
+		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Delete` + "`" + `)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -766,9 +766,10 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 	}
 
 	tplController = gstr.ReplaceByMap(tplController, map[string]string{
-		`{TplPathSuffixCaseCamel}`:      tpl.PathSuffixCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`: tpl.PathSuffixCaseCamelLower,
-		`{TplTableNameCaseCamel}`:       tpl.TableNameCaseCamel,
+		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
+		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
+		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
 	})
 
 	saveControllerPath := path + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
