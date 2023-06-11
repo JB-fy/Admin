@@ -32,7 +32,7 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="sceneId">
             <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
-                :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" />
+                :api="{ code: 'auth/scene/list', param: { field: ['id', 'keyword'] } }" />
         </ElFormItem>
         <ElFormItem prop="pid">
             <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"

@@ -52,7 +52,7 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 			return
 		}
 		allowField := daoPlatform.Server.ColumnArr()
-		allowField = append(allowField, `id`)
+		allowField = append(allowField, `id`, `keyword`)
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {

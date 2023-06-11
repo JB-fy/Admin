@@ -49,10 +49,10 @@ func (controllerThis *Admin) List(r *ghttp.Request) {
 	case `platformAdmin`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformAdminLook`)
-		allowField := []string{`adminId`, `nickname`, `id`}
+		allowField := []string{`id`, `keyword`, `adminId`, `nickname`}
 		if isAuth {
 			allowField = daoPlatform.Admin.ColumnArr()
-			allowField = append(allowField, `id`)
+			allowField = append(allowField, `id`, `keyword`)
 			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		}
 		field := allowField
@@ -92,7 +92,7 @@ func (controllerThis *Admin) Info(r *ghttp.Request) {
 		}
 
 		allowField := daoPlatform.Admin.ColumnArr()
-		allowField = append(allowField, `id`, `roleIdArr`)
+		allowField = append(allowField, `id`, `keyword`, `roleIdArr`)
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {

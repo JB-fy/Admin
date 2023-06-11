@@ -34,7 +34,7 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="roleId">
             <MySelect v-model="queryCommon.data.roleId" :placeholder="t('common.name.rel.roleId')"
-                :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
+                :api="{ code: 'auth/role/list', param: { field: ['id', 'keyword'] } }" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
             <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"

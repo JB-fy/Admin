@@ -27,7 +27,7 @@ class Menu extends AbstractController
                     $allowField = $this->getAllowField(AuthMenu::class);
                     $allowField = array_merge($allowField, ['sceneName', 'pMenuName']);
                 } else {
-                    $allowField = ['menuId', 'menuName', 'id'];
+                    $allowField = ['id', 'keyword', 'menuId', 'menuName'];
                 }
                 if (empty($data['field'])) {
                     $data['field'] = $allowField;

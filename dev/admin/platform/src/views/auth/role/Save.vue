@@ -94,7 +94,7 @@ const saveDrawer = reactive({
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId"
-                        :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }"
+                        :api="{ code: 'auth/scene/list', param: { field: ['id', 'keyword'] } }"
                         @change="() => { saveForm.data.menuIdArr = []; saveForm.data.actionIdArr = [] }" />
                 </ElFormItem>
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.menuIdArr')" prop="menuIdArr">
