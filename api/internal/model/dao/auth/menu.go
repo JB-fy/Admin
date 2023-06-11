@@ -145,7 +145,7 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `keyword`:
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				if daoThis.ColumnArrG().Contains(v) {
+				if daoThis.ColumnArrG().Contains(keywordField) {
 					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
 				}
 			case `menuTree`: //树状需要以下字段和排序方式

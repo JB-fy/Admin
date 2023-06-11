@@ -10,7 +10,7 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, sort: { key: string, order: string }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
+     *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: { key: string, order: string }, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
      *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
      *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数filter中使用的字段名。默认：props.api.param.field[0]
      *      searchField：非必须。当用户输入关键字做查询时，接口参数filter中使用的字段名。默认：props.api.param.field[1]
@@ -90,14 +90,14 @@ const select = reactive({
     api: {
         isEnd: false,
         loading: false,
-        param: computed((): { field: string[], filter: { [propName: string]: any }, sort: { key: string, order: string }, page: number, limit: number } => {
+        param: computed((): { filter: { [propName: string]: any }, field: string[], sort: { key: string, order: string }, page: number, limit: number } => {
             return {
-                field: [],
+                field: ['id', 'keyword'],
                 filter: {} as { [propName: string]: any },
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: useSettingStore().scrollSize,
-                ...props.api.param
+                ...(props.api?.param ?? {})
             }
         }),
         transform: computed(() => {
@@ -116,13 +116,13 @@ const select = reactive({
             if (props.api.selectedField) {
                 return props.api.selectedField
             }
-            if (props.api.param.field[0] == 'id') {
+            if (select.api.param.field[0] == 'id') {
                 return props.multiple ? 'idArr' : 'id'
             }
-            return props.api.param.field[0]
+            return select.api.param.field[0]
         }),
         searchField: computed((): string => {
-            return props.api.searchField ?? props.api.param.field[1]
+            return props.api.searchField ?? select.api.param.field[1]
         }),
         getOptions: async () => {
             if (select.api.loading) {
@@ -229,11 +229,11 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 
 <template>
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
-    <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value"
-        :placeholder="placeholder" :options="select.options" :clearable="clearable" :filterable="filterable"
-        @visible-change="select.visibleChange" :remote="remote" :remote-method="select.remoteMethod"
-        :loading="select.loading" :disabled="disabled" :multiple="multiple" :multiple-limit="multipleLimit"
-        :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
+    <ElSelectV2 v-if="multiple" :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
+        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
+        :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled"
+        :multiple="multiple" :multiple-limit="multipleLimit" :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
     <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
         :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
@@ -241,10 +241,10 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 
     <!-------- 使用示例 开始-------->
     <!-- <MySelect v-model="saveCommon.data.sceneId"
-        :api="{ code: 'auth/scene/list', param: { field: ['id', 'keyword'] } }" />
+        :api="{ code: 'auth/scene/list' }" />
 
     <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
         :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
-        :api="{ code: 'auth/scene/list', param: { field: ['id', 'keyword'] } }" /> -->
+        :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
     <!-------- 使用示例 结束-------->
 </template>

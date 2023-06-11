@@ -218,7 +218,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				} else {
 					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/list', param: { field: ['id', 'keyword'] } }" />
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/list' }" />
 		</ElFormItem>`
 				}
 				continue

@@ -23,8 +23,7 @@ const queryForm = reactive({
     <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
         @keyup.enter="queryForm.submit">
         <ElFormItem prop="id">
-            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
-                :controls="false" />
+            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="menuName">
             <ElInput v-model="queryCommon.data.menuName" :placeholder="t('common.name.auth.menu.menuName')"
@@ -32,7 +31,7 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="sceneId">
             <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
-                :api="{ code: 'auth/scene/list', param: { field: ['id', 'keyword'] } }" />
+                :api="{ code: 'auth/scene/list' }" />
         </ElFormItem>
         <ElFormItem prop="pid">
             <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"

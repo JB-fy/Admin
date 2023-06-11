@@ -140,7 +140,7 @@ func (daoThis *adminDao) ParseField(field []string, joinTableArr *[]string) gdb.
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `keyword`:
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				if daoThis.ColumnArrG().Contains(v) {
+				if daoThis.ColumnArrG().Contains(keywordField) {
 					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
 				}
 			case `roleIdArr`:
