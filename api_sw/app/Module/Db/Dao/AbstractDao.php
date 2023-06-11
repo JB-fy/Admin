@@ -332,6 +332,14 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey() . ' AS ' . $key);
                 return true;
+            case 'keyword':
+                $keywordField = str_replace('Id', 'Name', $this->getKey());
+                if (in_array($keywordField, $this->getAllColumn())) {
+                    $this->builder->addSelect($this->getTable() . '.' . $keywordField . ' AS ' . $key);
+                } else {
+                    $this->builder->addSelect($key);
+                }
+                return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     $this->builder->addSelect($this->getTable() . '.' . $key);
@@ -385,7 +393,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 return true;
             case 'keyword':
                 $keywordField = str_replace('Id', 'Name', $this->getKey());
-                $this->builder->where($this->getTable() . '.'.$keywordField, $operator ?? 'Like', '%'.$value.'%', $boolean ?? 'and');
+                if (in_array($keywordField, $this->getAllColumn())) {
+                    $this->builder->where($this->getTable() . '.' . $keywordField, $operator ?? 'Like', '%' . $value . '%', $boolean ?? 'and');
+                } else {
+                    $this->builder->where('0 = 1');
+                }
                 return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
@@ -401,7 +413,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                             $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                         }
                     } else if (strtolower(substr($key, -4)) === 'name') {
-                        $this->builder->where($this->getTable() . '.'.$key, $operator ?? 'like', '%'.$value.'%', $boolean ?? 'and');
+                        $this->builder->where($this->getTable() . '.' . $key, $operator ?? 'like', '%' . $value . '%', $boolean ?? 'and');
                     } else {
                         $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                     }

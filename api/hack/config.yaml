@@ -29,7 +29,7 @@ gfcli:
         group: "default"
         removePrefix: "platform_"
         path: "internal"
-        tables: "platform_admin,platform_config,platform_server"
+        tables: "platform_admin,platform_config,platform_corn,platform_server"
         daoPath: "model/dao/platform"
         tplDaoIndexPath: "resource/template/gen_dao_template_dao.txt"
         tplDaoInternalPath: "resource/template/gen_dao_template_dao_internal.txt"

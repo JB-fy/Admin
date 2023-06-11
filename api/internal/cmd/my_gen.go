@@ -42,6 +42,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	MyGenTplApi(ctx, option, tpl)
 	MyGenTplLogic(ctx, option, tpl)
 	MyGenTplController(ctx, option, tpl)
+	MyGenTplView(ctx, option, tpl)
 	return
 }
 
@@ -305,9 +306,6 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 
 // api模板生成
 func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	path := gfile.SelfDir()
-	//tplApiPath := path + `/resource/template/gen_template_api.txt`
-	//tplApi := gfile.GetContents(tplApiPath)
 	tplApi := `package api
 
 import (
@@ -366,15 +364,13 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 		`{TplApiSaveColumn}`:      tpl.ApiSaveColumn,
 	})
 
+	path := gfile.SelfDir()
 	saveApiPath := path + `/api/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	gfile.PutContents(saveApiPath, tplApi)
 }
 
 // logic模板生成
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	path := gfile.SelfDir()
-	//tplLogicPath := path + `/resource/template/gen_template_logic.txt`
-	//tplLogic := gfile.GetContents(tplLogicPath)
 	tplLogic := `package logic
 
 import (
@@ -527,6 +523,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 		`{TplTableNameCaseCamel}`:       tpl.TableNameCaseCamel,
 	})
 
+	path := gfile.SelfDir()
 	saveLogicPath := path + `/internal/logic/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	gfile.PutContents(saveLogicPath, tplLogic)
 }
@@ -797,4 +794,69 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 
 	saveControllerPath := path + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	gfile.PutContents(saveControllerPath, tplController)
+}
+
+// view模板生成
+func MyGenTplView(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	tplView := `<script setup lang="ts">
+import List from './List.vue'
+import Query from './Query.vue'`
+	if !(option.NoCreate && option.NoUpdate) {
+		tplView += `
+import Save from './Save.vue'`
+	}
+	tplView += `
+
+//搜索
+const queryCommon = reactive({
+	data: {}
+})
+provide('queryCommon', queryCommon)
+
+//列表
+const listCommon = reactive({
+	ref: null as any,
+})
+provide('listCommon', listCommon)`
+	if !(option.NoCreate && option.NoUpdate) {
+		tplView += `
+
+//保存
+const saveCommon = reactive({
+	visible: false,
+	title: '',  //新增|编辑|复制
+	data: {}
+})
+provide('saveCommon', saveCommon)`
+	}
+	tplView += `
+</script>
+
+<template>
+	<ElContainer class="main-table-container">
+		<ElHeader>
+			<Query />
+		</ElHeader>
+
+		<List :ref="(el: any) => { listCommon.ref = el }" />`
+	if !(option.NoCreate && option.NoUpdate) {
+		tplView += `
+
+		<!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
+		<Save v-if="saveCommon.visible" />`
+	}
+	tplView += `
+	</ElContainer>
+</template>`
+
+	tplView = gstr.ReplaceByMap(tplView, map[string]string{
+		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
+		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
+		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
+	})
+
+	path := gfile.SelfDir()
+	saveViewPathPrefix := path + `../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake
+	gfile.PutContents(saveViewPathPrefix+`/Index.vue`, tplView)
 }
