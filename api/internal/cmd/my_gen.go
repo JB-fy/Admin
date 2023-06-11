@@ -208,15 +208,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		switch fieldCaseCamel {
 		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
 		default:
-			if gstr.ToLower(field) == `remark` || gstr.ToLower(field) == `isstop` || gstr.ToLower(field) == `sort` || gstr.ToLower(field) == `account` || gstr.ToLower(field) == `password` || gstr.ToLower(field) == `phone` {
-
-			}
 			comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 				"\n", " ",
 				"\r", " ",
 			}))
-			tpl.ViewI18nField += `
+			if !garray.NewStrArrayFrom([]string{`remark`, `isstop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(gstr.ToLower(field)) {
+				tpl.ViewI18nField += `
 	` + field + `: '` + comment + `',`
+			}
 			//允许字段
 			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment`) || gstr.ToLower(gstr.CaseCamelLower(field)) == gstr.ToLower(tpl.TableNameCaseCamel+`name`) {
 				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
@@ -234,15 +233,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			if gstr.ToLower(gstr.SubStr(field, -2)) == `id` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
 				tpl.ApiSaveColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
-				tpl.ViewListColumn += `
+				if gstr.ToLower(field) == `pid` {
+					tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
+		title: t('common.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
 	},`
-				if gstr.ToLower(field) == `pid` {
 					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree' }" :defaultOptions="[{ id: 0, keyword: t('common.name.allTopLevel') }]" />
@@ -256,6 +255,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
                     <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, keyword: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>`
 				} else {
+					tpl.ViewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 150,
+	},`
 					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamel(gstr.SubStr(field, 0, -2)) + `/list' }" />
