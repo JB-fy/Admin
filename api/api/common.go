@@ -9,7 +9,7 @@ type CommonListReq struct {
 	Field []string `p:"field" v:"distinct|foreach|min-length:1"`
 	Sort  SortReq  `p:"sort"`
 	Page  int      `p:"page" v:"integer|min:1"`
-	Limit int      `p:"limit" v:"integer|min:0"` //可传0取全部
+	Limit *int     `p:"limit" v:"integer|min:0"` //可传0取全部
 }
 
 type CommonListFilterReq struct {

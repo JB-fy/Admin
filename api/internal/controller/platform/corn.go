@@ -22,10 +22,10 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *apiPlatform.CornListReq
 	err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
+	if err != nil {
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		return
+	}
 	filter := gconv.Map(param.Filter)
 	order := [][2]string{{`id`, `DESC`}}
 	if param.Sort.Key != `` {
@@ -37,8 +37,8 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 	if param.Page <= 0 {
 		param.Page = 1
 	}
-	if param.Limit <= 0 {
-		param.Limit = 10
+	if param.Limit == nil {
+		*param.Limit = 10
 	}
 	/**--------参数处理 结束--------**/
 
@@ -66,7 +66,7 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Corn().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Corn().List(r.GetCtx(), filter, field, order, param.Page, *param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -218,4 +218,3 @@ func (controllerThis *Corn) Delete(r *ghttp.Request) {
 		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
-

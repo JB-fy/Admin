@@ -37,8 +37,8 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 	if param.Page <= 0 {
 		param.Page = 1
 	}
-	if param.Limit <= 0 {
-		param.Limit = 10
+	if param.Limit == nil {
+		*param.Limit = 10
 	}
 	/**--------参数处理 结束--------**/
 
@@ -68,7 +68,7 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Server().List(r.GetCtx(), filter, field, order, param.Page, param.Limit)
+		list, err := service.Server().List(r.GetCtx(), filter, field, order, param.Page, *param.Limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
