@@ -208,17 +208,20 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
 	},`
 				if gstr.ToLower(field) == `pid` {
-
+					tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree' }" :defaultOptions="[{ id: 0, keyword: t('common.name.allTopLevel') }]" />
+		</ElFormItem>`
 				} else {
 					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/list' }" />
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamel(gstr.SubStr(field, 0, -2)) + `/list' }" />
 		</ElFormItem>`
 				}
 				continue
@@ -230,11 +233,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `" style="width: 100px;">
+			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.` + field + `')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//is前缀
@@ -274,6 +281,10 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			]
 		}
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `" style="width: 100px;">
+			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//含有sort和weight字符
@@ -358,14 +369,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
 		</ElFormItem>,`
 				continue
 			}
@@ -377,11 +388,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//含有mobile和phone字符
@@ -392,11 +407,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//含有url和link字符
@@ -407,11 +426,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 300,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//int类型
@@ -426,11 +449,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.` + field + `')" :controls="false" />
+		</ElFormItem>`
 				continue
 			}
 			//float类型
@@ -440,11 +467,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :precision="2" :controls="false" />
+		</ElFormItem>`
 				continue
 			}
 			//varchar类型
@@ -455,11 +486,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//char类型
@@ -470,11 +505,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+				tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 				continue
 			}
 			//json类型
@@ -484,7 +523,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 200,
 		align: 'center',
@@ -499,7 +538,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -514,7 +553,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -528,11 +567,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseSnake}.` + field + `'),
+		title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
 	},`
+			tpl.ViewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" :clearable="true" />
+		</ElFormItem>`
 		}
 	}
 	tpl.ApiFilterColumn = gstr.SubStr(tpl.ApiFilterColumn, 0, -len("\n"))
@@ -1439,9 +1482,33 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, 
 		return
 	}
 	tplView := `<script setup lang="ts">
+import dayjs from 'dayjs'
+
 const { t, tm } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+queryCommon.data = {
+	...queryCommon.data,
+	timeRange: (() => {
+		const date = new Date()
+		return [
+			new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+			new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+		]
+	})(),
+	startTime: computed(() => {
+		if (queryCommon.data.timeRange?.length) {
+			return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
+		}
+		return ''
+	}),
+	endTime: computed(() => {
+		if (queryCommon.data.timeRange?.length) {
+			return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
+		}
+		return ''
+	})
+}
 const listCommon = inject('listCommon') as { ref: any }
 const queryForm = reactive({
 	ref: null as any,
@@ -1463,20 +1530,13 @@ const queryForm = reactive({
 	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
 		@keyup.enter="queryForm.submit">
 		<ElFormItem prop="id">
-			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
-				:controls="false" />
-		</ElFormItem>
-		<ElFormItem prop="sceneName">
-			<ElInput v-model="queryCommon.data.sceneName" :placeholder="t('common.name.auth.scene.sceneName')"
-				:clearable="true" />
-		</ElFormItem>
-		<ElFormItem prop="sceneCode">
-			<ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('common.name.auth.scene.sceneCode')"
-				:clearable="true" />
-		</ElFormItem>
-		<ElFormItem prop="isStop" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
-				:placeholder="t('common.name.isStop')" :clearable="true" />
+			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
+		</ElFormItem>{TplViewQueryField}
+		<ElFormItem prop="timeRange">
+			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-"
+				:default-time="queryCommon.data.timeRange" :start-placeholder="t('common.name.startTime')"
+				:end-placeholder="t('common.name.endTime')">
+			</ElDatePicker>
 		</ElFormItem>
 		<ElFormItem>
 			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
@@ -1490,7 +1550,7 @@ const queryForm = reactive({
 </template>`
 
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
-		`{TplViewListColumn}`: tpl.ViewListColumn, //县替换这个！内部还有变量要替换
+		`{TplViewQueryField}`: tpl.ViewQueryField, //县替换这个！内部还有变量要替换
 	})
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,

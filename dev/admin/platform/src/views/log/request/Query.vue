@@ -47,8 +47,7 @@ const queryForm = reactive({
     <ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
         @keyup.enter="queryForm.submit">
         <ElFormItem prop="id">
-            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
-                :controls="false" />
+            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="requestUrl">
             <ElInput v-model="queryCommon.data.requestUrl" :placeholder="t('common.name.log.request.requestUrl')"
@@ -64,8 +63,9 @@ const queryForm = reactive({
             <ElInput v-model="queryCommon.data.maxRunTime" :placeholder="t('common.name.max')" />
         </ElFormItem>
         <ElFormItem prop="timeRange">
-            <ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="queryCommon.data.timeRange"
-                :start-placeholder="t('common.name.startTime')" :end-placeholder="t('common.name.endTime')">
+            <ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-"
+                :default-time="queryCommon.data.timeRange" :start-placeholder="t('common.name.startTime')"
+                :end-placeholder="t('common.name.endTime')">
             </ElDatePicker>
         </ElFormItem>
         <ElFormItem>
