@@ -866,7 +866,6 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 		tplApi += `type {TplTableNameCaseCamel}DeleteReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq
 }
-
 `
 	}
 
@@ -1035,7 +1034,6 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 	row, err = result.RowsAffected()
 	return
 }
-
 `
 	}
 
@@ -1300,7 +1298,6 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
-
 `
 	}
 
