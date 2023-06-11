@@ -75,7 +75,7 @@ const table = reactive({
 	},
 	{
 		dataKey: 'remark',
-		title: t('common.name.platform.corn.remark'),
+		title: t('common.name.remark'),
 		key: 'remark',
 		width: 150,
 		align: 'center',

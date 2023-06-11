@@ -612,7 +612,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		title: t('common.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
-		align: 'center',,
+		align: 'center',
         hidden: true
 	},`
 					tpl.ViewSaveRule += `
