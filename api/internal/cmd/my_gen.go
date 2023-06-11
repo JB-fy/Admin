@@ -1078,10 +1078,10 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}ListReq
 	err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
+	if err != nil {
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		return
+	}
 	filter := gconv.Map(param.Filter)
 	order := [][2]string{{` + "`id`" + `, ` + "`" + `DESC` + "`" + `}}
 	if param.Sort.Key != ` + "`" + "`" + ` {
@@ -1147,10 +1147,10 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}InfoReq
 		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
+	if err != nil {
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		return
+	}
 
 		allowField := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
 		allowField = append(allowField, ` + "`id`, `keyword`" + `)`
@@ -1197,10 +1197,10 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}CreateReq
 		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
+	if err != nil {
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		return
+	}
 		data := gconv.Map(param)
 		/**--------参数处理 结束--------**/
 
@@ -1233,10 +1233,10 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}UpdateReq
 		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
+	if err != nil {
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		return
+	}
 		data := gconv.Map(param)
 		delete(data, ` + "`" + `idArr` + "`" + `)
 		if len(data) == 0 {
@@ -1275,10 +1275,10 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}DeleteReq
 		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
+	if err != nil {
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		return
+	}
 		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
 		/**--------参数处理 结束--------**/
 
