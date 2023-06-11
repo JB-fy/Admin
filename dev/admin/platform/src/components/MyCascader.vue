@@ -10,7 +10,7 @@ const props = defineProps({
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ field: string[], filter: { [propName: string]: any }, sort: { key: string, order: string }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
+     *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: { key: string, order: string }, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
      *      transform：非必须。接口返回数据转换方法
      *      pidField：非必须。动态加载时用于获取子级，接口参数filter中使用的字段名
      */
@@ -103,10 +103,10 @@ const cascader = reactive({
     },
     api: {
         loading: false,
-        param: computed((): { field: string[], filter: { [propName: string]: any }, sort: { key: string, order: string }, page: number, limit: number } => {
+        param: computed((): { filter: { [propName: string]: any }, field: string[], sort: { key: string, order: string }, page: number, limit: number } => {
             return {
-                field: [],
                 filter: {} as { [propName: string]: any },
+                field: ['id', 'keyword'],
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: 0,

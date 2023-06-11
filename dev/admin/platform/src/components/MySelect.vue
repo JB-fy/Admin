@@ -92,8 +92,8 @@ const select = reactive({
         loading: false,
         param: computed((): { filter: { [propName: string]: any }, field: string[], sort: { key: string, order: string }, page: number, limit: number } => {
             return {
-                field: ['id', 'keyword'],
                 filter: {} as { [propName: string]: any },
+                field: ['id', 'keyword'],
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: useSettingStore().scrollSize,
