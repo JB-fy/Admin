@@ -203,17 +203,17 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
 
     <!-------- 使用示例 开始-------->
     <!-- <MyCascader v-model="saveCommon.data.menuIdArr"
-        :api="{ code: 'auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }" :isPanel="true"
+        :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }" :isPanel="true"
         :props="{ multiple: true }" />
 
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: 'auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }" />
+        :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }" />
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: 'auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }"
+        :api="{ code: '/auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }"
         :props="{ lazy: true }" />
 
     <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"
         :defaultOptions="[{ id: 0, menuName: t('common.name.allTopLevel') }]"
-        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'] } }" /> -->
+        :api="{ code: '/auth/menu/tree', param: { field: ['id', 'menuName'] } }" /> -->
     <!-------- 使用示例 结束-------->
 </template>

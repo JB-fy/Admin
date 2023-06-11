@@ -116,9 +116,9 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
         :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
 
     <!-------- 使用示例 开始-------->
-    <!-- <MyTransfer v-model="saveCommon.data.sceneIdArr" :api="{ code: 'auth/scene/list' }" />
+    <!-- <MyTransfer v-model="saveCommon.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
 
     <MyTransfer v-model="saveCommon.data.sceneIdArr"
-        :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+        :api="{ code: '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
     <!-------- 使用示例 结束-------->
 </template>

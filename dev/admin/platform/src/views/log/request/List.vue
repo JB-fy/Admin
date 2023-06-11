@@ -128,7 +128,7 @@ defineExpose({
         <ElCol :span="8" style="text-align: right;">
             <ElSpace :size="10" style="height: 100%;">
                 <MyExportButton :headerList="table.columns"
-                    :api="{ code: 'log/request/list', param: { filter: queryCommon.data, sort: table.sort } }" />
+                    :api="{ code: '/log/request/list', param: { filter: queryCommon.data, sort: table.sort } }" />
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
                         <AutoiconEpHide />

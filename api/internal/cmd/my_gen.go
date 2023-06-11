@@ -37,6 +37,7 @@ type MyGenTpl struct {
 	ViewListColumn              string //view列表字段
 	ViewQueryField              string //view查询字段
 	ViewSaveField               string //view创建更新字段
+	ViewSaveRule                string //view创建更新字段验证规则
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -216,12 +217,12 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				if gstr.ToLower(field) == `pid` {
 					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree' }" :defaultOptions="[{ id: 0, keyword: t('common.name.allTopLevel') }]" />
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree' }" :defaultOptions="[{ id: 0, keyword: t('common.name.allTopLevel') }]" />
 		</ElFormItem>`
 				} else {
 					tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamel(gstr.SubStr(field, 0, -2)) + `/list' }" />
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.rel.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamel(gstr.SubStr(field, 0, -2)) + `/list' }" />
 		</ElFormItem>`
 				}
 				continue
@@ -1462,7 +1463,7 @@ defineExpose({
 </template>`
 
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
-		`{TplViewListColumn}`: tpl.ViewListColumn, //县替换这个！内部还有变量要替换
+		`{TplViewListColumn}`: tpl.ViewListColumn, //先替换这个！内部还有变量要替换
 	})
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
@@ -1550,7 +1551,7 @@ const queryForm = reactive({
 </template>`
 
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
-		`{TplViewQueryField}`: tpl.ViewQueryField, //县替换这个！内部还有变量要替换
+		`{TplViewQueryField}`: tpl.ViewQueryField, //先替换这个！内部还有变量要替换
 	})
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
@@ -1570,58 +1571,84 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, s
 		return
 	}
 	tplView := `<script setup lang="ts">
-const { t, tm } = useI18n()
+const { t } = useI18n()
 
-const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
+const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
-const queryForm = reactive({
+
+const saveForm = reactive({
 	ref: null as any,
 	loading: false,
+	data: {
+		...saveCommon.data
+	} as { [propName: string]: any },
+	rules: {{TplViewSaveRule}
+	} as any,
 	submit: () => {
-		queryForm.loading = true
-		listCommon.ref.getList(true).finally(() => {
-			queryForm.loading = false
+		saveForm.ref.validate(async (valid: boolean) => {
+			if (!valid) {
+				return false
+			}
+			saveForm.loading = true
+			const param = removeEmptyOfObj(saveForm.data, false)
+			try {
+				if (param?.idArr?.length > 0) {
+					await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/update', param, true)
+				} else {
+					await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/create', param, true)
+				}
+				listCommon.ref.getList(true)
+				saveCommon.visible = false
+			} catch (error) { }
+			saveForm.loading = false
 		})
+	}
+})
+
+const saveDrawer = reactive({
+	ref: null as any,
+	size: useSettingStore().saveDrawer.size,
+	beforeClose: (done: Function) => {
+		if (useSettingStore().saveDrawer.isTipClose) {
+			ElMessageBox.confirm('', {
+				type: 'info',
+				title: t('common.tip.configExit'),
+				center: true,
+				showClose: false,
+			}).then(() => {
+				done()
+			}).catch(() => { })
+		} else {
+			done()
+		}
 	},
-	reset: () => {
-		queryForm.ref.resetFields()
-		//queryForm.submit()
+	buttonClose: () => {
+		//saveCommon.visible = false
+		saveDrawer.ref.handleClose()    //会触发beforeClose
 	}
 })
 </script>
 
 <template>
-	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
-		@keyup.enter="queryForm.submit">
-		<ElFormItem prop="id">
-			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1"
-				:controls="false" />
-		</ElFormItem>
-		<ElFormItem prop="sceneName">
-			<ElInput v-model="queryCommon.data.sceneName" :placeholder="t('common.name.auth.scene.sceneName')"
-				:clearable="true" />
-		</ElFormItem>
-		<ElFormItem prop="sceneCode">
-			<ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('common.name.auth.scene.sceneCode')"
-				:clearable="true" />
-		</ElFormItem>
-		<ElFormItem prop="isStop" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"
-				:placeholder="t('common.name.isStop')" :clearable="true" />
-		</ElFormItem>
-		<ElFormItem>
-			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
-				<AutoiconEpSearch />{{ t('common.query') }}
+	<ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible"
+		:title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+		<ElScrollbar>
+			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
+				label-width="auto" :status-icon="true" :scroll-to-error="true">{TplViewSaveField}
+			</ElForm>
+		</ElScrollbar>
+		<template #footer>
+			<ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
+			<ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+				{{ t('common.save') }}
 			</ElButton>
-			<ElButton type="info" @click="queryForm.reset">
-				<AutoiconEpCircleClose />{{ t('common.reset') }}
-			</ElButton>
-		</ElFormItem>
-	</ElForm>
+		</template>
+	</ElDrawer>
 </template>`
 
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
-		`{TplViewListColumn}`: tpl.ViewListColumn, //县替换这个！内部还有变量要替换
+		`{TplViewSaveRule}`:  tpl.ViewSaveRule,  //先替换这个！内部还有变量要替换
+		`{TplViewSaveField}`: tpl.ViewSaveField, //先替换这个！内部还有变量要替换
 	})
 	tplView = gstr.ReplaceByMap(tplView, map[string]string{
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
