@@ -24,13 +24,15 @@ type MyGenOption struct {
 }
 
 type MyGenTpl struct {
-	RawTableNameCaseCamelLower string //原始表名（小驼峰）
-	TableNameCaseCamel         string //去除前缀表名（大驼峰）
-	TableNameCaseSnake         string //去除前缀表名（蛇形）
-	PathSuffixCaseCamelLower   string //路径后缀（小驼峰）
-	PathSuffixCaseCamel        string //路径后缀（大驼峰）
-	ApiFilterColumn            string //api列表过滤
-	ApiSaveColumn              string //api创建更新
+	RawTableNameCaseCamelLower  string //原始表名（小驼峰）
+	TableNameCaseCamel          string //去除前缀表名（大驼峰）
+	TableNameCaseSnake          string //去除前缀表名（蛇形）
+	PathSuffixCaseCamelLower    string //路径后缀（小驼峰）
+	PathSuffixCaseCamel         string //路径后缀（大驼峰）
+	ApiFilterColumn             string //api列表过滤
+	ApiSaveColumn               string //api创建更新
+	ControllerAlloweFieldAppend string //controller追加字段
+	ControllerAlloweFieldDiff   string //controller移除字段
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -180,9 +182,18 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		switch fieldCaseCamel {
 		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
 		default:
+			//允许字段
+			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment`) || gstr.ToLower(gstr.CaseCamelLower(field)) == gstr.ToLower(tpl.TableNameCaseCamel+`name`) || gstr.ToLower(field) == `account` {
+				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
+			}
+			//排除字段
+			if gstr.ToLower(field) == `password` || gstr.ToLower(field) == `passwd` {
+				tpl.ControllerAlloweFieldDiff += "`" + field + "`, "
+			}
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + column[`Comment`].String() + "\n"
+				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
 				continue
 			}
 			//id后缀
@@ -287,6 +298,8 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	}
 	tpl.ApiFilterColumn = gstr.SubStr(tpl.ApiFilterColumn, 0, -len("\n"))
 	tpl.ApiSaveColumn = gstr.SubStr(tpl.ApiSaveColumn, 0, -len("\n"))
+	tpl.ControllerAlloweFieldAppend = gstr.SubStr(tpl.ApiFilterColumn, 0, -len(`, `))
+	tpl.ControllerAlloweFieldDiff = gstr.SubStr(tpl.ApiSaveColumn, 0, -len(`, `))
 	return
 }
 
@@ -574,11 +587,15 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	case ` + "`" + `platformAdmin` + "`" + `:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
-		allowField := []string{` + "`" + `{TplTableNameCamelLowerCase}Id` + "`" + `, ` + "`" + `{TplTableNameCamelLowerCase}Name` + "`" + `, ` + "`" + `id` + "`" + `}
+		allowField := []string{{TplControllerAlloweFieldAppend}` + `, ` + "`" + `id` + "`" + `}
 		if isAuth {
 			allowField = dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
-			allowField = append(allowField, ` + "`" + `id` + "`" + `)
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + "`" + `password` + "`" + `})).Slice() //移除敏感字段
+			allowField = append(allowField, ` + "`" + `id` + "`" + `)`
+		if tpl.ControllerAlloweFieldDiff != `` {
+			tplController += `
+			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段`
+		}
+		tplController += `
 		}
 		field := allowField
 		if len(param.Field) > 0 {
@@ -620,8 +637,12 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 		}
 
 		allowField := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
-		allowField = append(allowField, ` + "`" + `id` + "`" + `)
-		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + "`" + `password` + "`" + `})).Slice() //移除敏感字段
+		allowField = append(allowField, ` + "`" + `id` + "`" + `)`
+		if tpl.ControllerAlloweFieldDiff != `` {
+			tplController += `
+			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段`
+		}
+		tplController += `
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -766,10 +787,12 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 	}
 
 	tplController = gstr.ReplaceByMap(tplController, map[string]string{
-		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
-		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
-		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
+		`{TplRawTableNameCaseCamelLower}`:  tpl.RawTableNameCaseCamelLower,
+		`{TplPathSuffixCaseCamel}`:         tpl.PathSuffixCaseCamel,
+		`{TplPathSuffixCaseCamelLower}`:    tpl.PathSuffixCaseCamelLower,
+		`{TplTableNameCaseCamel}`:          tpl.TableNameCaseCamel,
+		`{TplControllerAlloweFieldAppend}`: tpl.ControllerAlloweFieldAppend,
+		`{TplControllerAlloweFieldDiff}`:   tpl.ControllerAlloweFieldDiff,
 	})
 
 	saveControllerPath := path + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`

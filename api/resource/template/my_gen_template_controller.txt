@@ -47,11 +47,11 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	case `platformAdmin`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `{TplRawTableNameCaseCamelLower}Look`)
-		allowField := []string{`{TplTableNameCamelLowerCase}Id`, `{TplTableNameCamelLowerCase}Name`, `id`}
+		allowField := []string{{TplControllerAlloweFieldAppend}, `id`}
 		if isAuth {
 			allowField = dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
 			allowField = append(allowField, `id`)
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
+			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段
 		}
 		field := allowField
 		if len(param.Field) > 0 {
