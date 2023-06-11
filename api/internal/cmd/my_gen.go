@@ -21,6 +21,7 @@ type MyGenOption struct {
 	NoCreate     bool   `c:"noCreate"`             //不生成创建接口(0,false,off,no,""为false，其他都为true)
 	NoUpdate     bool   `c:"noUpdate"`             //不生成更新接口(0,false,off,no,""为false，其他都为true)
 	NoDelete     bool   `c:"noDelete"`             //不生成删除接口(0,false,off,no,""为false，其他都为true)
+	IsCover      bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
 }
 
 type MyGenTpl struct {
@@ -61,7 +62,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	var db gdb.DB
 	option.DbGroup = `default`
 	if option.DbGroup == `` {
-		option.DbGroup = gcmd.Scan("> 请输入db分组,默认(default):\n")
+		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
 		if option.DbGroup == `` {
 			option.DbGroup = `default`
 		}
@@ -73,7 +74,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		if err == nil {
 			break
 		}
-		option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入,默认(default):\n")
+		option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入，默认(default):\n")
 		if option.DbGroup == `` {
 			option.DbGroup = `default`
 		}
@@ -99,11 +100,11 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		if option.RemovePrefix == `` || gstr.Pos(option.DbTable, option.RemovePrefix) == 0 {
 			break
 		}
-		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入,默认(空):\n")
+		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
 	noList, ok := optionMap[`noList`]
 	if !ok {
-		noList = gcmd.Scan("> 是否生成列表接口,默认(yes):\n")
+		noList = gcmd.Scan("> 是否生成列表接口，默认(yes):\n")
 	}
 noListEnd:
 	for {
@@ -115,12 +116,12 @@ noListEnd:
 			option.NoList = true
 			break noListEnd
 		default:
-			noList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口,默认(yes):\n")
+			noList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
 		}
 	}
 	noCreate, ok := optionMap[`noCreate`]
 	if !ok {
-		noCreate = gcmd.Scan("> 是否生成创建接口,默认(yes):\n")
+		noCreate = gcmd.Scan("> 是否生成创建接口，默认(yes):\n")
 	}
 noCreateEnd:
 	for {
@@ -132,12 +133,12 @@ noCreateEnd:
 			option.NoCreate = true
 			break noCreateEnd
 		default:
-			noCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口,默认(yes):\n")
+			noCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
 		}
 	}
 	noUpdate, ok := optionMap[`noUpdate`]
 	if !ok {
-		noUpdate = gcmd.Scan("> 是否生成更新接口,默认(yes):\n")
+		noUpdate = gcmd.Scan("> 是否生成更新接口，默认(yes):\n")
 	}
 noUpdateEnd:
 	for {
@@ -149,12 +150,12 @@ noUpdateEnd:
 			option.NoUpdate = true
 			break noUpdateEnd
 		default:
-			noUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口,默认(yes):\n")
+			noUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
 		}
 	}
 	noDelete, ok := optionMap[`noDelete`]
 	if !ok {
-		noDelete = gcmd.Scan("> 是否生成删除接口,默认(yes):\n")
+		noDelete = gcmd.Scan("> 是否生成删除接口，默认(yes):\n")
 	}
 noDeleteEnd:
 	for {
@@ -166,7 +167,24 @@ noDeleteEnd:
 			option.NoDelete = true
 			break noDeleteEnd
 		default:
-			noDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口,默认(yes):\n")
+			noDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
+		}
+	}
+	isCover, ok := optionMap[`isCover`]
+	if !ok {
+		isCover = gcmd.Scan("> 如果文件已存在，是否覆盖原文件，默认(no):\n")
+	}
+isCoverEnd:
+	for {
+		switch isCover {
+		case `yes`:
+			option.IsCover = true
+			break isCoverEnd
+		case ``, `no`:
+			option.IsCover = false
+			break isCoverEnd
+		default:
+			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件，默认(no):\n")
 		}
 	}
 	return
@@ -769,7 +787,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 // api模板生成
 func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/api/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplApi := `package api
@@ -836,7 +854,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 // logic模板生成
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplLogic := `package logic
@@ -997,7 +1015,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 // controller模板生成
 func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplController := `package controller
@@ -1276,7 +1294,7 @@ func MyGenTplView(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 // view模板生成Index
 func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
 	saveFile := saveViewPathPrefix + `/Index.vue`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplView := `<script setup lang="ts">
@@ -1336,7 +1354,7 @@ provide('saveCommon', saveCommon)`
 // view模板生成List
 func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
 	saveFile := saveViewPathPrefix + `/List.vue`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplView := `<script setup lang="ts">
@@ -1670,7 +1688,7 @@ defineExpose({
 // view模板生成Query
 func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
 	saveFile := saveViewPathPrefix + `/Query.vue`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplView := `<script setup lang="ts">
@@ -1760,7 +1778,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, s
 		return
 	}
 	saveFile := saveViewPathPrefix + `/Save.vue`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 	tplView := `<script setup lang="ts">
@@ -1856,7 +1874,7 @@ const saveDrawer = reactive({
 // view模板生成I18n
 func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
 	saveFile := saveViewPathPrefix + `.ts`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
