@@ -138,8 +138,6 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableAr
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
-				} else {
-					m = m.Fields(v)
 				}
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -186,8 +184,6 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interfac
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(keywordField) {
 					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
-				} else {
-					m = m.Where(`0 = 1`)
 				}
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k

@@ -192,8 +192,6 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(keywordField) {
 					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
-				} else {
-					m = m.Where(`0 = 1`)
 				}
 			case `accountOrPhone`:
 				if g.Validator().Rules(`required|integer`).Data(v).Run(m.GetCtx()) == nil {

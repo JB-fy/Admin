@@ -334,11 +334,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 return true;
             case 'keyword':
                 $keywordField = str_replace('Id', 'Name', $this->getKey());
-                var_dump($keywordField);
                 if (in_array($keywordField, $this->getAllColumn())) {
                     $this->builder->addSelect($this->getTable() . '.' . $keywordField . ' AS ' . $key);
-                } else {
-                    $this->builder->addSelect($key);
                 }
                 return true;
             default:
@@ -396,8 +393,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $keywordField = str_replace('Id', 'Name', $this->getKey());
                 if (in_array($keywordField, $this->getAllColumn())) {
                     $this->builder->where($this->getTable() . '.' . $keywordField, $operator ?? 'Like', '%' . $value . '%', $boolean ?? 'and');
-                } else {
-                    $this->builder->where('0 = 1');
                 }
                 return true;
             default:

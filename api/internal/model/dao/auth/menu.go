@@ -147,8 +147,6 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
-				} else {
-					m = m.Fields(v)
 				}
 			case `menuTree`: //树状需要以下字段和排序方式
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
@@ -213,8 +211,6 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(keywordField) {
 					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
-				} else {
-					m = m.Where(`0 = 1`)
 				}
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := v.(map[string]interface{})

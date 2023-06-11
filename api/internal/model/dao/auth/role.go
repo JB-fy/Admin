@@ -141,8 +141,6 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
-				} else {
-					m = m.Fields(v)
 				}
 			case `sceneName`:
 				m = m.Fields(Scene.Table() + `.` + v)
@@ -197,8 +195,6 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
 				if daoThis.ColumnArrG().Contains(keywordField) {
 					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
-				} else {
-					m = m.Where(`0 = 1`)
 				}
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
