@@ -44,8 +44,12 @@ const transfer = reactive({
     }),
     options: [...props.defaultOptions] as any,
     props: {
-        key: props.props.key ?? props.api.param.field[0] ?? 'key',
-        label: props.props.label ?? props.api.param.field[1] ?? 'label',
+        key: computed((): string => {
+            return props.props.key ?? transfer.api.param.field[0] ?? 'key'
+        }),
+        label: computed((): string => {
+            return props.props.label ?? transfer.api.param.field[1] ?? 'label'
+        }),
         disabled: props.props.disabled ?? 'disabled',
         ...props.props,
     },
@@ -65,7 +69,7 @@ const transfer = reactive({
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: 0,
-                ...props.api.param
+                ...(props.api?.param ?? {})
             }
         }),
         transform: computed(() => {
@@ -99,7 +103,7 @@ const transfer = reactive({
 transfer.initOptions()
 
 //当外部环境filter变化时，重置options
-watch(() => props.api.param.filter, (newVal: any, oldVal: any) => {
+watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
         transfer.resetOptions()
         transfer.api.addOptions()
@@ -112,7 +116,9 @@ watch(() => props.api.param.filter, (newVal: any, oldVal: any) => {
         :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
 
     <!-------- 使用示例 开始-------->
-    <!-- <MyTransfer v-model="saveCommon.data.sceneIdArr"
+    <!-- <MyTransfer v-model="saveCommon.data.sceneIdArr" :api="{ code: 'auth/scene/list' }" />
+
+    <MyTransfer v-model="saveCommon.data.sceneIdArr"
         :api="{ code: 'auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
     <!-------- 使用示例 结束-------->
 </template>

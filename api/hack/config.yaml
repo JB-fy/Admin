@@ -15,16 +15,7 @@ gfcli:
         # tplDaoDoPath: "resource/template/gen_dao_template_do.txt"
         entityPath: "model/entity/auth"
         # tplDaoEntityPath: "resource/template/gen_dao_template_entity.txt"
-        # 下面用于生成api,controller,logic
         # overwriteDao: true
-        # tables: "auth_action,auth_menu,auth_role,auth_scene"  #哪些表要生成，生成且修改后记得移除
-        # daoPath: "controller/auth"
-        # tplDaoIndexPath: "resource/template/gen_dao_template_controller.txt"
-        # # tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
-        # doPath: "logic/auth"
-        # tplDaoDoPath: "resource/template/gen_dao_template_logic.txt"
-        # entityPath: "../api/auth"
-        # tplDaoEntityPath: "resource/template/gen_dao_template_api.txt"
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         group: "default"
         removePrefix: "platform_"
@@ -37,16 +28,7 @@ gfcli:
         # tplDaoDoPath: "resource/template/gen_dao_template_do.txt"
         entityPath: "model/entity/platform"
         # tplDaoEntityPath: "resource/template/gen_dao_template_entity.txt"
-        # 下面用于生成api,controller,logic
         # overwriteDao: true
-        # tables: "platform_admin,platform_config,platform_server"  #哪些表要生成，生成且修改后记得移除
-        # daoPath: "controller/platform"
-        # tplDaoIndexPath: "resource/template/gen_dao_template_controller.txt"
-        # # tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
-        # doPath: "logic/platform"
-        # tplDaoDoPath: "resource/template/gen_dao_template_logic.txt"
-        # entityPath: "../api/platform"
-        # tplDaoEntityPath: "resource/template/gen_dao_template_api.txt"
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         group: "default"
         removePrefix: "log_"
@@ -59,13 +41,4 @@ gfcli:
         # tplDaoDoPath: "resource/template/gen_dao_template_do.txt"
         entityPath: "model/entity/log"
         # tplDaoEntityPath: "resource/template/gen_dao_template_entity.txt"
-        # 下面用于生成api,controller,logic
         # overwriteDao: true
-        # tables: "log_request"  #哪些表要生成，生成且修改后记得移除
-        # daoPath: "controller/log"
-        # tplDaoIndexPath: "resource/template/gen_dao_template_controller.txt"
-        # # tplDaoInternalPath: "resource/template/gen_dao_template_api_internal.txt"
-        # doPath: "logic/log"
-        # tplDaoDoPath: "resource/template/gen_dao_template_logic.txt"
-        # entityPath: "../api/log"
-        # tplDaoEntityPath: "resource/template/gen_dao_template_api.txt"

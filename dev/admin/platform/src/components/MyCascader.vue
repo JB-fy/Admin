@@ -87,8 +87,12 @@ const cascader = reactive({
             }).catch((error) => { })
             delete cascader.api.param.filter[cascader.api.pidField]
         },
-        value: props.props.value ?? props.api.param.field[0] ?? 'value',
-        label: props.props.label ?? props.api.param.field[1] ?? 'label',
+        value: computed((): string => {
+            return props.props.value ?? cascader.api.param.field[0] ?? 'value'
+        }),
+        label: computed((): string => {
+            return props.props.label ?? cascader.api.param.field[1] ?? 'label'
+        }),
         children: props.props.children ?? 'children',
         disabled: props.props.disabled ?? 'disabled',
         leaf: props.props.leaf ?? 'leaf',   //动态加载时用于终止继续加载。当checkStrictly为false时，该字段必须有，否则选中后值为null
@@ -110,7 +114,7 @@ const cascader = reactive({
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: 0,
-                ...props.api.param
+                ...(props.api?.param ?? {})
             }
         }),
         transform: computed(() => {
@@ -177,7 +181,7 @@ if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) 
 }
 
 //当外部环境filter变化时，重置options
-watch(() => props.api.param.filter, (newVal: any, oldVal: any) => {
+watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
         cascader.resetOptions()
         cascader.api.addOptions()
@@ -189,9 +193,9 @@ watch(() => props.api.param.filter, (newVal: any, oldVal: any) => {
     <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
         :options="cascader.options" :props="cascader.props" />
     <ElCascader v-else-if="cascader.props.lazy" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
-        :placeholder="placeholder" :clearable="clearable" :props="cascader.props"
-        @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
+        :placeholder="placeholder" :clearable="clearable" :props="cascader.props" @visible-change="cascader.visibleChange"
+        :disabled="disabled" :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip"
+        :separator="separator" />
     <ElCascader v-else :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value" :placeholder="placeholder"
         :clearable="clearable" :options="cascader.options" :props="cascader.props" :filterable="filterable"
         @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
@@ -199,13 +203,13 @@ watch(() => props.api.param.filter, (newVal: any, oldVal: any) => {
 
     <!-------- 使用示例 开始-------->
     <!-- <MyCascader v-model="saveCommon.data.menuIdArr"
-        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], filter: { sceneId: saveCommon.data.sceneId } } }"
-        :isPanel="true" :props="{ multiple: true }" />
+        :api="{ code: 'auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }" :isPanel="true"
+        :props="{ multiple: true }" />
 
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], filter: { sceneId: saveCommon.data.sceneId } } }" />
+        :api="{ code: 'auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }" />
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: 'auth/menu/list', param: { field: ['id', 'menuName'], filter: { sceneId: saveCommon.data.sceneId } } }"
+        :api="{ code: 'auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }"
         :props="{ lazy: true }" />
 
     <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"

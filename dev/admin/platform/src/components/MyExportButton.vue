@@ -42,7 +42,7 @@ const exportButton = reactive({
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: useSettingStore().exportButton.limit,
-                ...props.api.param,
+                ...(props.api?.param ?? {})
             }
             param.filter = removeEmptyOfObj(param.filter)
             return param

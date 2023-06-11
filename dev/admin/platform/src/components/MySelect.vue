@@ -240,8 +240,7 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
 
 
     <!-------- 使用示例 开始-------->
-    <!-- <MySelect v-model="saveCommon.data.sceneId"
-        :api="{ code: 'auth/scene/list' }" />
+    <!-- <MySelect v-model="saveCommon.data.sceneId" :api="{ code: 'auth/scene/list' }" />
 
     <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('common.name.rel.sceneId')"
         :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"

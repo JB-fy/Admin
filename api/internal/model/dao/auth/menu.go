@@ -8,6 +8,7 @@ import (
 	"api/internal/model/dao/auth/internal"
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -136,6 +137,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
+		fmt.Println(field)
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:

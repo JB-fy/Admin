@@ -35,8 +35,7 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="pid">
             <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.rel.pid')"
-                :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'] } }"
-                :defaultOptions="[{ id: 0, menuName: t('common.name.allTopLevel') }]" />
+                :api="{ code: 'auth/menu/tree' }" :defaultOptions="[{ id: 0, keyword: t('common.name.allTopLevel') }]" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
             <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"

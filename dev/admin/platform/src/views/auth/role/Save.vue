@@ -98,12 +98,12 @@ const saveDrawer = reactive({
                 </ElFormItem>
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.menuIdArr')" prop="menuIdArr">
                     <MyCascader v-model="saveForm.data.menuIdArr"
-                        :api="{ code: 'auth/menu/tree', param: { field: ['id', 'menuName'], filter: { sceneId: saveForm.data.sceneId } } }"
+                        :api="{ code: 'auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
                         :isPanel="true" :props="{ multiple: true, checkStrictly: false, emitPath: true }" />
                 </ElFormItem>
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.actionIdArr')" prop="actionIdArr">
                     <MyTransfer v-model="saveForm.data.actionIdArr"
-                        :api="{ code: 'auth/action/list', param: { field: ['id', 'actionName'], filter: { sceneId: saveForm.data.sceneId } } }" />
+                        :api="{ code: 'auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                     <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"

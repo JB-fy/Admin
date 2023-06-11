@@ -114,8 +114,7 @@ const saveDrawer = reactive({
                     <MyUpload v-model="saveForm.data.avatar" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.rel.roleIdArr')" prop="roleIdArr">
-                    <MyTransfer v-model="saveForm.data.roleIdArr"
-                        :api="{ code: 'auth/role/list', param: { field: ['id', 'roleName'] } }" />
+                    <MyTransfer v-model="saveForm.data.roleIdArr" :api="{ code: 'auth/role/list' }" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.isStop')" prop="isStop">
                     <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"
