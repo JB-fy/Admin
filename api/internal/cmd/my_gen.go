@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -118,6 +119,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
+noAllRestart:
 	noList, ok := optionMap[`noList`]
 	if !ok {
 		noList = gcmd.Scan("> 是否生成列表接口，默认(yes):\n")
@@ -185,6 +187,10 @@ noDeleteEnd:
 		default:
 			noDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
 		}
+	}
+	if option.NoList && option.NoCreate && option.NoUpdate && option.NoDelete {
+		fmt.Println("请重新选择生成哪些接口，不能全是no！")
+		goto noAllRestart
 	}
 	isCover, ok := optionMap[`isCover`]
 	if !ok {
@@ -897,14 +903,30 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	tplView := gfile.GetContents(saveFile)
 
+	replaceStr := ``
+	if !option.NoList {
+		replaceStr += `
+		"/list":   controllerThis.List,`
+	}
+	if !option.NoUpdate {
+		replaceStr += `
+						"/info":   controllerThis.Info,`
+	}
+	if !option.NoCreate {
+		replaceStr += `
+						"/create":   controllerThis.Create,`
+	}
+	if !option.NoUpdate {
+		replaceStr += `
+						"/update":   controllerThis.Update,`
+	}
+	if !option.NoDelete {
+		replaceStr += `
+						"/del":   controllerThis.Delete,`
+	}
 	tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`", func(group *ghttp.RouterGroup) {
 					controllerThis := controller`+tpl.PathSuffixCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
-					group.ALLMap(g.Map{
-						"/list":   controllerThis.List,
-						"/info":   controllerThis.Info,
-						"/create": controllerThis.Create,
-						"/update": controllerThis.Update,
-						"/del":    controllerThis.Delete,
+					group.ALLMap(g.Map{`+replaceStr+`
 					})
 				})
 
