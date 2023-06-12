@@ -1507,9 +1507,9 @@ const table = reactive({
 		tplView += `
 			]
 		},
-	}] as any,`
+	}`
 	}
-	tplView += `
+	tplView += `] as any,
 	data: [],
 	loading: false,
 	sort: { key: 'id', order: 'desc' } as any,
