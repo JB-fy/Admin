@@ -61,7 +61,14 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	MyGenTplApi(ctx, option, tpl)
 	MyGenTplLogic(ctx, option, tpl)
 	MyGenTplController(ctx, option, tpl)
-	MyGenTplView(ctx, option, tpl)
+	MyGenTplRouter(ctx, option, tpl)
+
+	MyGenTplViewIndex(ctx, option, tpl)
+	MyGenTplViewList(ctx, option, tpl)
+	MyGenTplViewQuery(ctx, option, tpl)
+	MyGenTplViewSave(ctx, option, tpl)
+	MyGenTplViewI18n(ctx, option, tpl)
+	MyGenTplViewRouter(ctx, option, tpl)
 	return
 }
 
@@ -884,21 +891,30 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 	gfile.PutContents(saveFile, tplController)
 }
 
-// view模板生成
-func MyGenTplView(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	path := gfile.SelfDir()
-	saveViewPathPrefix := path + `/../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower
-	MyGenTplViewIndex(ctx, option, tpl, saveViewPathPrefix)
-	MyGenTplViewList(ctx, option, tpl, saveViewPathPrefix)
-	MyGenTplViewQuery(ctx, option, tpl, saveViewPathPrefix)
-	MyGenTplViewSave(ctx, option, tpl, saveViewPathPrefix)
-	saveViewPathPrefix = path + `/../dev/admin/platform/src/i18n/language/zh-cn/common/name/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower
-	MyGenTplViewI18n(ctx, option, tpl, saveViewPathPrefix)
+// 添加路由
+func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/internal/router/platform_admin.go`
+
+	tplView := gfile.GetContents(saveFile)
+
+	tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`", func(group *ghttp.RouterGroup) {
+					controllerThis := controller`+tpl.PathSuffixCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
+					group.ALLMap(g.Map{
+						"/list":   controllerThis.List,
+						"/info":   controllerThis.Info,
+						"/create": controllerThis.Create,
+						"/update": controllerThis.Update,
+						"/del":    controllerThis.Delete,
+					})
+				})
+
+				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+	gfile.PutContents(saveFile, tplView)
 }
 
 // view模板生成Index
-func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
-	saveFile := saveViewPathPrefix + `/Index.vue`
+func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1270,12 +1286,12 @@ provide('saveCommon', saveCommon)`
 	</ElContainer>
 </template>`
 
-	gfile.PutContents(saveViewPathPrefix+`/Index.vue`, tplView)
+	gfile.PutContents(saveFile, tplView)
 }
 
 // view模板生成List
-func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
-	saveFile := saveViewPathPrefix + `/List.vue`
+func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/List.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1608,8 +1624,8 @@ defineExpose({
 }
 
 // view模板生成Query
-func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
-	saveFile := saveViewPathPrefix + `/Query.vue`
+func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Query.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1830,11 +1846,11 @@ const queryForm = reactive({
 }
 
 // view模板生成Save
-func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
+func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	if option.NoCreate && option.NoUpdate {
 		return
 	}
-	saveFile := saveViewPathPrefix + `/Save.vue`
+	saveFile := gfile.SelfDir() + `/../dev/admin/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Save.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2190,8 +2206,8 @@ const saveDrawer = reactive({
 }
 
 // view模板生成I18n
-func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, saveViewPathPrefix string) {
-	saveFile := saveViewPathPrefix + `.ts`
+func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/../dev/admin/platform/src/i18n/language/zh-cn/common/name/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2219,5 +2235,24 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, s
 		`{TplViewI18nField}`: tpl.ViewI18nField, //先替换这个！内部还有变量要替换
 	})
 	gfile.PutContents(saveFile, tplView)
+}
 
+// view模板生成路由
+func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/../dev/admin/platform/src/router/index.ts`
+
+	tplView := gfile.GetContents(saveFile)
+
+	tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `{
+                path: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`',
+                component: async () => {
+                    const component = await import('@/views/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`/Index.vue')
+                    component.default.name = '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`' }
+            },
+            /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+
+	gfile.PutContents(saveFile, tplView)
 }

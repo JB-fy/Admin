@@ -143,6 +143,7 @@ func InitRouterPlatformAdmin(s *ghttp.Server) {
 					})
 				})
 
+				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
 			})
 		})
 	})
