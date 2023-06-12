@@ -906,7 +906,7 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	replaceStr := ``
 	if !option.NoList {
 		replaceStr += `
-		"/list":   controllerThis.List,`
+						"/list":   controllerThis.List,`
 	}
 	if !option.NoUpdate {
 		replaceStr += `
