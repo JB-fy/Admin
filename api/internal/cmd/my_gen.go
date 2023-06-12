@@ -2206,7 +2206,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl, s
 		switch fieldCaseCamel {
 		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
 		default:
-			if !garray.NewStrArrayFrom([]string{`remark`, `isstop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(gstr.ToLower(field)) {
+			if !garray.NewStrArrayFrom([]string{`remark`, `isstop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(field) {
 				tpl.ViewI18nField += `
 	` + field + `: '` + comment + `',`
 			}
