@@ -753,7 +753,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [],`
 				tpl.ViewSaveField += `
-				<ElFormItem prop="` + field + `">
+				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
 				</ElFormItem>`
 				continue
@@ -774,7 +774,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [],`
 				tpl.ViewSaveField += `
-				<ElFormItem prop="` + field + `">
+				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
 				</ElFormItem>`
 				continue
