@@ -60,7 +60,6 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	gconv.Struct(optionMap, option)
 
 	var db gdb.DB
-	option.DbGroup = `default`
 	if option.DbGroup == `` {
 		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
 		if option.DbGroup == `` {
@@ -81,7 +80,6 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	}
 	tableArrTmp, _ := db.GetArray(ctx, `SHOW TABLES`)
 	tableArr := gconv.SliceStr(tableArrTmp)
-	option.DbTable = `auth_test_scene`
 	if option.DbTable == `` {
 		option.DbTable = gcmd.Scan("> 请输入db表:\n")
 	}
@@ -91,11 +89,10 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
 	}
-	/* _, ok := optionMap[`removePrefix`]
+	_, ok := optionMap[`removePrefix`]
 	if !ok {
 		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀,默认(空):\n")
-	} */
-	option.RemovePrefix = `auth_`
+	}
 	for {
 		if option.RemovePrefix == `` || gstr.Pos(option.DbTable, option.RemovePrefix) == 0 {
 			break
