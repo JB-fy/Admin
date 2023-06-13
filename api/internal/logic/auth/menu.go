@@ -5,7 +5,6 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -93,13 +92,11 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
 	var pInfo gdb.Record
-	fmt.Println(data[`pid`])
-	fmt.Println(gconv.Int(data[`pid`]))
 	pid := gconv.Int(data[`pid`])
 	if pid > 0 {
 		joinTableArr := []string{}
 		field := []string{`pidPath`, `level`}
-		filterTmp := g.Map{`menuId`: data[`pid`], `sceneId`: data[`sceneId`]}
+		filterTmp := g.Map{daoThis.PrimaryKey(): data[`pid`], `sceneId`: data[`sceneId`]}
 		pInfo, _ = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterTmp, &joinTableArr), daoThis.ParseField(field, &joinTableArr)).One()
 		if len(pInfo) == 0 {
 			err = utils.NewErrorCode(ctx, 29999998, ``)
@@ -142,7 +139,7 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 			filterOne := map[string]interface{}{daoThis.PrimaryKey(): id}
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterOne, &[]string{})).One()
 			pid := gconv.Int(data[`pid`])
-			if pid == oldInfo[`menuId`].Int() { //父级不能是自身
+			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
@@ -150,7 +147,7 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 				if pid > 0 {
 					joinTableArr := []string{}
 					field := []string{`pidPath`, `level`}
-					filterTmp := g.Map{`menuId`: data[`pid`], `sceneId`: oldInfo[`sceneId`]}
+					filterTmp := g.Map{daoThis.PrimaryKey(): data[`pid`], `sceneId`: oldInfo[`sceneId`]}
 					_, okSceneId := data[`sceneId`]
 					if okSceneId {
 						filterTmp[`sceneId`] = data[`sceneId`]
@@ -160,14 +157,14 @@ func (logicThis *sMenu) Update(ctx context.Context, data map[string]interface{},
 						err = utils.NewErrorCode(ctx, 29999998, ``)
 						return
 					}
-					if garray.NewStrArrayFrom(gstr.Split(pInfo[`pidPath`].String(), `-`)).Contains(oldInfo[`menuId`].String()) { //父级不能是自身的子孙级
+					if garray.NewStrArrayFrom(gstr.Split(pInfo[`pidPath`].String(), `-`)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
 						err = utils.NewErrorCode(ctx, 29999996, ``)
 						return
 					}
-					data[`pidPath`] = pInfo[`pidPath`].String() + `-` + oldInfo[`menuId`].String()
+					data[`pidPath`] = pInfo[`pidPath`].String() + `-` + oldInfo[daoThis.PrimaryKey()].String()
 					data[`level`] = pInfo[`level`].Int() + 1
 				} else {
-					data[`pidPath`] = `0-` + oldInfo[`menuId`].String()
+					data[`pidPath`] = `0-` + oldInfo[daoThis.PrimaryKey()].String()
 					data[`level`] = 1
 				}
 			}
@@ -228,10 +225,10 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 }
 
 // 菜单树
-func (logicThis *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error) {
+func (logicThis *sMenu) Tree(ctx context.Context, list gdb.Result, id int) (tree gdb.Result, err error) {
 	for _, v := range list {
 		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
-		if v[`pid`].Int() == menuId {
+		if v[`pid`].Int() == id {
 			children, _ := logicThis.Tree(ctx, list, v[`menuId`].Int())
 			v[`children`] = gvar.New(children)
 			tree = append(tree, v)
