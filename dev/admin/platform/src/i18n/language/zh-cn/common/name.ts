@@ -25,4 +25,5 @@ export default {
     repeatPassword: '重复密码',
     nickname: '昵称',
     avatar: '头像',
+    gender: '性别',
 }

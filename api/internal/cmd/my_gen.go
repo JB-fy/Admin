@@ -229,7 +229,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}))
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 		switch fieldCaseCamel {
-		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
+		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
@@ -621,7 +621,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		switch fieldCaseCamel {
-		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
+		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || field == `name` || gstr.CaseCamelLower(field) == tpl.TableNameCaseCamel+`Name` {
 				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
@@ -955,7 +955,7 @@ func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		switch fieldCaseCamel {
-		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
+		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			//password或passwd后缀
 			if gstr.SubStr(fieldCaseCamel, -8) == `Password` || gstr.SubStr(fieldCaseCamel, -6) == `Passwd` {
@@ -1665,7 +1665,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		switch fieldCaseCamel {
-		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
+		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			//password或passwd后缀
 			if gstr.SubStr(fieldCaseCamel, -8) == `Password` || gstr.SubStr(fieldCaseCamel, -6) == `Passwd` {
@@ -1892,7 +1892,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 		switch fieldCaseCamel {
-		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
+		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			//password或passwd后缀
 			if gstr.SubStr(fieldCaseCamel, -8) == `Password` || gstr.SubStr(fieldCaseCamel, -6) == `Passwd` {
@@ -2251,7 +2251,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			"\r", " ",
 		}))
 		switch fieldCaseCamel {
-		case `UpdatedAt`, `CreatedAt`, `DeletedAt`: //不处理的字段
+		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
 			if !garray.NewStrArrayFrom([]string{`remark`, `isstop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(field) {
 				tpl.ViewI18nField += `

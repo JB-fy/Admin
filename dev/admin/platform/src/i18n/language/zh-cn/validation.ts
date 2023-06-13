@@ -5,11 +5,13 @@ export default {
     },
     min: {
         string: '必须大于等于 {min} 个字符',
-        number: '必须大于等于 {min}'
+        number: '必须大于等于 {min}',
+        upload: '最少上传 {min} 个文件'
     },
     max: {
         string: '必须小于等于 {max} 个字符',
-        number: '必须小于等于 {max}'
+        number: '必须小于等于 {max}',
+        upload: '最多上传 {max} 个文件'
     },
     regex: '格式是无效的',
     json: '必须是有效的JSON格式',
