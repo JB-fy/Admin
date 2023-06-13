@@ -930,14 +930,14 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					})
 				})`
 
-	if gstr.Pos(tplView, tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower) == -1 { //路由不存在时新增
+	if gstr.Pos(tplView, `"/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`"`) == -1 { //路由不存在时新增
 		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
 	
 					/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
-		tplView, _ = gregex.ReplaceString(`group.Group("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`[\s\S]*
-					})
-				})`, replaceStr, tplView)
+		tplView, _ = gregex.ReplaceString(`group.Group\("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`",[\s\S]*
+					}\)
+				}\)`, replaceStr, tplView)
 	}
 	gfile.PutContents(saveFile, tplView)
 }
@@ -2283,13 +2283,13 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
                 meta: { isAuth: true, keepAlive: true, componentName: '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `' }
             },`
 
-	if gstr.Pos(tplView, tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower) == -1 { //路由不存在时新增
+	if gstr.Pos(tplView, `'/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`'`) == -1 { //路由不存在时新增
 		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
             /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
-		tplView, _ = gregex.ReplaceString(`{
-                path: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`[\s\S]*}
-				},`, replaceStr, tplView)
+		tplView, _ = gregex.ReplaceString(`\{
+                path: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`',[\s\S]*'/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`' \}
+            \},`, replaceStr, tplView)
 	}
 	gfile.PutContents(saveFile, tplView)
 }
