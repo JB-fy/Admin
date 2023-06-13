@@ -1966,7 +1966,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
-			{ type: 'url', trigger: 'blur', message: t('validation.url') }
+			{ type: 'url', trigger: 'change', message: t('validation.url') }
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">

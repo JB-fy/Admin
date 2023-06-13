@@ -32,7 +32,8 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         avatar: [
-            { type: 'string', min: 1, max: 120, trigger: 'change', message: t('validation.upload') }
+			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
+            { type: 'url', trigger: 'change', message: t('validation.upload') }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
