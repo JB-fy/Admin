@@ -135,9 +135,11 @@ func (daoThis *sceneDao) ParseField(field []string, joinTableArr *[]string) gdb.
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `keyword`:
-				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				if daoThis.ColumnArrG().Contains(keywordField) {
-					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
+				keywordField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
+				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(keywordField)) {
+					m = m.Fields(daoThis.Table() + `.` + gstr.CaseCamelLower(keywordField) + ` AS ` + v)
+				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(keywordField)) {
+					m = m.Fields(daoThis.Table() + `.` + gstr.CaseSnakeFirstUpper(keywordField) + ` AS ` + v)
 				}
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -181,9 +183,11 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `keyword`:
-				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				if daoThis.ColumnArrG().Contains(keywordField) {
-					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
+				keywordField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
+				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(keywordField)) {
+					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseCamelLower(keywordField), `%`+gconv.String(v)+`%`)
+				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(keywordField)) {
+					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseSnakeFirstUpper(keywordField), `%`+gconv.String(v)+`%`)
 				}
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k

@@ -144,9 +144,11 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `keyword`:
-				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				if daoThis.ColumnArrG().Contains(keywordField) {
-					m = m.Fields(daoThis.Table() + `.` + keywordField + ` AS ` + v)
+				keywordField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
+				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(keywordField)) {
+					m = m.Fields(daoThis.Table() + `.` + gstr.CaseCamelLower(keywordField) + ` AS ` + v)
+				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(keywordField)) {
+					m = m.Fields(daoThis.Table() + `.` + gstr.CaseSnakeFirstUpper(keywordField) + ` AS ` + v)
 				}
 			case `menuTree`: //树状需要以下字段和排序方式
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
@@ -208,9 +210,11 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `keyword`:
-				keywordField := strings.ReplaceAll(daoThis.PrimaryKey(), `Id`, `Name`)
-				if daoThis.ColumnArrG().Contains(keywordField) {
-					m = m.WhereLike(daoThis.Table()+`.`+keywordField, `%`+gconv.String(v)+`%`)
+				keywordField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
+				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(keywordField)) {
+					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseCamelLower(keywordField), `%`+gconv.String(v)+`%`)
+				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(keywordField)) {
+					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseSnakeFirstUpper(keywordField), `%`+gconv.String(v)+`%`)
 				}
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := v.(map[string]interface{})
