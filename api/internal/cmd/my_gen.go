@@ -924,13 +924,21 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		replaceStr += `
 						"/del":   controllerThis.Delete,`
 	}
-	tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`", func(group *ghttp.RouterGroup) {
-					controllerThis := controller`+tpl.PathSuffixCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
-					group.ALLMap(g.Map{`+replaceStr+`
+	replaceStr = `group.Group("/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `", func(group *ghttp.RouterGroup) {
+					controllerThis := controller` + tpl.PathSuffixCaseCamel + `.New` + tpl.TableNameCaseCamel + `()
+					group.ALLMap(g.Map{` + replaceStr + `
 					})
-				})
+				})`
 
-				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+	if gstr.Pos(tplView, tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower) == -1 { //路由不存在时新增
+		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
+	
+					/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+	} else { //路由已存在则替换
+		tplView, _ = gregex.ReplaceString(`group.Group("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`[\s\S]*
+					})
+				})`, replaceStr, tplView)
+	}
 	gfile.PutContents(saveFile, tplView)
 }
 
@@ -2265,16 +2273,23 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 	tplView := gfile.GetContents(saveFile)
 
-	tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `{
-                path: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`',
+	replaceStr := `{
+                path: '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `',
                 component: async () => {
-                    const component = await import('@/views/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`/Index.vue')
-                    component.default.name = '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`'
+                    const component = await import('@/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue')
+                    component.default.name = '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`' }
-            },
-            /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+                meta: { isAuth: true, keepAlive: true, componentName: '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `' }
+            },`
 
+	if gstr.Pos(tplView, tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower) == -1 { //路由不存在时新增
+		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
+            /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+	} else { //路由已存在则替换
+		tplView, _ = gregex.ReplaceString(`{
+                path: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`[\s\S]*}
+				},`, replaceStr, tplView)
+	}
 	gfile.PutContents(saveFile, tplView)
 }
