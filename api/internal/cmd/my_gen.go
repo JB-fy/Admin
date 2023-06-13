@@ -678,8 +678,9 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	if param.Page <= 0 {
 		param.Page = 1
 	}
-	if param.Limit == nil {
-		*param.Limit = 10
+	limit := 10
+	if param.Limit != nil {
+		limit = *param.Limit
 	}
 	/**--------参数处理 结束--------**/
 
@@ -712,7 +713,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.{TplTableNameCaseCamel}().List(r.GetCtx(), filter, field, order, param.Page, *param.Limit)
+		list, err := service.{TplTableNameCaseCamel}().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
