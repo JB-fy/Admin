@@ -223,7 +223,7 @@ func (controllerThis *Menu) Delete(r *ghttp.Request) {
 }
 
 // 菜单树
-func (cMenu *Menu) Tree(r *ghttp.Request) {
+func (controllerThis *Menu) Tree(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
 	var param *apiAuth.MenuTreeReq
 	err := r.Parse(&param)

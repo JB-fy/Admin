@@ -8,7 +8,6 @@ import (
 	"api/internal/model/dao/auth/internal"
 	"context"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -137,7 +136,6 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
-		fmt.Println(field)
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
@@ -152,21 +150,21 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				}
 			case `menuTree`: //树状需要以下字段和排序方式
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
-				m = m.Fields(daoThis.Table() + `.pid`)
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().Pid)
 
 				m = daoThis.ParseOrder([][2]string{{`menuTree`, ``}}, joinTableArr)(m) //排序方式
 			case `showMenu`: //前端显示菜单需要以下字段，且title需要转换
-				m = m.Fields(daoThis.Table() + `.menuName`)
-				m = m.Fields(daoThis.Table() + `.menuIcon`)
-				m = m.Fields(daoThis.Table() + `.menuUrl`)
-				m = m.Fields(daoThis.Table() + `.extraData->'$.i18n' AS i18n`)
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName)
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuIcon)
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuUrl)
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)
 				//m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(extraData, \`$.i18n\`)) AS i18n`))//mysql不能直接转成对象返回
 				afterField = append(afterField, v)
 			case `sceneName`:
 				m = m.Fields(Scene.Table() + `.` + v)
 				m = daoThis.ParseJoin(`scene`, joinTableArr)(m)
 			case `pMenuName`:
-				m = m.Fields(`p_` + daoThis.Table() + `.menuName AS ` + v)
+				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 				m = daoThis.ParseJoin(`pMenu`, joinTableArr)(m)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -287,8 +285,8 @@ func (daoThis *menuDao) ParseOrder(order [][2]string, joinTableArr *[]string) gd
 			case `id`:
 				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), v[1])
 			case `menuTree`:
-				m = m.Order(daoThis.Table()+`.pid`, `ASC`)
-				m = m.Order(daoThis.Table()+`.sort`, `ASC`)
+				m = m.Order(daoThis.Table()+`.`+daoThis.Columns().Pid, `ASC`)
+				m = m.Order(daoThis.Table()+`.`+daoThis.Columns().Sort, `ASC`)
 				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), `ASC`)
 			default:
 				if daoThis.ColumnArrG().Contains(v[0]) {
@@ -322,7 +320,7 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 			pMenuTable := `p_` + daoThis.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(pMenuTable) {
 				*joinTableArr = append(*joinTableArr, pMenuTable)
-				m = m.LeftJoin(daoThis.Table()+` AS `+pMenuTable, pMenuTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.pid`)
+				m = m.LeftJoin(daoThis.Table()+` AS `+pMenuTable, pMenuTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().Pid)
 			}
 		case `roleRelToMenu`:
 			roleRelToMenuTable := RoleRelToMenu.Table()

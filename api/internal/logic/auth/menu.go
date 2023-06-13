@@ -228,11 +228,11 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 }
 
 // 菜单树
-func (logicMenu *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error) {
+func (logicThis *sMenu) Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error) {
 	for _, v := range list {
 		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
 		if v[`pid`].Int() == menuId {
-			children, _ := logicMenu.Tree(ctx, list, v[`menuId`].Int())
+			children, _ := logicThis.Tree(ctx, list, v[`menuId`].Int())
 			v[`children`] = gvar.New(children)
 			tree = append(tree, v)
 		}
