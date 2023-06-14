@@ -53,7 +53,7 @@ const exportButton = reactive({
                     for (const key in item) {
                         switch (key) {
                             case 'isStop':
-                                item[key] = (<any>tm('common.status.whether')).find((item: any) => {
+                                item[key] = (tm('common.status.whether') as any).find((item: any) => {
                                     return item.value == item[key]
                                 }).label
                                 break;

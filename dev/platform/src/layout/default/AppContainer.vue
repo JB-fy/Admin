@@ -8,7 +8,7 @@ const keepAliveStore = useKeepAliveStore()
         <Transition mode="out-in" name="el-zoom-in-center">
             <KeepAlive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude"
                 :max="keepAliveStore.appContainerMax">
-                <component v-if="keepAliveStore.appContainerExclude.indexOf(<string>route.meta.componentName) === -1"
+                <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1"
                     :is="Component" :key="route.fullPath" />
             </KeepAlive>
         </Transition>
@@ -19,7 +19,7 @@ const keepAliveStore = useKeepAliveStore()
                 <Transition mode="out-in" name="transform">
                     <KeepAlive :include="keepAliveStore.appContainerInclude"
                         :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
-                        <component v-if="keepAliveStore.appContainerExclude.indexOf(<string>route.meta.componentName) === -1" :is="Component"
+                        <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1" :is="Component"
                             :key="route.fullPath" />
                     </KeepAlive>
                 </Transition>

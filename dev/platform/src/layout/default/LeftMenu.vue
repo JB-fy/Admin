@@ -9,7 +9,7 @@ const subMenuTitle = async () => {
     await nextTick()
     let subMenuTitleList = document.getElementsByClassName('el-sub-menu__title')
     for (let i = 0; i < subMenuTitleList.length; i++) {
-        (<HTMLElement>subMenuTitleList[i]).style.removeProperty('background-color')
+        (subMenuTitleList[i] as HTMLElement).style.removeProperty('background-color')
     }
 }
 const router = useRouter()

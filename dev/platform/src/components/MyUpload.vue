@@ -44,7 +44,7 @@ const upload = reactive({
     ref: null as any,
     value: ((): any => {
         if (props.multiple) {
-            return props.modelValue ? [...(<string[]>props.modelValue)] : []
+            return props.modelValue ? [...(props.modelValue as string[])] : []
         }
         return props.modelValue
     })(),
@@ -76,7 +76,7 @@ const upload = reactive({
             return []
         }
         if (props.multiple) {
-            return (<string[]>props.modelValue).map((item) => {
+            return (props.modelValue as string[]).map((item) => {
                 return {
                     name: item.slice(item.lastIndexOf('/') + 1),
                     url: item
@@ -84,8 +84,8 @@ const upload = reactive({
             })
         }
         return [{
-            name: (<string>props.modelValue).slice((<string>props.modelValue).lastIndexOf('/') + 1),
-            url: (<string>props.modelValue)
+            name: (props.modelValue as string).slice((props.modelValue as string).lastIndexOf('/') + 1),
+            url: (props.modelValue as string)
         }]
     })(),
     class: computed((): string => {
