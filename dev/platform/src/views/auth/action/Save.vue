@@ -91,7 +91,7 @@ const saveDrawer = reactive({
                         <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.rel.sceneIdArr')" prop="sceneIdArr">
+                <ElFormItem :label="t('view.auth.action.name.sceneIdArr')" prop="sceneIdArr">
                     <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.remark')" prop="remark">

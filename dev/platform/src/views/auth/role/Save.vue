@@ -96,12 +96,12 @@ const saveDrawer = reactive({
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
                         @change="() => { saveForm.data.menuIdArr = []; saveForm.data.actionIdArr = [] }" />
                 </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.menuIdArr')" prop="menuIdArr">
+                <ElFormItem v-if="saveForm.data.sceneId" :label="t('view.auth.role.name.menuIdArr')" prop="menuIdArr">
                     <MyCascader v-model="saveForm.data.menuIdArr"
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
                         :isPanel="true" :props="{ multiple: true, checkStrictly: false, emitPath: true }" />
                 </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.actionIdArr')" prop="actionIdArr">
+                <ElFormItem v-if="saveForm.data.sceneId" :label="t('view.auth.role.name.actionIdArr')" prop="actionIdArr">
                     <MyTransfer v-model="saveForm.data.actionIdArr"
                         :api="{ code: '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </ElFormItem>

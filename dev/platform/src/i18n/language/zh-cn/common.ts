@@ -56,5 +56,22 @@ export default {
         nickname: '昵称',
         avatar: '头像',
         gender: '性别',
-    }
+    },
+
+    tip: {
+        notSet: '未设置',
+        notFullScreen: '您的浏览器不支持全屏',
+        pleaseSelect: '请选择',
+        selectDelete: '请选择要删除的记录',
+        configDelete: '确定删除？',
+        configExit: '确定退出当前操作？',
+        configExport: '确认导出？',
+        notDuplicate: '不能与现有记录重复',
+        sort: '从小到大排序',
+        uploadOrDrop: '<em>点击上传</em>或将文件拖到此处',
+        uploadFail: '上传失败，请稍后再试！',
+        notAcceptFileType: '文件格式不在允许范围内',
+        notWithinFileSize: '文件大小不在允许范围内',
+        notRequired: '不填则不修改',
+    },
 }
