@@ -11,7 +11,7 @@ import (
 	"api/internal/middleware"
 )
 
-func InitRouterPlatformAdmin(s *ghttp.Server) {
+func InitRouterPlatform(s *ghttp.Server) {
 	s.Group("/platform", func(group *ghttp.RouterGroup) {
 		//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
 		group.Middleware(middleware.Cross, middleware.I18n)
