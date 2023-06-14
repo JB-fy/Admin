@@ -8,7 +8,7 @@ const { t } = useI18n()
             <ElIcon class="is-loading">
                 <AutoiconEpOrange />
             </ElIcon>
-            {{ t('view.index.welcome') }}
+            {{ t('index.welcome') }}
             <ElIcon class="is-loading">
                 <AutoiconEpOrange />
             </ElIcon>

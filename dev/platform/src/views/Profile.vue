@@ -51,7 +51,7 @@ const saveForm = reactive({
         checkPassword: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             {
-                required: computed((): boolean => { return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false; }), trigger: 'blur', message: t('view.profile.tip.checkPassword')
+                required: computed((): boolean => { return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false; }), trigger: 'blur', message: t('profile.tip.checkPassword')
             },
             {
                 validator: (rule: any, value: any, callback: any) => {
@@ -103,7 +103,7 @@ const saveForm = reactive({
                         maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert
-                            :title="t('view.profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })"
+                            :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })"
                             type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
@@ -112,7 +112,7 @@ const saveForm = reactive({
                         maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert
-                            :title="t('view.profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })"
+                            :title="t('profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })"
                             type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
@@ -144,7 +144,7 @@ const saveForm = reactive({
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('view.profile.tip.checkPassword')" type="info" :show-icon="true"
+                        <ElAlert :title="t('profile.tip.checkPassword')" type="info" :show-icon="true"
                             :closable="false" />
                     </label>
                 </ElFormItem>

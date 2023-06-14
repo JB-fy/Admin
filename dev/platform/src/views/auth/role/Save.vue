@@ -88,20 +88,20 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('view.auth.role.name.roleName')" prop="roleName">
-                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('view.auth.role.name.roleName')"
+                <ElFormItem :label="t('auth.role.name.roleName')" prop="roleName">
+                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.role.name.sceneId')" prop="sceneId">
+                <ElFormItem :label="t('auth.role.name.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
                         @change="() => { saveForm.data.menuIdArr = []; saveForm.data.actionIdArr = [] }" />
                 </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('view.auth.role.name.menuIdArr')" prop="menuIdArr">
+                <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuIdArr')" prop="menuIdArr">
                     <MyCascader v-model="saveForm.data.menuIdArr"
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
                         :isPanel="true" :props="{ multiple: true, checkStrictly: false, emitPath: true }" />
                 </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('view.auth.role.name.actionIdArr')" prop="actionIdArr">
+                <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionIdArr')" prop="actionIdArr">
                     <MyTransfer v-model="saveForm.data.actionIdArr"
                         :api="{ code: '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </ElFormItem>

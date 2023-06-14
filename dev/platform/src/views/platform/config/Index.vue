@@ -17,10 +17,10 @@ const { t } = useI18n()
     <ElContainer class="common-container">
         <ElMain>
             <ElTabs type="border-card" tab-position="top">
-                <!-- <ElTabPane :label="t('view.platform.config.label.testConfig')" :lazy="true">
+                <!-- <ElTabPane :label="t('platform.config.label.testConfig')" :lazy="true">
                     <UploadConfig />
                 </ElTabPane> -->
-                <ElTabPane :label="t('view.platform.config.label.uploadConfig')" :lazy="true">
+                <ElTabPane :label="t('platform.config.label.uploadConfig')" :lazy="true">
                     <UploadConfig />
                 </ElTabPane>
             </ElTabs>

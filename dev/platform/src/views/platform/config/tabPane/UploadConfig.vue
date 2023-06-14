@@ -60,24 +60,24 @@ saveForm.initData()
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
+        <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
             <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
-                :placeholder="t('view.platform.config.name.aliyunOssAccessKeyId')" minlength="1" maxlength="30"
+                :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" minlength="1" maxlength="30"
                 :show-word-limit="true" :clearable="true" /> -->
             <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
-                :placeholder="t('view.platform.config.name.aliyunOssAccessKeyId')" :clearable="true" />
+                :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" :clearable="true" />
         </ElFormItem>
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssAccessKeySecret')" prop="aliyunOssAccessKeySecret">
+        <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeySecret')" prop="aliyunOssAccessKeySecret">
             <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
-                :placeholder="t('view.platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
+                :placeholder="t('platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
         </ElFormItem>
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
-            <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('view.platform.config.name.aliyunOssHost')"
+        <ElFormItem :label="t('platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
+            <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('platform.config.name.aliyunOssHost')"
                 :clearable="true" />
         </ElFormItem>
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
+        <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
             <ElInput v-model="saveForm.data.aliyunOssBucket"
-                :placeholder="t('view.platform.config.name.aliyunOssBucket')" :clearable="true" />
+                :placeholder="t('platform.config.name.aliyunOssBucket')" :clearable="true" />
         </ElFormItem>
         <ElFormItem>
             <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">

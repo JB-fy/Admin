@@ -26,10 +26,10 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>
 		<ElFormItem prop="cornCode">
-			<ElInput v-model="queryCommon.data.cornCode" :placeholder="t('view.platform.corn.name.cornCode')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.cornCode" :placeholder="t('platform.corn.name.cornCode')" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="cornName">
-			<ElInput v-model="queryCommon.data.cornName" :placeholder="t('view.platform.corn.name.cornName')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.cornName" :placeholder="t('platform.corn.name.cornName')" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="isStop" style="width: 100px;">
 			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('common.name.isStop')" :clearable="true" />

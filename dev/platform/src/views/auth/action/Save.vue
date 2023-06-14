@@ -80,18 +80,18 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('view.auth.action.name.actionName')" prop="actionName">
-                    <ElInput v-model="saveForm.data.actionName" :placeholder="t('view.auth.action.name.actionName')"
+                <ElFormItem :label="t('auth.action.name.actionName')" prop="actionName">
+                    <ElInput v-model="saveForm.data.actionName" :placeholder="t('auth.action.name.actionName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.action.name.actionCode')" prop="actionCode">
-                    <ElInput v-model="saveForm.data.actionCode" :placeholder="t('view.auth.action.name.actionCode')"
+                <ElFormItem :label="t('auth.action.name.actionCode')" prop="actionCode">
+                    <ElInput v-model="saveForm.data.actionCode" :placeholder="t('auth.action.name.actionCode')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.action.name.sceneIdArr')" prop="sceneIdArr">
+                <ElFormItem :label="t('auth.action.name.sceneIdArr')" prop="sceneIdArr">
                     <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.remark')" prop="remark">

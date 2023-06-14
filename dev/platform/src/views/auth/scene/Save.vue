@@ -112,12 +112,12 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('view.auth.scene.name.sceneName')" prop="sceneName">
-                    <ElInput v-model="saveForm.data.sceneName" :placeholder="t('view.auth.scene.name.sceneName')"
+                <ElFormItem :label="t('auth.scene.name.sceneName')" prop="sceneName">
+                    <ElInput v-model="saveForm.data.sceneName" :placeholder="t('auth.scene.name.sceneName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.scene.name.sceneCode')" prop="sceneCode">
-                    <ElInput v-model="saveForm.data.sceneCode" :placeholder="t('view.auth.scene.name.sceneCode')"
+                <ElFormItem :label="t('auth.scene.name.sceneCode')" prop="sceneCode">
+                    <ElInput v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true"
                         style="max-width: 250px;" />
                     <label>
@@ -125,8 +125,8 @@ const saveDrawer = reactive({
                             :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.scene.name.sceneConfig')" prop="sceneConfig">
-                    <ElAlert :title="t('view.auth.scene.tip.sceneConfig')" type="info" :show-icon="true"
+                <ElFormItem :label="t('auth.scene.name.sceneConfig')" prop="sceneConfig">
+                    <ElAlert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true"
                         :closable="false" />
                     <ElInput v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
                 </ElFormItem>

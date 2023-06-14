@@ -32,7 +32,7 @@ const queryForm = reactive({
             <ElInput v-model="queryCommon.data.phone" :placeholder="t('common.name.phone')" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="roleId">
-            <MySelect v-model="queryCommon.data.roleId" :placeholder="t('view.platform.admin.name.roleId')"
+            <MySelect v-model="queryCommon.data.roleId" :placeholder="t('platform.admin.name.roleId')"
                 :api="{ code: '/auth/role/list' }" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">

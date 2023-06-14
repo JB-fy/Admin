@@ -117,23 +117,23 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('view.auth.menu.name.menuName')" prop="menuName">
-                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('view.auth.menu.name.menuName')"
+                <ElFormItem :label="t('auth.menu.name.menuName')" prop="menuName">
+                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.menu.name.menuIcon')" prop="menuIcon">
-                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('view.auth.menu.name.menuIcon')"
+                <ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
+                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('view.auth.menu.tip.menuIcon')" type="info" :show-icon="true"
+                        <ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true"
                             :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.menu.name.menuUrl')" prop="menuUrl">
-                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('view.auth.menu.name.menuUrl')" minlength="1"
+                <ElFormItem :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
+                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" minlength="1"
                         maxlength="120" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('view.auth.menu.name.sceneId')" prop="sceneId">
+                <ElFormItem :label="t('auth.menu.name.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
                         @change="() => { saveForm.data.pid = 0 }" />
                 </ElFormItem>
@@ -143,7 +143,7 @@ const saveDrawer = reactive({
                         :defaultOptions="[{ id: 0, keyword: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.extraData')" prop="extraData">
-                    <ElAlert :title="t('view.auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
+                    <ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
                     <ElInput v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.sort')" prop="sort">

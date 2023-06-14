@@ -54,14 +54,14 @@ const table = reactive({
     },
     {
         dataKey: 'actionName',
-        title: t('view.auth.action.name.actionName'),
+        title: t('auth.action.name.actionName'),
         key: 'actionName',
         align: 'center',
         width: 150,
     },
     {
         dataKey: 'actionCode',
-        title: t('view.auth.action.name.actionCode'),
+        title: t('auth.action.name.actionCode'),
         key: 'actionCode',
         align: 'center',
         width: 150,

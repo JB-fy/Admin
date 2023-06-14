@@ -1191,7 +1191,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
@@ -1203,7 +1203,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1215,7 +1215,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1227,7 +1227,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 300,
 		align: 'center',
@@ -1239,7 +1239,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
         dataKey: '` + field + `',
-        title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+        title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
         key: '` + field + `',
         width: 100,
         align: 'center',
@@ -1286,7 +1286,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1383,7 +1383,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
@@ -1405,7 +1405,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
@@ -1442,7 +1442,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1454,7 +1454,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1466,7 +1466,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1478,7 +1478,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1490,7 +1490,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 200,
 		align: 'center',
@@ -1503,7 +1503,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1516,7 +1516,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1528,7 +1528,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1918,7 +1918,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
 		</ElFormItem>`
 				continue
 			}
@@ -1926,7 +1926,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -1934,7 +1934,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -1942,7 +1942,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -1954,7 +1954,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -1986,7 +1986,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false" />
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false" />
 		</ElFormItem>`
 				continue
 			}
@@ -1994,7 +1994,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false" />
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false" />
 		</ElFormItem>`
 				continue
 			}
@@ -2002,7 +2002,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2010,7 +2010,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `char`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2029,7 +2029,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			//默认处理
 			tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 		}
 	}
@@ -2212,7 +2212,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
                     <MySelect v-model="saveForm.data.` + field + `" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
                 </ElFormItem>`
 				continue
@@ -2225,8 +2225,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2238,8 +2238,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2251,8 +2251,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'change', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2266,7 +2266,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
         ],`
 					tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" :multiple="true" />
 				</ElFormItem>`
 				} else {
@@ -2276,7 +2276,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
         ],`
 					tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
                     <MyUpload v-model="saveForm.data.` + field + `" />
                 </ElFormItem>`
 				}
@@ -2289,8 +2289,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2355,7 +2355,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false"/>
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false"/>
 				</ElFormItem>`
 				continue
 			}
@@ -2367,7 +2367,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false"/>
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false"/>
 				</ElFormItem>`
 				continue
 			}
@@ -2378,8 +2378,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2390,8 +2390,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: ` + result[1] + `, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: ` + result[1] + `, max: ` + result[1] + ` }) },
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="` + result[1] + `" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="` + result[1] + `" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2419,7 +2419,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			},
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>`
 				continue
@@ -2429,8 +2429,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
 				</ElFormItem>`
 				continue
 			}
@@ -2439,8 +2439,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
 				</ElFormItem>`
 				continue
 			}
@@ -2448,8 +2448,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			tpl.ViewSaveRule += `
 		` + field + `: [],`
 			tpl.ViewSaveField += `
-				<ElFormItem :label="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 		}
 	}

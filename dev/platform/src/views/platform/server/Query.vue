@@ -27,11 +27,11 @@ const queryForm = reactive({
                 :controls="false" />
         </ElFormItem>
         <ElFormItem prop="networkIp">
-            <ElInput v-model="queryCommon.data.networkIp" :placeholder="t('view.platform.server.name.networkIp')"
+            <ElInput v-model="queryCommon.data.networkIp" :placeholder="t('platform.server.name.networkIp')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="localIp">
-            <ElInput v-model="queryCommon.data.localIp" :placeholder="t('view.platform.server.name.localIp')"
+            <ElInput v-model="queryCommon.data.localIp" :placeholder="t('platform.server.name.localIp')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem>

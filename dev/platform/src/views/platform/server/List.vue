@@ -13,14 +13,14 @@ const table = reactive({
     },
     {
         dataKey: 'networkIp',
-        title: t('view.platform.server.name.networkIp'),
+        title: t('platform.server.name.networkIp'),
         key: 'networkIp',
         width: 200,
         align: 'center',
     },
     {
         dataKey: 'localIp',
-        title: t('view.platform.server.name.localIp'),
+        title: t('platform.server.name.localIp'),
         key: 'localIp',
         width: 200,
         align: 'center',

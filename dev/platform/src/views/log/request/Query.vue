@@ -50,12 +50,12 @@ const queryForm = reactive({
             <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="requestUrl">
-            <ElInput v-model="queryCommon.data.requestUrl" :placeholder="t('view.log.request.name.requestUrl')"
+            <ElInput v-model="queryCommon.data.requestUrl" :placeholder="t('log.request.name.requestUrl')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem style="width: 196px;" prop="minRunTime">
             <ElInput v-model="queryCommon.data.minRunTime" :placeholder="t('common.name.min')">
-                <template #prepend>{{ t('view.log.request.name.runTime') }}</template>
+                <template #prepend>{{ t('log.request.name.runTime') }}</template>
             </ElInput>
         </ElFormItem>
         <ElFormItem>-</ElFormItem>
