@@ -80,14 +80,14 @@ const saveDrawer = reactive({
 		<ElScrollbar>
 			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
 				label-width="auto" :status-icon="true" :scroll-to-error="true">
-				<ElFormItem :label="t('common.name.platform.corn.cornCode')" prop="cornCode">
-					<ElInput v-model="saveForm.data.cornCode" :placeholder="t('common.name.platform.corn.cornCode')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('view.platform.corn.name.cornCode')" prop="cornCode">
+					<ElInput v-model="saveForm.data.cornCode" :placeholder="t('view.platform.corn.name.cornCode')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
-				<ElFormItem :label="t('common.name.platform.corn.cornName')" prop="cornName">
-					<ElInput v-model="saveForm.data.cornName" :placeholder="t('common.name.platform.corn.cornName')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('view.platform.corn.name.cornName')" prop="cornName">
+					<ElInput v-model="saveForm.data.cornName" :placeholder="t('view.platform.corn.name.cornName')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
-				<ElFormItem :label="t('common.name.platform.corn.cornPattern')" prop="cornPattern">
-					<ElInput v-model="saveForm.data.cornPattern" :placeholder="t('common.name.platform.corn.cornPattern')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('view.platform.corn.name.cornPattern')" prop="cornPattern">
+					<ElInput v-model="saveForm.data.cornPattern" :placeholder="t('view.platform.corn.name.cornPattern')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('common.name.remark')" prop="remark">
 					<ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" />
