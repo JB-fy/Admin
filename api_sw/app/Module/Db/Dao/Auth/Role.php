@@ -28,14 +28,18 @@ class Role extends AbstractDao
         switch ($key) {
             case 'sceneName':
                 $this->builder->addSelect(getDao(Scene::class)->getTable() . '.' . $key);
-
                 $this->parseJoinOfAlone('scene');
                 return true;
             case 'menuIdArr':
             case 'actionIdArr':
                 //需要id字段
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
-
+                $this->afterField[] = $key;
+                return true;
+            case 'tableName':
+                $this->builder->addSelect($this->getTable() . '.tableId');
+                $this->builder->addSelect(getDao(Scene::class)->getTable() . '.sceneCode');
+                $this->parseJoinOfAlone('scene');
                 $this->afterField[] = $key;
                 return true;
         }
@@ -79,6 +83,16 @@ class Role extends AbstractDao
                 return true;
             case 'actionIdArr':
                 $info->{$key} = getDao(RoleRelToAction::class)->parseFilter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
+                return true;
+            case 'tableName':
+                if ($info->tableId == 0) {
+                    $info->{$key} = '平台';
+                    return true;
+                }
+                switch ($info->sceneCode) {
+                    case 'platform':
+                        break;
+                }
                 return true;
         }
         return false;

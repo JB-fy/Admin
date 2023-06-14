@@ -68,6 +68,13 @@ const table = reactive({
         width: 150,
     },
     {
+        dataKey: 'tableName',
+        title: t('common.name.auth.role.tableId'),
+        key: 'tableId',
+        align: 'center',
+        width: 150,
+    },
+    {
         dataKey: 'isStop',
         title: t('common.name.isStop'),
         key: 'isStop',

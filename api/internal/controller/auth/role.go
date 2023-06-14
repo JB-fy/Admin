@@ -51,7 +51,7 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 		allowField := []string{`id`, `keyword`, `roleId`, `roleName`}
 		if isAuth {
 			allowField = daoAuth.Role.ColumnArr()
-			allowField = append(allowField, `id`, `keyword`, `sceneName`)
+			allowField = append(allowField, `id`, `keyword`, `sceneName`, `tableName`)
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		}
 		field := allowField

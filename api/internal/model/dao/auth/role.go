@@ -150,7 +150,11 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			case `menuIdArr`, `actionIdArr`:
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
-
+				afterField = append(afterField, v)
+			case `tableName`:
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().TableId)
+				m = m.Fields(Scene.Table() + `.` + Scene.Columns().SceneCode)
+				m = daoThis.ParseJoin(`scene`, joinTableArr)(m)
 				afterField = append(afterField, v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -306,6 +310,15 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 					case `actionIdArr`:
 						actionIdArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(`roleId`, record[daoThis.PrimaryKey()]).Array(`actionId`)
 						record[v] = gvar.New(actionIdArr)
+					case `tableName`:
+						if record[`tableId`].Int() == 0 {
+							record[v] = gvar.New(`平台`)
+							continue
+						}
+						switch record[`sceneCode`].String() {
+						case `platform`:
+							break
+						}
 					}
 				}
 				result[i] = record
