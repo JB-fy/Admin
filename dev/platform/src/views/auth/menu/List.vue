@@ -92,7 +92,7 @@ const table = reactive({
     },
     {
         dataKey: 'pMenuName',
-        title: t('common.name.rel.pid'),
+        title: t('common.name.pid'),
         key: 'pid',
         align: 'center',
         width: 150,

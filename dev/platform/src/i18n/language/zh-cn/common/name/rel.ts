@@ -1,5 +1,4 @@
 export default {
-    pid: '父级',
     roleId: '所属角色',
     sceneId: '所属场景',
     actionIdArr: '所含操作',

@@ -137,7 +137,7 @@ const saveDrawer = reactive({
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
                         @change="() => { saveForm.data.pid = 0 }" />
                 </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.rel.pid')" prop="pid">
+                <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.pid')" prop="pid">
                     <MyCascader v-model="saveForm.data.pid"
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excId: saveForm.data.id } } }"
                         :defaultOptions="[{ id: 0, keyword: t('common.name.without') }]" :clearable="false" />
