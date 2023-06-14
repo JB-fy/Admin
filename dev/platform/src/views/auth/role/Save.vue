@@ -88,8 +88,8 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('common.name.auth.role.roleName')" prop="roleName">
-                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('common.name.auth.role.roleName')"
+                <ElFormItem :label="t('view.auth.role.name.roleName')" prop="roleName">
+                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('view.auth.role.name.roleName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">

@@ -26,11 +26,11 @@ const queryForm = reactive({
             <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="actionName">
-            <ElInput v-model="queryCommon.data.actionName" :placeholder="t('common.name.auth.action.actionName')"
+            <ElInput v-model="queryCommon.data.actionName" :placeholder="t('view.auth.action.name.actionName')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="actionCode">
-            <ElInput v-model="queryCommon.data.actionCode" :placeholder="t('common.name.auth.action.actionCode')"
+            <ElInput v-model="queryCommon.data.actionCode" :placeholder="t('view.auth.action.name.actionCode')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneId">

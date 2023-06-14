@@ -26,7 +26,7 @@ const queryForm = reactive({
             <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="roleName">
-            <ElInput v-model="queryCommon.data.roleName" :placeholder="t('common.name.auth.role.roleName')"
+            <ElInput v-model="queryCommon.data.roleName" :placeholder="t('view.auth.role.name.roleName')"
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneId">
