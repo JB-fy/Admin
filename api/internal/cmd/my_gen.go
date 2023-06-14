@@ -2546,7 +2546,7 @@ const saveDrawer = reactive({
 
 // view模板生成I18n
 func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/../dev/platform/src/i18n/language/zh-cn/view/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
+	saveFile := gfile.SelfDir() + `/../dev/platform/src/i18n/language/zh-cn/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
