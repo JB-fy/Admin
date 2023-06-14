@@ -56,14 +56,14 @@ const table = reactive({
     },
     {
         dataKey: 'menuName',
-        title: t('common.name.auth.menu.menuName'),
+        title: t('view.auth.menu.name.menuName'),
         key: 'menuName',
         align: 'center',
         width: 150,
     },
     {
         dataKey: 'menuIcon',
-        title: t('common.name.auth.menu.menuIcon'),
+        title: t('view.auth.menu.name.menuIcon'),
         key: 'menuIcon',
         align: 'center',
         width: 100,
@@ -78,7 +78,7 @@ const table = reactive({
     },
     {
         dataKey: 'menuUrl',
-        title: t('common.name.auth.menu.menuUrl'),
+        title: t('view.auth.menu.name.menuUrl'),
         key: 'menuUrl',
         align: 'center',
         width: 150,
@@ -107,7 +107,7 @@ const table = reactive({
     },
     {
         dataKey: 'pidPath',
-        title: t('common.name.auth.menu.pidPath'),
+        title: t('view.auth.menu.name.pidPath'),
         key: 'pidPath',
         width: 150,
         align: 'center',

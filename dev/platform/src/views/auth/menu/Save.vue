@@ -117,20 +117,20 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('common.name.auth.menu.menuName')" prop="menuName">
-                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('common.name.auth.menu.menuName')"
+                <ElFormItem :label="t('view.auth.menu.name.menuName')" prop="menuName">
+                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('view.auth.menu.name.menuName')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.auth.menu.menuIcon')" prop="menuIcon">
-                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('common.name.auth.menu.menuIcon')"
+                <ElFormItem :label="t('view.auth.menu.name.menuIcon')" prop="menuIcon">
+                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('view.auth.menu.name.menuIcon')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('view.auth.menu.tip.menuIcon')" type="info" :show-icon="true"
                             :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.auth.menu.menuUrl')" prop="menuUrl">
-                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('common.name.auth.menu.menuUrl')" minlength="1"
+                <ElFormItem :label="t('view.auth.menu.name.menuUrl')" prop="menuUrl">
+                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('view.auth.menu.name.menuUrl')" minlength="1"
                         maxlength="120" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
