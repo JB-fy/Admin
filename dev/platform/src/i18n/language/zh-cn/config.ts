@@ -1,3 +1,3 @@
 export default {
-    webTitle: '平台'
+    webTitle: '平台后台'
 }
