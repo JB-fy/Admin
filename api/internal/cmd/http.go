@@ -59,7 +59,7 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	s := g.Server()
 	//首页
 	s.BindHandler(`/`, func(r *ghttp.Request) {
-		r.Response.RedirectTo(`/view/admin/platform`)
+		r.Response.RedirectTo(`/view/platform`)
 	})
 	//上传回调
 	s.Group(`/upload`, func(group *ghttp.RouterGroup) {

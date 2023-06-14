@@ -8,7 +8,7 @@ class Index extends AbstractController
 {
     public function index()
     {
-        //return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->redirect('/view/admin/platform/index.html');
-        return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->redirect('/view/admin/platform');
+        //return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->redirect('/view/platform/index.html');
+        return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->redirect('/view/platform');
     }
 }
