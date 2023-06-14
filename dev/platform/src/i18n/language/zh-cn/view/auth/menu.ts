@@ -3,7 +3,8 @@ export default {
         menuName: '菜单名称',
         menuUrl: '菜单链接',
         menuIcon: '菜单图标',
-        pidPath: '父级路径'
+        pidPath: '父级路径',
+        sceneId: '所属场景',
     },
     tip: {
         menuIcon: '常用格式：Autoicon' + "{'{'}" + '集合' + "{'}{'}" + '标识' + "{'}'}" + '；Vant格式：Vant-' + "{'{'}" + '标识' + "{'}'}",

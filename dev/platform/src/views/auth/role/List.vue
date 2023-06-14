@@ -62,7 +62,7 @@ const table = reactive({
     },
     {
         dataKey: 'sceneName',
-        title: t('common.name.rel.sceneId'),
+        title: t('view.auth.role.name.sceneId'),
         key: 'sceneId',
         align: 'center',
         width: 150,

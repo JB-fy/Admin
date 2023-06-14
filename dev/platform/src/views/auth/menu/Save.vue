@@ -133,7 +133,7 @@ const saveDrawer = reactive({
                     <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('view.auth.menu.name.menuUrl')" minlength="1"
                         maxlength="120" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.rel.sceneId')" prop="sceneId">
+                <ElFormItem :label="t('view.auth.menu.name.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
                         @change="() => { saveForm.data.pid = 0 }" />
                 </ElFormItem>
