@@ -1994,7 +1994,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false" />
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('view.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false" />
 		</ElFormItem>`
 				continue
 			}
