@@ -17,7 +17,7 @@ class Login extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->service->encryptStr($data['account'], $sceneCode);
                 break;
@@ -33,7 +33,7 @@ class Login extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->service->login($data['account'], $data['password'], $sceneCode);
                 break;
@@ -49,7 +49,7 @@ class Login extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
                 throwSuccessJson(['info' => $loginInfo]);
                 break;
@@ -65,7 +65,7 @@ class Login extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 /**--------参数验证并处理 开始--------**/
                 $data = $this->request->all();
                 $data = $this->container->get(\App\Module\Validation\Platform\Admin::class)->make($data, 'updateSelf')->validate();
@@ -86,7 +86,7 @@ class Login extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
                 $sceneInfo = $this->container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneInfo();
                 $filter = [

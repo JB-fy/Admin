@@ -20,7 +20,7 @@ func NewLogin() *Login {
 func (c *Login) EncryptStr(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *api.LoginEncryptReq
 		err := r.Parse(&param)
@@ -43,7 +43,7 @@ func (c *Login) EncryptStr(r *ghttp.Request) {
 func (c *Login) Login(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *api.LoginLoginReq
 		err := r.Parse(&param)
@@ -66,7 +66,7 @@ func (c *Login) Login(r *ghttp.Request) {
 func (c *Login) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
 		utils.HttpSuccessJson(r, map[string]interface{}{`info`: loginInfo}, 0)
 	}
@@ -76,7 +76,7 @@ func (c *Login) Info(r *ghttp.Request) {
 func (c *Login) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.AdminUpdateSelfReq
 		err := r.Parse(&param)
@@ -106,7 +106,7 @@ func (c *Login) Update(r *ghttp.Request) {
 func (c *Login) MenuTree(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
 		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
 		filter := map[string]interface{}{}

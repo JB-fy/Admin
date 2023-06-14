@@ -12,7 +12,7 @@ class Scene implements \Psr\Http\Server\MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        //$sceneCode = 'platformAdmin';
+        //$sceneCode = 'platform';
         $pathArr= explode('/', getRequest()->getPathInfo());
         $sceneCode= $pathArr[1] ?? '';
         if (empty($sceneCode)) {

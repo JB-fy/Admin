@@ -45,7 +45,7 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authActionLook`)
 		allowField := []string{`id`, `keyword`, `actionId`, `actionName`}
@@ -81,7 +81,7 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 func (controllerThis *Action) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionInfoReq
 		err := r.Parse(&param)
@@ -124,7 +124,7 @@ func (controllerThis *Action) Info(r *ghttp.Request) {
 func (controllerThis *Action) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionCreateReq
 		err := r.Parse(&param)
@@ -156,7 +156,7 @@ func (controllerThis *Action) Create(r *ghttp.Request) {
 func (controllerThis *Action) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionUpdateReq
 		err := r.Parse(&param)
@@ -194,7 +194,7 @@ func (controllerThis *Action) Update(r *ghttp.Request) {
 func (controllerThis *Action) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionDeleteReq
 		err := r.Parse(&param)

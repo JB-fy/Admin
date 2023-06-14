@@ -23,7 +23,7 @@ func NewUpload() *Upload {
 func (c *Upload) Sign(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	//case `platformAdmin`:
+	//case `platform`:
 	default:
 		/**--------参数处理 开始--------**/
 		var param *api.UploadSignReq

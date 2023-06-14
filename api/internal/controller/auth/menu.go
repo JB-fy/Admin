@@ -45,7 +45,7 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authMenuLook`)
 		allowField := []string{`id`, `keyword`, `menuId`, `menuName`}
@@ -81,7 +81,7 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 func (controllerThis *Menu) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuInfoReq
 		err := r.Parse(&param)
@@ -124,7 +124,7 @@ func (controllerThis *Menu) Info(r *ghttp.Request) {
 func (controllerThis *Menu) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuCreateReq
 		err := r.Parse(&param)
@@ -156,7 +156,7 @@ func (controllerThis *Menu) Create(r *ghttp.Request) {
 func (controllerThis *Menu) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuUpdateReq
 		err := r.Parse(&param)
@@ -194,7 +194,7 @@ func (controllerThis *Menu) Update(r *ghttp.Request) {
 func (controllerThis *Menu) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuDeleteReq
 		err := r.Parse(&param)
@@ -239,7 +239,7 @@ func (controllerThis *Menu) Tree(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authMenuLook`)
 		allowField := []string{`id`, `keyword`, `menuId`, `menuName`}

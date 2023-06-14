@@ -725,7 +725,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case ` + "`" + `platformAdmin` + "`" + `:
+	case ` + "`" + `platform` + "`" + `:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
 		allowField := []string{` + "`id`, `keyword`, " + `{TplControllerAlloweFieldAppend}}
@@ -768,7 +768,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case ` + "`" + `platformAdmin` + "`" + `:
+	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}InfoReq
 		err := r.Parse(&param)
@@ -818,7 +818,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case ` + "`" + `platformAdmin` + "`" + `:
+	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}CreateReq
 		err := r.Parse(&param)
@@ -854,7 +854,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case ` + "`" + `platformAdmin` + "`" + `:
+	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}UpdateReq
 		err := r.Parse(&param)
@@ -896,7 +896,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case ` + "`" + `platformAdmin` + "`" + `:
+	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}DeleteReq
 		err := r.Parse(&param)

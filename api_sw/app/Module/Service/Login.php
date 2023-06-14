@@ -37,7 +37,7 @@ class Login extends AbstractService
     public function login(string $account, string $password, string $sceneCode)
     {
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 /**--------验证账号密码 开始--------**/
                 $info = getDao(Admin::class)->parseFilter(['accountOrPhone' => $account])->info();
                 if (empty($info)) {
@@ -77,7 +77,7 @@ class Login extends AbstractService
     public function verifyToken(string $sceneCode)
     {
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 /**--------验证token 开始--------**/
                 $token = $this->logic->getCurrentToken($sceneCode);
                 if (empty($token)) {

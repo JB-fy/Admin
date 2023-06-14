@@ -18,7 +18,7 @@ class Admin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -48,7 +48,7 @@ class Admin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -79,7 +79,7 @@ class Admin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -97,7 +97,7 @@ class Admin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 //不能修改平台超级管理员
                 if (in_array(getConfig('app.superPlatformAdminId'), $data['idArr'])) {
@@ -119,7 +119,7 @@ class Admin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 //不能删除平台超级管理员
                 if (in_array(getConfig('app.superPlatformAdminId'), $data['idArr'])) {

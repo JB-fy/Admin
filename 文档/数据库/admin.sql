@@ -271,7 +271,7 @@ CREATE TABLE `auth_scene`  (
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES (1, 'platformAdmin', '平台后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-11 12:38:24', '2023-06-09 12:03:30');
+INSERT INTO `auth_scene` VALUES (1, 'platform', '平台后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-11 12:38:24', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for log_request

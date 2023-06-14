@@ -14,8 +14,8 @@ use Psr\Container\ContainerInterface;
  */
 return [
     //平台管理员JWT插件
-    'platformAdminJwt' => function (ContainerInterface $container) {
-        $sceneInfo = getConfig('inDb.authScene.platformAdmin');
+    'platformJwt' => function (ContainerInterface $container) {
+        $sceneInfo = getConfig('inDb.authScene.platform');
         return make(\App\Plugin\Jwt::class, ['config' => $sceneInfo->sceneConfig]);
     },
     //上传组件

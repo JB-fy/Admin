@@ -1,3 +1,3 @@
 export default {
-    webTitle: 'PlatformAdmin',
+    webTitle: 'Platform',
 }

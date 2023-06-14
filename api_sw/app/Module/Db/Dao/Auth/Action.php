@@ -66,7 +66,7 @@ class Action extends AbstractDao
                 $this->builder->where(getDao(ActionRelToScene::class)->getTable() . '.sceneId', '=', $value['sceneCode'], 'and');
                 $this->parseJoinOfAlone('actionRelToScene');
                 switch ($value['sceneCode']) {
-                    case 'platformAdmin':
+                    case 'platform':
                         if ($value['loginId'] === getConfig('app.superPlatformAdminId')) { //平台超级管理员，不再需要其他条件
                             return true;
                         }

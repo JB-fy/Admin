@@ -27,7 +27,7 @@ Router::get('/favicon.ico', function () {
 /**--------公共接口 结束--------**/
 
 /**--------平台后台接口 开始--------**/
-Router::addGroup('/platformAdmin', function () {
+Router::addGroup('/platform', function () {
     //不做日志记录
     Router::addGroup('', function () {
         //需验证登录身份

@@ -45,7 +45,7 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformCornLook`)
 		allowField := []string{`id`, `keyword`, `cornId`, `cornName`}
@@ -80,7 +80,7 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 func (controllerThis *Corn) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.CornInfoReq
 		err := r.Parse(&param)
@@ -122,7 +122,7 @@ func (controllerThis *Corn) Info(r *ghttp.Request) {
 func (controllerThis *Corn) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.CornCreateReq
 		err := r.Parse(&param)
@@ -154,7 +154,7 @@ func (controllerThis *Corn) Create(r *ghttp.Request) {
 func (controllerThis *Corn) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.CornUpdateReq
 		err := r.Parse(&param)
@@ -192,7 +192,7 @@ func (controllerThis *Corn) Update(r *ghttp.Request) {
 func (controllerThis *Corn) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.CornDeleteReq
 		err := r.Parse(&param)

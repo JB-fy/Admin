@@ -18,7 +18,7 @@ class Role extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $isAuth = $this->checkAuth(__FUNCTION__, $sceneCode, false);
 
@@ -53,7 +53,7 @@ class Role extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -84,7 +84,7 @@ class Role extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -102,7 +102,7 @@ class Role extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -120,7 +120,7 @@ class Role extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         switch ($sceneCode) {
-            case 'platformAdmin':
+            case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
 

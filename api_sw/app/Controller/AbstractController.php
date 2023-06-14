@@ -60,7 +60,7 @@ abstract class AbstractController
      */
     final protected function validate(string $funcName, string $sceneCode = ''): array
     {
-        $sceneName = ($sceneCode === '' || $sceneCode == 'platformAdmin') ? $funcName : $funcName . 'Of' . ucfirst($sceneCode);
+        $sceneName = ($sceneCode === '' || $sceneCode == 'platform') ? $funcName : $funcName . 'Of' . ucfirst($sceneCode);
         $data = $this->request->all();
         switch ($funcName) {
             case 'tree':

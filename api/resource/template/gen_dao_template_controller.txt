@@ -45,7 +45,7 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `auth{TplTableNameCamelCase}Look`)
 		allowField := []string{`{TplTableNameCamelLowerCase}Id`, `{TplTableNameCamelLowerCase}Name`, `id`}
@@ -81,7 +81,7 @@ func (controllerThis *{TplTableNameCamelCase}) List(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.{TplTableNameCamelCase}InfoReq
 		err := r.Parse(&param)
@@ -124,7 +124,7 @@ func (controllerThis *{TplTableNameCamelCase}) Info(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCamelCase}) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.{TplTableNameCamelCase}CreateReq
 		err := r.Parse(&param)
@@ -156,7 +156,7 @@ func (controllerThis *{TplTableNameCamelCase}) Create(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.{TplTableNameCamelCase}UpdateReq
 		err := r.Parse(&param)
@@ -194,7 +194,7 @@ func (controllerThis *{TplTableNameCamelCase}) Update(r *ghttp.Request) {
 func (controllerThis *{TplTableNameCamelCase}) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.{TplTableNameCamelCase}DeleteReq
 		err := r.Parse(&param)

@@ -207,7 +207,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.Where(ActionRelToScene.Table()+`.sceneId`, val[`sceneId`])
 				m = daoThis.ParseJoin(`actionRelToScene`, joinTableArr)(m)
 				switch val[`sceneCode`].(string) {
-				case `platformAdmin`:
+				case `platform`:
 					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其他条件
 						return m
 					}

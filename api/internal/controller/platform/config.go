@@ -20,7 +20,7 @@ func NewConfig() *Config {
 func (controllerThis *Config) Get(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.ConfigGetReq
 		err := r.Parse(&param)
@@ -56,7 +56,7 @@ func (controllerThis *Config) Get(r *ghttp.Request) {
 func (controllerThis *Config) Save(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiPlatform.ConfigSaveReq
 		err := r.Parse(&param)

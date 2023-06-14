@@ -45,7 +45,7 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
-	case `platformAdmin`:
+	case `platform`:
 		/**--------权限验证 开始--------**/
 		_, err := service.Action().CheckAuth(r.GetCtx(), `platformServerLook`)
 		if err != nil {
