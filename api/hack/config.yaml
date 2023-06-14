@@ -42,3 +42,16 @@ gfcli:
         entityPath: "model/entity/log"
         # tplDaoEntityPath: "resource/template/gen_dao_template_entity.txt"
         # overwriteDao: true
+      - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
+        group: "default"
+        removePrefix: "test_"
+        path: "internal"
+        tables: "test_test"
+        daoPath: "model/dao/test"
+        tplDaoIndexPath: "resource/template/gen_dao_template_dao.txt"
+        tplDaoInternalPath: "resource/template/gen_dao_template_dao_internal.txt"
+        doPath: "model/do/test"
+        # tplDaoDoPath: "resource/template/gen_dao_template_do.txt"
+        entityPath: "model/entity/test"
+        # tplDaoEntityPath: "resource/template/gen_dao_template_entity.txt"
+        # overwriteDao: true
