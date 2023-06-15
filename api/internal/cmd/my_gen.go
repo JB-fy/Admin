@@ -1249,7 +1249,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             }`
 				if column[`Type`].String() == `json` {
 					tpl.ViewListColumn += `
-			const imageList = JSON.parse(props.rowData.` + field + `)`
+			let imageList: string[]
+			if (Array.isArray(props.rowData.` + field + `)) {
+				imageList = props.rowData.` + field + `
+			} else {
+				imageList = JSON.parse(props.rowData.` + field + `)
+			}`
 				} else {
 					tpl.ViewListColumn += `
 			const imageList = [props.rowData.` + field + `]`
