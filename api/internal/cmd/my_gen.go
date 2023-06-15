@@ -837,12 +837,12 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCaseCamel}().Create(r.GetCtx(), data)
+		id, err := service.{TplTableNameCaseCamel}().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{` + "`id`" + `: id}, 0)
 	}
 }
 
