@@ -153,7 +153,11 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 		}
 		return
 	}
-	row, err = result.RowsAffected()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
+	}
 	return
 }
 
@@ -165,9 +169,11 @@ func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface
 	if err != nil {
 		return
 	}
-	row, err = result.RowsAffected()
-	if row > 0 {
-		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, idArr).Delete()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
 	}
+	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, idArr).Delete()
 	return
 }

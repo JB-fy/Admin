@@ -110,7 +110,11 @@ func (logicThis *sCorn) Update(ctx context.Context, data map[string]interface{},
 		}
 		return
 	}
-	row, err = result.RowsAffected()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
+	}
 	return
 }
 
@@ -121,6 +125,10 @@ func (logicThis *sCorn) Delete(ctx context.Context, filter map[string]interface{
 	if err != nil {
 		return
 	}
-	row, err = result.RowsAffected()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
+	}
 	return
 }

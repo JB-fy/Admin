@@ -135,7 +135,11 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 		}
 		return
 	}
-	row, err = result.RowsAffected()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
+	}
 	return
 }
 
@@ -147,10 +151,12 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 	if err != nil {
 		return
 	}
-	row, err = result.RowsAffected()
-	if row > 0 {
-		daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, idArr).Delete()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
 	}
+	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, idArr).Delete()
 	return
 }
 

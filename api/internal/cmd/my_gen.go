@@ -619,7 +619,11 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, data map[
 		}
 		return
 	}
-	row, err = result.RowsAffected()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
+	}
 	return
 }
 
@@ -634,7 +638,11 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 	if err != nil {
 		return
 	}
-	row, err = result.RowsAffected()
+	row, _ = result.RowsAffected()
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 99999999, ``)
+		return
+	}
 	return
 }
 `
