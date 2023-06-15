@@ -5,7 +5,6 @@ import (
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -16,18 +15,23 @@ func NewTest() *Test {
 }
 
 func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.TestMetaRes, err error) {
-	//time.Sleep(10 * time.Second)
-	g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
+	// time.Sleep(10 * time.Second)
+	// utils.HttpFailJson(g.RequestFromCtx(ctx), utils.NewErrorCode(ctx, 99999999, ``))
+	// g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
+	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
+	res = &api.TestMetaRes{
+		Test: `aasd`,
+	}
 	return
 }
 
 func (c *Test) Test(r *ghttp.Request) {
-	/* var req *api.TestReq
+	var req *api.TestReq
 	err := r.Parse(&req)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
-	} */
+	}
 
 	// fmt.Println(garray.NewStrArrayFrom([]string{`a`, `b`, `c`}).Contains(`a`))
 
