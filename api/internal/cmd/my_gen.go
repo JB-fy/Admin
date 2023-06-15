@@ -1249,7 +1249,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             }`
 				if column[`Type`].String() == `json` {
 					tpl.ViewListColumn += `
-			const imageList= JSON.parse(props.rowData.` + field + `)`
+			const imageList = JSON.parse(props.rowData.` + field + `)`
 				} else {
 					tpl.ViewListColumn += `
 			const imageList = [props.rowData.` + field + `]`
@@ -1537,7 +1537,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	tplView := `<script setup lang="ts">
-const { t } = useI18n()
+const { t, tm } = useI18n()
 
 const table = reactive({
 	columns: [{
@@ -2568,7 +2568,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			if !garray.NewStrArrayFrom([]string{`remark`, `isStop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(fieldCaseCamelLower) {
 				tpl.ViewI18nField += `
-		` + field + `: '` + comment + `',`
+	` + field + `: '` + comment + `',`
 			}
 		}
 	}
