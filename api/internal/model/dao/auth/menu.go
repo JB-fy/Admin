@@ -231,7 +231,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 
 					m = daoThis.ParseJoin(`roleRelToMenu`, joinTableArr)(m)
 					m = daoThis.ParseJoin(`role`, joinTableArr)(m)
-					m = daoThis.ParseJoin(`roleRelOfPlatformAdmin`, joinTableArr)(m)
+					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
 				m = daoThis.ParseGroup([]string{`id`}, joinTableArr)(m)
 			default:
@@ -339,7 +339,7 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 				roleRelToMenuTable := RoleRelToMenu.Table()
 				m = m.LeftJoin(roleTable, roleTable+`.`+Role.PrimaryKey()+` = `+roleRelToMenuTable+`.`+Role.PrimaryKey())
 			}
-		case `roleRelOfPlatformAdmin`:
+		case RoleRelOfPlatformAdmin.Table():
 			roleRelOfPlatformAdminTable := RoleRelOfPlatformAdmin.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
 				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)

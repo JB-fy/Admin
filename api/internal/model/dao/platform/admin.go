@@ -205,7 +205,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				}
 			case `roleId`:
 				m = m.Where(daoAuth.RoleRelOfPlatformAdmin.Table()+`.`+k, v)
-				m = daoThis.ParseJoin(`roleRelOfPlatformAdmin`, joinTableArr)(m)
+				m = daoThis.ParseJoin(daoAuth.RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
@@ -282,7 +282,7 @@ func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.
 			*joinTableArr = append(*joinTableArr, xxxxTable)
 			m = m.LeftJoin(xxxxTable, xxxxTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
-		case `roleRelOfPlatformAdmin`:
+		case daoAuth.RoleRelOfPlatformAdmin.Table():
 			roleRelOfPlatformAdminTable := daoAuth.RoleRelOfPlatformAdmin.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
 				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
