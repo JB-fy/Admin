@@ -131,7 +131,7 @@ abstract class AbstractController
     protected function getAllowField(string $className): array
     {
         $allowField = getDao($className)->getAllColumn();
-        $allowField = array_merge($allowField, ['id', 'keyword']);
+        $allowField = array_merge($allowField, ['id', 'name']);
         $allowField = array_diff($allowField, ['password']);
         return $allowField;
     }

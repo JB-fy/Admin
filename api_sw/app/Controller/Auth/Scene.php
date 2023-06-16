@@ -26,7 +26,7 @@ class Scene extends AbstractController
                 if ($isAuth) {
                     $allowField = $this->getAllowField(AuthScene::class);
                 } else {
-                    $allowField = ['id', 'keyword', 'sceneId', 'sceneName'];
+                    $allowField = ['id', 'name', 'sceneId', 'sceneName'];
                 }
                 if (empty($data['field'])) {
                     $data['field'] = $allowField;

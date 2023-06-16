@@ -48,10 +48,10 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformCornLook`)
-		allowField := []string{`id`, `keyword`, `cornId`, `cornName`}
+		allowField := []string{`id`, `name`, `cornId`, `cornName`}
 		if isAuth {
 			allowField = daoPlatform.Corn.ColumnArr()
-			allowField = append(allowField, `id`, `keyword`)
+			allowField = append(allowField, `id`, `name`)
 		}
 		field := allowField
 		if len(param.Field) > 0 {
@@ -90,7 +90,7 @@ func (controllerThis *Corn) Info(r *ghttp.Request) {
 		}
 
 		allowField := daoPlatform.Corn.ColumnArr()
-		allowField = append(allowField, `id`, `keyword`)
+		allowField = append(allowField, `id`, `name`)
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

@@ -48,10 +48,10 @@ func (controllerThis *Scene) List(r *ghttp.Request) {
 	case `platform`:
 		/**--------权限验证 开始--------**/
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authSceneLook`)
-		allowField := []string{`id`, `keyword`, `sceneId`, `sceneName`}
+		allowField := []string{`id`, `name`, `sceneId`, `sceneName`}
 		if isAuth {
 			allowField = daoAuth.Scene.ColumnArr()
-			allowField = append(allowField, `id`, `keyword`)
+			allowField = append(allowField, `id`, `name`)
 			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		}
 		field := allowField
@@ -91,7 +91,7 @@ func (controllerThis *Scene) Info(r *ghttp.Request) {
 		}
 
 		allowField := daoAuth.Scene.ColumnArr()
-		allowField = append(allowField, `id`, `keyword`)
+		allowField = append(allowField, `id`, `name`)
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {

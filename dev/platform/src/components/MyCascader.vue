@@ -110,7 +110,7 @@ const cascader = reactive({
         param: computed((): { filter: { [propName: string]: any }, field: string[], sort: { key: string, order: string }, page: number, limit: number } => {
             return {
                 filter: {} as { [propName: string]: any },
-                field: ['id', 'keyword'],
+                field: ['id', 'name'],
                 sort: { key: 'id', order: 'desc' },
                 page: 1,
                 limit: 0,

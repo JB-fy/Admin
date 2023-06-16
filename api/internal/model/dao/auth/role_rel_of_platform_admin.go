@@ -135,12 +135,12 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableAr
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			case `keyword`:
-				keywordField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
-				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(keywordField)) {
-					m = m.Fields(daoThis.Table() + `.` + gstr.CaseCamelLower(keywordField) + ` AS ` + v)
-				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(keywordField)) {
-					m = m.Fields(daoThis.Table() + `.` + gstr.CaseSnakeFirstUpper(keywordField) + ` AS ` + v)
+			case `name`:
+				nameField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
+				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(nameField)) {
+					m = m.Fields(daoThis.Table() + `.` + gstr.CaseCamelLower(nameField) + ` AS ` + v)
+				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(nameField)) {
+					m = m.Fields(daoThis.Table() + `.` + gstr.CaseSnakeFirstUpper(nameField) + ` AS ` + v)
 				}
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -183,12 +183,12 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interfac
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `keyword`:
-				keywordField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
-				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(keywordField)) {
-					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseCamelLower(keywordField), `%`+gconv.String(v)+`%`)
-				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(keywordField)) {
-					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseSnakeFirstUpper(keywordField), `%`+gconv.String(v)+`%`)
+			case `name`:
+				nameField := gstr.SubStr(gstr.CaseCamel(daoThis.PrimaryKey()), 0, -2) + `Name`
+				if daoThis.ColumnArrG().Contains(gstr.CaseCamelLower(nameField)) {
+					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseCamelLower(nameField), `%`+gconv.String(v)+`%`)
+				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(nameField)) {
+					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseSnakeFirstUpper(nameField), `%`+gconv.String(v)+`%`)
 				}
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k

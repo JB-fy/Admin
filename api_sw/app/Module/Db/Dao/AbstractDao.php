@@ -332,10 +332,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey() . ' AS ' . $key);
                 return true;
-            case 'keyword':
-                $keywordField = str_replace('Id', 'Name', $this->getKey());
-                if (in_array($keywordField, $this->getAllColumn())) {
-                    $this->builder->addSelect($this->getTable() . '.' . $keywordField . ' AS ' . $key);
+            case 'name':
+                $nameField = str_replace('Id', 'Name', $this->getKey());
+                if (in_array($nameField, $this->getAllColumn())) {
+                    $this->builder->addSelect($this->getTable() . '.' . $nameField . ' AS ' . $key);
                 }
                 return true;
             default:
@@ -389,10 +389,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'endTime':
                 $this->builder->where($this->getTable() . '.createdAt', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
-            case 'keyword':
-                $keywordField = str_replace('Id', 'Name', $this->getKey());
-                if (in_array($keywordField, $this->getAllColumn())) {
-                    $this->builder->where($this->getTable() . '.' . $keywordField, $operator ?? 'Like', '%' . $value . '%', $boolean ?? 'and');
+            case 'name':
+                $nameField = str_replace('Id', 'Name', $this->getKey());
+                if (in_array($nameField, $this->getAllColumn())) {
+                    $this->builder->where($this->getTable() . '.' . $nameField, $operator ?? 'Like', '%' . $value . '%', $boolean ?? 'and');
                 }
                 return true;
             default:

@@ -53,7 +53,7 @@ func (controllerThis *Request) List(r *ghttp.Request) {
 			return
 		}
 		allowField := daoLog.Request.ColumnArr()
-		allowField = append(allowField, `id`, `keyword`)
+		allowField = append(allowField, `id`, `name`)
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
