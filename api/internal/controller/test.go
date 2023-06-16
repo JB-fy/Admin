@@ -33,6 +33,8 @@ func (c *Test) Test(r *ghttp.Request) {
 		return
 	}
 
+	// fmt.Println(g.I18n().T(ctx, `code.99999999`))
+
 	// fmt.Println(garray.NewStrArrayFrom([]string{`a`, `b`, `c`}).Contains(`a`))
 
 	// fmt.Println(gset.NewIntSetFrom([]int{1, 2, 3}).Diff(gset.NewIntSetFrom([]int{1, 3})).Slice())

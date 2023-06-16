@@ -1,3 +1,5 @@
-0: "success"
+test: "test" # 第一个字段不能带.号，否则整个文件配置都不会被读取到
 
-99999999: "fail"
+code.0: "success"
+
+code.99999999: "fail"
