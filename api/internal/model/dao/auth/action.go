@@ -359,10 +359,10 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, sceneIdArr []int, id
 	sceneIdArrOfOld := gconv.SliceInt(sceneIdArrOfOldTmp)
 
 	/**----新增关联场景 开始----**/
-	inserttSceneIdArr := gset.NewIntSetFrom(sceneIdArr).Diff(gset.NewIntSetFrom(sceneIdArrOfOld)).Slice()
-	if len(inserttSceneIdArr) > 0 {
+	insertSceneIdArr := gset.NewIntSetFrom(sceneIdArr).Diff(gset.NewIntSetFrom(sceneIdArrOfOld)).Slice()
+	if len(insertSceneIdArr) > 0 {
 		insertList := []map[string]interface{}{}
-		for _, v := range inserttSceneIdArr {
+		for _, v := range insertSceneIdArr {
 			insertList = append(insertList, map[string]interface{}{
 				`actionId`: id,
 				`sceneId`:  v,
