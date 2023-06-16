@@ -670,7 +670,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		switch fieldCaseCamel {
 		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
-			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || field == `name` || gstr.CaseCamelLower(field) == tpl.TableNameCaseCamel+`Name` {
+			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || field == `name` || gstr.CaseCamel(field) == tpl.TableNameCaseCamel+`Name` {
 				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
 				continue
 			}
