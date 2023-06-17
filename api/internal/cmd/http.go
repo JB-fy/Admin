@@ -16,7 +16,6 @@ import (
 	"api/internal/corn"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/middleware"
-	"api/internal/packed"
 	"api/internal/router"
 )
 
@@ -31,8 +30,8 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	/**--------多语言设置 结束--------**/
 
 	/**--------设置当前服务器IP并记录 开始--------**/
-	serverNetworkIp := packed.GetServerNetworkIp()
-	serverLocalIp := packed.GetServerLocalIp()
+	serverNetworkIp := utils.GetServerNetworkIp()
+	serverLocalIp := utils.GetServerLocalIp()
 	genv.Set(`SERVER_NETWORK_IP`, serverNetworkIp) //设置服务器外网ip（key必须由大写和_组成，才能用g.Cfg().MustGetWithEnv()方法读取）
 	genv.Set(`SERVER_LOCAL_IP`, serverLocalIp)     //设置服务器内网ip（key必须由大写和_组成，才能用g.Cfg().MustGetWithEnv()方法读取）
 	daoPlatform.Server.ParseDbCtx(ctx).Data(g.Map{`networkIp`: serverNetworkIp, `localIp`: serverLocalIp}).Save()

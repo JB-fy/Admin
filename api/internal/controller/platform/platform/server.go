@@ -3,7 +3,6 @@ package controller
 import (
 	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
-	"api/internal/packed"
 	"api/internal/service"
 
 	"github.com/gogf/gf/v2/container/gset"
@@ -23,7 +22,7 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 	var param *apiPlatform.ServerListReq
 	err := r.Parse(&param)
 	if err != nil {
-		packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 		return
 	}
 	filter := gconv.Map(param.Filter)
@@ -43,13 +42,13 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------权限验证 开始--------**/
 		_, err := service.Action().CheckAuth(r.GetCtx(), `platformServerLook`)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		allowField := daoPlatform.Server.ColumnArr()
@@ -66,14 +65,14 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 
 		count, err := service.Server().Count(r.GetCtx(), filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		list, err := service.Server().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
 	}
 }

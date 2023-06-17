@@ -2,7 +2,6 @@ package logic
 
 import (
 	daoAuth "api/internal/dao/auth"
-	"api/internal/packed"
 	"api/internal/service"
 	"context"
 
@@ -79,7 +78,7 @@ func (logicThis *sRole) Info(ctx context.Context, filter map[string]interface{},
 		return
 	}
 	if len(info) == 0 {
-		err = packed.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 	return
@@ -94,7 +93,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 		filterTmp := g.Map{`menuId`: data[`menuIdArr`], `sceneId`: data[`sceneId`]}
 		menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Handler(daoAuth.Menu.ParseFilter(filterTmp, &[]string{})).Count()
 		if len(menuIdArr) != menuIdArrCount {
-			err = packed.NewErrorCode(ctx, 89999998, ``)
+			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
 		}
 	}
@@ -104,7 +103,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 		filterTmp := g.Map{`actionId`: data[`actionIdArr`], `sceneId`: data[`sceneId`]}
 		actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filterTmp, &[]string{})).Count()
 		if len(actionIdArr) != actionIdArrCount {
-			err = packed.NewErrorCode(ctx, 89999998, ``)
+			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
 		}
 	}
@@ -113,7 +112,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
@@ -151,7 +150,7 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 				}
 				menuIdArrCount, _ := daoAuth.Menu.ParseDbCtx(ctx).Handler(daoAuth.Menu.ParseFilter(filterTmp, &[]string{})).Count()
 				if len(menuIdArr) != menuIdArrCount {
-					err = packed.NewErrorCode(ctx, 89999998, ``)
+					err = utils.NewErrorCode(ctx, 89999998, ``)
 					return
 				}
 				daoThis.SaveRelMenu(ctx, menuIdArr, oldInfo[`roleId`].Int())
@@ -166,7 +165,7 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 				}
 				actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filterTmp, &[]string{})).Count()
 				if len(actionIdArr) != actionIdArrCount {
-					err = packed.NewErrorCode(ctx, 89999998, ``)
+					err = utils.NewErrorCode(ctx, 89999998, ``)
 					return
 				}
 				daoThis.SaveRelAction(ctx, actionIdArr, oldInfo[`roleId`].Int())
@@ -179,14 +178,14 @@ func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{},
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = packed.NewErrorCode(ctx, 99999999, ``)
+		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	return
@@ -202,7 +201,7 @@ func (logicThis *sRole) Delete(ctx context.Context, filter map[string]interface{
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = packed.NewErrorCode(ctx, 99999999, ``)
+		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	daoAuth.RoleRelToMenu.ParseDbCtx(ctx).Where(`roleId`, idArr).Delete()

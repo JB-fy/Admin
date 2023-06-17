@@ -579,7 +579,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 		return
 	}
 	if len(info) == 0 {
-		err = packed.NewErrorCode(ctx, 29999999, ` + "`" + "`" + `)
+		err = utils.NewErrorCode(ctx, 29999999, ` + "`" + "`" + `)
 		return
 	}
 	return
@@ -595,7 +595,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 	if err != nil {
 		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
 		if len(match) > 0 {
-			err = packed.NewErrorCode(ctx, 29991062, ` + "`" + "`" + `, map[string]interface{}{` + "`" + `errField` + "`" + `: match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ` + "`" + "`" + `, map[string]interface{}{` + "`" + `errField` + "`" + `: match[1]})
 			return
 		}
 		return
@@ -614,14 +614,14 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, data map[
 	if err != nil {
 		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
 		if len(match) > 0 {
-			err = packed.NewErrorCode(ctx, 29991062, ` + "`" + "`" + `, map[string]interface{}{` + "`" + `errField` + "`" + `: match[1]})
+			err = utils.NewErrorCode(ctx, 29991062, ` + "`" + "`" + `, map[string]interface{}{` + "`" + `errField` + "`" + `: match[1]})
 			return
 		}
 		return
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = packed.NewErrorCode(ctx, 99999999, ` + "``" + `)
+		err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
 		return
 	}
 	return
@@ -640,7 +640,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = packed.NewErrorCode(ctx, 99999999, ` + "``" + `)
+		err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
 		return
 	}
 	return
@@ -711,7 +711,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}ListReq
 	err := r.Parse(&param)
 	if err != nil {
-		packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 		return
 	}
 	filter := gconv.Map(param.Filter)
@@ -731,7 +731,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------权限验证 开始--------**/
@@ -757,15 +757,15 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 
 		count, err := service.{TplTableNameCaseCamel}().Count(r.GetCtx(), filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		list, err := service.{TplTableNameCaseCamel}().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{` + "`" + `count` + "`" + `: count, ` + "`" + `list` + "`" + `: list}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{` + "`" + `count` + "`" + `: count, ` + "`" + `list` + "`" + `: list}, 0)
 	}
 }
 
@@ -774,14 +774,14 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	if !option.NoUpdate {
 		tplController += `// 详情
 func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}InfoReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
@@ -805,17 +805,17 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		info, err := service.{TplTableNameCaseCamel}().Info(r.GetCtx(), filter, field)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{` + "`" + `info` + "`" + `: info}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{` + "`" + `info` + "`" + `: info}, 0)
 	}
 }
 
@@ -824,14 +824,14 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 	if !option.NoCreate {
 		tplController += `// 创建
 func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}CreateReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
@@ -840,17 +840,17 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Create` + "`" + `)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		id, err := service.{TplTableNameCaseCamel}().Create(r.GetCtx(), data)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{` + "`id`" + `: id}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{` + "`id`" + `: id}, 0)
 	}
 }
 
@@ -860,20 +860,20 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 	if !option.NoUpdate {
 		tplController += `// 更新
 func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}UpdateReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
 		delete(data, ` + "`" + `idArr` + "`" + `)
 		if len(data) == 0 {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, ` + "`" + "`" + `))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ` + "`" + "`" + `))
 			return
 		}
 		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
@@ -882,17 +882,17 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Update` + "`" + `)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		_, err = service.{TplTableNameCaseCamel}().Update(r.GetCtx(), data, filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -902,14 +902,14 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 	if !option.NoDelete {
 		tplController += `// 删除
 func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
 		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}DeleteReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
@@ -918,17 +918,17 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Delete` + "`" + `)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		_, err = service.{TplTableNameCaseCamel}().Delete(r.GetCtx(), filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 `

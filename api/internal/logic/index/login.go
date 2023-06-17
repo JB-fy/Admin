@@ -3,7 +3,6 @@ package logic
 import (
 	"api/internal/consts"
 	daoPlatform "api/internal/dao/platform"
-	"api/internal/packed"
 	"api/internal/service"
 	"context"
 	"errors"
@@ -54,12 +53,12 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 		}
 		/**--------验证账号密码 结束--------**/
 
-		claims := packed.CustomClaims{
+		claims := utils.CustomClaims{
 			LoginId:  info[`adminId`].Uint(),
 			Account:  info[`account`].String(),
 			Nickname: info[`nickname`].String(),
 		}
-		jwt := packed.NewJWT(ctx, packed.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
+		jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
 		token, err = jwt.CreateToken(claims)
 		/* //缓存token（选做。限制多地登录，多设备登录等情况下可用）
 		TokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.Account)

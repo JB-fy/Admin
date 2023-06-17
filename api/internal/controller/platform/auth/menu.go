@@ -3,7 +3,6 @@ package controller
 import (
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
-	"api/internal/packed"
 	"api/internal/service"
 
 	"github.com/gogf/gf/v2/container/gset"
@@ -23,7 +22,7 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 	var param *apiAuth.MenuListReq
 	err := r.Parse(&param)
 	if err != nil {
-		packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 		return
 	}
 	filter := gconv.Map(param.Filter)
@@ -43,7 +42,7 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------权限验证 开始--------**/
@@ -65,28 +64,28 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 
 		count, err := service.Menu().Count(r.GetCtx(), filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		list, err := service.Menu().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
 	}
 }
 
 // 详情
 func (controllerThis *Menu) Info(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuInfoReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
@@ -106,30 +105,30 @@ func (controllerThis *Menu) Info(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authMenuLook`)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		info, err := service.Menu().Info(r.GetCtx(), filter, field)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
 	}
 }
 
 // 创建
 func (controllerThis *Menu) Create(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuCreateReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
@@ -138,36 +137,36 @@ func (controllerThis *Menu) Create(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authMenuCreate`)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		id, err := service.Menu().Create(r.GetCtx(), data)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{`id`: id}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{`id`: id}, 0)
 	}
 }
 
 // 更新
 func (controllerThis *Menu) Update(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
 		delete(data, `idArr`)
 		if len(data) == 0 {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, ``))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
 			return
 		}
 		filter := map[string]interface{}{`id`: param.IdArr}
@@ -176,30 +175,30 @@ func (controllerThis *Menu) Update(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authMenuUpdate`)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		_, err = service.Menu().Update(r.GetCtx(), data, filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
 // 删除
 func (controllerThis *Menu) Delete(r *ghttp.Request) {
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.MenuDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
-			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		filter := map[string]interface{}{`id`: param.IdArr}
@@ -208,17 +207,17 @@ func (controllerThis *Menu) Delete(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authMenuDelete`)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		_, err = service.Menu().Delete(r.GetCtx(), filter)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		packed.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
@@ -237,7 +236,7 @@ func (controllerThis *Menu) Tree(r *ghttp.Request) {
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
+	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------权限验证 开始--------**/
@@ -262,10 +261,10 @@ func (controllerThis *Menu) Tree(r *ghttp.Request) {
 
 		list, err := service.Menu().List(r.GetCtx(), filter, field, [][2]string{}, 0, 0)
 		if err != nil {
-			packed.HttpFailJson(r, err)
+			utils.HttpFailJson(r, err)
 			return
 		}
-		tree := packed.Tree(list, 0, `menuId`, `pid`)
-		packed.HttpSuccessJson(r, map[string]interface{}{`tree`: tree}, 0)
+		tree := utils.Tree(list, 0, `menuId`, `pid`)
+		utils.HttpSuccessJson(r, map[string]interface{}{`tree`: tree}, 0)
 	}
 }
