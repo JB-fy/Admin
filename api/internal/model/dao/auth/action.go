@@ -133,7 +133,7 @@ func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(`xxxx`, joinTableArr)(m)
+			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -199,23 +199,23 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 			case `sceneId`:
 				m = m.Where(ActionRelToScene.Table()+`.`+k, v)
 
-				m = daoThis.ParseJoin(`actionRelToScene`, joinTableArr)(m)
+				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
 			case `selfAction`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`=>场景id, `loginId`: 登录身份id}
 				val := v.(map[string]interface{})
 
-				m = m.Where(daoThis.Table()+`.isStop`, 0)
-				m = m.Where(ActionRelToScene.Table()+`.sceneId`, val[`sceneId`])
-				m = daoThis.ParseJoin(`actionRelToScene`, joinTableArr)(m)
+				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
+				m = m.Where(ActionRelToScene.Table()+`.`+ActionRelToScene.Columns().SceneId, val[`sceneId`])
+				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
 				switch val[`sceneCode`].(string) {
 				case `platform`:
 					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其他条件
 						return m
 					}
-					m = m.Where(Role.Table()+`.isStop`, 0)
-					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.adminId`, val[`loginId`])
+					m = m.Where(Role.Table()+`.`+Role.Columns().IsStop, 0)
+					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
 
-					m = daoThis.ParseJoin(`roleRelToAction`, joinTableArr)(m)
-					m = daoThis.ParseJoin(`role`, joinTableArr)(m)
+					m = daoThis.ParseJoin(RoleRelToAction.Table(), joinTableArr)(m)
+					m = daoThis.ParseJoin(Role.Table(), joinTableArr)(m)
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
 				m = daoThis.ParseGroup([]string{`id`}, joinTableArr)(m)
@@ -230,7 +230,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 							} else {
 								m = m.Where(daoThis.Table()+`.`+k, v)
 							}
-						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == `name` {
+						} else if gstr.SubStr(gstr.CaseCamel(kArr[0]), 0, -4) == `Name` {
 							m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 						} else {
 							m = m.Where(daoThis.Table()+`.`+k, v)
@@ -289,37 +289,35 @@ func (daoThis *actionDao) ParseOrder(order [][2]string, joinTableArr *[]string) 
 func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
-		/* case `xxxx`:
-		xxxxTable := xxxx.Table()
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
-			*joinTableArr = append(*joinTableArr, xxxxTable)
-			m = m.LeftJoin(xxxxTable, xxxxTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		/* case Xxxx.Table():
+		relTable := Xxxx.Table()
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+			*joinTableArr = append(*joinTableArr, relTable)
+			m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
-		case `actionRelToScene`:
-			actionRelToSceneTable := ActionRelToScene.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(actionRelToSceneTable) {
-				*joinTableArr = append(*joinTableArr, actionRelToSceneTable)
-				m = m.LeftJoin(actionRelToSceneTable, actionRelToSceneTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		case ActionRelToScene.Table():
+			relTable := ActionRelToScene.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
-		case `roleRelToAction`:
-			roleRelToActionTable := RoleRelToAction.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelToActionTable) {
-				*joinTableArr = append(*joinTableArr, roleRelToActionTable)
-				m = m.LeftJoin(roleRelToActionTable, roleRelToActionTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		case RoleRelToAction.Table():
+			relTable := RoleRelToAction.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
-		case `role`:
-			roleTable := Role.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleTable) {
-				*joinTableArr = append(*joinTableArr, roleTable)
-				roleRelToActionTable := RoleRelToAction.Table()
-				m = m.LeftJoin(roleTable, roleTable+`.`+Role.PrimaryKey()+` = `+roleRelToActionTable+`.`+Role.PrimaryKey())
+		case Role.Table():
+			relTable := Role.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.Table()+`.`+Role.PrimaryKey())
 			}
 		case RoleRelOfPlatformAdmin.Table():
-			roleRelOfPlatformAdminTable := RoleRelOfPlatformAdmin.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
-				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
-				roleRelToActionTable := RoleRelToAction.Table()
-				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+`.`+Role.PrimaryKey()+` = `+roleRelToActionTable+`.`+Role.PrimaryKey())
+			relTable := RoleRelOfPlatformAdmin.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.Table()+`.`+Role.PrimaryKey())
 			}
 		}
 		return m
@@ -340,8 +338,8 @@ func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
 					case `sceneIdArr`:
-						sceneIdArr, _ := ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, record[daoThis.PrimaryKey()]).Array(`sceneId`)
-						record[v] = gvar.New(sceneIdArr)
+						idArr, _ := ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
+						record[v] = gvar.New(idArr)
 					}
 				}
 				result[i] = record
@@ -354,18 +352,20 @@ func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
 // Fill with you ideas below.
 
 // 保存关联场景
-func (daoThis *actionDao) SaveRelScene(ctx context.Context, sceneIdArr []int, id int) {
-	sceneIdArrOfOldTmp, _ := ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, id).Array(`sceneId`)
-	sceneIdArrOfOld := gconv.SliceInt(sceneIdArrOfOldTmp)
+func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id int) {
+	relKey := ActionRelToScene.Columns().SceneId
+	priKey := daoThis.PrimaryKey()
+	relIdArrOfOldTmp, _ := ActionRelToScene.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联场景 开始----**/
-	insertSceneIdArr := gset.NewIntSetFrom(sceneIdArr).Diff(gset.NewIntSetFrom(sceneIdArrOfOld)).Slice()
-	if len(insertSceneIdArr) > 0 {
+	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
+	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
-		for _, v := range insertSceneIdArr {
+		for _, v := range insertRelIdArr {
 			insertList = append(insertList, map[string]interface{}{
-				`actionId`: id,
-				`sceneId`:  v,
+				priKey: id,
+				relKey: v,
 			})
 		}
 		ActionRelToScene.ParseDbCtx(ctx).Data(insertList).Insert()
@@ -373,9 +373,9 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, sceneIdArr []int, id
 	/**----新增关联场景 结束----**/
 
 	/**----删除关联场景 开始----**/
-	deleteSceneIdArr := gset.NewIntSetFrom(sceneIdArrOfOld).Diff(gset.NewIntSetFrom(sceneIdArr)).Slice()
-	if len(deleteSceneIdArr) > 0 {
-		ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, id).Where(`sceneId`, deleteSceneIdArr).Delete()
+	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
+	if len(deleteRelIdArr) > 0 {
+		ActionRelToScene.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联场景 结束----**/
 }

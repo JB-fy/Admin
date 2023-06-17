@@ -131,7 +131,7 @@ func (daoThis *cornDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(`xxxx`, joinTableArr)(m)
+			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -260,11 +260,11 @@ func (daoThis *cornDao) ParseOrder(order [][2]string, joinTableArr *[]string) gd
 func (daoThis *cornDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
-		/* case `xxxx`:
-		xxxxTable := xxxx.Table()
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(xxxxTable) {
-			*joinTableArr = append(*joinTableArr, xxxxTable)
-			m = m.LeftJoin(xxxxTable, xxxxTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		/* case Xxxx.Table():
+		relTable := Xxxx.Table()
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+			*joinTableArr = append(*joinTableArr, relTable)
+			m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
 		}
 		return m
