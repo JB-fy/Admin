@@ -12,36 +12,36 @@ const table = reactive({
         sortable: true,
     },
     {
-        dataKey: 'requestUrl',
-        title: t('log.request.name.requestUrl'),
-        key: 'requestUrl',
+        dataKey: 'url',
+        title: t('log.http.name.url'),
+        key: 'url',
         width: 300,
         align: 'center',
     },
     {
-        dataKey: 'requestHeader',
-        title: t('log.request.name.requestHeader'),
-        key: 'requestHeader',
+        dataKey: 'header',
+        title: t('log.http.name.header'),
+        key: 'header',
         width: 200,
         align: 'center',
     },
     {
-        dataKey: 'requestData',
-        title: t('log.request.name.requestData'),
-        key: 'requestData',
+        dataKey: 'reqData',
+        title: t('log.http.name.reqData'),
+        key: 'reqData',
         width: 200,
         align: 'center',
     },
     {
-        dataKey: 'responseBody',
-        title: t('log.request.name.responseBody'),
-        key: 'responseBody',
+        dataKey: 'resData',
+        title: t('log.http.name.resData'),
+        key: 'resData',
         width: 200,
         align: 'center',
     },
     {
         dataKey: 'runTime',
-        title: t('log.request.name.runTime'),
+        title: t('log.http.name.runTime'),
         key: 'runTime',
         align: 'center',
         width: 150,
@@ -104,7 +104,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request('/log/request/list', param)
+        const res = await request('/log/http/list', param)
         table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
     } catch (error) { }
@@ -128,7 +128,7 @@ defineExpose({
         <ElCol :span="8" style="text-align: right;">
             <ElSpace :size="10" style="height: 100%;">
                 <MyExportButton :headerList="table.columns"
-                    :api="{ code: '/log/request/list', param: { filter: queryCommon.data, sort: table.sort } }" />
+                    :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort } }" />
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
                         <AutoiconEpHide />
