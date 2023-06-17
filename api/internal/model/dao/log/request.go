@@ -9,7 +9,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/gogf/gf/container/gvar"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
