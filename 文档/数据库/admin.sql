@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 12/06/2023 01:12:15
+ Date: 17/06/2023 22:33:24
 */
 
 SET NAMES utf8mb4;
@@ -58,12 +58,12 @@ INSERT INTO `auth_action` VALUES (19, '平台管理员-编辑', 'platformAdminUp
 INSERT INTO `auth_action` VALUES (20, '平台管理员-删除', 'platformAdminDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (23, '请求日志-查看', 'logRequestLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
+INSERT INTO `auth_action` VALUES (23, 'Http日志-查看', 'logHttpLook', '', 0, '2023-06-17 13:47:28', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (24, '服务器-查看', 'platformServerLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (25, '定时器-查看', 'platformCornLook', '', 0, '2023-06-11 14:50:24', '2023-06-11 14:50:24');
 INSERT INTO `auth_action` VALUES (26, '定时器-新增', 'platformCornCreate', '', 0, '2023-06-11 14:51:10', '2023-06-11 14:50:44');
 INSERT INTO `auth_action` VALUES (27, '定时器-编辑', 'platformCornUpdate', '', 0, '2023-06-11 14:51:23', '2023-06-11 14:51:23');
-INSERT INTO `auth_action` VALUES (28, '定时器-删除', 'platformCornDelete', '', 0, '2023-06-11 14:51:35', '2023-06-11 14:51:35');
+INSERT INTO `auth_action` VALUES (28, '定时器-删除', 'platformCornDelete', '', 0, '2023-06-16 16:06:13', '2023-06-11 14:51:35');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -148,7 +148,7 @@ INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '
 INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (11, 1, 0, '日志管理', 'AutoiconEpDataAnalysis', '', 1, '0-11', '{\"i18n\": {\"title\": {\"en\": \"Log Manage \", \"zh-cn\": \"日志管理\"}}}', 80, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (12, 1, 11, '请求日志', 'AutoiconEpReading', '/log/request', 2, '0-11-12', '{\"i18n\": {\"title\": {\"en\": \"Request Log \", \"zh-cn\": \"请求日志\"}}}', 50, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (12, 1, 11, 'Http日志', 'AutoiconEpReading', '/log/http', 0, '', '{\"i18n\": {\"title\": {\"en\": \"Http Log \", \"zh-cn\": \"Http日志\"}}}', 50, 0, '2023-06-17 13:47:10', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (13, 1, 8, '服务器', 'AutoiconEpCpu', '/platform/server', 2, '0-8-13', '{\"i18n\": {\"title\": {\"en\": \"Server \", \"zh-cn\": \"服务器\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (14, 1, 8, '定时器', 'AutoiconEpTimer', '/platform/corn', 2, '0-8-14', '{\"i18n\": {\"title\": {\"en\": \"Corn\", \"zh-cn\": \"定时器\"}}}', 100, 0, '2023-06-11 14:16:58', '2023-06-11 14:16:58');
 
@@ -172,7 +172,7 @@ CREATE TABLE `auth_role`  (
 -- ----------------------------
 -- Records of auth_role
 -- ----------------------------
-INSERT INTO `auth_role` VALUES (1, 1, 0, '超级管理员', 0, '2023-06-11 14:52:39', '2023-06-09 12:03:30');
+INSERT INTO `auth_role` VALUES (1, 1, 0, '超级管理员', 0, '2023-06-17 14:28:09', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for auth_role_rel_of_platform_admin
@@ -209,6 +209,24 @@ CREATE TABLE `auth_role_rel_to_action`  (
 -- ----------------------------
 -- Records of auth_role_rel_to_action
 -- ----------------------------
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 1, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 2, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 3, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 4, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 5, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 6, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 7, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 8, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 9, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 10, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 11, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 12, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 13, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 14, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 15, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 16, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 17, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 18, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 19, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 20, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 21, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
@@ -271,26 +289,26 @@ CREATE TABLE `auth_scene`  (
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES (1, 'platform', '平台后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-11 12:38:24', '2023-06-09 12:03:30');
+INSERT INTO `auth_scene` VALUES (1, 'platform', '平台后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-14 21:52:16', '2023-06-09 12:03:30');
 
 -- ----------------------------
--- Table structure for log_request
+-- Table structure for log_http
 -- ----------------------------
-DROP TABLE IF EXISTS `log_request`;
-CREATE TABLE `log_request`  (
-  `logId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '请求日志ID',
-  `requestUrl` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '请求地址',
-  `requestHeader` json NULL COMMENT '请求头',
-  `requestData` json NULL COMMENT '请求数据',
-  `responseBody` json NULL COMMENT '响应体',
+DROP TABLE IF EXISTS `log_http`;
+CREATE TABLE `log_http`  (
+  `httpId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'http记录ID',
+  `url` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '地址',
+  `header` json NULL COMMENT '请求头',
+  `reqData` json NULL COMMENT '请求数据',
+  `resData` json NULL COMMENT '响应数据',
   `runTime` decimal(8, 3) UNSIGNED NOT NULL DEFAULT 0.000 COMMENT '运行时间（单位：毫秒）',
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`logId`, `createdAt`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统日志-请求表' ROW_FORMAT = DYNAMIC;
+  PRIMARY KEY (`httpId`, `createdAt`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '日志-http记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of log_request
+-- Records of log_http
 -- ----------------------------
 
 -- ----------------------------
@@ -329,7 +347,7 @@ CREATE TABLE `platform_config`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
@@ -350,11 +368,12 @@ CREATE TABLE `platform_corn`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`cornId`) USING BTREE,
   UNIQUE INDEX `cornCode`(`cornCode` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '定时器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '定时器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_corn
 -- ----------------------------
+INSERT INTO `platform_corn` VALUES (1, 'LogHttpPartition', 'Http日志表分区', '0 0 3 * * 1', '每周星期一的凌晨3点对Http日志表执行分区', 0, '2023-06-17 14:32:37', '2023-06-10 05:36:58');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -368,7 +387,7 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
