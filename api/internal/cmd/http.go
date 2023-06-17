@@ -68,8 +68,8 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	})
 	// 测试使用
 	s.Group(``, func(group *ghttp.RouterGroup) {
-		//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
 		group.Middleware(middleware.Cross, middleware.I18n)
+		// group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
 		controllerThis := controller.NewTest()
 		group.ALL(`/test`, controllerThis.Test)
 		group.Bind(

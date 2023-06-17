@@ -5,7 +5,9 @@ import (
 
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func HandlerResponse(r *ghttp.Request) {
@@ -22,8 +24,11 @@ func HandlerResponse(r *ghttp.Request) {
 		code = gerror.Code(err)
 	)
 	if err != nil {
-		if code == gcode.CodeNil {
+		switch code {
+		case gcode.CodeNil:
 			code = gcode.CodeInternalError
+		case gcode.CodeValidationFailed:
+			code = gcode.New(89999999, ``, nil)
 		}
 		msg = err.Error()
 	} else {
@@ -41,6 +46,7 @@ func HandlerResponse(r *ghttp.Request) {
 			r.SetError(err)
 		} else {
 			code = gcode.CodeOK
+			msg = g.I18n().T(r.GetCtx(), `code.`+gconv.String(0))
 		}
 	}
 

@@ -13,10 +13,10 @@ import (
 
 func InitRouterPlatform(s *ghttp.Server) {
 	s.Group("/platform", func(group *ghttp.RouterGroup) {
-		//group.Middleware(middleware.HandlerResponse) // 现在没啥用！如果cotroller方法是用规范路由写的才有用
 		group.Middleware(middleware.Cross, middleware.I18n)
 		//不做日志记录
 		group.Group("", func(group *ghttp.RouterGroup) {
+			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
 			//需验证登录身份
 			group.Group("", func(group *ghttp.RouterGroup) {
@@ -32,7 +32,9 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 		//做日志记录
 		group.Group("", func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.Log, middleware.Scene)
+			group.Middleware(middleware.Log)
+			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
+			group.Middleware(middleware.Scene)
 			//无需验证登录身份
 			group.Group("/login", func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewLogin()
@@ -108,8 +110,11 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 				group.Group("/platform/admin", func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewAdmin()
+					group.Bind(
+						controllerThis.List,
+					)
 					group.ALLMap(g.Map{
-						"/list":   controllerThis.List,
+						//"/list":   controllerThis.List,
 						"/info":   controllerThis.Info,
 						"/create": controllerThis.Create,
 						"/update": controllerThis.Update,

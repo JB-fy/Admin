@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
+	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -18,63 +20,58 @@ func NewScene() *Scene {
 }
 
 // 列表
-func (controllerThis *Scene) List(r *ghttp.Request) {
+func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *api.CommonListWithCountRes, err error) {
 	/**--------参数处理 开始--------**/
-	var param *apiAuth.SceneListReq
-	err := r.Parse(&param)
-	if err != nil {
-		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-		return
-	}
-	filter := gconv.Map(param.Filter)
+	filter := gconv.Map(req.Filter)
 	order := [][2]string{{`id`, `DESC`}}
-	if param.Sort.Key != `` {
-		order[0][0] = param.Sort.Key
+	if req.Sort.Key != `` {
+		order[0][0] = req.Sort.Key
 	}
-	if param.Sort.Order != `` {
-		order[0][1] = param.Sort.Order
+	if req.Sort.Order != `` {
+		order[0][1] = req.Sort.Order
 	}
-	if param.Page <= 0 {
-		param.Page = 1
+	page := 1
+	if req.Page > 0 {
+		page = req.Page
 	}
 	limit := 10
-	if param.Limit != nil {
-		limit = *param.Limit
+	if req.Limit != nil {
+		limit = *req.Limit
+	}
+
+	columnsThis := daoAuth.Scene.Columns()
+	allowField := daoAuth.Scene.ColumnArr()
+	allowField = append(allowField, `id`, `name`)
+	// allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
+		}
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authSceneLook`)
-		allowField := []string{`id`, `name`, `sceneId`, `sceneName`}
-		if isAuth {
-			allowField = daoAuth.Scene.ColumnArr()
-			allowField = append(allowField, `id`, `name`)
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
-		}
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		/**--------权限验证 结束--------**/
-
-		count, err := service.Scene().Count(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		list, err := service.Scene().List(r.GetCtx(), filter, field, order, param.Page, limit)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
+	/**--------权限验证 开始--------**/
+	isAuth, _ := service.Action().CheckAuth(ctx, `authSceneLook`)
+	if !isAuth {
+		field = []string{`id`, `name`, columnsThis.SceneId, columnsThis.SceneName}
 	}
+	/**--------权限验证 结束--------**/
+
+	count, err := service.Scene().Count(ctx, filter)
+	if err != nil {
+		return
+	}
+	list, err := service.Scene().List(ctx, filter, field, order, page, limit)
+	if err != nil {
+		return
+	}
+	res = &api.CommonListWithCountRes{
+		Count: count,
+		List:  list,
+	}
+	return
 }
 
 // 详情

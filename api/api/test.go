@@ -3,7 +3,7 @@ package api
 import "github.com/gogf/gf/v2/frame/g"
 
 type TestMetaReq struct {
-	g.Meta `path:"/testMeta" tags:"TestMeta" method:"get" summary:"测试"`
+	g.Meta `path:"/testMeta" method:"get" tags:"测试" summary:"测试"`
 	Test   string `json:"test" v:"required|length:4,30" dc:"测试"`
 }
 
