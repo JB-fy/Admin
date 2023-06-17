@@ -28,7 +28,6 @@ type (
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-		Tree(ctx context.Context, list gdb.Result, menuId int) (tree gdb.Result, err error)
 	}
 	IRole interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
@@ -55,28 +54,6 @@ var (
 	localScene  IScene
 )
 
-func Role() IRole {
-	if localRole == nil {
-		panic("implement not found for interface IRole, forgot register?")
-	}
-	return localRole
-}
-
-func RegisterRole(i IRole) {
-	localRole = i
-}
-
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
-	}
-	return localScene
-}
-
-func RegisterScene(i IScene) {
-	localScene = i
-}
-
 func Action() IAction {
 	if localAction == nil {
 		panic("implement not found for interface IAction, forgot register?")
@@ -97,4 +74,26 @@ func Menu() IMenu {
 
 func RegisterMenu(i IMenu) {
 	localMenu = i
+}
+
+func Role() IRole {
+	if localRole == nil {
+		panic("implement not found for interface IRole, forgot register?")
+	}
+	return localRole
+}
+
+func RegisterRole(i IRole) {
+	localRole = i
+}
+
+func Scene() IScene {
+	if localScene == nil {
+		panic("implement not found for interface IScene, forgot register?")
+	}
+	return localScene
+}
+
+func RegisterScene(i IScene) {
+	localScene = i
 }

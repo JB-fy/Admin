@@ -5,6 +5,7 @@ import (
 	"context"
 	"os/exec"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -174,5 +175,18 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 		}
 	}
 	/**--------检测需要创建的分区是否存在，没有则新增分区 结束--------**/
+	return
+}
+
+// 组成菜单树
+func Tree(list gdb.Result, id int, priKey string, pidKey string) (tree gdb.Result) {
+	for _, v := range list {
+		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
+		if v[pidKey].Int() == id {
+			children := Tree(list, v[priKey].Int(), priKey, pidKey)
+			v[`children`] = gvar.New(children)
+			tree = append(tree, v)
+		}
+	}
 	return
 }

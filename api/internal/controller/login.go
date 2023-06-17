@@ -122,11 +122,7 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		tree, err := service.Menu().Tree(r.GetCtx(), list, 0)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
+		tree := utils.Tree(list, 0, `menuId`, `pid`)
 		utils.HttpSuccessJson(r, map[string]interface{}{`tree`: tree}, 0)
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
-	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
@@ -228,19 +227,6 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
-	}
-	return
-}
-
-// 菜单树
-func (logicThis *sMenu) Tree(ctx context.Context, list gdb.Result, id int) (tree gdb.Result, err error) {
-	for _, v := range list {
-		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
-		if v[`pid`].Int() == id {
-			children, _ := logicThis.Tree(ctx, list, v[`menuId`].Int())
-			v[`children`] = gvar.New(children)
-			tree = append(tree, v)
-		}
 	}
 	return
 }
