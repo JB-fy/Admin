@@ -1,4 +1,4 @@
-package utils
+package packed
 
 import (
 	"api/internal/consts"

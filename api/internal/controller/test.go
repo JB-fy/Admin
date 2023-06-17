@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	"api/internal/utils"
+	"api/internal/packed"
 	"context"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -16,7 +16,7 @@ func NewTest() *Test {
 
 func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.TestMetaRes, err error) {
 	// time.Sleep(10 * time.Second)
-	// utils.HttpFailJson(g.RequestFromCtx(ctx), utils.NewErrorCode(ctx, 99999999, ``))
+	// packed.HttpFailJson(g.RequestFromCtx(ctx), packed.NewErrorCode(ctx, 99999999, ``))
 	// g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	res = &api.TestMetaRes{
@@ -61,8 +61,8 @@ func (c *Test) Test(r *ghttp.Request) {
 		`msg`:  `成功`,
 		`data`: map[string]interface{}{},
 	}) */
-	utils.HttpSuccessJson(r, map[string]interface{}{
+	packed.HttpSuccessJson(r, map[string]interface{}{
 		`list`: []map[string]interface{}{},
 	}, 0)
-	utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 99999999, ``))
+	packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 99999999, ``))
 }

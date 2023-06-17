@@ -3,8 +3,8 @@ package controller
 import (
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
+	"api/internal/packed"
 	"api/internal/service"
-	"api/internal/utils"
 
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -23,7 +23,7 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 	var param *apiAuth.ActionListReq
 	err := r.Parse(&param)
 	if err != nil {
-		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+		packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 		return
 	}
 	filter := gconv.Map(param.Filter)
@@ -43,7 +43,7 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
+	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------权限验证 开始--------**/
@@ -65,28 +65,28 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 
 		count, err := service.Action().Count(r.GetCtx(), filter)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
 		list, err := service.Action().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
+		packed.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
 	}
 }
 
 // 详情
 func (controllerThis *Action) Info(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
+	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionInfoReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
@@ -106,30 +106,30 @@ func (controllerThis *Action) Info(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authActionLook`)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		info, err := service.Action().Info(r.GetCtx(), filter, field)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
+		packed.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
 	}
 }
 
 // 创建
 func (controllerThis *Action) Create(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
+	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionCreateReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
@@ -138,36 +138,36 @@ func (controllerThis *Action) Create(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authActionCreate`)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		id, err := service.Action().Create(r.GetCtx(), data)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`id`: id}, 0)
+		packed.HttpSuccessJson(r, map[string]interface{}{`id`: id}, 0)
 	}
 }
 
 // 更新
 func (controllerThis *Action) Update(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
+	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		data := gconv.Map(param)
 		delete(data, `idArr`)
 		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
+			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, ``))
 			return
 		}
 		filter := map[string]interface{}{`id`: param.IdArr}
@@ -176,30 +176,30 @@ func (controllerThis *Action) Update(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authActionUpdate`)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		_, err = service.Action().Update(r.GetCtx(), data, filter)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		packed.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }
 
 // 删除
 func (controllerThis *Action) Delete(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
+	sceneCode := packed.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
 		var param *apiAuth.ActionDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
+			packed.HttpFailJson(r, packed.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 		filter := map[string]interface{}{`id`: param.IdArr}
@@ -208,16 +208,16 @@ func (controllerThis *Action) Delete(r *ghttp.Request) {
 		/**--------权限验证 开始--------**/
 		_, err = service.Action().CheckAuth(r.GetCtx(), `authActionDelete`)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
 		_, err = service.Action().Delete(r.GetCtx(), filter)
 		if err != nil {
-			utils.HttpFailJson(r, err)
+			packed.HttpFailJson(r, err)
 			return
 		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+		packed.HttpSuccessJson(r, map[string]interface{}{}, 0)
 	}
 }

@@ -2,7 +2,7 @@ package corn
 
 import (
 	daoLog "api/internal/dao/log"
-	"api/internal/utils"
+	"api/internal/packed"
 	"context"
 
 	"github.com/gogf/gf/v2/os/gcron"
@@ -17,5 +17,5 @@ func InitCorn(ctx context.Context) {
 
 // http记录表每周新增分区
 func LogHttpPartition(ctx context.Context) {
-	utils.DbTablePartition(ctx, daoLog.Http.Group(), daoLog.Http.Table(), 7, 24*60*60, `createdAt`)
+	packed.DbTablePartition(ctx, daoLog.Http.Group(), daoLog.Http.Table(), 7, 24*60*60, `createdAt`)
 }

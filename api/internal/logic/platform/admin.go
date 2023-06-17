@@ -3,8 +3,8 @@ package logic
 import (
 	daoAuth "api/internal/dao/auth"
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/packed"
 	"api/internal/service"
-	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -79,7 +79,7 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = packed.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 	return
@@ -92,7 +92,7 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
@@ -110,19 +110,19 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = packed.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 
 	_, okCheckPassword := data[`checkPassword`]
 	if okCheckPassword {
 		if len(idArr) > 1 { //该字段只支持单个用户更新
-			err = utils.NewErrorCode(ctx, 89999996, ``, map[string]interface{}{`errField`: `checkPassword`})
+			err = packed.NewErrorCode(ctx, 89999996, ``, map[string]interface{}{`errField`: `checkPassword`})
 			return
 		}
 		password, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Value(`password`)
 		if gconv.String(data[`checkPassword`]) != password.String() {
-			err = utils.NewErrorCode(ctx, 39990003, ``)
+			err = packed.NewErrorCode(ctx, 39990003, ``)
 			return
 		}
 	}
@@ -133,7 +133,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 		if err != nil {
 			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 			if len(match) > 0 {
-				err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+				err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 				return
 			}
 			return
@@ -148,14 +148,14 @@ func (logicThis *sAdmin) Update(ctx context.Context, data map[string]interface{}
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
+		err = packed.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	return
@@ -171,7 +171,7 @@ func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
+		err = packed.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, idArr).Delete()

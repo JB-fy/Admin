@@ -2,8 +2,8 @@ package logic
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/packed"
 	"api/internal/service"
-	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -77,7 +77,7 @@ func (logicThis *sCorn) Info(ctx context.Context, filter map[string]interface{},
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = packed.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 	return
@@ -90,7 +90,7 @@ func (logicThis *sCorn) Create(ctx context.Context, data map[string]interface{})
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
@@ -105,14 +105,14 @@ func (logicThis *sCorn) Update(ctx context.Context, data map[string]interface{},
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
+		err = packed.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	return
@@ -127,7 +127,7 @@ func (logicThis *sCorn) Delete(ctx context.Context, filter map[string]interface{
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
+		err = packed.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	return

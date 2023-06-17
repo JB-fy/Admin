@@ -2,8 +2,8 @@ package logic
 
 import (
 	daoAuth "api/internal/dao/auth"
+	"api/internal/packed"
 	"api/internal/service"
-	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -79,7 +79,7 @@ func (logicThis *sAction) Info(ctx context.Context, filter map[string]interface{
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = packed.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
 	return
@@ -92,7 +92,7 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
@@ -115,7 +115,7 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 		if err != nil {
 			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 			if len(match) > 0 {
-				err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+				err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 				return
 			}
 			return
@@ -130,14 +130,14 @@ func (logicThis *sAction) Update(ctx context.Context, data map[string]interface{
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			err = packed.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
 			return
 		}
 		return
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
+		err = packed.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	return
@@ -153,7 +153,7 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 	}
 	row, _ = result.RowsAffected()
 	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
+		err = packed.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
 	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, idArr).Delete()
@@ -162,8 +162,8 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 
 // 判断操作权限
 func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error) {
-	loginInfo := utils.GetCtxLoginInfo(ctx)
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	loginInfo := packed.GetCtxLoginInfo(ctx)
+	sceneInfo := packed.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[`sceneCode`].String()
 	filter := map[string]interface{}{
 		`actionCode`: actionCode,
@@ -185,7 +185,7 @@ func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (i
 	daoAction := daoAuth.Action
 	count, err := daoAction.ParseDbCtx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
 	if count == 0 {
-		err = utils.NewErrorCode(ctx, 39990002, ``)
+		err = packed.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 	isAuth = true
