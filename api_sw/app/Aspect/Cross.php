@@ -23,7 +23,7 @@ class Cross extends \Hyperf\Di\Aop\AbstractAspect
         \App\Controller\Auth\Menu::class,
         \App\Controller\Auth\Role::class,
         \App\Controller\Auth\Scene::class,
-        \App\Controller\Log\Request::class,
+        \App\Controller\Log\Http::class,
         \App\Controller\Platform\Admin::class,
         \App\Controller\Platform\Config::class,
         \App\Controller\Platform\Server::class,

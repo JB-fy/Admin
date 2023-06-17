@@ -6,6 +6,6 @@ namespace App\Module\Service\Log;
 
 use App\Module\Service\AbstractService;
 
-class Request extends AbstractService
+class Http extends AbstractService
 {
 }

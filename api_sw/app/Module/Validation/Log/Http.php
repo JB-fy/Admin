@@ -6,7 +6,7 @@ namespace App\Module\Validation\Log;
 
 use App\Module\Validation\AbstractValidation;
 
-class Request extends AbstractValidation
+class Http extends AbstractValidation
 {
     protected array $rule = [
         'httpId' => 'sometimes|required|integer|min:1',
