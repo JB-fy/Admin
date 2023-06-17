@@ -7,16 +7,16 @@ namespace App\Module\Db\Dao\Log;
 use App\Module\Db\Dao\AbstractDao;
 
 /**
- * @property int $logId 请求日志ID
- * @property string $requestUrl 请求地址
- * @property string $requestHeader 请求头
- * @property string $requestData 请求数据
- * @property string $responseBody 响应体
+ * @property int $httpId http记录ID
+ * @property string $url 地址
+ * @property string $header 请求头
+ * @property string $reqData 请求数据
+ * @property string $resData 响应数据
  * @property string $runTime 运行时间（单位：毫秒）
  * @property string $updatedAt 更新时间
  * @property string $createdAt 创建时间
  */
-class Request extends AbstractDao
+class Http extends AbstractDao
 {
     /**
      * 解析filter（独有的）

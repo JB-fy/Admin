@@ -32,8 +32,8 @@ Router::addGroup('/platform', function () {
     Router::addGroup('', function () {
         //需验证登录身份
         Router::addGroup('', function () {
-            Router::addGroup('/log/request', function () {
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Log\Request::class, 'list']);
+            Router::addGroup('/log/http', function () {
+                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Log\Http::class, 'list']);
             });
         }, ['middleware' => [\App\Middleware\SceneLoginOfPlatformAdmin::class]]);
     }, ['middleware' => [\App\Middleware\Scene::class]]);
@@ -112,6 +112,6 @@ Router::addGroup('/platform', function () {
                 });
             }, ['middleware' => [\App\Middleware\SceneLoginOfPlatformAdmin::class]]);
         }, ['middleware' => [\App\Middleware\Scene::class]]);
-    }, ['middleware' => [\App\Middleware\LogRequest::class]]);
+    }, ['middleware' => [\App\Middleware\LogHttp::class]]);
 });
 /**--------平台后台接口 结束--------**/

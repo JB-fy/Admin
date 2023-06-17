@@ -9,8 +9,8 @@ use App\Module\Validation\AbstractValidation;
 class Request extends AbstractValidation
 {
     protected array $rule = [
-        'logId' => 'sometimes|required|integer|min:1',
-        'requestUrl' => 'sometimes|required|url',
+        'httpId' => 'sometimes|required|integer|min:1',
+        'url' => 'sometimes|required|url',
         'minRunTime' => 'sometimes|required|numeric|min:0',
         'maxRunTime' => 'sometimes|required|numeric|min:0|gte:minRunTime',
     ];

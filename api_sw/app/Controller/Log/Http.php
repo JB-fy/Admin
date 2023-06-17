@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\Log;
 
 use App\Controller\AbstractController;
-use App\Module\Db\Dao\Log\Request as LogRequest;
+use App\Module\Db\Dao\Log\Http as LogHttp;
 
-class Request extends AbstractController
+class Http extends AbstractController
 {
     /**
      * 列表
@@ -21,9 +21,9 @@ class Request extends AbstractController
             case 'platform':
                 $data = $this->validate(__FUNCTION__, $sceneCode);
                 $this->checkAuth(__FUNCTION__, $sceneCode);
-
+                
                 /**--------参数处理 开始--------**/
-                $allowField = $this->getAllowField(LogRequest::class);
+                $allowField = $this->getAllowField(LogHttp::class);
                 if (empty($data['field'])) {
                     $data['field'] = $allowField;
                 } else {

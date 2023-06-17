@@ -20,8 +20,8 @@ return [
     'crontab' => [
         /**--------Callback类型定时任务（默认） 开始--------**/
         (new Crontab())
-            ->setName('LogRequestPartition')
-            ->setCallback([App\Crontab\LogRequest::class, 'partition'])
+            ->setName('LogHttpPartition')
+            ->setCallback([App\Crontab\LogHttp::class, 'partition'])
             ->setRule('0 0 3 * * 1') //星期一的凌晨3点执行（方便人工检查是否成功，防止失败隔天该表无法正常使用）
             //->setRule('*/5 * * * * *')
             //->setSingleton(true)  //解决单机任务并发问题，同时只会运行1个。但集群时无用

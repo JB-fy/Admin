@@ -50,7 +50,7 @@ if (!function_exists('dbTablePartition')) {
      * 注意：如果表有唯一索引（含主键），则用于建立分区的字段必须和唯一索引字段组成联合索引
      * 建议：分区间隔时间，分区数量设置后，两者总时长要比定时器间隔多几天时间，方便分区失败时，有时间让技术人工处理
      *
-     * @param string $daoClassName  数据库表对应的dao类。示例：App\Module\Db\Dao\Log\Request::class
+     * @param string $daoClassName  数据库表对应的dao类。示例：App\Module\Db\Dao\Log\Http::class
      * @param integer $partitionNumber  当前时间后面，需要新增的分区数量
      * @param integer $partitionTime    间隔多长时间创建一个分区，单位：秒
      * @param string $partitionField    分区字段，即根据该字段做分区

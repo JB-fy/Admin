@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class LogRequest implements \Psr\Http\Server\MiddlewareInterface
+class LogHttp implements \Psr\Http\Server\MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -45,7 +45,7 @@ class LogRequest implements \Psr\Http\Server\MiddlewareInterface
             throw $th;
         } finally {
             $endTime = microtime(true);
-            $this->logRequest($startTime, $endTime, $responseBody);
+            $this->logHttp($startTime, $endTime, $responseBody);
         }
     }
 
@@ -57,17 +57,17 @@ class LogRequest implements \Psr\Http\Server\MiddlewareInterface
      * @param string $responseBody
      * @return void
      */
-    public function logRequest(float $startTime, float $endTime, string $responseBody)
+    public function logHttp(float $startTime, float $endTime, string $responseBody)
     {
         $request = getRequest();
 
         $LogData = [
-            'requestUrl' => getRequestUrl(1),
-            'requestData' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
-            'requestHeader' => json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE),
+            'url' => getRequestUrl(1),
+            'header' => json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE),
+            'reqData' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
+            'resData' => $responseBody,
             'runTime' => round(($endTime - $startTime) * 1000, 3),
-            'responseBody' => $responseBody,
         ];
-        getDao(\App\Module\Db\Dao\Log\Request::class)->parseInsert($LogData)->insert();
+        getDao(\App\Module\Db\Dao\Log\Http::class)->parseInsert($LogData)->insert();
     }
 }

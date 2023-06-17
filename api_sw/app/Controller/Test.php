@@ -9,7 +9,7 @@ class Test extends AbstractController
     public function index()
     {
         //$data = $this->request->all();
-        //$crontab = $this->container->get(\Hyperf\Contract\ConfigInterface::class)->get('crontab.crontab.LogRequestPartition');
+        //$crontab = $this->container->get(\Hyperf\Contract\ConfigInterface::class)->get('crontab.crontab.LogHttpPartition');
         //$a = getDao(\App\Module\Db\Dao\Auth\Scene::class)->getBuilder()->get()->toArray();
         //$a = $this->container->get(\Hyperf\Redis\RedisFactory::class)->get('default')->set('aaaa', 'asda', 10);
         //$a = $this->container->get(\App\Module\Cache\Login::class);

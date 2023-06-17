@@ -190,7 +190,7 @@ return [
         'menuId' => '菜单ID',
         'roleId' => '角色ID',
         'sceneId' => '场景ID',
-        'logId' => '日志ID',
+        'httpId' => 'http记录ID',
         'adminId' => '管理员ID',
         'serverId' => '服务器id',
 
@@ -235,7 +235,7 @@ return [
         'sceneCode' => '场景标识',
         'sceneConfig' => '场景配置',
 
-        'requestUrl' => '请求地址',
+        'url' => '地址',
         'minRunTime' => '运行时间最小值',
         'maxRunTime' => '运行时间最大值',
 
