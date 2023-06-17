@@ -18,18 +18,18 @@ type CommonListReq struct {
 }
 
 type CommonListFilterReq struct {
-	Id        *uint       `c:"id,omitempty" json:"id" v:"integer|min:1"`
-	IdArr     []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1"`
-	ExcId     *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1"`
-	ExcIdArr  []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1"`
-	StartTime *gtime.Time `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s"`
-	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime"`
-	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Id        *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
+	IdArr     []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	ExcId     *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`
+	ExcIdArr  []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	StartTime *gtime.Time `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"`
+	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
+	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 }
 
 type CommonInfoReq struct {
-	Id    uint     `json:"id" v:"required|integer|min:1"`
-	Field []string `json:"field" v:"distinct|foreach|min-length:1"`
+	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。可为空，默认返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 }
 
 type CommonUpdateDeleteIdArrReq struct {

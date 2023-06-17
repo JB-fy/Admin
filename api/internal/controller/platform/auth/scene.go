@@ -22,7 +22,7 @@ func NewScene() *Scene {
 // 列表
 func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *api.CommonListWithCountRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.Map(req.Filter, `list`)
 	order := [][2]string{{`id`, `DESC`}}
 	if req.Sort.Key != `` {
 		order[0][0] = req.Sort.Key

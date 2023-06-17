@@ -9,15 +9,15 @@ import (
 type SceneListReq struct {
 	g.Meta `path:"/list" method:"post" tags:"场景" summary:"列表"`
 	apiCommon.CommonListReq
-	Filter SceneListFilterReq `p:"filter"`
+	Filter SceneListFilterReq `json:"filter"`
 }
 
 type SceneListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
-	SceneId                       *uint  `c:"sceneId,omitempty" p:"sceneId" v:"integer|min:1"`
-	SceneCode                     string `c:"sceneCode,omitempty" p:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneName                     string `c:"sceneName,omitempty" p:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	IsStop                        *uint  `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	SceneId                       *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	SceneCode                     string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景Code"`
+	SceneName                     string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
+	IsStop                        *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
 type SceneInfoReq struct {
@@ -27,19 +27,19 @@ type SceneInfoReq struct {
 
 type SceneCreateReq struct {
 	g.Meta      `path:"/create" method:"post" tags:"场景" summary:"创建"`
-	SceneCode   *string `c:"sceneCode,omitempty" p:"sceneCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneName   *string `c:"sceneName,omitempty" p:"sceneName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneConfig *string `c:"sceneConfig,omitempty" p:"sceneConfig" v:"json"`
-	IsStop      *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	SceneCode   *string `c:"sceneCode,omitempty" json:"sceneCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneName   *string `c:"sceneName,omitempty" json:"sceneName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneConfig *string `c:"sceneConfig,omitempty" json:"sceneConfig" v:"json"`
+	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
 }
 
 type SceneUpdateReq struct {
 	g.Meta                               `path:"/update" method:"post" tags:"场景" summary:"更新"`
 	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	SceneCode                            *string `c:"sceneCode,omitempty" p:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneName                            *string `c:"sceneName,omitempty" p:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	SceneConfig                          *string `c:"sceneConfig,omitempty" p:"sceneConfig" v:"json"`
-	IsStop                               *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	SceneCode                            *string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneName                            *string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	SceneConfig                          *string `c:"sceneConfig,omitempty" json:"sceneConfig" v:"json"`
+	IsStop                               *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
 }
 
 type SceneDeleteReq struct {
