@@ -199,9 +199,9 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				}
 			case `accountOrPhone`:
 				if g.Validator().Rules(`required|integer`).Data(v).Run(m.GetCtx()) == nil {
-					m = m.Where(daoThis.Table()+`.phone`, v)
+					m = m.Where(daoThis.Table()+`.`+daoThis.Columns().Phone, v)
 				} else {
-					m = m.Where(daoThis.Table()+`.account`, v)
+					m = m.Where(daoThis.Table()+`.`+daoThis.Columns().Account, v)
 				}
 			case `roleId`:
 				m = m.Where(daoAuth.RoleRelOfPlatformAdmin.Table()+`.`+k, v)
@@ -283,10 +283,10 @@ func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.
 			m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
 		case daoAuth.RoleRelOfPlatformAdmin.Table():
-			roleRelOfPlatformAdminTable := daoAuth.RoleRelOfPlatformAdmin.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
-				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
-				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			relTable := daoAuth.RoleRelOfPlatformAdmin.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
 		}
 		return m
@@ -307,7 +307,7 @@ func (daoThis *adminDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
 					case `roleIdArr`:
-						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, record[daoThis.PrimaryKey()]).Array(`roleId`)
+						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
 						record[v] = gvar.New(idArr)
 					}
 				}
@@ -321,18 +321,20 @@ func (daoThis *adminDao) AfterField(afterField []string) gdb.HookHandler {
 // Fill with you ideas below.
 
 // 保存关联角色
-func (daoThis *adminDao) SaveRelRole(ctx context.Context, roleIdArr []int, id int) {
-	roleIdArrOfOldTmp, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, id).Array(`roleId`)
-	roleIdArrOfOld := gconv.SliceInt(roleIdArrOfOldTmp)
+func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int) {
+	relKey := daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId
+	priKey := daoThis.PrimaryKey()
+	relIdArrOfOldTmp, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联角色 开始----**/
-	inserttRoleIdArr := gset.NewIntSetFrom(roleIdArr).Diff(gset.NewIntSetFrom(roleIdArrOfOld)).Slice()
-	if len(inserttRoleIdArr) > 0 {
+	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
+	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
-		for _, v := range inserttRoleIdArr {
+		for _, v := range insertRelIdArr {
 			insertList = append(insertList, map[string]interface{}{
-				`adminId`: id,
-				`roleId`:  v,
+				priKey: id,
+				relKey: v,
 			})
 		}
 		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Data(insertList).Insert()
@@ -340,9 +342,9 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, roleIdArr []int, id in
 	/**----新增关联角色 结束----**/
 
 	/**----删除关联角色 开始----**/
-	deleteRoleIdArr := gset.NewIntSetFrom(roleIdArrOfOld).Diff(gset.NewIntSetFrom(roleIdArr)).Slice()
-	if len(deleteRoleIdArr) > 0 {
-		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, id).Where(`roleId`, deleteRoleIdArr).Delete()
+	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
+	if len(deleteRelIdArr) > 0 {
+		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联角色 结束----**/
 }

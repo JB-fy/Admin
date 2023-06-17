@@ -146,7 +146,7 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				}
 			case `sceneName`:
 				m = m.Fields(Scene.Table() + `.` + v)
-				m = daoThis.ParseJoin(`scene`, joinTableArr)(m)
+				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 			case `menuIdArr`, `actionIdArr`:
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
@@ -154,7 +154,7 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			case `tableName`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().TableId)
 				m = m.Fields(Scene.Table() + `.` + Scene.Columns().SceneCode)
-				m = daoThis.ParseJoin(`scene`, joinTableArr)(m)
+				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 				afterField = append(afterField, v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -280,11 +280,11 @@ func (daoThis *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 			*joinTableArr = append(*joinTableArr, relTable)
 			m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
-		case `scene`:
-			sceneTable := Scene.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(sceneTable) {
-				*joinTableArr = append(*joinTableArr, sceneTable)
-				m = m.LeftJoin(sceneTable, sceneTable+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+Scene.PrimaryKey())
+		case Scene.Table():
+			relTable := Scene.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+Scene.PrimaryKey())
 			}
 		}
 		return m
@@ -305,17 +305,17 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
 					case `menuIdArr`:
-						menuIdArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(`roleId`, record[daoThis.PrimaryKey()]).Array(`menuId`)
-						record[v] = gvar.New(menuIdArr)
+						idArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
+						record[v] = gvar.New(idArr)
 					case `actionIdArr`:
-						actionIdArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(`roleId`, record[daoThis.PrimaryKey()]).Array(`actionId`)
-						record[v] = gvar.New(actionIdArr)
+						idArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
+						record[v] = gvar.New(idArr)
 					case `tableName`:
-						if record[`tableId`].Int() == 0 {
+						if record[daoThis.Columns().TableId].Int() == 0 {
 							record[v] = gvar.New(`平台`)
 							continue
 						}
-						switch record[`sceneCode`].String() {
+						switch record[Scene.Columns().SceneCode].String() {
 						case `platform`:
 							break
 						}
@@ -331,18 +331,20 @@ func (daoThis *roleDao) AfterField(afterField []string) gdb.HookHandler {
 // Fill with you ideas below.
 
 // 保存关联菜单
-func (daoThis *roleDao) SaveRelMenu(ctx context.Context, menuIdArr []int, id int) {
-	menuIdArrOfOldTmp, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(`roleId`, id).Array(`menuId`)
-	menuIdArrOfOld := gconv.SliceInt(menuIdArrOfOldTmp)
+func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []int, id int) {
+	relKey := RoleRelToMenu.Columns().MenuId
+	priKey := daoThis.PrimaryKey()
+	relIdArrOfOldTmp, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联菜单 开始----**/
-	insertMenuIdArr := gset.NewIntSetFrom(menuIdArr).Diff(gset.NewIntSetFrom(menuIdArrOfOld)).Slice()
-	if len(insertMenuIdArr) > 0 {
+	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
+	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
-		for _, v := range insertMenuIdArr {
+		for _, v := range insertRelIdArr {
 			insertList = append(insertList, map[string]interface{}{
-				`roleId`: id,
-				`menuId`: v,
+				priKey: id,
+				relKey: v,
 			})
 		}
 		RoleRelToMenu.ParseDbCtx(ctx).Data(insertList).Insert()
@@ -350,26 +352,28 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, menuIdArr []int, id int
 	/**----新增关联菜单 结束----**/
 
 	/**----删除关联菜单 开始----**/
-	deleteMenuIdArr := gset.NewIntSetFrom(menuIdArrOfOld).Diff(gset.NewIntSetFrom(menuIdArr)).Slice()
-	if len(deleteMenuIdArr) > 0 {
-		RoleRelToMenu.ParseDbCtx(ctx).Where(`roleId`, id).Where(`menuId`, deleteMenuIdArr).Delete()
+	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
+	if len(deleteRelIdArr) > 0 {
+		RoleRelToMenu.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联菜单 结束----**/
 }
 
 // 保存关联操作
-func (daoThis *roleDao) SaveRelAction(ctx context.Context, actionIdArr []int, id int) {
-	actionIdArrOfOldTmp, _ := RoleRelToAction.ParseDbCtx(ctx).Where(`roleId`, id).Array(`actionId`)
-	actionIdArrOfOld := gconv.SliceInt(actionIdArrOfOldTmp)
+func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []int, id int) {
+	relKey := RoleRelToAction.Columns().ActionId
+	priKey := daoThis.PrimaryKey()
+	relIdArrOfOldTmp, _ := RoleRelToAction.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联操作 开始----**/
-	inserttActionIdArr := gset.NewIntSetFrom(actionIdArr).Diff(gset.NewIntSetFrom(actionIdArrOfOld)).Slice()
-	if len(inserttActionIdArr) > 0 {
+	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
+	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
-		for _, v := range inserttActionIdArr {
+		for _, v := range insertRelIdArr {
 			insertList = append(insertList, map[string]interface{}{
-				`roleId`:   id,
-				`actionId`: v,
+				priKey: id,
+				relKey: v,
 			})
 		}
 		RoleRelToAction.ParseDbCtx(ctx).Data(insertList).Insert()
@@ -377,9 +381,9 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, actionIdArr []int, id
 	/**----新增关联操作 开始----**/
 
 	/**----删除关联操作 结束----**/
-	deleteActionIdArr := gset.NewIntSetFrom(actionIdArrOfOld).Diff(gset.NewIntSetFrom(actionIdArr)).Slice()
-	if len(deleteActionIdArr) > 0 {
-		RoleRelToAction.ParseDbCtx(ctx).Where(`roleId`, id).Where(`actionId`, deleteActionIdArr).Delete()
+	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
+	if len(deleteRelIdArr) > 0 {
+		RoleRelToAction.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联操作 结束----**/
 }

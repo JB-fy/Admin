@@ -190,6 +190,10 @@ func (daoThis *requestDao) ParseFilter(filter map[string]interface{}, joinTableA
 				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(nameField)) {
 					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseSnakeFirstUpper(nameField), `%`+gconv.String(v)+`%`)
 				}
+			case `minRunTime`:
+				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().RunTime, v)
+			case `maxRunTime`:
+				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().RunTime, v)
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
