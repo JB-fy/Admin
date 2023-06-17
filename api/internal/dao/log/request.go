@@ -5,7 +5,7 @@
 package dao
 
 import (
-	"api/internal/model/dao/log/internal"
+	"api/internal/dao/log/internal"
 	"context"
 	"strings"
 

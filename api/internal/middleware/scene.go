@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	dao "api/internal/model/dao/auth"
+	dao "api/internal/dao/auth"
 	"api/internal/utils"
 	"strings"
 

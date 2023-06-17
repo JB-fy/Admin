@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	dao "api/internal/model/dao/log"
+	dao "api/internal/dao/log"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"

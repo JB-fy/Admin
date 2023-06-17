@@ -490,7 +490,7 @@ func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	tplLogic := `package logic
 
 import (
-	dao{TplPathSuffixCaseCamel} "api/internal/model/dao/{TplPathSuffixCaseCamelLower}"
+	dao{TplPathSuffixCaseCamel} "api/internal/dao/{TplPathSuffixCaseCamelLower}"
 	"api/internal/service"`
 	if !(option.NoCreate && option.NoUpdate && option.NoDelete) {
 		tplLogic += `
@@ -688,7 +688,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 import (
 	api{TplPathSuffixCaseCamel} "api/api/{TplPathSuffixCaseCamelLower}"
-	dao{TplPathSuffixCaseCamel} "api/internal/model/dao/{TplPathSuffixCaseCamelLower}"
+	dao{TplPathSuffixCaseCamel} "api/internal/dao/{TplPathSuffixCaseCamelLower}"
 	"api/internal/service"
 	"api/internal/utils"
 

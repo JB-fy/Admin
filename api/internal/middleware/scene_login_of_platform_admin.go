@@ -3,7 +3,7 @@ package middleware
 import (
 	"api/internal/utils"
 
-	daoPlatform "api/internal/model/dao/platform"
+	daoPlatform "api/internal/dao/platform"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

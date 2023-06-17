@@ -5,8 +5,8 @@
 package dao
 
 import (
-	daoAuth "api/internal/model/dao/auth"
-	"api/internal/model/dao/platform/internal"
+	daoAuth "api/internal/dao/auth"
+	"api/internal/dao/platform/internal"
 	"context"
 	"strings"
 

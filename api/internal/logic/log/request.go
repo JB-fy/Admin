@@ -1,7 +1,7 @@
 package logic
 
 import (
-	daoLog "api/internal/model/dao/log"
+	daoLog "api/internal/dao/log"
 	"api/internal/service"
 	"context"
 

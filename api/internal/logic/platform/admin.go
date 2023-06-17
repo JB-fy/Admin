@@ -1,8 +1,8 @@
 package logic
 
 import (
-	daoAuth "api/internal/model/dao/auth"
-	daoPlatform "api/internal/model/dao/platform"
+	daoAuth "api/internal/dao/auth"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"

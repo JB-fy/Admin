@@ -2,7 +2,7 @@ package logic
 
 import (
 	"api/internal/consts"
-	daoPlatform "api/internal/model/dao/platform"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"

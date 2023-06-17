@@ -14,8 +14,8 @@ import (
 
 	"api/internal/controller"
 	"api/internal/corn"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/middleware"
-	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/router"
 	"api/internal/utils"
 )
