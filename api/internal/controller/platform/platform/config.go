@@ -1,7 +1,7 @@
 package controller
 
 import (
-	apiPlatform "api/api/platform"
+	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"

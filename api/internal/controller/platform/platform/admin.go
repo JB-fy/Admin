@@ -1,26 +1,28 @@
 package controller
 
 import (
-	apiPlatform "api/api/platform"
+	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Corn struct{}
+type Admin struct{}
 
-func NewCorn() *Corn {
-	return &Corn{}
+func NewAdmin() *Admin {
+	return &Admin{}
 }
 
 // 列表
-func (controllerThis *Corn) List(r *ghttp.Request) {
+func (controllerThis *Admin) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
-	var param *apiPlatform.CornListReq
+	var param *apiPlatform.AdminListReq
 	err := r.Parse(&param)
 	if err != nil {
 		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -47,11 +49,12 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 	switch sceneCode {
 	case `platform`:
 		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformCornLook`)
-		allowField := []string{`id`, `name`, `cornId`, `cornName`}
+		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformAdminLook`)
+		allowField := []string{`id`, `name`, `adminId`, `nickname`}
 		if isAuth {
-			allowField = daoPlatform.Corn.ColumnArr()
+			allowField = daoPlatform.Admin.ColumnArr()
 			allowField = append(allowField, `id`, `name`)
+			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		}
 		field := allowField
 		if len(param.Field) > 0 {
@@ -62,12 +65,12 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Corn().Count(r.GetCtx(), filter)
+		count, err := service.Admin().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Corn().List(r.GetCtx(), filter, field, order, param.Page, limit)
+		list, err := service.Admin().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -77,20 +80,21 @@ func (controllerThis *Corn) List(r *ghttp.Request) {
 }
 
 // 详情
-func (controllerThis *Corn) Info(r *ghttp.Request) {
+func (controllerThis *Admin) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornInfoReq
+		var param *apiPlatform.AdminInfoReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
-		allowField := daoPlatform.Corn.ColumnArr()
-		allowField = append(allowField, `id`, `name`)
+		allowField := daoPlatform.Admin.ColumnArr()
+		allowField = append(allowField, `id`, `name`, `roleIdArr`)
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
 			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -102,14 +106,14 @@ func (controllerThis *Corn) Info(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornLook`)
+		_, err = service.Action().CheckAuth(r.GetCtx(), `platformAdminLook`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		info, err := service.Corn().Info(r.GetCtx(), filter, field)
+		info, err := service.Admin().Info(r.GetCtx(), filter, field)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -119,12 +123,12 @@ func (controllerThis *Corn) Info(r *ghttp.Request) {
 }
 
 // 创建
-func (controllerThis *Corn) Create(r *ghttp.Request) {
+func (controllerThis *Admin) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornCreateReq
+		var param *apiPlatform.AdminCreateReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -134,14 +138,14 @@ func (controllerThis *Corn) Create(r *ghttp.Request) {
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornCreate`)
+		_, err = service.Action().CheckAuth(r.GetCtx(), `platformAdminCreate`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		id, err := service.Corn().Create(r.GetCtx(), data)
+		id, err := service.Admin().Create(r.GetCtx(), data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -151,12 +155,12 @@ func (controllerThis *Corn) Create(r *ghttp.Request) {
 }
 
 // 更新
-func (controllerThis *Corn) Update(r *ghttp.Request) {
+func (controllerThis *Admin) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornUpdateReq
+		var param *apiPlatform.AdminUpdateReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -171,15 +175,22 @@ func (controllerThis *Corn) Update(r *ghttp.Request) {
 		filter := map[string]interface{}{`id`: param.IdArr}
 		/**--------参数处理 结束--------**/
 
+		/**--------不能修改平台超级管理员 开始--------**/
+		if garray.NewIntArrayFrom(gconv.SliceInt(filter[`id`])).Contains(g.Cfg().MustGet(r.GetCtx(), `superPlatformAdminId`).Int()) {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39990004, ``))
+			return
+		}
+		/**--------不能修改平台超级管理员 结束--------**/
+
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornUpdate`)
+		_, err = service.Action().CheckAuth(r.GetCtx(), `platformAdminUpdate`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Corn().Update(r.GetCtx(), data, filter)
+		_, err = service.Admin().Update(r.GetCtx(), data, filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -189,12 +200,12 @@ func (controllerThis *Corn) Update(r *ghttp.Request) {
 }
 
 // 删除
-func (controllerThis *Corn) Delete(r *ghttp.Request) {
+func (controllerThis *Admin) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornDeleteReq
+		var param *apiPlatform.AdminDeleteReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -203,15 +214,22 @@ func (controllerThis *Corn) Delete(r *ghttp.Request) {
 		filter := map[string]interface{}{`id`: param.IdArr}
 		/**--------参数处理 结束--------**/
 
+		/**--------不能删除平台超级管理员 开始--------**/
+		if garray.NewIntArrayFrom(gconv.SliceInt(filter[`id`])).Contains(g.Cfg().MustGet(r.GetCtx(), `superPlatformAdminId`).Int()) {
+			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 39990005, ``))
+			return
+		}
+		/**--------不能删除平台超级管理员 结束--------**/
+
 		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornDelete`)
+		_, err = service.Action().CheckAuth(r.GetCtx(), `platformAdminDelete`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Corn().Delete(r.GetCtx(), filter)
+		_, err = service.Admin().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

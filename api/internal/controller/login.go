@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	apiPlatform "api/api/platform"
+	apiPlatform "api/api/platform/platform"
 	"api/internal/service"
 	"api/internal/utils"
 

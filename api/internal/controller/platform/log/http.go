@@ -1,8 +1,8 @@
 package controller
 
 import (
-	apiPlatform "api/api/platform"
-	daoPlatform "api/internal/dao/platform"
+	apiLog "api/api/platform/log"
+	daoLog "api/internal/dao/log"
 	"api/internal/service"
 	"api/internal/utils"
 
@@ -11,16 +11,16 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Server struct{}
+type Http struct{}
 
-func NewServer() *Server {
-	return &Server{}
+func NewHttp() *Http {
+	return &Http{}
 }
 
 // 列表
-func (controllerThis *Server) List(r *ghttp.Request) {
+func (controllerThis *Http) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
-	var param *apiPlatform.ServerListReq
+	var param *apiLog.HttpListReq
 	err := r.Parse(&param)
 	if err != nil {
 		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -47,13 +47,13 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 	switch sceneCode {
 	case `platform`:
 		/**--------权限验证 开始--------**/
-		_, err := service.Action().CheckAuth(r.GetCtx(), `platformServerLook`)
+		_, err := service.Action().CheckAuth(r.GetCtx(), `logHttpLook`)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		allowField := daoPlatform.Server.ColumnArr()
-		allowField = append(allowField, `id`, `name`)
+		allowField := daoLog.Http.ColumnArr()
+		allowField = append(allowField, `id`)
 		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 		field := allowField
 		if len(param.Field) > 0 {
@@ -64,12 +64,12 @@ func (controllerThis *Server) List(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		count, err := service.Server().Count(r.GetCtx(), filter)
+		count, err := service.Http().Count(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Server().List(r.GetCtx(), filter, field, order, param.Page, limit)
+		list, err := service.Http().List(r.GetCtx(), filter, field, order, param.Page, limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

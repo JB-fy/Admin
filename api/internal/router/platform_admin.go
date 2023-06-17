@@ -5,9 +5,9 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"api/internal/controller"
-	controllerAuth "api/internal/controller/auth"
-	controllerLog "api/internal/controller/log"
-	controllerPlatform "api/internal/controller/platform"
+	controllerAuth "api/internal/controller/platform/auth"
+	controllerLog "api/internal/controller/platform/log"
+	controllerPlatform "api/internal/controller/platform/platform"
 	"api/internal/middleware"
 )
 

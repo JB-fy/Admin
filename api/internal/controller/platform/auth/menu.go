@@ -1,7 +1,7 @@
 package controller
 
 import (
-	apiAuth "api/api/auth"
+	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
