@@ -294,3 +294,34 @@ func (daoThis *configDao) AfterField(afterField []string) gdb.HookHandler {
 }
 
 // Fill with you ideas below.
+
+// 获取配置
+func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config map[string]interface{}, err error) {
+	keyField := daoThis.Columns().ConfigKey
+	valueField := daoThis.Columns().ConfigValue
+	result, err := daoThis.ParseDbCtx(ctx).Where(keyField, configKeyArr).Fields(keyField, valueField).All()
+	if err != nil {
+		return
+	}
+	config = map[string]interface{}{}
+	for _, v := range result {
+		config[v[keyField].String()] = v[valueField]
+	}
+	return
+}
+
+// 保存配置
+func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{}) (err error) {
+	keyField := daoThis.Columns().ConfigKey
+	valueField := daoThis.Columns().ConfigValue
+	err = daoThis.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
+		for k, v := range config {
+			_, err = tx.Model(daoThis.Table()).Data(g.Map{keyField: k, valueField: v}).Save()
+			if err != nil {
+				return
+			}
+		}
+		return
+	})
+	return
+}

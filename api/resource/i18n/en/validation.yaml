@@ -44,3 +44,5 @@ gf.gvalid.rule.in: "The {field} value `{value}` is not in acceptable range: {pat
 gf.gvalid.rule.not-in: "The {field} value `{value}` must not be in range: {pattern}"
 gf.gvalid.rule.regex: "The {field} value `{value}` must be in regex of: {pattern}"
 gf.gvalid.rule.gf.gvalid.rule.__default__: "The :attribute value `:value` is invalid"
+
+gf.gvalid.rule.distinct: "{field}字段值`{value}`不能有重复值"

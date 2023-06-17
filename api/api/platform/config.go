@@ -1,7 +1,7 @@
 package api
 
 type ConfigGetReq struct {
-	ConfigKeyArr *[]string `c:"configKeyArr,omitempty" p:"configKeyArr" v:"distinct|foreach|min-length:1"`
+	ConfigKeyArr *[]string `c:"configKeyArr,omitempty" p:"configKeyArr" v:"required|distinct|foreach|min-length:1"`
 }
 
 type ConfigSaveReq struct {

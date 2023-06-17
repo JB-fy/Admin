@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	"api/internal/service"
+	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/utils"
 	"fmt"
 
@@ -47,10 +47,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 			}
 		}
 
-		filter := map[string]interface{}{
-			`configKey`: []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`},
-		}
-		config, _ := service.Config().Get(r.GetCtx(), filter)
+		config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`})
 		upload := utils.NewAliyunOss(r.GetCtx(), config)
 		signInfo, _ := upload.CreateSign(option)
 		utils.HttpSuccessJson(r, signInfo, 0)
@@ -59,10 +56,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 
 // 回调
 func (c *Upload) Notify(r *ghttp.Request) {
-	filter := map[string]interface{}{
-		`configKey`: []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`},
-	}
-	config, _ := service.Config().Get(r.GetCtx(), filter)
+	config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`})
 	upload := utils.NewAliyunOss(r.GetCtx(), config)
 	err := upload.Notify(r)
 	if err != nil {

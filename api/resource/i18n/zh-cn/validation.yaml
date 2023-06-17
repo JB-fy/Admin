@@ -47,3 +47,5 @@ gf.gvalid.rule.in: "{field}字段值`{value}`字段值应当满足取值范围:{
 gf.gvalid.rule.not-in: "{field}字段值`{value}`字段值不应当满足取值范围:{pattern}"
 gf.gvalid.rule.regex: "{field}字段值`{value}`字段值不满足规则:{pattern}"
 gf.gvalid.rule.__default__: "{field}字段值`{value}`字段值不合法"
+
+gf.gvalid.rule.distinct: "{field}字段值`{value}`不能有重复值"

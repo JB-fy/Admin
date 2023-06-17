@@ -2,9 +2,9 @@ package controller
 
 import (
 	apiPlatform "api/api/platform"
+	daoPlatform "api/internal/model/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
-	"fmt"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -28,11 +28,6 @@ func (controllerThis *Config) Get(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
-		filter := map[string]interface{}{}
-		data := gconv.Map(param)
-		if len(data) > 0 && len(gconv.SliceStr(data[`configKeyArr`])) > 0 {
-			filter[`configKey`] = data[`configKeyArr`]
-		}
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
@@ -43,7 +38,7 @@ func (controllerThis *Config) Get(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		config, err := service.Config().Get(r.GetCtx(), filter)
+		config, err := daoPlatform.Config.Get(r.GetCtx(), *param.ConfigKeyArr)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -64,10 +59,8 @@ func (controllerThis *Config) Save(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
-		fmt.Println(param)
-		data := gconv.Map(param)
-		fmt.Println(data)
-		if len(data) == 0 {
+		config := gconv.Map(param)
+		if len(config) == 0 {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
 			return
 		}
@@ -81,7 +74,7 @@ func (controllerThis *Config) Save(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		err = service.Config().Save(r.GetCtx(), data)
+		err = daoPlatform.Config.Save(r.GetCtx(), config)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
