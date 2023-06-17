@@ -76,13 +76,13 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' }
             },
             {
-                path: '/log/request',
+                path: '/log/http',
                 component: async () => {
-                    const component = await import('@/views/log/request/Index.vue')
-                    component.default.name = '/log/request'
+                    const component = await import('@/views/log/http/Index.vue')
+                    component.default.name = '/log/http'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/log/request' }
+                meta: { isAuth: true, keepAlive: true, componentName: '/log/http' }
             },
             {
                 path: '/platform/admin',

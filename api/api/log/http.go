@@ -4,15 +4,15 @@ import (
 	apiCommon "api/api"
 )
 
-type RequestListReq struct {
+type HttpListReq struct {
 	apiCommon.CommonListReq
-	Filter RequestListFilterReq `p:"filter"`
+	Filter HttpListFilterReq `p:"filter"`
 }
 
-type RequestListFilterReq struct {
+type HttpListFilterReq struct {
 	apiCommon.CommonListFilterReq `c:",omitempty"`
-	LogId                         *uint    `c:"logId,omitempty" p:"logId" v:"integer|min:1"`
-	RequestUrl                    string   `c:"requestUrl,omitempty" p:"requestUrl" v:"url"`
+	HttpId                        *uint    `c:"httpId,omitempty" p:"httpId" v:"integer|min:1"`
+	Url                           string   `c:"url,omitempty" p:"url" v:"url"`
 	MinRunTime                    *float64 `c:"minRunTime,omitempty" p:"minRunTime" v:"float|min:0"`
 	MaxRunTime                    *float64 `c:"maxRunTime,omitempty" p:"maxRunTime" v:"float|min:0|gte:MinRunTime"`
 }

@@ -39,7 +39,7 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	/**--------设置当前服务器IP并记录 结束--------**/
 
 	/**--------定时器设置 开始--------**/
-	corn.LogRequestPartition(ctx) //先执行一次请求日志分区
+	corn.LogHttpPartition(ctx) //先执行一次请求日志分区
 
 	corn.InitCorn(ctx) //启动定时器
 	/**--------定时器设置 结束--------**/

@@ -21,8 +21,8 @@ func InitRouterPlatform(s *ghttp.Server) {
 			//需验证登录身份
 			group.Group("", func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.SceneLoginOfPlatformAdmin)
-				group.Group("/log/request", func(group *ghttp.RouterGroup) {
-					controllerThis := controllerLog.NewRequest()
+				group.Group("/log/http", func(group *ghttp.RouterGroup) {
+					controllerThis := controllerLog.NewHttp()
 					group.ALLMap(g.Map{
 						"/list": controllerThis.List,
 					})

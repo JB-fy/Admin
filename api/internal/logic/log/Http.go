@@ -8,19 +8,19 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
-type sRequest struct{}
+type sHttp struct{}
 
-func NewRequest() *sRequest {
-	return &sRequest{}
+func NewHttp() *sHttp {
+	return &sHttp{}
 }
 
 func init() {
-	service.RegisterRequest(NewRequest())
+	service.RegisterHttp(NewHttp())
 }
 
 // 总数
-func (logicThis *sRequest) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
-	daoThis := daoLog.Request
+func (logicThis *sHttp) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+	daoThis := daoLog.Http
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -35,8 +35,8 @@ func (logicThis *sRequest) Count(ctx context.Context, filter map[string]interfac
 }
 
 // 列表
-func (logicThis *sRequest) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
-	daoThis := daoLog.Request
+func (logicThis *sHttp) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
+	daoThis := daoLog.Http
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {

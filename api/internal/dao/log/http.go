@@ -16,24 +16,24 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// internalRequestDao is internal type for wrapping internal DAO implements.
-type internalRequestDao = *internal.RequestDao
+// internalHttpDao is internal type for wrapping internal DAO implements.
+type internalHttpDao = *internal.HttpDao
 
-// requestDao is the data access object for table log_request.
+// httpDao is the data access object for table log_http.
 // You can define custom methods on it to extend its functionality as you wish.
-type requestDao struct {
-	internalRequestDao
+type httpDao struct {
+	internalHttpDao
 }
 
 var (
-	// Request is globally public accessible object for table log_request operations.
-	Request = requestDao{
-		internal.NewRequestDao(),
+	// Http is globally public accessible object for table log_http operations.
+	Http = httpDao{
+		internal.NewHttpDao(),
 	}
 )
 
 // 解析分库
-func (daoThis *requestDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
+func (daoThis *httpDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
 	group := daoThis.Group()
 	if len(dbGroupSeldata) > 0 { //分库逻辑
 	}
@@ -41,7 +41,7 @@ func (daoThis *requestDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) s
 }
 
 // 解析分表
-func (daoThis *requestDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
+func (daoThis *httpDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
 	table := daoThis.Table()
 	if len(dbTableSelData) > 0 { //分表逻辑
 	}
@@ -49,7 +49,7 @@ func (daoThis *requestDao) ParseDbTable(dbTableSelData map[string]interface{}) s
 }
 
 // 解析分库分表（对外暴露使用）
-func (daoThis *requestDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
+func (daoThis *httpDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
 	switch len(dbSelDataList) {
 	case 1:
 		return g.DB(daoThis.ParseDbGroup(dbSelDataList[0])).Model(daoThis.Table()).Safe().Ctx(ctx)
@@ -61,7 +61,7 @@ func (daoThis *requestDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[
 }
 
 // 解析insert
-func (daoThis *requestDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *httpDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := make([]map[string]interface{}, len(insert))
 		for index, item := range insert {
@@ -89,7 +89,7 @@ func (daoThis *requestDao) ParseInsert(insert []map[string]interface{}, fill ...
 }
 
 // 解析update
-func (daoThis *requestDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *httpDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
@@ -125,7 +125,7 @@ func (daoThis *requestDao) ParseUpdate(update map[string]interface{}, fill ...bo
 }
 
 // 解析field
-func (daoThis *requestDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *httpDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
@@ -158,7 +158,7 @@ func (daoThis *requestDao) ParseField(field []string, joinTableArr *[]string) gd
 }
 
 // 解析filter
-func (daoThis *requestDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *httpDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -223,7 +223,7 @@ func (daoThis *requestDao) ParseFilter(filter map[string]interface{}, joinTableA
 }
 
 // 解析group
-func (daoThis *requestDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *httpDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -242,7 +242,7 @@ func (daoThis *requestDao) ParseGroup(group []string, joinTableArr *[]string) gd
 }
 
 // 解析order
-func (daoThis *requestDao) ParseOrder(order [][2]string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *httpDao) ParseOrder(order [][2]string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			switch v[0] {
@@ -261,7 +261,7 @@ func (daoThis *requestDao) ParseOrder(order [][2]string, joinTableArr *[]string)
 }
 
 // 解析join
-func (daoThis *requestDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *httpDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		/* case Xxxx.Table():
@@ -276,7 +276,7 @@ func (daoThis *requestDao) ParseJoin(joinCode string, joinTableArr *[]string) gd
 }
 
 // 获取数据后，再处理的字段
-func (daoThis *requestDao) AfterField(afterField []string) gdb.HookHandler {
+func (daoThis *httpDao) AfterField(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
