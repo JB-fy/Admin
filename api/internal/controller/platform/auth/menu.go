@@ -27,13 +27,7 @@ func (controllerThis *Menu) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
-	order := [][2]string{{`id`, `DESC`}}
-	if param.Sort.Key != `` {
-		order[0][0] = param.Sort.Key
-	}
-	if param.Sort.Order != `` {
-		order[0][1] = param.Sort.Order
-	}
+	order := []string{param.Sort}
 	page := param.Page
 	limit := param.Limit
 	/**--------参数处理 结束--------**/
@@ -255,7 +249,7 @@ func (controllerThis *Menu) Tree(r *ghttp.Request) {
 		field = append(field, `menuTree`) //补充字段（菜单树所需）
 		/**--------权限验证 结束--------**/
 
-		list, err := service.Menu().List(r.GetCtx(), filter, field, [][2]string{}, 0, 0)
+		list, err := service.Menu().List(r.GetCtx(), filter, field, []string{}, 0, 0)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

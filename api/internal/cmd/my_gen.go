@@ -536,7 +536,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map
 }
 
 // 列表
-func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -1775,7 +1775,7 @@ const getList = async (resetPage: boolean = false) => {
 	const param = {
 		field: [],
 		filter: removeEmptyOfObj(queryCommon.data),
-		sort: table.sort,
+		sort: table.sort.key + ' ' + table.sort.order,
 		page: pagination.page,
 		limit: pagination.size
 	}

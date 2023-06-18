@@ -37,7 +37,7 @@ func (logicThis *sCorn) Count(ctx context.Context, filter map[string]interface{}
 }
 
 // 列表
-func (logicThis *sCorn) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *sCorn) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoPlatform.Corn
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)

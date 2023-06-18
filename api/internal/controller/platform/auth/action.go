@@ -27,13 +27,7 @@ func (controllerThis *Action) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
-	order := [][2]string{{`id`, `DESC`}}
-	if param.Sort.Key != `` {
-		order[0][0] = param.Sort.Key
-	}
-	if param.Sort.Order != `` {
-		order[0][1] = param.Sort.Order
-	}
+	order := []string{param.Sort}
 	page := param.Page
 	limit := param.Limit
 	/**--------参数处理 结束--------**/

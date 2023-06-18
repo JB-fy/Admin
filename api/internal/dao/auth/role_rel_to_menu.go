@@ -238,17 +238,21 @@ func (daoThis *roleRelToMenuDao) ParseGroup(group []string, joinTableArr *[]stri
 }
 
 // 解析order
-func (daoThis *roleRelToMenuDao) ParseOrder(order [][2]string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *roleRelToMenuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
-			switch v[0] {
+			kArr := strings.Split(v, ` `)
+			if len(kArr) == 1 {
+				kArr = append(kArr, `ASC`)
+			}
+			switch kArr[0] {
 			case `id`:
-				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), v[1])
+				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), kArr[1])
 			default:
-				if daoThis.ColumnArrG().Contains(v[0]) {
-					m = m.Order(daoThis.Table()+`.`+v[0], v[1])
+				if daoThis.ColumnArrG().Contains(kArr[0]) {
+					m = m.Order(daoThis.Table()+`.`+kArr[0], kArr[1])
 				} else {
-					m = m.Order(v[0], v[1])
+					m = m.Order(kArr[0], kArr[1])
 				}
 			}
 		}

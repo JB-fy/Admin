@@ -41,7 +41,7 @@ func (logicThis *sMenu) Count(ctx context.Context, filter map[string]interface{}
 }
 
 // 列表
-func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)

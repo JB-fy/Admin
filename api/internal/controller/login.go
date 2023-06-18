@@ -117,7 +117,7 @@ func (c *Login) MenuTree(r *ghttp.Request) {
 		}
 		field := []string{`menuTree`, `showMenu`}
 
-		list, err := service.Menu().List(r.GetCtx(), filter, field, [][2]string{}, 0, 0)
+		list, err := service.Menu().List(r.GetCtx(), filter, field, []string{}, 0, 0)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

@@ -12,6 +12,14 @@ type SceneListReq struct {
 	Filter SceneListFilterReq `json:"filter" dc:"查询条件"`
 }
 
+type SceneListFilterReq struct {
+	apiCommon.CommonListFilterReq `c:",omitempty"`
+	SceneId                       *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	SceneCode                     string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景Code"`
+	SceneName                     string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
+	IsStop                        *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+}
+
 type SceneListRes struct {
 	apiCommon.CommonRes
 	Data SceneList `json:"data" dc:"返回数据"`
@@ -32,14 +40,6 @@ type SceneListOne struct {
 	IsStop      uint   `c:"isStop,omitempty" json:"isStop" dc:"是否停用：0否 1是"`
 	UpdatedAt   string `c:"updatedAt,omitempty" json:"updatedAt" dc:"更新时间"`
 	CreatedAt   string `c:"createdAt,omitempty" json:"createdAt" dc:"创建时间"`
-}
-
-type SceneListFilterReq struct {
-	apiCommon.CommonListFilterReq
-	SceneId   *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
-	SceneCode string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景Code"`
-	SceneName string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
-	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
 type SceneInfoReq struct {

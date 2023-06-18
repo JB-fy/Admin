@@ -14,7 +14,7 @@ import (
 type (
 	IHttp interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order [][2]string, page int, limit int) (list gdb.Result, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
 	}
 )
 

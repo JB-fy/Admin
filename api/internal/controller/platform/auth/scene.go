@@ -22,13 +22,7 @@ func NewScene() *Scene {
 func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *apiAuth.SceneListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter)
-	order := [][2]string{{`id`, `DESC`}}
-	if req.Sort.Key != `` {
-		order[0][0] = req.Sort.Key
-	}
-	if req.Sort.Order != `` {
-		order[0][1] = req.Sort.Order
-	}
+	order := []string{req.Sort}
 	page := req.Page
 	limit := req.Limit
 
