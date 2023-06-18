@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -20,7 +19,7 @@ func NewScene() *Scene {
 }
 
 // 列表
-func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *api.CommonListWithCountRes, err error) {
+func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *apiAuth.SceneListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter)
 	order := [][2]string{{`id`, `DESC`}}
@@ -61,10 +60,12 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	if err != nil {
 		return
 	}
-	res = &api.CommonListWithCountRes{
-		Count: count,
-		List:  list,
+	res = &apiAuth.SceneListRes{
+		Data: apiAuth.SceneList{
+			Count: count,
+		},
 	}
+	list.Structs(&res.Data.List)
 	return
 }
 

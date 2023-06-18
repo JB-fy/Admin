@@ -1,13 +1,9 @@
 package middleware
 
 import (
-	"net/http"
-
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func HandlerResponse(r *ghttp.Request) {
@@ -31,28 +27,28 @@ func HandlerResponse(r *ghttp.Request) {
 			code = gcode.New(89999999, ``, nil)
 		}
 		msg = err.Error()
-	} else {
-		if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
-			msg = http.StatusText(r.Response.Status)
-			switch r.Response.Status {
-			case http.StatusNotFound:
-				code = gcode.CodeNotFound
-			case http.StatusForbidden:
-				code = gcode.CodeNotAuthorized
-			default:
-				code = gcode.CodeUnknown
-			}
-			err = gerror.NewCode(code, msg)
-			r.SetError(err)
-		} else {
-			code = gcode.CodeOK
-			msg = g.I18n().T(r.GetCtx(), `code.`+gconv.String(0))
-		}
+		r.Response.WriteJson(map[string]interface{}{
+			"code": code.Code(),
+			"msg":  msg,
+			"data": res,
+		})
+		return
 	}
+	/* if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
+		msg = http.StatusText(r.Response.Status)
+		switch r.Response.Status {
+		case http.StatusNotFound:
+			code = gcode.CodeNotFound
+		case http.StatusForbidden:
+			code = gcode.CodeNotAuthorized
+		default:
+			code = gcode.CodeUnknown
+		}
+		err = gerror.NewCode(code, msg)
+		r.SetError(err)
+	} */
+	/* code = gcode.CodeOK
+	msg = g.I18n().T(r.GetCtx(), `code.`+gconv.String(0)) */
 
-	r.Response.WriteJson(map[string]interface{}{
-		"code": code.Code(),
-		"msg":  msg,
-		"data": res,
-	})
+	r.Response.WriteJson(res)
 }

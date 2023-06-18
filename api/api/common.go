@@ -1,20 +1,20 @@
 package api
 
 import (
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-type SortReq struct {
+type Sort struct {
 	Key   string `json:"key" v:"required-with:Order|min-length:1" default:"id" dc:"排序字段"`
 	Order string `json:"order" v:"required-with:Key|in:asc,desc,ASC,DESC" default:"DESC" dc:"排序方式：ASC正序 DESC倒序"`
 }
 
 type CommonListReq struct {
-	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
-	Sort  SortReq  `json:"sort" dc:"排序"`
-	Page  int      `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
-	Limit int      `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
+	Field  []string            `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Sort   Sort                `json:"sort" dc:"排序"`
+	Page   int                 `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
+	Limit  int                 `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
+	Filter CommonListFilterReq `json:"filter" dc:"查询条件"`
 }
 
 type CommonListFilterReq struct {
@@ -36,12 +36,8 @@ type CommonUpdateDeleteIdArrReq struct {
 	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
-type CommonListRes struct {
-	List gdb.Result `json:"list" dc:"列表"`
-	//List []map[string]interface{} `json:"list" dc:"列表"`
-}
-
-type CommonListWithCountRes struct {
-	Count int        `json:"count" dc:"总数"`
-	List  gdb.Result `json:"list" dc:"列表"`
+type CommonRes struct {
+	Code int                    `json:"code" dc:"返回码"`
+	Msg  string                 `json:"mgs" dc:"返回信息"`
+	Data map[string]interface{} `json:"data" dc:"返回数据"`
 }
