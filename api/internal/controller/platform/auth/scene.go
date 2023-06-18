@@ -22,7 +22,7 @@ func NewScene() *Scene {
 // 列表
 func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *api.CommonListWithCountRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter, `list`)
+	filter := gconv.Map(req.Filter)
 	order := [][2]string{{`id`, `DESC`}}
 	if req.Sort.Key != `` {
 		order[0][0] = req.Sort.Key
@@ -30,14 +30,8 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	if req.Sort.Order != `` {
 		order[0][1] = req.Sort.Order
 	}
-	page := 1
-	if req.Page > 0 {
-		page = req.Page
-	}
-	limit := 10
-	if req.Limit != nil {
-		limit = *req.Limit
-	}
+	page := req.Page
+	limit := req.Limit
 
 	columnsThis := daoAuth.Scene.Columns()
 	allowField := daoAuth.Scene.ColumnArr()

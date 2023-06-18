@@ -34,13 +34,8 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 	if param.Sort.Order != `` {
 		order[0][1] = param.Sort.Order
 	}
-	if param.Page <= 0 {
-		param.Page = 1
-	}
-	limit := 10
-	if param.Limit != nil {
-		limit = *param.Limit
-	}
+	page := param.Page
+	limit := param.Limit
 	/**--------参数处理 结束--------**/
 
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
@@ -68,7 +63,7 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 			utils.HttpFailJson(r, err)
 			return
 		}
-		list, err := service.Role().List(r.GetCtx(), filter, field, order, param.Page, limit)
+		list, err := service.Role().List(r.GetCtx(), filter, field, order, page, limit)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

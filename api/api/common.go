@@ -6,15 +6,15 @@ import (
 )
 
 type SortReq struct {
-	Key   string `json:"key" v:"min-length:1"`
-	Order string `json:"order" v:"in:asc,desc,ASC,DESC"`
+	Key   string `json:"key" v:"required-with:Order|min-length:1" default:"id" dc:"排序字段"`
+	Order string `json:"order" v:"required-with:Key|in:asc,desc,ASC,DESC" default:"DESC" dc:"排序方式：ASC正序 DESC倒序"`
 }
 
 type CommonListReq struct {
-	Field []string `json:"field" v:"distinct|foreach|min-length:1"`
-	Sort  SortReq  `json:"sort"`
-	Page  int      `json:"page" v:"integer|min:1"`
-	Limit *int     `json:"limit" v:"integer|min:0"` //可传0取全部
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Sort  SortReq  `json:"sort" dc:"排序"`
+	Page  int      `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
+	Limit int      `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type CommonListFilterReq struct {
@@ -29,7 +29,7 @@ type CommonListFilterReq struct {
 
 type CommonInfoReq struct {
 	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
-	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。可为空，默认返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 }
 
 type CommonUpdateDeleteIdArrReq struct {
