@@ -174,8 +174,6 @@ return [
         'filter' => '筛选字段',
         'filter.*' => '筛选字段内所有值',
         'sort' => '排序',
-        'sort.key' => '排序字段',
-        'sort.order' => '排序方式',
         'page' => '页码',
         'limit' => '条数',
 
