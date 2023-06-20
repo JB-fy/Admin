@@ -21,6 +21,9 @@ func NewMenu() *Menu {
 func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) (res *apiAuth.MenuListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter)
+	if filter == nil {
+		filter = map[string]interface{}{}
+	}
 	order := []string{req.Sort}
 	page := req.Page
 	limit := req.Limit

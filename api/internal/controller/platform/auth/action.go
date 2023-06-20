@@ -21,6 +21,9 @@ func NewAction() *Action {
 func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListReq) (res *apiAuth.ActionListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter)
+	if filter == nil {
+		filter = map[string]interface{}{}
+	}
 	order := []string{req.Sort}
 	page := req.Page
 	limit := req.Limit

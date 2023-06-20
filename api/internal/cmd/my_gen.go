@@ -715,6 +715,9 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
+	if filter == nil {
+		filter = map[string]interface{}{}
+	}
 	order := [][2]string{{` + "`id`" + `, ` + "`" + `DESC` + "`" + `}}
 	if param.Sort.Key != ` + "`" + "`" + ` {
 		order[0][0] = param.Sort.Key

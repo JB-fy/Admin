@@ -27,6 +27,9 @@ func (controllerThis *Role) List(r *ghttp.Request) {
 		return
 	}
 	filter := gconv.Map(param.Filter)
+	if filter == nil {
+		filter = map[string]interface{}{}
+	}
 	order := []string{param.Sort}
 	page := param.Page
 	limit := param.Limit
