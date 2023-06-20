@@ -128,8 +128,8 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 		return
 	}
 	strCallbackBody := string(bodyContent)
-	strURLPathDecode, errUnescape := aliyunOssThis.unescapePath(r.URL.Path, encodePathSegment) //url.PathUnescape(r.URL.Path) for Golang v1.8.2+
-	if errUnescape != nil {
+	strURLPathDecode, err := aliyunOssThis.unescapePath(r.URL.Path, encodePathSegment) //url.PathUnescape(r.URL.Path) for Golang v1.8.2+
+	if err != nil {
 		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, err.Error())
 		return
 	}
@@ -159,9 +159,9 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	pub := pubInterface.(*rsa.PublicKey)
 
 	// 6.验证签名
-	errorVerifyPKCS1v15 := rsa.VerifyPKCS1v15(pub, crypto.MD5, byteMD5, byteAuthorization)
-	if errorVerifyPKCS1v15 != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, errorVerifyPKCS1v15.Error())
+	err = rsa.VerifyPKCS1v15(pub, crypto.MD5, byteMD5, byteAuthorization)
+	if err != nil {
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, err.Error())
 		return
 	}
 	return

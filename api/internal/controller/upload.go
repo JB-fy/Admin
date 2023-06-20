@@ -56,6 +56,8 @@ func (c *Upload) Sign(r *ghttp.Request) {
 
 // 回调
 func (c *Upload) Notify(r *ghttp.Request) {
+	filename := r.Get(`filename`).String()
+
 	config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`})
 	upload := utils.NewAliyunOss(r.GetCtx(), config)
 	err := upload.Notify(r)
@@ -63,5 +65,9 @@ func (c *Upload) Notify(r *ghttp.Request) {
 		utils.HttpFailJson(r, err)
 		return
 	}
-	utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+
+	resData := map[string]interface{}{
+		`url`: upload.GetBucketHost() + `/` + filename,
+	}
+	utils.HttpSuccessJson(r, resData, 0)
 }
