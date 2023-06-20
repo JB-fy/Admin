@@ -1,4 +1,4 @@
-package log
+package controller
 
 import (
 	apiLog "api/api/platform/log"

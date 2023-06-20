@@ -1,4 +1,4 @@
-package auth
+package controller
 
 import (
 	apiAuth "api/api/platform/auth"
