@@ -105,6 +105,9 @@ type SceneUpdateReq struct {
 	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
 }
 
+type SceneUpdateRes struct {
+}
+
 /*--------修改 结束--------*/
 
 /*--------删除 开始--------*/
@@ -112,6 +115,9 @@ type SceneDeleteReq struct {
 	g.Meta `path:"/del" method:"post" tags:"平台-场景" sm:"删除"`
 	// apiCommon.CommonUpdateDeleteIdArrReq
 	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+}
+
+type SceneDeleteRes struct {
 }
 
 /*--------删除 结束--------*/

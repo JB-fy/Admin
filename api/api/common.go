@@ -30,24 +30,3 @@ type CommonInfoReq struct {
 type CommonUpdateDeleteIdArrReq struct {
 	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
-
-type CommonRes struct {
-	Code int                    `json:"code" dc:"返回码"`
-	Msg  string                 `json:"mgs" dc:"返回信息"`
-	Data map[string]interface{} `json:"data" dc:"返回数据"`
-}
-
-type CommonListRes struct {
-	Count int                      `json:"count" dc:"总数"`
-	List  []map[string]interface{} `json:"list" dc:"列表"`
-}
-
-type CommonCreateRes struct {
-	Id int64 `json:"id" dc:"ID"`
-}
-
-type CommonUpdateRes struct {
-}
-
-type CommonDeleteRes struct {
-}
