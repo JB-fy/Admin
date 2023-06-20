@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -163,49 +162,42 @@ func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteR
 }
 
 // 菜单树
-func (controllerThis *Menu) Tree(r *ghttp.Request) {
+func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) (res *apiAuth.MenuTreeRes, err error) {
 	/**--------参数处理 开始--------**/
-	var param *apiAuth.MenuTreeReq
-	err := r.Parse(&param)
-	if err != nil {
-		r.Response.Writeln(err.Error())
-		return
-	}
-	filter := gconv.Map(param.Filter)
+	filter := gconv.Map(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
+
+	columnsThis := daoAuth.Menu.Columns()
+	allowField := daoAuth.Menu.ColumnArr()
+	allowField = append(allowField, `id`, `name`, `sceneName`, `pMenuName`)
+	// allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
+		}
+	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `authMenuLook`)
-		allowField := []string{`id`, `name`, `menuId`, `menuName`}
-		if isAuth {
-			allowField = daoAuth.Menu.ColumnArr()
-			allowField = append(allowField, `id`, `name`, `sceneName`, `pMenuName`)
-			//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
-		}
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-
-		filter[`isStop`] = 0              //补充条件
-		field = append(field, `menuTree`) //补充字段（菜单树所需）
-		/**--------权限验证 结束--------**/
-
-		list, err := service.Menu().List(r.GetCtx(), filter, field, []string{}, 0, 0)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		tree := utils.Tree(list, 0, `menuId`, `pid`)
-		utils.HttpSuccessJson(r, map[string]interface{}{`tree`: tree}, 0)
+	/**--------权限验证 开始--------**/
+	isAuth, _ := service.Action().CheckAuth(ctx, `authMenuLook`)
+	if !isAuth {
+		field = []string{`id`, `name`, columnsThis.MenuId, columnsThis.MenuName}
 	}
+	/**--------权限验证 结束--------**/
+
+	filter[`isStop`] = 0              //补充条件
+	field = append(field, `menuTree`) //补充字段（菜单树所需）
+
+	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
+	if err != nil {
+		return
+	}
+	tree := utils.Tree(list, 0, `menuId`, `pid`)
+	res = &apiAuth.MenuTreeRes{}
+	tree.Structs(&res.Tree)
+	return
 }

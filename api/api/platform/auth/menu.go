@@ -83,7 +83,7 @@ type MenuInfo struct {
 	MenuName  string `json:"menuName" dc:"菜单名称"`
 	MenuUrl   string `json:"menuUrl" dc:"菜单链接"`
 	MenuIcon  string `json:"menuIcon" dc:"菜单图标"`
-	ExtraData string `json:"ExtraData" dc:"额外数据"`
+	ExtraData string `json:"extraData" dc:"额外数据"`
 	Level     uint   `json:"level" dc:"层级"`
 	PidPath   string `json:"pidPath" dc:"父级路径"`
 	Sort      uint   `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
@@ -145,7 +145,25 @@ type MenuDeleteRes struct {
 
 /*--------删除 结束--------*/
 
+/*--------菜单树 开始--------*/
 type MenuTreeReq struct {
+	g.Meta `path:"/tree" method:"post" tags:"平台-菜单" sm:"菜单树"`
 	Field  []string       `json:"field" v:"foreach|min-length:1"`
 	Filter MenuListFilter `json:"filter"`
 }
+
+type MenuTreeRes struct {
+	// apiCommon.CommonListRes
+	Tree []MenuTree `json:"tree" dc:"菜单树"`
+}
+
+type MenuTree struct {
+	Id     uint   `json:"id" dc:"ID"`
+	Name   string `json:"name" dc:"名称"`
+	MenuId uint   `json:"menuId" dc:"菜单ID"`
+	Pid    uint   `json:"pid" dc:"父级ID"`
+	//Children []MenuTree `json:"children" dc:"子级列表"`
+	Children interface{} `json:"children" dc:"子级列表"`
+}
+
+/*--------菜单树 结束--------*/
