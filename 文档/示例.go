@@ -87,7 +87,10 @@ db.Model(&users).Where("id", 1).Pluck("SUM(price) as sum", &sum)
 var id int
 db.Table("table").Where("man_num > current_num").Order("current_num desc").Pluck("id", &id)
 
-db.Table("table").Create(map[string]interface{}{"id":id})
+xxxx := Xxxx{Name: "xxxx"}
+db.Create(&xxxx) // model创建可通过xxxx.ID获取主键
+
+db.Table("table").Create(map[string]interface{}{"id":id})	//map创建不会返回主键
 
 db.Table("table").Updates(map[string]interface{}{"price": gorm.Expr("price + ?", 1)})
 
