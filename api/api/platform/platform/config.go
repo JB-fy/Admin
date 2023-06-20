@@ -1,4 +1,4 @@
-package api
+package platform
 
 type ConfigGetReq struct {
 	ConfigKeyArr *[]string `c:"configKeyArr,omitempty" p:"configKeyArr" v:"required|distinct|foreach|min-length:1"`
