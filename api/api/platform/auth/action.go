@@ -27,11 +27,11 @@ type ActionListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	ActionId   *uint   `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
-	ActionName string  `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
-	SceneId    *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	ActionId   *uint  `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
+	ActionName string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	IsStop     *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	SceneId    *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 }
 
 type ActionListRes struct {
