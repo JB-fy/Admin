@@ -608,7 +608,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 
 	if !option.NoUpdate {
 		tplLogic += `// 更新
-func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {

@@ -129,7 +129,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 }
 
 // 更新
-func (logicThis *sRole) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
 	_, okMenuIdArr := data[`menuIdArr`]
 	_, okActionIdArr := data[`actionIdArr`]

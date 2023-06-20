@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -46,9 +47,14 @@ func HandlerResponse(r *ghttp.Request) {
 		}
 		err = gerror.NewCode(code, msg)
 		r.SetError(err)
+	} else {
+		code = gcode.CodeOK
+		msg = g.I18n().T(r.GetCtx(), `code.0`)
 	} */
-	/* code = gcode.CodeOK
-	msg = g.I18n().T(r.GetCtx(), `code.`+gconv.String(0)) */
 
-	r.Response.WriteJson(res)
+	r.Response.WriteJson(map[string]interface{}{
+		"code": 0,
+		"msg":  g.I18n().T(r.GetCtx(), `code.0`),
+		"data": res,
+	})
 }

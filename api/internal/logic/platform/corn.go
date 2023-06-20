@@ -99,7 +99,7 @@ func (logicThis *sCorn) Create(ctx context.Context, data map[string]interface{})
 }
 
 // 更新
-func (logicThis *sCorn) Update(ctx context.Context, data map[string]interface{}, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sCorn) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Corn
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {

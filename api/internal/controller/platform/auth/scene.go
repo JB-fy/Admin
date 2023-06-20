@@ -1,6 +1,7 @@
 package controller
 
 import (
+	apiCommon "api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -8,7 +9,6 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -55,155 +55,110 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 		return
 	}
 	res = &apiAuth.SceneListRes{
-		Data: apiAuth.SceneList{
-			Count: count,
-		},
+		Count: count,
 	}
-	list.Structs(&res.Data.List)
+	list.Structs(&res.List)
 	return
 }
 
 // 详情
-func (controllerThis *Scene) Info(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.SceneInfoReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
+func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq) (res *apiAuth.SceneInfoRes, err error) {
+	/**--------参数处理 开始--------**/
+	allowField := daoAuth.Scene.ColumnArr()
+	allowField = append(allowField, `id`, `name`)
+	//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
 		}
-
-		allowField := daoAuth.Scene.ColumnArr()
-		allowField = append(allowField, `id`, `name`)
-		//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		filter := map[string]interface{}{`id`: param.Id}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `authSceneLook`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		info, err := service.Scene().Info(r.GetCtx(), filter, field)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
 	}
+	filter := map[string]interface{}{`id`: req.Id}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `authSceneLook`)
+	if err != nil {
+		return
+	}
+	/**--------权限验证 结束--------**/
+
+	info, err := service.Scene().Info(ctx, filter, field)
+	if err != nil {
+		return
+	}
+	res = &apiAuth.SceneInfoRes{}
+	info.Struct(&res.Info)
+	return
 }
 
-// 创建
-func (controllerThis *Scene) Create(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.SceneCreateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		data := gconv.Map(param)
-		/**--------参数处理 结束--------**/
+// 新增
+func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreateReq) (res *apiCommon.CommonCreateRes, err error) {
+	/**--------参数处理 开始--------**/
+	data := gconv.Map(req)
+	/**--------参数处理 结束--------**/
 
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `authSceneCreate`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		id, err := service.Scene().Create(r.GetCtx(), data)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`id`: id}, 0)
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `authSceneCreate`)
+	if err != nil {
+		return
 	}
+	/**--------权限验证 结束--------**/
+
+	id, err := service.Scene().Create(ctx, data)
+	if err != nil {
+		return
+	}
+	res = &apiCommon.CommonCreateRes{
+		Id: id,
+	}
+	return
+
 }
 
-// 更新
-func (controllerThis *Scene) Update(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.SceneUpdateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		data := gconv.Map(param)
-		delete(data, `idArr`)
-		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
-			return
-		}
-		filter := map[string]interface{}{`id`: param.IdArr}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `authSceneUpdate`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Scene().Update(r.GetCtx(), data, filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+// 修改
+func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdateReq) (res *apiCommon.CommonUpdateRes, err error) {
+	/**--------参数处理 开始--------**/
+	data := gconv.Map(req)
+	delete(data, `idArr`)
+	if len(data) == 0 {
+		err = utils.NewErrorCode(ctx, 89999999, ``)
+		return
 	}
+	filter := map[string]interface{}{`id`: req.IdArr}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `authSceneUpdate`)
+	if err != nil {
+		return
+	}
+	/**--------权限验证 结束--------**/
+
+	_, err = service.Scene().Update(ctx, filter, data)
+	if err != nil {
+		return
+	}
+	return
 }
 
 // 删除
-func (controllerThis *Scene) Delete(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiAuth.SceneDeleteReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		filter := map[string]interface{}{`id`: param.IdArr}
-		/**--------参数处理 结束--------**/
+func (controllerThis *Scene) Delete(ctx context.Context, req *apiAuth.SceneDeleteReq) (res *apiCommon.CommonDeleteRes, err error) {
+	/**--------参数处理 开始--------**/
+	filter := map[string]interface{}{`id`: req.IdArr}
+	/**--------参数处理 结束--------**/
 
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `authSceneDelete`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Scene().Delete(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `authSceneDelete`)
+	if err != nil {
+		return
 	}
+	/**--------权限验证 结束--------**/
+
+	_, err = service.Scene().Delete(ctx, filter)
+	if err != nil {
+		return
+	}
+	return
 }
