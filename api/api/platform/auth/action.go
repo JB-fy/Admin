@@ -8,7 +8,7 @@ import (
 /*--------列表 开始--------*/
 type ActionListReq struct {
 	g.Meta `path:"/list" method:"post" tags:"平台-操作" sm:"列表"`
-	Filter ActionListFilter `p:"filter"`
+	Filter ActionListFilter `json:"filter"`
 	// apiCommon.CommonListReq
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 	Sort  string   `json:"sort" default:"id DESC" dc:"排序"`
@@ -27,11 +27,11 @@ type ActionListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	ActionId   *uint   `c:"actionId,omitempty" p:"actionId" v:"integer|min:1" dc:"操作ID"`
-	ActionName string  `c:"actionName,omitempty" p:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" p:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	IsStop     *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
-	SceneId    *uint   `c:"sceneId,omitempty" p:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	ActionId   *uint   `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
+	ActionName string  `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	SceneId    *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 }
 
 type ActionListRes struct {
@@ -84,11 +84,11 @@ type ActionInfo struct {
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
 	g.Meta     `path:"/create" method:"post" tags:"平台-操作" sm:"创建"`
-	ActionName *string `c:"actionName,omitempty" p:"actionName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" p:"actionCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	Remark     *string `c:"remark,omitempty" p:"remark" v:"length:1,120" dc:"备注"`
-	IsStop     *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
-	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" p:"sceneIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
+	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
+	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
 type ActionCreateRes struct {
@@ -102,11 +102,11 @@ type ActionUpdateReq struct {
 	g.Meta `path:"/update" method:"post" tags:"平台-操作" sm:"更新"`
 	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
 	IdArr      []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	ActionName *string `c:"actionName,omitempty" p:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" p:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	Remark     *string `c:"remark,omitempty" p:"remark" v:"length:1,120" dc:"备注"`
-	IsStop     *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
-	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" p:"sceneIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
+	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
+	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
 type ActionUpdateRes struct {

@@ -70,21 +70,21 @@ class Menu extends AbstractService
                         $data['pidPath'] = '0-' . $oldInfo->menuId;
                         $data['level'] = 1;
                     }
+                    //修改pid时，更新所有子孙级的pidPath和level
+                    $this->getDao()->parseFilter([['pidPath', 'like', $oldInfo->pidPath . '%']])
+                        ->parseUpdate([
+                            'pidPathOfChild' => [
+                                'newVal' => $data['pidPath'],
+                                'oldVal' => $oldInfo->pidPath
+                            ],
+                            'levelOfChild' => [
+                                'newVal' => $data['level'],
+                                'oldVal' => $oldInfo->level
+                            ]
+                        ])
+                        ->update();
                 }
                 $this->getDao()->parseFilter($filterOne)->parseUpdate($data)->update();
-                //修改pid时，更新所有子孙级的pidPath和level
-                $this->getDao()->parseFilter([['pidPath', 'like', $oldInfo->pidPath . '%']])
-                    ->parseUpdate([
-                        'pidPathOfChild' => [
-                            'newVal' => $data['pidPath'],
-                            'oldVal' => $oldInfo->pidPath
-                        ],
-                        'levelOfChild' => [
-                            'newVal' => $data['level'],
-                            'oldVal' => $oldInfo->level
-                        ]
-                    ])
-                    ->update();
             }
         } else {
             $result = $this->getDao()->parseFilter($filter)->parseUpdate($data)->update();

@@ -1,55 +1,151 @@
 package api
 
 import (
-	apiCommon "api/api"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
+/*--------列表 开始--------*/
 type MenuListReq struct {
-	apiCommon.CommonListReq
-	Filter MenuListFilterReq `p:"filter"`
+	g.Meta `path:"/list" method:"post" tags:"平台-菜单" sm:"列表"`
+	Filter MenuListFilter `json:"filter"`
+	// apiCommon.CommonListReq
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Sort  string   `json:"sort" default:"id DESC" dc:"排序"`
+	Page  int      `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
+	Limit int      `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
-type MenuListFilterReq struct {
-	apiCommon.CommonListFilterReq `c:",omitempty"`
-	MenuId                        *uint  `c:"menuId,omitempty" p:"menuId" v:"integer|integer|min:1"`
-	SceneId                       *uint  `c:"sceneId,omitempty" p:"sceneId" v:"integer|min:1"`
-	Pid                           *uint  `c:"pid,omitempty" p:"pid" v:"integer|min:0"`
-	MenuName                      string `c:"menuName,omitempty" p:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	IsStop                        *uint  `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+type MenuListFilter struct {
+	/*--------公共参数 开始--------*/
+	// apiCommon.CommonListFilterReq `c:",omitempty"`	// 代码中用到转换成map，且必须用omitempty过滤空参数。而规范路由自动生成swagger会因omitempty导致这些字段不生成。故直接写这里
+	Id        *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
+	IdArr     []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	ExcId     *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`
+	ExcIdArr  []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	StartTime *gtime.Time `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"`
+	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
+	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
+	/*--------公共参数 结束--------*/
+	MenuId   *uint  `c:"menuId,omitempty" json:"menuId" v:"integer|min:1" dc:"菜单ID"`
+	SceneId  *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	Pid      *uint  `c:"pid,omitempty" json:"pid" v:"integer|min:0"`
+	MenuName string `c:"menuName,omitempty" json:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
+	IsStop   *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
+type MenuListRes struct {
+	// apiCommon.CommonListRes
+	Count int        `json:"count" dc:"总数"`
+	List  []MenuList `json:"list" dc:"列表"`
+}
+
+type MenuList struct {
+	Id        uint   `json:"id" dc:"ID"`
+	Name      string `json:"name" dc:"名称"`
+	MenuId    uint   `json:"menuId" dc:"菜单ID"`
+	Pid       uint   `json:"pid" dc:"父级ID"`
+	SceneId   uint   `json:"sceneId" dc:"场景ID"`
+	MenuName  string `json:"menuName" dc:"菜单名称"`
+	MenuUrl   string `json:"menuUrl" dc:"菜单链接"`
+	MenuIcon  string `json:"menuIcon" dc:"菜单图标"`
+	ExtraData string `json:"ExtraData" dc:"额外数据"`
+	Level     uint   `json:"level" dc:"层级"`
+	PidPath   string `json:"pidPath" dc:"父级路径"`
+	Sort      uint   `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
+	IsStop    uint   `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt string `json:"updatedAt" dc:"更新时间"`
+	CreatedAt string `json:"createdAt" dc:"创建时间"`
+	PMenuName string `json:"pMenuName" dc:"父级菜单名称"`
+	SceneName string `json:"sceneName" dc:"场景名称"`
+}
+
+/*--------列表 结束--------*/
+
+/*--------详情 开始--------*/
 type MenuInfoReq struct {
-	apiCommon.CommonInfoReq
+	g.Meta `path:"/info" method:"post" tags:"平台-菜单" sm:"详情"`
+	// apiCommon.CommonInfoReq
+	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 }
 
+type MenuInfoRes struct {
+	Info MenuInfo `json:"info" dc:"详情"`
+}
+
+type MenuInfo struct {
+	Id        uint   `json:"id" dc:"ID"`
+	Name      string `json:"name" dc:"名称"`
+	MenuId    uint   `json:"menuId" dc:"菜单ID"`
+	Pid       uint   `json:"pid" dc:"父级ID"`
+	SceneId   uint   `json:"sceneId" dc:"场景ID"`
+	MenuName  string `json:"menuName" dc:"菜单名称"`
+	MenuUrl   string `json:"menuUrl" dc:"菜单链接"`
+	MenuIcon  string `json:"menuIcon" dc:"菜单图标"`
+	ExtraData string `json:"ExtraData" dc:"额外数据"`
+	Level     uint   `json:"level" dc:"层级"`
+	PidPath   string `json:"pidPath" dc:"父级路径"`
+	Sort      uint   `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
+	IsStop    uint   `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt string `json:"updatedAt" dc:"更新时间"`
+	CreatedAt string `json:"createdAt" dc:"创建时间"`
+}
+
+/*--------详情 结束--------*/
+
+/*--------新增 开始--------*/
 type MenuCreateReq struct {
-	SceneId   *uint   `c:"sceneId,omitempty" p:"sceneId" v:"required|integer|min:1"`
-	Pid       *uint   `c:"pid,omitempty" p:"pid" v:"integer|min:0"`
-	MenuName  *string `c:"menuName,omitempty" p:"menuName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	MenuIcon  *string `c:"menuIcon,omitempty" p:"menuIcon" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	MenuUrl   *string `c:"menuUrl,omitempty" p:"menuUrl" v:"length:1,120"`
-	ExtraData *string `c:"extraData,omitempty" p:"extraData" v:"json"`
-	Sort      *uint   `c:"sort,omitempty" p:"sort" v:"integer|between:0,100"`
-	IsStop    *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	g.Meta    `path:"/create" method:"post" tags:"平台-菜单" sm:"创建"`
+	SceneId   *uint   `c:"sceneId,omitempty" json:"sceneId" v:"required|integer|min:1" dc:"场景ID"`
+	Pid       *uint   `c:"pid,omitempty" json:"pid" v:"integer|min:0" dc:"父级ID"`
+	MenuName  *string `c:"menuName,omitempty" json:"menuName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
+	MenuIcon  *string `c:"menuIcon,omitempty" json:"menuIcon" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单图标"`
+	MenuUrl   *string `c:"menuUrl,omitempty" json:"menuUrl" v:"length:1,120" dc:"菜单链接"`
+	ExtraData *string `c:"extraData,omitempty" json:"extraData" v:"json" dc:"额外数据"`
+	Sort      *uint   `c:"sort,omitempty" json:"sort" v:"integer|between:0,100" dc:"排序值（从小到大排序，默认50，范围0-100）"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
+type MenuCreateRes struct {
+	Id int64 `json:"id" dc:"ID"`
+}
+
+/*--------新增 结束--------*/
+
+/*--------修改 开始--------*/
 type MenuUpdateReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	SceneId                              *uint   `c:"sceneId,omitempty" p:"sceneId" v:"integer|min:1"`
-	Pid                                  *uint   `c:"pid,omitempty" p:"pid" v:"integer|min:0"`
-	MenuName                             *string `c:"menuName,omitempty" p:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	MenuIcon                             *string `c:"menuIcon,omitempty" p:"menuIcon" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	MenuUrl                              *string `c:"menuUrl,omitempty" p:"menuUrl" v:"length:1,120"`
-	ExtraData                            *string `c:"extraData,omitempty" p:"extraData" v:"json"`
-	Sort                                 *uint   `c:"sort,omitempty" p:"sort" v:"integer|between:0,100"`
-	IsStop                               *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	g.Meta `path:"/update" method:"post" tags:"平台-菜单" sm:"更新"`
+	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	IdArr     []uint  `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	SceneId   *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	Pid       *uint   `c:"pid,omitempty" json:"pid" v:"integer|min:0" dc:"父级ID"`
+	MenuName  *string `c:"menuName,omitempty" json:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
+	MenuIcon  *string `c:"menuIcon,omitempty" json:"menuIcon" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单图标"`
+	MenuUrl   *string `c:"menuUrl,omitempty" json:"menuUrl" v:"length:1,120" dc:"菜单链接"`
+	ExtraData *string `c:"extraData,omitempty" json:"extraData" v:"json" dc:"额外数据"`
+	Sort      *uint   `c:"sort,omitempty" json:"sort" v:"integer|between:0,100" dc:"排序值（从小到大排序，默认50，范围0-100）"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type MenuDeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq
+type MenuUpdateRes struct {
 }
+
+/*--------修改 结束--------*/
+
+/*--------删除 开始--------*/
+type MenuDeleteReq struct {
+	g.Meta `path:"/del" method:"post" tags:"平台-菜单" sm:"删除"`
+	// apiCommon.CommonUpdateDeleteIdArrReq
+	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+}
+
+type MenuDeleteRes struct {
+}
+
+/*--------删除 结束--------*/
 
 type MenuTreeReq struct {
-	Field  []string          `p:"field" v:"foreach|min-length:1"`
-	Filter MenuListFilterReq `p:"filter"`
+	Field  []string       `json:"field" v:"foreach|min-length:1"`
+	Filter MenuListFilter `json:"filter"`
 }

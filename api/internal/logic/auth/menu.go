@@ -166,6 +166,19 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 					data[`pidPath`] = `0-` + oldInfo[daoThis.PrimaryKey()].String()
 					data[`level`] = 1
 				}
+				//修改pid时，更新所有子孙级的pidPath和level
+				update := map[string]interface{}{
+					`pidPathOfChild`: map[string]interface{}{
+						`newVal`: data[`pidPath`],
+						`oldVal`: oldInfo[`pidPath`],
+					},
+					`levelOfChild`: map[string]interface{}{
+						`newVal`: data[`level`],
+						`oldVal`: oldInfo[`level`],
+					},
+				}
+				filterPidPath := map[string]interface{}{`pidPath Like ?`: oldInfo[`pidPath`].String() + `%`}
+				daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filterPidPath, &[]string{})).Update()
 			}
 			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
 			if err != nil {
@@ -176,19 +189,6 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				}
 				return
 			}
-			//修改pid时，更新所有子孙级的pidPath和level
-			update := map[string]interface{}{
-				`pidPathOfChild`: map[string]interface{}{
-					`newVal`: data[`pidPath`],
-					`oldVal`: oldInfo[`pidPath`],
-				},
-				`levelOfChild`: map[string]interface{}{
-					`newVal`: data[`level`],
-					`oldVal`: oldInfo[`level`],
-				},
-			}
-			filterPidPath := map[string]interface{}{`pidPath Like ?`: oldInfo[`pidPath`].String() + `%`}
-			daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filterPidPath, &[]string{})).Update()
 		}
 		return
 	}
