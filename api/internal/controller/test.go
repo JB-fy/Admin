@@ -33,6 +33,7 @@ func (c *Test) Test(r *ghttp.Request) {
 		return
 	}
 
+	// g.Log().Info(r.GetCtx(), `日志打印`)
 	// fmt.Println(g.I18n().T(ctx, `code.99999999`))
 
 	// fmt.Println(garray.NewStrArrayFrom([]string{`a`, `b`, `c`}).Contains(`a`))
