@@ -168,7 +168,7 @@ func (controllerThis *Corn) Update(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Corn().Update(r.GetCtx(), data, filter)
+		_, err = service.Corn().Update(r.GetCtx(), filter, data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

@@ -93,7 +93,7 @@ func (c *Login) Update(r *ghttp.Request) {
 		filter := map[string]interface{}{`id`: loginInfo[`adminId`]}
 		/**--------参数处理 结束--------**/
 
-		_, err = service.Admin().Update(r.GetCtx(), data, filter)
+		_, err = service.Admin().Update(r.GetCtx(), filter, data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

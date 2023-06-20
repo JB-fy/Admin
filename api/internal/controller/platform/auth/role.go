@@ -170,7 +170,7 @@ func (controllerThis *Role) Update(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.Role().Update(r.GetCtx(), data, filter)
+		_, err = service.Role().Update(r.GetCtx(), filter, data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
