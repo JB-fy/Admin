@@ -66,13 +66,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 				group.Group("/auth/action", func(group *ghttp.RouterGroup) {
 					controllerThis := controllerAuth.NewAction()
-					group.ALLMap(g.Map{
-						"/list":   controllerThis.List,
-						"/info":   controllerThis.Info,
-						"/create": controllerThis.Create,
-						"/update": controllerThis.Update,
-						"/del":    controllerThis.Delete,
-					})
+					group.Bind(controllerThis)
 				})
 
 				group.Group("/auth/menu", func(group *ghttp.RouterGroup) {
@@ -98,8 +92,10 @@ func InitRouterPlatform(s *ghttp.Server) {
 				})
 
 				group.Group("/auth/scene", func(group *ghttp.RouterGroup) {
+					controllerThis := controllerAuth.NewScene()
 					group.Bind(
-						controllerAuth.NewScene(),
+						controllerThis,
+						//controllerThis.List,
 					)
 				})
 
