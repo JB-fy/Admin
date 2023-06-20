@@ -136,9 +136,9 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 
 	strAuth := ``
 	if r.URL.RawQuery == `` {
-		strAuth = fmt.Sprintf(`%s\n%s`, strURLPathDecode, strCallbackBody)
+		strAuth = fmt.Sprintf("%s\n%s", strURLPathDecode, strCallbackBody)
 	} else {
-		strAuth = fmt.Sprintf(`%s?%s\n%s`, strURLPathDecode, r.URL.RawQuery, strCallbackBody)
+		strAuth = fmt.Sprintf("%s?%s\n%s", strURLPathDecode, r.URL.RawQuery, strCallbackBody)
 	}
 
 	md5Ctx := md5.New()
