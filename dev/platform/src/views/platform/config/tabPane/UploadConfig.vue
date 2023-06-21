@@ -5,12 +5,19 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
-        aliyunOssAccessKeyId: '',
-        aliyunOssAccessKeySecret: '',
         aliyunOssHost: '',
         aliyunOssBucket: '',
+        aliyunOssAccessKeyId: '',
+        aliyunOssAccessKeySecret: '',
+        aliyunOssRoleArn: '',
     } as { [propName: string]: any },
     rules: {
+        aliyunOssHost: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') }
+        ],
+        aliyunOssBucket: [
+            { type: 'string', trigger: 'blur' }
+        ],
         aliyunOssAccessKeyId: [
             //{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
@@ -18,12 +25,7 @@ const saveForm = reactive({
         aliyunOssAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
-        aliyunOssHost: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') }
-        ],
-        aliyunOssBucket: [
-            { type: 'string', trigger: 'blur' }
-        ],
+        aliyunOssRoleArn: [],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -60,6 +62,14 @@ saveForm.initData()
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
+        <ElFormItem :label="t('platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
+            <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('platform.config.name.aliyunOssHost')"
+                :clearable="true" />
+        </ElFormItem>
+        <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
+            <ElInput v-model="saveForm.data.aliyunOssBucket"
+                :placeholder="t('platform.config.name.aliyunOssBucket')" :clearable="true" />
+        </ElFormItem>
         <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
             <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
                 :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" minlength="1" maxlength="30"
@@ -71,13 +81,9 @@ saveForm.initData()
             <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
                 :placeholder="t('platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
         </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
-            <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('platform.config.name.aliyunOssHost')"
-                :clearable="true" />
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
-            <ElInput v-model="saveForm.data.aliyunOssBucket"
-                :placeholder="t('platform.config.name.aliyunOssBucket')" :clearable="true" />
+        <ElFormItem :label="t('view.platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
+            <ElInput v-model="saveForm.data.aliyunOssRoleArn"
+                :placeholder="t('view.platform.config.name.aliyunOssRoleArn')" :clearable="true" />
         </ElFormItem>
         <ElFormItem>
             <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
