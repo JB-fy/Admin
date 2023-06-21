@@ -97,7 +97,7 @@ const upload = reactive({
     }),
     action: '' as string,
     data: {} as { [propName: string]: any },
-    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ accessid: "xxxx", host: "https://xxxxx.com", dir: "common/2022/12/31/1521189152_", expire: 1672471578, callback: "string", policy: "string", signature: "string" }
+    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ accessid: "xxxx", host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, callback: "string", policy: "string", signature: "string" }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await upload.api.getSignInfo()
@@ -123,7 +123,7 @@ const upload = reactive({
         }
     },
     createSaveInfo: (rawFile: any) => {
-        let fileName = upload.signInfo.dir + rawFile.uid + randomInt(1000, 9999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
+        let fileName = upload.signInfo.dir + rawFile.uid + '_' + randomInt(1000, 9999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
         let url = upload.signInfo.host + '/' + fileName
         return {
             fileName: fileName,
@@ -213,10 +213,10 @@ upload.initSignInfo()   //初始化签名信息
 <template>
     <div :id="upload.id">
         <div v-if="isImage" class="upload-container">
-            <ElUpload :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList"
-                :action="upload.action" :data="upload.data" :before-upload="upload.beforeUpload"
-                :on-success="upload.onSuccess" :on-remove="upload.onRemove" :on-preview="upload.onPreview"
-                :multiple="multiple" :limit="limit" list-type="picture-card" :drag="true" :class="upload.class">
+            <ElUpload :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
+                :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
+                :on-remove="upload.onRemove" :on-preview="upload.onPreview" :multiple="multiple" :limit="limit"
+                list-type="picture-card" :drag="true" :class="upload.class">
                 <ElIcon class="el-icon--upload">
                     <AutoiconEpUploadFilled />
                 </ElIcon>
@@ -230,10 +230,9 @@ upload.initSignInfo()   //初始化签名信息
             <ElImageViewer v-if="imageViewer.visible" :url-list="imageViewer.urlList"
                 :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
         </div>
-        <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList"
-            :action="upload.action" :data="upload.data" :before-upload="upload.beforeUpload"
-            :on-success="upload.onSuccess" :on-remove="upload.onRemove" :multiple="multiple" :limit="limit"
-            list-type="text">
+        <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
+            :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
+            :on-remove="upload.onRemove" :multiple="multiple" :limit="limit" list-type="text">
             <ElButton type="primary">{{ t('common.upload') }}</ElButton>
             <template v-if="tip" #tip>
                 <div class="el-upload__tip">

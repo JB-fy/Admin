@@ -10,7 +10,6 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/gogf/gf/v2/util/grand"
 )
 
 type Upload struct{}
@@ -36,7 +35,7 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		option := utils.AliyunOssSignOption{
 			CallbackUrl: ``,
 			ExpireTime:  15 * 60,
-			Dir:         fmt.Sprintf(`common/%s_%d_`, gtime.Now().Format(`Y/m/d/His`), grand.N(1000, 9999)),
+			Dir:         fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
 			MinSize:     0,
 			MaxSize:     100 * 1024 * 1024,
 		}
