@@ -166,10 +166,13 @@ const upload = reactive({
         emits('update:modelValue', upload.value)
     },
     onSuccess: (res: any, file: any, fileList: any) => {
-        if (upload.signInfo?.callback && res.code !== 0) {    //如有回调服务器且有报错，则默认失败
-            ElMessage.error(t('common.tip.uploadFail'))
-            fileList.splice(fileList.indexOf(file), 1)
-            return
+        if (upload.signInfo?.callback) {    //如有回调服务器且有报错，则默认失败
+            if (res.code !== 0) {
+                ElMessage.error(t('common.tip.uploadFail'))
+                fileList.splice(fileList.indexOf(file), 1)
+                return
+            }
+            file.raw.saveInfo.url = res.data.url  //有返回以服务器返回地址为准
         }
         if (props.multiple) {
             upload.value.push(file.raw.saveInfo.url)
