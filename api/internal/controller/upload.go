@@ -34,16 +34,16 @@ func (c *Upload) Sign(r *ghttp.Request) {
 		}
 		/**--------参数处理 结束--------**/
 		option := utils.AliyunOssSignOption{
-			CallbackUrl: ``,
-			ExpireTime:  15 * 60,
-			Dir:         fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
-			MinSize:     0,
-			MaxSize:     100 * 1024 * 1024,
+			ExpireTime: 15 * 60,
+			Dir:        fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
+			MinSize:    0,
+			MaxSize:    100 * 1024 * 1024,
 		}
-		switch param.UploadType {
-		default:
-			if g.Cfg().MustGet(r.GetCtx(), `uploadCallbackEnable`).Bool() {
-				option.CallbackUrl = gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
+		if g.Cfg().MustGet(r.GetCtx(), `uploadCallbackEnable`).Bool() {
+			option.Callback = utils.AliyunOssCallback{
+				CallbackUrl:      gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1),
+				CallbackBody:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
+				CallbackBodyType: `application/x-www-form-urlencoded`,
 			}
 		}
 
@@ -56,10 +56,6 @@ func (c *Upload) Sign(r *ghttp.Request) {
 
 // 获取STS
 func (c *Upload) Sts(r *ghttp.Request) {
-	/* sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	//case `platformAdmin`:
-	default: */
 	/**--------参数处理 开始--------**/
 	var param *api.UploadSignReq
 	err := r.Parse(&param)
@@ -70,25 +66,27 @@ func (c *Upload) Sts(r *ghttp.Request) {
 	/**--------参数处理 结束--------**/
 
 	config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssRoleArn`})
-	option := utils.AliyunOssAppStsOption{
+	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
+	option := utils.AliyunOssStsOption{
 		SessionName: `oss_app_sts_token`,
-		CallbackUrl: ``,
 		ExpireTime:  15 * 60,
-		//Policy: `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/` + fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)) + `*"]}],"Version": "1"}`,
-		Policy: `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/*"]}],"Version": "1"}`,
+		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/` + dir + `*"]}],"Version": "1"}`,
 	}
-	switch param.UploadType {
-	default:
-		if g.Cfg().MustGet(r.GetCtx(), `uploadCallbackEnable`).Bool() {
-			option.CallbackUrl = gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
+	if g.Cfg().MustGet(r.GetCtx(), `uploadCallbackEnable`).Bool() {
+		option.Callback = utils.AliyunOssCallback{
+			CallbackUrl:      gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1),
+			CallbackBody:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
+			CallbackBodyType: `application/x-www-form-urlencoded`,
 		}
 	}
 
-	upload := utils.NewAliyunOssApp(r.GetCtx(), config)
+	upload := utils.NewAliyunOss(r.GetCtx(), config)
 	stsInfo, _ := upload.GetStsToken(option)
-
+	stsInfo[`endpoint`] = config[`aliyunOssHost`]
+	stsInfo[`bucket`] = config[`aliyunOssBucket`]
+	stsInfo[`callback`] = option.Callback
+	stsInfo[`dir`] = dir
 	r.Response.WriteJsonExit(stsInfo)
-	//}
 }
 
 // 回调

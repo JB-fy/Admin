@@ -7,6 +7,7 @@ import (
 	"crypto/md5"
 	"crypto/rsa"
 	"crypto/sha1"
+	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
@@ -16,30 +17,47 @@ import (
 	"hash"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 type AliyunOss struct {
 	Ctx             context.Context
-	AccessKeyId     string `c:"aliyunOssAccessKeyId"`     //LTAI5tHx81H64BRJA971DPZF,	LTAI5tSjYikt3bX33riHezmk
-	AccessKeySecret string `c:"aliyunOssAccessKeySecret"` //nJyNpTtUuIgZqx21FF4G2zi0WHOn51,	k4uRZU6flv73yz1j4LJu9VY5eNlHas
-	Host            string `c:"aliyunOssHost"`            //http://oss-cn-hongkong.aliyuncs.com,	https://oss-cn-hangzhou.aliyuncs.com
-	Bucket          string `c:"aliyunOssBucket"`          //4724382110,	gamemt
-	//BucketHost      string //http://4724382110.oss-cn-hongkong.aliyuncs.com
+	Host            string `c:"aliyunOssHost"`            // https://oss-cn-hangzhou.aliyuncs.com
+	Bucket          string `c:"aliyunOssBucket"`          // jslx01
+	AccessKeyId     string `c:"aliyunOssAccessKeyId"`     // LTAI5t9jGNGpb9hhtV8M8q2x
+	AccessKeySecret string `c:"aliyunOssAccessKeySecret"` // vhfbJ2QAZsFoTZ6m5XF0qwikqWeR0x
+	RoleArn         string `c:"aliyunOssRoleArn"`         // acs:ram::1359390739767110:role/aliyunosstokengeneratorrole
+}
+
+type AliyunOssCallback struct {
+	CallbackUrl      string //回调地址	gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
+	CallbackBody     string //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+	CallbackBodyType string //回调方式	`application/x-www-form-urlencoded`
 }
 
 type AliyunOssSignOption struct {
-	CallbackUrl string `c:"callbackUrl"` //是否回调服务器。空字符串不回调
-	ExpireTime  int    `c:"expireTime"`  //签名有效时间。单位：秒
-	Dir         string `c:"dir"`         //上传的文件前缀
-	MinSize     int    `c:"MinSize"`     //限制上传的文件大小。单位：字节
-	MaxSize     int    `c:"maxSize"`     //限制上传的文件大小。单位：字节
+	ExpireTime int               //签名有效时间。单位：秒
+	Dir        string            //上传的文件前缀
+	MinSize    int               //限制上传的文件大小。单位：字节
+	MaxSize    int               //限制上传的文件大小。单位：字节
+	Callback   AliyunOssCallback //是否回调服务器。nil不回调
+}
+
+type AliyunOssStsOption struct {
+	SessionName string            //可自定义
+	ExpireTime  int               //签名有效时间。单位：秒
+	Policy      string            //写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}。读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
+	Callback    AliyunOssCallback //是否回调服务器。nil不回调
 }
 
 func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss {
@@ -60,11 +78,11 @@ func (aliyunOssThis *AliyunOss) CreateSign(option AliyunOssSignOption) (signInfo
 		`expire`:   expireEnd,
 	}
 
-	if option.CallbackUrl != `` {
+	if option.Callback.CallbackUrl != `` {
 		callbackParam := map[string]interface{}{
-			`callbackUrl`:      option.CallbackUrl,
-			`callbackBody`:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
-			`callbackBodyType`: `application/x-www-form-urlencoded`,
+			`callbackUrl`:      option.Callback.CallbackUrl,
+			`callbackBody`:     option.Callback.CallbackBody,
+			`callbackBodyType`: option.Callback.CallbackBodyType,
 		}
 		callbackStr, _ := json.Marshal(callbackParam)
 		callbackBase64 := base64.StdEncoding.EncodeToString(callbackStr)
@@ -86,6 +104,55 @@ func (aliyunOssThis *AliyunOss) CreateSign(option AliyunOssSignOption) (signInfo
 	io.WriteString(h, policyBase64)
 	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	signInfo[`signature`] = string(signedStr)
+	return
+}
+
+// 创建sts Token（App前端直传用）
+func (aliyunOssThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo map[string]interface{}, err error) {
+	url, err := aliyunOssThis.GenerateSignedURL(option)
+	if err != nil {
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000004, err.Error())
+		return
+	}
+
+	body, status, err := aliyunOssThis.SendRequest(url)
+	if err != nil {
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000005, err.Error())
+		return
+	}
+	if status != http.StatusOK {
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000005, ``)
+		return
+	}
+
+	type Credentials struct {
+		AccessKeyId     string `json:"AccessKeyId"`
+		AccessKeySecret string `json:"AccessKeySecret"`
+		Expiration      string `json:"Expiration"`
+		SecurityToken   string `json:"SecurityToken"`
+	}
+	type AssumedRoleUser struct {
+		Arn           string `json:"Arn"`
+		AssumedRoleId string `json:"AssumedRoleId"`
+	}
+	type StsResponse struct {
+		Credentials     Credentials     `json:"Credentials"`
+		AssumedRoleUser AssumedRoleUser `json:"AssumedRoleUser"`
+		RequestId       string          `json:"RequestId"`
+	}
+	resp := StsResponse{}
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		err = NewErrorCode(aliyunOssThis.Ctx, 40000005, ``)
+		return
+	}
+	stsInfo = map[string]interface{}{
+		`StatusCode`:      http.StatusOK,
+		`AccessKeyId`:     resp.Credentials.AccessKeyId,
+		`AccessKeySecret`: resp.Credentials.AccessKeySecret,
+		`SecurityToken`:   resp.Credentials.SecurityToken,
+		`Expiration`:      resp.Credentials.Expiration,
+	}
 	return
 }
 
@@ -361,4 +428,52 @@ func (aliyunOssThis *AliyunOss) unhex(c byte) byte {
 		return c - 'A' + 10
 	}
 	return 0
+}
+
+func (aliyunOssThis *AliyunOss) GenerateSignedURL(option AliyunOssStsOption) (string, error) {
+	rand.Seed(time.Now().UnixNano())
+	queryStr := "SignatureVersion=1.0"
+	queryStr += "&Format=JSON"
+	queryStr += "&Timestamp=" + url.QueryEscape(time.Now().UTC().Format(`2006-01-02T15:04:05Z`))
+	queryStr += "&RoleArn=" + url.QueryEscape(aliyunOssThis.RoleArn)
+	queryStr += "&RoleSessionName=" + option.SessionName
+	queryStr += "&AccessKeyId=" + aliyunOssThis.AccessKeyId
+	queryStr += "&SignatureMethod=HMAC-SHA1"
+	queryStr += "&Version=2015-04-01"
+	queryStr += "&Action=AssumeRole"
+	queryStr += "&SignatureNonce=" + grand.Str(`ABCDEFGHIJKLMNOPQRSTUVWXYZ`, 10)
+	queryStr += "&DurationSeconds=" + gconv.String(option.ExpireTime)
+	if option.Policy != "" {
+		queryStr += "&Policy=" + url.QueryEscape(option.Policy)
+	}
+
+	queryParams, err := url.ParseQuery(queryStr)
+	if err != nil {
+		return "", err
+	}
+	sortUrl := strings.Replace(queryParams.Encode(), "+", "%20", -1)
+	strToSign := `GET&` + "%2F" + "&" + url.QueryEscape(sortUrl)
+
+	hashSign := hmac.New(sha1.New, []byte(aliyunOssThis.AccessKeySecret+"&"))
+	hashSign.Write([]byte(strToSign))
+	signature := base64.StdEncoding.EncodeToString(hashSign.Sum(nil))
+
+	assumeURL := `https://sts.aliyuncs.com/?` + queryStr + "&Signature=" + url.QueryEscape(signature)
+	return assumeURL, nil
+}
+
+func (aliyunOssThis *AliyunOss) SendRequest(url string) ([]byte, int, error) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
+	resp, err := client.Get(url)
+	if err != nil {
+		return nil, -1, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	return body, resp.StatusCode, err
 }
