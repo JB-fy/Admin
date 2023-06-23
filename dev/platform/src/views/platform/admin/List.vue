@@ -87,7 +87,6 @@ const table = reactive({
             const imageList = [props.rowData.avatar]
             return [
                 h(ElScrollbar, {
-                    //'max-height': '50px',
                     'wrap-style': 'display: flex; align-items: center;',
                     //'view-style': 'margin: auto; width: 64px;',   //单列显示增加宽度设置
                     'view-style': 'margin: auto;',

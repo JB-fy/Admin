@@ -1168,7 +1168,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             const imageList = [props.rowData.` + field + `]
             return [
                 h(ElScrollbar, {
-                    //'max-height': '50px',
                     'wrap-style': 'display: flex; align-items: center;',
                     //'view-style': 'margin: auto; width: 64px;',   //单列显示增加宽度设置
                     'view-style': 'margin: auto;',
@@ -1268,7 +1267,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
             return [
                 h(ElScrollbar, {
-                    //'max-height': '50px',
                     'wrap-style': 'display: flex; align-items: center;',
                     //'view-style': 'margin: auto; width: 64px;',   //单列显示增加宽度设置
                     'view-style': 'margin: auto;',
