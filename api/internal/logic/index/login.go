@@ -6,7 +6,6 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -39,17 +38,17 @@ func (logicThis *sLogin) Login(ctx context.Context, sceneCode string, account st
 		/**--------验证账号密码 开始--------**/
 		info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()
 		if len(info) == 0 {
-			err = errors.New(`39990000`)
+			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
 		if info[`isStop`].Int() > 0 {
-			err = errors.New(`39990001`)
+			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
 		}
 		encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
 		encryptStr, _ := g.Redis().Get(ctx, encryptStrKey)
 		if encryptStr.String() == `` || gmd5.MustEncrypt(info[`password`].String()+encryptStr.String()) != password {
-			err = errors.New(`39990000`)
+			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
 		/**--------验证账号密码 结束--------**/
