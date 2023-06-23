@@ -250,7 +250,7 @@ upload.initSignInfo()   //初始化签名信息
     </div>
 
     <!-------- 使用示例 开始-------->
-    <!-- <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
+    <!-- <MyUpload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
     <MyUpload v-model="saveForm.data.avatar" accept="video/*" :isImage="false" /> -->
     <!-------- 使用示例 结束-------->
