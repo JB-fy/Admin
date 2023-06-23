@@ -1169,13 +1169,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             return [
                 h(ElScrollbar, {
                     'wrap-style': 'display: flex; align-items: center;',
-                    //'view-style': 'margin: auto; width: 64px;',   //单列显示增加宽度设置
                     'view-style': 'margin: auto;',
                 }, {
                     default: () => {
                         const content = imageList.map((item) => {
                             return h(ElImage as any, {
-                                'style': 'width: 45px;',    //如果需要增加高度不想显示滚动条，也得增加table高度。即设置row-height
+                                'style': 'width: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
                                 'src': item,
                                 'lazy': true,
                                 'hide-on-click-modal': true,
@@ -1268,13 +1267,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             return [
                 h(ElScrollbar, {
                     'wrap-style': 'display: flex; align-items: center;',
-                    //'view-style': 'margin: auto; width: 64px;',   //单列显示增加宽度设置
                     'view-style': 'margin: auto;',
                 }, {
                     default: () => {
                         const content = imageList.map((item) => {
                             return h(ElImage as any, {
-                                'style': 'width: 45px;',    //如果需要增加高度不想显示滚动条，也得增加table高度。即设置row-height
+                                'style': 'width: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
                                 'src': item,
                                 'lazy': true,
                                 'hide-on-click-modal': true,
