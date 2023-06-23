@@ -84,7 +84,7 @@ func (c *Upload) Sts(r *ghttp.Request) {
 	stsInfo, _ := upload.GetStsToken(option)
 	stsInfo[`endpoint`] = config[`aliyunOssHost`]
 	stsInfo[`bucket`] = config[`aliyunOssBucket`]
-	stsInfo[`callback`] = option.Callback
+	stsInfo[`callback`] = gconv.Map(option.Callback)
 	stsInfo[`dir`] = dir
 	r.Response.WriteJsonExit(stsInfo)
 }

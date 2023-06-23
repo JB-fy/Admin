@@ -40,9 +40,9 @@ type AliyunOss struct {
 }
 
 type AliyunOssCallback struct {
-	CallbackUrl      string //回调地址	gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
-	CallbackBody     string //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-	CallbackBodyType string //回调方式	`application/x-www-form-urlencoded`
+	CallbackUrl      string `c:"callbackUrl"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
+	CallbackBody     string `c:"callbackBody"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+	CallbackBodyType string `c:"callbackBodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
 type AliyunOssSignOption struct {
