@@ -303,6 +303,17 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				continue
 			}
+			//video后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+				if column[`Type`].String() == `json` {
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
+				} else {
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				}
+				continue
+			}
 			//Ip后缀
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
@@ -1288,6 +1299,54 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
     },`
 				continue
 			}
+			//video后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+				tpl.ViewListColumn += `
+	{
+        dataKey: '` + field + `',
+        title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
+        key: '` + field + `',
+        width: 100,
+        align: 'center',
+        cellRenderer: (props: any): any => {
+            if (!props.rowData.` + field + `) {
+                return
+            }`
+				if column[`Type`].String() == `json` {
+					tpl.ViewListColumn += `
+			let videoList: string[]
+			if (Array.isArray(props.rowData.` + field + `)) {
+				videoList = props.rowData.` + field + `
+			} else {
+				videoList = JSON.parse(props.rowData.` + field + `)
+			}`
+				} else {
+					tpl.ViewListColumn += `
+			const videoList = [props.rowData.` + field + `]`
+				}
+				tpl.ViewListColumn += `
+            return [
+                h(ElScrollbar, {
+                    'wrap-style': 'display: flex; align-items: center;',
+                    'view-style': 'margin: auto;',
+                }, {
+                    default: () => {
+                        const content = videoList.map((item) => {
+                            return h('video', {
+								'style': 'width: 120px; height: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
+								'preload': 'none',
+								'controls': true,
+								'src': item
+							})
+                        })
+                        return content
+                    }
+                })
+            ]
+        },
+    },`
+				continue
+			}
 			//Ip后缀
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				tpl.ViewListColumn += `
@@ -1957,6 +2016,10 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
 				continue
 			}
+			//video后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+				continue
+			}
 			//Ip后缀
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				tpl.ViewQueryField += `
@@ -2204,7 +2267,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
+			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
         ],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
@@ -2280,11 +2343,37 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					tpl.ViewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
+			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
         ],`
 					tpl.ViewSaveField += `
 				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
                     <MyUpload v-model="saveForm.data.` + field + `" />
+                </ElFormItem>`
+				}
+				continue
+			}
+			//video后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+				if column[`Type`].String() == `json` {
+					tpl.ViewSaveRule += `
+		` + field + `: [
+            { type: 'array', trigger: 'change', defaultField: { type: 'url', message: t('validation.url') }, message: t('validation.upload') },
+            { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
+            { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
+        ],`
+					tpl.ViewSaveField += `
+				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
+					<MyUpload v-model="saveForm.data.` + field + `" :isImage="false" :multiple="true" />
+				</ElFormItem>`
+				} else {
+					tpl.ViewSaveRule += `
+		` + field + `: [
+			{ type: 'url', trigger: 'change', message: t('validation.upload') },
+			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
+        ],`
+					tpl.ViewSaveField += `
+				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
+                    <MyUpload v-model="saveForm.data.` + field + `" :isImage="false" />
                 </ElFormItem>`
 				}
 				continue
