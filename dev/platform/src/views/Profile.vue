@@ -121,7 +121,7 @@ const saveForm = reactive({
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.avatar')" prop="avatar">
-                    <MyUpload v-model="saveForm.data.avatar" />
+                    <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.newPassword')" prop="password">
                     <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.newPassword')" minlength="1"

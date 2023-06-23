@@ -112,7 +112,7 @@ const saveDrawer = reactive({
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.avatar')" prop="avatar">
-                    <MyUpload v-model="saveForm.data.avatar" />
+                    <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.admin.name.roleIdArr')" prop="roleIdArr">
                     <MyTransfer v-model="saveForm.data.roleIdArr" :api="{ code: '/auth/role/list' }" />
