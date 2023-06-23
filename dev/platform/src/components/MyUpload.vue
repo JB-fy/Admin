@@ -13,7 +13,7 @@ const props = defineProps({
     api: {
         type: Object
     },
-    acceptType: {   //需要限制文件格式时使用。示例：['image/png','image/jpg','image/jpeg','image/gif']
+    acceptType: {   //需要严格限制文件格式时使用。示例：['image/png','image/jpg','image/jpeg','image/gif']
         type: Array,
         default: []
     },
@@ -35,6 +35,10 @@ const props = defineProps({
     },
     limit: {
         type: Number
+    },
+    accept: {   //文件选择弹出框过滤用，但可被人工跳过。示例：'image/*'、'video/*'、'audio/*'、'.git,.png'等
+        type: String,
+        default: ''
     },
 })
 
@@ -219,7 +223,7 @@ upload.initSignInfo()   //初始化签名信息
             <ElUpload :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
                 :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
                 :on-remove="upload.onRemove" :on-preview="upload.onPreview" :multiple="multiple" :limit="limit"
-                list-type="picture-card" :drag="true" :class="upload.class">
+                :accept="accept" list-type="picture-card" :drag="true" :class="upload.class">
                 <ElIcon class="el-icon--upload">
                     <AutoiconEpUploadFilled />
                 </ElIcon>
@@ -235,7 +239,7 @@ upload.initSignInfo()   //初始化签名信息
         </div>
         <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
             :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
-            :on-remove="upload.onRemove" :multiple="multiple" :limit="limit" list-type="text">
+            :on-remove="upload.onRemove" :multiple="multiple" :limit="limit" :accept="accept" list-type="text">
             <ElButton type="primary">{{ t('common.upload') }}</ElButton>
             <template v-if="tip" #tip>
                 <div class="el-upload__tip">

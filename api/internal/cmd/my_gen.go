@@ -2271,7 +2271,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         ],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-                    <MyUpload v-model="saveForm.data.` + field + `" />
+                    <MyUpload v-model="saveForm.data.` + field + `" accept="image/*" />
                 </ElFormItem>`
 				continue
 			}
@@ -2337,7 +2337,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         ],`
 					tpl.ViewSaveField += `
 				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<MyUpload v-model="saveForm.data.` + field + `" :multiple="true" />
+					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*" :multiple="true" />
 				</ElFormItem>`
 				} else {
 					tpl.ViewSaveRule += `
@@ -2347,7 +2347,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         ],`
 					tpl.ViewSaveField += `
 				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-                    <MyUpload v-model="saveForm.data.` + field + `" />
+                    <MyUpload v-model="saveForm.data.` + field + `" accept="image/*" />
                 </ElFormItem>`
 				}
 				continue
@@ -2363,7 +2363,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         ],`
 					tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
-					<MyUpload v-model="saveForm.data.` + field + `" :isImage="false" :multiple="true" />
+					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" :multiple="true" />
 				</ElFormItem>`
 				} else {
 					tpl.ViewSaveRule += `
@@ -2373,7 +2373,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         ],`
 					tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
-                    <MyUpload v-model="saveForm.data.` + field + `" :isImage="false" />
+                    <MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" />
                 </ElFormItem>`
 				}
 				continue
