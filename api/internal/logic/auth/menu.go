@@ -136,6 +136,10 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	if len(idArr) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, ``)
+		return
+	}
 
 	updateList := map[int]map[string]interface{}{}
 	updateChildList := map[string]map[string]interface{}{}
@@ -228,6 +232,10 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	if len(idArr) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, ``)
+		return
+	}
 	count, _ := daoThis.ParseDbCtx(ctx).Where(`pid`, idArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999995, ``)

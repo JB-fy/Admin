@@ -101,6 +101,7 @@ func (logicThis *sCorn) Create(ctx context.Context, data map[string]interface{})
 // 修改
 func (logicThis *sCorn) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Corn
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
@@ -111,6 +112,7 @@ func (logicThis *sCorn) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
@@ -121,11 +123,13 @@ func (logicThis *sCorn) Update(ctx context.Context, filter map[string]interface{
 // 删除
 func (logicThis *sCorn) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Corn
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return

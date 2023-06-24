@@ -120,28 +120,11 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 			err = utils.NewErrorCode(ctx, 89999996, ``, map[string]interface{}{`errField`: `checkPassword`})
 			return
 		}
-		password, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Value(`password`)
+		password, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr[0]).Value(`password`)
 		if gconv.String(data[`checkPassword`]) != password.String() {
 			err = utils.NewErrorCode(ctx, 39990003, ``)
 			return
 		}
-	}
-
-	_, okRoleIdArr := data[`roleIdArr`]
-	if okRoleIdArr {
-		_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改roleIdArr
-		if err != nil {
-			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-			if len(match) > 0 {
-				err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-				return
-			}
-			return
-		}
-		for _, id := range idArr {
-			daoThis.SaveRelRole(ctx, gconv.SliceInt(data[`roleIdArr`]), id.Int())
-		}
-		return
 	}
 
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
@@ -154,6 +137,15 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 		return
 	}
 	row, _ = result.RowsAffected()
+
+	_, okRoleIdArr := data[`roleIdArr`]
+	if okRoleIdArr {
+		for _, id := range idArr {
+			daoThis.SaveRelRole(ctx, gconv.SliceInt(data[`roleIdArr`]), id.Int())
+		}
+		row = 1 //有可能只改sceneIdArr
+	}
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
@@ -165,15 +157,21 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	if len(idArr) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, ``)
+		return
+	}
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
-	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`adminId`, idArr).Delete()
+	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 	return
 }
