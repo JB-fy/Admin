@@ -85,7 +85,7 @@ func (logicThis *sRole) Info(ctx context.Context, filter map[string]interface{},
 	return
 }
 
-// 创建
+// 新增
 func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Role
 	_, okMenuIdArr := data[`menuIdArr`]
@@ -128,7 +128,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 	return
 }
 
-// 更新
+// 修改
 func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
 	_, okMenuIdArr := data[`menuIdArr`]

@@ -609,7 +609,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 `
 	}
 	if !option.NoCreate {
-		tplLogic += `// 创建
+		tplLogic += `// 新增
 func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
@@ -628,7 +628,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 	}
 
 	if !option.NoUpdate {
-		tplLogic += `// 更新
+		tplLogic += `// 修改
 func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
@@ -841,7 +841,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 `
 	}
 	if !option.NoCreate {
-		tplController += `// 创建
+		tplController += `// 新增
 func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {
@@ -877,7 +877,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 	}
 
 	if !option.NoUpdate {
-		tplController += `// 更新
+		tplController += `// 修改
 func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
 	switch sceneCode {

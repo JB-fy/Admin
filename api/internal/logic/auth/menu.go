@@ -87,7 +87,7 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 	return
 }
 
-// 创建
+// 新增
 func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
 	var pInfo gdb.Record
@@ -127,7 +127,7 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 	return
 }
 
-// 更新
+// 修改
 func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 

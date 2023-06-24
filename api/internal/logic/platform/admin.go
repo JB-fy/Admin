@@ -85,7 +85,7 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 	return
 }
 
-// 创建
+// 新增
 func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoPlatform.Admin
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
@@ -105,7 +105,7 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 	return
 }
 
-// 更新
+// 修改
 func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())

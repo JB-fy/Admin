@@ -83,7 +83,7 @@ func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}
 	return
 }
 
-// 创建
+// 新增
 func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Scene
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
@@ -98,7 +98,7 @@ func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}
 	return
 }
 
-// 更新
+// 修改
 func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
