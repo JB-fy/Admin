@@ -108,25 +108,9 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 // 修改
 func (logicThis *sAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
-	_, okSceneIdArr := data[`sceneIdArr`]
-	if okSceneIdArr {
-		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
-		_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update() //有可能只改sceneIdArr
-		if err != nil {
-			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-			if len(match) > 0 {
-				err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-				return
-			}
-			return
-		}
-		for _, id := range idArr {
-			daoThis.SaveRelScene(ctx, gconv.SliceInt(data[`sceneIdArr`]), id.Int())
-		}
-		return
-	}
+	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data)).Update()
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 		if len(match) > 0 {
@@ -136,6 +120,15 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 		return
 	}
 	row, _ = result.RowsAffected()
+
+	_, okSceneIdArr := data[`sceneIdArr`]
+	if okSceneIdArr {
+		for _, id := range idArr {
+			daoThis.SaveRelScene(ctx, gconv.SliceInt(data[`sceneIdArr`]), id.Int())
+		}
+		row = 1 //有可能只改sceneIdArr
+	}
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
@@ -147,16 +140,18 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
-	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(`actionId`, idArr).Delete()
+	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 	return
 }
 

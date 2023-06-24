@@ -166,6 +166,15 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 					data[`pidPath`] = `0-` + oldInfo[daoThis.PrimaryKey()].String()
 					data[`level`] = 1
 				}
+				_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update()
+				if err != nil {
+					match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+					if len(match) > 0 {
+						err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+						return
+					}
+					return
+				}
 				//修改pid时，更新所有子孙级的pidPath和level
 				update := map[string]interface{}{
 					`pidPathOfChild`: map[string]interface{}{
@@ -179,15 +188,16 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				}
 				filterPidPath := map[string]interface{}{`pidPath Like ?`: oldInfo[`pidPath`].String() + `%`}
 				daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filterPidPath, &[]string{})).Update()
-			}
-			_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update() //有可能只改menuIdArr或actionIdArr
-			if err != nil {
-				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-				if len(match) > 0 {
-					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+			} else {
+				_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update()
+				if err != nil {
+					match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+					if len(match) > 0 {
+						err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+						return
+					}
 					return
 				}
-				return
 			}
 		}
 		return
@@ -203,6 +213,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return

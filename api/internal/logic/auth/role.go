@@ -131,6 +131,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 // 修改
 func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
+
 	_, okMenuIdArr := data[`menuIdArr`]
 	_, okActionIdArr := data[`actionIdArr`]
 	if okMenuIdArr || okActionIdArr {
@@ -185,6 +186,7 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
@@ -196,17 +198,19 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 func (logicThis *sRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
 	}
-	daoAuth.RoleRelToMenu.ParseDbCtx(ctx).Where(`roleId`, idArr).Delete()
-	daoAuth.RoleRelToAction.ParseDbCtx(ctx).Where(`roleId`, idArr).Delete()
-	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(`roleId`, idArr).Delete()
+	daoAuth.RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+	daoAuth.RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 	return
 }
