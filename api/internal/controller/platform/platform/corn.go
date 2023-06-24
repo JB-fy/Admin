@@ -115,7 +115,6 @@ func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCre
 	res = &apiPlatform.CornCreateRes{
 		Id: id,
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`id`: id}, 0)
 	return
 }
 
@@ -142,7 +141,6 @@ func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpd
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }
 
@@ -163,6 +161,5 @@ func (controllerThis *Corn) Delete(ctx context.Context, req *apiPlatform.CornDel
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }

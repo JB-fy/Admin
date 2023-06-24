@@ -56,6 +56,5 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }

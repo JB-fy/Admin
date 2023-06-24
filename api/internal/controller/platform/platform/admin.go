@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
@@ -100,7 +101,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 }
 
 // 新增
-func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminCreateReq) (res *apiPlatform.AdminCreateRes, err error) {
+func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	/**--------参数处理 结束--------**/
@@ -116,15 +117,12 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminC
 	if err != nil {
 		return
 	}
-	res = &apiPlatform.AdminCreateRes{
-		Id: id,
-	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`id`: id}, 0)
+	res = &api.CommonCreateRes{Id: id}
 	return
 }
 
 // 修改
-func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminUpdateReq) (res *apiPlatform.AdminUpdateRes, err error) {
+func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	delete(data, `idArr`)
@@ -153,12 +151,11 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }
 
 // 删除
-func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminDeleteReq) (res *apiPlatform.AdminDeleteRes, err error) {
+func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
@@ -181,6 +178,5 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminD
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }

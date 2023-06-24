@@ -116,7 +116,6 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 		return
 	}
 	res = &api.CommonCreateRes{Id: id}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`id`: id}, 0)
 	return
 }
 
@@ -143,7 +142,6 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }
 
@@ -164,6 +162,5 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	if err != nil {
 		return
 	}
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
 	return
 }

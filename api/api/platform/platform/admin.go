@@ -91,10 +91,6 @@ type AdminCreateReq struct {
 	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type AdminCreateRes struct {
-	Id int64 `json:"id" dc:"ID"`
-}
-
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
@@ -110,18 +106,12 @@ type AdminUpdateReq struct {
 	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type AdminUpdateRes struct {
-}
-
 /*--------修改 结束--------*/
 
 /*--------删除 开始--------*/
 type AdminDeleteReq struct {
 	g.Meta `path:"/del" method:"post" tags:"平台/管理员" sm:"删除"`
 	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-}
-
-type AdminDeleteRes struct {
 }
 
 /*--------删除 结束--------*/
