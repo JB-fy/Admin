@@ -87,13 +87,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 				group.Group("/platform/admin", func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewAdmin()
-					group.ALLMap(g.Map{
-						"/list":   controllerThis.List,
-						"/info":   controllerThis.Info,
-						"/create": controllerThis.Create,
-						"/update": controllerThis.Update,
-						"/del":    controllerThis.Delete,
-					})
+					group.Bind(controllerThis)
 				})
 
 				group.Group("/platform/config", func(group *ghttp.RouterGroup) {

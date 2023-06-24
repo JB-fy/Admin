@@ -1,8 +1,6 @@
 package api
 
 import (
-	apiCommon "api/api"
-
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -59,7 +57,7 @@ type AdminList struct {
 
 /*--------详情 开始--------*/
 type AdminInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台-角色" sm:"详情"`
+	g.Meta `path:"/info" method:"post" tags:"平台-管理员" sm:"详情"`
 	// apiCommon.CommonInfoReq
 	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -85,36 +83,51 @@ type AdminInfo struct {
 
 /*--------详情 结束--------*/
 
+/*--------新增 开始--------*/
 type AdminCreateReq struct {
-	Account   *string `c:"account,omitempty" json:"account" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone     *string `c:"phone,omitempty" json:"phone" v:"required-without:Account|phone"`
-	Password  *string `c:"password,omitempty" json:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
-	RoleIdArr *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"required|distinct|foreach|integer|foreach|min:1"`
-	Nickname  *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Avatar    *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120"`
-	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
+	g.Meta    `path:"/create" method:"post" tags:"平台-管理员" sm:"创建"`
+	Account   *string `c:"account,omitempty" json:"account" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Phone     *string `c:"phone,omitempty" json:"phone" v:"required-without:Account|phone" dc:"手机号"`
+	Password  *string `c:"password,omitempty" json:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$" dc:"密码"`
+	RoleIdArr *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
+	Nickname  *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
+	Avatar    *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120" dc:"头像"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
+type AdminCreateRes struct {
+	Id int64 `json:"id" dc:"ID"`
+}
+
+/*--------新增 结束--------*/
+
+/*--------修改 开始--------*/
 type AdminUpdateReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	Account                              *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone                                *string `c:"phone,omitempty" json:"phone" v:"phone"`
-	Password                             *string `c:"password,omitempty" json:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$"`
-	RoleIdArr                            *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"distinct|foreach|integer|foreach|min:1"`
-	Nickname                             *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Avatar                               *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120"`
-	IsStop                               *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
+	g.Meta `path:"/update" method:"post" tags:"平台-管理员" sm:"更新"`
+	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	IdArr     []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	Account   *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Phone     *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
+	Password  *string `c:"password,omitempty" json:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$" dc:"密码"`
+	RoleIdArr *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
+	Nickname  *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
+	Avatar    *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120" dc:"头像"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
+type AdminUpdateRes struct {
+}
+
+/*--------修改 结束--------*/
+
+/*--------删除 开始--------*/
 type AdminDeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq
+	g.Meta `path:"/del" method:"post" tags:"平台-管理员" sm:"删除"`
+	// apiCommon.CommonUpdateDeleteIdArrReq
+	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
-type AdminUpdateSelfReq struct {
-	Account       *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone         *string `c:"phone,omitempty" json:"phone" v:"phone"`
-	Nickname      *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Avatar        *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120"`
-	Password      *string `c:"password,omitempty" json:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$|different:CheckPassword"`
-	CheckPassword *string `c:"checkPassword,omitempty" json:"checkPassword" v:"required-with:account,phone,password|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+type AdminDeleteRes struct {
 }
+
+/*--------删除 结束--------*/

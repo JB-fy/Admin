@@ -2,7 +2,6 @@ package controller
 
 import (
 	"api/api"
-	apiPlatform "api/api/platform/platform"
 	"api/internal/service"
 	"api/internal/utils"
 
@@ -78,7 +77,7 @@ func (c *Login) Update(r *ghttp.Request) {
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
-		var param *apiPlatform.AdminUpdateSelfReq
+		var param *api.AdminUpdateSelfReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
