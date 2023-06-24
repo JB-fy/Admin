@@ -102,7 +102,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 	if okActionIdArr {
 		actionIdArr := gconv.SliceInt(data[`actionIdArr`])
 		filterTmp := g.Map{`actionId`: data[`actionIdArr`], `sceneId`: data[`sceneId`]}
-		actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filterTmp, &[]string{})).Count()
+		actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(filterTmp).Count()
 		if len(actionIdArr) != actionIdArrCount {
 			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
@@ -164,7 +164,7 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 				if okSceneId {
 					filterTmp[`sceneId`] = data[`sceneId`]
 				}
-				actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Handler(daoAuth.ActionRelToScene.ParseFilter(filterTmp, &[]string{})).Count()
+				actionIdArrCount, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(filterTmp).Count()
 				if len(actionIdArr) != actionIdArrCount {
 					err = utils.NewErrorCode(ctx, 89999998, ``)
 					return
