@@ -234,196 +234,196 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
 				continue
 			}
 			//pid字段
 			if field == `pid` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
 				continue
 			}
 			//is_stop或isStop字段
 			if fieldCaseCamelLower == `isStop` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
 				continue
 			}
 			//gender字段
 			if field == `gender` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
 				continue
 			}
 			//avator字段
 			if field == `avator` {
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				continue
 			}
 			//id后缀
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1"` + "` // " + comment + "\n"
 				continue
 			}
 			//name或code后缀
 			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"required|length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"required|length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"` + "` // " + comment + "\n"
 				continue
 			}
 			//mobile或phone后缀
 			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				continue
 			}
 			//url或link后缀
 			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				continue
 			}
 			//img或image或cover后缀
 			if gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
 				if column[`Type`].String() == `json` {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
-					tpl.ApiUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-					tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				}
 				continue
 			}
 			//video后缀
 			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
 				if column[`Type`].String() == `json` {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
-					tpl.ApiUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-					tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				}
 				continue
 			}
 			//Ip后缀
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				continue
 			}
 			//sort或weight后缀
 			if gstr.SubStr(fieldCaseCamel, -4) == `Sort` || gstr.SubStr(fieldCaseCamel, -6) == `Weight` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|between:0,100"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|between:0,100"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|between:0,100"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100"` + "` // " + comment + "\n"
 				continue
 			}
 			//status后缀
 			if gstr.SubStr(fieldCaseCamel, -6) == `Status` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2"` + "` // " + comment + "\n"
 				continue
 			}
 			//is_前缀
 			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1"` + "` // " + comment + "\n"
 				continue
 			}
 			//int类型
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-					tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + comment + "\n"
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + comment + "\n"
-					tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + comment + "\n"
+					tpl.ApiFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiFilterColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + comment + "\n"
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + comment + "\n"
-					tpl.ApiUpdateColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"integer"` + "` // " + comment + "\n"
+					tpl.ApiFilterColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer"` + "` // " + comment + "\n"
+					tpl.ApiUpdateColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer"` + "` // " + comment + "\n"
 				}
 				continue
 			}
 			//float类型
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"float"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"float"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"float"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float"` + "` // " + comment + "\n"
 				continue
 			}
 			//varchar类型
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
 				continue
 			}
 			//char类型
 			if gstr.Pos(column[`Type`].String(), `char`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"size:` + result[1] + `"` + "` // " + comment + "\n"
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"size:` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `"` + "` // " + comment + "\n"
 				continue
 			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"required|date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"required|date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
 				}
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"date-format:Y-m-d H:i:s"` + "` // " + comment + "\n"
 				continue
 			}
 			//date类型
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"date-format:Y-m-d"` + "` // " + comment + "\n"
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"required|date-format:Y-m-d"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"required|date-format:Y-m-d"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"date-format:Y-m-d"` + "` // " + comment + "\n"
 				}
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"date-format:Y-m-d"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"date-format:Y-m-d"` + "` // " + comment + "\n"
 				continue
 			}
 			//json类型
 			if gstr.Pos(column[`Type`].String(), `json`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"json"` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"json"` + "` // " + comment + "\n"
 				if column[`Null`].String() == `NO` {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"required|json"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"required|json"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"json"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"json"` + "` // " + comment + "\n"
 				}
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"json"` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"json"` + "` // " + comment + "\n"
 				continue
 			}
 			//text类型
 			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
-				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + comment + "\n"
+				tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:""` + "` // " + comment + "\n"
 				if column[`Null`].String() == `NO` {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:"required"` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"required"` + "` // " + comment + "\n"
 				} else {
-					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + comment + "\n"
+					tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:""` + "` // " + comment + "\n"
 				}
-				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + comment + "\n"
+				tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:""` + "` // " + comment + "\n"
 				continue
 			}
 			//默认处理
-			tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + comment + "\n"
-			tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + comment + "\n"
-			tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" p:"` + field + `" v:""` + "` // " + comment + "\n"
+			tpl.ApiFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:""` + "` // " + comment + "\n"
+			tpl.ApiCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:""` + "` // " + comment + "\n"
+			tpl.ApiUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:""` + "` // " + comment + "\n"
 		}
 	}
 	tpl.ApiFilterColumn = gstr.SubStr(tpl.ApiFilterColumn, 0, -len("\n"))
@@ -439,7 +439,7 @@ import (
 `
 	if !option.NoList {
 		tplApi += `type {TplTableNameCaseCamel}ListReq struct {
-	Filter {TplTableNameCaseCamel}ListFilterReq ` + "`" + `p:"filter"` + "`" + `
+	Filter {TplTableNameCaseCamel}ListFilterReq ` + "`" + `json:"filter"` + "`" + `
 	Field []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
 	Sort  string   ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
 	Page  int      ` + "`" + `json:"page" v:"integer|min:1" default:"1" dc:"页码"` + "`" + `

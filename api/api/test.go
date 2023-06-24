@@ -7,14 +7,9 @@ type TestMetaReq struct {
 	Test   string `json:"test" v:"required|length:4,30" in:"query" default:"默认值（嵌套结构体二级不起作用）" dc:"详细描述"`
 }
 
-type TestList struct {
-	Test string `json:"test" dc:"测试"`
-}
-
 type TestMetaRes struct {
 	g.Meta `mime:"text/html" example:"string"`
-	Test   string   `json:"test" dc:"测试"`
-	List   TestList `json:"list" dc:"列表"`
+	Test   string `json:"test" dc:"测试"`
 }
 
 type TestReq struct {

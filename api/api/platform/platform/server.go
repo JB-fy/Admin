@@ -25,9 +25,9 @@ type ServerListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	ServerId  *uint  `c:"serverId,omitempty" p:"serverId" v:"integer|min:1" dc:"服务器ID"`
-	NetworkIp string `c:"networkIp,omitempty" p:"networkIp" v:"ip" dc:"外网IP"`
-	LocalIp   string `c:"localIp,omitempty" p:"localIp" v:"ip" dc:"内网IP"`
+	ServerId  *uint  `c:"serverId,omitempty" json:"serverId" v:"integer|min:1" dc:"服务器ID"`
+	NetworkIp string `c:"networkIp,omitempty" json:"networkIp" v:"ip" dc:"外网IP"`
+	LocalIp   string `c:"localIp,omitempty" json:"localIp" v:"ip" dc:"内网IP"`
 }
 
 type ServerListRes struct {

@@ -23,9 +23,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 				group.Middleware(middleware.SceneLoginOfPlatformAdmin)
 				group.Group("/log/http", func(group *ghttp.RouterGroup) {
 					controllerThis := controllerLog.NewHttp()
-					group.ALLMap(g.Map{
-						"/list": controllerThis.List,
-					})
+					group.Bind(controllerThis)
 				})
 			})
 		})
@@ -97,9 +95,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 				group.Group("/platform/server", func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewServer()
-					group.ALLMap(g.Map{
-						"/list": controllerThis.List,
-					})
+					group.Bind(controllerThis)
 				})
 
 				group.Group("/platform/corn", func(group *ghttp.RouterGroup) {
