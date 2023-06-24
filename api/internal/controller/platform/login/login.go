@@ -7,7 +7,6 @@ import (
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -37,7 +36,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiLogin.LoginLogin
 	return
 }
 
-// 登录用户详情
+// 用户详情
 func (controllerThis *Login) Info(ctx context.Context, req *apiLogin.LoginInfoReq) (res *apiLogin.LoginInfoRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	res = &apiLogin.LoginInfoRes{}
@@ -63,26 +62,24 @@ func (controllerThis *Login) Update(ctx context.Context, req *apiLogin.LoginUpda
 }
 
 // 用户菜单树
-func (c *Login) MenuTree(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
-		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
-		filter := map[string]interface{}{}
-		filter[`selfMenu`] = map[string]interface{}{
-			`sceneCode`: sceneCode,
-			`sceneId`:   sceneInfo[`sceneId`].Int(),
-			`loginId`:   loginInfo[`adminId`].Int(),
-		}
-		field := []string{`menuTree`, `showMenu`}
-
-		list, err := service.Menu().List(r.GetCtx(), filter, field, []string{}, 0, 0)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		tree := utils.Tree(list, 0, `menuId`, `pid`)
-		utils.HttpSuccessJson(r, map[string]interface{}{`tree`: tree}, 0)
+func (controllerThis *Login) MenuTree(ctx context.Context, req *apiLogin.LoginMenuTreeReq) (res *apiLogin.LoginMenuTreeRes, err error) {
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	filter := map[string]interface{}{}
+	filter[`selfMenu`] = map[string]interface{}{
+		`sceneCode`: sceneInfo[`sceneCode`].String(),
+		`sceneId`:   sceneInfo[`sceneId`].Int(),
+		`loginId`:   loginInfo[`adminId`].Int(),
 	}
+	field := []string{`menuTree`, `showMenu`}
+
+	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
+	if err != nil {
+		return
+	}
+	tree := utils.Tree(list, 0, `menuId`, `pid`)
+	res = &apiLogin.LoginMenuTreeRes{}
+	tree.Structs(&res.Tree)
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`tree`: tree}, 0)
+	return
 }

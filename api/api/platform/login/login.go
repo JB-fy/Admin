@@ -24,7 +24,7 @@ type LoginLoginReq struct {
 
 /*--------详情 开始--------*/
 type LoginInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台/登录" sm:"登录用户详情"`
+	g.Meta `path:"/info" method:"post" tags:"平台/登录" sm:"用户详情"`
 }
 
 type LoginInfoRes struct {
@@ -56,3 +56,25 @@ type LoginUpdateReq struct {
 }
 
 /*--------修改个人信息 结束--------*/
+
+/*--------用户菜单树 开始--------*/
+type LoginMenuTreeReq struct {
+	g.Meta `path:"/menuTree" method:"post" tags:"平台/登录" sm:"用户菜单树"`
+}
+
+type LoginMenuTreeRes struct {
+	Tree []LoginMenuTree `json:"tree" dc:"菜单树"`
+}
+
+type LoginMenuTree struct {
+	MenuId   uint        `json:"menuId" dc:"菜单ID"`
+	MenuIcon string      `json:"menuIcon" dc:"菜单图标"`
+	MenuName string      `json:"menuName" dc:"菜单名称"`
+	MenuUrl  string      `json:"menuUrl" dc:"菜单链接"`
+	Pid      uint        `json:"pid" dc:"父级ID"`
+	I18n     interface{} `json:"i18n" dc:"多语言设置"`
+	Children interface{} `json:"children" dc:"子级列表"`
+	//Children []LoginMenuTree `json:"children" dc:"子级列表"`
+}
+
+/*--------用户菜单树 结束--------*/

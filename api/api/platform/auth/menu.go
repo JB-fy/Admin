@@ -141,12 +141,12 @@ type MenuTreeRes struct {
 }
 
 type MenuTree struct {
-	Id     uint   `json:"id" dc:"ID"`
-	Name   string `json:"name" dc:"名称"`
-	MenuId uint   `json:"menuId" dc:"菜单ID"`
-	Pid    uint   `json:"pid" dc:"父级ID"`
-	//Children []MenuTree `json:"children" dc:"子级列表"`
+	Id       uint        `json:"id" dc:"ID"`
+	Name     string      `json:"name" dc:"名称"`
+	MenuId   uint        `json:"menuId" dc:"菜单ID"`
+	Pid      uint        `json:"pid" dc:"父级ID"`
 	Children interface{} `json:"children" dc:"子级列表"`
+	//Children []MenuTree `json:"children" dc:"子级列表"`
 }
 
 /*--------菜单树 结束--------*/
