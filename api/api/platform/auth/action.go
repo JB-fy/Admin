@@ -8,7 +8,7 @@ import (
 /*--------列表 开始--------*/
 type ActionListReq struct {
 	g.Meta `path:"/list" method:"post" tags:"平台-操作" sm:"列表"`
-	Filter ActionListFilter `json:"filter"`
+	Filter ActionListFilter `json:"filter" dc:"过滤条件"`
 	// apiCommon.CommonListReq
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 	Sort  string   `json:"sort" default:"id DESC" dc:"排序"`
