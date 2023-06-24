@@ -28,7 +28,6 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 		MinSize:    0,
 		MaxSize:    100 * 1024 * 1024,
 	}
-
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
 		option.Callback = utils.AliyunOssCallback{
 			CallbackUrl:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
@@ -69,6 +68,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 			option.Callback.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
 		}
 	}
+
 	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证权限
 	if request.URL.Path == `/upload/sts` {
 		upload := utils.NewAliyunOss(ctx, config)
