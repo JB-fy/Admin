@@ -67,8 +67,8 @@ saveForm.initData()
                 :clearable="true" />
         </ElFormItem>
         <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
-            <ElInput v-model="saveForm.data.aliyunOssBucket"
-                :placeholder="t('platform.config.name.aliyunOssBucket')" :clearable="true" />
+            <ElInput v-model="saveForm.data.aliyunOssBucket" :placeholder="t('platform.config.name.aliyunOssBucket')"
+                :clearable="true" />
         </ElFormItem>
         <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
             <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
@@ -81,9 +81,9 @@ saveForm.initData()
             <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
                 :placeholder="t('platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
         </ElFormItem>
-        <ElFormItem :label="t('view.platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
-            <ElInput v-model="saveForm.data.aliyunOssRoleArn"
-                :placeholder="t('view.platform.config.name.aliyunOssRoleArn')" :clearable="true" />
+        <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
+            <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
+                :clearable="true" />
         </ElFormItem>
         <ElFormItem>
             <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
