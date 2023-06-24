@@ -1,7 +1,6 @@
 package router
 
 import (
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"api/internal/controller"
@@ -49,9 +48,9 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 				group.Group("/upload", func(group *ghttp.RouterGroup) {
 					controllerThis := controller.NewUpload()
-					group.ALLMap(g.Map{
-						"/sign": controllerThis.Sign,
-					})
+					group.Bind(
+						controllerThis.Sign,
+					)
 				})
 
 				group.Group("/login", func(group *ghttp.RouterGroup) {

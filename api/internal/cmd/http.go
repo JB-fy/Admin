@@ -64,7 +64,12 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	})
 	//上传回调
 	s.Group(`/upload`, func(group *ghttp.RouterGroup) {
-		group.ALL(`/notify`, controller.NewUpload().Notify)
+		controllerThis := controller.NewUpload()
+		group.Bind(
+			// controllerThis.Sign, //建议放对应场景内验证登录后才可调用
+			controllerThis.Sts,
+			controllerThis.Notify,
+		)
 	})
 	// 测试使用
 	s.Group(``, func(group *ghttp.RouterGroup) {
