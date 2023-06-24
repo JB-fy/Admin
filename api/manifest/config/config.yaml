@@ -1,3 +1,20 @@
+dev: true # 是否开发环境
+
+superPlatformAdminId: 1 # 指定平台超级管理员ID
+
+upload:
+  callbackEnable: true # 上传插件是否回调服务器。建议：线上(true)，本地(false)
+  callbackUrl: "http://jslx.fuhua91.com:20080/upload/notify" #开发环境下，且开启回调时用于指定线上地址用于回调
+
+logger:
+  path: "log/"
+  level: "all"
+  stdout: true
+
+i18n:
+  path: "resource/i18n"
+  language: "zh-cn"
+
 server:
   address: ":20080"
   openapiPath: "/api.json"
@@ -14,18 +31,6 @@ server:
   # errorLogPattern:     "error-{Ymd}.log"  # 异常错误日志文件格式。默认为"error-{Ymd}.log"
   # accessLogEnabled:    false              # 是否记录访问日志。默认为false
   # accessLogPattern:    "access-{Ymd}.log" # 访问日志文件格式。默认为"access-{Ymd}.log"
-
-uploadCallbackEnable: false # 上传插件是否回调服务器。建议：线上(true)，本地(false)
-
-superPlatformAdminId: 1 # 指定平台超级管理员ID
-
-logger:
-  level: "all"
-  stdout: true
-
-i18n:
-  path: "resource/i18n"
-  language: "zh-cn"
 
 database:
   default:

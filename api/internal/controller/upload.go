@@ -29,11 +29,14 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 		MaxSize:    100 * 1024 * 1024,
 	}
 
-	if g.Cfg().MustGet(ctx, `uploadCallbackEnable`).Bool() {
+	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
 		option.Callback = utils.AliyunOssCallback{
 			CallbackUrl:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
 			CallbackBody:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			CallbackBodyType: `application/x-www-form-urlencoded`,
+		}
+		if g.Cfg().MustGet(ctx, `dev`).Bool() {
+			option.Callback.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
 		}
 	}
 
@@ -56,21 +59,24 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 		ExpireTime:  15 * 60,
 		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/` + dir + `*"]}],"Version": "1"}`,
 	}
-	if g.Cfg().MustGet(ctx, `uploadCallbackEnable`).Bool() {
+	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
 		option.Callback = utils.AliyunOssCallback{
 			CallbackUrl:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
 			CallbackBody:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			CallbackBodyType: `application/x-www-form-urlencoded`,
 		}
+		if g.Cfg().MustGet(ctx, `dev`).Bool() {
+			option.Callback.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
+		}
 	}
-	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回。故该地址不验证权限
+	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证权限
 	if request.URL.Path == `/upload/sts` {
 		upload := utils.NewAliyunOss(ctx, config)
 		stsInfo, _ := upload.GetStsToken(option)
 		request.Response.WriteJsonExit(stsInfo)
 		return
 	}
-	//App端实际上传时需要用到的字段，但必须验证权限后才能拿到
+	//App端实际上传时需用到的字段，但必须验证权限后才能拿到
 	res = &api.UploadStsRes{
 		Endpoint:         gconv.String(config[`aliyunOssHost`]),
 		Bucket:           gconv.String(config[`aliyunOssBucket`]),

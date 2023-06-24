@@ -34,14 +34,14 @@ type UploadStsRes struct {
 	Expiration      string `json:"Expiration" dc:"Expiration"`
 	/*--------App端的SDK需设置一个地址来获取Sts Token，且必须按要求以下字段 结束--------*/
 
-	/*--------App端实际上传时需要用到的字段，但必须验证权限后才能拿到 开始--------*/
+	/*--------App端实际上传时需用到的字段，但必须验证权限后才能拿到 开始--------*/
 	Endpoint         string `json:"endpoint" dc:"阿里云存储-endpoint"`
 	Bucket           string `json:"bucket" dc:"阿里云存储-bucket"`
 	Dir              string `json:"dir" dc:"上传文件目录"`
 	CallbackUrl      string `json:"callbackUrl" dc:"回调地址"`
 	CallbackBody     string `json:"callbackBody" dc:"回调参数"`
 	CallbackBodyType string `json:"callbackBodyType" dc:"回调方式"`
-	/*--------App端实际上传时需要用到的字段，但必须验证权限后才能拿到 结束--------*/
+	/*--------App端实际上传时需用到的字段，但必须验证权限后才能拿到 结束--------*/
 }
 
 /*--------获取Sts Token 结束--------*/
