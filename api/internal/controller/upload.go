@@ -28,20 +28,22 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 		MinSize:    0,
 		MaxSize:    100 * 1024 * 1024,
 	}
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		option.Callback = utils.AliyunOssCallback{
-			CallbackUrl:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
-			CallbackBody:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
-			CallbackBodyType: `application/x-www-form-urlencoded`,
-		}
-		if g.Cfg().MustGet(ctx, `dev`).Bool() {
-			option.Callback.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
-		}
-	}
-
 	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`})
 	upload := utils.NewAliyunOss(ctx, config)
 	signInfo, _ := upload.CreateSign(option)
+
+	//是否回调
+	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
+		callback := utils.AliyunOssCallback{
+			Url:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
+			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
+			BodyType: `application/x-www-form-urlencoded`,
+		}
+		if g.Cfg().MustGet(ctx, `dev`).Bool() {
+			callback.Url = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
+		}
+		signInfo[`callback`] = upload.CreateCallbackStr(callback)
+	}
 	res = &api.UploadSignRes{}
 	gconv.Struct(signInfo, &res)
 	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), signInfo, 0)
@@ -58,16 +60,6 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 		ExpireTime:  15 * 60,
 		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/` + dir + `*"]}],"Version": "1"}`,
 	}
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		option.Callback = utils.AliyunOssCallback{
-			CallbackUrl:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
-			CallbackBody:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
-			CallbackBodyType: `application/x-www-form-urlencoded`,
-		}
-		if g.Cfg().MustGet(ctx, `dev`).Bool() {
-			option.Callback.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
-		}
-	}
 
 	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证权限
 	if request.URL.Path == `/upload/sts` {
@@ -76,14 +68,22 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 		request.Response.WriteJsonExit(stsInfo)
 		return
 	}
+
 	//App端实际上传时需用到的字段，但必须验证权限后才能拿到
 	res = &api.UploadStsRes{
-		Endpoint:         gconv.String(config[`aliyunOssHost`]),
-		Bucket:           gconv.String(config[`aliyunOssBucket`]),
-		Dir:              dir,
-		CallbackUrl:      option.Callback.CallbackUrl,
-		CallbackBody:     option.Callback.CallbackBody,
-		CallbackBodyType: option.Callback.CallbackBodyType,
+		Endpoint: gconv.String(config[`aliyunOssHost`]),
+		Bucket:   gconv.String(config[`aliyunOssBucket`]),
+		Dir:      dir,
+	}
+
+	//是否回调
+	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
+		res.CallbackUrl = gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1)
+		res.CallbackBody = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+		res.CallbackBodyType = `application/x-www-form-urlencoded`
+		if g.Cfg().MustGet(ctx, `dev`).Bool() {
+			res.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
+		}
 	}
 	return
 }

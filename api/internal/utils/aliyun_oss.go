@@ -40,24 +40,22 @@ type AliyunOss struct {
 }
 
 type AliyunOssCallback struct {
-	CallbackUrl      string `c:"callbackUrl"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
-	CallbackBody     string `c:"callbackBody"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-	CallbackBodyType string `c:"callbackBodyType"` //回调方式	`application/x-www-form-urlencoded`
+	Url      string `c:"url"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
+	Body     string `c:"body"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+	BodyType string `c:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
 type AliyunOssSignOption struct {
-	ExpireTime int               //签名有效时间。单位：秒
-	Dir        string            //上传的文件前缀
-	MinSize    int               //限制上传的文件大小。单位：字节
-	MaxSize    int               //限制上传的文件大小。单位：字节
-	Callback   AliyunOssCallback //是否回调服务器。nil不回调
+	ExpireTime int    //签名有效时间。单位：秒
+	Dir        string //上传的文件前缀
+	MinSize    int    //限制上传的文件大小。单位：字节
+	MaxSize    int    //限制上传的文件大小。单位：字节
 }
 
 type AliyunOssStsOption struct {
-	SessionName string            //可自定义
-	ExpireTime  int               //签名有效时间。单位：秒
-	Policy      string            //写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}。读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
-	Callback    AliyunOssCallback //是否回调服务器。nil不回调
+	SessionName string //可自定义
+	ExpireTime  int    //签名有效时间。单位：秒
+	Policy      string //写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}。读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 }
 
 func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss {
@@ -78,17 +76,6 @@ func (aliyunOssThis *AliyunOss) CreateSign(option AliyunOssSignOption) (signInfo
 		`expire`:   expireEnd,
 	}
 
-	if option.Callback.CallbackUrl != `` {
-		callbackParam := map[string]interface{}{
-			`callbackUrl`:      option.Callback.CallbackUrl,
-			`callbackBody`:     option.Callback.CallbackBody,
-			`callbackBodyType`: option.Callback.CallbackBodyType,
-		}
-		callbackStr, _ := json.Marshal(callbackParam)
-		callbackBase64 := base64.StdEncoding.EncodeToString(callbackStr)
-		signInfo[`callback`] = string(callbackBase64)
-	}
-
 	policy := map[string]interface{}{
 		`expiration`: aliyunOssThis.GetGmtIso8601(expireEnd),
 		`conditions`: [][]interface{}{
@@ -105,6 +92,18 @@ func (aliyunOssThis *AliyunOss) CreateSign(option AliyunOssSignOption) (signInfo
 	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	signInfo[`signature`] = string(signedStr)
 	return
+}
+
+// 创建回调字符串（web前端直传用）
+func (aliyunOssThis *AliyunOss) CreateCallbackStr(callback AliyunOssCallback) string {
+	callbackParam := map[string]interface{}{
+		`callbackUrl`:      callback.Url,
+		`callbackBody`:     callback.Body,
+		`callbackBodyType`: callback.BodyType,
+	}
+	callbackStr, _ := json.Marshal(callbackParam)
+	callbackBase64 := base64.StdEncoding.EncodeToString(callbackStr)
+	return string(callbackBase64)
 }
 
 // 创建sts Token（App前端直传用）

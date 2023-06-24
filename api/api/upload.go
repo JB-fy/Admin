@@ -15,6 +15,7 @@ type UploadSignRes struct {
 	Host      string `json:"host" dc:"阿里云存储-域名"`
 	Policy    string `json:"policy" dc:"上传策略policy"`
 	Signature string `json:"signature" dc:"签名"`
+	Callback  string `json:"callback" dc:"回调字符串"`
 }
 
 /*--------获取签名 结束--------*/
