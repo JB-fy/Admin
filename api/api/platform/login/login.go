@@ -22,7 +22,7 @@ type LoginLoginReq struct {
 
 /*--------登录 结束--------*/
 
-/*--------详情 开始--------*/
+/*--------用户详情 开始--------*/
 type LoginInfoReq struct {
 	g.Meta `path:"/info" method:"post" tags:"平台/登录" sm:"用户详情"`
 }
@@ -42,7 +42,7 @@ type LoginInfo struct {
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
-/*--------详情 结束--------*/
+/*--------用户详情 结束--------*/
 
 /*--------修改个人信息 开始--------*/
 type LoginUpdateReq struct {
@@ -72,7 +72,7 @@ type LoginMenuTree struct {
 	MenuName string      `json:"menuName" dc:"菜单名称"`
 	MenuUrl  string      `json:"menuUrl" dc:"菜单链接"`
 	Pid      uint        `json:"pid" dc:"父级ID"`
-	I18n     interface{} `json:"i18n" dc:"多语言设置"`
+	I18n     interface{} `json:"i18n" dc:"多语言"`
 	Children interface{} `json:"children" dc:"子级列表"`
 	//Children []LoginMenuTree `json:"children" dc:"子级列表"`
 }
