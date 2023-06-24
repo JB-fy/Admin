@@ -25,10 +25,11 @@ type RoleListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	RoleId   *uint  `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
-	RoleName string `c:"roleName,omitempty" json:"roleName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
-	SceneId  *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
-	IsStop   *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	RoleId    *uint  `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
+	RoleName  string `c:"roleName,omitempty" json:"roleName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
+	SceneId   *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	SceneCode string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
+	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
 type RoleListRes struct {

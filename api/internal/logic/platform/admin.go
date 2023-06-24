@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -88,6 +89,19 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 // 新增
 func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoPlatform.Admin
+
+	_, okRoleIdArr := data[`roleIdArr`]
+	if okRoleIdArr {
+		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
+		sceneId, _ := daoThis.ParseDbCtx(ctx).Where(`sceneCode`, `platform`).Value(`sceneId`)
+		filterTmp := g.Map{`sceneId`: sceneId, `roleId`: roleIdArr}
+		count, _ := daoAuth.Role.ParseDbCtx(ctx).Where(filterTmp).Count()
+		if len(roleIdArr) != count {
+			err = utils.NewErrorCode(ctx, 89999998, ``)
+			return
+		}
+	}
+
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
 	if err != nil {
 		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
@@ -98,9 +112,9 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 		return
 	}
 
-	_, okRoleIdArr := data[`roleIdArr`]
 	if okRoleIdArr {
-		daoThis.SaveRelRole(ctx, gconv.SliceInt(data[`roleIdArr`]), int(id))
+		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
+		daoThis.SaveRelRole(ctx, roleIdArr, int(id))
 	}
 	return
 }
@@ -126,6 +140,17 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 			return
 		}
 	}
+	_, okRoleIdArr := data[`roleIdArr`]
+	if okRoleIdArr {
+		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
+		sceneId, _ := daoThis.ParseDbCtx(ctx).Where(`sceneCode`, `platform`).Value(`sceneId`)
+		filterTmp := g.Map{`sceneId`: sceneId, `roleId`: roleIdArr}
+		count, _ := daoAuth.Role.ParseDbCtx(ctx).Where(filterTmp).Count()
+		if len(roleIdArr) != count {
+			err = utils.NewErrorCode(ctx, 89999998, ``)
+			return
+		}
+	}
 
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
@@ -138,12 +163,12 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 	}
 	row, _ = result.RowsAffected()
 
-	_, okRoleIdArr := data[`roleIdArr`]
 	if okRoleIdArr {
+		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
 		for _, id := range idArr {
-			daoThis.SaveRelRole(ctx, gconv.SliceInt(data[`roleIdArr`]), id.Int())
+			daoThis.SaveRelRole(ctx, roleIdArr, id.Int())
 		}
-		row = 1 //有可能只改sceneIdArr
+		row = 1 //有可能只改roleIdArr
 	}
 
 	if row == 0 {

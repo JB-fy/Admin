@@ -204,6 +204,9 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				} else if daoThis.ColumnArrG().Contains(gstr.CaseSnakeFirstUpper(nameField)) {
 					m = m.WhereLike(daoThis.Table()+`.`+gstr.CaseSnakeFirstUpper(nameField), `%`+gconv.String(v)+`%`)
 				}
+			case `sceneCode`:
+				m = m.Where(Scene.Table()+`.`+Scene.Columns().SceneCode, v)
+				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if daoThis.ColumnArrG().Contains(kArr[0]) {

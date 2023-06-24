@@ -47,6 +47,26 @@ class Role extends AbstractDao
     }
 
     /**
+     * 解析filter（独有的）
+     *
+     * @param string $key
+     * @param string|null $operator
+     * @param [type] $value
+     * @param string|null $boolean
+     * @return boolean
+     */
+    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    {
+        switch ($key) {
+            case 'sceneCode':
+                $this->builder->where(getDao(Scene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
+                $this->parseJoinOfAlone('scene');
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * 解析join（独有的）
      *
      * @param string $key   键，用于确定关联表
