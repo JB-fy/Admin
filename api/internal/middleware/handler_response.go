@@ -26,11 +26,10 @@ func HandlerResponse(r *ghttp.Request) {
 		case gcode.CodeValidationFailed:
 			code = gcode.New(89999999, ``, nil)
 		}
-		msg := err.Error()
 		r.Response.WriteJson(map[string]interface{}{
 			`code`: code.Code(),
-			`msg`:  msg,
-			`data`: res,
+			`msg`:  err.Error(),
+			`data`: code.Detail(),
 		})
 		return
 	}

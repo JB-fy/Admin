@@ -18,20 +18,33 @@ import (
 
 // 生成错误码
 func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]interface{}) error {
-	dataTmp := map[string]interface{}{}
+	detail := map[string]interface{}{}
 	if len(data) > 0 && data[0] != nil {
-		dataTmp = data[0]
+		detail = data[0]
 	}
 	if msg == `` {
 		switch code {
 		case 29991062, 89999996:
-			msg = g.I18n().Tf(ctx, `code.`+gconv.String(code), gconv.String(dataTmp[`errField`]))
-			delete(dataTmp, `errField`)
+			msg = g.I18n().Tf(ctx, `code.`+gconv.String(code), gconv.String(detail[`errField`]))
+			delete(detail, `errField`)
 		default:
 			msg = g.I18n().T(ctx, `code.`+gconv.String(code))
 		}
 	}
-	return gerror.NewCode(gcode.New(code, ``, dataTmp), msg)
+	return gerror.NewCode(gcode.New(code, ``, detail), msg)
+}
+
+// Http返回json
+func HttpWriteJson(ctx context.Context, data map[string]interface{}, code int, msg string) {
+	resData := map[string]interface{}{
+		`code`: code,
+		`msg`:  msg,
+		`data`: data,
+	}
+	if msg == `` {
+		resData[`msg`] = g.I18n().T(ctx, `code.`+gconv.String(code))
+	}
+	g.RequestFromCtx(ctx).Response.WriteJson(resData)
 }
 
 // 设置场景信息

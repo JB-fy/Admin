@@ -64,7 +64,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 	if request.URL.Path == `/upload/sts` {
 		upload := utils.NewAliyunOss(ctx, config)
 		stsInfo, _ := upload.GetStsToken(option)
-		request.Response.WriteJsonExit(stsInfo)
+		request.Response.WriteJson(stsInfo)
 		return
 	}
 
