@@ -56,10 +56,10 @@ func (controllerThis *Corn) List(ctx context.Context, req *apiPlatform.CornListR
 	if err != nil {
 		return
 	}
-	res = &apiPlatform.CornListRes{
-		Count: count,
-	}
-	list.Structs(&res.List)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`count`: count,
+		`list`:  list,
+	}, 0, ``)
 	return
 }
 
@@ -89,8 +89,9 @@ func (controllerThis *Corn) Info(ctx context.Context, req *apiPlatform.CornInfoR
 	if err != nil {
 		return
 	}
-	res = &apiPlatform.CornInfoRes{}
-	info.Struct(&res.Info)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`info`: info,
+	}, 0, ``)
 	return
 }
 

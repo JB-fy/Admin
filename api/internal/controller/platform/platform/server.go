@@ -4,6 +4,7 @@ import (
 	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
+	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
@@ -54,9 +55,9 @@ func (controllerThis *Server) List(ctx context.Context, req *apiPlatform.ServerL
 	if err != nil {
 		return
 	}
-	res = &apiPlatform.ServerListRes{
-		Count: count,
-	}
-	list.Structs(&res.List)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`count`: count,
+		`list`:  list,
+	}, 0, ``)
 	return
 }

@@ -57,10 +57,10 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	if err != nil {
 		return
 	}
-	res = &apiAuth.ActionListRes{
-		Count: count,
-	}
-	list.Structs(&res.List)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`count`: count,
+		`list`:  list,
+	}, 0, ``)
 	return
 }
 
@@ -91,8 +91,9 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	if err != nil {
 		return
 	}
-	res = &apiAuth.ActionInfoRes{}
-	info.Struct(&res.Info)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`info`: info,
+	}, 0, ``)
 	return
 }
 

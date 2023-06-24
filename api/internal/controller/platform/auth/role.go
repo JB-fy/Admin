@@ -57,10 +57,10 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	if err != nil {
 		return
 	}
-	res = &apiAuth.RoleListRes{
-		Count: count,
-	}
-	list.Structs(&res.List)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`count`: count,
+		`list`:  list,
+	}, 0, ``)
 	return
 }
 
@@ -91,8 +91,9 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	if err != nil {
 		return
 	}
-	res = &apiAuth.RoleInfoRes{}
-	info.Struct(&res.Info)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`info`: info,
+	}, 0, ``)
 	return
 }
 

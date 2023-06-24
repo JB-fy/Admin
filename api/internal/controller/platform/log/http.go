@@ -4,6 +4,7 @@ import (
 	apiLog "api/api/platform/log"
 	daoLog "api/internal/dao/log"
 	"api/internal/service"
+	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
@@ -53,9 +54,9 @@ func (controllerThis *Http) List(ctx context.Context, req *apiLog.HttpListReq) (
 	if err != nil {
 		return
 	}
-	res = &apiLog.HttpListRes{
-		Count: count,
-	}
-	list.Structs(&res.List)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`count`: count,
+		`list`:  list,
+	}, 0, ``)
 	return
 }

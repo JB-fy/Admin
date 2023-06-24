@@ -30,8 +30,9 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	if err != nil {
 		return
 	}
-	res = &apiPlatform.ConfigGetRes{}
-	gconv.Struct(config, &res.Config)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`config`: config,
+	}, 0, ``)
 	return
 }
 
