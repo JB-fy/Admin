@@ -63,7 +63,6 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 		Count: count,
 	}
 	list.Structs(&res.List)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`count`: count, `list`: list}, 0)
 	return
 }
 
@@ -96,7 +95,6 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	}
 	res = &apiPlatform.AdminInfoRes{}
 	info.Struct(&res.Info)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`info`: info}, 0)
 	return
 }
 

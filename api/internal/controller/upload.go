@@ -46,7 +46,6 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	}
 	res = &api.UploadSignRes{}
 	gconv.Struct(signInfo, &res)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), signInfo, 0)
 	return
 }
 

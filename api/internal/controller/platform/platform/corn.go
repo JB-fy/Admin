@@ -60,7 +60,6 @@ func (controllerThis *Corn) List(ctx context.Context, req *apiPlatform.CornListR
 		Count: count,
 	}
 	list.Structs(&res.List)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`count`: count, `list`: list}, 0)
 	return
 }
 
@@ -92,7 +91,6 @@ func (controllerThis *Corn) Info(ctx context.Context, req *apiPlatform.CornInfoR
 	}
 	res = &apiPlatform.CornInfoRes{}
 	info.Struct(&res.Info)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`info`: info}, 0)
 	return
 }
 

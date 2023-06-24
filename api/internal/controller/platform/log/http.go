@@ -57,6 +57,5 @@ func (controllerThis *Http) List(ctx context.Context, req *apiLog.HttpListReq) (
 		Count: count,
 	}
 	list.Structs(&res.List)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`count`: count, `list`: list}, 0)
 	return
 }

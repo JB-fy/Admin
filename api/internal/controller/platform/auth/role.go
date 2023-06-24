@@ -61,7 +61,6 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 		Count: count,
 	}
 	list.Structs(&res.List)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`count`: count, `list`: list}, 0)
 	return
 }
 
@@ -94,7 +93,6 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 	res = &apiAuth.RoleInfoRes{}
 	info.Struct(&res.Info)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`info`: info}, 0)
 	return
 }
 

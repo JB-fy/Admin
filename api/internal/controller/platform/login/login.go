@@ -41,7 +41,6 @@ func (controllerThis *Login) Info(ctx context.Context, req *apiLogin.LoginInfoRe
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	res = &apiLogin.LoginInfoRes{}
 	loginInfo.Struct(&res.Info)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`info`: loginInfo}, 0)
 	return
 }
 
@@ -80,6 +79,5 @@ func (controllerThis *Login) MenuTree(ctx context.Context, req *apiLogin.LoginMe
 	tree := utils.Tree(list, 0, `menuId`, `pid`)
 	res = &apiLogin.LoginMenuTreeRes{}
 	tree.Structs(&res.Tree)
-	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`tree`: tree}, 0)
 	return
 }
