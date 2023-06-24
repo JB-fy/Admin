@@ -14,13 +14,16 @@ import (
 func InitRouterPlatform(s *ghttp.Server) {
 	s.Group(`/platform`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Cross, middleware.I18n)
+
 		//不做日志记录
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
+
 			//需验证登录身份
 			group.Group(``, func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.SceneLoginOfPlatform)
+
 				group.Group(`/log/http`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerLog.NewHttp()
 					group.Bind(controllerThis)
@@ -33,6 +36,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Middleware(middleware.Log)
 			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
+
 			//无需验证登录身份
 			group.Group(`/login`, func(group *ghttp.RouterGroup) {
 				controllerThis := controllerIndex.NewLogin()
