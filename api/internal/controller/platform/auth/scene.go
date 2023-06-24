@@ -137,9 +137,6 @@ func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdat
 	/**--------权限验证 结束--------**/
 
 	_, err = service.Scene().Update(ctx, filter, data)
-	if err != nil {
-		return
-	}
 	return
 }
 
@@ -157,8 +154,5 @@ func (controllerThis *Scene) Delete(ctx context.Context, req *apiAuth.SceneDelet
 	/**--------权限验证 结束--------**/
 
 	_, err = service.Scene().Delete(ctx, filter)
-	if err != nil {
-		return
-	}
 	return
 }

@@ -54,8 +54,5 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 	/**--------权限验证 结束--------**/
 
 	err = daoPlatform.Config.Save(ctx, config)
-	if err != nil {
-		return
-	}
 	return
 }

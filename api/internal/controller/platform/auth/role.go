@@ -139,9 +139,6 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 	/**--------权限验证 结束--------**/
 
 	_, err = service.Role().Update(ctx, filter, data)
-	if err != nil {
-		return
-	}
 	return
 }
 
@@ -159,8 +156,5 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	/**--------权限验证 结束--------**/
 
 	_, err = service.Role().Delete(ctx, filter)
-	if err != nil {
-		return
-	}
 	return
 }
