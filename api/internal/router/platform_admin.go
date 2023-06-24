@@ -5,9 +5,9 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"api/internal/controller"
-	controllerIndex "api/internal/controller/platform"
 	controllerAuth "api/internal/controller/platform/auth"
 	controllerLog "api/internal/controller/platform/log"
+	controllerLogin "api/internal/controller/platform/login"
 	controllerPlatform "api/internal/controller/platform/platform"
 	"api/internal/middleware"
 )
@@ -36,7 +36,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Middleware(middleware.Scene)
 			//无需验证登录身份
 			group.Group("/login", func(group *ghttp.RouterGroup) {
-				controllerThis := controllerIndex.NewLogin()
+				controllerThis := controllerLogin.NewLogin()
 				group.Bind(
 					controllerThis.EncryptStr,
 					controllerThis.Login,
@@ -55,7 +55,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 				})
 
 				group.Group("/login", func(group *ghttp.RouterGroup) {
-					controllerThis := controllerIndex.NewLogin()
+					controllerThis := controllerLogin.NewLogin()
 					group.ALLMap(g.Map{
 						"/info":     controllerThis.Info,
 						"/update":   controllerThis.Update,
