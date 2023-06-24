@@ -1,14 +1,5 @@
 package api
 
-type LoginEncryptReq struct {
-	Account string `json:"account"  v:"required|length:4,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-}
-
-type LoginLoginReq struct {
-	Account  string `json:"account"  v:"required|length:4,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Password string `json:"password"  v:"required|size:32|regex:^[\\p{L}\\p{N}]+$"`
-}
-
 type AdminUpdateSelfReq struct {
 	Account       *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
 	Phone         *string `c:"phone,omitempty" json:"phone" v:"phone"`

@@ -2,8 +2,10 @@ package controller
 
 import (
 	"api/api"
+	apiPlatform "api/api/platform"
 	"api/internal/service"
 	"api/internal/utils"
+	"context"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -15,50 +17,24 @@ func NewLogin() *Login {
 	return &Login{}
 }
 
-// 获取登录加密字符串(前端登录操作用于加密密码后提交)
-func (c *Login) EncryptStr(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *api.LoginEncryptReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		/**--------参数处理 结束--------**/
-
-		encryptStr, err := service.Login().EncryptStr(r.GetCtx(), sceneCode, param.Account)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`encryptStr`: encryptStr}, 0)
+// 获取加密盐
+func (controllerThis *Login) EncryptStr(ctx context.Context, req *api.LoginEncryptReq) (res *api.LoginEncryptRes, err error) {
+	encryptStr, err := service.Login().EncryptStr(ctx, `platform`, req.Account)
+	if err != nil {
+		return
 	}
+	res = &api.LoginEncryptRes{EncryptStr: encryptStr}
+	return
 }
 
 // 登录
-func (c *Login) Login(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *api.LoginLoginReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		/**--------参数处理 结束--------**/
-
-		token, err := service.Login().Login(r.GetCtx(), sceneCode, param.Account, param.Password)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`token`: token}, 0)
+func (controllerThis *Login) Login(ctx context.Context, req *api.LoginReq) (res *api.LoginRes, err error) {
+	token, err := service.Login().Login(ctx, `platform`, req.Account, req.Password)
+	if err != nil {
+		return
 	}
+	res = &api.LoginRes{Token: token}
+	return
 }
 
 // 登录用户详情
@@ -77,7 +53,7 @@ func (c *Login) Update(r *ghttp.Request) {
 	switch sceneCode {
 	case `platform`:
 		/**--------参数处理 开始--------**/
-		var param *api.AdminUpdateSelfReq
+		var param *apiPlatform.AdminUpdateSelfReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
