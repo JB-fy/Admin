@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	apiLogin "api/api/platform/login"
+	apiIndex "api/api/platform/index"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -17,7 +17,7 @@ func NewLogin() *Login {
 }
 
 // 获取加密盐
-func (controllerThis *Login) EncryptStr(ctx context.Context, req *apiLogin.LoginEncryptStrReq) (res *api.CommonEncryptStrRes, err error) {
+func (controllerThis *Login) EncryptStr(ctx context.Context, req *apiIndex.LoginEncryptStrReq) (res *api.CommonEncryptStrRes, err error) {
 	encryptStr, err := service.Login().EncryptStr(ctx, `platform`, req.Account)
 	if err != nil {
 		return
@@ -27,7 +27,7 @@ func (controllerThis *Login) EncryptStr(ctx context.Context, req *apiLogin.Login
 }
 
 // 登录
-func (controllerThis *Login) Login(ctx context.Context, req *apiLogin.LoginLoginReq) (res *api.CommonTokenRes, err error) {
+func (controllerThis *Login) Login(ctx context.Context, req *apiIndex.LoginLoginReq) (res *api.CommonTokenRes, err error) {
 	token, err := service.Login().Login(ctx, `platform`, req.Account, req.Password)
 	if err != nil {
 		return
@@ -37,15 +37,15 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiLogin.LoginLogin
 }
 
 // 用户详情
-func (controllerThis *Login) Info(ctx context.Context, req *apiLogin.LoginInfoReq) (res *apiLogin.LoginInfoRes, err error) {
+func (controllerThis *Login) Info(ctx context.Context, req *apiIndex.LoginInfoReq) (res *apiIndex.LoginInfoRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	res = &apiLogin.LoginInfoRes{}
+	res = &apiIndex.LoginInfoRes{}
 	loginInfo.Struct(&res.Info)
 	return
 }
 
 // 修改个人信息
-func (controllerThis *Login) Update(ctx context.Context, req *apiLogin.LoginUpdateReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Login) Update(ctx context.Context, req *apiIndex.LoginUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	if len(data) == 0 {
@@ -61,7 +61,7 @@ func (controllerThis *Login) Update(ctx context.Context, req *apiLogin.LoginUpda
 }
 
 // 用户菜单树
-func (controllerThis *Login) MenuTree(ctx context.Context, req *apiLogin.LoginMenuTreeReq) (res *apiLogin.LoginMenuTreeRes, err error) {
+func (controllerThis *Login) MenuTree(ctx context.Context, req *apiIndex.LoginMenuTreeReq) (res *apiIndex.LoginMenuTreeRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	filter := map[string]interface{}{}
@@ -77,7 +77,7 @@ func (controllerThis *Login) MenuTree(ctx context.Context, req *apiLogin.LoginMe
 		return
 	}
 	tree := utils.Tree(list, 0, `menuId`, `pid`)
-	res = &apiLogin.LoginMenuTreeRes{}
+	res = &apiIndex.LoginMenuTreeRes{}
 	tree.Structs(&res.Tree)
 	return
 }

@@ -5,8 +5,8 @@ import (
 
 	"api/internal/controller"
 	controllerAuth "api/internal/controller/platform/auth"
+	controllerIndex "api/internal/controller/platform/index"
 	controllerLog "api/internal/controller/platform/log"
-	controllerLogin "api/internal/controller/platform/login"
 	controllerPlatform "api/internal/controller/platform/platform"
 	"api/internal/middleware"
 )
@@ -35,7 +35,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Middleware(middleware.Scene)
 			//无需验证登录身份
 			group.Group(`/login`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerLogin.NewLogin()
+				controllerThis := controllerIndex.NewLogin()
 				group.Bind(
 					controllerThis.EncryptStr,
 					controllerThis.Login,
@@ -55,7 +55,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 				})
 
 				group.Group(`/login`, func(group *ghttp.RouterGroup) {
-					controllerThis := controllerLogin.NewLogin()
+					controllerThis := controllerIndex.NewLogin()
 					group.Bind(
 						controllerThis.Info,
 						controllerThis.Update,

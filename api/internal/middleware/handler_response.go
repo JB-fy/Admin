@@ -15,7 +15,6 @@ func HandlerResponse(r *ghttp.Request) {
 	}
 
 	var (
-		msg  string
 		err  = r.GetError()
 		res  = r.GetHandlerResponse()
 		code = gerror.Code(err)
@@ -27,7 +26,7 @@ func HandlerResponse(r *ghttp.Request) {
 		case gcode.CodeValidationFailed:
 			code = gcode.New(89999999, ``, nil)
 		}
-		msg = err.Error()
+		msg := err.Error()
 		r.Response.WriteJson(map[string]interface{}{
 			`code`: code.Code(),
 			`msg`:  msg,
