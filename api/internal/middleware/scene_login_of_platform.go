@@ -7,7 +7,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-func SceneLoginOfPlatformAdmin(r *ghttp.Request) {
+func SceneLoginOfPlatform(r *ghttp.Request) {
 	/**--------验证token 开始--------**/
 	token := r.Header.Get("PlatformToken")
 	if token == "" {

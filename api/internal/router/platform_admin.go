@@ -20,7 +20,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Middleware(middleware.Scene)
 			//需验证登录身份
 			group.Group("", func(group *ghttp.RouterGroup) {
-				group.Middleware(middleware.SceneLoginOfPlatformAdmin)
+				group.Middleware(middleware.SceneLoginOfPlatform)
 				group.Group("/log/http", func(group *ghttp.RouterGroup) {
 					controllerThis := controllerLog.NewHttp()
 					group.Bind(controllerThis)
@@ -44,13 +44,13 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 			//需验证登录身份
 			group.Group("", func(group *ghttp.RouterGroup) {
-				group.Middleware(middleware.SceneLoginOfPlatformAdmin)
+				group.Middleware(middleware.SceneLoginOfPlatform)
 
 				group.Group("/upload", func(group *ghttp.RouterGroup) {
 					controllerThis := controller.NewUpload()
 					group.Bind(
 						controllerThis.Sign,
-						controllerThis.Sts,
+						//controllerThis.Sts,
 					)
 				})
 

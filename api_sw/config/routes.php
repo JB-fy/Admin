@@ -35,7 +35,7 @@ Router::addGroup('/platform', function () {
             Router::addGroup('/log/http', function () {
                 Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Log\Http::class, 'list']);
             });
-        }, ['middleware' => [\App\Middleware\SceneLoginOfPlatformAdmin::class]]);
+        }, ['middleware' => [\App\Middleware\SceneLoginOfPlatform::class]]);
     }, ['middleware' => [\App\Middleware\Scene::class]]);
 
     //做日志记录
@@ -110,7 +110,7 @@ Router::addGroup('/platform', function () {
                 Router::addGroup('/platform/server', function () {
                     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Server::class, 'list']);
                 });
-            }, ['middleware' => [\App\Middleware\SceneLoginOfPlatformAdmin::class]]);
+            }, ['middleware' => [\App\Middleware\SceneLoginOfPlatform::class]]);
         }, ['middleware' => [\App\Middleware\Scene::class]]);
     }, ['middleware' => [\App\Middleware\LogHttp::class]]);
 });

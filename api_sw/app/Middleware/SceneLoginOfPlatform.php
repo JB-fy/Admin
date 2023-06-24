@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class SceneLoginOfPlatformAdmin implements \Psr\Http\Server\MiddlewareInterface
+class SceneLoginOfPlatform implements \Psr\Http\Server\MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
