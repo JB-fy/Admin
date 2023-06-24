@@ -32,7 +32,6 @@ type SceneListFilter struct {
 }
 
 type SceneListRes struct {
-	// apiCommon.CommonListRes
 	Count int         `json:"count" dc:"总数"`
 	List  []SceneList `json:"list" dc:"列表"`
 }
@@ -85,10 +84,6 @@ type SceneCreateReq struct {
 	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type SceneCreateRes struct {
-	Id int64 `json:"id" dc:"ID"`
-}
-
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
@@ -101,18 +96,12 @@ type SceneUpdateReq struct {
 	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type SceneUpdateRes struct {
-}
-
 /*--------修改 结束--------*/
 
 /*--------删除 开始--------*/
 type SceneDeleteReq struct {
 	g.Meta `path:"/del" method:"post" tags:"平台/场景" sm:"删除"`
 	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-}
-
-type SceneDeleteRes struct {
 }
 
 /*--------删除 结束--------*/

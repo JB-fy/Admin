@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -96,7 +97,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 }
 
 // 新增
-func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreateReq) (res *apiAuth.SceneCreateRes, err error) {
+func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	/**--------参数处理 结束--------**/
@@ -112,14 +113,12 @@ func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreat
 	if err != nil {
 		return
 	}
-	res = &apiAuth.SceneCreateRes{
-		Id: id,
-	}
+	res = &api.CommonCreateRes{Id: id}
 	return
 }
 
 // 修改
-func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdateReq) (res *apiAuth.SceneUpdateRes, err error) {
+func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	delete(data, `idArr`)
@@ -145,7 +144,7 @@ func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdat
 }
 
 // 删除
-func (controllerThis *Scene) Delete(ctx context.Context, req *apiAuth.SceneDeleteReq) (res *apiAuth.SceneDeleteRes, err error) {
+func (controllerThis *Scene) Delete(ctx context.Context, req *apiAuth.SceneDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/

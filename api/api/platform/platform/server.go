@@ -31,7 +31,6 @@ type ServerListFilter struct {
 }
 
 type ServerListRes struct {
-	// apiCommon.CommonListRes
 	Count int          `json:"count" dc:"总数"`
 	List  []ServerList `json:"list" dc:"列表"`
 }

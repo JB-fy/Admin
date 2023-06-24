@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -98,7 +99,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 }
 
 // 新增
-func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateReq) (res *apiAuth.RoleCreateRes, err error) {
+func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	/**--------参数处理 结束--------**/
@@ -114,15 +115,13 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 	if err != nil {
 		return
 	}
-	res = &apiAuth.RoleCreateRes{
-		Id: id,
-	}
+	res = &api.CommonCreateRes{Id: id}
 	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`id`: id}, 0)
 	return
 }
 
 // 修改
-func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateReq) (res *apiAuth.RoleUpdateRes, err error) {
+func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	delete(data, `idArr`)
@@ -149,7 +148,7 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 }
 
 // 删除
-func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteReq) (res *apiAuth.RoleDeleteRes, err error) {
+func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/

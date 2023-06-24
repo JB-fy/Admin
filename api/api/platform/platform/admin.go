@@ -33,7 +33,6 @@ type AdminListFilter struct {
 }
 
 type AdminListRes struct {
-	// apiCommon.CommonListRes
 	Count int         `json:"count" dc:"总数"`
 	List  []AdminList `json:"list" dc:"列表"`
 }

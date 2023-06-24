@@ -32,7 +32,6 @@ type CornListFilter struct {
 }
 
 type CornListRes struct {
-	// apiCommon.CommonListRes
 	Count int        `json:"count" dc:"总数"`
 	List  []CornList `json:"list" dc:"列表"`
 }

@@ -32,7 +32,6 @@ type HttpListFilter struct {
 }
 
 type HttpListRes struct {
-	// apiCommon.CommonListRes
 	Count int        `json:"count" dc:"总数"`
 	List  []HttpList `json:"list" dc:"列表"`
 }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -96,7 +97,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 }
 
 // 新增
-func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCreateReq) (res *apiAuth.ActionCreateRes, err error) {
+func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	/**--------参数处理 结束--------**/
@@ -112,14 +113,12 @@ func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCre
 	if err != nil {
 		return
 	}
-	res = &apiAuth.ActionCreateRes{
-		Id: id,
-	}
+	res = &api.CommonCreateRes{Id: id}
 	return
 }
 
 // 修改
-func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpdateReq) (res *apiAuth.ActionUpdateRes, err error) {
+func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	delete(data, `idArr`)
@@ -145,7 +144,7 @@ func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpd
 }
 
 // 删除
-func (controllerThis *Action) Delete(ctx context.Context, req *apiAuth.ActionDeleteReq) (res *apiAuth.ActionDeleteRes, err error) {
+func (controllerThis *Action) Delete(ctx context.Context, req *apiAuth.ActionDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/

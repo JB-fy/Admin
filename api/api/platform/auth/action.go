@@ -33,7 +33,6 @@ type ActionListFilter struct {
 }
 
 type ActionListRes struct {
-	// apiCommon.CommonListRes
 	Count int          `json:"count" dc:"总数"`
 	List  []ActionList `json:"list" dc:"列表"`
 }
@@ -88,10 +87,6 @@ type ActionCreateReq struct {
 	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
-type ActionCreateRes struct {
-	Id int64 `json:"id" dc:"ID"`
-}
-
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
@@ -105,18 +100,12 @@ type ActionUpdateReq struct {
 	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
-type ActionUpdateRes struct {
-}
-
 /*--------修改 结束--------*/
 
 /*--------删除 开始--------*/
 type ActionDeleteReq struct {
 	g.Meta `path:"/del" method:"post" tags:"平台/操作" sm:"删除"`
 	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-}
-
-type ActionDeleteRes struct {
 }
 
 /*--------删除 结束--------*/

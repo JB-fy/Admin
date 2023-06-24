@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiAuth "api/api/platform/auth"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -96,7 +97,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 }
 
 // 新增
-func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateReq) (res *apiAuth.MenuCreateRes, err error) {
+func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	/**--------参数处理 结束--------**/
@@ -112,14 +113,12 @@ func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateR
 	if err != nil {
 		return
 	}
-	res = &apiAuth.MenuCreateRes{
-		Id: id,
-	}
+	res = &api.CommonCreateRes{Id: id}
 	return
 }
 
 // 修改
-func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateReq) (res *apiAuth.MenuUpdateRes, err error) {
+func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	delete(data, `idArr`)
@@ -145,7 +144,7 @@ func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateR
 }
 
 // 删除
-func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteReq) (res *apiAuth.MenuDeleteRes, err error) {
+func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/

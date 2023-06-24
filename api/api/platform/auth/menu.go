@@ -33,7 +33,6 @@ type MenuListFilter struct {
 }
 
 type MenuListRes struct {
-	// apiCommon.CommonListRes
 	Count int        `json:"count" dc:"总数"`
 	List  []MenuList `json:"list" dc:"列表"`
 }
@@ -104,10 +103,6 @@ type MenuCreateReq struct {
 	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type MenuCreateRes struct {
-	Id int64 `json:"id" dc:"ID"`
-}
-
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
@@ -124,18 +119,12 @@ type MenuUpdateReq struct {
 	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
-type MenuUpdateRes struct {
-}
-
 /*--------修改 结束--------*/
 
 /*--------删除 开始--------*/
 type MenuDeleteReq struct {
 	g.Meta `path:"/del" method:"post" tags:"平台/菜单" sm:"删除"`
 	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-}
-
-type MenuDeleteRes struct {
 }
 
 /*--------删除 结束--------*/
@@ -148,7 +137,6 @@ type MenuTreeReq struct {
 }
 
 type MenuTreeRes struct {
-	// apiCommon.CommonListRes
 	Tree []MenuTree `json:"tree" dc:"菜单树"`
 }
 
