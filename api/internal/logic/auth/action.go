@@ -100,7 +100,8 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 
 	_, okSceneIdArr := data[`sceneIdArr`]
 	if okSceneIdArr {
-		daoThis.SaveRelScene(ctx, gconv.SliceInt(data[`sceneIdArr`]), int(id))
+		sceneIdArr := gconv.SliceInt(data[`sceneIdArr`])
+		daoThis.SaveRelScene(ctx, sceneIdArr, int(id))
 	}
 	return
 }
@@ -123,8 +124,9 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 
 	_, okSceneIdArr := data[`sceneIdArr`]
 	if okSceneIdArr {
+		sceneIdArr := gconv.SliceInt(data[`sceneIdArr`])
 		for _, id := range idArr {
-			daoThis.SaveRelScene(ctx, gconv.SliceInt(data[`sceneIdArr`]), id.Int())
+			daoThis.SaveRelScene(ctx, sceneIdArr, id.Int())
 		}
 		row = 1 //有可能只改sceneIdArr
 	}

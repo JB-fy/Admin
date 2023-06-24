@@ -135,8 +135,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 	if okPid { //存在pid则只能一个个循环更新
 		idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 		for _, id := range idArr {
-			filterOne := map[string]interface{}{daoThis.PrimaryKey(): id}
-			oldInfo, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filterOne, &[]string{})).One()
+			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			pid := gconv.Int(data[`pid`])
 			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999997, ``)
@@ -166,7 +165,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 					data[`pidPath`] = `0-` + oldInfo[daoThis.PrimaryKey()].String()
 					data[`level`] = 1
 				}
-				_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update()
+				_, err = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Handler(daoThis.ParseUpdate(data)).Update()
 				if err != nil {
 					match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 					if len(match) > 0 {
@@ -189,7 +188,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				filterPidPath := map[string]interface{}{`pidPath Like ?`: oldInfo[`pidPath`].String() + `%`}
 				daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(update), daoThis.ParseFilter(filterPidPath, &[]string{})).Update()
 			} else {
-				_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filterOne, &[]string{})).Update()
+				_, err = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Handler(daoThis.ParseUpdate(data)).Update()
 				if err != nil {
 					match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 					if len(match) > 0 {

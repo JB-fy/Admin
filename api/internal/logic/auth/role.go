@@ -180,6 +180,7 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if okMenuIdArr {
 		menuIdArr := gconv.SliceInt(data[`menuIdArr`])
 		for _, id := range idArr {
