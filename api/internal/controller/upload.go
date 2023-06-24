@@ -63,16 +63,22 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 			CallbackBodyType: `application/x-www-form-urlencoded`,
 		}
 	}
-
-	upload := utils.NewAliyunOss(ctx, config)
-	stsInfo, _ := upload.GetStsToken(option)
-	stsInfo[`endpoint`] = config[`aliyunOssHost`]
-	stsInfo[`bucket`] = config[`aliyunOssBucket`]
-	stsInfo[`dir`] = dir
-	stsInfo[`callbackUrl`] = option.Callback.CallbackUrl
-	stsInfo[`callbackBody`] = option.Callback.CallbackBody
-	stsInfo[`callbackBodyType`] = option.Callback.CallbackBodyType
-	request.Response.WriteJsonExit(stsInfo) //必须按阿里云官方文档要求的格式返回。App端的SDK才能用
+	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回。故该地址不验证权限
+	if request.URL.Path == `/upload/sts` {
+		upload := utils.NewAliyunOss(ctx, config)
+		stsInfo, _ := upload.GetStsToken(option)
+		request.Response.WriteJsonExit(stsInfo)
+		return
+	}
+	//App端实际上传时需要用到的字段，但必须验证权限后才能拿到
+	res = &api.UploadStsRes{
+		Endpoint:         gconv.String(config[`aliyunOssHost`]),
+		Bucket:           gconv.String(config[`aliyunOssBucket`]),
+		Dir:              dir,
+		CallbackUrl:      option.Callback.CallbackUrl,
+		CallbackBody:     option.Callback.CallbackBody,
+		CallbackBodyType: option.Callback.CallbackBodyType,
+	}
 	return
 }
 

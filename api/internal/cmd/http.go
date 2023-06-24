@@ -67,7 +67,7 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		controllerThis := controller.NewUpload()
 		group.Bind(
 			// controllerThis.Sign, //建议放对应场景内验证登录后才可调用
-			controllerThis.Sts,
+			controllerThis.Sts, //直接给App端的SDK调用
 			controllerThis.Notify,
 		)
 	})
