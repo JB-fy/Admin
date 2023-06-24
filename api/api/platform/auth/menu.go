@@ -34,10 +34,10 @@ type MenuListFilter struct {
 
 type MenuListRes struct {
 	Count int        `json:"count" dc:"总数"`
-	List  []MenuList `json:"list" dc:"列表"`
+	List  []MenuItem `json:"list" dc:"列表"`
 }
 
-type MenuList struct {
+type MenuItem struct {
 	Id        uint        `json:"id" dc:"ID"`
 	Name      string      `json:"name" dc:"名称"`
 	MenuId    uint        `json:"menuId" dc:"菜单ID"`

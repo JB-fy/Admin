@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
@@ -96,7 +97,7 @@ func (controllerThis *Corn) Info(ctx context.Context, req *apiPlatform.CornInfoR
 }
 
 // 新增
-func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCreateReq) (res *apiPlatform.CornCreateRes, err error) {
+func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	/**--------参数处理 结束--------**/
@@ -112,14 +113,12 @@ func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCre
 	if err != nil {
 		return
 	}
-	res = &apiPlatform.CornCreateRes{
-		Id: id,
-	}
+	res = &api.CommonCreateRes{Id: id}
 	return
 }
 
 // 修改
-func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpdateReq) (res *apiPlatform.CornUpdateRes, err error) {
+func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req)
 	delete(data, `idArr`)
@@ -145,7 +144,7 @@ func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpd
 }
 
 // 删除
-func (controllerThis *Corn) Delete(ctx context.Context, req *apiPlatform.CornDeleteReq) (res *apiPlatform.CornDeleteRes, err error) {
+func (controllerThis *Corn) Delete(ctx context.Context, req *apiPlatform.CornDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/

@@ -33,10 +33,10 @@ type HttpListFilter struct {
 
 type HttpListRes struct {
 	Count int        `json:"count" dc:"总数"`
-	List  []HttpList `json:"list" dc:"列表"`
+	List  []HttpItem `json:"list" dc:"列表"`
 }
 
-type HttpList struct {
+type HttpItem struct {
 	Id        uint        `json:"id" dc:"ID"`
 	HttpId    uint        `json:"httpId" dc:"Http日志ID"`
 	Url       string      `json:"url" dc:"地址"`

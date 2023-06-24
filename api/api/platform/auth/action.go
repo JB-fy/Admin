@@ -34,10 +34,10 @@ type ActionListFilter struct {
 
 type ActionListRes struct {
 	Count int          `json:"count" dc:"总数"`
-	List  []ActionList `json:"list" dc:"列表"`
+	List  []ActionItem `json:"list" dc:"列表"`
 }
 
-type ActionList struct {
+type ActionItem struct {
 	Id         uint        `json:"id" dc:"ID"`
 	Name       string      `json:"name" dc:"名称"`
 	ActionId   uint        `json:"actionId" dc:"操作ID"`

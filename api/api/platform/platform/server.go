@@ -32,10 +32,10 @@ type ServerListFilter struct {
 
 type ServerListRes struct {
 	Count int          `json:"count" dc:"总数"`
-	List  []ServerList `json:"list" dc:"列表"`
+	List  []ServerItem `json:"list" dc:"列表"`
 }
 
-type ServerList struct {
+type ServerItem struct {
 	Id        uint        `json:"id" dc:"ID"`
 	Name      string      `json:"name" dc:"名称"`
 	ServerId  uint        `json:"cornId" dc:"服务器ID"`

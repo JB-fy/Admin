@@ -33,10 +33,10 @@ type SceneListFilter struct {
 
 type SceneListRes struct {
 	Count int         `json:"count" dc:"总数"`
-	List  []SceneList `json:"list" dc:"列表"`
+	List  []SceneItem `json:"list" dc:"列表"`
 }
 
-type SceneList struct {
+type SceneItem struct {
 	Id          uint        `json:"id" dc:"ID"`
 	Name        string      `json:"name" dc:"名称"`
 	SceneId     uint        `json:"sceneId" dc:"场景ID"`

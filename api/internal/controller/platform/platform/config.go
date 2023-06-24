@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"api/api"
 	apiPlatform "api/api/platform/platform"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
@@ -36,7 +37,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 }
 
 // 保存
-func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigSaveReq) (res *apiPlatform.ConfigSaveRes, err error) {
+func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigSaveReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	config := gconv.Map(req)
 	if len(config) == 0 {

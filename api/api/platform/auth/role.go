@@ -33,10 +33,10 @@ type RoleListFilter struct {
 
 type RoleListRes struct {
 	Count int        `json:"count" dc:"总数"`
-	List  []RoleList `json:"list" dc:"列表"`
+	List  []RoleItem `json:"list" dc:"列表"`
 }
 
-type RoleList struct {
+type RoleItem struct {
 	Id        uint        `json:"id" dc:"ID"`
 	Name      string      `json:"name" dc:"名称"`
 	RoleId    uint        `json:"roleId" dc:"角色ID"`

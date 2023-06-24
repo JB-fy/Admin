@@ -34,7 +34,4 @@ type ConfigSaveReq struct {
 	AliyunOssRoleArn         *string `c:"aliyunOssRoleArn,omitempty" json:"aliyunOssRoleArn" v:"" dc:"阿里云存储-RoleArn"`
 }
 
-type ConfigSaveRes struct {
-}
-
 /*--------保存 结束--------*/

@@ -34,10 +34,10 @@ type AdminListFilter struct {
 
 type AdminListRes struct {
 	Count int         `json:"count" dc:"总数"`
-	List  []AdminList `json:"list" dc:"列表"`
+	List  []AdminItem `json:"list" dc:"列表"`
 }
 
-type AdminList struct {
+type AdminItem struct {
 	Id        uint        `json:"id" dc:"ID"`
 	Name      string      `json:"name" dc:"名称"`
 	AdminId   uint        `json:"adminId" dc:"管理员ID"`
