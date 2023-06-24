@@ -14,12 +14,9 @@ func HandlerResponse(r *ghttp.Request) {
 		return
 	}
 
-	var (
-		err  = r.GetError()
-		res  = r.GetHandlerResponse()
-		code = gerror.Code(err)
-	)
+	err := r.GetError()
 	if err != nil {
+		code := gerror.Code(err)
 		switch code {
 		case gcode.CodeNil:
 			code = gcode.CodeInternalError
@@ -45,14 +42,12 @@ func HandlerResponse(r *ghttp.Request) {
 		}
 		err = gerror.NewCode(code, msg)
 		r.SetError(err)
-	} else {
-		code = gcode.CodeOK
-		msg = g.I18n().T(r.GetCtx(), `code.0`)
+		return
 	} */
 
 	r.Response.WriteJson(map[string]interface{}{
 		`code`: 0,
 		`msg`:  g.I18n().T(r.GetCtx(), `code.0`),
-		`data`: res,
+		`data`: r.GetHandlerResponse(),
 	})
 }
