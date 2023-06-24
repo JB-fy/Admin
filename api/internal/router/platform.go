@@ -12,16 +12,16 @@ import (
 )
 
 func InitRouterPlatform(s *ghttp.Server) {
-	s.Group("/platform", func(group *ghttp.RouterGroup) {
+	s.Group(`/platform`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Cross, middleware.I18n)
 		//不做日志记录
-		group.Group("", func(group *ghttp.RouterGroup) {
+		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
 			//需验证登录身份
-			group.Group("", func(group *ghttp.RouterGroup) {
+			group.Group(``, func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.SceneLoginOfPlatform)
-				group.Group("/log/http", func(group *ghttp.RouterGroup) {
+				group.Group(`/log/http`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerLog.NewHttp()
 					group.Bind(controllerThis)
 				})
@@ -29,12 +29,12 @@ func InitRouterPlatform(s *ghttp.Server) {
 		})
 
 		//做日志记录
-		group.Group("", func(group *ghttp.RouterGroup) {
+		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.Log)
 			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
 			//无需验证登录身份
-			group.Group("/login", func(group *ghttp.RouterGroup) {
+			group.Group(`/login`, func(group *ghttp.RouterGroup) {
 				controllerThis := controllerLogin.NewLogin()
 				group.Bind(
 					controllerThis.EncryptStr,
@@ -43,10 +43,10 @@ func InitRouterPlatform(s *ghttp.Server) {
 			})
 
 			//需验证登录身份
-			group.Group("", func(group *ghttp.RouterGroup) {
+			group.Group(``, func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.SceneLoginOfPlatform)
 
-				group.Group("/upload", func(group *ghttp.RouterGroup) {
+				group.Group(`/upload`, func(group *ghttp.RouterGroup) {
 					controllerThis := controller.NewUpload()
 					group.Bind(
 						controllerThis.Sign,
@@ -54,7 +54,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 					)
 				})
 
-				group.Group("/login", func(group *ghttp.RouterGroup) {
+				group.Group(`/login`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerLogin.NewLogin()
 					group.Bind(
 						controllerThis.Info,
@@ -63,42 +63,42 @@ func InitRouterPlatform(s *ghttp.Server) {
 					)
 				})
 
-				group.Group("/auth/action", func(group *ghttp.RouterGroup) {
+				group.Group(`/auth/action`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerAuth.NewAction()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/auth/menu", func(group *ghttp.RouterGroup) {
+				group.Group(`/auth/menu`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerAuth.NewMenu()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/auth/role", func(group *ghttp.RouterGroup) {
+				group.Group(`/auth/role`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerAuth.NewRole()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/auth/scene", func(group *ghttp.RouterGroup) {
+				group.Group(`/auth/scene`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerAuth.NewScene()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/platform/admin", func(group *ghttp.RouterGroup) {
+				group.Group(`/platform/admin`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewAdmin()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/platform/config", func(group *ghttp.RouterGroup) {
+				group.Group(`/platform/config`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewConfig()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/platform/server", func(group *ghttp.RouterGroup) {
+				group.Group(`/platform/server`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewServer()
 					group.Bind(controllerThis)
 				})
 
-				group.Group("/platform/corn", func(group *ghttp.RouterGroup) {
+				group.Group(`/platform/corn`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerPlatform.NewCorn()
 					group.Bind(controllerThis)
 				})

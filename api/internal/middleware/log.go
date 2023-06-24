@@ -15,11 +15,11 @@ func Log(r *ghttp.Request) {
 	endTime := gtime.Now().UnixMicro()
 	runTime := (float64(endTime) - float64(startTime)) / 1000
 	data := map[string]interface{}{
-		"url":     r.GetUrl(),
-		"header":  r.Header,
-		"reqData": r.GetMap(),
-		"resData": r.Response.BufferString(),
-		"runTime": runTime,
+		`url`:     r.GetUrl(),
+		`header`:  r.Header,
+		`reqData`: r.GetMap(),
+		`resData`: r.Response.BufferString(),
+		`runTime`: runTime,
 	}
 	dao.Http.ParseDbCtx(r.GetCtx()).Data(data).Insert()
 }

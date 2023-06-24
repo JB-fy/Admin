@@ -6,9 +6,9 @@ import (
 
 func Cross(r *ghttp.Request) {
 	/* corsOptions := r.Response.DefaultCORSOptions()
-	corsOptions.AllowHeaders = "*"
-	corsOptions.AllowMethods = "*"
-	corsOptions.AllowDomain = []string{"xxxx.com"}
+	corsOptions.AllowHeaders = `*`
+	corsOptions.AllowMethods = `*`
+	corsOptions.AllowDomain = []string{`xxxx.com`}
 	if !r.Response.CORSAllowedOrigin(corsOptions) {
 		r.Response.WriteStatus(http.StatusForbidden)
 		return

@@ -29,9 +29,9 @@ func HandlerResponse(r *ghttp.Request) {
 		}
 		msg = err.Error()
 		r.Response.WriteJson(map[string]interface{}{
-			"code": code.Code(),
-			"msg":  msg,
-			"data": res,
+			`code`: code.Code(),
+			`msg`:  msg,
+			`data`: res,
 		})
 		return
 	}
@@ -53,8 +53,8 @@ func HandlerResponse(r *ghttp.Request) {
 	} */
 
 	r.Response.WriteJson(map[string]interface{}{
-		"code": 0,
-		"msg":  g.I18n().T(r.GetCtx(), `code.0`),
-		"data": res,
+		`code`: 0,
+		`msg`:  g.I18n().T(r.GetCtx(), `code.0`),
+		`data`: res,
 	})
 }
