@@ -1,5 +1,5 @@
 package api
 
 type UploadSignReq struct {
-	UploadType string `p:"uploadType"  v:""`
+	UploadType string `json:"uploadType"  v:""`
 }

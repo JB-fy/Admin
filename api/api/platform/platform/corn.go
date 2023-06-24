@@ -27,9 +27,9 @@ type CornListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	CornId   *uint  `c:"cornId,omitempty" p:"cornId" v:"integer|min:1" dc:"定时器ID"`
-	CornName string `c:"cornName,omitempty" p:"cornName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"定时器名称"`
-	CornCode string `c:"cornCode,omitempty" p:"cornCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"定时器标识"`
+	CornId   *uint  `c:"cornId,omitempty" json:"cornId" v:"integer|min:1" dc:"定时器ID"`
+	CornName string `c:"cornName,omitempty" json:"cornName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"定时器名称"`
+	CornCode string `c:"cornCode,omitempty" json:"cornCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"定时器标识"`
 	IsStop   *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
@@ -84,10 +84,10 @@ type CornInfo struct {
 /*--------新增 开始--------*/
 type CornCreateReq struct {
 	g.Meta      `path:"/create" method:"post" tags:"平台-定时器" sm:"创建"`
-	CornCode    *string `c:"cornCode,omitempty" p:"cornCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	CornName    *string `c:"cornName,omitempty" p:"cornName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
-	CornPattern *string `c:"cornPattern,omitempty" p:"cornPattern" v:"required|length:1,30" dc:"表达式"`
-	Remark      *string `c:"remark,omitempty" p:"remark" v:"length:1,120" dc:"备注"`
+	CornCode    *string `c:"cornCode,omitempty" json:"cornCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
+	CornName    *string `c:"cornName,omitempty" json:"cornName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	CornPattern *string `c:"cornPattern,omitempty" json:"cornPattern" v:"required|length:1,30" dc:"表达式"`
+	Remark      *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
 	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
@@ -102,10 +102,10 @@ type CornUpdateReq struct {
 	g.Meta `path:"/update" method:"post" tags:"平台-定时器" sm:"更新"`
 	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
 	IdArr       []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	CornCode    *string `c:"cornCode,omitempty" p:"cornCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	CornName    *string `c:"cornName,omitempty" p:"cornName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
-	CornPattern *string `c:"cornPattern,omitempty" p:"cornPattern" v:"length:1,30" dc:"表达式"`
-	Remark      *string `c:"remark,omitempty" p:"remark" v:"length:1,120" dc:"备注"`
+	CornCode    *string `c:"cornCode,omitempty" json:"cornCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
+	CornName    *string `c:"cornName,omitempty" json:"cornName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	CornPattern *string `c:"cornPattern,omitempty" json:"cornPattern" v:"length:1,30" dc:"表达式"`
+	Remark      *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
 	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
