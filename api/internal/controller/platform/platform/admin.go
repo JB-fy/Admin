@@ -5,6 +5,7 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
+	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
@@ -20,55 +21,50 @@ func NewAdmin() *Admin {
 }
 
 // 列表
-func (controllerThis *Admin) List(r *ghttp.Request) {
+func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminListReq) (res *apiPlatform.AdminListRes, err error) {
 	/**--------参数处理 开始--------**/
-	var param *apiPlatform.AdminListReq
-	err := r.Parse(&param)
-	if err != nil {
-		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-		return
-	}
-	filter := gconv.Map(param.Filter)
+	filter := gconv.Map(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-	order := []string{param.Sort}
-	page := param.Page
-	limit := param.Limit
+	order := []string{req.Sort}
+	page := req.Page
+	limit := req.Limit
+
+	columnsThis := daoPlatform.Admin.Columns()
+	allowField := daoPlatform.Admin.ColumnArr()
+	allowField = append(allowField, `id`, `name`)
+	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
+		}
+	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformAdminLook`)
-		allowField := []string{`id`, `name`, `adminId`, `nickname`}
-		if isAuth {
-			allowField = daoPlatform.Admin.ColumnArr()
-			allowField = append(allowField, `id`, `name`)
-			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
-		}
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		/**--------权限验证 结束--------**/
-
-		count, err := service.Admin().Count(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		list, err := service.Admin().List(r.GetCtx(), filter, field, order, page, limit)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
+	/**--------权限验证 开始--------**/
+	isAuth, _ := service.Action().CheckAuth(ctx, `platformAdminLook`)
+	if !isAuth {
+		field = []string{`id`, `name`, columnsThis.AdminId, columnsThis.Nickname}
 	}
+	/**--------权限验证 结束--------**/
+
+	count, err := service.Admin().Count(ctx, filter)
+	if err != nil {
+		return
+	}
+	list, err := service.Admin().List(ctx, filter, field, order, page, limit)
+	if err != nil {
+		return
+	}
+	res = &apiPlatform.AdminListRes{
+		Count: count,
+	}
+	list.Structs(&res.List)
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`count`: count, `list`: list}, 0)
+	return
 }
 
 // 详情

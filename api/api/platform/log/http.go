@@ -40,15 +40,15 @@ type HttpListRes struct {
 }
 
 type HttpList struct {
-	Id        uint    `json:"id" dc:"ID"`
-	HttpId    uint    `json:"httpId" dc:"Http日志ID"`
-	Url       string  `json:"url" dc:"地址"`
-	Header    string  `json:"header" dc:"请求头"`
-	ReqData   string  `json:"reqData" dc:"请求数据"`
-	ResData   string  `json:"resData" dc:"响应数据"`
-	RunTime   float64 `json:"runTime" dc:"运行时间（单位：毫秒）"`
-	UpdatedAt string  `json:"updatedAt" dc:"更新时间"`
-	CreatedAt string  `json:"createdAt" dc:"创建时间"`
+	Id        uint        `json:"id" dc:"ID"`
+	HttpId    uint        `json:"httpId" dc:"Http日志ID"`
+	Url       string      `json:"url" dc:"地址"`
+	Header    string      `json:"header" dc:"请求头"`
+	ReqData   string      `json:"reqData" dc:"请求数据"`
+	ResData   string      `json:"resData" dc:"响应数据"`
+	RunTime   float64     `json:"runTime" dc:"运行时间（单位：毫秒）"`
+	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/

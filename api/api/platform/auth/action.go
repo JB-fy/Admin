@@ -41,15 +41,15 @@ type ActionListRes struct {
 }
 
 type ActionList struct {
-	Id         uint   `json:"id" dc:"ID"`
-	Name       string `json:"name" dc:"名称"`
-	ActionId   uint   `json:"actionId" dc:"操作ID"`
-	ActionName string `json:"actionName" dc:"操作名称"`
-	ActionCode string `json:"actionCode" dc:"操作标识"`
-	Remark     string `json:"remark" dc:"备注"`
-	IsStop     uint   `json:"isStop" dc:"是否停用：0否 1是"`
-	UpdatedAt  string `json:"updatedAt" dc:"更新时间"`
-	CreatedAt  string `json:"createdAt" dc:"创建时间"`
+	Id         uint        `json:"id" dc:"ID"`
+	Name       string      `json:"name" dc:"名称"`
+	ActionId   uint        `json:"actionId" dc:"操作ID"`
+	ActionName string      `json:"actionName" dc:"操作名称"`
+	ActionCode string      `json:"actionCode" dc:"操作标识"`
+	Remark     string      `json:"remark" dc:"备注"`
+	IsStop     uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt  *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt  *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -67,16 +67,16 @@ type ActionInfoRes struct {
 }
 
 type ActionInfo struct {
-	Id         uint   `json:"id" dc:"ID"`
-	Name       string `json:"name" dc:"名称"`
-	ActionId   uint   `json:"actionId" dc:"操作ID"`
-	ActionName string `json:"actionName" dc:"操作名称"`
-	ActionCode string `json:"actionCode" dc:"操作标识"`
-	Remark     string `json:"remark" dc:"备注"`
-	IsStop     uint   `json:"isStop" dc:"是否停用：0否 1是"`
-	UpdatedAt  string `json:"updatedAt" dc:"更新时间"`
-	CreatedAt  string `json:"createdAt" dc:"创建时间"`
-	SceneIdArr []uint `json:"sceneIdArr" dc:"场景ID列表"`
+	Id         uint        `json:"id" dc:"ID"`
+	Name       string      `json:"name" dc:"名称"`
+	ActionId   uint        `json:"actionId" dc:"操作ID"`
+	ActionName string      `json:"actionName" dc:"操作名称"`
+	ActionCode string      `json:"actionCode" dc:"操作标识"`
+	Remark     string      `json:"remark" dc:"备注"`
+	IsStop     uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt  *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt  *gtime.Time `json:"createdAt" dc:"创建时间"`
+	SceneIdArr []uint      `json:"sceneIdArr" dc:"场景ID列表"`
 }
 
 /*--------详情 结束--------*/

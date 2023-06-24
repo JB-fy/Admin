@@ -41,23 +41,23 @@ type MenuListRes struct {
 }
 
 type MenuList struct {
-	Id        uint   `json:"id" dc:"ID"`
-	Name      string `json:"name" dc:"名称"`
-	MenuId    uint   `json:"menuId" dc:"菜单ID"`
-	Pid       uint   `json:"pid" dc:"父级ID"`
-	SceneId   uint   `json:"sceneId" dc:"场景ID"`
-	MenuName  string `json:"menuName" dc:"菜单名称"`
-	MenuUrl   string `json:"menuUrl" dc:"菜单链接"`
-	MenuIcon  string `json:"menuIcon" dc:"菜单图标"`
-	ExtraData string `json:"ExtraData" dc:"额外数据"`
-	Level     uint   `json:"level" dc:"层级"`
-	PidPath   string `json:"pidPath" dc:"父级路径"`
-	Sort      uint   `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop    uint   `json:"isStop" dc:"是否停用：0否 1是"`
-	UpdatedAt string `json:"updatedAt" dc:"更新时间"`
-	CreatedAt string `json:"createdAt" dc:"创建时间"`
-	PMenuName string `json:"pMenuName" dc:"父级菜单名称"`
-	SceneName string `json:"sceneName" dc:"场景名称"`
+	Id        uint        `json:"id" dc:"ID"`
+	Name      string      `json:"name" dc:"名称"`
+	MenuId    uint        `json:"menuId" dc:"菜单ID"`
+	Pid       uint        `json:"pid" dc:"父级ID"`
+	SceneId   uint        `json:"sceneId" dc:"场景ID"`
+	MenuName  string      `json:"menuName" dc:"菜单名称"`
+	MenuUrl   string      `json:"menuUrl" dc:"菜单链接"`
+	MenuIcon  string      `json:"menuIcon" dc:"菜单图标"`
+	ExtraData string      `json:"ExtraData" dc:"额外数据"`
+	Level     uint        `json:"level" dc:"层级"`
+	PidPath   string      `json:"pidPath" dc:"父级路径"`
+	Sort      uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
+	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
+	PMenuName string      `json:"pMenuName" dc:"父级菜单名称"`
+	SceneName string      `json:"sceneName" dc:"场景名称"`
 }
 
 /*--------列表 结束--------*/
@@ -75,21 +75,21 @@ type MenuInfoRes struct {
 }
 
 type MenuInfo struct {
-	Id        uint   `json:"id" dc:"ID"`
-	Name      string `json:"name" dc:"名称"`
-	MenuId    uint   `json:"menuId" dc:"菜单ID"`
-	Pid       uint   `json:"pid" dc:"父级ID"`
-	SceneId   uint   `json:"sceneId" dc:"场景ID"`
-	MenuName  string `json:"menuName" dc:"菜单名称"`
-	MenuUrl   string `json:"menuUrl" dc:"菜单链接"`
-	MenuIcon  string `json:"menuIcon" dc:"菜单图标"`
-	ExtraData string `json:"extraData" dc:"额外数据"`
-	Level     uint   `json:"level" dc:"层级"`
-	PidPath   string `json:"pidPath" dc:"父级路径"`
-	Sort      uint   `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop    uint   `json:"isStop" dc:"是否停用：0否 1是"`
-	UpdatedAt string `json:"updatedAt" dc:"更新时间"`
-	CreatedAt string `json:"createdAt" dc:"创建时间"`
+	Id        uint        `json:"id" dc:"ID"`
+	Name      string      `json:"name" dc:"名称"`
+	MenuId    uint        `json:"menuId" dc:"菜单ID"`
+	Pid       uint        `json:"pid" dc:"父级ID"`
+	SceneId   uint        `json:"sceneId" dc:"场景ID"`
+	MenuName  string      `json:"menuName" dc:"菜单名称"`
+	MenuUrl   string      `json:"menuUrl" dc:"菜单链接"`
+	MenuIcon  string      `json:"menuIcon" dc:"菜单图标"`
+	ExtraData string      `json:"extraData" dc:"额外数据"`
+	Level     uint        `json:"level" dc:"层级"`
+	PidPath   string      `json:"pidPath" dc:"父级路径"`
+	Sort      uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
+	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/

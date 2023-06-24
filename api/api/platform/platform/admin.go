@@ -2,45 +2,108 @@ package api
 
 import (
 	apiCommon "api/api"
+
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
+/*--------列表 开始--------*/
 type AdminListReq struct {
-	apiCommon.CommonListReq
-	Filter AdminListFilterReq `p:"filter"`
+	g.Meta `path:"/list" method:"post" tags:"平台-管理员" sm:"列表"`
+	Filter AdminListFilter `json:"filter" dc:"过滤条件"`
+	// apiCommon.CommonListReq
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Sort  string   `json:"sort" default:"id DESC" dc:"排序"`
+	Page  int      `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
+	Limit int      `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
-type AdminListFilterReq struct {
-	apiCommon.CommonListFilterReq `c:",omitempty"`
-	AdminId                       *uint  `c:"adminId,omitempty" p:"adminId" v:"integer|min:1"`
-	Account                       string `c:"account,omitempty" p:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone                         string `c:"phone,omitempty" p:"phone" v:"phone"`
-	RoleId                        *uint  `c:"roleId,omitempty" p:"roleId" v:"integer|min:1"`
-	IsStop                        *uint  `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+type AdminListFilter struct {
+	/*--------公共参数 开始--------*/
+	// apiCommon.CommonListFilterReq `c:",omitempty"`	// 代码中用到转换成map，且必须用omitempty过滤空参数。而规范路由自动生成swagger会因omitempty导致这些字段不生成。故直接写这里
+	Id        *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
+	IdArr     []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	ExcId     *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`
+	ExcIdArr  []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	StartTime *gtime.Time `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"`
+	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
+	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
+	/*--------公共参数 结束--------*/
+	AdminId *uint  `c:"adminId,omitempty" json:"adminId" v:"integer|min:1" dc:"管理员ID"`
+	Account string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Phone   string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
+	RoleId  *uint  `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
+	IsStop  *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
+type AdminListRes struct {
+	// apiCommon.CommonListRes
+	Count int         `json:"count" dc:"总数"`
+	List  []AdminList `json:"list" dc:"列表"`
+}
+
+type AdminList struct {
+	Id        uint        `json:"id" dc:"ID"`
+	Name      string      `json:"name" dc:"名称"`
+	AdminId   uint        `json:"adminId" dc:"管理员ID"`
+	Account   string      `json:"account" dc:"账号"`
+	Phone     string      `json:"phone" dc:"手机号"`
+	Avatar    string      `json:"avatar" dc:"头像"`
+	Nickname  string      `json:"nickname" dc:"昵称"`
+	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
+}
+
+/*--------列表 结束--------*/
+
+/*--------详情 开始--------*/
 type AdminInfoReq struct {
-	apiCommon.CommonInfoReq
+	g.Meta `path:"/info" method:"post" tags:"平台-角色" sm:"详情"`
+	// apiCommon.CommonInfoReq
+	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 }
+
+type AdminInfoRes struct {
+	Info AdminInfo `json:"info" dc:"详情"`
+}
+
+type AdminInfo struct {
+	Id        uint        `json:"id" dc:"ID"`
+	Name      string      `json:"name" dc:"名称"`
+	AdminId   uint        `json:"adminId" dc:"管理员ID"`
+	Account   string      `json:"account" dc:"账号"`
+	Phone     string      `json:"phone" dc:"手机号"`
+	Avatar    string      `json:"avatar" dc:"头像"`
+	Nickname  string      `json:"nickname" dc:"昵称"`
+	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
+	RoleIdArr []uint      `json:"roleIdArr" dc:"角色ID列表"`
+}
+
+/*--------详情 结束--------*/
 
 type AdminCreateReq struct {
-	Account   *string `c:"account,omitempty" p:"account" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone     *string `c:"phone,omitempty" p:"phone" v:"required-without:Account|phone"`
-	Password  *string `c:"password,omitempty" p:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
-	RoleIdArr *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"required|distinct|foreach|integer|foreach|min:1"`
-	Nickname  *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Avatar    *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
-	IsStop    *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	Account   *string `c:"account,omitempty" json:"account" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Phone     *string `c:"phone,omitempty" json:"phone" v:"required-without:Account|phone"`
+	Password  *string `c:"password,omitempty" json:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	RoleIdArr *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"required|distinct|foreach|integer|foreach|min:1"`
+	Nickname  *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Avatar    *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
 }
 
 type AdminUpdateReq struct {
 	apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
-	Account                              *string `c:"account,omitempty" p:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone                                *string `c:"phone,omitempty" p:"phone" v:"phone"`
-	Password                             *string `c:"password,omitempty" p:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$"`
-	RoleIdArr                            *[]uint `c:"roleIdArr,omitempty" p:"roleIdArr" v:"distinct|foreach|integer|foreach|min:1"`
-	Nickname                             *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Avatar                               *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
-	IsStop                               *uint   `c:"isStop,omitempty" p:"isStop" v:"integer|in:0,1"`
+	Account                              *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Phone                                *string `c:"phone,omitempty" json:"phone" v:"phone"`
+	Password                             *string `c:"password,omitempty" json:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	RoleIdArr                            *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"distinct|foreach|integer|foreach|min:1"`
+	Nickname                             *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Avatar                               *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120"`
+	IsStop                               *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1"`
 }
 
 type AdminDeleteReq struct {
@@ -48,10 +111,10 @@ type AdminDeleteReq struct {
 }
 
 type AdminUpdateSelfReq struct {
-	Account       *string `c:"account,omitempty" p:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Phone         *string `c:"phone,omitempty" p:"phone" v:"phone"`
-	Nickname      *string `c:"nickname,omitempty" p:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
-	Avatar        *string `c:"avatar,omitempty" p:"avatar" v:"url|length:1,120"`
-	Password      *string `c:"password,omitempty" p:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$|different:CheckPassword"`
-	CheckPassword *string `c:"checkPassword,omitempty" p:"checkPassword" v:"required-with:account,phone,password|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
+	Account       *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Phone         *string `c:"phone,omitempty" json:"phone" v:"phone"`
+	Nickname      *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$"`
+	Avatar        *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120"`
+	Password      *string `c:"password,omitempty" json:"password" v:"size:32|regex:^[\\p{L}\\p{N}_-]+$|different:CheckPassword"`
+	CheckPassword *string `c:"checkPassword,omitempty" json:"checkPassword" v:"required-with:account,phone,password|size:32|regex:^[\\p{L}\\p{N}_-]+$"`
 }

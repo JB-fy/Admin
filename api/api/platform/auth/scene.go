@@ -40,15 +40,15 @@ type SceneListRes struct {
 }
 
 type SceneList struct {
-	Id          uint   `json:"id" dc:"ID"`
-	Name        string `json:"name" dc:"名称"`
-	SceneId     uint   `json:"sceneId" dc:"场景ID"`
-	SceneCode   string `json:"sceneCode" dc:"场景标识"`
-	SceneName   string `json:"sceneName" dc:"场景名称"`
-	SceneConfig string `json:"sceneConfig" dc:"场景配置"`
-	IsStop      uint   `json:"isStop" dc:"是否停用：0否 1是"`
-	UpdatedAt   string `json:"updatedAt" dc:"更新时间"`
-	CreatedAt   string `json:"createdAt" dc:"创建时间"`
+	Id          uint        `json:"id" dc:"ID"`
+	Name        string      `json:"name" dc:"名称"`
+	SceneId     uint        `json:"sceneId" dc:"场景ID"`
+	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
+	SceneName   string      `json:"sceneName" dc:"场景名称"`
+	SceneConfig string      `json:"sceneConfig" dc:"场景配置"`
+	IsStop      uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -66,15 +66,15 @@ type SceneInfoRes struct {
 }
 
 type SceneInfo struct {
-	Id          uint   `json:"id" dc:"ID"`
-	Name        string `json:"name" dc:"名称"`
-	SceneId     uint   `json:"sceneId" dc:"场景ID"`
-	SceneCode   string `json:"sceneCode" dc:"场景标识"`
-	SceneName   string `json:"sceneName" dc:"场景名称"`
-	SceneConfig string `json:"sceneConfig" dc:"场景配置"`
-	IsStop      uint   `json:"isStop" dc:"是否停用：0否 1是"`
-	UpdatedAt   string `json:"updatedAt" dc:"更新时间"`
-	CreatedAt   string `json:"createdAt" dc:"创建时间"`
+	Id          uint        `json:"id" dc:"ID"`
+	Name        string      `json:"name" dc:"名称"`
+	SceneId     uint        `json:"sceneId" dc:"场景ID"`
+	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
+	SceneName   string      `json:"sceneName" dc:"场景名称"`
+	SceneConfig string      `json:"sceneConfig" dc:"场景配置"`
+	IsStop      uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/
