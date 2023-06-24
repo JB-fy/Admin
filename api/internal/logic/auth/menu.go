@@ -233,11 +233,13 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 		err = utils.NewErrorCode(ctx, 29999995, ``)
 		return
 	}
+
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
 	row, _ = result.RowsAffected()
+
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
 		return
