@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type ActionListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"平台-操作" sm:"列表"`
+	g.Meta `path:"/list" method:"post" tags:"平台/操作" sm:"列表"`
 	Filter ActionListFilter `json:"filter" dc:"过滤条件"`
 	// apiCommon.CommonListReq
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -56,7 +56,7 @@ type ActionList struct {
 
 /*--------详情 开始--------*/
 type ActionInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台-操作" sm:"详情"`
+	g.Meta `path:"/info" method:"post" tags:"平台/操作" sm:"详情"`
 	// apiCommon.CommonInfoReq
 	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -83,7 +83,7 @@ type ActionInfo struct {
 
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
-	g.Meta     `path:"/create" method:"post" tags:"平台-操作" sm:"创建"`
+	g.Meta     `path:"/create" method:"post" tags:"平台/操作" sm:"创建"`
 	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
 	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
 	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
@@ -99,7 +99,7 @@ type ActionCreateRes struct {
 
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
-	g.Meta `path:"/update" method:"post" tags:"平台-操作" sm:"更新"`
+	g.Meta `path:"/update" method:"post" tags:"平台/操作" sm:"更新"`
 	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
 	IdArr      []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
@@ -116,7 +116,7 @@ type ActionUpdateRes struct {
 
 /*--------删除 开始--------*/
 type ActionDeleteReq struct {
-	g.Meta `path:"/del" method:"post" tags:"平台-操作" sm:"删除"`
+	g.Meta `path:"/del" method:"post" tags:"平台/操作" sm:"删除"`
 	// apiCommon.CommonUpdateDeleteIdArrReq
 	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }

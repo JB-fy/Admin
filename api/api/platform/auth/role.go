@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type RoleListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"平台-角色" sm:"列表"`
+	g.Meta `path:"/list" method:"post" tags:"平台/角色" sm:"列表"`
 	Filter RoleListFilter `json:"filter" dc:"过滤条件"`
 	// apiCommon.CommonListReq
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -58,7 +58,7 @@ type RoleList struct {
 
 /*--------详情 开始--------*/
 type RoleInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台-角色" sm:"详情"`
+	g.Meta `path:"/info" method:"post" tags:"平台/角色" sm:"详情"`
 	// apiCommon.CommonInfoReq
 	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -88,7 +88,7 @@ type RoleInfo struct {
 
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
-	g.Meta      `path:"/create" method:"post" tags:"平台-角色" sm:"创建"`
+	g.Meta      `path:"/create" method:"post" tags:"平台/角色" sm:"创建"`
 	RoleName    *string `c:"roleName,omitempty" json:"roleName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
 	SceneId     *uint   `c:"sceneId,omitempty" json:"sceneId" v:"required|integer|min:1" dc:"场景ID"`
 	MenuIdArr   *[]uint `c:"menuIdArr,omitempty" json:"menuIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
@@ -104,7 +104,7 @@ type RoleCreateRes struct {
 
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
-	g.Meta `path:"/update" method:"post" tags:"平台-角色" sm:"更新"`
+	g.Meta `path:"/update" method:"post" tags:"平台/角色" sm:"更新"`
 	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
 	IdArr       []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	RoleName    *string `c:"roleName,omitempty" json:"roleName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
@@ -121,7 +121,7 @@ type RoleUpdateRes struct {
 
 /*--------删除 开始--------*/
 type RoleDeleteReq struct {
-	g.Meta `path:"/del" method:"post" tags:"平台-角色" sm:"删除"`
+	g.Meta `path:"/del" method:"post" tags:"平台/角色" sm:"删除"`
 	// apiCommon.CommonUpdateDeleteIdArrReq
 	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }

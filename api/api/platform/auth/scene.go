@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type SceneListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"平台-场景" sm:"列表"`
+	g.Meta `path:"/list" method:"post" tags:"平台/场景" sm:"列表"`
 	Filter SceneListFilter `json:"filter" dc:"查询条件"`
 	// apiCommon.CommonListReq
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -55,7 +55,7 @@ type SceneList struct {
 
 /*--------详情 开始--------*/
 type SceneInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台-场景" sm:"详情"`
+	g.Meta `path:"/info" method:"post" tags:"平台/场景" sm:"详情"`
 	// apiCommon.CommonInfoReq
 	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -81,7 +81,7 @@ type SceneInfo struct {
 
 /*--------新增 开始--------*/
 type SceneCreateReq struct {
-	g.Meta      `path:"/create" method:"post" tags:"平台-场景" sm:"创建"`
+	g.Meta      `path:"/create" method:"post" tags:"平台/场景" sm:"创建"`
 	SceneCode   *string `c:"sceneCode,omitempty" json:"sceneCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
 	SceneName   *string `c:"sceneName,omitempty" json:"sceneName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
 	SceneConfig *string `c:"sceneConfig,omitempty" json:"sceneConfig" v:"json" dc:"场景配置"`
@@ -96,7 +96,7 @@ type SceneCreateRes struct {
 
 /*--------修改 开始--------*/
 type SceneUpdateReq struct {
-	g.Meta `path:"/update" method:"post" tags:"平台-场景" sm:"更新"`
+	g.Meta `path:"/update" method:"post" tags:"平台/场景" sm:"更新"`
 	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
 	IdArr       []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	SceneCode   *string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
@@ -112,7 +112,7 @@ type SceneUpdateRes struct {
 
 /*--------删除 开始--------*/
 type SceneDeleteReq struct {
-	g.Meta `path:"/del" method:"post" tags:"平台-场景" sm:"删除"`
+	g.Meta `path:"/del" method:"post" tags:"平台/场景" sm:"删除"`
 	// apiCommon.CommonUpdateDeleteIdArrReq
 	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
