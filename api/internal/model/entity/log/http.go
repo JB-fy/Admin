@@ -10,7 +10,7 @@ import (
 
 // Http is the golang structure for table http.
 type Http struct {
-	HttpId    uint        `json:"httpId"    ` // http记录ID
+	HttpId    uint        `json:"httpId"    ` // Http日志ID
 	Url       string      `json:"url"       ` // 地址
 	Header    string      `json:"header"    ` // 请求头
 	ReqData   string      `json:"reqData"   ` // 请求数据

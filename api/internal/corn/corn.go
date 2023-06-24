@@ -15,7 +15,7 @@ func InitCorn(ctx context.Context) {
 	}, `LogHttpPartition`)
 }
 
-// http记录表每周新增分区
+// Http日志表每周新增分区
 func LogHttpPartition(ctx context.Context) {
 	utils.DbTablePartition(ctx, daoLog.Http.Group(), daoLog.Http.Table(), 7, 24*60*60, `createdAt`)
 }

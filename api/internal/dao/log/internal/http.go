@@ -25,7 +25,7 @@ type HttpDao struct {
 
 // HttpColumns defines and stores column names for table log_http.
 type HttpColumns struct {
-	HttpId    string // http记录ID
+	HttpId    string // Http日志ID
 	Url       string // 地址
 	Header    string // 请求头
 	ReqData   string // 请求数据

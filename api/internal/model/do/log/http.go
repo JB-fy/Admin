@@ -12,7 +12,7 @@ import (
 // Http is the golang structure of table log_http for DAO operations like Where/Data.
 type Http struct {
 	g.Meta    `orm:"table:log_http, do:true"`
-	HttpId    interface{} // http记录ID
+	HttpId    interface{} // Http日志ID
 	Url       interface{} // 地址
 	Header    interface{} // 请求头
 	ReqData   interface{} // 请求数据

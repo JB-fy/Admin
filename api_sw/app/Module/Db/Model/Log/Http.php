@@ -7,7 +7,7 @@ namespace App\Module\Db\Model\Log;
 use App\Module\Db\Model\AbstractModel;
 
 /**
- * @property int $httpId http记录ID
+ * @property int $httpId Http日志ID
  * @property string $url 地址
  * @property string $header 请求头
  * @property string $reqData 请求数据

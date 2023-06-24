@@ -188,7 +188,7 @@ return [
         'menuId' => '菜单ID',
         'roleId' => '角色ID',
         'sceneId' => '场景ID',
-        'httpId' => 'http记录ID',
+        'httpId' => 'Http日志ID',
         'adminId' => '管理员ID',
         'serverId' => '服务器id',
 

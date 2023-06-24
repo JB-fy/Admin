@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type HttpListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"平台-角色" sm:"列表"`
+	g.Meta `path:"/list" method:"post" tags:"平台-Http日志" sm:"列表"`
 	Filter HttpListFilter `json:"filter" dc:"过滤条件"`
 	// apiCommon.CommonListReq
 	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
@@ -27,7 +27,7 @@ type HttpListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	HttpId     *uint    `c:"httpId,omitempty" json:"httpId" v:"integer|min:1" dc:"Http记录ID"`
+	HttpId     *uint    `c:"httpId,omitempty" json:"httpId" v:"integer|min:1" dc:"Http日志ID"`
 	Url        string   `c:"url,omitempty" json:"url" v:"url" dc:"地址"`
 	MinRunTime *float64 `c:"minRunTime,omitempty" json:"minRunTime" v:"float|min:0" dc:"最小运行时间"`
 	MaxRunTime *float64 `c:"maxRunTime,omitempty" json:"maxRunTime" v:"float|min:0|gte:MinRunTime" dc:"最大运行时间"`
@@ -41,7 +41,7 @@ type HttpListRes struct {
 
 type HttpList struct {
 	Id        uint    `json:"id" dc:"ID"`
-	HttpId    uint    `json:"httpId" dc:"Http记录ID"`
+	HttpId    uint    `json:"httpId" dc:"Http日志ID"`
 	Url       string  `json:"url" dc:"地址"`
 	Header    string  `json:"header" dc:"请求头"`
 	ReqData   string  `json:"reqData" dc:"请求数据"`
