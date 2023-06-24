@@ -439,12 +439,21 @@ import (
 `
 	if !option.NoList {
 		tplApi += `type {TplTableNameCaseCamel}ListReq struct {
-	apiCommon.CommonListReq
 	Filter {TplTableNameCaseCamel}ListFilterReq ` + "`" + `p:"filter"` + "`" + `
+	Field []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
+	Sort  string   ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
+	Page  int      ` + "`" + `json:"page" v:"integer|min:1" default:"1" dc:"页码"` + "`" + `
+	Limit int      ` + "`" + `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
 }
 
 type {TplTableNameCaseCamel}ListFilterReq struct {
-	apiCommon.CommonListFilterReq ` + "`" + `c:",omitempty"` + "`" + `
+	Id        *uint       ` + "`" + `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"` + "`" + `
+	IdArr     []uint      ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
+	ExcId     *uint       ` + "`" + `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"` + "`" + `
+	ExcIdArr  []uint      ` + "`" + `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
+	StartTime *gtime.Time ` + "`" + `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"` + "`" + `
+	EndTime   *gtime.Time ` + "`" + `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"` + "`" + `
+	Name      string      ` + "`" + `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"` + "`" + `
 	{TplApiFilterColumn}
 }
 
@@ -452,7 +461,8 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 	}
 	if !option.NoUpdate {
 		tplApi += `type {TplTableNameCaseCamel}InfoReq struct {
-	apiCommon.CommonInfoReq
+	Id    uint     ` + "`" + `json:"id" v:"required|integer|min:1" dc:"ID"` + "`" + `
+	Field []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
 }
 
 `
@@ -467,7 +477,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 
 	if !option.NoUpdate {
 		tplApi += `type {TplTableNameCaseCamel}UpdateReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq ` + "`" + `c:",omitempty"` + "`" + `
+	IdArr []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	{TplApiUpdateColumn}
 }
 
@@ -476,7 +486,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 
 	if !option.NoDelete {
 		tplApi += `type {TplTableNameCaseCamel}DeleteReq struct {
-	apiCommon.CommonUpdateDeleteIdArrReq
+	IdArr []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 `
 	}

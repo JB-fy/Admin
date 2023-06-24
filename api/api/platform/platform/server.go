@@ -9,16 +9,14 @@ import (
 type ServerListReq struct {
 	g.Meta `path:"/list" method:"post" tags:"平台/服务器" sm:"列表"`
 	Filter ServerListFilter `json:"filter" dc:"过滤条件"`
-	// apiCommon.CommonListReq
-	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
-	Sort  string   `json:"sort" default:"id DESC" dc:"排序"`
-	Page  int      `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
-	Limit int      `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
+	Field  []string         `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Sort   string           `json:"sort" default:"id DESC" dc:"排序"`
+	Page   int              `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
+	Limit  int              `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type ServerListFilter struct {
 	/*--------公共参数 开始--------*/
-	// apiCommon.CommonListFilterReq `c:",omitempty"`	// 代码中用到转换成map，且必须用omitempty过滤空参数。而规范路由自动生成swagger会因omitempty导致这些字段不生成。故直接写这里
 	Id        *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
 	IdArr     []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	ExcId     *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`

@@ -9,16 +9,14 @@ import (
 type AdminListReq struct {
 	g.Meta `path:"/list" method:"post" tags:"平台/管理员" sm:"列表"`
 	Filter AdminListFilter `json:"filter" dc:"过滤条件"`
-	// apiCommon.CommonListReq
-	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
-	Sort  string   `json:"sort" default:"id DESC" dc:"排序"`
-	Page  int      `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
-	Limit int      `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
+	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
+	Page   int             `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
+	Limit  int             `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type AdminListFilter struct {
 	/*--------公共参数 开始--------*/
-	// apiCommon.CommonListFilterReq `c:",omitempty"`	// 代码中用到转换成map，且必须用omitempty过滤空参数。而规范路由自动生成swagger会因omitempty导致这些字段不生成。故直接写这里
 	Id        *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
 	IdArr     []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	ExcId     *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`
@@ -58,9 +56,8 @@ type AdminList struct {
 /*--------详情 开始--------*/
 type AdminInfoReq struct {
 	g.Meta `path:"/info" method:"post" tags:"平台/管理员" sm:"详情"`
-	// apiCommon.CommonInfoReq
-	Id    uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
-	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
+	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 }
 
 type AdminInfoRes struct {
@@ -103,8 +100,7 @@ type AdminCreateRes struct {
 
 /*--------修改 开始--------*/
 type AdminUpdateReq struct {
-	g.Meta `path:"/update" method:"post" tags:"平台/管理员" sm:"更新"`
-	// apiCommon.CommonUpdateDeleteIdArrReq `c:",omitempty"`
+	g.Meta    `path:"/update" method:"post" tags:"平台/管理员" sm:"更新"`
 	IdArr     []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	Account   *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone     *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
@@ -123,8 +119,7 @@ type AdminUpdateRes struct {
 /*--------删除 开始--------*/
 type AdminDeleteReq struct {
 	g.Meta `path:"/del" method:"post" tags:"平台/管理员" sm:"删除"`
-	// apiCommon.CommonUpdateDeleteIdArrReq
-	IdArr []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
 type AdminDeleteRes struct {
