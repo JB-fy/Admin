@@ -65,5 +65,5 @@ func (c *Test) Test(r *ghttp.Request) {
 	utils.HttpSuccessJson(r, map[string]interface{}{
 		`list`: []map[string]interface{}{},
 	}, 0)
-	utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 99999999, ``))
+	// r.SetError(utils.NewErrorCode(r.GetCtx(), 99999999, ``))
 }

@@ -34,21 +34,6 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 	return gerror.NewCode(gcode.New(code, ``, dataTmp), msg)
 }
 
-// http接口调用失败返回json
-func HttpFailJson(r *ghttp.Request, err error) {
-	resData := map[string]interface{}{
-		`code`: 99999999,
-		`msg`:  err.Error(),
-		`data`: map[string]interface{}{},
-	}
-	code := gerror.Code(err)
-	if code.Code() > 0 {
-		resData[`code`] = code.Code()
-		resData[`data`] = code.Detail()
-	}
-	r.Response.WriteJsonExit(resData)
-}
-
 // http接口调用成功返回json
 func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, msg ...string) {
 	resData := map[string]interface{}{
