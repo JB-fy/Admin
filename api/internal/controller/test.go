@@ -2,9 +2,9 @@ package controller
 
 import (
 	"api/api"
-	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -20,7 +20,7 @@ func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.Tes
 	// g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	res = &api.TestMetaRes{
-		Test: `aasd`,
+		Test: `测试`,
 	}
 	return
 }
@@ -57,13 +57,12 @@ func (c *Test) Test(r *ghttp.Request) {
 
 	//fmt.Println(ghttp.RestartAllServer(r.GetCtx()))
 
-	/* r.Response.WriteJson(map[string]interface{}{
-		`code`: 0,
-		`msg`:  `成功`,
-		`data`: map[string]interface{}{},
-	}) */
-	utils.HttpSuccessJson(r, map[string]interface{}{
-		`list`: []map[string]interface{}{},
-	}, 0)
 	// r.SetError(utils.NewErrorCode(r.GetCtx(), 99999999, ``))
+	r.Response.WriteJson(map[string]interface{}{
+		`code`: 0,
+		`msg`:  g.I18n().T(r.GetCtx(), `code.0`),
+		`data`: map[string]interface{}{
+			`list`: []map[string]interface{}{},
+		},
+	})
 }

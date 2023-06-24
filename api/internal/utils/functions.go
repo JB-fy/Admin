@@ -34,21 +34,6 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 	return gerror.NewCode(gcode.New(code, ``, dataTmp), msg)
 }
 
-// http接口调用成功返回json
-func HttpSuccessJson(r *ghttp.Request, data map[string]interface{}, code int, msg ...string) {
-	resData := map[string]interface{}{
-		`code`: code,
-		`msg`:  ``,
-		`data`: data,
-	}
-	if len(msg) == 0 || msg[0] == `` {
-		resData[`msg`] = g.I18n().T(r.GetCtx(), `code.`+gconv.String(code))
-	} else {
-		resData[`msg`] = msg[0]
-	}
-	r.Response.WriteJsonExit(resData)
-}
-
 // 设置场景信息
 func SetCtxSceneInfo(r *ghttp.Request, info gdb.Record) {
 	r.SetCtxVar(consts.ConstCtxSceneInfoName, info)
