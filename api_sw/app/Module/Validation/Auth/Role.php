@@ -17,6 +17,8 @@ class Role extends AbstractValidation
         'actionIdArr' => 'sometimes|required_if_null|array|min:0',
         'actionIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'isStop' => 'sometimes|required|integer|in:0,1',
+
+        'sceneCode' => 'sometimes|required|alpha_dash|between:1,30',
     ];
 
     protected array $scene = [
