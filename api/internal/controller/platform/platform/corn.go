@@ -5,9 +5,9 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
+	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -18,196 +18,151 @@ func NewCorn() *Corn {
 }
 
 // 列表
-func (controllerThis *Corn) List(r *ghttp.Request) {
+func (controllerThis *Corn) List(ctx context.Context, req *apiPlatform.CornListReq) (res *apiPlatform.CornListRes, err error) {
 	/**--------参数处理 开始--------**/
-	var param *apiPlatform.CornListReq
-	err := r.Parse(&param)
-	if err != nil {
-		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-		return
-	}
-	filter := gconv.Map(param.Filter)
+	filter := gconv.Map(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-	order := []string{param.Sort}
-	page := param.Page
-	limit := param.Limit
+	order := []string{req.Sort}
+	page := req.Page
+	limit := req.Limit
+
+	columnsThis := daoPlatform.Corn.Columns()
+	allowField := daoPlatform.Corn.ColumnArr()
+	allowField = append(allowField, `id`, `name`)
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
+		}
+	}
 	/**--------参数处理 结束--------**/
 
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), `platformCornLook`)
-		allowField := []string{`id`, `name`, `cornId`, `cornName`}
-		if isAuth {
-			allowField = daoPlatform.Corn.ColumnArr()
-			allowField = append(allowField, `id`, `name`)
-		}
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		/**--------权限验证 结束--------**/
-
-		count, err := service.Corn().Count(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		list, err := service.Corn().List(r.GetCtx(), filter, field, order, page, limit)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`count`: count, `list`: list}, 0)
+	/**--------权限验证 开始--------**/
+	isAuth, _ := service.Action().CheckAuth(ctx, `platformCornLook`)
+	if !isAuth {
+		field = []string{`id`, `name`, columnsThis.CornId, columnsThis.CornName}
 	}
+	/**--------权限验证 结束--------**/
+
+	count, err := service.Corn().Count(ctx, filter)
+	if err != nil {
+		return
+	}
+	list, err := service.Corn().List(ctx, filter, field, order, page, limit)
+	if err != nil {
+		return
+	}
+	res = &apiPlatform.CornListRes{
+		Count: count,
+	}
+	list.Structs(&res.List)
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`count`: count, `list`: list}, 0)
+	return
 }
 
 // 详情
-func (controllerThis *Corn) Info(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornInfoReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
+func (controllerThis *Corn) Info(ctx context.Context, req *apiPlatform.CornInfoReq) (res *apiPlatform.CornInfoRes, err error) {
+	/**--------参数处理 开始--------**/
+	allowField := daoPlatform.Corn.ColumnArr()
+	allowField = append(allowField, `id`, `name`)
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
 		}
-
-		allowField := daoPlatform.Corn.ColumnArr()
-		allowField = append(allowField, `id`, `name`)
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		filter := map[string]interface{}{`id`: param.Id}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornLook`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		info, err := service.Corn().Info(r.GetCtx(), filter, field)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`info`: info}, 0)
 	}
+	filter := map[string]interface{}{`id`: req.Id}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `platformCornLook`)
+	if err != nil {
+		return
+	}
+	/**--------权限验证 结束--------**/
+
+	info, err := service.Corn().Info(ctx, filter, field)
+	if err != nil {
+		return
+	}
+	res = &apiPlatform.CornInfoRes{}
+	info.Struct(&res.Info)
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`info`: info}, 0)
+	return
 }
 
-// 创建
-func (controllerThis *Corn) Create(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornCreateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		data := gconv.Map(param)
-		/**--------参数处理 结束--------**/
+// 新增
+func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCreateReq) (res *apiPlatform.CornCreateRes, err error) {
+	/**--------参数处理 开始--------**/
+	data := gconv.Map(req)
+	/**--------参数处理 结束--------**/
 
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornCreate`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		id, err := service.Corn().Create(r.GetCtx(), data)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{`id`: id}, 0)
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `platformCornCreate`)
+	if err != nil {
+		return
 	}
+	/**--------权限验证 结束--------**/
+
+	id, err := service.Corn().Create(ctx, data)
+	if err != nil {
+		return
+	}
+	res = &apiPlatform.CornCreateRes{
+		Id: id,
+	}
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{`id`: id}, 0)
+	return
 }
 
-// 更新
-func (controllerThis *Corn) Update(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornUpdateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		data := gconv.Map(param)
-		delete(data, `idArr`)
-		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ``))
-			return
-		}
-		filter := map[string]interface{}{`id`: param.IdArr}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornUpdate`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Corn().Update(r.GetCtx(), filter, data)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+// 修改
+func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpdateReq) (res *apiPlatform.CornUpdateRes, err error) {
+	/**--------参数处理 开始--------**/
+	data := gconv.Map(req)
+	delete(data, `idArr`)
+	if len(data) == 0 {
+		err = utils.NewErrorCode(ctx, 89999999, ``)
+		return
 	}
+	filter := map[string]interface{}{`id`: req.IdArr}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `platformCornUpdate`)
+	if err != nil {
+		return
+	}
+	/**--------权限验证 结束--------**/
+
+	_, err = service.Corn().Update(ctx, filter, data)
+	if err != nil {
+		return
+	}
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
+	return
 }
 
 // 删除
-func (controllerThis *Corn) Delete(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case `platform`:
-		/**--------参数处理 开始--------**/
-		var param *apiPlatform.CornDeleteReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		filter := map[string]interface{}{`id`: param.IdArr}
-		/**--------参数处理 结束--------**/
+func (controllerThis *Corn) Delete(ctx context.Context, req *apiPlatform.CornDeleteReq) (res *apiPlatform.CornDeleteRes, err error) {
+	/**--------参数处理 开始--------**/
+	filter := map[string]interface{}{`id`: req.IdArr}
+	/**--------参数处理 结束--------**/
 
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), `platformCornDelete`)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		_, err = service.Corn().Delete(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, `platformCornDelete`)
+	if err != nil {
+		return
 	}
+	/**--------权限验证 结束--------**/
+
+	_, err = service.Corn().Delete(ctx, filter)
+	if err != nil {
+		return
+	}
+	// utils.HttpSuccessJson(g.RequestFromCtx(ctx), map[string]interface{}{}, 0)
+	return
 }
