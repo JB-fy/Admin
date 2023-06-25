@@ -98,6 +98,16 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+			case `pid`:
+				updateData[daoThis.Table()+`.`+k] = v
+				if gconv.Int(v) > 0 {
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(`pidPath`, `level`).One()
+					updateData[daoThis.Table()+`.pidPath`] = gdb.Raw(`CONCAT('` + pInfo[`pidPath`].String() + `-', ` + daoThis.PrimaryKey() + `)`)
+					updateData[daoThis.Table()+`.level`] = pInfo[`level`].Int() + 1
+				} else {
+					updateData[daoThis.Table()+`.pidPath`] = gdb.Raw(`CONCAT('0-', ` + daoThis.PrimaryKey() + `)`)
+					updateData[daoThis.Table()+`.level`] = 1
+				}
 			case `pidPathOfChild`: //更新所有子孙级的pidPath。参数：map[string]interface{}{`newVal`: `父级新pidPath`, `oldVal`:`父级旧pidPath`}
 				val := gconv.Map(v)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().PidPath] = gdb.Raw(`REPLACE(` + daoThis.Table() + `.` + daoThis.Columns().PidPath + `, '` + gconv.String(val[`oldVal`]) + `', '` + gconv.String(val[`newVal`]) + `')`)

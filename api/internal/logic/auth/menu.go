@@ -141,7 +141,6 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	updateList := map[int]map[string]interface{}{}
 	updateChildList := map[string]map[string]interface{}{}
 	_, okPid := data[`pid`]
 	if okPid {
@@ -161,7 +160,6 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				return
 			}
 			if pid != oldInfo[`pid`].Int() {
-				idKey := id.Int()
 				if pid > 0 {
 					sceneId := oldInfo[`sceneId`].Int()
 					_, okSceneId := data[`sceneId`]
@@ -176,25 +174,27 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 						err = utils.NewErrorCode(ctx, 29999996, ``)
 						return
 					}
-					updateList[idKey] = map[string]interface{}{
-						`pidPath`: pInfo[`pidPath`].String() + `-` + oldInfo[daoThis.PrimaryKey()].String(),
-						`level`:   pInfo[`level`].Int() + 1,
+					updateChildList[oldInfo[`pidPath`].String()] = map[string]interface{}{
+						`pidPathOfChild`: map[string]interface{}{
+							`newVal`: pInfo[`pidPath`].String() + `-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`oldVal`: oldInfo[`pidPath`],
+						},
+						`levelOfChild`: map[string]interface{}{
+							`newVal`: pInfo[`level`].Int() + 1,
+							`oldVal`: oldInfo[`level`],
+						},
 					}
 				} else {
-					updateList[idKey] = map[string]interface{}{
-						`pidPath`: `0-` + oldInfo[daoThis.PrimaryKey()].String(),
-						`level`:   1,
+					updateChildList[oldInfo[`pidPath`].String()] = map[string]interface{}{
+						`pidPathOfChild`: map[string]interface{}{
+							`newVal`: `0-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`oldVal`: oldInfo[`pidPath`],
+						},
+						`levelOfChild`: map[string]interface{}{
+							`newVal`: 1,
+							`oldVal`: oldInfo[`level`],
+						},
 					}
-				}
-				updateChildList[oldInfo[`pidPath`].String()] = map[string]interface{}{
-					`pidPathOfChild`: map[string]interface{}{
-						`newVal`: updateList[idKey][`pidPath`],
-						`oldVal`: oldInfo[`pidPath`],
-					},
-					`levelOfChild`: map[string]interface{}{
-						`newVal`: updateList[idKey][`level`],
-						`oldVal`: oldInfo[`level`],
-					},
 				}
 			}
 		}
@@ -216,10 +216,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	if len(updateList) > 0 {
-		for id, update := range updateList {
-			daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(update).Update()
-		}
+	if len(updateChildList) > 0 {
 		//修改pid时，更新所有子孙级的pidPath和level
 		for pidPath, update := range updateChildList {
 			daoThis.ParseDbCtx(ctx).WhereLike(`pidPath`, pidPath+`%`).Handler(daoThis.ParseUpdate(update)).Update()
