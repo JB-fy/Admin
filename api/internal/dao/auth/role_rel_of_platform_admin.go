@@ -150,6 +150,28 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableAr
 	}
 }
 
+// hook select
+func (daoThis *roleRelOfPlatformAdminDao) HookSelect(afterField []string) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for index, record := range result {
+				for _, v := range afterField {
+					switch v {
+					/* case `xxxx`:
+					record[v] = gvar.New(``) */
+					}
+				}
+				result[index] = record
+			}
+			return
+		},
+	}
+}
+
 // 解析filter
 func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -251,28 +273,6 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseJoin(joinCode string, joinTableAr
 		} */
 		}
 		return m
-	}
-}
-
-// hook select
-func (daoThis *roleRelOfPlatformAdminDao) HookSelect(afterField []string) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
-					}
-				}
-				result[index] = record
-			}
-			return
-		},
 	}
 }
 

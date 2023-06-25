@@ -164,6 +164,43 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 	}
 }
 
+// hook select
+func (daoThis *roleDao) HookSelect(afterField []string) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for index, record := range result {
+				for _, v := range afterField {
+					switch v {
+					/* case `xxxx`:
+					record[v] = gvar.New(``) */
+					case `menuIdArr`:
+						idArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
+						record[v] = gvar.New(idArr)
+					case `actionIdArr`:
+						idArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
+						record[v] = gvar.New(idArr)
+					case `tableName`:
+						if record[daoThis.Columns().TableId].Int() == 0 {
+							record[v] = gvar.New(`平台`)
+							continue
+						}
+						switch record[Scene.Columns().SceneCode].String() {
+						case `platform`:
+							break
+						}
+					}
+				}
+				result[index] = record
+			}
+			return
+		},
+	}
+}
+
 // 解析filter
 func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -274,43 +311,6 @@ func (daoThis *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 			}
 		}
 		return m
-	}
-}
-
-// hook select
-func (daoThis *roleDao) HookSelect(afterField []string) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
-					case `menuIdArr`:
-						idArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
-						record[v] = gvar.New(idArr)
-					case `actionIdArr`:
-						idArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
-						record[v] = gvar.New(idArr)
-					case `tableName`:
-						if record[daoThis.Columns().TableId].Int() == 0 {
-							record[v] = gvar.New(`平台`)
-							continue
-						}
-						switch record[Scene.Columns().SceneCode].String() {
-						case `platform`:
-							break
-						}
-					}
-				}
-				result[index] = record
-			}
-			return
-		},
 	}
 }
 

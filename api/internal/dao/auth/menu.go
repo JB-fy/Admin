@@ -68,8 +68,8 @@ func (daoThis *menuDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[str
 // 解析insert
 func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
 		hookData := map[string]interface{}{}
+		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
 			case `id`:
@@ -107,7 +107,6 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
 				if len(match) > 0 {
 					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-					return
 				}
 				return
 			}
@@ -132,6 +131,7 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 // 解析update
 func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		hookData := map[string]interface{}{}
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
@@ -178,7 +178,35 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 		data := []interface{}{strings.Join(fieldArr, `,`)}
 		data = append(data, valueArr...)
 		m = m.Data(data...)
+		m = m.Hook(daoThis.HookUpdate(hookData))
 		return m
+	}
+}
+
+// hook update
+func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+	return gdb.HookHandler{
+		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+				if len(match) > 0 {
+					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+				}
+				return
+			}
+			row, _ := result.RowsAffected()
+
+			/* for k, v := range data {
+				switch k {
+				}
+			} */
+
+			if row == 0 {
+				err = utils.NewErrorCode(ctx, 99999999, ``)
+			}
+			return
+		},
 	}
 }
 

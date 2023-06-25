@@ -150,6 +150,28 @@ func (daoThis *httpDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 	}
 }
 
+// hook select
+func (daoThis *httpDao) HookSelect(afterField []string) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for index, record := range result {
+				for _, v := range afterField {
+					switch v {
+					/* case `xxxx`:
+					record[v] = gvar.New(``) */
+					}
+				}
+				result[index] = record
+			}
+			return
+		},
+	}
+}
+
 // 解析filter
 func (daoThis *httpDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -255,28 +277,6 @@ func (daoThis *httpDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 		} */
 		}
 		return m
-	}
-}
-
-// hook select
-func (daoThis *httpDao) HookSelect(afterField []string) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
-					}
-				}
-				result[index] = record
-			}
-			return
-		},
 	}
 }
 
