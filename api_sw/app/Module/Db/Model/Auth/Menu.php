@@ -14,7 +14,7 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $menuIcon 图标
  * @property string $menuUrl 链接
  * @property int $level 层级
- * @property string $pidPath 层级路径
+ * @property string $idPath 层级路径
  * @property string $extraData 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
  * @property int $sort 排序值（从小到大排序，默认50，范围0-100）
  * @property int $isStop 是否停用：0否 1是
@@ -32,7 +32,7 @@ class Menu extends AbstractModel
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['menuId', 'sceneId', 'pid', 'menuName', 'menuIcon', 'menuUrl', 'level', 'pidPath', 'extraData', 'sort', 'isStop', 'updatedAt', 'createdAt'];
+    protected array $fillable = ['menuId', 'sceneId', 'pid', 'menuName', 'menuIcon', 'menuUrl', 'level', 'idPath', 'extraData', 'sort', 'isStop', 'updatedAt', 'createdAt'];
 
     /**
      * The attributes that should be cast to native types.

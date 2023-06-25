@@ -362,7 +362,7 @@ DROP TABLE IF EXISTS `game_category`;
 CREATE TABLE `game_category`  (
   `gameCategoryId` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `pid` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '父级id',
-  `pidPath` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '层级路径',
+  `idPath` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '层级路径',
   `level` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '层级',
   `gameCategoryName` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
   `gameCategoryIcon` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '分类图标',

@@ -48,7 +48,7 @@ type MenuItem struct {
 	MenuIcon  string      `json:"menuIcon" dc:"菜单图标"`
 	ExtraData string      `json:"ExtraData" dc:"额外数据"`
 	Level     uint        `json:"level" dc:"层级"`
-	PidPath   string      `json:"pidPath" dc:"父级路径"`
+	IdPath    string      `json:"idPath" dc:"层级路径"`
 	Sort      uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
 	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
@@ -81,7 +81,7 @@ type MenuInfo struct {
 	MenuIcon  string      `json:"menuIcon" dc:"菜单图标"`
 	ExtraData string      `json:"extraData" dc:"额外数据"`
 	Level     uint        `json:"level" dc:"层级"`
-	PidPath   string      `json:"pidPath" dc:"父级路径"`
+	IdPath    string      `json:"idPath" dc:"层级路径"`
 	Sort      uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
 	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`

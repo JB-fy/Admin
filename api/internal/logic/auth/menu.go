@@ -90,12 +90,11 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
 
-	pInfo := gdb.Record{}
 	_, okPid := data[`pid`]
 	if okPid {
 		pid := gconv.Int(data[`pid`])
 		if pid > 0 {
-			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(`sceneId`, `pidPath`, `level`).One()
+			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(`sceneId`, `idPath`, `level`).One()
 			if len(pInfo) == 0 {
 				err = utils.NewErrorCode(ctx, 29999998, ``)
 				return
@@ -109,26 +108,6 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 	}
 
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
-	}
-
-	update := map[string]interface{}{
-		`pidPath`: `0-` + gconv.String(id),
-		`level`:   1,
-	}
-	if len(pInfo) > 0 {
-		update = map[string]interface{}{
-			`pidPath`: pInfo[`pidPath`].String() + `-` + gconv.String(id),
-			`level`:   pInfo[`level`].Int() + 1,
-		}
-	}
-	daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(update).Update()
 	return
 }
 
@@ -147,7 +126,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		pInfo := gdb.Record{}
 		pid := gconv.Int(data[`pid`])
 		if pid > 0 {
-			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(`sceneId`, `pidPath`, `level`).One()
+			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(`sceneId`, `idPath`, `level`).One()
 			if len(pInfo) == 0 {
 				err = utils.NewErrorCode(ctx, 29999998, ``)
 				return
@@ -170,14 +149,14 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 						err = utils.NewErrorCode(ctx, 89999998, ``)
 						return
 					}
-					if garray.NewStrArrayFrom(gstr.Split(pInfo[`pidPath`].String(), `-`)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
+					if garray.NewStrArrayFrom(gstr.Split(pInfo[`idPath`].String(), `-`)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
 						err = utils.NewErrorCode(ctx, 29999996, ``)
 						return
 					}
-					updateChildList[oldInfo[`pidPath`].String()] = map[string]interface{}{
-						`pidPathOfChild`: map[string]interface{}{
-							`newVal`: pInfo[`pidPath`].String() + `-` + oldInfo[daoThis.PrimaryKey()].String(),
-							`oldVal`: oldInfo[`pidPath`],
+					updateChildList[oldInfo[`idPath`].String()] = map[string]interface{}{
+						`idPathOfChild`: map[string]interface{}{
+							`newVal`: pInfo[`idPath`].String() + `-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`oldVal`: oldInfo[`idPath`],
 						},
 						`levelOfChild`: map[string]interface{}{
 							`newVal`: pInfo[`level`].Int() + 1,
@@ -185,10 +164,10 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 						},
 					}
 				} else {
-					updateChildList[oldInfo[`pidPath`].String()] = map[string]interface{}{
-						`pidPathOfChild`: map[string]interface{}{
+					updateChildList[oldInfo[`idPath`].String()] = map[string]interface{}{
+						`idPathOfChild`: map[string]interface{}{
 							`newVal`: `0-` + oldInfo[daoThis.PrimaryKey()].String(),
-							`oldVal`: oldInfo[`pidPath`],
+							`oldVal`: oldInfo[`idPath`],
 						},
 						`levelOfChild`: map[string]interface{}{
 							`newVal`: 1,
@@ -217,9 +196,9 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 	}
 
 	if len(updateChildList) > 0 {
-		//修改pid时，更新所有子孙级的pidPath和level
-		for pidPath, update := range updateChildList {
-			daoThis.ParseDbCtx(ctx).WhereLike(`pidPath`, pidPath+`%`).Handler(daoThis.ParseUpdate(update)).Update()
+		//修改pid时，更新所有子孙级的idPath和level
+		for idPath, update := range updateChildList {
+			daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, idPath+`%`).Handler(daoThis.ParseUpdate(update)).Update()
 		}
 	}
 	return

@@ -15,7 +15,7 @@ use Hyperf\DbConnection\Db;
  * @property string $menuIcon 图标
  * @property string $menuUrl 链接
  * @property int $level 层级
- * @property string $pidPath 层级路径
+ * @property string $idPath 层级路径
  * @property string $extraData 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
  * @property int $sort 排序值（从小到大排序，默认50，范围0-100）
  * @property int $isStop 是否停用：0否 1是
@@ -36,8 +36,8 @@ class Menu extends AbstractDao
     protected function parseUpdateOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'pidPathOfChild':  //更新所有子孙级的pidPath。参数：['newVal'=>父级新pidPath, 'oldVal'=>父级旧pidPath]
-                $this->update[$this->getTable() . '.pidPath'] = Db::raw('REPLACE(' . $this->getTable() . '.pidPath, \'' . $value['oldVal'] . '\', \'' . $value['newVal'] . '\')');
+            case 'idPathOfChild':  //更新所有子孙级的idPath。参数：['newVal'=>父级新idPath, 'oldVal'=>父级旧idPath]
+                $this->update[$this->getTable() . '.idPath'] = Db::raw('REPLACE(' . $this->getTable() . '.idPath, \'' . $value['oldVal'] . '\', \'' . $value['newVal'] . '\')');
                 return true;
             case 'levelOfChild':    //更新所有子孙级的level。参数：['newVal'=>父级新level, 'oldVal'=>父级旧level]
                 $this->update[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level + ' . ($value['newVal'] - $value['oldVal']));

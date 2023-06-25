@@ -18,7 +18,7 @@ class Menu extends AbstractService
     public function create(array $data)
     {
         if (!empty($data['pid'])) {
-            $pInfo = $this->getDao()->parseField(['pidPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->info();
+            $pInfo = $this->getDao()->parseField(['idPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->info();
             if (empty($pInfo)) {
                 throwFailJson(29999998);
             }
@@ -28,10 +28,10 @@ class Menu extends AbstractService
             throwFailJson();
         }
         if (!empty($data['pid'])) {
-            $update['pidPath'] = $pInfo->pidPath . '-' . $id;
+            $update['idPath'] = $pInfo->idPath . '-' . $id;
             $update['level'] = $pInfo->level + 1;
         } else {
-            $update['pidPath'] = '0-' . $id;
+            $update['idPath'] = '0-' . $id;
             $update['level'] = 1;
         }
         $this->getDao()->parseFilter(['id' => $id])->parseUpdate($update)->update();
@@ -57,25 +57,25 @@ class Menu extends AbstractService
                 }
                 if ($data['pid'] != $oldInfo->pid) {
                     if ($data['pid'] > 0) {
-                        $pInfo = $this->getDao()->parseField(['pidPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->info();
+                        $pInfo = $this->getDao()->parseField(['idPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->info();
                         if (empty($pInfo)) {
                             throwFailJson(29999998);
                         }
-                        if (in_array($oldInfo->menuId, explode('-',  $pInfo->pidPath))) {   //父级不能是自身的子孙级
+                        if (in_array($oldInfo->menuId, explode('-',  $pInfo->idPath))) {   //父级不能是自身的子孙级
                             throwFailJson(29999996);
                         }
-                        $data['pidPath'] =  $pInfo->pidPath . '-' . $oldInfo->menuId;
+                        $data['idPath'] =  $pInfo->idPath . '-' . $oldInfo->menuId;
                         $data['level'] = $pInfo->level + 1;
                     } else {
-                        $data['pidPath'] = '0-' . $oldInfo->menuId;
+                        $data['idPath'] = '0-' . $oldInfo->menuId;
                         $data['level'] = 1;
                     }
-                    //修改pid时，更新所有子孙级的pidPath和level
-                    $this->getDao()->parseFilter([['pidPath', 'like', $oldInfo->pidPath . '%']])
+                    //修改pid时，更新所有子孙级的idPath和level
+                    $this->getDao()->parseFilter([['idPath', 'like', $oldInfo->idPath . '%']])
                         ->parseUpdate([
-                            'pidPathOfChild' => [
-                                'newVal' => $data['pidPath'],
-                                'oldVal' => $oldInfo->pidPath
+                            'idPathOfChild' => [
+                                'newVal' => $data['idPath'],
+                                'oldVal' => $oldInfo->idPath
                             ],
                             'levelOfChild' => [
                                 'newVal' => $data['level'],

@@ -106,9 +106,9 @@ const table = reactive({
         sortable: true,
     },
     {
-        dataKey: 'pidPath',
-        title: t('auth.menu.name.pidPath'),
-        key: 'pidPath',
+        dataKey: 'idPath',
+        title: t('auth.menu.name.idPath'),
+        key: 'idPath',
         width: 150,
         align: 'center',
         hidden: true

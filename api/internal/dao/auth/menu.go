@@ -6,7 +6,9 @@ package dao
 
 import (
 	"api/internal/dao/auth/internal"
+	"api/internal/utils"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"strings"
 
@@ -14,6 +16,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -66,10 +69,21 @@ func (daoThis *menuDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[str
 func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
+		hookData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
+			case `pid`:
+				insertData[k] = v
+				if gconv.Int(v) > 0 {
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(`idPath`, `level`).One()
+					hookData[`pIdPath`] = pInfo[`idPath`].String()
+					hookData[`pLevel`] = pInfo[`level`].Int()
+				} else {
+					hookData[`pIdPath`] = `0`
+					hookData[`pLevel`] = 0
+				}
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -79,7 +93,39 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool)
 			}
 		}
 		m = m.Data(insertData)
+		m = m.Hook(daoThis.HookInsert(hookData))
 		return m
+	}
+}
+
+// hook insert
+func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler {
+	return gdb.HookHandler{
+		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+				if len(match) > 0 {
+					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+					return
+				}
+				return
+			}
+			id, _ := result.LastInsertId()
+			updateSelfData := map[string]interface{}{}
+			for k, v := range data {
+				switch k {
+				case `pIdPath`:
+					updateSelfData[`idPath`] = gconv.String(v) + `-` + gconv.String(id)
+				case `pLevel`:
+					updateSelfData[`level`] = gconv.Int(v) + 1
+				}
+			}
+			if len(updateSelfData) > 0 {
+				daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(updateSelfData).Update()
+			}
+			return
+		},
 	}
 }
 
@@ -93,17 +139,18 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
 			case `pid`:
 				updateData[daoThis.Table()+`.`+k] = v
+				pIdPath := `0`
+				pLevel := 0
 				if gconv.Int(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(`pidPath`, `level`).One()
-					updateData[daoThis.Table()+`.pidPath`] = gdb.Raw(`CONCAT('` + pInfo[`pidPath`].String() + `-', ` + daoThis.PrimaryKey() + `)`)
-					updateData[daoThis.Table()+`.level`] = pInfo[`level`].Int() + 1
-				} else {
-					updateData[daoThis.Table()+`.pidPath`] = gdb.Raw(`CONCAT('0-', ` + daoThis.PrimaryKey() + `)`)
-					updateData[daoThis.Table()+`.level`] = 1
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(`idPath`, `level`).One()
+					pIdPath = pInfo[`idPath`].String()
+					pLevel = pInfo[`level`].Int()
 				}
-			case `pidPathOfChild`: //更新所有子孙级的pidPath。参数：map[string]interface{}{`newVal`: `父级新pidPath`, `oldVal`:`父级旧pidPath`}
+				updateData[daoThis.Table()+`.idPath`] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
+				updateData[daoThis.Table()+`.level`] = pLevel + 1
+			case `idPathOfChild`: //更新所有子孙级的idPath。参数：map[string]interface{}{`newVal`: `父级新idPath`, `oldVal`:`父级旧idPath`}
 				val := gconv.Map(v)
-				updateData[daoThis.Table()+`.`+daoThis.Columns().PidPath] = gdb.Raw(`REPLACE(` + daoThis.Table() + `.` + daoThis.Columns().PidPath + `, '` + gconv.String(val[`oldVal`]) + `', '` + gconv.String(val[`newVal`]) + `')`)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`REPLACE(` + daoThis.Table() + `.` + daoThis.Columns().IdPath + `, '` + gconv.String(val[`oldVal`]) + `', '` + gconv.String(val[`newVal`]) + `')`)
 			case `levelOfChild`: //更新所有子孙级的level。参数：map[string]interface{}{`newVal`: 父级新level, `oldVal`:父级旧level}
 				val := gconv.Map(v)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = gdb.Raw(daoThis.Table() + `.` + daoThis.Columns().Level + ` + ` + gconv.String(gconv.Int(val[`newVal`])-gconv.Int(val[`oldVal`])))
@@ -183,6 +230,36 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			m = m.Hook(daoThis.HookSelect(afterField))
 		}
 		return m
+	}
+}
+
+// hook select
+func (daoThis *menuDao) HookSelect(afterField []string) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for index, record := range result {
+				for _, v := range afterField {
+					switch v {
+					/* case `xxxx`:
+					record[v] = gvar.New(``) */
+					case `showMenu`:
+						if record[`i18n`] == nil {
+							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
+						} else {
+							i18n := map[string]interface{}{}
+							json.Unmarshal([]byte(record[`i18n`].String()), &i18n)
+							record[`i18n`] = gvar.New(i18n)
+						}
+					}
+				}
+				result[index] = record
+			}
+			return
+		},
 	}
 }
 
@@ -341,36 +418,6 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 			}
 		}
 		return m
-	}
-}
-
-// hook select
-func (daoThis *menuDao) HookSelect(afterField []string) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
-					case `showMenu`:
-						if record[`i18n`] == nil {
-							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
-						} else {
-							i18n := map[string]interface{}{}
-							json.Unmarshal([]byte(record[`i18n`].String()), &i18n)
-							record[`i18n`] = gvar.New(i18n)
-						}
-					}
-				}
-				result[index] = record
-			}
-			return
-		},
 	}
 }
 

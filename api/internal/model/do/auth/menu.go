@@ -19,7 +19,7 @@ type Menu struct {
 	MenuIcon  interface{} // 图标
 	MenuUrl   interface{} // 链接
 	Level     interface{} // 层级
-	PidPath   interface{} // 层级路径
+	IdPath   interface{} // 层级路径
 	ExtraData interface{} // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
 	Sort      interface{} // 排序值（从小到大排序，默认50，范围0-100）
 	IsStop    interface{} // 是否停用：0否 1是
