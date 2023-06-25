@@ -261,7 +261,7 @@ func (daoThis *actionRelToSceneDao) ParseJoin(joinCode string, joinTableArr *[]s
 	}
 }
 
-// hook查询
+// hook select
 func (daoThis *actionRelToSceneDao) HookSelect(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {

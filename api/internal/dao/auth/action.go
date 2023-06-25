@@ -314,7 +314,7 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 	}
 }
 
-// hook查询
+// hook select
 func (daoThis *actionDao) HookSelect(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {

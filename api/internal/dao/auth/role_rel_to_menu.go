@@ -261,7 +261,7 @@ func (daoThis *roleRelToMenuDao) ParseJoin(joinCode string, joinTableArr *[]stri
 	}
 }
 
-// hook查询
+// hook select
 func (daoThis *roleRelToMenuDao) HookSelect(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
