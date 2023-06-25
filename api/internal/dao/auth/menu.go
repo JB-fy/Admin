@@ -187,6 +187,10 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
+			/* var idArr []*gvar.Var
+			if len(data) > 0 {
+				idArr, _ = daoThis.ParseDbCtx(ctx).Where(in.Condition, in.Args[len(in.Args)-gstr.Count(in.Condition, `?`):]...).Array(daoThis.PrimaryKey())
+			} */
 			result, err = in.Next(ctx)
 			if err != nil {
 				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
@@ -199,6 +203,11 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 
 			/* for k, v := range data {
 				switch k {
+				case `xxxx`:
+					xxxx := gconv.SliceInt(v)
+					for _, id := range idArr {
+					}
+					row = 1 //有可能只改menuIdArr
 				}
 			} */
 
