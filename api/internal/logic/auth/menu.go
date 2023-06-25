@@ -126,7 +126,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		pInfo := gdb.Record{}
 		pid := gconv.Int(data[`pid`])
 		if pid > 0 {
-			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(`sceneId`, `idPath`, `level`).One()
+			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if len(pInfo) == 0 {
 				err = utils.NewErrorCode(ctx, 29999998, ``)
 				return

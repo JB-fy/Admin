@@ -77,9 +77,9 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool)
 			case `pid`:
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(`idPath`, `level`).One()
-					hookData[`pIdPath`] = pInfo[`idPath`].String()
-					hookData[`pLevel`] = pInfo[`level`].Int()
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
+					hookData[`pIdPath`] = pInfo[daoThis.Columns().IdPath].String()
+					hookData[`pLevel`] = pInfo[daoThis.Columns().Level].Int()
 				} else {
 					hookData[`pIdPath`] = `0`
 					hookData[`pLevel`] = 0
@@ -116,9 +116,9 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 			for k, v := range data {
 				switch k {
 				case `pIdPath`:
-					updateSelfData[`idPath`] = gconv.String(v) + `-` + gconv.String(id)
+					updateSelfData[daoThis.Columns().IdPath] = gconv.String(v) + `-` + gconv.String(id)
 				case `pLevel`:
-					updateSelfData[`level`] = gconv.Int(v) + 1
+					updateSelfData[daoThis.Columns().Level] = gconv.Int(v) + 1
 				}
 			}
 			if len(updateSelfData) > 0 {
@@ -142,12 +142,12 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 				pIdPath := `0`
 				pLevel := 0
 				if gconv.Int(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(`idPath`, `level`).One()
-					pIdPath = pInfo[`idPath`].String()
-					pLevel = pInfo[`level`].Int()
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
+					pIdPath = pInfo[daoThis.Columns().IdPath].String()
+					pLevel = pInfo[daoThis.Columns().Level].Int()
 				}
-				updateData[daoThis.Table()+`.idPath`] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
-				updateData[daoThis.Table()+`.level`] = pLevel + 1
+				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = pLevel + 1
 			case `idPathOfChild`: //更新所有子孙级的idPath。参数：map[string]interface{}{`newVal`: `父级新idPath`, `oldVal`:`父级旧idPath`}
 				val := gconv.Map(v)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`REPLACE(` + daoThis.Table() + `.` + daoThis.Columns().IdPath + `, '` + gconv.String(val[`oldVal`]) + `', '` + gconv.String(val[`newVal`]) + `')`)
@@ -293,7 +293,6 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := v.(map[string]interface{})
-
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().SceneId, val[`sceneId`])
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
 				switch val[`sceneCode`].(string) {
