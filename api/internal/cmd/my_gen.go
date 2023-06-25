@@ -612,7 +612,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 		tplLogic += `// 新增
 func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
-	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert([]map[string]interface{}{data})).InsertAndGetId()
+	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
 	if err != nil {
 		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
 		if len(match) > 0 {

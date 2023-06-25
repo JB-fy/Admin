@@ -64,29 +64,22 @@ func (daoThis *adminDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[st
 }
 
 // 解析insert
-func (daoThis *adminDao) ParseInsert(insert []map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := make([]map[string]interface{}, len(insert))
-		for index, item := range insert {
-			insertData[index] = map[string]interface{}{}
-			for k, v := range item {
-				switch k {
-				case `id`:
-					insertData[index][daoThis.PrimaryKey()] = v
-				default:
-					//数据库不存在的字段过滤掉，未传值默认true
-					if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
-						continue
-					}
-					insertData[index][k] = v
+		insertData := map[string]interface{}{}
+		for k, v := range insert {
+			switch k {
+			case `id`:
+				insertData[daoThis.PrimaryKey()] = v
+			default:
+				//数据库不存在的字段过滤掉，未传值默认true
+				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
+					continue
 				}
+				insertData[k] = v
 			}
 		}
-		if len(insertData) == 1 {
-			m = m.Data(insertData[0])
-		} else {
-			m = m.Data(insertData)
-		}
+		m = m.Data(insertData)
 		return m
 	}
 }
