@@ -269,14 +269,14 @@ func (daoThis *roleRelToActionDao) AfterField(afterField []string) gdb.HookHandl
 			if err != nil {
 				return
 			}
-			for i, record := range result {
+			for index, record := range result {
 				for _, v := range afterField {
 					switch v {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
 					}
 				}
-				result[i] = record
+				result[index] = record
 			}
 			return
 		},

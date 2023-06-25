@@ -349,7 +349,7 @@ func (daoThis *menuDao) AfterField(afterField []string) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			for i, record := range result {
+			for index, record := range result {
 				for _, v := range afterField {
 					switch v {
 					/* case `xxxx`:
@@ -364,7 +364,7 @@ func (daoThis *menuDao) AfterField(afterField []string) gdb.HookHandler {
 						}
 					}
 				}
-				result[i] = record
+				result[index] = record
 			}
 			return
 		},
