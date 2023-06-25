@@ -151,7 +151,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableAr
 			}
 		}
 		if len(afterField) > 0 {
-			m = m.Hook(daoThis.AfterField(afterField))
+			m = m.Hook(daoThis.HookSelect(afterField))
 		}
 		return m
 	}
@@ -261,8 +261,8 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseJoin(joinCode string, joinTableAr
 	}
 }
 
-// 获取数据后，再处理的字段
-func (daoThis *roleRelOfPlatformAdminDao) AfterField(afterField []string) gdb.HookHandler {
+// hook查询
+func (daoThis *roleRelOfPlatformAdminDao) HookSelect(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)

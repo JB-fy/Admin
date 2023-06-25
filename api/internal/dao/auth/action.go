@@ -157,7 +157,7 @@ func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb
 			}
 		}
 		if len(afterField) > 0 {
-			m = m.Hook(daoThis.AfterField(afterField))
+			m = m.Hook(daoThis.HookSelect(afterField))
 		}
 		return m
 	}
@@ -314,8 +314,8 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 	}
 }
 
-// 获取数据后，再处理的字段
-func (daoThis *actionDao) AfterField(afterField []string) gdb.HookHandler {
+// hook查询
+func (daoThis *actionDao) HookSelect(afterField []string) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
