@@ -163,12 +163,7 @@ func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]interface{}, jo
 		for k, v := range filter {
 			switch k {
 			case `id`, `idArr`:
-				val := gconv.SliceInt(v)
-				if len(val) == 1 {
-					m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), val[0])
-				} else {
-					m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
-				}
+				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
@@ -192,26 +187,17 @@ func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]interface{}, jo
 				}
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
-				if daoThis.ColumnArrG().Contains(kArr[0]) {
-					if len(kArr) == 1 {
-						if gstr.ToLower(gstr.SubStr(kArr[0], -2)) == `id` {
-							val := gconv.SliceInt(v)
-							if len(val) == 1 {
-								m = m.Where(daoThis.Table()+`.`+k, val[0])
-							} else {
-								m = m.Where(daoThis.Table()+`.`+k, v)
-							}
-						} else if gstr.ToLower(gstr.SubStr(kArr[0], -4)) == `name` {
-							m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
-						} else {
-							m = m.Where(daoThis.Table()+`.`+k, v)
-						}
-					} else {
-						m = m.Where(daoThis.Table()+`.`+k, v)
-					}
-				} else {
+				if !daoThis.ColumnArrG().Contains(kArr[0]) {
 					m = m.Where(k, v)
+					continue
 				}
+				if len(kArr) == 1 {
+					if gstr.SubStr(gstr.CaseCamel(kArr[0]), -4) == `Name` {
+						m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+						continue
+					}
+				}
+				m = m.Where(daoThis.Table()+`.`+k, v)
 			}
 		}
 		return m
