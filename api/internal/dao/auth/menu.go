@@ -184,7 +184,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 }
 
 // hook update
-func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+func (daoThis *menuDao) HookUpdate(data map[string]interface{}) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			/* var idArr []*gvar.Var
