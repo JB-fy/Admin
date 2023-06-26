@@ -155,7 +155,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 					}
 					updateChildList[oldInfo[`idPath`].String()] = map[string]interface{}{
 						`idPathOfChild`: map[string]interface{}{
-							`newVal`: pInfo[`idPath`].String() + `-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`newVal`: pInfo[`idPath`].String() + `-` + id.String(),
 							`oldVal`: oldInfo[`idPath`],
 						},
 						`levelOfChild`: map[string]interface{}{
@@ -166,7 +166,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				} else {
 					updateChildList[oldInfo[`idPath`].String()] = map[string]interface{}{
 						`idPathOfChild`: map[string]interface{}{
-							`newVal`: `0-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`newVal`: `0-` + id.String(),
 							`oldVal`: oldInfo[`idPath`],
 						},
 						`levelOfChild`: map[string]interface{}{

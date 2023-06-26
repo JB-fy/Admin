@@ -182,7 +182,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 }
 
 // hook update
-func (daoThis *menuDao) HookUpdate(update map[string]interface{}, idArr ...int) gdb.HookHandler {
+func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			/* //不能这样拿idArr，联表时会有bug
@@ -215,6 +215,15 @@ func (daoThis *menuDao) HookUpdate(update map[string]interface{}, idArr ...int) 
 				return
 			}
 
+			/* for k, v := range data {
+				switch k {
+				case `updateChildList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`idPathOfChild`: map[string]interface{}{`newVal`: `父级新idPath`, `oldVal`:`父级旧idPath`}, `levelOfChild`: map[string]interface{}{`newVal`: 父级新level, `oldVal`:父级旧level}}
+					val := v.(map[string]map[string]interface{})
+					for idPath, update := range val {
+						daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, idPath+`%`).Handler(daoThis.ParseUpdate(update)).Update()
+					}
+				}
+			} */
 			return
 		},
 	}
