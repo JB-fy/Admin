@@ -177,11 +177,15 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				}
 			}
 		}
+
+		if len(updateChildList) > 0 {
+			hookData[`updateChildList`] = updateChildList
+		}
 	}
 
 	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{}))
 	if len(hookData) > 0 {
-		model = model.Hook(daoThis.HookUpdate(data, gconv.SliceInt(idArr)...))
+		model = model.Hook(daoThis.HookUpdate(hookData /* , gconv.SliceInt(idArr)... */))
 	}
 	_, err = model.UpdateAndGetAffected()
 	if err != nil {
@@ -211,6 +215,6 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete( /* gconv.SliceInt(idArr)... */ )).Delete()
 	return
 }
