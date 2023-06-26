@@ -12,29 +12,13 @@ import (
 )
 
 type (
-	IRole interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-	}
-	IScene interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
-	}
 	IAction interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (err error)
 		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
 	}
 	IMenu interface {
@@ -42,16 +26,32 @@ type (
 		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (err error)
+	}
+	IRole interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (err error)
+	}
+	IScene interface {
+		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
+		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
+		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
+		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (err error)
 	}
 )
 
 var (
+	localMenu   IMenu
 	localRole   IRole
 	localScene  IScene
 	localAction IAction
-	localMenu   IMenu
 )
 
 func Action() IAction {

@@ -137,7 +137,7 @@ func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpd
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Action().Update(ctx, filter, data)
+	err = service.Action().Update(ctx, filter, data)
 	return
 }
 
@@ -154,6 +154,6 @@ func (controllerThis *Action) Delete(ctx context.Context, req *apiAuth.ActionDel
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Action().Delete(ctx, filter)
+	err = service.Action().Delete(ctx, filter)
 	return
 }

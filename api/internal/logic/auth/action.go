@@ -107,7 +107,7 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 }
 
 // 修改
-func (logicThis *sAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
 	daoThis := daoAuth.Action
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -124,7 +124,7 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 		}
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 
 	_, okSceneIdArr := data[`sceneIdArr`]
 	if okSceneIdArr {
@@ -143,7 +143,7 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 }
 
 // 删除
-func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
 	daoThis := daoAuth.Action
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -155,7 +155,7 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 	if err != nil {
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)

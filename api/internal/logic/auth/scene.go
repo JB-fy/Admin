@@ -99,7 +99,7 @@ func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}
 }
 
 // 修改
-func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
 	daoThis := daoAuth.Scene
 
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data)).Update()
@@ -111,7 +111,7 @@ func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface
 		}
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)
@@ -121,14 +121,14 @@ func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface
 }
 
 // 删除
-func (logicThis *sScene) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sScene) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
 	daoThis := daoAuth.Scene
 
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)

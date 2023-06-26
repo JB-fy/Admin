@@ -629,7 +629,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 
 	if !option.NoUpdate {
 		tplLogic += `// 修改
-func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
@@ -640,7 +640,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter ma
 		}
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
 		return
@@ -653,13 +653,13 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter ma
 
 	if !option.NoDelete {
 		tplLogic += `// 删除
-func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
 	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
 		return
@@ -906,7 +906,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCaseCamel}().Update(r.GetCtx(), filter, data)
+		err = service.{TplTableNameCaseCamel}().Update(r.GetCtx(), filter, data)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return
@@ -942,7 +942,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 		}
 		/**--------权限验证 结束--------**/
 
-		_, err = service.{TplTableNameCaseCamel}().Delete(r.GetCtx(), filter)
+		err = service.{TplTableNameCaseCamel}().Delete(r.GetCtx(), filter)
 		if err != nil {
 			utils.HttpFailJson(r, err)
 			return

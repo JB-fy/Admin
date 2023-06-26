@@ -135,7 +135,7 @@ func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpd
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Corn().Update(ctx, filter, data)
+	err = service.Corn().Update(ctx, filter, data)
 	return
 }
 
@@ -152,6 +152,6 @@ func (controllerThis *Corn) Delete(ctx context.Context, req *apiPlatform.CornDel
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Corn().Delete(ctx, filter)
+	err = service.Corn().Delete(ctx, filter)
 	return
 }

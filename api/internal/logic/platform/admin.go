@@ -120,7 +120,7 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 }
 
 // 修改
-func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -161,7 +161,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 		}
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 
 	if okRoleIdArr {
 		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
@@ -179,7 +179,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 }
 
 // 删除
-func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -191,7 +191,7 @@ func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface
 	if err != nil {
 		return
 	}
-	row, _ = result.RowsAffected()
+	row, _ := result.RowsAffected()
 
 	if row == 0 {
 		err = utils.NewErrorCode(ctx, 99999999, ``)

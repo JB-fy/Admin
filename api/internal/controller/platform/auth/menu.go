@@ -137,7 +137,7 @@ func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateR
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Menu().Update(ctx, filter, data)
+	err = service.Menu().Update(ctx, filter, data)
 	return
 }
 
@@ -154,7 +154,7 @@ func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteR
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Menu().Delete(ctx, filter)
+	err = service.Menu().Delete(ctx, filter)
 	return
 }
 

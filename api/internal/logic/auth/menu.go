@@ -111,7 +111,7 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 }
 
 // 修改
-func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -119,6 +119,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 
+	hookData := map[string]interface{}{}
 	updateChildList := map[string]map[string]interface{}{}
 	_, okPid := data[`pid`]
 	if okPid {
@@ -178,7 +179,11 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		}
 	}
 
-	row, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).UpdateAndGetAffected()
+	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{}))
+	if len(hookData) > 0 {
+		model = model.Hook(daoThis.HookUpdate(data, gconv.SliceInt(idArr)...))
+	}
+	_, err = model.UpdateAndGetAffected()
 	if err != nil {
 		return
 	}
@@ -193,7 +198,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 }
 
 // 删除
-func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -206,15 +211,6 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
-	if err != nil {
-		return
-	}
-	row, _ = result.RowsAffected()
-
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
-	}
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }

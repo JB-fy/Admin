@@ -131,7 +131,6 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 // 解析update
 func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		hookData := map[string]interface{}{}
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
@@ -178,16 +177,16 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 		data := []interface{}{strings.Join(fieldArr, `,`)}
 		data = append(data, valueArr...)
 		m = m.Data(data...)
-		m = m.Hook(daoThis.HookUpdate(hookData))
 		return m
 	}
 }
 
 // hook update
-func (daoThis *menuDao) HookUpdate(data map[string]interface{}) gdb.HookHandler {
+func (daoThis *menuDao) HookUpdate(update map[string]interface{}, idArr ...int) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
-			/* var idArr []*gvar.Var
+			/* //不能这样拿idArr，联表时会有bug
+			var idArr []*gvar.Var
 			if len(data) > 0 {
 				idArr, _ = daoThis.ParseDbCtx(ctx).Where(in.Condition, in.Args[len(in.Args)-gstr.Count(in.Condition, `?`):]...).Array(daoThis.PrimaryKey())
 			} */
@@ -201,7 +200,7 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}) gdb.HookHandler 
 			}
 			row, _ := result.RowsAffected()
 
-			/* for k, v := range data {
+			/* for k, v := range update {
 				switch k {
 				case `xxxx`:
 					xxxx := gconv.SliceInt(v)
@@ -213,7 +212,33 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}) gdb.HookHandler 
 
 			if row == 0 {
 				err = utils.NewErrorCode(ctx, 99999999, ``)
+				return
 			}
+
+			return
+		},
+	}
+}
+
+// hook delete
+func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
+	return gdb.HookHandler{
+		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
+			/* //不能这样拿idArr，联表时会有bug
+			var idArr []*gvar.Var
+			if len(data) > 0 {
+				idArr, _ = daoThis.ParseDbCtx(ctx).Where(in.Condition, in.Args[len(in.Args)-gstr.Count(in.Condition, `?`):]...).Array(daoThis.PrimaryKey())
+			} */
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			row, _ := result.RowsAffected()
+			if row == 0 {
+				err = utils.NewErrorCode(ctx, 99999999, ``)
+				return
+			}
+
 			return
 		},
 	}

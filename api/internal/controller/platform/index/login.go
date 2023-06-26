@@ -56,7 +56,7 @@ func (controllerThis *Login) Update(ctx context.Context, req *apiIndex.LoginUpda
 	filter := map[string]interface{}{`id`: loginInfo[`adminId`]}
 	/**--------参数处理 结束--------**/
 
-	_, err = service.Admin().Update(ctx, filter, data)
+	err = service.Admin().Update(ctx, filter, data)
 	return
 }
 
