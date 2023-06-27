@@ -180,7 +180,7 @@ func (daoThis *actionDao) HookUpdate(data map[string]interface{}, idArr ...int) 
 			}
 
 			/* if row == 0 {
-				err = utils.NewErrorCode(ctx, 99999999, ``)
+				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return
@@ -198,7 +198,7 @@ func (daoThis *actionDao) HookDelete(idArr ...int) gdb.HookHandler {
 			}
 			row, _ := result.RowsAffected()
 			if row == 0 {
-				//err = utils.NewErrorCode(ctx, 99999999, ``)
+				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			}
 

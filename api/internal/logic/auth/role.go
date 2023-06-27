@@ -8,7 +8,6 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -110,23 +109,6 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 	}
 
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
-	}
-
-	if okMenuIdArr {
-		menuIdArr := gconv.SliceInt(data[`menuIdArr`])
-		daoThis.SaveRelMenu(ctx, menuIdArr, int(id))
-	}
-	if okActionIdArr {
-		actionIdArr := gconv.SliceInt(data[`actionIdArr`])
-		daoThis.SaveRelAction(ctx, actionIdArr, int(id))
-	}
 	return
 }
 
@@ -138,6 +120,7 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
+	hookData := map[string]interface{}{}
 
 	_, okMenuIdArr := data[`menuIdArr`]
 	if okMenuIdArr {
@@ -155,6 +138,8 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 				return
 			}
 		}
+		hookData[`menuIdArr`] = data[`menuIdArr`]
+		delete(data, `menuIdArr`)
 	}
 	_, okActionIdArr := data[`actionIdArr`]
 	if okActionIdArr {
@@ -172,38 +157,15 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 				return
 			}
 		}
+		hookData[`actionIdArr`] = data[`actionIdArr`]
+		delete(data, `actionIdArr`)
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
+	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
+	if len(hookData) > 0 {
+		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
-	row, _ := result.RowsAffected()
-
-	if okMenuIdArr {
-		menuIdArr := gconv.SliceInt(data[`menuIdArr`])
-		for _, id := range idArr {
-			daoThis.SaveRelMenu(ctx, menuIdArr, id.Int())
-		}
-		row = 1 //有可能只改menuIdArr
-	}
-	if okActionIdArr {
-		actionIdArr := gconv.SliceInt(data[`actionIdArr`])
-		for _, id := range idArr {
-			daoThis.SaveRelAction(ctx, actionIdArr, id.Int())
-		}
-		row = 1 //有可能只改actionIdArr
-	}
-
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
-	}
+	_, err = model.UpdateAndGetAffected()
 	return
 }
 
@@ -216,18 +178,6 @@ func (logicThis *sRole) Delete(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
-	if err != nil {
-		return
-	}
-	row, _ := result.RowsAffected()
-
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
-	}
-	daoAuth.RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
-	daoAuth.RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
-	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }

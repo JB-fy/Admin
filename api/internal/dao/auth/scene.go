@@ -159,7 +159,7 @@ func (daoThis *sceneDao) HookUpdate(data map[string]interface{}, idArr ...int) g
 			// row, _ := result.RowsAffected()
 
 			/* if row == 0 {
-				err = utils.NewErrorCode(ctx, 99999999, ``)
+				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return
@@ -177,7 +177,7 @@ func (daoThis *sceneDao) HookDelete(idArr ...int) gdb.HookHandler {
 			}
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
-				//err = utils.NewErrorCode(ctx, 99999999, ``)
+				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return
