@@ -110,6 +110,7 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 				return
 			}
 			id, _ := result.LastInsertId()
+
 			updateSelfData := map[string]interface{}{}
 			for k, v := range data {
 				switch k {
