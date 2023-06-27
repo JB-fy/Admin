@@ -35,16 +35,16 @@ var (
 // 解析分库
 func (daoThis *sceneDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
 	group := daoThis.Group()
-	if len(dbGroupSeldata) > 0 { //分库逻辑
-	}
+	/* if len(dbGroupSeldata) > 0 { //分库逻辑
+	} */
 	return group
 }
 
 // 解析分表
 func (daoThis *sceneDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
 	table := daoThis.Table()
-	if len(dbTableSelData) > 0 { //分表逻辑
-	}
+	/* if len(dbTableSelData) > 0 { //分表逻辑
+	} */
 	return table
 }
 

@@ -120,7 +120,6 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 	}
 
 	hookData := map[string]interface{}{}
-	updateChildList := map[string]map[string]interface{}{}
 	_, okPid := data[`pid`]
 	if okPid {
 		pInfo := gdb.Record{}
@@ -132,6 +131,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				return
 			}
 		}
+		updateChildIdPathAndLevelList := []map[string]interface{}{}
 		for _, id := range idArr {
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
@@ -153,33 +153,25 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 						err = utils.NewErrorCode(ctx, 29999996, ``)
 						return
 					}
-					updateChildList[oldInfo[`idPath`].String()] = map[string]interface{}{
-						`idPathOfChild`: map[string]interface{}{
-							`newVal`: pInfo[`idPath`].String() + `-` + id.String(),
-							`oldVal`: oldInfo[`idPath`],
-						},
-						`levelOfChild`: map[string]interface{}{
-							`newVal`: pInfo[`level`].Int() + 1,
-							`oldVal`: oldInfo[`level`],
-						},
-					}
+					updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
+						`newIdPath`: pInfo[`idPath`].String() + `-` + id.String(),
+						`oldIdPath`: oldInfo[`idPath`],
+						`newLevel`:  pInfo[`level`].Int() + 1,
+						`oldLevel`:  oldInfo[`level`],
+					})
 				} else {
-					updateChildList[oldInfo[`idPath`].String()] = map[string]interface{}{
-						`idPathOfChild`: map[string]interface{}{
-							`newVal`: `0-` + id.String(),
-							`oldVal`: oldInfo[`idPath`],
-						},
-						`levelOfChild`: map[string]interface{}{
-							`newVal`: 1,
-							`oldVal`: oldInfo[`level`],
-						},
-					}
+					updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
+						`newIdPath`: `0-` + id.String(),
+						`oldIdPath`: oldInfo[`idPath`],
+						`newLevel`:  1,
+						`oldLevel`:  oldInfo[`level`],
+					})
 				}
 			}
 		}
 
-		if len(updateChildList) > 0 {
-			hookData[`updateChildList`] = updateChildList
+		if len(updateChildIdPathAndLevelList) > 0 {
+			hookData[`updateChildIdPathAndLevelList`] = updateChildIdPathAndLevelList
 		}
 	}
 
@@ -188,16 +180,6 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		model = model.Hook(daoThis.HookUpdate(hookData /* , gconv.SliceInt(idArr)... */))
 	}
 	_, err = model.UpdateAndGetAffected()
-	if err != nil {
-		return
-	}
-
-	if len(updateChildList) > 0 {
-		//修改pid时，更新所有子孙级的idPath和level
-		for idPath, update := range updateChildList {
-			daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, idPath+`%`).Handler(daoThis.ParseUpdate(update)).Update()
-		}
-	}
 	return
 }
 

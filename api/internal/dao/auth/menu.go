@@ -40,16 +40,16 @@ var (
 // 解析分库
 func (daoThis *menuDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
 	group := daoThis.Group()
-	if len(dbGroupSeldata) > 0 { //分库逻辑
-	}
+	/* if len(dbGroupSeldata) > 0 { //分库逻辑
+	} */
 	return group
 }
 
 // 解析分表
 func (daoThis *menuDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
 	table := daoThis.Table()
-	if len(dbTableSelData) > 0 { //分表逻辑
-	}
+	/* if len(dbTableSelData) > 0 { //分表逻辑
+	} */
 	return table
 }
 
@@ -147,12 +147,6 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 				}
 				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = pLevel + 1
-			case `idPathOfChild`: //更新所有子孙级的idPath。参数：map[string]interface{}{`newVal`: `父级新idPath`, `oldVal`:`父级旧idPath`}
-				val := gconv.Map(v)
-				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`REPLACE(` + daoThis.Table() + `.` + daoThis.Columns().IdPath + `, '` + gconv.String(val[`oldVal`]) + `', '` + gconv.String(val[`newVal`]) + `')`)
-			case `levelOfChild`: //更新所有子孙级的level。参数：map[string]interface{}{`newVal`: 父级新level, `oldVal`:父级旧level}
-				val := gconv.Map(v)
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = gdb.Raw(daoThis.Table() + `.` + daoThis.Columns().Level + ` + ` + gconv.String(gconv.Int(val[`newVal`])-gconv.Int(val[`oldVal`])))
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -215,15 +209,15 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 				return
 			}
 
-			/* for k, v := range data {
+			for k, v := range data {
 				switch k {
-				case `updateChildList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`idPathOfChild`: map[string]interface{}{`newVal`: `父级新idPath`, `oldVal`:`父级旧idPath`}, `levelOfChild`: map[string]interface{}{`newVal`: 父级新level, `oldVal`:父级旧level}}
-					val := v.(map[string]map[string]interface{})
-					for idPath, update := range val {
-						daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, idPath+`%`).Handler(daoThis.ParseUpdate(update)).Update()
+				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{newIdPath: 父级新idPath, oldIdPath: 父级旧idPath, newLevel: 父级新level, oldLevel: 父级旧level}
+					val := v.([]map[string]interface{})
+					for _, v1 := range val {
+						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[`newIdPath`]), gconv.String(v1[`oldIdPath`]), gconv.Int(v1[`newLevel`]), gconv.Int(v1[`oldLevel`]))
 					}
 				}
-			} */
+			}
 			return
 		},
 	}
@@ -492,3 +486,11 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 }
 
 // Fill with you ideas below.
+
+// 当某个菜单修改pid时，更新所有子孙级的idPath和level
+func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
+	daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, oldIdPath+`-%`).Data(g.Map{
+		daoThis.Columns().IdPath: gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + oldIdPath + `', '` + newIdPath + `')`),
+		daoThis.Columns().Level:  gdb.Raw(daoThis.Columns().Level + ` + ` + gconv.String(newLevel-oldLevel)),
+	}).Update()
+}
