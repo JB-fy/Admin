@@ -171,19 +171,13 @@ func (daoThis *sceneDao) HookUpdate(data map[string]interface{}, idArr ...int) g
 func (daoThis *sceneDao) HookDelete(idArr ...int) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
-			/* //不能这样拿idArr，联表时会有bug
-			var idArr []*gvar.Var
-			if len(data) > 0 {
-				idArr, _ = daoThis.ParseDbCtx(ctx).Where(in.Condition, in.Args[len(in.Args)-gstr.Count(in.Condition, `?`):]...).Array(daoThis.PrimaryKey())
-			} */
 			result, err = in.Next(ctx)
 			if err != nil {
 				return
 			}
-			// row, _ := result.RowsAffected()
-
-			/* if row == 0 {
-				err = utils.NewErrorCode(ctx, 99999999, ``)
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
+				//err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return

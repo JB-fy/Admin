@@ -8,7 +8,6 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -89,20 +88,6 @@ func (logicThis *sAction) Info(ctx context.Context, filter map[string]interface{
 func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Action
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
-	}
-
-	_, okSceneIdArr := data[`sceneIdArr`]
-	if okSceneIdArr {
-		sceneIdArr := gconv.SliceInt(data[`sceneIdArr`])
-		daoThis.SaveRelScene(ctx, sceneIdArr, int(id))
-	}
 	return
 }
 
@@ -114,31 +99,19 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
-
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data)).Update()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
-	}
-	row, _ := result.RowsAffected()
+	hookData := map[string]interface{}{}
 
 	_, okSceneIdArr := data[`sceneIdArr`]
 	if okSceneIdArr {
-		sceneIdArr := gconv.SliceInt(data[`sceneIdArr`])
-		for _, id := range idArr {
-			daoThis.SaveRelScene(ctx, sceneIdArr, id.Int())
-		}
-		row = 1 //有可能只改sceneIdArr
+		hookData[`sceneIdArr`] = data[`sceneIdArr`]
+		delete(data, `sceneIdArr`)
 	}
 
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
+	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
+	if len(hookData) > 0 {
+		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
+	_, err = model.UpdateAndGetAffected()
 	return
 }
 
@@ -151,17 +124,7 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 		return
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
-	if err != nil {
-		return
-	}
-	row, _ := result.RowsAffected()
-
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
-	}
-	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }
 

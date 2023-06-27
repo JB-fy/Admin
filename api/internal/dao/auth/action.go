@@ -6,7 +6,9 @@ package dao
 
 import (
 	"api/internal/dao/auth/internal"
+	"api/internal/utils"
 	"context"
+	"database/sql"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -14,6 +16,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -66,10 +69,13 @@ func (daoThis *actionDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[s
 func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
+		hookData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
+			case `sceneIdArr`:
+				hookData[k] = v
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -78,8 +84,33 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...boo
 				insertData[k] = v
 			}
 		}
-		m = m.Data(insertData)
+		m = m.Data(insertData).Hook(daoThis.HookInsert(hookData))
 		return m
+	}
+}
+
+// hook insert
+func (daoThis *actionDao) HookInsert(data map[string]interface{}) gdb.HookHandler {
+	return gdb.HookHandler{
+		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+				if len(match) > 0 {
+					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+				}
+				return
+			}
+			id, _ := result.LastInsertId()
+
+			for k, v := range data {
+				switch k {
+				case `sceneIdArr`:
+					daoThis.SaveRelScene(ctx, gconv.SliceInt(v), int(id))
+				}
+			}
+			return
+		},
 	}
 }
 
@@ -116,6 +147,64 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, fill ...boo
 		data = append(data, valueArr...)
 		m = m.Data(data...)
 		return m
+	}
+}
+
+// hook update
+func (daoThis *actionDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+	return gdb.HookHandler{
+		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
+			/* //不能这样拿idArr，联表时会有bug
+			var idArr []*gvar.Var
+			if len(data) > 0 {
+				idArr, _ = daoThis.ParseDbCtx(ctx).Where(in.Condition, in.Args[len(in.Args)-gstr.Count(in.Condition, `?`):]...).Array(daoThis.PrimaryKey())
+			} */
+			result, err = in.Next(ctx)
+			if err != nil {
+				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
+				if len(match) > 0 {
+					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
+				}
+				return
+			}
+			// row, _ := result.RowsAffected()
+
+			for k, v := range data {
+				switch k {
+				case `sceneIdArr`:
+					relIdArr := gconv.SliceInt(v)
+					for _, id := range idArr {
+						daoThis.SaveRelScene(ctx, relIdArr, id)
+					}
+				}
+			}
+
+			/* if row == 0 {
+				err = utils.NewErrorCode(ctx, 99999999, ``)
+				return
+			} */
+			return
+		},
+	}
+}
+
+// hook delete
+func (daoThis *actionDao) HookDelete(idArr ...int) gdb.HookHandler {
+	return gdb.HookHandler{
+		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			row, _ := result.RowsAffected()
+			if row == 0 {
+				//err = utils.NewErrorCode(ctx, 99999999, ``)
+				return
+			}
+
+			ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+			return
+		},
 	}
 }
 
