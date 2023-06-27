@@ -13,3 +13,4 @@ output/
 manifest/output/
 temp/
 /__debug_bin
+/log/

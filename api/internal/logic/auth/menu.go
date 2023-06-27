@@ -118,8 +118,8 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
-
 	hookData := map[string]interface{}{}
+
 	_, okPid := data[`pid`]
 	if okPid {
 		pInfo := gdb.Record{}
@@ -139,6 +139,8 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 				return
 			}
 			if pid != oldInfo[`pid`].Int() {
+				pIdPath := `0`
+				pLevel := 0
 				if pid > 0 {
 					sceneId := oldInfo[`sceneId`].Int()
 					_, okSceneId := data[`sceneId`]
@@ -153,20 +155,15 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 						err = utils.NewErrorCode(ctx, 29999996, ``)
 						return
 					}
-					updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-						`newIdPath`: pInfo[`idPath`].String() + `-` + id.String(),
-						`oldIdPath`: oldInfo[`idPath`],
-						`newLevel`:  pInfo[`level`].Int() + 1,
-						`oldLevel`:  oldInfo[`level`],
-					})
-				} else {
-					updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-						`newIdPath`: `0-` + id.String(),
-						`oldIdPath`: oldInfo[`idPath`],
-						`newLevel`:  1,
-						`oldLevel`:  oldInfo[`level`],
-					})
+					pIdPath = pInfo[`idPath`].String()
+					pLevel = pInfo[`level`].Int()
 				}
+				updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
+					`newIdPath`: pIdPath + `-` + id.String(),
+					`oldIdPath`: oldInfo[`idPath`],
+					`newLevel`:  pLevel + 1,
+					`oldLevel`:  oldInfo[`level`],
+				})
 			}
 		}
 
@@ -177,7 +174,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 
 	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{}))
 	if len(hookData) > 0 {
-		model = model.Hook(daoThis.HookUpdate(hookData /* , gconv.SliceInt(idArr)... */))
+		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
 	_, err = model.UpdateAndGetAffected()
 	return
@@ -191,12 +188,13 @@ func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{
 		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
+
 	count, _ := daoThis.ParseDbCtx(ctx).Where(`pid`, idArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999995, ``)
 		return
 	}
 
-	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete( /* gconv.SliceInt(idArr)... */ )).Delete()
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }
