@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 17/06/2023 22:33:24
+ Date: 28/06/2023 00:11:52
 */
 
 SET NAMES utf8mb4;
@@ -123,7 +123,7 @@ CREATE TABLE `auth_menu`  (
   `menuIcon` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '图标',
   `menuUrl` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '链接',
   `level` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '层级',
-  `pidPath` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '层级路径',
+  `idPath` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '层级路径',
   `extraData` json NULL COMMENT '额外数据。（json格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}）',
   `sort` tinyint UNSIGNED NOT NULL DEFAULT 50 COMMENT '排序值（从小到大排序，默认50，范围0-100）',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
@@ -138,17 +138,17 @@ CREATE TABLE `auth_menu`  (
 -- Records of auth_menu
 -- ----------------------------
 INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', 'AutoiconEpHomeFilled', '/', 1, '0-1', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 0, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', 'AutoiconEpLock', '', 2, '0-2', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage \", \"zh-cn\": \"权限管理\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', 'AutoiconEpLock', '', 1, '0-2', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage \", \"zh-cn\": \"权限管理\"}}}', 90, 0, '2023-06-24 03:37:38', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (3, 1, 2, '场景', 'AutoiconEpFlag', '/auth/scene', 2, '0-2-3', '{\"i18n\": {\"title\": {\"en\": \"Scene \", \"zh-cn\": \"场景\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (4, 1, 2, '操作', 'AutoiconEpCoordinate', '/auth/action', 2, '0-2-4', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 90, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (5, 1, 2, '菜单', 'AutoiconEpMenu', '/auth/menu', 2, '0-2-5', '{\"i18n\": {\"title\": {\"en\": \"Menu \", \"zh-cn\": \"菜单\"}}}', 80, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (6, 1, 2, '角色', 'AutoiconEpView', '/auth/role', 2, '0-2-6', '{\"i18n\": {\"title\": {\"en\": \"Role \", \"zh-cn\": \"角色\"}}}', 70, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'AutoiconEpUserFilled', '/platform/admin', 2, '0-2-7', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin \", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage \", \"zh-cn\": \"系统管理\"}}}', 90, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (11, 1, 0, '日志管理', 'AutoiconEpDataAnalysis', '', 1, '0-11', '{\"i18n\": {\"title\": {\"en\": \"Log Manage \", \"zh-cn\": \"日志管理\"}}}', 80, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (12, 1, 11, 'Http日志', 'AutoiconEpReading', '/log/http', 0, '', '{\"i18n\": {\"title\": {\"en\": \"Http Log \", \"zh-cn\": \"Http日志\"}}}', 50, 0, '2023-06-17 13:47:10', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage \", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-06-24 03:37:34', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (11, 1, 0, '日志管理', 'AutoiconEpDataAnalysis', '', 1, '0-11', '{\"i18n\": {\"title\": {\"en\": \"Log Manage \", \"zh-cn\": \"日志管理\"}}}', 95, 0, '2023-06-24 03:36:29', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (12, 1, 11, 'Http日志', 'AutoiconEpReading', '/log/http', 2, '0-11-12', '{\"i18n\": {\"title\": {\"en\": \"Http Log \", \"zh-cn\": \"Http日志\"}}}', 50, 0, '2023-06-21 00:40:08', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (13, 1, 8, '服务器', 'AutoiconEpCpu', '/platform/server', 2, '0-8-13', '{\"i18n\": {\"title\": {\"en\": \"Server \", \"zh-cn\": \"服务器\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (14, 1, 8, '定时器', 'AutoiconEpTimer', '/platform/corn', 2, '0-8-14', '{\"i18n\": {\"title\": {\"en\": \"Corn\", \"zh-cn\": \"定时器\"}}}', 100, 0, '2023-06-11 14:16:58', '2023-06-11 14:16:58');
 
@@ -333,7 +333,7 @@ CREATE TABLE `platform_admin`  (
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES (1, 'admin', NULL, 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', 'https://gamemt.oss-cn-hangzhou.aliyuncs.com/common/2023/01/12/204205_2094_16735273287104264.gif', 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
+INSERT INTO `platform_admin` VALUES (1, 'admin', NULL, 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', 'https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230624/1687601922719_8091.gif?w=471&h=373', 0, '2023-06-24 10:18:53', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for platform_config
