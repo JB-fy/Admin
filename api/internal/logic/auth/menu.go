@@ -172,7 +172,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 		}
 	}
 
-	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{}))
+	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
 	if len(hookData) > 0 {
 		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}

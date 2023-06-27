@@ -68,8 +68,8 @@ func (daoThis *menuDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[str
 // 解析insert
 func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		hookData := map[string]interface{}{}
 		insertData := map[string]interface{}{}
+		hookData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
 			case `id`:
@@ -92,8 +92,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool)
 				insertData[k] = v
 			}
 		}
-		m = m.Data(insertData)
-		m = m.Hook(daoThis.HookInsert(hookData))
+		m = m.Data(insertData).Hook(daoThis.HookInsert(hookData))
 		return m
 	}
 }
@@ -202,9 +201,9 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 					}
 				}
 			}
+			// row, _ := result.RowsAffected()
 
-			/* row, _ := result.RowsAffected()
-			if row == 0 {
+			/* if row == 0 {
 				err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
@@ -226,12 +225,12 @@ func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			row, _ := result.RowsAffected()
-			if row == 0 {
+			// row, _ := result.RowsAffected()
+
+			/* if row == 0 {
 				err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
-			}
-
+			} */
 			return
 		},
 	}
