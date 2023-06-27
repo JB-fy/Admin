@@ -29,7 +29,7 @@ func (logicThis *sCorn) Count(ctx context.Context, filter map[string]interface{}
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr)).Distinct().Fields(daoThis.PrimaryKey())
+		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr)).Distinct().Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 	}
 	count, err = model.Count()
 	return
