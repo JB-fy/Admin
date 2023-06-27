@@ -9,7 +9,6 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -102,19 +101,6 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 	}
 
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
-	}
-
-	if okRoleIdArr {
-		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
-		daoThis.SaveRelRole(ctx, roleIdArr, int(id))
-	}
 	return
 }
 
@@ -126,6 +112,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 		err = utils.NewErrorCode(ctx, 29999999, ``)
 		return
 	}
+	hookData := map[string]interface{}{}
 
 	_, okCheckPassword := data[`checkPassword`]
 	if okCheckPassword {
@@ -138,42 +125,26 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 			err = utils.NewErrorCode(ctx, 39990003, ``)
 			return
 		}
+		delete(data, `checkPassword`)
 	}
 	_, okRoleIdArr := data[`roleIdArr`]
 	if okRoleIdArr {
 		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
 		sceneId, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(`sceneCode`, `platform`).Value(`sceneId`)
-		filterTmp := g.Map{`sceneId`: sceneId, `roleId`: roleIdArr}
-		count, _ := daoAuth.Role.ParseDbCtx(ctx).Where(filterTmp).Count()
+		count, _ := daoAuth.Role.ParseDbCtx(ctx).Where(g.Map{`sceneId`: sceneId, `roleId`: roleIdArr}).Count()
 		if len(roleIdArr) != count {
 			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
 		}
+		hookData[`roleIdArr`] = data[`roleIdArr`]
+		delete(data, `roleIdArr`)
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
-	if err != nil {
-		match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-			return
-		}
-		return
+	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
+	if len(hookData) > 0 {
+		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
-	row, _ := result.RowsAffected()
-
-	if okRoleIdArr {
-		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
-		for _, id := range idArr {
-			daoThis.SaveRelRole(ctx, roleIdArr, id.Int())
-		}
-		row = 1 //有可能只改roleIdArr
-	}
-
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
-	}
+	_, err = model.UpdateAndGetAffected()
 	return
 }
 
@@ -186,16 +157,6 @@ func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface
 		return
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
-	if err != nil {
-		return
-	}
-	row, _ := result.RowsAffected()
-
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ``)
-		return
-	}
-	daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }

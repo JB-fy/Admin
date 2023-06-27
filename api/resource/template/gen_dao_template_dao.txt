@@ -62,6 +62,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseDbCtx(ctx context.Context, 
 func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
+		hookData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
 			case `id`:
@@ -74,7 +75,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert map[string]in
 				insertData[k] = v
 			}
 		}
-		m = m.Data(insertData)
+		m = m.Data(insertData).Hook(daoThis.HookInsert(hookData))
 		return m
 	}
 }
