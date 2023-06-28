@@ -83,7 +83,7 @@ func GetServerNetworkIp() string {
 func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
-	return string(output)
+	return gstr.Trim(string(output))
 }
 
 // 数据库表按时间做分区（通用，默认以分区最大日期作为分区名）
