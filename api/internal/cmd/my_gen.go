@@ -15,15 +15,15 @@ import (
 )
 
 type MyGenOption struct {
+	SceneCode    string `c:"sceneCode"`            //场景标识。示例：platform
 	DbGroup      string `c:"dbGroup"`              //db分组。示例：default
 	DbTable      string `c:"dbTable"`              //db表。示例：auth_scene
 	RemovePrefix string `c:"removePrefix"`         //要删除的db表前缀。示例：auth_
-	SceneDir     string `c:"sceneDir"`             //场景目录。示例：platform
-	ModuleDir    string `c:"moduleDir"`            //模块目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
-	NoList       bool   `c:"noList,default:true" ` //不生成列表接口(0,false,off,no,""为false，其他都为true)
-	NoCreate     bool   `c:"noCreate"`             //不生成创建接口(0,false,off,no,""为false，其他都为true)
-	NoUpdate     bool   `c:"noUpdate"`             //不生成更新接口(0,false,off,no,""为false，其他都为true)
-	NoDelete     bool   `c:"noDelete"`             //不生成删除接口(0,false,off,no,""为false，其他都为true)
+	ModuleDir    string `c:"moduleDir"`            //模块目录，不支持多层。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
+	NoList       bool   `c:"noList,default:true" ` //是否生成列表接口(0,false,off,no,""为false，其他都为true)
+	NoCreate     bool   `c:"noCreate"`             //是否生成创建接口(0,false,off,no,""为false，其他都为true)
+	NoUpdate     bool   `c:"noUpdate"`             //是否生成更新接口(0,false,off,no,""为false，其他都为true)
+	NoDelete     bool   `c:"noDelete"`             //是否生成删除接口(0,false,off,no,""为false，其他都为true)
 	IsApi        bool   `c:"isApi"`                //是否生成后端api文件
 	IsView       bool   `c:"isView"`               //是否生成前端view文件
 	IsCover      bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
@@ -35,8 +35,9 @@ type MyGenTpl struct {
 	TableNameCaseCamelLower     string     //去除前缀表名（小驼峰）
 	TableNameCaseCamel          string     //去除前缀表名（大驼峰）
 	TableNameCaseSnake          string     //去除前缀表名（蛇形）
-	PathSuffixCaseCamelLower    string     //路径后缀（小驼峰）
-	PathSuffixCaseCamel         string     //路径后缀（大驼峰）
+	ModuleDirCaseCamelLower     string     //路径后缀（小驼峰）
+	ModuleDirCaseCamel          string     //路径后缀（大驼峰）
+	SceneCodeCaseCamelLower     string     //路径后缀（小驼峰）
 	ApiFilterColumn             string     //api列表字段
 	ApiCreateColumn             string     //api创建字段
 	ApiUpdateColumn             string     //api更新字段
@@ -54,11 +55,12 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 
 	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
 	tpl := &MyGenTpl{
+		SceneCodeCaseCamelLower:    gstr.CaseCamelLower(option.SceneCode),
 		TableColumnList:            tableColumnList,
 		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
 		TableNameCaseCamel:         gstr.CaseCamel(gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)),
-		PathSuffixCaseCamelLower:   gstr.CaseCamelLower(option.ModuleDir),
-		PathSuffixCaseCamel:        gstr.CaseCamel(option.ModuleDir),
+		ModuleDirCaseCamelLower:    gstr.CaseCamelLower(option.ModuleDir),
+		ModuleDirCaseCamel:         gstr.CaseCamel(option.ModuleDir),
 	}
 	tpl.TableNameCaseCamelLower = gstr.CaseCamelLower(tpl.TableNameCaseCamel)
 	tpl.TableNameCaseSnake = gstr.CaseSnakeFirstUpper(tpl.TableNameCaseCamel)
@@ -83,6 +85,21 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	option = &MyGenOption{}
 	gconv.Struct(optionMap, option)
 
+	// 场景标识
+	_, ok := optionMap[`sceneCode`]
+	if !ok {
+		option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
+	}
+	for {
+		if option.SceneCode != `` {
+			count, _ := g.DB().Model(`auth_scene`).Where(`sceneCode`, option.SceneCode).Count()
+			if count > 0 {
+				break
+			}
+		}
+		option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
+	}
+	// db分组
 	var db gdb.DB
 	if option.DbGroup == `` {
 		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
@@ -102,6 +119,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 			option.DbGroup = `default`
 		}
 	}
+	// db表
 	tableArrTmp, _ := db.GetArray(ctx, `SHOW TABLES`)
 	tableArr := gconv.SliceStr(tableArrTmp)
 	if option.DbTable == `` {
@@ -113,7 +131,8 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
 	}
-	_, ok := optionMap[`removePrefix`]
+	// db表前缀
+	_, ok = optionMap[`removePrefix`]
 	if !ok {
 		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
 	}
@@ -123,16 +142,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
-	_, ok = optionMap[`sceneDir`]
-	if !ok {
-		option.SceneDir = gcmd.Scan("> 请输入场景目录:\n")
-	}
-	for {
-		if option.SceneDir != `` {
-			break
-		}
-		option.SceneDir = gcmd.Scan("> 请输入场景目录:\n")
-	}
+	// 模块目录
 	_, ok = optionMap[`moduleDir`]
 	if !ok {
 		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
@@ -143,6 +153,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
+	// 是否生成列表接口
 noAllRestart:
 	noList, ok := optionMap[`noList`]
 	if !ok {
@@ -161,6 +172,7 @@ noListEnd:
 			noList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
 		}
 	}
+	// 是否生成创建接口
 	noCreate, ok := optionMap[`noCreate`]
 	if !ok {
 		noCreate = gcmd.Scan("> 是否生成创建接口，默认(yes):\n")
@@ -178,6 +190,7 @@ noCreateEnd:
 			noCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
 		}
 	}
+	// 是否生成更新接口
 	noUpdate, ok := optionMap[`noUpdate`]
 	if !ok {
 		noUpdate = gcmd.Scan("> 是否生成更新接口，默认(yes):\n")
@@ -195,6 +208,7 @@ noUpdateEnd:
 			noUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
 		}
 	}
+	// 是否生成删除接口
 	noDelete, ok := optionMap[`noDelete`]
 	if !ok {
 		noDelete = gcmd.Scan("> 是否生成删除接口，默认(yes):\n")
@@ -216,6 +230,7 @@ noDeleteEnd:
 		fmt.Println("请重新选择生成哪些接口，不能全是no！")
 		goto noAllRestart
 	}
+	// 是否生成后端api文件
 	isApi, ok := optionMap[`isApi`]
 	if !ok {
 		isApi = gcmd.Scan("> 是否生成后端api文件，默认(yes):\n")
@@ -233,6 +248,7 @@ isApiEnd:
 			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端api文件，默认(yes):\n")
 		}
 	}
+	// 是否生成前端view文件
 	isView, ok := optionMap[`isView`]
 	if !ok {
 		isView = gcmd.Scan("> 是否生成前端view文件，默认(yes):\n")
@@ -250,6 +266,7 @@ isViewEnd:
 			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端view文件，默认(yes):\n")
 		}
 	}
+	// 是否覆盖原文件
 	isCover, ok := optionMap[`isCover`]
 	if !ok {
 		isCover = gcmd.Scan("> 如果文件已存在，是否覆盖原文件，默认(no):\n")
@@ -272,7 +289,7 @@ isCoverEnd:
 
 // api模板生成
 func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/api/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/api/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -561,7 +578,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 
 // logic模板生成
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/internal/logic/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/logic/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -569,7 +586,7 @@ func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	tplLogic := `package logic
 
 import (
-	dao{TplPathSuffixCaseCamel} "api/internal/dao/{TplPathSuffixCaseCamelLower}"
+	dao{TplModuleDirCaseCamel} "api/internal/dao/{TplModuleDirCaseCamelLower}"
 	"api/internal/service"`
 	if !(option.NoCreate && option.NoUpdate && option.NoDelete) {
 		tplLogic += `
@@ -600,7 +617,7 @@ func init() {
 	if !option.NoList {
 		tplLogic += `// 总数
 func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
-	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
+	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -616,7 +633,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map
 
 // 列表
 func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
-	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
+	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -643,7 +660,7 @@ func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[
 	if !option.NoUpdate {
 		tplLogic += `// 详情
 func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
-	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
+	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
@@ -669,7 +686,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 	if !option.NoCreate {
 		tplLogic += `// 新增
 func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
-	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
+	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
 	if err != nil {
 		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
@@ -688,7 +705,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 	if !option.NoUpdate {
 		tplLogic += `// 修改
 func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
-	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
+	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
 	if err != nil {
 		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
@@ -712,7 +729,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter ma
 	if !option.NoDelete {
 		tplLogic += `// 删除
 func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
-	daoThis := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}
+	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
 	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
 	if err != nil {
 		return
@@ -728,9 +745,9 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 	}
 
 	tplLogic = gstr.ReplaceByMap(tplLogic, map[string]string{
-		`{TplPathSuffixCaseCamel}`:      tpl.PathSuffixCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`: tpl.PathSuffixCaseCamelLower,
-		`{TplTableNameCaseCamel}`:       tpl.TableNameCaseCamel,
+		`{TplModuleDirCaseCamel}`:      tpl.ModuleDirCaseCamel,
+		`{TplModuleDirCaseCamelLower}`: tpl.ModuleDirCaseCamelLower,
+		`{TplTableNameCaseCamel}`:      tpl.TableNameCaseCamel,
 	})
 
 	gfile.PutContents(saveFile, tplLogic)
@@ -738,7 +755,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter ma
 
 // controller模板生成
 func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/internal/controller/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/controller/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -766,8 +783,8 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	tplController := `package controller
 
 import (
-	api{TplPathSuffixCaseCamel} "api/api/{TplPathSuffixCaseCamelLower}"
-	dao{TplPathSuffixCaseCamel} "api/internal/dao/{TplPathSuffixCaseCamelLower}"
+	api{TplModuleDirCaseCamel} "api/api/{TplModuleDirCaseCamelLower}"
+	dao{TplModuleDirCaseCamel} "api/internal/dao/{TplModuleDirCaseCamelLower}"
 	"api/internal/service"
 	"api/internal/utils"
 
@@ -787,7 +804,7 @@ func New{TplTableNameCaseCamel}() *{TplTableNameCaseCamel} {
 		tplController += `// 列表
 func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
-	var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}ListReq
+	var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}ListReq
 	err := r.Parse(&param)
 	if err != nil {
 		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -815,7 +832,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
 		allowField := []string{` + "`id`, `name`, " + `{TplControllerAlloweFieldAppend}}
 		if isAuth {
-			allowField = dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
+			allowField = dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
 			allowField = append(allowField, ` + "`id`, `name`" + `)`
 		if tpl.ControllerAlloweFieldDiff != `` {
 			tplController += `
@@ -855,14 +872,14 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
-		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}InfoReq
+		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}InfoReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
 
-		allowField := dao{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
+		allowField := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
 		allowField = append(allowField, ` + "`id`, `name`" + `)`
 		if tpl.ControllerAlloweFieldDiff != `` {
 			tplController += `
@@ -905,7 +922,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
-		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}CreateReq
+		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}CreateReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -941,7 +958,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
-		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}UpdateReq
+		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}UpdateReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -983,7 +1000,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 	switch sceneCode {
 	case ` + "`" + `platform` + "`" + `:
 		/**--------参数处理 开始--------**/
-		var param *api{TplPathSuffixCaseCamel}.{TplTableNameCaseCamel}DeleteReq
+		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}DeleteReq
 		err := r.Parse(&param)
 		if err != nil {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
@@ -1013,8 +1030,8 @@ func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 
 	tplController = gstr.ReplaceByMap(tplController, map[string]string{
 		`{TplRawTableNameCaseCamelLower}`:  tpl.RawTableNameCaseCamelLower,
-		`{TplPathSuffixCaseCamel}`:         tpl.PathSuffixCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`:    tpl.PathSuffixCaseCamelLower,
+		`{TplModuleDirCaseCamel}`:          tpl.ModuleDirCaseCamel,
+		`{TplModuleDirCaseCamelLower}`:     tpl.ModuleDirCaseCamelLower,
 		`{TplTableNameCaseCamel}`:          tpl.TableNameCaseCamel,
 		`{TplControllerAlloweFieldAppend}`: tpl.ControllerAlloweFieldAppend,
 		`{TplControllerAlloweFieldDiff}`:   tpl.ControllerAlloweFieldDiff,
@@ -1049,18 +1066,18 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		replaceStr += `
 						"/del":   controllerThis.Delete,`
 	}
-	replaceStr = `group.Group("/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `", func(group *ghttp.RouterGroup) {
-					controllerThis := controller` + tpl.PathSuffixCaseCamel + `.New` + tpl.TableNameCaseCamel + `()
+	replaceStr = `group.Group("/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `", func(group *ghttp.RouterGroup) {
+					controllerThis := controller` + tpl.ModuleDirCaseCamel + `.New` + tpl.TableNameCaseCamel + `()
 					group.ALLMap(g.Map{` + replaceStr + `
 					})
 				})`
 
-	if gstr.Pos(tplView, `"/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`"`) == -1 { //路由不存在时新增
+	if gstr.Pos(tplView, `"/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`"`) == -1 { //路由不存在时新增
 		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
 	
 				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
-		tplView, _ = gregex.ReplaceString(`group.Group\("/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`",[\s\S]*
+		tplView, _ = gregex.ReplaceString(`group.Group\("/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`",[\s\S]*
 					}\)
 				}\)`, replaceStr, tplView)
 	}
@@ -1069,7 +1086,7 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 // view模板生成Index
 func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue`
+	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1130,7 +1147,7 @@ provide('saveCommon', saveCommon)`
 
 // view模板生成List
 func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/List.vue`
+	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/List.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1274,7 +1291,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
@@ -1286,7 +1303,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1298,7 +1315,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1310,7 +1327,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 300,
 		align: 'center',
@@ -1322,7 +1339,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
         dataKey: '` + field + `',
-        title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+        title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
         key: '` + field + `',
         width: 100,
         align: 'center',
@@ -1372,7 +1389,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
         dataKey: '` + field + `',
-        title: t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
+        title: t('common.name.{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
         key: '` + field + `',
         width: 100,
         align: 'center',
@@ -1420,7 +1437,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1517,7 +1534,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
@@ -1539,7 +1556,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
@@ -1576,7 +1593,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1588,7 +1605,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1600,7 +1617,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1612,7 +1629,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1624,7 +1641,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 200,
 		align: 'center',
@@ -1637,7 +1654,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1650,7 +1667,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1662,7 +1679,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			tpl.ViewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
+		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
 		width: 150,
 		align: 'center',
@@ -1834,7 +1851,7 @@ const handleBatchDelete = () => {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-	request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/info', { id: id }).then((res) => {
+	request('/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/info', { id: id }).then((res) => {
 		saveCommon.data = { ...res.data.info }
 		switch (type) {
 			case 'edit':
@@ -1861,7 +1878,7 @@ const handleDelete = (idArr: number[]) => {
 		center: true,
 		showClose: false,
 	}).then(() => {
-		request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/del', { idArr: idArr }, true).then((res) => {
+		request('/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/del', { idArr: idArr }, true).then((res) => {
 			getList()
 		}).catch(() => { })
 	}).catch(() => { })
@@ -1871,7 +1888,7 @@ const handleDelete = (idArr: number[]) => {
 		tplView += `
 //更新
 const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
-	await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/update', param, true)
+	await request('/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/update', param, true)
 }`
 	}
 	tplView += `
@@ -1907,7 +1924,7 @@ const getList = async (resetPage: boolean = false) => {
 	}
 	table.loading = true
 	try {
-		const res = await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/list', param)
+		const res = await request('/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/list', param)
 		table.data = res.data.list?.length ? res.data.list : []
 		pagination.total = res.data.count
 	} catch (error) { }
@@ -1992,15 +2009,15 @@ defineExpose({
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
 		`{TplTableNameCaseCamelLower}`:    tpl.TableNameCaseCamelLower,
 		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
-		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+		`{TplModuleDirCaseCamelLower}`:    tpl.ModuleDirCaseCamelLower,
+		`{TplModuleDirCaseCamel}`:         tpl.ModuleDirCaseCamel,
 	})
 	gfile.PutContents(saveFile, tplView)
 }
 
 // view模板生成Query
 func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Query.vue`
+	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Query.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2024,7 +2041,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if field == `pid` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.` + field + `')" :api="{ code: '/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
 		</ElFormItem>`
 				continue
 			}
@@ -2052,7 +2069,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :api="{ code: '/{TplModuleDirCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
 		</ElFormItem>`
 				continue
 			}
@@ -2060,7 +2077,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2068,7 +2085,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2076,7 +2093,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2092,7 +2109,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2124,7 +2141,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false" />
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false" />
 		</ElFormItem>`
 				continue
 			}
@@ -2132,7 +2149,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false" />
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false" />
 		</ElFormItem>`
 				continue
 			}
@@ -2140,7 +2157,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2148,7 +2165,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `char`) != -1 {
 				tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2167,7 +2184,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			//默认处理
 			tpl.ViewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 		}
 	}
@@ -2247,8 +2264,8 @@ const queryForm = reactive({
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
 		`{TplTableNameCaseCamelLower}`:    tpl.TableNameCaseCamelLower,
 		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
-		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+		`{TplModuleDirCaseCamelLower}`:    tpl.ModuleDirCaseCamelLower,
+		`{TplModuleDirCaseCamel}`:         tpl.ModuleDirCaseCamel,
 	})
 	gfile.PutContents(saveFile, tplView)
 }
@@ -2258,7 +2275,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	if option.NoCreate && option.NoUpdate {
 		return
 	}
-	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Save.vue`
+	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Save.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2301,7 +2318,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
+                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>`
 				continue
 			}
@@ -2350,8 +2367,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-                    <MySelect v-model="saveForm.data.` + field + `" :api="{ code: '/{TplPathSuffixCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+                    <MySelect v-model="saveForm.data.` + field + `" :api="{ code: '/{TplModuleDirCaseCamelLower}/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
                 </ElFormItem>`
 				continue
 			}
@@ -2363,8 +2380,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2376,8 +2393,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2389,8 +2406,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'change', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2404,7 +2421,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
         ],`
 					tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*" :multiple="true" />
 				</ElFormItem>`
 				} else {
@@ -2414,7 +2431,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
         ],`
 					tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
                     <MyUpload v-model="saveForm.data.` + field + `" accept="image/*" />
                 </ElFormItem>`
 				}
@@ -2430,7 +2447,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
         ],`
 					tpl.ViewSaveField += `
-				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('common.name.{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" :multiple="true" />
 				</ElFormItem>`
 				} else {
@@ -2440,7 +2457,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
         ],`
 					tpl.ViewSaveField += `
-				<ElFormItem :label="t('common.name.{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('common.name.{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `')" prop="` + field + `">
                     <MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" />
                 </ElFormItem>`
 				}
@@ -2453,8 +2470,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2519,7 +2536,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false"/>
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :controls="false"/>
 				</ElFormItem>`
 				continue
 			}
@@ -2531,7 +2548,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				tpl.ViewSaveField += `
 				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false"/>
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :precision="2" :controls="false"/>
 				</ElFormItem>`
 				continue
 			}
@@ -2542,8 +2559,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2554,8 +2571,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: ` + result[1] + `, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: ` + result[1] + `, max: ` + result[1] + ` }) },
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="` + result[1] + `" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" minlength="` + result[1] + `" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2583,7 +2600,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			},
 		],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>`
 				continue
@@ -2593,8 +2610,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
 				</ElFormItem>`
 				continue
 			}
@@ -2603,8 +2620,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				tpl.ViewSaveRule += `
 		` + field + `: [],`
 				tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
 				</ElFormItem>`
 				continue
 			}
@@ -2612,8 +2629,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			tpl.ViewSaveRule += `
 		` + field + `: [],`
 			tpl.ViewSaveField += `
-				<ElFormItem :label="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplPathSuffixCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :show-word-limit="true" :clearable="true" />
+				<ElFormItem :label="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `')" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 		}
 	}
@@ -2641,9 +2658,9 @@ const saveForm = reactive({
 			const param = removeEmptyOfObj(saveForm.data, false)
 			try {
 				if (param?.idArr?.length > 0) {
-					await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/update', param, true)
+					await request('/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/update', param, true)
 				} else {
-					await request('/{TplPathSuffixCaseCamelLower}/{TplTableNameCaseCamelLower}/create', param, true)
+					await request('/{TplModuleDirCaseCamelLower}/{TplTableNameCaseCamelLower}/create', param, true)
 				}
 				listCommon.ref.getList(true)
 				saveCommon.visible = false
@@ -2702,15 +2719,15 @@ const saveDrawer = reactive({
 		`{TplRawTableNameCaseCamelLower}`: tpl.RawTableNameCaseCamelLower,
 		`{TplTableNameCaseCamelLower}`:    tpl.TableNameCaseCamelLower,
 		`{TplTableNameCaseCamel}`:         tpl.TableNameCaseCamel,
-		`{TplPathSuffixCaseCamelLower}`:   tpl.PathSuffixCaseCamelLower,
-		`{TplPathSuffixCaseCamel}`:        tpl.PathSuffixCaseCamel,
+		`{TplModuleDirCaseCamelLower}`:    tpl.ModuleDirCaseCamelLower,
+		`{TplModuleDirCaseCamel}`:         tpl.ModuleDirCaseCamel,
 	})
 	gfile.PutContents(saveFile, tplView)
 }
 
 // view模板生成I18n
 func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/../dev/platform/src/i18n/language/zh-cn/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
+	saveFile := gfile.SelfDir() + `/../dev/platform/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2753,21 +2770,21 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	tplView := gfile.GetContents(saveFile)
 
 	replaceStr := `{
-                path: '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `',
+                path: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `',
                 component: async () => {
-                    const component = await import('@/views/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue')
-                    component.default.name = '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `'
+                    const component = await import('@/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue')
+                    component.default.name = '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/` + tpl.PathSuffixCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `' }
+                meta: { isAuth: true, keepAlive: true, componentName: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `' }
             },`
 
-	if gstr.Pos(tplView, `'/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`'`) == -1 { //路由不存在时新增
+	if gstr.Pos(tplView, `'/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`'`) == -1 { //路由不存在时新增
 		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
             /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
 		tplView, _ = gregex.ReplaceString(`\{
-                path: '/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`',[\s\S]*'/`+tpl.PathSuffixCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`' \}
+                path: '/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`',[\s\S]*'/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`' \}
             \},`, replaceStr, tplView)
 	}
 	gfile.PutContents(saveFile, tplView)
