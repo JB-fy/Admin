@@ -21,7 +21,7 @@ func NewScene() *Scene {
 // 列表
 func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *apiAuth.SceneListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

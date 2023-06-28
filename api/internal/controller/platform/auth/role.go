@@ -21,7 +21,7 @@ func NewRole() *Role {
 // 列表
 func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) (res *apiAuth.RoleListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

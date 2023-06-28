@@ -20,7 +20,7 @@ func NewServer() *Server {
 // 列表
 func (controllerThis *Server) List(ctx context.Context, req *apiPlatform.ServerListReq) (res *apiPlatform.ServerListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

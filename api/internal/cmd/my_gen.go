@@ -736,7 +736,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 		return
 	}
-	filter := gconv.Map(param.Filter)
+	filter := gconv.MapDeep(param.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

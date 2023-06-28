@@ -20,7 +20,7 @@ func NewHttp() *Http {
 // 列表
 func (controllerThis *Http) List(ctx context.Context, req *apiLog.HttpListReq) (res *apiLog.HttpListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

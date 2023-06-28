@@ -21,7 +21,7 @@ func NewMenu() *Menu {
 // 列表
 func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) (res *apiAuth.MenuListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -161,7 +161,7 @@ func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteR
 // 菜单树
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) (res *apiAuth.MenuTreeRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

@@ -21,7 +21,7 @@ func NewAction() *Action {
 // 列表
 func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListReq) (res *apiAuth.ActionListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
