@@ -12,3 +12,6 @@
     composer config -g --unset repos.packagist
 查看镜像源
     composer config -g -l
+
+#指定php版本运行composer
+    /server/tool/php-7.4.33/bin/php /server/tool/composer/composer install
