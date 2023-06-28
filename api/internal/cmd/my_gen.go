@@ -325,7 +325,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		switch fieldCaseCamel {
 		case `DeletedAt`: //不处理的字段
 		case `CreatedAt`, `UpdatedAt`:
-			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
@@ -592,6 +592,8 @@ type ` + tpl.TableNameCaseCamel + `ListRes struct {
 }
 
 type ` + tpl.TableNameCaseCamel + `Item struct {
+	Id          uint        ` + "`" + `json:"id" dc:"ID"` + "`" + `
+	Name        string      ` + "`" + `json:"name" dc:"名称"` + "`" + `
 	` + apiResColumn + `
 }
 
@@ -612,6 +614,8 @@ type ` + tpl.TableNameCaseCamel + `InfoRes struct {
 }
 
 type ` + tpl.TableNameCaseCamel + `Info struct {
+	Id          uint        ` + "`" + `json:"id" dc:"ID"` + "`" + `
+	Name        string      ` + "`" + `json:"name" dc:"名称"` + "`" + `
 	` + apiResColumn + `
 }
 
