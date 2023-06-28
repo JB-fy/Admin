@@ -57,8 +57,8 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		TableColumnList:            tableColumnList,
 		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
 		TableNameCaseCamel:         gstr.CaseCamel(gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)),
-		PathSuffixCaseCamelLower:   gstr.CaseCamelLower(option.RemovePrefix),
-		PathSuffixCaseCamel:        gstr.CaseCamel(option.RemovePrefix),
+		PathSuffixCaseCamelLower:   gstr.CaseCamelLower(option.ModuleDir),
+		PathSuffixCaseCamel:        gstr.CaseCamel(option.ModuleDir),
 	}
 	tpl.TableNameCaseCamelLower = gstr.CaseCamelLower(tpl.TableNameCaseCamel)
 	tpl.TableNameCaseSnake = gstr.CaseSnakeFirstUpper(tpl.TableNameCaseCamel)
@@ -115,7 +115,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	}
 	_, ok := optionMap[`removePrefix`]
 	if !ok {
-		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀,默认(空):\n")
+		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
 	}
 	for {
 		if option.RemovePrefix == `` || gstr.Pos(option.DbTable, option.RemovePrefix) == 0 {
