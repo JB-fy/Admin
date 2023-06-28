@@ -15,14 +15,15 @@ import (
 )
 
 type MyGenOption struct {
-	DbGroup      string `c:"dbGroup"`              //db分组
-	DbTable      string `c:"dbTable"`              //db表
-	RemovePrefix string `c:"removePrefix"`         //要删除的db表前缀。和hcak/config.yaml内的removePrefix一致
-	NoList       bool   `c:"noList,default:true" ` //不生成列表接口(0,false,off,no,""为false，其他都为true)
-	NoCreate     bool   `c:"noCreate"`             //不生成创建接口(0,false,off,no,""为false，其他都为true)
-	NoUpdate     bool   `c:"noUpdate"`             //不生成更新接口(0,false,off,no,""为false，其他都为true)
-	NoDelete     bool   `c:"noDelete"`             //不生成删除接口(0,false,off,no,""为false，其他都为true)
-	IsCover      bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
+	DbGroup       string `c:"dbGroup"`              //db分组
+	DbTable       string `c:"dbTable"`              //db表
+	RemovePrefix  string `c:"removePrefix"`         //要删除的db表前缀
+	DirPathSuffix string `c:"pathSuffix"`           //路径后缀。即为模块文件夹名称
+	NoList        bool   `c:"noList,default:true" ` //不生成列表接口(0,false,off,no,""为false，其他都为true)
+	NoCreate      bool   `c:"noCreate"`             //不生成创建接口(0,false,off,no,""为false，其他都为true)
+	NoUpdate      bool   `c:"noUpdate"`             //不生成更新接口(0,false,off,no,""为false，其他都为true)
+	NoDelete      bool   `c:"noDelete"`             //不生成删除接口(0,false,off,no,""为false，其他都为true)
+	IsCover       bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
 }
 
 type MyGenTpl struct {
@@ -853,7 +854,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
-		data := gconv.Map(param)
+		data := gconv.MapDeep(param)
 		/**--------参数处理 结束--------**/
 
 		/**--------权限验证 开始--------**/
@@ -889,7 +890,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
 			return
 		}
-		data := gconv.Map(param)
+		data := gconv.MapDeep(param)
 		delete(data, ` + "`" + `idArr` + "`" + `)
 		if len(data) == 0 {
 			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ` + "`" + "`" + `))

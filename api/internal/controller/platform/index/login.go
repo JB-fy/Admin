@@ -47,7 +47,7 @@ func (controllerThis *Login) Info(ctx context.Context, req *apiIndex.LoginInfoRe
 // 修改个人信息
 func (controllerThis *Login) Update(ctx context.Context, req *apiIndex.LoginUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

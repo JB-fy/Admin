@@ -98,7 +98,7 @@ func (controllerThis *Corn) Info(ctx context.Context, req *apiPlatform.CornInfoR
 // 新增
 func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -119,7 +119,7 @@ func (controllerThis *Corn) Create(ctx context.Context, req *apiPlatform.CornCre
 // 修改
 func (controllerThis *Corn) Update(ctx context.Context, req *apiPlatform.CornUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)

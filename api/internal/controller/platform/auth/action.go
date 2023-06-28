@@ -100,7 +100,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 // 新增
 func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -121,7 +121,7 @@ func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCre
 // 修改
 func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)

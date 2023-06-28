@@ -102,7 +102,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 // 新增
 func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -123,7 +123,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminC
 // 修改
 func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req)
+	data := gconv.MapDeep(req)
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
