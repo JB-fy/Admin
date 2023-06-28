@@ -14,19 +14,20 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
+// ./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isView=yes -isCover=no
 type MyGenOption struct {
-	SceneCode    string `c:"sceneCode"`            //场景标识。示例：platform
-	DbGroup      string `c:"dbGroup"`              //db分组。示例：default
-	DbTable      string `c:"dbTable"`              //db表。示例：auth_scene
-	RemovePrefix string `c:"removePrefix"`         //要删除的db表前缀。示例：auth_
-	ModuleDir    string `c:"moduleDir"`            //模块目录，不支持多层。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
-	NoList       bool   `c:"noList,default:true" ` //是否生成列表接口(0,false,off,no,""为false，其他都为true)
-	NoCreate     bool   `c:"noCreate"`             //是否生成创建接口(0,false,off,no,""为false，其他都为true)
-	NoUpdate     bool   `c:"noUpdate"`             //是否生成更新接口(0,false,off,no,""为false，其他都为true)
-	NoDelete     bool   `c:"noDelete"`             //是否生成删除接口(0,false,off,no,""为false，其他都为true)
-	IsApi        bool   `c:"isApi"`                //是否生成后端api文件
-	IsView       bool   `c:"isView"`               //是否生成前端view文件
-	IsCover      bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
+	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
+	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
+	DbTable      string `c:"dbTable"`      //db表。示例：auth_scene
+	RemovePrefix string `c:"removePrefix"` //要删除的db表前缀。示例：auth_
+	ModuleDir    string `c:"moduleDir"`    //模块目录，不支持多层。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
+	IsList       bool   `c:"isList" `      //是否生成列表接口(0,false,off,no,""为false，其他都为true)
+	IsCreate     bool   `c:"isCreate"`     //是否生成创建接口(0,false,off,no,""为false，其他都为true)
+	IsUpdate     bool   `c:"isUpdate"`     //是否生成更新接口(0,false,off,no,""为false，其他都为true)
+	IsDelete     bool   `c:"isDelete"`     //是否生成删除接口(0,false,off,no,""为false，其他都为true)
+	IsApi        bool   `c:"isApi"`        //是否生成后端api文件
+	IsView       bool   `c:"isView"`       //是否生成前端view文件
+	IsCover      bool   `c:"isCover"`      //如果生成的文件已存在，是否覆盖
 }
 
 type MyGenTpl struct {
@@ -155,78 +156,78 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	}
 	// 是否生成列表接口
 noAllRestart:
-	noList, ok := optionMap[`noList`]
+	isList, ok := optionMap[`isList`]
 	if !ok {
-		noList = gcmd.Scan("> 是否生成列表接口，默认(yes):\n")
+		isList = gcmd.Scan("> 是否生成列表接口，默认(yes):\n")
 	}
-noListEnd:
+isListEnd:
 	for {
-		switch noList {
+		switch isList {
 		case ``, `yes`:
-			option.NoList = false
-			break noListEnd
+			option.IsList = true
+			break isListEnd
 		case `no`:
-			option.NoList = true
-			break noListEnd
+			option.IsList = false
+			break isListEnd
 		default:
-			noList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
+			isList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
 		}
 	}
 	// 是否生成创建接口
-	noCreate, ok := optionMap[`noCreate`]
+	isCreate, ok := optionMap[`isCreate`]
 	if !ok {
-		noCreate = gcmd.Scan("> 是否生成创建接口，默认(yes):\n")
+		isCreate = gcmd.Scan("> 是否生成创建接口，默认(yes):\n")
 	}
-noCreateEnd:
+isCreateEnd:
 	for {
-		switch noCreate {
+		switch isCreate {
 		case ``, `yes`:
-			option.NoCreate = false
-			break noCreateEnd
+			option.IsCreate = true
+			break isCreateEnd
 		case `no`:
-			option.NoCreate = true
-			break noCreateEnd
+			option.IsCreate = false
+			break isCreateEnd
 		default:
-			noCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
+			isCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
 		}
 	}
 	// 是否生成更新接口
-	noUpdate, ok := optionMap[`noUpdate`]
+	isUpdate, ok := optionMap[`isUpdate`]
 	if !ok {
-		noUpdate = gcmd.Scan("> 是否生成更新接口，默认(yes):\n")
+		isUpdate = gcmd.Scan("> 是否生成更新接口，默认(yes):\n")
 	}
-noUpdateEnd:
+isUpdateEnd:
 	for {
-		switch noUpdate {
+		switch isUpdate {
 		case ``, `yes`:
-			option.NoUpdate = false
-			break noUpdateEnd
+			option.IsUpdate = true
+			break isUpdateEnd
 		case `no`:
-			option.NoUpdate = true
-			break noUpdateEnd
+			option.IsUpdate = false
+			break isUpdateEnd
 		default:
-			noUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
+			isUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
 		}
 	}
 	// 是否生成删除接口
-	noDelete, ok := optionMap[`noDelete`]
+	isDelete, ok := optionMap[`isDelete`]
 	if !ok {
-		noDelete = gcmd.Scan("> 是否生成删除接口，默认(yes):\n")
+		isDelete = gcmd.Scan("> 是否生成删除接口，默认(yes):\n")
 	}
-noDeleteEnd:
+isDeleteEnd:
 	for {
-		switch noDelete {
+		switch isDelete {
 		case ``, `yes`:
-			option.NoDelete = false
-			break noDeleteEnd
+			option.IsDelete = true
+			break isDeleteEnd
 		case `no`:
-			option.NoDelete = true
-			break noDeleteEnd
+			option.IsDelete = false
+			break isDeleteEnd
 		default:
-			noDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
+			isDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
 		}
 	}
-	if option.NoList && option.NoCreate && option.NoUpdate && option.NoDelete {
+	if !(option.IsList || option.IsCreate || option.IsUpdate || option.IsDelete) {
 		fmt.Println("请重新选择生成哪些接口，不能全是no！")
 		goto noAllRestart
 	}
@@ -508,20 +509,25 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	tplApi := `package api
 
 import (
-	apiCommon "api/api"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
 `
-	if !option.NoList {
-		tplApi += `type {TplTableNameCaseCamel}ListReq struct {
-	Filter {TplTableNameCaseCamel}ListFilterReq ` + "`" + `json:"filter"` + "`" + `
-	Field []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
-	Sort  string   ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
-	Page  int      ` + "`" + `json:"page" v:"integer|min:1" default:"1" dc:"页码"` + "`" + `
-	Limit int      ` + "`" + `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
+	if option.IsList {
+		tplApi += `
+/*--------列表 开始--------*/
+type ` + tpl.TableNameCaseCamel + `ListReq struct {
+	g.Meta ` + "`" + `path:"/list" method:"post" tags:"平台/场景" sm:"列表"` + "`" + `
+	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
+	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
+	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
+	Page   int             ` + "`" + `json:"page" v:"integer|min:1" default:"1" dc:"页码"` + "`" + `
+	Limit  int             ` + "`" + `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
 }
 
-type {TplTableNameCaseCamel}ListFilterReq struct {
+type ` + tpl.TableNameCaseCamel + `ListFilter struct {
+	/*--------公共参数 开始--------*/
 	Id        *uint       ` + "`" + `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"` + "`" + `
 	IdArr     []uint      ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId     *uint       ` + "`" + `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"` + "`" + `
@@ -529,12 +535,30 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 	StartTime *gtime.Time ` + "`" + `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"` + "`" + `
 	EndTime   *gtime.Time ` + "`" + `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"` + "`" + `
 	Name      string      ` + "`" + `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"` + "`" + `
-	{TplApiFilterColumn}
+	/*--------公共参数 结束--------*/
+	` + tpl.ApiFilterColumn + `
 }
 
-`
+type ` + tpl.TableNameCaseCamel + `ListRes struct {
+	Count int         ` + "`" + `json:"count" dc:"总数"` + "`" + `
+	List  []` + tpl.TableNameCaseCamel + `Item ` + "`" + `json:"list" dc:"列表"` + "`" + `
+}
+
+type ` + tpl.TableNameCaseCamel + `Item struct {
+	Id          uint        ` + "`" + `json:"id" dc:"ID"` + "`" + `
+	Name        string      ` + "`" + `json:"name" dc:"名称"` + "`" + `
+	SceneId     uint        ` + "`" + `json:"sceneId" dc:"场景ID"` + "`" + `
+	SceneCode   string      ` + "`" + `json:"sceneCode" dc:"场景标识"` + "`" + `
+	SceneName   string      ` + "`" + `json:"sceneName" dc:"场景名称"` + "`" + `
+	SceneConfig string      ` + "`" + `json:"sceneConfig" dc:"场景配置"` + "`" + `
+	IsStop      uint        ` + "`" + `json:"isStop" dc:"是否停用：0否 1是"` + "`" + `
+	UpdatedAt   *gtime.Time ` + "`" + `json:"updatedAt" dc:"更新时间"` + "`" + `
+	CreatedAt   *gtime.Time ` + "`" + `json:"createdAt" dc:"创建时间"` + "`" + `
+}
+
+/*--------列表 结束--------*/`
 	}
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		tplApi += `type {TplTableNameCaseCamel}InfoReq struct {
 	Id    uint     ` + "`" + `json:"id" v:"required|integer|min:1" dc:"ID"` + "`" + `
 	Field []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
@@ -542,7 +566,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 
 `
 	}
-	if !option.NoCreate {
+	if option.IsCreate {
 		tplApi += `type {TplTableNameCaseCamel}CreateReq struct {
 	{TplApiCreateColumn}
 }
@@ -550,7 +574,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 `
 	}
 
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		tplApi += `type {TplTableNameCaseCamel}UpdateReq struct {
 	IdArr []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	{TplApiUpdateColumn}
@@ -559,7 +583,7 @@ type {TplTableNameCaseCamel}ListFilterReq struct {
 `
 	}
 
-	if !option.NoDelete {
+	if option.IsDelete {
 		tplApi += `type {TplTableNameCaseCamel}DeleteReq struct {
 	IdArr []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 }
@@ -588,7 +612,7 @@ func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 import (
 	dao{TplModuleDirCaseCamel} "api/internal/dao/{TplModuleDirCaseCamelLower}"
 	"api/internal/service"`
-	if !(option.NoCreate && option.NoUpdate && option.NoDelete) {
+	if !(option.IsCreate || option.IsUpdate || option.IsDelete) {
 		tplLogic += `
 	"api/internal/utils"`
 	}
@@ -596,7 +620,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"`
-	if !(option.NoCreate && option.NoUpdate) {
+	if option.IsCreate || option.IsUpdate {
 		tplLogic += `
 	"github.com/gogf/gf/v2/text/gregex"`
 	}
@@ -614,7 +638,7 @@ func init() {
 }
 
 `
-	if !option.NoList {
+	if option.IsList {
 		tplLogic += `// 总数
 func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
@@ -657,7 +681,7 @@ func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[
 
 `
 	}
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		tplLogic += `// 详情
 func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
@@ -683,7 +707,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 
 `
 	}
-	if !option.NoCreate {
+	if option.IsCreate {
 		tplLogic += `// 新增
 func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
@@ -702,7 +726,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 `
 	}
 
-	if !option.NoUpdate {
+	if option.IsCreate {
 		tplLogic += `// 修改
 func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
 	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
@@ -726,7 +750,7 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter ma
 `
 	}
 
-	if !option.NoDelete {
+	if option.IsDelete {
 		tplLogic += `// 删除
 func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
 	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
@@ -800,7 +824,7 @@ func New{TplTableNameCaseCamel}() *{TplTableNameCaseCamel} {
 }
 
 `
-	if !option.NoList {
+	if option.IsList {
 		tplController += `// 列表
 func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 	/**--------参数处理 开始--------**/
@@ -865,7 +889,7 @@ func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
 
 `
 	}
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		tplController += `// 详情
 func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
@@ -915,7 +939,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
 
 `
 	}
-	if !option.NoCreate {
+	if option.IsCreate {
 		tplController += `// 新增
 func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
@@ -951,7 +975,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 `
 	}
 
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		tplController += `// 修改
 func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
@@ -993,7 +1017,7 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 `
 	}
 
-	if !option.NoDelete {
+	if option.IsDelete {
 		tplController += `// 删除
 func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
 	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
@@ -1046,23 +1070,23 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	tplView := gfile.GetContents(saveFile)
 
 	replaceStr := ``
-	if !option.NoList {
+	if option.IsList {
 		replaceStr += `
 						"/list":   controllerThis.List,`
 	}
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		replaceStr += `
 						"/info":   controllerThis.Info,`
 	}
-	if !option.NoCreate {
+	if option.IsCreate {
 		replaceStr += `
 						"/create":   controllerThis.Create,`
 	}
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		replaceStr += `
 						"/update":   controllerThis.Update,`
 	}
-	if !option.NoDelete {
+	if option.IsDelete {
 		replaceStr += `
 						"/del":   controllerThis.Delete,`
 	}
@@ -1094,7 +1118,7 @@ func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 	tplView := `<script setup lang="ts">
 import List from './List.vue'
 import Query from './Query.vue'`
-	if !(option.NoCreate && option.NoUpdate) {
+	if option.IsCreate || option.IsUpdate {
 		tplView += `
 import Save from './Save.vue'`
 	}
@@ -1111,7 +1135,7 @@ const listCommon = reactive({
 	ref: null as any,
 })
 provide('listCommon', listCommon)`
-	if !(option.NoCreate && option.NoUpdate) {
+	if option.IsCreate || option.IsUpdate {
 		tplView += `
 
 //保存
@@ -1132,7 +1156,7 @@ provide('saveCommon', saveCommon)`
 		</ElHeader>
 
 		<List :ref="(el: any) => { listCommon.ref = el }" />`
-	if !(option.NoCreate && option.NoUpdate) {
+	if option.IsCreate || option.IsUpdate {
 		tplView += `
 
 		<!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
@@ -1207,7 +1231,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					'active-text': t('common.yes'),
 					'inactive-text': t('common.no'),
 					style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',`
-				if !option.NoUpdate {
+				if option.IsUpdate {
 					tpl.ViewListColumn += `
 					onChange: (val: number) => {
 						handleUpdate({
@@ -1454,7 +1478,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		align: 'center',
 		width: 100,
 		sortable: true,`
-				if !option.NoUpdate {
+				if option.IsUpdate {
 					tpl.ViewListColumn += `
 		cellRenderer: (props: any): any => {
 			if (props.rowData.edit` + gstr.CaseCamel(field) + `) {
@@ -1570,7 +1594,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					'active-text': t('common.yes'),
 					'inactive-text': t('common.no'),
 					style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',`
-				if !option.NoUpdate {
+				if option.IsUpdate {
 					tpl.ViewListColumn += `
 					onChange: (val: number) => {
 						handleUpdate({
@@ -1699,7 +1723,7 @@ const table = reactive({
 		align: 'center',
 		fixed: 'left',
 		sortable: true,`
-	if !(option.NoUpdate && option.NoDelete) {
+	if !(option.IsUpdate || option.IsDelete) {
 		tplView += `
 		headerCellRenderer: () => {
 			const allChecked = table.data.every((item: any) => item.checked)
@@ -1761,7 +1785,7 @@ const table = reactive({
 		width: 150,
 		sortable: true
 	},`
-	if !(option.NoCreate && option.NoUpdate && option.NoDelete) {
+	if !(option.IsCreate || option.IsUpdate || option.IsDelete) {
 		tplView += `
 	{
 		title: t('common.name.action'),
@@ -1771,7 +1795,7 @@ const table = reactive({
 		width: 250,
 		cellRenderer: (props: any): any => {
 			return [`
-		if !option.NoUpdate {
+		if option.IsUpdate {
 			tplView += `
 				h(ElButton, {
 					type: 'primary',
@@ -1781,7 +1805,7 @@ const table = reactive({
 					default: () => [h(AutoiconEpEdit), t('common.edit')]
 				}),`
 		}
-		if !option.NoDelete {
+		if option.IsDelete {
 			tplView += `
 				h(ElButton, {
 					type: 'danger',
@@ -1791,7 +1815,7 @@ const table = reactive({
 					default: () => [h(AutoiconEpDelete), t('common.delete')]
 				}),`
 		}
-		if !option.NoCreate {
+		if option.IsCreate {
 			tplView += `
 				h(ElButton, {
 					type: 'warning',
@@ -1816,12 +1840,12 @@ const table = reactive({
 		getList()
 	},
 })`
-	if !(option.NoCreate && option.NoUpdate) {
+	if option.IsCreate || option.IsUpdate {
 		tplView += `
 
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }`
 	}
-	if !option.NoCreate {
+	if option.IsCreate {
 		tplView += `
 //新增
 const handleAdd = () => {
@@ -1830,7 +1854,7 @@ const handleAdd = () => {
 	saveCommon.visible = true
 }`
 	}
-	if !option.NoDelete {
+	if option.IsDelete {
 		tplView += `
 //批量删除
 const handleBatchDelete = () => {
@@ -1847,7 +1871,7 @@ const handleBatchDelete = () => {
 	}
 }`
 	}
-	if !(option.NoCreate && option.NoUpdate) {
+	if option.IsCreate || option.IsUpdate {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
@@ -1868,7 +1892,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
 	}).catch(() => { })
 }`
 	}
-	if !option.NoDelete {
+	if option.IsDelete {
 		tplView += `
 //删除
 const handleDelete = (idArr: number[]) => {
@@ -1884,7 +1908,7 @@ const handleDelete = (idArr: number[]) => {
 	}).catch(() => { })
 }`
 	}
-	if !option.NoUpdate {
+	if option.IsUpdate {
 		tplView += `
 //更新
 const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
@@ -1942,13 +1966,13 @@ defineExpose({
 	<ElRow class="main-table-tool">
 		<ElCol :span="16">
 			<ElSpace :size="10" style="height: 100%; margin-left: 10px;">`
-	if !option.NoCreate {
+	if option.IsCreate {
 		tplView += `
 				<ElButton type="primary" @click="handleAdd">
 					<AutoiconEpEditPen />{{ t('common.add') }}
 				</ElButton>`
 	}
-	if !option.NoDelete {
+	if option.IsDelete {
 		tplView += `
 				<ElButton type="danger" @click="handleBatchDelete">
 					<AutoiconEpDeleteFilled />{{ t('common.batchDelete') }}
@@ -2272,7 +2296,7 @@ const queryForm = reactive({
 
 // view模板生成Save
 func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	if option.NoCreate && option.NoUpdate {
+	if !(option.IsCreate || option.IsUpdate) {
 		return
 	}
 	saveFile := gfile.SelfDir() + `/../dev/platform/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Save.vue`
