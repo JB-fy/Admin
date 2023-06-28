@@ -39,10 +39,6 @@ type MyGenTpl struct {
 	TableNameCaseSnake          string     //去除前缀表名（蛇形）
 	ModuleDirCaseCamelLower     string     //路径后缀（小驼峰）
 	ModuleDirCaseCamel          string     //路径后缀（大驼峰）
-	ApiReqFilterColumn          string     //api请求列表过滤字段
-	ApiReqCreateColumn          string     //api请求创建字段
-	ApiReqUpdateColumn          string     //api请求更新字段
-	ApiResColumn                string     //api响应字段
 	ControllerAlloweFieldAppend string     //controller追加字段
 	ControllerAlloweFieldDiff   string     //controller移除字段
 	ViewListColumn              string     //view列表字段
