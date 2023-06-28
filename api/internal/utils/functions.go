@@ -69,7 +69,11 @@ func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
 
 // 获取登录身份信息
 func GetCtxLoginInfo(ctx context.Context) gdb.Record {
-	return ctx.Value(consts.ConstCtxLoginInfoName).(gdb.Record)
+	tmp := ctx.Value(consts.ConstCtxLoginInfoName)
+	if tmp == nil {
+		return nil
+	}
+	return tmp.(gdb.Record)
 }
 
 // 设置服务器外网ip

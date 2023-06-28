@@ -15,15 +15,18 @@ import (
 )
 
 type MyGenOption struct {
-	DbGroup       string `c:"dbGroup"`              //db分组
-	DbTable       string `c:"dbTable"`              //db表
-	RemovePrefix  string `c:"removePrefix"`         //要删除的db表前缀
-	DirPathSuffix string `c:"pathSuffix"`           //路径后缀。即为模块文件夹名称
-	NoList        bool   `c:"noList,default:true" ` //不生成列表接口(0,false,off,no,""为false，其他都为true)
-	NoCreate      bool   `c:"noCreate"`             //不生成创建接口(0,false,off,no,""为false，其他都为true)
-	NoUpdate      bool   `c:"noUpdate"`             //不生成更新接口(0,false,off,no,""为false，其他都为true)
-	NoDelete      bool   `c:"noDelete"`             //不生成删除接口(0,false,off,no,""为false，其他都为true)
-	IsCover       bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
+	DbGroup      string `c:"dbGroup"`              //db分组。示例：default
+	DbTable      string `c:"dbTable"`              //db表。示例：auth_scene
+	RemovePrefix string `c:"removePrefix"`         //要删除的db表前缀。示例：auth_
+	SceneDir     string `c:"sceneDir"`             //场景目录。示例：platform
+	ModuleDir    string `c:"moduleDir"`            //模块目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
+	NoList       bool   `c:"noList,default:true" ` //不生成列表接口(0,false,off,no,""为false，其他都为true)
+	NoCreate     bool   `c:"noCreate"`             //不生成创建接口(0,false,off,no,""为false，其他都为true)
+	NoUpdate     bool   `c:"noUpdate"`             //不生成更新接口(0,false,off,no,""为false，其他都为true)
+	NoDelete     bool   `c:"noDelete"`             //不生成删除接口(0,false,off,no,""为false，其他都为true)
+	IsApi        bool   `c:"isApi"`                //是否生成后端api文件
+	IsView       bool   `c:"isView"`               //是否生成前端view文件
+	IsCover      bool   `c:"isCover"`              //如果生成的文件已存在，是否覆盖
 }
 
 type MyGenTpl struct {
@@ -120,6 +123,26 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
+	_, ok = optionMap[`sceneDir`]
+	if !ok {
+		option.SceneDir = gcmd.Scan("> 请输入场景目录:\n")
+	}
+	for {
+		if option.SceneDir != `` {
+			break
+		}
+		option.SceneDir = gcmd.Scan("> 请输入场景目录:\n")
+	}
+	_, ok = optionMap[`moduleDir`]
+	if !ok {
+		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+	}
+	for {
+		if option.ModuleDir != `` {
+			break
+		}
+		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+	}
 noAllRestart:
 	noList, ok := optionMap[`noList`]
 	if !ok {
@@ -192,6 +215,40 @@ noDeleteEnd:
 	if option.NoList && option.NoCreate && option.NoUpdate && option.NoDelete {
 		fmt.Println("请重新选择生成哪些接口，不能全是no！")
 		goto noAllRestart
+	}
+	isApi, ok := optionMap[`isApi`]
+	if !ok {
+		isApi = gcmd.Scan("> 是否生成后端api文件，默认(yes):\n")
+	}
+isApiEnd:
+	for {
+		switch isApi {
+		case ``, `yes`:
+			option.IsApi = true
+			break isApiEnd
+		case `no`:
+			option.IsApi = false
+			break isApiEnd
+		default:
+			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端api文件，默认(yes):\n")
+		}
+	}
+	isView, ok := optionMap[`isView`]
+	if !ok {
+		isView = gcmd.Scan("> 是否生成前端view文件，默认(yes):\n")
+	}
+isViewEnd:
+	for {
+		switch isView {
+		case ``, `yes`:
+			option.IsView = true
+			break isViewEnd
+		case `no`:
+			option.IsView = false
+			break isViewEnd
+		default:
+			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端view文件，默认(yes):\n")
+		}
 	}
 	isCover, ok := optionMap[`isCover`]
 	if !ok {
