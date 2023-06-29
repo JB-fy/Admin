@@ -713,8 +713,8 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Count(ctx context.Context, fil
 }
 
 // 列表
-func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
-	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
+func (logicThis *s` + tpl.TableNameCaseCamel + `) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
@@ -727,7 +727,7 @@ func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[
 		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr))
+		model = model.Group(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
 	}
 	if limit > 0 {
 		model = model.Offset((page - 1) * limit).Limit(limit)
@@ -740,8 +740,8 @@ func (logicThis *s{TplTableNameCaseCamel}) List(ctx context.Context, filter map[
 	}
 	if option.IsUpdate {
 		tplLogic += `// 详情
-func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
-	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
@@ -749,14 +749,14 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr))
+		model = model.Group(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
 	}
 	info, err = model.One()
 	if err != nil {
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ` + "`" + "`" + `)
+		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
 		return
 	}
 	return
@@ -766,17 +766,9 @@ func (logicThis *s{TplTableNameCaseCamel}) Info(ctx context.Context, filter map[
 	}
 	if option.IsCreate {
 		tplLogic += `// 新增
-func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
-	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
-	if err != nil {
-		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ` + "`" + "`" + `, map[string]interface{}{` + "`" + `errField` + "`" + `: match[1]})
-			return
-		}
-		return
-	}
 	return
 }
 
@@ -785,22 +777,20 @@ func (logicThis *s{TplTableNameCaseCamel}) Create(ctx context.Context, data map[
 
 	if option.IsCreate {
 		tplLogic += `// 修改
-func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
-	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseUpdate(data), daoThis.ParseFilter(filter, &[]string{})).Update()
-	if err != nil {
-		match, _ := gregex.MatchString(` + "`" + `1062.*Duplicate.*\.([^']*)'` + "`" + `, err.Error())
-		if len(match) > 0 {
-			err = utils.NewErrorCode(ctx, 29991062, ` + "`" + "`" + `, map[string]interface{}{` + "`" + `errField` + "`" + `: match[1]})
-			return
-		}
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
+	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	if len(idArr) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
 		return
 	}
-	row, _ := result.RowsAffected()
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
-		return
+	hookData := map[string]interface{}{}
+
+	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
+	if len(hookData) > 0 {
+		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
+	_, err = model.UpdateAndGetAffected()
 	return
 }
 
@@ -809,27 +799,19 @@ func (logicThis *s{TplTableNameCaseCamel}) Update(ctx context.Context, filter ma
 
 	if option.IsDelete {
 		tplLogic += `// 删除
-func (logicThis *s{TplTableNameCaseCamel}) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
-	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Delete()
-	if err != nil {
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
+	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	if len(idArr) == 0 {
+		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
 		return
 	}
-	row, _ := result.RowsAffected()
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
-		return
-	}
+
+	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }
 `
 	}
-
-	tplLogic = gstr.ReplaceByMap(tplLogic, map[string]string{
-		`{TplModuleDirCaseCamel}`:      tpl.ModuleDirCaseCamel,
-		`{TplModuleDirCaseCamelLower}`: tpl.ModuleDirCaseCamelLower,
-		`{TplTableNameCaseCamel}`:      tpl.TableNameCaseCamel,
-	})
 
 	gfile.PutContents(saveFile, tplLogic)
 }
