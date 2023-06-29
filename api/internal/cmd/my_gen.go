@@ -931,6 +931,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	allowField = append(allowField, ` + "`id`, `name`" + `)`
 		if controllerAlloweFieldDiff != `` {
 			tplController += `
+	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
 		}
 		tplController += `

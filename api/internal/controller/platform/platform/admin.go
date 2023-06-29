@@ -69,9 +69,9 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 // 详情
 func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInfoReq) (res *apiPlatform.AdminInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	columnsThis := daoPlatform.Admin.Columns()
 	allowField := daoPlatform.Admin.ColumnArr()
 	allowField = append(allowField, `id`, `name`, `roleIdArr`)
+	columnsThis := daoPlatform.Admin.Columns()
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
