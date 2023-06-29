@@ -452,20 +452,20 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id i
 	/**----删除关联场景 结束----**/
 }
 
-// 自动生成操作权限
-func (daoThis *actionDao) MyGenAction(ctx context.Context, actionCode string, actionName string, sceneId int) {
-	actionIdVar, _ := Action.ParseDbCtx(ctx).Where(Action.Columns().ActionCode, actionCode).Value(Action.Columns().ActionId)
-	actionId := actionIdVar.Int64()
-	if actionId == 0 {
-		actionId, _ = Action.ParseDbCtx(ctx).Data(map[string]interface{}{
-			Action.Columns().ActionCode: actionCode,
-			Action.Columns().ActionName: actionName,
+// 自动生成操作
+func (daoThis *actionDao) MyGenAction(ctx context.Context, sceneId int, actionCode string, actionName string) {
+	idVar, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().ActionCode, actionCode).Value(daoThis.PrimaryKey())
+	id := idVar.Int64()
+	if id == 0 {
+		id, _ = daoThis.ParseDbCtx(ctx).Data(map[string]interface{}{
+			daoThis.Columns().ActionCode: actionCode,
+			daoThis.Columns().ActionName: actionName,
 		}).InsertAndGetId()
 	} else {
-		Action.ParseDbCtx(ctx).Where(Action.Columns().ActionCode, actionCode).Data(Action.Columns().ActionName, actionName).Update()
+		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(daoThis.Columns().ActionName, actionName).Update()
 	}
 	ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
-		ActionRelToScene.Columns().ActionId: actionId,
+		ActionRelToScene.Columns().ActionId: id,
 		ActionRelToScene.Columns().SceneId:  sceneId,
 	}).Save()
 }

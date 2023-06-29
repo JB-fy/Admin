@@ -921,7 +921,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
 			actionName := option.CommonName + `-查看`
-			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
+			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -979,7 +979,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
 			actionName := option.CommonName + `-查看`
-			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
+			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1015,7 +1015,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Create`
 			actionName := option.CommonName + `-新增`
-			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
+			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1053,7 +1053,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Update`
 			actionName := option.CommonName + `-编辑`
-			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
+			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1081,7 +1081,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Delete`
 			actionName := option.CommonName + `-删除`
-			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
+			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2784,23 +2784,26 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 	tplView := gfile.GetContents(saveFile)
 
+	path := `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower
 	replaceStr := `{
-                path: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `',
+                path: '` + path + `',
                 component: async () => {
-                    const component = await import('@/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue')
-                    component.default.name = '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `'
+                    const component = await import('@/views` + path + `/Index.vue')
+                    component.default.name = '` + path + `'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `' }
+                meta: { isAuth: true, keepAlive: true, componentName: '` + path + `' }
             },`
 
-	if gstr.Pos(tplView, `'/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`'`) == -1 { //路由不存在时新增
+	if gstr.Pos(tplView, `'`+path+`'`) == -1 { //路由不存在时新增
 		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
             /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
 		tplView, _ = gregex.ReplaceString(`\{
-                path: '/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`',[\s\S]*'/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`' \}
+                path: '`+path+`',[\s\S]*'`+path+`' \}
             \},`, replaceStr, tplView)
 	}
 	gfile.PutContents(saveFile, tplView)
+
+	daoAuth.Menu.MyGenMenu(ctx, tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
 }

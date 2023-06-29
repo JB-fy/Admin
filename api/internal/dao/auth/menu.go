@@ -478,3 +478,24 @@ func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath
 		daoThis.Columns().Level:  gdb.Raw(daoThis.Columns().Level + ` + ` + gconv.String(newLevel-oldLevel)),
 	}).Update()
 }
+
+// 自动生成菜单
+func (daoThis *menuDao) MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string, menuNameOfEn string) {
+	idVar, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().SceneId, sceneId).Where(daoThis.Columns().MenuUrl, menuUrl).Value(daoThis.PrimaryKey())
+	id := idVar.Int()
+	if id == 0 {
+		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(map[string]interface{}{
+			daoThis.Columns().SceneId:   sceneId,
+			daoThis.Columns().Pid:       0,
+			daoThis.Columns().MenuName:  menuName,
+			daoThis.Columns().MenuIcon:  `AutoiconEpLink`,
+			daoThis.Columns().MenuUrl:   menuUrl,
+			daoThis.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		})).InsertAndGetId()
+	} else {
+		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(map[string]interface{}{
+			daoThis.Columns().MenuName:  menuName,
+			daoThis.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		}).Update()
+	}
+}
