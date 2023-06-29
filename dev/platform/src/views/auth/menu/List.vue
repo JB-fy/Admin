@@ -256,7 +256,7 @@ const table = reactive({
                     onClick: () => handleEditCopy(props.rowData.id, 'copy')
                 }, {
                     default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
-                })
+                }),
             ]
         },
     }] as any,
