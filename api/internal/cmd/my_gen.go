@@ -1241,8 +1241,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         dataKey: '` + field + `',
         title: t('common.name.` + field + `'),
         key: '` + field + `',
-        width: 100,
         align: 'center',
+        width: 100,
         cellRenderer: (props: any): any => {
             if (!props.rowData.` + field + `) {
                 return
@@ -1292,8 +1292,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1304,8 +1304,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1316,8 +1316,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 300,
 		align: 'center',
+		width: 300,
 	},`
 				continue
 			}
@@ -1328,8 +1328,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         dataKey: '` + field + `',
         title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
         key: '` + field + `',
-        width: 100,
         align: 'center',
+        width: 100,
         cellRenderer: (props: any): any => {
             if (!props.rowData.` + field + `) {
                 return
@@ -1378,8 +1378,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         dataKey: '` + field + `',
         title: t('common.name.{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.` + field + `'),
         key: '` + field + `',
-        width: 100,
         align: 'center',
+        width: 100,
         cellRenderer: (props: any): any => {
             if (!props.rowData.` + field + `) {
                 return
@@ -1426,8 +1426,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1510,8 +1510,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('common.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 		hidden: true
 	},`
 				continue
@@ -1582,8 +1582,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1594,8 +1594,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1606,8 +1606,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1618,8 +1618,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 				continue
 			}
@@ -1630,8 +1630,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 200,
 		align: 'center',
+		width: 200,
         hidden: true
 	},`
 				continue
@@ -1643,8 +1643,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
         sortable: true
 	},`
 				continue
@@ -1656,8 +1656,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
         sortable: true
 	},`
 				continue
@@ -1668,8 +1668,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		dataKey: '` + field + `',
 		title: t('{TplModuleDirCaseCamelLower}.{TplTableNameCaseCamelLower}.name.` + field + `'),
 		key: '` + field + `',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},`
 		}
 	}
@@ -1682,11 +1682,11 @@ const table = reactive({
 		dataKey: 'id',
 		title: t('common.name.id'),
 		key: 'id',
-		width: 200,
 		align: 'center',
+		width: 200,
 		fixed: 'left',
 		sortable: true,`
-	if !(option.IsUpdate || option.IsDelete) {
+	if option.IsUpdate || option.IsDelete {
 		tplView += `
 		headerCellRenderer: () => {
 			const allChecked = table.data.every((item: any) => item.checked)
@@ -1748,14 +1748,14 @@ const table = reactive({
 		width: 150,
 		sortable: true
 	},`
-	if !(option.IsCreate || option.IsUpdate || option.IsDelete) {
+	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
 	{
 		title: t('common.name.action'),
 		key: 'action',
 		align: 'center',
-		fixed: 'right',
 		width: 250,
+		fixed: 'right',
 		cellRenderer: (props: any): any => {
 			return [`
 		if option.IsUpdate {
