@@ -58,19 +58,19 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	}
 
 	if option.IsApi {
-		MyGenTplApi(ctx, option, tpl)
-		MyGenTplLogic(ctx, option, tpl)
-		MyGenTplController(ctx, option, tpl)
-		MyGenTplRouter(ctx, option, tpl)
+		MyGenTplApi(ctx, option, tpl)        // api模板生成
+		MyGenTplLogic(ctx, option, tpl)      // logic模板生成
+		MyGenTplController(ctx, option, tpl) // controller模板生成
+		MyGenTplRouter(ctx, option, tpl)     // 后端路由生成
 	}
 
 	if option.IsView {
-		MyGenTplViewIndex(ctx, option, tpl)
-		MyGenTplViewList(ctx, option, tpl)
-		MyGenTplViewQuery(ctx, option, tpl)
-		MyGenTplViewSave(ctx, option, tpl)
-		MyGenTplViewI18n(ctx, option, tpl)
-		MyGenTplViewRouter(ctx, option, tpl)
+		MyGenTplViewIndex(ctx, option, tpl)  // 视图模板Index生成
+		MyGenTplViewList(ctx, option, tpl)   // 视图模板List生成
+		MyGenTplViewQuery(ctx, option, tpl)  // 视图模板Query生成
+		MyGenTplViewSave(ctx, option, tpl)   // 视图模板Save生成
+		MyGenTplViewI18n(ctx, option, tpl)   // 视图模板I18n生成
+		MyGenTplViewRouter(ctx, option, tpl) // 前端路由生成
 	}
 	return
 }
@@ -1043,7 +1043,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	gfile.PutContents(saveFile, tplController)
 }
 
-// 路由生成
+// 后端路由生成
 func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
 
@@ -1068,7 +1068,7 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 }
 
-// view模板生成Index
+// 视图模板Index生成
 func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/../dev/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
@@ -1129,7 +1129,7 @@ provide('saveCommon', saveCommon)`
 	gfile.PutContents(saveFile, tplView)
 }
 
-// view模板生成List
+// 视图模板List生成
 func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/../dev/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/List.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
@@ -1990,7 +1990,7 @@ defineExpose({
 	gfile.PutContents(saveFile, tplView)
 }
 
-// view模板生成Query
+// 视图模板Query生成
 func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/../dev/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Query.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
@@ -2237,7 +2237,7 @@ const queryForm = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-// view模板生成Save
+// 视图模板Save生成
 func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	if !(option.IsCreate || option.IsUpdate) {
 		return
@@ -2683,7 +2683,7 @@ const saveDrawer = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-// view模板生成I18n
+// 视图模板I18n生成
 func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/../dev/` + option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
 	if !option.IsCover && gfile.IsFile(saveFile) {
@@ -2720,7 +2720,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	gfile.PutContents(saveFile, tplView)
 }
 
-// view模板生成路由
+// 前端路由生成
 func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/../dev/` + option.SceneCode + `/src/router/index.ts`
 
