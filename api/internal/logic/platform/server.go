@@ -27,7 +27,7 @@ func (logicThis *sServer) Count(ctx context.Context, filter map[string]interface
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr)).Distinct().Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
+		model = model.Group(daoThis.Table() + `.` + daoThis.PrimaryKey()).Distinct().Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 	}
 	count, err = model.Count()
 	return
@@ -48,7 +48,7 @@ func (logicThis *sServer) List(ctx context.Context, filter map[string]interface{
 		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		model = model.Handler(daoThis.ParseGroup([]string{`id`}, &joinTableArr))
+		model = model.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
 	}
 	if limit > 0 {
 		model = model.Offset((page - 1) * limit).Limit(limit)

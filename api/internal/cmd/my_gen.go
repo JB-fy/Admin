@@ -668,7 +668,7 @@ func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	tplLogic := `package logic
 
 import (
-	dao{TplModuleDirCaseCamel} "api/internal/dao/{TplModuleDirCaseCamelLower}"
+	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
 	"api/internal/service"`
 	if !(option.IsCreate || option.IsUpdate || option.IsDelete) {
 		tplLogic += `
@@ -678,38 +678,37 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"`
-	if option.IsCreate || option.IsUpdate {
+	if option.IsUpdate || option.IsDelete {
 		tplLogic += `
-	"github.com/gogf/gf/v2/text/gregex"`
+	"github.com/gogf/gf/v2/util/gconv"`
 	}
 	tplLogic += `
 )
 
-type s{TplTableNameCaseCamel} struct{}
+type s` + tpl.TableNameCaseCamel + ` struct{}
 
-func New{TplTableNameCaseCamel}() *s{TplTableNameCaseCamel} {
-	return &s{TplTableNameCaseCamel}{}
+func New` + tpl.TableNameCaseCamel + `() *s` + tpl.TableNameCaseCamel + ` {
+	return &s` + tpl.TableNameCaseCamel + `{}
 }
 
 func init() {
-	service.Register{TplTableNameCaseCamel}(New{TplTableNameCaseCamel}())
+	service.Register` + tpl.TableNameCaseCamel + `(New` + tpl.TableNameCaseCamel + `())
 }
 
 `
 	if option.IsList {
 		tplLogic += `// 总数
-func (logicThis *s{TplTableNameCaseCamel}) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
-	daoThis := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
 	if len(filter) > 0 {
 		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
 	}
 	if len(joinTableArr) > 0 {
-		count, err = model.Handler(daoThis.ParseGroup([]string{` + "`id`" + `}, &joinTableArr)).Distinct().Count(daoThis.PrimaryKey())
-	} else {
-		count, err = model.Count()
+		model = model.Group(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey()).Distinct().Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
 	}
+	count, err = model.Count()
 	return
 }
 

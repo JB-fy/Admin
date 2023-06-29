@@ -356,7 +356,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 					m = daoThis.ParseJoin(Role.Table(), joinTableArr)(m)
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
-				m = daoThis.ParseGroup([]string{`id`}, joinTableArr)(m)
+				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {
