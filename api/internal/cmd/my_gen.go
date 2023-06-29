@@ -919,9 +919,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
+			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
+			actionName := option.CommonName + `-查看`
+			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Look`" + `)
+	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
 		field = []string{` + "`id`, `name`" + `, ` + controllerAlloweFieldAppend + `}
 	}
@@ -974,9 +977,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
+			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
+			actionName := option.CommonName + `-查看`
+			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Look`" + `)
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1007,9 +1013,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
+			actionCode := tpl.RawTableNameCaseCamelLower + `Create`
+			actionName := option.CommonName + `-新增`
+			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Create`" + `)
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1042,9 +1051,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
+			actionCode := tpl.RawTableNameCaseCamelLower + `Update`
+			actionName := option.CommonName + `-编辑`
+			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Update`" + `)
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1067,9 +1079,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
+			actionCode := tpl.RawTableNameCaseCamelLower + `Delete`
+			actionName := option.CommonName + `-删除`
+			daoAuth.Action.MyGenAction(ctx, actionCode, actionName, tpl.SceneId) // 操作权限处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Delete`" + `)
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
