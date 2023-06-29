@@ -7,7 +7,7 @@ import (
 
 /*--------获取加密盐 开始--------*/
 type LoginEncryptStrReq struct {
-	g.Meta  `path:"/encryptStr" method:"post" tags:"平台/登录" sm:"获取加密盐"`
+	g.Meta  `path:"/encryptStr" method:"post" tags:"平台后台/登录" sm:"获取加密盐"`
 	Account string `json:"account"  v:"required|length:4,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 }
 
@@ -15,7 +15,7 @@ type LoginEncryptStrReq struct {
 
 /*--------登录 开始--------*/
 type LoginLoginReq struct {
-	g.Meta   `path:"" method:"post" tags:"平台/登录" sm:"登录"`
+	g.Meta   `path:"" method:"post" tags:"平台后台/登录" sm:"登录"`
 	Account  string `json:"account"  v:"required|length:4,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Password string `json:"password"  v:"required|size:32|regex:^[\\p{L}\\p{N}]+$" dc:"密码。加密后发送，公式：md5(md5(用户输入密码)+加密盐)"`
 }
@@ -24,7 +24,7 @@ type LoginLoginReq struct {
 
 /*--------用户详情 开始--------*/
 type LoginInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台/登录" sm:"用户详情"`
+	g.Meta `path:"/info" method:"post" tags:"平台后台/登录" sm:"用户详情"`
 }
 
 type LoginInfoRes struct {
@@ -46,7 +46,7 @@ type LoginInfo struct {
 
 /*--------修改个人信息 开始--------*/
 type LoginUpdateReq struct {
-	g.Meta        `path:"/update" method:"post" tags:"平台/登录" sm:"修改个人信息"`
+	g.Meta        `path:"/update" method:"post" tags:"平台后台/登录" sm:"修改个人信息"`
 	Account       *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone         *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
 	Nickname      *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
@@ -59,7 +59,7 @@ type LoginUpdateReq struct {
 
 /*--------用户菜单树 开始--------*/
 type LoginMenuTreeReq struct {
-	g.Meta `path:"/menuTree" method:"post" tags:"平台/登录" sm:"用户菜单树"`
+	g.Meta `path:"/menuTree" method:"post" tags:"平台后台/登录" sm:"用户菜单树"`
 }
 
 type LoginMenuTreeRes struct {

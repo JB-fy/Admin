@@ -15,7 +15,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -swaggerTag=平台/场景 -isView=yes -isCover=no
+// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isView=yes -commonName=场景 -isCover=no
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
 	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
@@ -28,14 +28,15 @@ type MyGenOption struct {
 	IsDelete     bool   `c:"isDelete"`     //是否生成删除接口(0,false,off,no,""为false，其他都为true)
 	IsApi        bool   `c:"isApi"`        //是否生成后端接口文件
 	IsAuthAction bool   `c:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
-	Name         string `c:"name"`         //名称，同时用于swagger文档Tag标签名称，权限菜单名称，权限操作名称。示例：场景
-	SwaggerTag   string `c:"swaggerTag"`   //生成的swagger文档Tag标签名称。示例：平台/场景
 	IsView       bool   `c:"isView"`       //是否生成前端视图文件
+	CommonName   string `c:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
 	IsCover      bool   `c:"isCover"`      //如果生成的文件已存在，是否覆盖
 }
 
 type MyGenTpl struct {
 	TableColumnList            gdb.Result //表字段详情
+	SceneName                  string     //场景名称
+	SceneId                    int        //场景ID
 	RawTableNameCaseCamelLower string     //原始表名（小驼峰）
 	TableNameCaseCamelLower    string     //去除前缀表名（小驼峰）
 	TableNameCaseCamel         string     //去除前缀表名（大驼峰）
@@ -48,9 +49,12 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	option := MyGenOptionHandle(ctx, parser)
 
 	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
+	sceneInfo, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
 	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
 	tpl := &MyGenTpl{
 		TableColumnList:            tableColumnList,
+		SceneName:                  sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
+		SceneId:                    sceneInfo[daoAuth.Scene.Columns().SceneId].Int(),
 		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
 		TableNameCaseCamelLower:    gstr.CaseCamelLower(tableName),
 		TableNameCaseCamel:         gstr.CaseCamel(tableName),
@@ -246,18 +250,7 @@ isApiEnd:
 			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端接口文件，默认(yes):\n")
 		}
 	}
-	// 生成的swagger文档Tag标签名称
 	if option.IsApi {
-		_, ok = optionMap[`swaggerTag`]
-		if !ok {
-			option.SwaggerTag = gcmd.Scan("> 请输入生成的swagger文档标签名称:\n")
-		}
-		for {
-			if option.SwaggerTag != `` {
-				break
-			}
-			option.SwaggerTag = gcmd.Scan("> 请输入生成的swagger文档标签名称:\n")
-		}
 		// 是否判断操作权限，如是，则同时会生成操作权限
 		isAuthAction, ok := optionMap[`isAuthAction`]
 		if !ok {
@@ -294,6 +287,17 @@ isViewEnd:
 		default:
 			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端视图文件，默认(yes):\n")
 		}
+	}
+	// 公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
+	_, ok = optionMap[`commonName`]
+	if !ok {
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
+	}
+	for {
+		if option.CommonName != `` {
+			break
+		}
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
 	}
 	// 是否覆盖原文件
 	isCover, ok := optionMap[`isCover`]
@@ -580,7 +584,7 @@ import (
 		tplApi += `
 /*--------列表 开始--------*/
 type ` + tpl.TableNameCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/list" method:"post" tags:"` + option.SwaggerTag + `" sm:"列表"` + "`" + `
+	g.Meta ` + "`" + `path:"/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
 	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
@@ -619,7 +623,7 @@ type ` + tpl.TableNameCaseCamel + `Item struct {
 	if option.IsUpdate {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableNameCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/info" method:"post" tags:"` + option.SwaggerTag + `" sm:"详情"` + "`" + `
+	g.Meta ` + "`" + `path:"/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
 	Id     uint     ` + "`" + `json:"id" v:"required|integer|min:1" dc:"ID"` + "`" + `
 	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
 }
@@ -641,7 +645,7 @@ type ` + tpl.TableNameCaseCamel + `Info struct {
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableNameCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/create" method:"post" tags:"` + option.SwaggerTag + `" sm:"创建"` + "`" + `
+	g.Meta      ` + "`" + `path:"/create" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"创建"` + "`" + `
 	` + apiReqCreateColumn + `
 }
 
@@ -653,7 +657,7 @@ type ` + tpl.TableNameCaseCamel + `CreateReq struct {
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/update" method:"post" tags:"` + option.SwaggerTag + `" sm:"更新"` + "`" + `
+	g.Meta      ` + "`" + `path:"/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"更新"` + "`" + `
 	IdArr       []uint  ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	` + apiReqUpdateColumn + `
 }
@@ -666,7 +670,7 @@ type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type SceneDeleteReq struct {
-	g.Meta ` + "`" + `path:"/del" method:"post" tags:"` + option.SwaggerTag + `" sm:"删除"` + "`" + `
+	g.Meta ` + "`" + `path:"/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
 	IdArr  []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 
@@ -913,14 +917,18 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		}
 	}
 	/**--------参数处理 结束--------**/
-
+`
+		if option.IsAuthAction {
+			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Look`" + `)
 	if !isAuth {
 		field = []string{` + "`id`, `name`" + `, ` + controllerAlloweFieldAppend + `}
 	}
 	/**--------权限验证 结束--------**/
-
+`
+		}
+		tplController += `
 	count, err := service.` + tpl.TableNameCaseCamel + `().Count(ctx, filter)
 	if err != nil {
 		return
@@ -964,14 +972,18 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	}
 	filter := map[string]interface{}{` + "`id`" + `: req.Id}
 	/**--------参数处理 结束--------**/
-
+`
+		if option.IsAuthAction {
+			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Look`" + `)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
-
+`
+		}
+		tplController += `
 	info, err := service.` + tpl.TableNameCaseCamel + `().Info(ctx, filter, field)
 	if err != nil {
 		return
@@ -993,14 +1005,18 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 	/**--------参数处理 开始--------**/
 	data := gconv.MapDeep(req)
 	/**--------参数处理 结束--------**/
-
+`
+		if option.IsAuthAction {
+			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Create`" + `)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
-
+`
+		}
+		tplController += `
 	id, err := service.` + tpl.TableNameCaseCamel + `().Create(ctx, data)
 	if err != nil {
 		return
@@ -1024,14 +1040,18 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 	}
 	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
-
+`
+		if option.IsAuthAction {
+			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Update`" + `)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
-
+`
+		}
+		tplController += `
 	err = service.` + tpl.TableNameCaseCamel + `().Update(ctx, filter, data)
 	return
 }
@@ -1045,14 +1065,18 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
-
+`
+		if option.IsAuthAction {
+			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Delete`" + `)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
-
+`
+		}
+		tplController += `
 	err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
 	return
 }
