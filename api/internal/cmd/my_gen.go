@@ -2569,9 +2569,9 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [
 			{
 				type: 'object',
-				fields: {
+				/* fields: {
 					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) }
-				},
+				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
 						return undefined
