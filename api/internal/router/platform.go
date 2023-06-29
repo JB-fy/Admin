@@ -17,7 +17,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 		//不做日志记录
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
+			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。但如果是规范路由时则必须，且有用log中间件时，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
 
 			//需验证登录身份
@@ -34,7 +34,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 		//做日志记录
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.Log)
-			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。且如果有用log中间件，必须放在其后面，才能读取到响应数据
+			group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。但如果是规范路由时则必须，且有用log中间件时，必须放在其后面，才能读取到响应数据
 			group.Middleware(middleware.Scene)
 
 			//无需验证登录身份
@@ -50,20 +50,20 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Group(``, func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.SceneLoginOfPlatform)
 
-				group.Group(`/upload`, func(group *ghttp.RouterGroup) {
-					controllerThis := controller.NewUpload()
-					group.Bind(
-						controllerThis.Sign,
-						controllerThis.Sts,
-					)
-				})
-
 				group.Group(`/login`, func(group *ghttp.RouterGroup) {
 					controllerThis := controllerIndex.NewLogin()
 					group.Bind(
 						controllerThis.Info,
 						controllerThis.Update,
 						controllerThis.MenuTree,
+					)
+				})
+
+				group.Group(`/upload`, func(group *ghttp.RouterGroup) {
+					controllerThis := controller.NewUpload()
+					group.Bind(
+						controllerThis.Sign,
+						controllerThis.Sts,
 					)
 				})
 

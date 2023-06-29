@@ -32,20 +32,18 @@ type MyGenOption struct {
 }
 
 type MyGenTpl struct {
-	TableColumnList             gdb.Result //表字段详情
-	RawTableNameCaseCamelLower  string     //原始表名（小驼峰）
-	TableNameCaseCamelLower     string     //去除前缀表名（小驼峰）
-	TableNameCaseCamel          string     //去除前缀表名（大驼峰）
-	TableNameCaseSnake          string     //去除前缀表名（蛇形）
-	ModuleDirCaseCamelLower     string     //路径后缀（小驼峰）
-	ModuleDirCaseCamel          string     //路径后缀（大驼峰）
-	ControllerAlloweFieldAppend string     //controller追加字段
-	ControllerAlloweFieldDiff   string     //controller移除字段
-	ViewListColumn              string     //view列表字段
-	ViewQueryField              string     //view查询字段
-	ViewSaveRule                string     //view创建更新字段验证规则
-	ViewSaveField               string     //view创建更新字段
-	ViewI18nField               string     //view多语言字段
+	TableColumnList            gdb.Result //表字段详情
+	RawTableNameCaseCamelLower string     //原始表名（小驼峰）
+	TableNameCaseCamelLower    string     //去除前缀表名（小驼峰）
+	TableNameCaseCamel         string     //去除前缀表名（大驼峰）
+	TableNameCaseSnake         string     //去除前缀表名（蛇形）
+	ModuleDirCaseCamelLower    string     //路径后缀（小驼峰）
+	ModuleDirCaseCamel         string     //路径后缀（大驼峰）
+	ViewListColumn             string     //view列表字段
+	ViewQueryField             string     //view查询字段
+	ViewSaveRule               string     //view创建更新字段验证规则
+	ViewSaveField              string     //view创建更新字段
+	ViewI18nField              string     //view多语言字段
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -304,6 +302,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
+
 	apiReqFilterColumn := ``
 	apiReqCreateColumn := ``
 	apiReqUpdateColumn := ``
@@ -822,6 +821,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
+
 	controllerAlloweFieldAppend := ``
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
@@ -1042,49 +1042,29 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	gfile.PutContents(saveFile, tplController)
 }
 
-// 添加路由
+// 路由生成
 func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
 
 	tplView := gfile.GetContents(saveFile)
 
-	replaceStr := ``
-	if option.IsList {
-		replaceStr += `
-						"/list":   controllerThis.List,`
-	}
-	if option.IsUpdate {
-		replaceStr += `
-						"/info":   controllerThis.Info,`
-	}
-	if option.IsCreate {
-		replaceStr += `
-						"/create":   controllerThis.Create,`
-	}
-	if option.IsUpdate {
-		replaceStr += `
-						"/update":   controllerThis.Update,`
-	}
-	if option.IsDelete {
-		replaceStr += `
-						"/del":   controllerThis.Delete,`
-	}
-	replaceStr = `group.Group("/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `", func(group *ghttp.RouterGroup) {
-					controllerThis := controller` + tpl.ModuleDirCaseCamel + `.New` + tpl.TableNameCaseCamel + `()
-					group.ALLMap(g.Map{` + replaceStr + `
-					})
-				})`
+	if gstr.Pos(tplView, "`"+`/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+"`") == -1 { //路由不存在时需生成
+		//控制器不存在时导入
+		importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"`
+		if gstr.Pos(tplView, importControllerStr) == -1 {
+			tplView = gstr.Replace(tplView, `"api/internal/middleware"`, importControllerStr+`
+			"api/internal/middleware"`)
+		}
 
-	if gstr.Pos(tplView, `"/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`"`) == -1 { //路由不存在时新增
-		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
+		//路由生成
+		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
+					controllerThis := controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
+					group.Bind(controllerThis)
+				})
 	
 				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
-	} else { //路由已存在则替换
-		tplView, _ = gregex.ReplaceString(`group.Group\("/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+`",[\s\S]*
-					}\)
-				}\)`, replaceStr, tplView)
+		gfile.PutContents(saveFile, tplView)
 	}
-	gfile.PutContents(saveFile, tplView)
 }
 
 // view模板生成Index
