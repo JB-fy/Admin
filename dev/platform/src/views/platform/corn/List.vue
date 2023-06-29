@@ -6,8 +6,8 @@ const table = reactive({
 		dataKey: 'id',
 		title: t('common.name.id'),
 		key: 'id',
-		width: 200,
 		align: 'center',
+		width: 200,
 		fixed: 'left',
 		sortable: true,
 		headerCellRenderer: () => {
@@ -56,29 +56,29 @@ const table = reactive({
 		dataKey: 'cornCode',
 		title: t('platform.corn.name.cornCode'),
 		key: 'cornCode',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},
 	{
 		dataKey: 'cornName',
 		title: t('platform.corn.name.cornName'),
 		key: 'cornName',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},
 	{
 		dataKey: 'cornPattern',
 		title: t('platform.corn.name.cornPattern'),
 		key: 'cornPattern',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},
 	{
 		dataKey: 'remark',
 		title: t('common.name.remark'),
 		key: 'remark',
-		width: 150,
 		align: 'center',
+		width: 150,
 	},
 	{
 		dataKey: 'isStop',
@@ -128,8 +128,8 @@ const table = reactive({
 		title: t('common.name.action'),
 		key: 'action',
 		align: 'center',
-		fixed: 'right',
 		width: 250,
+		fixed: 'right',
 		cellRenderer: (props: any): any => {
 			return [
 				h(ElButton, {

@@ -8,8 +8,8 @@ const table = reactive({
         dataKey: 'id',
         title: t('common.name.id'),
         key: 'id',
-        width: 200,
         align: 'center',
+        width: 200,
         fixed: 'left',
         sortable: true,
         headerCellRenderer: () => {
@@ -109,16 +109,16 @@ const table = reactive({
         dataKey: 'idPath',
         title: t('auth.menu.name.idPath'),
         key: 'idPath',
-        width: 150,
         align: 'center',
+        width: 150,
         hidden: true
     },
     {
         dataKey: 'extraData',
         title: t('common.name.extraData'),
         key: 'extraData',
-        width: 200,
         align: 'center',
+        width: 200,
         hidden: true
     },
     {
@@ -232,8 +232,8 @@ const table = reactive({
         title: t('common.name.action'),
         key: 'action',
         align: 'center',
-        fixed: 'right',
         width: 250,
+        fixed: 'right',
         cellRenderer: (props: any): any => {
             return [
                 h(ElButton, {

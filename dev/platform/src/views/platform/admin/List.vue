@@ -6,8 +6,8 @@ const table = reactive({
         dataKey: 'id',
         title: t('common.name.id'),
         key: 'id',
-        width: 200,
         align: 'center',
+        width: 200,
         fixed: 'left',
         sortable: true,
         headerCellRenderer: () => {
@@ -77,8 +77,8 @@ const table = reactive({
         dataKey: 'avatar',
         title: t('common.name.avatar'),
         key: 'avatar',
-        width: 100,
         align: 'center',
+        width: 100,
         cellRenderer: (props: any): any => {
             if (!props.rowData.avatar) {
                 return
@@ -155,8 +155,8 @@ const table = reactive({
         title: t('common.name.action'),
         key: 'action',
         align: 'center',
-        fixed: 'right',
         width: 250,
+        fixed: 'right',
         cellRenderer: (props: any): any => {
             return [
                 h(ElButton, {
