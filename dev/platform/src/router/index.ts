@@ -217,7 +217,7 @@ router.beforeEach(async (to: any) => {
 })
 
 router.afterEach((to) => {
-    useKeepAliveStore().removeAppContainerExclude(<string>to.meta?.componentName)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
+    useKeepAliveStore().removeAppContainerExclude(to.meta?.componentName as string)  //打开后重新设置成允许缓存，主要用于实现缓存刷新
 })
 
 export default router
