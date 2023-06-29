@@ -40,26 +40,22 @@ type MyGenTpl struct {
 	TableNameCaseSnake         string     //去除前缀表名（蛇形）
 	ModuleDirCaseCamelLower    string     //路径后缀（小驼峰）
 	ModuleDirCaseCamel         string     //路径后缀（大驼峰）
-	ViewListColumn             string     //view列表字段
-	ViewQueryField             string     //view查询字段
-	ViewSaveRule               string     //view创建更新字段验证规则
-	ViewSaveField              string     //view创建更新字段
-	ViewI18nField              string     //view多语言字段
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	option := MyGenOptionHandle(ctx, parser)
 
 	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
+	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
 	tpl := &MyGenTpl{
 		TableColumnList:            tableColumnList,
 		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
-		TableNameCaseCamel:         gstr.CaseCamel(gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)),
+		TableNameCaseCamelLower:    gstr.CaseCamelLower(tableName),
+		TableNameCaseCamel:         gstr.CaseCamel(tableName),
+		TableNameCaseSnake:         gstr.CaseSnakeFirstUpper(tableName),
 		ModuleDirCaseCamelLower:    gstr.CaseCamelLower(option.ModuleDir),
 		ModuleDirCaseCamel:         gstr.CaseCamel(option.ModuleDir),
 	}
-	tpl.TableNameCaseCamelLower = gstr.CaseCamelLower(tpl.TableNameCaseCamel)
-	tpl.TableNameCaseSnake = gstr.CaseSnakeFirstUpper(tpl.TableNameCaseCamel)
 
 	if option.IsApi {
 		MyGenTplApi(ctx, option, tpl)
@@ -2694,6 +2690,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		return
 	}
 
+	viewI18nField := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
@@ -2710,18 +2707,16 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			if !garray.NewStrArrayFrom([]string{`remark`, `isStop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(fieldCaseCamelLower) {
-				tpl.ViewI18nField += `
+				viewI18nField += `
 	` + field + `: '` + comment + `',`
 			}
 		}
 	}
 	tplView := `export default {
-    name:{{TplViewI18nField}
+    name:{` + viewI18nField + `
     },
 }`
-	tplView = gstr.ReplaceByMap(tplView, map[string]string{
-		`{TplViewI18nField}`: tpl.ViewI18nField, //先替换这个！内部还有变量要替换
-	})
+
 	gfile.PutContents(saveFile, tplView)
 }
 
