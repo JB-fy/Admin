@@ -60,17 +60,21 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	tpl.TableNameCaseCamelLower = gstr.CaseCamelLower(tpl.TableNameCaseCamel)
 	tpl.TableNameCaseSnake = gstr.CaseSnakeFirstUpper(tpl.TableNameCaseCamel)
 
-	MyGenTplApi(ctx, option, tpl)
-	MyGenTplLogic(ctx, option, tpl)
-	MyGenTplController(ctx, option, tpl)
-	MyGenTplRouter(ctx, option, tpl)
+	if option.IsApi {
+		MyGenTplApi(ctx, option, tpl)
+		MyGenTplLogic(ctx, option, tpl)
+		MyGenTplController(ctx, option, tpl)
+		MyGenTplRouter(ctx, option, tpl)
+	}
 
-	MyGenTplViewIndex(ctx, option, tpl)
-	MyGenTplViewList(ctx, option, tpl)
-	MyGenTplViewQuery(ctx, option, tpl)
-	MyGenTplViewSave(ctx, option, tpl)
-	MyGenTplViewI18n(ctx, option, tpl)
-	MyGenTplViewRouter(ctx, option, tpl)
+	if option.IsView {
+		MyGenTplViewIndex(ctx, option, tpl)
+		MyGenTplViewList(ctx, option, tpl)
+		MyGenTplViewQuery(ctx, option, tpl)
+		MyGenTplViewSave(ctx, option, tpl)
+		MyGenTplViewI18n(ctx, option, tpl)
+		MyGenTplViewRouter(ctx, option, tpl)
+	}
 	return
 }
 
