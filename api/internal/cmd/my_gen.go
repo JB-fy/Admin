@@ -1057,7 +1057,7 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"`
 		if gstr.Pos(tplView, importControllerStr) == -1 {
 			tplView = gstr.Replace(tplView, `"api/internal/middleware"`, importControllerStr+`
-			"api/internal/middleware"`)
+	"api/internal/middleware"`)
 		}
 
 		//路由生成
