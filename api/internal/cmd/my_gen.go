@@ -26,9 +26,11 @@ type MyGenOption struct {
 	IsCreate     bool   `c:"isCreate"`     //是否生成创建接口(0,false,off,no,""为false，其他都为true)
 	IsUpdate     bool   `c:"isUpdate"`     //是否生成更新接口(0,false,off,no,""为false，其他都为true)
 	IsDelete     bool   `c:"isDelete"`     //是否生成删除接口(0,false,off,no,""为false，其他都为true)
-	IsApi        bool   `c:"isApi"`        //是否生成后端api文件
+	IsApi        bool   `c:"isApi"`        //是否生成后端接口文件
+	IsAuthAction bool   `c:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
+	Name         string `c:"name"`         //名称，同时用于swagger文档Tag标签名称，权限菜单名称，权限操作名称。示例：场景
 	SwaggerTag   string `c:"swaggerTag"`   //生成的swagger文档Tag标签名称。示例：平台/场景
-	IsView       bool   `c:"isView"`       //是否生成前端view文件
+	IsView       bool   `c:"isView"`       //是否生成前端视图文件
 	IsCover      bool   `c:"isCover"`      //如果生成的文件已存在，是否覆盖
 }
 
@@ -226,10 +228,10 @@ isDeleteEnd:
 		fmt.Println("请重新选择生成哪些接口，不能全是no！")
 		goto noAllRestart
 	}
-	// 是否生成后端api文件
+	// 是否生成后端接口文件
 	isApi, ok := optionMap[`isApi`]
 	if !ok {
-		isApi = gcmd.Scan("> 是否生成后端api文件，默认(yes):\n")
+		isApi = gcmd.Scan("> 是否生成后端接口文件，默认(yes):\n")
 	}
 isApiEnd:
 	for {
@@ -241,7 +243,7 @@ isApiEnd:
 			option.IsApi = false
 			break isApiEnd
 		default:
-			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端api文件，默认(yes):\n")
+			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端接口文件，默认(yes):\n")
 		}
 	}
 	// 生成的swagger文档Tag标签名称
@@ -256,12 +258,29 @@ isApiEnd:
 			}
 			option.SwaggerTag = gcmd.Scan("> 请输入生成的swagger文档标签名称:\n")
 		}
-
+		// 是否判断操作权限，如是，则同时会生成操作权限
+		isAuthAction, ok := optionMap[`isAuthAction`]
+		if !ok {
+			isAuthAction = gcmd.Scan("> 是否判断操作权限，如是，则同时会生成操作权限，默认(yes):\n")
+		}
+	isAuthActionEnd:
+		for {
+			switch isAuthAction {
+			case ``, `yes`:
+				option.IsAuthAction = true
+				break isAuthActionEnd
+			case `no`:
+				option.IsAuthAction = false
+				break isAuthActionEnd
+			default:
+				isAuthAction = gcmd.Scan("> 输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes):\n")
+			}
+		}
 	}
-	// 是否生成前端view文件
+	// 是否生成前端视图文件
 	isView, ok := optionMap[`isView`]
 	if !ok {
-		isView = gcmd.Scan("> 是否生成前端view文件，默认(yes):\n")
+		isView = gcmd.Scan("> 是否生成前端视图文件，默认(yes):\n")
 	}
 isViewEnd:
 	for {
@@ -273,7 +292,7 @@ isViewEnd:
 			option.IsView = false
 			break isViewEnd
 		default:
-			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端view文件，默认(yes):\n")
+			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端视图文件，默认(yes):\n")
 		}
 	}
 	// 是否覆盖原文件
