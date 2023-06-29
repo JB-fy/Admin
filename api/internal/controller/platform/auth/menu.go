@@ -32,7 +32,6 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	columnsThis := daoAuth.Menu.Columns()
 	allowField := daoAuth.Menu.ColumnArr()
 	allowField = append(allowField, `id`, `name`, `sceneName`, `pMenuName`)
-	// allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -69,7 +68,6 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Menu.ColumnArr()
 	allowField = append(allowField, `id`, `name`)
-	//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -169,7 +167,6 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	columnsThis := daoAuth.Menu.Columns()
 	allowField := daoAuth.Menu.ColumnArr()
 	allowField = append(allowField, `id`, `name`, `sceneName`, `pMenuName`)
-	// allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

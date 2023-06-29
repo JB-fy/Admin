@@ -32,7 +32,6 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	columnsThis := daoAuth.Action.Columns()
 	allowField := daoAuth.Action.ColumnArr()
 	allowField = append(allowField, `id`, `name`)
-	// allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -69,7 +68,6 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Action.ColumnArr()
 	allowField = append(allowField, `id`, `name`, `sceneIdArr`)
-	//allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{`password`})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
