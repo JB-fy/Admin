@@ -5,31 +5,31 @@
 package dao
 
 import (
-	"api/internal/dao/auth/internal"
+	"{TplImportPrefix}/internal"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// internalActionRelToSceneDao is internal type for wrapping internal DAO implements.
-type internalActionRelToSceneDao = *internal.ActionRelToSceneDao
+// internal{TplTableNameCamelCase}Dao is internal type for wrapping internal DAO implements.
+type internal{TplTableNameCamelCase}Dao = *internal.{TplTableNameCamelCase}Dao
 
-// actionRelToSceneDao is the data access object for table auth_action_rel_to_scene.
+// {TplTableNameCamelLowerCase}Dao is the data access object for table {TplTableName}.
 // You can define custom methods on it to extend its functionality as you wish.
-type actionRelToSceneDao struct {
-	internalActionRelToSceneDao
+type {TplTableNameCamelLowerCase}Dao struct {
+	internal{TplTableNameCamelCase}Dao
 }
 
 var (
-	// ActionRelToScene is globally public accessible object for table auth_action_rel_to_scene operations.
-	ActionRelToScene = actionRelToSceneDao{
-		internal.NewActionRelToSceneDao(),
+	// {TplTableNameCamelCase} is globally public accessible object for table {TplTableName} operations.
+	{TplTableNameCamelCase} = {TplTableNameCamelLowerCase}Dao{
+		internal.New{TplTableNameCamelCase}Dao(),
 	}
 )
 
 // 解析分库
-func (daoThis *actionRelToSceneDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
 	group := daoThis.Group()
 	/* if len(dbGroupSeldata) > 0 { //分库逻辑
 	} */
@@ -37,7 +37,7 @@ func (daoThis *actionRelToSceneDao) ParseDbGroup(dbGroupSeldata map[string]inter
 }
 
 // 解析分表
-func (daoThis *actionRelToSceneDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseDbTable(dbTableSelData map[string]interface{}) string {
 	table := daoThis.Table()
 	/* if len(dbTableSelData) > 0 { //分表逻辑
 	} */
@@ -45,7 +45,7 @@ func (daoThis *actionRelToSceneDao) ParseDbTable(dbTableSelData map[string]inter
 }
 
 // 解析分库分表（对外暴露使用）
-func (daoThis *actionRelToSceneDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
 	switch len(dbSelDataList) {
 	case 1:
 		return g.DB(daoThis.ParseDbGroup(dbSelDataList[0])).Model(daoThis.Table()).Safe().Ctx(ctx)
