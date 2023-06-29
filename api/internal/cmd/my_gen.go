@@ -822,193 +822,170 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
-
+	controllerAlloweFieldAppend := ``
+	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		switch fieldCaseCamel {
 		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
 		default:
-			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || field == `name` || gstr.CaseCamel(field) == tpl.TableNameCaseCamel+`Name` {
-				tpl.ControllerAlloweFieldAppend += "`" + field + "`, "
+			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
+				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
 				continue
 			}
 			//password或passwd后缀
 			if gstr.SubStr(fieldCaseCamel, -8) == `Password` || gstr.SubStr(fieldCaseCamel, -6) == `Passwd` {
-				tpl.ControllerAlloweFieldDiff += "`" + field + "`, "
+				controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 				continue
 			}
 		}
 	}
-	tpl.ControllerAlloweFieldAppend = gstr.SubStr(tpl.ControllerAlloweFieldAppend, 0, -len(`, `))
-	tpl.ControllerAlloweFieldDiff = gstr.SubStr(tpl.ControllerAlloweFieldDiff, 0, -len(`, `))
+	controllerAlloweFieldAppend = gstr.SubStr(controllerAlloweFieldAppend, 0, -len(`, `))
+	controllerAlloweFieldDiff = gstr.SubStr(controllerAlloweFieldDiff, 0, -len(`, `))
 
 	tplController := `package controller
 
 import (
-	api{TplModuleDirCaseCamel} "api/api/{TplModuleDirCaseCamelLower}"
-	dao{TplModuleDirCaseCamel} "api/internal/dao/{TplModuleDirCaseCamelLower}"
+	"api/api"
+	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"
+	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
 	"api/internal/service"
 	"api/internal/utils"
+	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type {TplTableNameCaseCamel} struct{}
+type ` + tpl.TableNameCaseCamel + ` struct{}
 
-func New{TplTableNameCaseCamel}() *{TplTableNameCaseCamel} {
-	return &{TplTableNameCaseCamel}{}
+func New` + tpl.TableNameCaseCamel + `() *` + tpl.TableNameCaseCamel + ` {
+	return &` + tpl.TableNameCaseCamel + `{}
 }
 
 `
 	if option.IsList {
 		tplController += `// 列表
-func (controllerThis *{TplTableNameCaseCamel}) List(r *ghttp.Request) {
+func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes, err error) {
 	/**--------参数处理 开始--------**/
-	var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}ListReq
-	err := r.Parse(&param)
-	if err != nil {
-		utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-		return
-	}
-	filter := gconv.MapDeep(param.Filter)
+	filter := gconv.MapDeep(req.Filter)
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-	order := [][2]string{{` + "`id`" + `, ` + "`" + `DESC` + "`" + `}}
-	if param.Sort.Key != ` + "`" + "`" + ` {
-		order[0][0] = param.Sort.Key
-	}
-	if param.Sort.Order != ` + "`" + "`" + ` {
-		order[0][1] = param.Sort.Order
-	}
-	page := param.Page
-	limit := param.Limit
-	/**--------参数处理 结束--------**/
+	order := []string{req.Sort}
+	page := req.Page
+	limit := req.Limit
 
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case ` + "`" + `platform` + "`" + `:
-		/**--------权限验证 开始--------**/
-		isAuth, _ := service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
-		allowField := []string{` + "`id`, `name`, " + `{TplControllerAlloweFieldAppend}}
-		if isAuth {
-			allowField = dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
-			allowField = append(allowField, ` + "`id`, `name`" + `)`
-		if tpl.ControllerAlloweFieldDiff != `` {
+	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
+	allowField = append(allowField, ` + "`id`, `name`" + `)`
+		if controllerAlloweFieldDiff != `` {
 			tplController += `
-			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段`
+	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
 		}
 		tplController += `
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
 		}
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
-		}
-		/**--------权限验证 结束--------**/
-
-		count, err := service.{TplTableNameCaseCamel}().Count(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		list, err := service.{TplTableNameCaseCamel}().List(r.GetCtx(), filter, field, order, page, limit)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{` + "`" + `count` + "`" + `: count, ` + "`" + `list` + "`" + `: list}, 0)
 	}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Look`" + `)
+	if !isAuth {
+		field = []string{` + "`id`, `name`" + `, ` + controllerAlloweFieldAppend + `}
+	}
+	/**--------权限验证 结束--------**/
+
+	count, err := service.` + tpl.TableNameCaseCamel + `().Count(ctx, filter)
+	if err != nil {
+		return
+	}
+	list, err := service.` + tpl.TableNameCaseCamel + `().List(ctx, filter, field, order, page, limit)
+	if err != nil {
+		return
+	}
+	/* //不建议用这个返回，指定字段获取时，返回时其他字段也会返回，但都是空
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{
+		Count: count,
+	}
+	list.Structs(&res.List) */
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		` + "`count`" + `: count,
+		` + "`list`" + `:  list,
+	}, 0, ` + "``" + `)
+	return
 }
 
 `
 	}
 	if option.IsUpdate {
 		tplController += `// 详情
-func (controllerThis *{TplTableNameCaseCamel}) Info(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case ` + "`" + `platform` + "`" + `:
-		/**--------参数处理 开始--------**/
-		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}InfoReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-
-		allowField := dao{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}.ColumnArr()
-		allowField = append(allowField, ` + "`id`, `name`" + `)`
-		if tpl.ControllerAlloweFieldDiff != `` {
+func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
+	/**--------参数处理 开始--------**/
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
+	allowField = append(allowField, ` + "`id`, `name`" + `)`
+		if controllerAlloweFieldDiff != `` {
 			tplController += `
-			allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{{TplControllerAlloweFieldDiff}})).Slice() //移除敏感字段`
+	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
 		}
 		tplController += `
-		field := allowField
-		if len(param.Field) > 0 {
-			field = gset.NewStrSetFrom(param.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-			if len(field) == 0 {
-				field = allowField
-			}
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
 		}
-		filter := map[string]interface{}{` + "`id`" + `: param.Id}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Look` + "`" + `)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		info, err := service.{TplTableNameCaseCamel}().Info(r.GetCtx(), filter, field)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{` + "`" + `info` + "`" + `: info}, 0)
 	}
+	filter := map[string]interface{}{` + "`id`" + `: req.Id}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Look`" + `)
+	if err != nil {
+		return
+	}
+	/**--------权限验证 结束--------**/
+
+	info, err := service.` + tpl.TableNameCaseCamel + `().Info(ctx, filter, field)
+	if err != nil {
+		return
+	}
+	/* //不建议用这个返回，指定字段获取时，返回时其他字段也会返回，但都是空
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes{}
+	info.Struct(&res.Info) */
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		` + "`info`" + `: info,
+	}, 0, ` + "``" + `)
+	return
 }
 
 `
 	}
 	if option.IsCreate {
 		tplController += `// 新增
-func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case ` + "`" + `platform` + "`" + `:
-		/**--------参数处理 开始--------**/
-		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}CreateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		data := gconv.MapDeep(param)
-		/**--------参数处理 结束--------**/
+func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
+	/**--------参数处理 开始--------**/
+	data := gconv.MapDeep(req)
+	/**--------参数处理 结束--------**/
 
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Create` + "`" + `)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		id, err := service.{TplTableNameCaseCamel}().Create(r.GetCtx(), data)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{` + "`id`" + `: id}, 0)
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Create`" + `)
+	if err != nil {
+		return
 	}
+	/**--------权限验证 结束--------**/
+
+	id, err := service.` + tpl.TableNameCaseCamel + `().Create(ctx, data)
+	if err != nil {
+		return
+	}
+	res = &api.CommonCreateRes{Id: id}
+	return
 }
 
 `
@@ -1016,41 +993,26 @@ func (controllerThis *{TplTableNameCaseCamel}) Create(r *ghttp.Request) {
 
 	if option.IsUpdate {
 		tplController += `// 修改
-func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case ` + "`" + `platform` + "`" + `:
-		/**--------参数处理 开始--------**/
-		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}UpdateReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		data := gconv.MapDeep(param)
-		delete(data, ` + "`" + `idArr` + "`" + `)
-		if len(data) == 0 {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, ` + "`" + "`" + `))
-			return
-		}
-		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
-		/**--------参数处理 结束--------**/
-
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Update` + "`" + `)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		err = service.{TplTableNameCaseCamel}().Update(r.GetCtx(), filter, data)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
+	/**--------参数处理 开始--------**/
+	data := gconv.MapDeep(req)
+	delete(data, ` + "`idArr`" + `)
+	if len(data) == 0 {
+		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
+		return
 	}
+	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
+	/**--------参数处理 结束--------**/
+
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Update`" + `)
+	if err != nil {
+		return
+	}
+	/**--------权限验证 结束--------**/
+
+	err = service.` + tpl.TableNameCaseCamel + `().Update(ctx, filter, data)
+	return
 }
 
 `
@@ -1058,47 +1020,24 @@ func (controllerThis *{TplTableNameCaseCamel}) Update(r *ghttp.Request) {
 
 	if option.IsDelete {
 		tplController += `// 删除
-func (controllerThis *{TplTableNameCaseCamel}) Delete(r *ghttp.Request) {
-	sceneCode := utils.GetCtxSceneCode(r.GetCtx())
-	switch sceneCode {
-	case ` + "`" + `platform` + "`" + `:
-		/**--------参数处理 开始--------**/
-		var param *api{TplModuleDirCaseCamel}.{TplTableNameCaseCamel}DeleteReq
-		err := r.Parse(&param)
-		if err != nil {
-			utils.HttpFailJson(r, utils.NewErrorCode(r.GetCtx(), 89999999, err.Error()))
-			return
-		}
-		filter := map[string]interface{}{` + "`id`" + `: param.IdArr}
-		/**--------参数处理 结束--------**/
+func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
+	/**--------参数处理 开始--------**/
+	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
+	/**--------参数处理 结束--------**/
 
-		/**--------权限验证 开始--------**/
-		_, err = service.Action().CheckAuth(r.GetCtx(), ` + "`" + `{TplRawTableNameCaseCamelLower}Delete` + "`" + `)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		/**--------权限验证 结束--------**/
-
-		err = service.{TplTableNameCaseCamel}().Delete(r.GetCtx(), filter)
-		if err != nil {
-			utils.HttpFailJson(r, err)
-			return
-		}
-		utils.HttpSuccessJson(r, map[string]interface{}{}, 0)
+	/**--------权限验证 开始--------**/
+	_, err = service.Action().CheckAuth(ctx, ` + "`" + tpl.RawTableNameCaseCamelLower + "Delete`" + `)
+	if err != nil {
+		return
 	}
+	/**--------权限验证 结束--------**/
+
+	err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
+	return
 }
 `
 	}
 
-	tplController = gstr.ReplaceByMap(tplController, map[string]string{
-		`{TplRawTableNameCaseCamelLower}`:  tpl.RawTableNameCaseCamelLower,
-		`{TplModuleDirCaseCamel}`:          tpl.ModuleDirCaseCamel,
-		`{TplModuleDirCaseCamelLower}`:     tpl.ModuleDirCaseCamelLower,
-		`{TplTableNameCaseCamel}`:          tpl.TableNameCaseCamel,
-		`{TplControllerAlloweFieldAppend}`: tpl.ControllerAlloweFieldAppend,
-		`{TplControllerAlloweFieldDiff}`:   tpl.ControllerAlloweFieldDiff,
-	})
 	gfile.PutContents(saveFile, tplController)
 }
 
