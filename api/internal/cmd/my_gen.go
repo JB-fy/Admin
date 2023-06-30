@@ -15,14 +15,15 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// 建议搭配git一起使用，便于查看改动和代码回退。且logic层为多场景共用，如果isCover为true时，覆盖后需特别注意该logic文件的改动
-// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -commonName=场景 -isCover=no
+// 强烈建议搭配git一起使用，便于查看改动和代码回退。且logic层为多场景共用，如果isCover为true时，覆盖后需特别注意该logic文件的改动
+// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -commonName=场景 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
 	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
 	DbTable      string `c:"dbTable"`      //db表。示例：auth_scene
 	RemovePrefix string `c:"removePrefix"` //要删除的db表前缀。示例：auth_
-	ModuleDir    string `c:"moduleDir"`    //模块目录，不支持多层。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
+	ModuleDir    string `c:"moduleDir"`    //模块目录，只支持单目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
+	CommonName   string `c:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
 	IsList       bool   `c:"isList" `      //是否生成列表接口(0,false,off,no,""为false，其他都为true)
 	IsCreate     bool   `c:"isCreate"`     //是否生成创建接口(0,false,off,no,""为false，其他都为true)
 	IsUpdate     bool   `c:"isUpdate"`     //是否生成更新接口(0,false,off,no,""为false，其他都为true)
@@ -30,7 +31,6 @@ type MyGenOption struct {
 	IsApi        bool   `c:"isApi"`        //是否生成后端接口文件
 	IsAuthAction bool   `c:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	IsView       bool   `c:"isView"`       //是否生成前端视图文件
-	CommonName   string `c:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
 	IsCover      bool   `c:"isCover"`      //如果生成的文件已存在，是否覆盖
 }
 
@@ -155,6 +155,17 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 			break
 		}
 		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+	}
+	// 公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
+	_, ok = optionMap[`commonName`]
+	if !ok {
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
+	}
+	for {
+		if option.CommonName != `` {
+			break
+		}
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
 	}
 	// 是否生成列表接口
 noAllRestart:
@@ -288,17 +299,6 @@ isViewEnd:
 		default:
 			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端视图文件，默认(yes):\n")
 		}
-	}
-	// 公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
-	_, ok = optionMap[`commonName`]
-	if !ok {
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
-	}
-	for {
-		if option.CommonName != `` {
-			break
-		}
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
 	}
 	// 是否覆盖原文件
 	isCover, ok := optionMap[`isCover`]
