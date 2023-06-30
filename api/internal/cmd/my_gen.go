@@ -30,7 +30,7 @@ type MyGenOption struct {
 	IsApi        bool   `c:"isApi"`        //是否生成后端接口文件
 	IsAuthAction bool   `c:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	IsView       bool   `c:"isView"`       //是否生成前端视图文件
-	IsCover      bool   `c:"isCover"`      //是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)
+	IsCover      bool   `c:"isCover"`      //是否覆盖原文件(设置为true时，建议与git一起使用，防止代码覆盖风险)
 }
 
 type MyGenTpl struct {
