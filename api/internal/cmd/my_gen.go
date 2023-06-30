@@ -15,7 +15,6 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// 强烈建议搭配git一起使用，便于查看改动和代码回退。且logic层为多场景共用，如果isCover为true时，覆盖后需特别注意该logic文件的改动
 // 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -commonName=场景 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
@@ -31,7 +30,7 @@ type MyGenOption struct {
 	IsApi        bool   `c:"isApi"`        //是否生成后端接口文件
 	IsAuthAction bool   `c:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	IsView       bool   `c:"isView"`       //是否生成前端视图文件
-	IsCover      bool   `c:"isCover"`      //如果生成的文件已存在，是否覆盖
+	IsCover      bool   `c:"isCover"`      //是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)
 }
 
 type MyGenTpl struct {
@@ -305,7 +304,7 @@ isViewEnd:
 	// 是否覆盖原文件
 	isCover, ok := optionMap[`isCover`]
 	if !ok {
-		isCover = gcmd.Scan("> 如果文件已存在，是否覆盖原文件，默认(no):\n")
+		isCover = gcmd.Scan("> 是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
 	}
 isCoverEnd:
 	for {
@@ -317,7 +316,7 @@ isCoverEnd:
 			option.IsCover = false
 			break isCoverEnd
 		default:
-			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件，默认(no):\n")
+			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
 		}
 	}
 	return
