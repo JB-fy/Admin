@@ -24,9 +24,9 @@ type MyGenOption struct {
 	ModuleDir    string `c:"moduleDir"`    //模块目录，只支持单目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
 	CommonName   string `c:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
 	IsList       bool   `c:"isList" `      //是否生成列表接口(0,false,off,no,""为false，其他都为true)
-	IsCreate     bool   `c:"isCreate"`     //是否生成创建接口(0,false,off,no,""为false，其他都为true)
-	IsUpdate     bool   `c:"isUpdate"`     //是否生成更新接口(0,false,off,no,""为false，其他都为true)
-	IsDelete     bool   `c:"isDelete"`     //是否生成删除接口(0,false,off,no,""为false，其他都为true)
+	IsCreate     bool   `c:"isCreate"`     //是否生成创建接口
+	IsUpdate     bool   `c:"isUpdate"`     //是否生成更新接口
+	IsDelete     bool   `c:"isDelete"`     //是否生成删除接口
 	IsApi        bool   `c:"isApi"`        //是否生成后端接口文件
 	IsAuthAction bool   `c:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	IsView       bool   `c:"isView"`       //是否生成前端视图文件
