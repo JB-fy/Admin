@@ -180,6 +180,7 @@ func (daoThis *sceneDao) HookDelete(idArr ...int) gdb.HookHandler {
 				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			}
+
 			Menu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 			ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 			Role.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
