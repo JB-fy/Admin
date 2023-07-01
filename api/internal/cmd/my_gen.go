@@ -4,6 +4,7 @@ import (
 	daoAuth "api/internal/dao/auth"
 	"context"
 	"fmt"
+	"os/exec"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -63,8 +64,15 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		ModuleDirCaseCamel:         gstr.CaseCamel(option.ModuleDir),
 	}
 
+	/* //必须先生成dao层（会生成部分字段的解析代码）
+	daoFile := gfile.SelfDir() + `/internal/dao/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	if !gfile.IsFile(daoFile) {
+		fmt.Println(`请先生成dao层后操作`)
+		return
+	} */
 	//多场景共用的模块，需特殊处理
-	MyGenTplLogic(ctx, option, tpl) // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	MyGenTplLogic(ctx, option, tpl)                       // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	exec.Command(`gf`, `gen`, `service`).CombinedOutput() //service生成
 
 	if option.IsApi {
 		MyGenTplApi(ctx, option, tpl)        // api模板生成
