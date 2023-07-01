@@ -8,6 +8,7 @@ export default {
         level: '层级',
         idPath: '层级路径',
         sceneId: '所属场景',
+        extraData: '额外数据',
     },
     tip: {
         // menuIcon: 常用格式：Autoicon{集合}{标识}；Vant格式：Vant-{标识}

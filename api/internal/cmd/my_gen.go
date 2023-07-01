@@ -1513,7 +1513,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.` + field + `'),
+		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
@@ -2673,9 +2673,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
-		case `pid`:
 		case `is_stop`, `isStop`:
-		case `sort`, `weight`:
 		case `avator`:
 		case `gender`:
 		default:
@@ -2683,7 +2681,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				continue
 			}
-			if !garray.NewStrArrayFrom([]string{`remark`, `account`, `phone`}).Contains(fieldCaseCamelLower) {
+			if !garray.NewStrArrayFrom([]string{`account`, `phone`}).Contains(fieldCaseCamelLower) {
 				viewI18nField += `
 		` + field + `: '` + comment + `',`
 			}

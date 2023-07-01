@@ -94,7 +94,7 @@ const saveDrawer = reactive({
                 <ElFormItem :label="t('auth.action.name.sceneIdArr')" prop="sceneIdArr">
                     <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.remark')" prop="remark">
+                <ElFormItem :label="t('auth.action.name.remark')" prop="remark">
                     <ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" minlength="0"
                         maxlength="120" :show-word-limit="true" />
                 </ElFormItem>

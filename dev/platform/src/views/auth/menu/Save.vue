@@ -142,7 +142,7 @@ const saveDrawer = reactive({
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excId: saveForm.data.id } } }"
                         :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.extraData')" prop="extraData">
+                <ElFormItem :label="t('auth.menu.name.extraData')" prop="extraData">
                     <ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
                     <ElInput v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                 </ElFormItem>

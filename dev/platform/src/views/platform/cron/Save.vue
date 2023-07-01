@@ -89,7 +89,7 @@ const saveDrawer = reactive({
 				<ElFormItem :label="t('platform.cron.name.cronPattern')" prop="cronPattern">
 					<ElInput v-model="saveForm.data.cronPattern" :placeholder="t('platform.cron.name.cronPattern')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
-				<ElFormItem :label="t('common.name.remark')" prop="remark">
+				<ElFormItem :label="t('platform.cron.name.remark')" prop="remark">
 					<ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>
 				<ElFormItem :label="t('common.name.isStop')" prop="isStop">

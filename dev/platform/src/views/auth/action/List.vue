@@ -68,7 +68,7 @@ const table = reactive({
     },
     {
         dataKey: 'remark',
-        title: t('common.name.remark'),
+        title: t('auth.action.name.remark'),
         key: 'remark',
         align: 'center',
         width: 200,

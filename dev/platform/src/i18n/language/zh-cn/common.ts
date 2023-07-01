@@ -41,8 +41,6 @@ export default {
 
         id: 'ID',
         isStop: '停用',
-        remark: '备注',
-        extraData: '额外数据',
 
         account: '账号',
         phone: '手机号',

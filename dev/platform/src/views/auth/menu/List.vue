@@ -115,7 +115,7 @@ const table = reactive({
     },
     {
         dataKey: 'extraData',
-        title: t('common.name.extraData'),
+        title: t('auth.menu.name.extraData'),
         key: 'extraData',
         align: 'center',
         width: 200,
