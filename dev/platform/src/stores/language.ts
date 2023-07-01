@@ -65,7 +65,7 @@ export const useLanguageStore = defineStore('language', {
     },
     //获取网站标题
     getWebTitle(fullPath: string = router.currentRoute.value.fullPath) {
-      let webTitle = (<any>i18n).global.t('config.webTitle')
+      let webTitle = (<any>i18n).global.t('common.webTitle')
       const title = this.getPageTitle(fullPath)
       if (title) {
         webTitle += '-' + title

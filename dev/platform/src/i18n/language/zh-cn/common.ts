@@ -1,4 +1,6 @@
 export default {
+    webTitle: '平台后台',
+
     yes: '是',
     no: '否',
     ok: '确定',
