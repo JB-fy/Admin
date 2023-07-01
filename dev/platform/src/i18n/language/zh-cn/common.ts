@@ -33,6 +33,9 @@ export default {
         action: '操作',
         updatedAt: '更新时间',
         createdAt: '创建时间',
+        account: '账号',
+        phone: '手机号',
+        password: '密码',
 
         without: '无',
         allTopLevel: '全部顶级',
@@ -40,16 +43,6 @@ export default {
         max: '最大值',
         startTime: '开始时间',
         endTime: '结束时间',
-
-        account: '账号',
-        phone: '手机号',
-        password: '密码',
-        newPassword: '新密码',
-        oldPassword: '旧密码',
-        repeatPassword: '重复密码',
-        nickname: '昵称',
-        avatar: '头像',
-        gender: '性别',
     },
 
     tip: {

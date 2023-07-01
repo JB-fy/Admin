@@ -116,31 +116,31 @@ const saveForm = reactive({
                             type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.nickname')" prop="nickname">
-                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
+                <ElFormItem :label="t('profile.name.nickname')" prop="nickname">
+                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('profile.name.nickname')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.avatar')" prop="avatar">
+                <ElFormItem :label="t('profile.name.avatar')" prop="avatar">
                     <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.newPassword')" prop="password">
-                    <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.newPassword')" minlength="1"
+                <ElFormItem :label="t('profile.name.newPassword')" prop="password">
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('profile.name.newPassword')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.repeatPassword')" prop="repeatPassword">
-                    <ElInput v-model="saveForm.data.repeatPassword" :placeholder="t('common.name.repeatPassword')"
+                <ElFormItem :label="t('profile.name.repeatPassword')" prop="repeatPassword">
+                    <ElInput v-model="saveForm.data.repeatPassword" :placeholder="t('profile.name.repeatPassword')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.oldPassword')" prop="checkPassword">
-                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('common.name.oldPassword')"
+                <ElFormItem :label="t('profile.name.oldPassword')" prop="checkPassword">
+                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('profile.name.oldPassword')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>

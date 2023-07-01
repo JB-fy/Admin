@@ -498,15 +498,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
-		case `avator`:
-			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-			apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
-		case `gender`:
-			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2" dc:"` + comment + `"` + "`\n"
-			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2" dc:"` + comment + `"` + "`\n"
-			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2" dc:"` + comment + `"` + "`\n"
-			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
@@ -547,7 +538,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//img或image或cover后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
 				if column[`Type`].String() == `json` {
 					apiReqCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 					apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
@@ -581,7 +572,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//status后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
 				apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1,2" dc:"` + comment + `"` + "`\n"
@@ -821,11 +812,6 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
-		case `pid`:
-		case `is_stop`, `isStop`:
-		case `sort`, `weight`:
-		case `avator`:
-		case `gender`:
 		default:
 			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
 				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
@@ -1182,7 +1168,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `'),
+		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
@@ -1225,7 +1211,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `'),
+		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
@@ -1290,61 +1276,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			viewListColumn += `
 	},`
-		case `avator`:
-			viewListColumn += `
-	{
-        dataKey: '` + field + `',
-        title: t('common.name.` + field + `'),
-        key: '` + field + `',
-        align: 'center',
-        width: 100,
-        cellRenderer: (props: any): any => {
-            if (!props.rowData.` + field + `) {
-                return
-            }
-            //const imageList= JSON.parse(props.rowData.` + field + `)
-            const imageList = [props.rowData.` + field + `]
-            return [
-                h(ElScrollbar, {
-                    'wrap-style': 'display: flex; align-items: center;',
-                    'view-style': 'margin: auto;',
-                }, {
-                    default: () => {
-                        const content = imageList.map((item) => {
-                            return h(ElImage as any, {
-                                'style': 'width: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
-                                'src': item,
-                                'lazy': true,
-                                'hide-on-click-modal': true,
-                                'preview-teleported': true,
-                                'preview-src-list': imageList
-                            })
-                        })
-                        return content
-                    }
-                })
-            ]
-        },
-    },`
-		case `gender`:
-			viewListColumn += `
-	{
-		dataKey: '` + field + `',
-		title: t('common.name.` + field + `'),
-		key: '` + field + `',
-		align: 'center',
-		width: 100,
-		cellRenderer: (props: any): any => {
-			let typeObj: any = { 0: 'warning', 1: 'success', 2: 'danger' }
-			return [
-				h(ElTag as any, {
-					type: typeObj[props.rowData.` + field + `]
-				}, {
-					default: () => (tm('common.status.` + field + `') as any).find((item: any) => { return item.value == props.rowData.` + field + ` })?.label
-				})
-			]
-		}
-	},`
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
@@ -1399,7 +1330,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//img或image或cover后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
 				viewListColumn += `
 	{
         dataKey: '` + field + `',
@@ -1453,7 +1384,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewListColumn += `
 	{
         dataKey: '` + field + `',
-        title: t('common.name.` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `'),
+        title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
         key: '` + field + `',
         align: 'center',
         width: 100,
@@ -1522,7 +1453,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//status后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -1534,7 +1465,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			let typeObj: any = { 0: '', 1: 'success', 2: 'danger', 3: 'info', 4: 'warning' }
 			return [
 				h(ElTag as any, {
-					type: typeObj[props.rowData.` + field + `]
+					type: typeObj?.[props.rowData.` + field + `] ?? ''
 				}, {
 					default: () => (tm('common.status.gender') as any).find((item: any) => { return item.value == props.rowData.` + field + ` })?.label
 				})
@@ -2016,7 +1947,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		case `pid`:
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
 		</ElFormItem>`
 		case `is_stop`, `isStop`:
 			viewQueryField += `
@@ -2024,12 +1955,6 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('common.name.isStop')" :clearable="true" />
 		</ElFormItem>`
 		case `sort`, `weight`:
-		case `avator`:
-		case `gender`:
-			viewQueryField += `
-		<ElFormItem prop="` + field + `" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.` + field + `')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
-		</ElFormItem>`
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
@@ -2068,7 +1993,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//img或image或cover后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
 				continue
 			}
 			//video后缀
@@ -2084,10 +2009,10 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//status后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.gender')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
+			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.gender')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2266,7 +2191,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
 		],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>`
 		case `is_stop`, `isStop`:
@@ -2285,32 +2210,13 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) }
 		],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1"
                         :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>
                         <ElAlert :title="t('common.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>`
-		case `avator`:
-			viewSaveRule += `
-		` + field + `: [
-			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
-        ],`
-			viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-                    <MyUpload v-model="saveForm.data.` + field + `" accept="image/*" />
-                </ElFormItem>`
-		case `gender`:
-			viewSaveRule += `
-		` + field + `: [
-			{ type: 'enum', enum: [0, 1, 2], trigger: 'change', message: t('validation.select') }
-		],`
-			viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('common.status.` + field + `')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
-				</ElFormItem>`
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
@@ -2368,7 +2274,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//img或image或cover后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` {
 				if column[`Type`].String() == `json` {
 					viewSaveRule += `
 		` + field + `: [
@@ -2403,7 +2309,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
         ],`
 					viewSaveField += `
-				<ElFormItem :label="t('common.name.` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" :multiple="true" />
 				</ElFormItem>`
 				} else {
@@ -2413,7 +2319,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
         ],`
 					viewSaveField += `
-				<ElFormItem :label="t('common.name.` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" />
                 </ElFormItem>`
 				}
@@ -2432,14 +2338,14 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//status后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'enum', enum: [0, 1, 2], trigger: 'change', message: t('validation.select') }
 		],`
 				viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('common.status.gender')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('common.status.gender')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}

@@ -107,11 +107,11 @@ const saveDrawer = reactive({
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.nickname')" prop="nickname">
-                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('common.name.nickname')" minlength="1"
+                <ElFormItem :label="t('platform.admin.name.nickname')" prop="nickname">
+                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('platform.admin.name.nickname')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.avatar')" prop="avatar">
+                <ElFormItem :label="t('platform.admin.name.avatar')" prop="avatar">
                     <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.admin.name.roleIdArr')" prop="roleIdArr">
