@@ -2,9 +2,12 @@ package cron
 
 import (
 	daoLog "api/internal/dao/log"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
 	"context"
 	"fmt"
+
+	"github.com/gogf/gf/v2/os/gcron"
 )
 
 var JobList = map[string]func(ctx context.Context){
@@ -13,13 +16,13 @@ var JobList = map[string]func(ctx context.Context){
 }
 
 func InitCron(ctx context.Context) {
-	/* columns := daoPlatform.Cron.Columns()
+	columns := daoPlatform.Cron.Columns()
 	cronList, _ := daoPlatform.Cron.ParseDbCtx(ctx).Where(columns.IsStop, 0).All()
 	for _, cron := range cronList {
 		code := cron[columns.CronCode].String()
 		pattern := cron[columns.CronPattern].String()
 		gcron.AddSingleton(ctx, pattern, JobList[code], code)
-	} */
+	}
 }
 
 // Http日志表每周新增分区

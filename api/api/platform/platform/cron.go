@@ -25,12 +25,10 @@ type CronListFilter struct {
 	EndTime   *gtime.Time `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"`
 	Name      string      `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"`
 	/*--------公共参数 结束--------*/
-	CronId      *uint  `c:"cronId,omitempty" json:"cronId" v:"integer|min:1" dc:"定时器ID"`
-	CronName    string `c:"cronName,omitempty" json:"cronName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
-	CronCode    string `c:"cronCode,omitempty" json:"cronCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	CronPattern string `c:"cronPattern,omitempty" json:"cronPattern" v:"length:1,30" dc:"表达式"`
-	Remark      string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
-	IsStop      *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	CronId   *uint  `c:"cronId,omitempty" json:"cronId" v:"integer|min:1" dc:"定时器ID"`
+	CronName string `c:"cronName,omitempty" json:"cronName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	CronCode string `c:"cronCode,omitempty" json:"cronCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
+	IsStop   *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
 
 type CronListRes struct {
