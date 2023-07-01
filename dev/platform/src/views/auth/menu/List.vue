@@ -136,7 +136,7 @@ const table = reactive({
                     h(ElInputNumber as any, {
                         'ref': (el: any) => { currentRef = el; el?.focus() },
                         'model-value': currentVal,
-                        'placeholder': t('common.tip.sort'),
+                        'placeholder': t('auth.menu.tip.sort'),
                         'precision': 0,
                         'min': 0,
                         'max': 100,

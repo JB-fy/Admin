@@ -12,6 +12,7 @@ export default {
         isStop: '停用',
     },
     tip: {
+        sort: '从小到大排序',
         // menuIcon: 常用格式：Autoicon{集合}{标识}；Vant格式：Vant-{标识}
         menuIcon: '常用格式：Autoicon' + "{'{'}" + '集合' + "{'}{'}" + '标识' + "{'}'}" + '；Vant格式：Vant-' + "{'{'}" + '标识' + "{'}'}",
         // extraData: 'JSON格式。说明：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}}',

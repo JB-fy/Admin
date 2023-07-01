@@ -150,7 +150,7 @@ const saveDrawer = reactive({
                     <ElInputNumber v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1"
                         :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>
-                        <ElAlert :title="t('common.tip.sort')" type="info" :show-icon="true" :closable="false" />
+                        <ElAlert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('auth.menu.name.isStop')" prop="isStop">
