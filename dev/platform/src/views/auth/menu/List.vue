@@ -92,14 +92,14 @@ const table = reactive({
     },
     {
         dataKey: 'pMenuName',
-        title: t('common.name.pid'),
+        title: t('auth.menu.name.pid'),
         key: 'pid',
         align: 'center',
         width: 150,
     },
     {
         dataKey: 'level',
-        title: t('common.name.level'),
+        title: t('auth.menu.name.level'),
         key: 'level',
         align: 'center',
         width: 100,
@@ -123,7 +123,7 @@ const table = reactive({
     },
     {
         dataKey: 'sort',
-        title: t('common.name.sort'),
+        title: t('auth.menu.name.sort'),
         key: 'sort',
         align: 'center',
         width: 100,

@@ -40,10 +40,7 @@ export default {
         endTime: '结束时间',
 
         id: 'ID',
-        pid: '父级',
-        sort: '排序',
         isStop: '停用',
-        level: '层级',
         remark: '备注',
         extraData: '额外数据',
 

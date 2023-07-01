@@ -1182,7 +1182,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.` + field + `'),
+		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
@@ -1225,7 +1225,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewListColumn += `
 	{
 		dataKey: '` + field + `',
-		title: t('common.name.` + field + `'),
+		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
@@ -2016,7 +2016,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		case `pid`:
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('common.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
 		</ElFormItem>`
 		case `is_stop`, `isStop`:
 			viewQueryField += `
@@ -2266,7 +2266,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
 		],`
 			viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" prop="` + field + `">
                     <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
                 </ElFormItem>`
 		case `is_stop`, `isStop`:
@@ -2285,7 +2285,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) }
 		],`
 			viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.` + field + `')" prop="` + field + `">
                     <ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1"
                         :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>

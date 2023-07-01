@@ -137,7 +137,7 @@ const saveDrawer = reactive({
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
                         @change="() => { saveForm.data.pid = 0 }" />
                 </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('common.name.pid')" prop="pid">
+                <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
                     <MyCascader v-model="saveForm.data.pid"
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excId: saveForm.data.id } } }"
                         :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
@@ -146,7 +146,7 @@ const saveDrawer = reactive({
                     <ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
                     <ElInput v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.sort')" prop="sort">
+                <ElFormItem :label="t('auth.menu.name.sort')" prop="sort">
                     <ElInputNumber v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1"
                         :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>

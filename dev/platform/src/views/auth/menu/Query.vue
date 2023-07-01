@@ -34,7 +34,7 @@ const queryForm = reactive({
                 :api="{ code: '/auth/scene/list' }" />
         </ElFormItem>
         <ElFormItem prop="pid">
-            <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.pid')"
+            <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
                 :api="{ code: '/auth/menu/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">

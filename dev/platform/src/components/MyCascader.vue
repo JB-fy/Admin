@@ -212,7 +212,7 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
         :api="{ code: '/auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }"
         :props="{ lazy: true }" />
 
-    <MyCascader v-model="queryCommon.data.pid" :placeholder="t('common.name.pid')"
+    <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
         :defaultOptions="[{ id: 0, menuName: t('common.name.allTopLevel') }]"
         :api="{ code: '/auth/menu/tree', param: { field: ['id', 'menuName'] } }" /> -->
     <!-------- 使用示例 结束-------->
