@@ -102,11 +102,6 @@ func InitRouterPlatform(s *ghttp.Server) {
 					group.Bind(controllerThis)
 				})
 
-				group.Group(`/platform/corn`, func(group *ghttp.RouterGroup) {
-					controllerThis := controllerPlatform.NewCorn()
-					group.Bind(controllerThis)
-				})
-
 				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
 			})
 		})
