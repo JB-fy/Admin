@@ -44,14 +44,14 @@ const loginForm = reactive({
             @keyup.enter="loginForm.submit">
             <ElFormItem prop="account">
                 <ElInput v-model="loginForm.data.account"
-                    :placeholder="t('common.name.account') + '/' + t('common.name.phone')">
+                    :placeholder="t('login.name.account') + '/' + t('login.name.phone')">
                     <template #prefix>
                         <AutoiconEpUser />
                     </template>
                 </ElInput>
             </ElFormItem>
             <ElFormItem prop="password">
-                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('common.name.password')"
+                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('login.name.password')"
                     :show-password="true">
                     <template #prefix>
                         <AutoiconEpLock />

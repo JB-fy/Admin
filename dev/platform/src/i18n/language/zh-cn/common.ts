@@ -32,9 +32,6 @@ export default {
         action: '操作',
         updatedAt: '更新时间',
         createdAt: '创建时间',
-        account: '账号',
-        phone: '手机号',
-        password: '密码',
 
         without: '无',
         allTopLevel: '全部顶级',

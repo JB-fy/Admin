@@ -483,11 +483,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		case `password`, `passwd`:
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `" dc:"` + comment + `"` + "`\n"
-		case `pid`:
-			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
-			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
-			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
-			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		case `sort`, `weight`:
 			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
@@ -501,7 +496,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//id后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if field == `pid` || gstr.SubStr(fieldCaseCamel, -2) == `Id` {
 				apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
@@ -808,7 +803,12 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		case `password`, `passwd`:
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 		default:
-			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
+			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
+				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
+				continue
+			}
+			if fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
+				//代补充，修改dao内的name字段的查询过滤
 				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
 				continue
 			}
@@ -1145,7 +1145,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	rawCreatedAtField := ``
 	rawUpdatedAtField := ``
-	//rawDeletedAtField := ``
+	// rawDeletedAtField := ``
 	viewListColumn := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
@@ -1153,21 +1153,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		switch field {
 		case `deletedAt`, `deleted_at`:
-		//rawDeletedAtField = field
+			// rawDeletedAtField = field
 		case `createdAt`, `created_at`:
 			rawCreatedAtField = field
 		case `updatedAt`, `updated_at`:
 			rawUpdatedAtField = field
 		case `password`, `passwd`:
-		case `pid`:
-			viewListColumn += `
-	{
-		dataKey: '` + field + `',
-		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
-		key: '` + field + `',
-		align: 'center',
-		width: 150,
-	},`
 		case `sort`, `weight`:
 			viewListColumn += `
 	{
@@ -1243,7 +1234,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//id后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if field == `pid` || gstr.SubStr(fieldCaseCamel, -2) == `Id` {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
