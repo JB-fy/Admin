@@ -1,4 +1,4 @@
-package corn
+package cron
 
 import (
 	daoLog "api/internal/dao/log"
@@ -15,12 +15,12 @@ var JobList = map[string]func(ctx context.Context){
 	`Test`:             Test,
 }
 
-func InitCorn(ctx context.Context) {
-	columns := daoPlatform.Corn.Columns()
-	cornList, _ := daoPlatform.Corn.ParseDbCtx(ctx).Where(columns.IsStop, 0).All()
-	for _, corn := range cornList {
-		code := corn[columns.CornCode].String()
-		pattern := corn[columns.CornPattern].String()
+func InitCron(ctx context.Context) {
+	columns := daoPlatform.Cron.Columns()
+	cronList, _ := daoPlatform.Cron.ParseDbCtx(ctx).Where(columns.IsStop, 0).All()
+	for _, cron := range cronList {
+		code := cron[columns.CronCode].String()
+		pattern := cron[columns.CronPattern].String()
 		gcron.AddSingleton(ctx, pattern, JobList[code], code)
 	}
 }

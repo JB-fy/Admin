@@ -11,7 +11,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gvalid"
 
-	"api/internal/corn"
+	"api/internal/cron"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/router"
 	"api/internal/utils"
@@ -39,9 +39,9 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	/**--------设置当前服务器IP并记录 结束--------**/
 
 	/**--------定时器设置 开始--------**/
-	corn.LogHttpPartition(ctx) //先执行一次请求日志分区
+	cron.LogHttpPartition(ctx) //先执行一次请求日志分区
 
-	corn.InitCorn(ctx) //启动定时器
+	cron.InitCron(ctx) //启动定时器
 	/**--------定时器设置 结束--------**/
 
 	/**--------自定义校验规则注册 开始--------**/

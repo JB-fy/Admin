@@ -111,15 +111,6 @@ const initRouteList = [
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/server' }
             },
-            {
-                path: '/platform/corn',
-                component: async () => {
-                    const component = await import('@/views/platform/corn/Index.vue')
-                    component.default.name = '/platform/corn'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/corn' }
-            },
             /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {
                 path: '/profile',
