@@ -9,12 +9,12 @@ import (
 	"api/internal/utils"
 	"context"
 	"database/sql"
-	"encoding/json"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -258,8 +258,9 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName)
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuIcon)
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuUrl)
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)
-				//m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))//mysql不能直接转成对象返回
+				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData)
+				// m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
+				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))	//mysql不能直接转成对象返回
 				afterField = append(afterField, v)
 			case `sceneName`:
 				m = m.Fields(Scene.Table() + `.` + v)
@@ -296,12 +297,10 @@ func (daoThis *menuDao) HookSelect(afterField []string) gdb.HookHandler {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
 					case `showMenu`:
+						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
+						record[`i18n`] = extraDataJson.Get(`i18n`)
 						if record[`i18n`] == nil {
 							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
-						} else {
-							i18n := map[string]interface{}{}
-							json.Unmarshal([]byte(record[`i18n`].String()), &i18n)
-							record[`i18n`] = gvar.New(i18n)
 						}
 					}
 				}
