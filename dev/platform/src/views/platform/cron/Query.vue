@@ -34,7 +34,7 @@ const queryForm = reactive({
 			<ElInput v-model="queryCommon.data.cronCode" :placeholder="t('platform.cron.name.cronCode')" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="isStop" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('common.name.isStop')" :clearable="true" />
+			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('platform.cron.name.isStop')" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem>
 			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">

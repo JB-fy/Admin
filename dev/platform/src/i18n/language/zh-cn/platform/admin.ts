@@ -6,5 +6,6 @@ export default {
         avatar: '头像',
         roleId: '所属角色',
         roleIdArr: '所属角色',
+        isStop: '停用',
     }
 }

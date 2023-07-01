@@ -29,7 +29,6 @@ export default {
 
     name: {
         id: 'ID',
-        isStop: '停用',
         action: '操作',
         updatedAt: '更新时间',
         createdAt: '创建时间',

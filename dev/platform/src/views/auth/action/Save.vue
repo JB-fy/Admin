@@ -98,7 +98,7 @@ const saveDrawer = reactive({
                     <ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" minlength="0"
                         maxlength="120" :show-word-limit="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.isStop')" prop="isStop">
+                <ElFormItem :label="t('auth.action.name.isStop')" prop="isStop">
                     <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"
                         :active-text="t('common.yes')" :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />

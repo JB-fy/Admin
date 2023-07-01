@@ -82,7 +82,7 @@ const table = reactive({
 	},
 	{
 		dataKey: 'isStop',
-		title: t('common.name.isStop'),
+		title: t('platform.cron.name.isStop'),
 		key: 'isStop',
 		align: 'center',
 		width: 100,

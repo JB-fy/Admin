@@ -5,5 +5,6 @@ export default {
         sceneId: '所属场景',
         menuIdArr: '所含菜单',
         actionIdArr: '所含操作',
+        isStop: '停用',
     },
 }

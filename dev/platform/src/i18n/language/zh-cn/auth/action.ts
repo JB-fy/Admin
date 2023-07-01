@@ -5,5 +5,6 @@ export default {
         sceneId: '所属场景',
         sceneIdArr: '所属场景',
         remark: '备注',
+        isStop: '停用',
     },
 }

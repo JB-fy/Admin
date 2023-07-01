@@ -105,7 +105,7 @@ const saveDrawer = reactive({
                     <MyTransfer v-model="saveForm.data.actionIdArr"
                         :api="{ code: '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.isStop')" prop="isStop">
+                <ElFormItem :label="t('auth.role.name.isStop')" prop="isStop">
                     <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"
                         :active-text="t('common.yes')" :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
