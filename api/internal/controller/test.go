@@ -26,12 +26,12 @@ func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.Tes
 }
 
 func (c *Test) Test(r *ghttp.Request) {
-	var req *api.TestReq
+	/* var req *api.TestReq
 	err := r.Parse(&req)
 	if err != nil {
 		r.Response.Writeln(err.Error())
 		return
-	}
+	} */
 
 	// g.Log().Info(r.GetCtx(), `日志打印`)
 	// fmt.Println(g.I18n().T(ctx, `code.99999999`))

@@ -15,7 +15,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefix=auth_ -moduleDir=auth -commonName=场景 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
 	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
@@ -1419,7 +1419,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				h(ElTag as any, {
 					type: typeObj?.[props.rowData.` + field + `] ?? ''
 				}, {
-					default: () => (tm('common.status.gender') as any).find((item: any) => { return item.value == props.rowData.` + field + ` })?.label
+					default: () => (tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).find((item: any) => { return item.value == props.rowData.` + field + ` })?.label
 				})
 			]
 		}
@@ -1959,7 +1959,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.gender')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2279,7 +2279,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('common.status.gender')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2500,9 +2500,11 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		return
 	}
 
-	viewI18nField := ``
+	viewI18nName := ``
+	viewI18nStatus := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
+		fieldCaseCamel := gstr.CaseCamel(field)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", " ",
 			"\r", " ",
@@ -2515,12 +2517,27 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				continue
 			}
-			viewI18nField += `
+			viewI18nName += `
 		` + field + `: '` + comment + `',`
+
+			//status后缀
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+				viewI18nStatus += `
+		` + field + `: [`
+				statusList, _ := gregex.MatchAllString(`(\d+)([^\d\s,，;；]+)`, comment)
+				for _, status := range statusList {
+					viewI18nStatus += `
+			{ label: '` + status[2] + `', value: ` + status[1] + ` },`
+				}
+				viewI18nStatus += `
+		],`
+			}
 		}
 	}
 	tplView := `export default {
-    name:{` + viewI18nField + `
+    name:{` + viewI18nName + `
+    },
+    status: {` + viewI18nStatus + `
     },
 }`
 
