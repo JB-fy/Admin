@@ -54,14 +54,14 @@ const table = reactive({
     },
     {
         dataKey: 'account',
-        title: t('common.name.account'),
+        title: t('platform.admin.name.account'),
         key: 'account',
         align: 'center',
         width: 150,
     },
     {
         dataKey: 'phone',
-        title: t('common.name.phone'),
+        title: t('platform.admin.name.phone'),
         key: 'phone',
         align: 'center',
         width: 150,

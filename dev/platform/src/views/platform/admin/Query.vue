@@ -26,10 +26,10 @@ const queryForm = reactive({
             <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="account">
-            <ElInput v-model="queryCommon.data.account" :placeholder="t('common.name.account')" :clearable="true" />
+            <ElInput v-model="queryCommon.data.account" :placeholder="t('platform.admin.name.account')" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="phone">
-            <ElInput v-model="queryCommon.data.phone" :placeholder="t('common.name.phone')" :clearable="true" />
+            <ElInput v-model="queryCommon.data.phone" :placeholder="t('platform.admin.name.phone')" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="roleId">
             <MySelect v-model="queryCommon.data.roleId" :placeholder="t('platform.admin.name.roleId')"

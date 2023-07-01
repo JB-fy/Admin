@@ -28,6 +28,8 @@ export default {
     batchDelete: '批量删除',
 
     name: {
+        id: 'ID',
+        isStop: '停用',
         action: '操作',
         updatedAt: '更新时间',
         createdAt: '创建时间',
@@ -38,9 +40,6 @@ export default {
         max: '最大值',
         startTime: '开始时间',
         endTime: '结束时间',
-
-        id: 'ID',
-        isStop: '停用',
 
         account: '账号',
         phone: '手机号',

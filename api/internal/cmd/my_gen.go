@@ -2664,7 +2664,6 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	viewI18nField := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
-		fieldCaseCamelLower := gstr.CaseCamelLower(field)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", " ",
 			"\r", " ",
@@ -2672,19 +2671,14 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
-		case `password`, `passwd`:
 		case `is_stop`, `isStop`:
-		case `avator`:
-		case `gender`:
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				continue
 			}
-			if !garray.NewStrArrayFrom([]string{`account`, `phone`}).Contains(fieldCaseCamelLower) {
-				viewI18nField += `
+			viewI18nField += `
 		` + field + `: '` + comment + `',`
-			}
 		}
 	}
 	tplView := `export default {

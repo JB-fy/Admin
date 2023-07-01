@@ -98,8 +98,8 @@ const saveForm = reactive({
         <ElMain>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="false">
-                <ElFormItem :label="t('common.name.account')" prop="account">
-                    <ElInput v-model="saveForm.data.account" :placeholder="t('common.name.account')" minlength="1"
+                <ElFormItem :label="t('profile.name.account')" prop="account">
+                    <ElInput v-model="saveForm.data.account" :placeholder="t('profile.name.account')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert
@@ -107,8 +107,8 @@ const saveForm = reactive({
                             type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.phone')" prop="phone">
-                    <ElInput v-model="saveForm.data.phone" :placeholder="t('common.name.phone')" minlength="1"
+                <ElFormItem :label="t('profile.name.phone')" prop="phone">
+                    <ElInput v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert

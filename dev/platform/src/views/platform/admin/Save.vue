@@ -91,12 +91,12 @@ const saveDrawer = reactive({
         <ElScrollbar>
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="false">
-                <ElFormItem :label="t('common.name.account')" prop="account">
-                    <ElInput v-model="saveForm.data.account" :placeholder="t('common.name.account')" minlength="1"
+                <ElFormItem :label="t('platform.admin.name.account')" prop="account">
+                    <ElInput v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.phone')" prop="phone">
-                    <ElInput v-model="saveForm.data.phone" :placeholder="t('common.name.phone')" minlength="1"
+                <ElFormItem :label="t('platform.admin.name.phone')" prop="phone">
+                    <ElInput v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('common.name.password')" prop="password">
