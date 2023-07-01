@@ -804,7 +804,7 @@ type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
 
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
-type SceneDeleteReq struct {
+type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 	g.Meta ` + "`" + `path:"/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
 	IdArr  []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 }
