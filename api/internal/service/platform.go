@@ -20,7 +20,7 @@ type (
 		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (err error)
 	}
-	ICorn interface {
+	ICron interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
 		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
@@ -36,7 +36,7 @@ type (
 
 var (
 	localAdmin  IAdmin
-	localCorn   ICorn
+	localCron   ICron
 	localServer IServer
 )
 
@@ -51,15 +51,15 @@ func RegisterAdmin(i IAdmin) {
 	localAdmin = i
 }
 
-func Corn() ICorn {
-	if localCorn == nil {
-		panic("implement not found for interface ICorn, forgot register?")
+func Cron() ICron {
+	if localCron == nil {
+		panic("implement not found for interface ICron, forgot register?")
 	}
-	return localCorn
+	return localCron
 }
 
-func RegisterCorn(i ICorn) {
-	localCorn = i
+func RegisterCron(i ICron) {
+	localCron = i
 }
 
 func Server() IServer {
