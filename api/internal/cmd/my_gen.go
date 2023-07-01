@@ -2743,7 +2743,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			if !garray.NewStrArrayFrom([]string{`remark`, `isStop`, `sort`, `pid`, `account`, `password`, `phone`}).Contains(fieldCaseCamelLower) {
 				viewI18nField += `
-	` + field + `: '` + comment + `',`
+		` + field + `: '` + comment + `',`
 			}
 		}
 	}
