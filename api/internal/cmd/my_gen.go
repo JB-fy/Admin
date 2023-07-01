@@ -528,7 +528,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
-			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -3) == `ImgList` || gstr.SubStr(fieldCaseCamel, -3) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -3) == `ImageList` || gstr.SubStr(fieldCaseCamel, -3) == `ImageArr` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` {
 				if column[`Type`].String() == `json` {
 					apiReqCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 					apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
@@ -541,7 +541,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//video,video_list,videoList,video_arr,videoArr等后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
 				if column[`Type`].String() == `json` {
 					apiReqCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 					apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
@@ -1152,6 +1152,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	rawCreatedAtField := ``
 	rawUpdatedAtField := ``
 	// rawDeletedAtField := ``
+	tableRowHeight := 50
 	viewListColumn := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
@@ -1288,7 +1289,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
-			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -3) == `ImgList` || gstr.SubStr(fieldCaseCamel, -3) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -3) == `ImageList` || gstr.SubStr(fieldCaseCamel, -3) == `ImageArr` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` {
 				viewListColumn += `
 	{
         dataKey: '` + field + `',
@@ -1338,14 +1339,17 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//video,video_list,videoList,video_arr,videoArr等后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
+				if tableRowHeight < 100 {
+					tableRowHeight = 100
+				}
 				viewListColumn += `
 	{
         dataKey: '` + field + `',
         title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
         key: '` + field + `',
         align: 'center',
-        width: 100,
+        width: 150,
         cellRenderer: (props: any): any => {
             if (!props.rowData.` + field + `) {
                 return
@@ -1862,7 +1866,7 @@ defineExpose({
 		<ElAutoResizer>
 			<template #default="{ height, width }">
 				<ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort"
-					@column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
+					@column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(tableRowHeight) + `">
 					<template v-if="table.loading" #overlay>
 						<ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
 							<AutoiconEpLoading />
@@ -1946,11 +1950,11 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
-			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -3) == `ImgList` || gstr.SubStr(fieldCaseCamel, -3) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -3) == `ImageList` || gstr.SubStr(fieldCaseCamel, -3) == `ImageArr` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` {
 				continue
 			}
 			//video,video_list,videoList,video_arr,videoArr等后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
 				continue
 			}
 			//Ip后缀
@@ -2114,6 +2118,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		return
 	}
 
+	passwordField := ``
 	viewSaveRule := ``
 	viewSaveField := ``
 	for _, column := range tpl.TableColumnList {
@@ -2125,6 +2130,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
+			passwordField = field
 			viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
@@ -2214,7 +2220,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
-			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -3) == `ImgList` || gstr.SubStr(fieldCaseCamel, -3) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -3) == `ImageList` || gstr.SubStr(fieldCaseCamel, -3) == `ImageArr` {
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` {
 				if column[`Type`].String() == `json` {
 					viewSaveRule += `
 		` + field + `: [
@@ -2240,7 +2246,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//video,video_list,videoList,video_arr,videoArr等后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
 				if column[`Type`].String() == `json` {
 					viewSaveRule += `
 		` + field + `: [
@@ -2420,7 +2426,13 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
-	tplView := `<script setup lang="ts">
+	tplView := `<script setup lang="ts">`
+	if passwordField != `` {
+		tplView += `
+import md5 from 'js-md5'
+`
+	}
+	tplView += `
 const { t, tm } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
@@ -2440,7 +2452,12 @@ const saveForm = reactive({
 				return false
 			}
 			saveForm.loading = true
-			const param = removeEmptyOfObj(saveForm.data, false)
+			const param = removeEmptyOfObj(saveForm.data, false)`
+	if passwordField != `` {
+		tplView += `
+            param.` + passwordField + ` ? param.` + passwordField + ` = md5(param.` + passwordField + `) : delete param.` + passwordField
+	}
+	tplView += `
 			try {
 				if (param?.idArr?.length > 0) {
 					await request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
