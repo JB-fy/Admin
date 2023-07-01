@@ -816,8 +816,15 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		switch fieldCaseCamel {
-		case `CreatedAt`, `UpdatedAt`, `DeletedAt`: //不处理的字段
+
+		switch field {
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`: //不处理的字段
+		case `password`, `passwd`:
+		case `pid`:
+		case `is_stop`, `isStop`:
+		case `sort`, `weight`:
+		case `avator`:
+		case `gender`:
 		default:
 			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
 				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
