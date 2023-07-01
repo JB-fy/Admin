@@ -488,11 +488,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
-		case `is_stop`, `isStop`:
-			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1" dc:"` + comment + `"` + "`\n"
-			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1" dc:"` + comment + `"` + "`\n"
-			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1" dc:"` + comment + `"` + "`\n"
-			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		case `sort`, `weight`:
 			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
@@ -1172,40 +1167,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
-	},`
-		case `is_stop`, `isStop`:
-			viewListColumn += `
-	{
-		dataKey: '` + field + `',
-		title: t('common.name.isStop'),
-		key: '` + field + `',
-		align: 'center',
-		width: 100,
-		cellRenderer: (props: any): any => {
-			return [
-				h(ElSwitch as any, {
-					'model-value': props.rowData.` + field + `,
-					'active-value': 1,
-					'inactive-value': 0,
-					'inline-prompt': true,
-					'active-text': t('common.yes'),
-					'inactive-text': t('common.no'),
-					style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',`
-			if option.IsUpdate {
-				viewListColumn += `
-					onChange: (val: number) => {
-						handleUpdate({
-							idArr: [props.rowData.id],
-							` + field + `: val
-						}).then((res) => {
-							props.rowData.` + field + ` = val
-						}).catch((error) => { })
-					}`
-			}
-			viewListColumn += `
-				})
-			]
-		}
 	},`
 		case `sort`, `weight`:
 			viewListColumn += `
@@ -1949,11 +1910,6 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
 		</ElFormItem>`
-		case `is_stop`, `isStop`:
-			viewQueryField += `
-		<ElFormItem prop="` + field + `" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('common.name.isStop')" :clearable="true" />
-		</ElFormItem>`
 		case `sort`, `weight`:
 		default:
 			//主键
@@ -2024,7 +1980,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 100px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('common.name.` + field + `')" :clearable="true" />
+			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2177,8 +2133,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
 		],`
 			viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('common.name.` + field + `')" minlength="1"
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label v-if="saveForm.data.id">
@@ -2193,16 +2149,6 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
-                </ElFormItem>`
-		case `is_stop`, `isStop`:
-			viewSaveRule += `
-		` + field + `: [
-            { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
-        ],`
-			viewSaveField += `
-				<ElFormItem :label="t('common.name.isStop')" prop="` + field + `">
-                    <ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
                 </ElFormItem>`
 		case `sort`, `weight`:
 			viewSaveRule += `
@@ -2356,7 +2302,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
 		],`
 				viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>`
 				continue
@@ -2368,9 +2314,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
         ],`
 				viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
-                    <ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')"
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
                 </ElFormItem>`
 				continue
 			}
@@ -2381,7 +2326,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'integer', trigger: 'change', message: '' }
 		],`
 				viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false"/>
 				</ElFormItem>`
 				continue
@@ -2393,7 +2338,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			{ type: 'float', trigger: 'change', message: '' }
 		],`
 				viewSaveField += `
-				<ElFormItem :label="t('common.name.` + field + `')" prop="` + field + `">
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="2" :controls="false"/>
 				</ElFormItem>`
 				continue
@@ -2577,7 +2522,6 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
-		case `is_stop`, `isStop`:
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {

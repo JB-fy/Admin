@@ -99,8 +99,8 @@ const saveDrawer = reactive({
                     <ElInput v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('common.name.password')" prop="password">
-                    <ElInput v-model="saveForm.data.password" :placeholder="t('common.name.password')" minlength="1"
+                <ElFormItem :label="t('platform.admin.name.password')" prop="password">
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label v-if="saveForm.data.id">
