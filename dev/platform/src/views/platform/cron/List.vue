@@ -79,7 +79,6 @@ const table = reactive({
 		key: 'remark',
 		align: 'center',
 		width: 150,
-		hidden: true
 	},
 	{
 		dataKey: 'isStop',

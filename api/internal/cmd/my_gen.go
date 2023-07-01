@@ -1545,7 +1545,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
-		hidden: true
+		hidden: true,
 	},`
 				continue
 			}
