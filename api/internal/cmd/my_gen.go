@@ -477,7 +477,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
 		switch field {
-		case `deletedAt`, `deleted_at`: //不处理的字段
+		case `deletedAt`, `deleted_at`:
 		case `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		case `password`, `passwd`:
@@ -818,8 +818,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		fieldCaseCamel := gstr.CaseCamel(field)
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`: //不处理的字段
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
+			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 		case `pid`:
 		case `is_stop`, `isStop`:
 		case `sort`, `weight`:
@@ -828,11 +829,6 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		default:
 			if (column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id`) || fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
 				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
-				continue
-			}
-			//password或passwd后缀
-			if gstr.SubStr(fieldCaseCamel, -8) == `Password` || gstr.SubStr(fieldCaseCamel, -6) == `Passwd` {
-				controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 				continue
 			}
 		}
@@ -1175,7 +1171,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		switch field {
-		case `deletedAt`, `deleted_at`: //不处理的字段
+		case `deletedAt`, `deleted_at`:
 		//rawDeletedAtField = field
 		case `createdAt`, `created_at`:
 			rawCreatedAtField = field
@@ -2015,7 +2011,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`: //不处理的字段
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
 		case `pid`:
 			viewQueryField += `
@@ -2249,7 +2245,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`: //不处理的字段
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
 			viewSaveRule += `
 		` + field + `: [
@@ -2675,7 +2671,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}))
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`: //不处理的字段
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
 		case `pid`:
 		case `is_stop`, `isStop`:
