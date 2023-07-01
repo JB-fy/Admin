@@ -74,4 +74,16 @@ export default {
         notWithinFileSize: '文件大小不在允许范围内',
         notRequired: '不填则不修改',
     },
+
+    status: {
+        whether: [
+            { label: '否', value: 0 },
+            { label: '是', value: 1 },
+        ],
+        gender: [
+            { label: '未知', value: 0 },
+            { label: '男', value: 1 },
+            { label: '女', value: 2 },
+        ]
+    },
 }
