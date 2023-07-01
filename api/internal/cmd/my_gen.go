@@ -540,8 +540,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				continue
 			}
-			//video后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+			//video,video_list,videoList,video_arr,videoArr等后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
 				if column[`Type`].String() == `json` {
 					apiReqCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 					apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
@@ -1337,8 +1337,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
     },`
 				continue
 			}
-			//video后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+			//video,video_list,videoList,video_arr,videoArr等后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
 				viewListColumn += `
 	{
         dataKey: '` + field + `',
@@ -1949,8 +1949,8 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -3) == `ImgList` || gstr.SubStr(fieldCaseCamel, -3) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -3) == `ImageList` || gstr.SubStr(fieldCaseCamel, -3) == `ImageArr` {
 				continue
 			}
-			//video后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+			//video,video_list,videoList,video_arr,videoArr等后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
 				continue
 			}
 			//Ip后缀
@@ -2239,8 +2239,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				continue
 			}
-			//video后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Video` {
+			//video,video_list,videoList,video_arr,videoArr等后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -3) == `VideoList` || gstr.SubStr(fieldCaseCamel, -3) == `VideoArr` {
 				if column[`Type`].String() == `json` {
 					viewSaveRule += `
 		` + field + `: [
