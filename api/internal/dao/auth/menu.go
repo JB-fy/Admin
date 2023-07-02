@@ -298,6 +298,8 @@ func (daoThis *menuDao) HookSelect(afterField []string) gdb.HookHandler {
 						if record[`i18n`] == nil {
 							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
 						}
+					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
+					default:
 					}
 				}
 				result[index] = record

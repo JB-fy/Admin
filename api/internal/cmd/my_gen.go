@@ -389,6 +389,47 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
+	imageVideoJsonFieldList := ``
+	for _, column := range tpl.TableColumnList {
+		field := column[`Field`].String()
+		fieldCaseCamel := gstr.CaseCamel(field)
+		switch field {
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `password`, `passwd`:
+		default:
+			//cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
+			//video,video_list,videoList,video_arr,videoArr等后缀
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
+				if column[`Type`].String() == `json` {
+					imageVideoJsonFieldList += `columnsThis.` + gstr.CaseCamel(field) + `, `
+				}
+			}
+		}
+	}
+	imageVideoJsonFieldList = gstr.SubStr(imageVideoJsonFieldList, 0, -len(`, `))
+	if gstr.Pos(tplDao, `m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
+				afterField = append(afterField, v)`) == -1 {
+		tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+imageVideoJsonFieldList+`:
+				m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
+				afterField = append(afterField, v)
+			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+	} else {
+		tplDao, _ = gregex.ReplaceString(`case [\s\S]*:
+				m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
+				afterField = append(afterField, v)`, `case `+imageVideoJsonFieldList+`:
+				m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
+				afterField = append(afterField, v)`, tplDao)
+	}
+	if gstr.Pos(tplDao, `record[v] = gvar.New(record[v].Slice())`) == -1 {
+		tplDao = gstr.Replace(tplDao, `/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+imageVideoJsonFieldList+`:
+						record[v] = gvar.New(record[v].Slice())
+					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+	} else {
+		tplDao, _ = gregex.ReplaceString(`case [\s\S]*:
+						record[v] = gvar.New(record[v].Slice())`, `case `+imageVideoJsonFieldList+`:
+						record[v] = gvar.New(record[v].Slice())`, tplDao)
+	}
+
 	gfile.PutContents(saveFile, tplDao)
 }
 

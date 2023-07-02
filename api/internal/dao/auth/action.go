@@ -257,6 +257,8 @@ func (daoThis *actionDao) HookSelect(afterField []string) gdb.HookHandler {
 					case `sceneIdArr`:
 						idArr, _ := ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
 						record[v] = gvar.New(idArr)
+					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
+					default:
 					}
 				}
 				result[index] = record
