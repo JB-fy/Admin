@@ -36,6 +36,8 @@ type MyGenOption struct {
 
 type MyGenTpl struct {
 	TableColumnList            gdb.Result //表字段详情
+	PrimaryKey                 string     //表主键
+	NameField                  string     //dao层name对应的字段
 	SceneName                  string     //场景名称
 	SceneId                    int        //场景ID
 	RawTableNameCaseCamelLower string     //原始表名（小驼峰）
@@ -48,31 +50,11 @@ type MyGenTpl struct {
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	option := MyGenOptionHandle(ctx, parser)
+	tpl := MyGenTplHandle(ctx, option)
 
-	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
-	sceneInfo, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
-	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
-	tpl := &MyGenTpl{
-		TableColumnList:            tableColumnList,
-		SceneName:                  sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
-		SceneId:                    sceneInfo[daoAuth.Scene.Columns().SceneId].Int(),
-		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
-		TableNameCaseCamelLower:    gstr.CaseCamelLower(tableName),
-		TableNameCaseCamel:         gstr.CaseCamel(tableName),
-		TableNameCaseSnake:         gstr.CaseSnakeFirstUpper(tableName),
-		ModuleDirCaseCamelLower:    gstr.CaseCamelLower(option.ModuleDir),
-		ModuleDirCaseCamel:         gstr.CaseCamel(option.ModuleDir),
-	}
-
-	/* //必须先生成dao层（会生成部分字段的解析代码）
-	daoFile := gfile.SelfDir() + `/internal/dao/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
-	if !gfile.IsFile(daoFile) {
-		fmt.Println(`请先生成dao层后操作`)
-		return
-	} */
-	//多场景共用的模块，需特殊处理
+	MyGenTplDao(ctx, option, tpl)                         // dao层存在时，增加或修改部分字段的解析代码
 	MyGenTplLogic(ctx, option, tpl)                       // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
-	exec.Command(`gf`, `gen`, `service`).CombinedOutput() //service生成
+	exec.Command(`gf`, `gen`, `service`).CombinedOutput() // service生成
 
 	if option.IsApi {
 		MyGenTplApi(ctx, option, tpl)        // api模板生成
@@ -330,6 +312,69 @@ isCoverEnd:
 	return
 }
 
+// 模板参数处理
+func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
+	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
+	sceneInfo, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
+	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
+	tpl = &MyGenTpl{
+		TableColumnList:            tableColumnList,
+		SceneName:                  sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
+		SceneId:                    sceneInfo[daoAuth.Scene.Columns().SceneId].Int(),
+		RawTableNameCaseCamelLower: gstr.CaseCamelLower(option.DbTable),
+		TableNameCaseCamelLower:    gstr.CaseCamelLower(tableName),
+		TableNameCaseCamel:         gstr.CaseCamel(tableName),
+		TableNameCaseSnake:         gstr.CaseSnakeFirstUpper(tableName),
+		ModuleDirCaseCamelLower:    gstr.CaseCamelLower(option.ModuleDir),
+		ModuleDirCaseCamel:         gstr.CaseCamel(option.ModuleDir),
+	}
+	fieldArr := make([]string, len(tpl.TableColumnList))
+	fieldCaseCamelArr := make([]string, len(tpl.TableColumnList))
+	for index, column := range tpl.TableColumnList {
+		field := column[`Field`].String()
+		fieldArr[index] = field
+		fieldCaseCamel := gstr.CaseCamel(field)
+		fieldCaseCamelArr[index] = fieldCaseCamel
+		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
+			tpl.PrimaryKey = field
+		}
+	}
+
+	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
+	// 根据name字段优先级排序
+	nameFieldList := []string{
+		tpl.TableNameCaseCamel + `Name`,
+		gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`,
+		`Phone`,
+		`Account`,
+	}
+	for _, v := range nameFieldList {
+		index := fieldCaseCamelArrG.Search(v)
+		if index != -1 {
+			tpl.NameField = fieldArr[index]
+			return
+		}
+	}
+	return
+}
+
+// status字段注释解析
+func MyGenStatusList(comment string) (statusList [][]string) {
+	statusList, _ = gregex.MatchAllString(`(\d+)([^\d\s,，;；]+)`, comment)
+	return
+}
+
+// dao层存在增加部分字段的解析
+func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+	saveFile := gfile.SelfDir() + `/internal/dao/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	if !gfile.IsFile(saveFile) {
+		return
+	}
+	tplDao := gfile.GetContents(saveFile)
+
+	gfile.PutContents(saveFile, tplDao)
+}
+
 // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
@@ -571,7 +616,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//status后缀
 			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
-				statusList, _ := gregex.MatchAllString(`(\d+)([^\d\s,，;；]+)`, comment)
+				statusList := MyGenStatusList(comment)
 				statusArr := make([]string, len(statusList))
 				for index, status := range statusList {
 					statusArr[index] = status[1]
@@ -2553,7 +2598,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 			//status后缀
 			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
-				statusList, _ := gregex.MatchAllString(`(\d+)([^\d\s,，;；]+)`, comment)
+				statusList := MyGenStatusList(comment)
 				viewI18nStatus += `
 		` + field + `: [`
 				for _, status := range statusList {
