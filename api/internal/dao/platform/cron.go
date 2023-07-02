@@ -196,6 +196,7 @@ func (daoThis *cronDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -254,6 +255,7 @@ func (daoThis *cronDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

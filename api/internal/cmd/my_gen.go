@@ -364,13 +364,30 @@ func MyGenStatusList(comment string) (statusList [][]string) {
 	return
 }
 
-// dao层存在增加部分字段的解析
+// dao层存在时，增加或修改部分字段的解析代码
 func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/dao/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !gfile.IsFile(saveFile) {
 		return
 	}
 	tplDao := gfile.GetContents(saveFile)
+
+	if tpl.NameField != `` {
+		if tpl.NameField != `name` {
+			if gstr.Pos(tplDao, `case `+"`name`"+`:
+				m = m.Fields(`) == -1 {
+				tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`name`"+`:
+				m = m.Fields(daoThis.Table() + `+"`.`"+` + daoThis.Columns().`+gstr.CaseCamel(tpl.NameField)+` + `+"` AS `"+` + v)
+			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+			}
+		}
+		if gstr.Pos(tplDao, `case `+"`name`"+`:
+				m = m.WhereLike(`) == -1 {
+			tplDao = gstr.Replace(tplDao, `/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`name`"+`:
+				m = m.WhereLike(daoThis.Table()+`+"`.`"+`+daoThis.Columns().`+gstr.CaseCamel(tpl.NameField)+`, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)
+			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		}
+	}
 
 	gfile.PutContents(saveFile, tplDao)
 }
@@ -852,25 +869,19 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	}
 
 	controllerAlloweFieldAppend := ``
+	if tpl.PrimaryKey != `id` {
+		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, `
+	}
+	if tpl.NameField != `` && tpl.NameField != `name` {
+		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.NameField) + `, `
+	}
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
-		default:
-			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
-				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
-				continue
-			}
-			if fieldCaseCamel == tpl.TableNameCaseCamel+`Name` {
-				//代补充，修改dao内的name字段的查询过滤
-				controllerAlloweFieldAppend += `columnsThis.` + fieldCaseCamel + `, `
-				continue
-			}
 		}
 	}
 	controllerAlloweFieldAppend = gstr.SubStr(controllerAlloweFieldAppend, 0, -len(`, `))
@@ -934,7 +945,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
-		field = []string{` + "`id`, `name`" + `, ` + controllerAlloweFieldAppend + `}
+		field = []string{` + "`id`, `name`"
+			if controllerAlloweFieldAppend != `` {
+				tplController += `, ` + controllerAlloweFieldAppend
+			}
+			tplController += `}
 	}
 	/**--------权限验证 结束--------**/
 `

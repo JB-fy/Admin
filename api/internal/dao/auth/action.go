@@ -225,6 +225,7 @@ func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				afterField = append(afterField, v)
+			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -311,6 +312,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
 				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
+			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

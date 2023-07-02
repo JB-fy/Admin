@@ -242,6 +242,7 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				m = m.Fields(Scene.Table() + `.` + Scene.Columns().SceneCode)
 				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 				afterField = append(afterField, v)
+			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -320,6 +321,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 			case `sceneCode`:
 				m = m.Where(Scene.Table()+`.`+Scene.Columns().SceneCode, v)
 				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
+			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {
