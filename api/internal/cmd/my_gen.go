@@ -677,8 +677,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
-			//status后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			//status或type后缀
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
 				statusList := MyGenStatusList(comment)
 				statusArr := make([]string, len(statusList))
 				for index, status := range statusList {
@@ -1528,8 +1528,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	},`
 				continue
 			}
-			//status后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			//status或type后缀
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -2079,8 +2079,8 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		</ElFormItem>`
 				continue
 			}
-			//status后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			//status或type后缀
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 100px;">
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
@@ -2397,8 +2397,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				</ElFormItem>`
 				continue
 			}
-			//status后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			//status或type后缀
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'enum', enum: [0, 1, 2], trigger: 'change', message: t('validation.select') }
@@ -2657,8 +2657,8 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewI18nName += `
 		` + field + `: '` + comment + `',`
 
-			//status后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` {
+			//status或type后缀
+			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
 				statusList := MyGenStatusList(comment)
 				viewI18nStatus += `
 		` + field + `: [`
