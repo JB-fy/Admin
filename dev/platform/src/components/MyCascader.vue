@@ -205,6 +205,8 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
     <!-- <MyCascader v-model="saveCommon.data.menuIdArr"
         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }" :isPanel="true"
         :props="{ multiple: true }" />
+    <MyCascader v-model="saveCommon.data.categoryId" :placeholder="t('common.name.rel.categoryId')"
+        :api="{ code: '/category/tree', param: { field: ['id', 'categoryName'] } }" :props="{ checkStrictly: false }" />
 
     <MyCascader v-model="saveCommon.data.pid"
         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }" />
