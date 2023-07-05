@@ -284,7 +284,6 @@ func (daoThis *roleDao) HookSelect(afterField []string) gdb.HookHandler {
 						}
 						switch record[Scene.Columns().SceneCode].String() {
 						case `platform`:
-							break
 						}
 					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 					default:
