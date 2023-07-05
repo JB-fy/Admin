@@ -2162,8 +2162,8 @@ queryCommon.data = {
 	timeRange: (() => {
 		const date = new Date()
 		return [
-			new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-			new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
 		]
 	})(),
 	startTime: computed(() => {
