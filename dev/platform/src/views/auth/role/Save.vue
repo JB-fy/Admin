@@ -8,7 +8,6 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        sort: 50,
         ...saveCommon.data
     } as { [propName: string]: any },
     rules: {
