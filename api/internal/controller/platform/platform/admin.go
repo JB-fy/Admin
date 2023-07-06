@@ -33,7 +33,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 
 	columnsThis := daoPlatform.Admin.Columns()
 	allowField := daoPlatform.Admin.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`)
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
@@ -47,7 +47,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `platformAdminLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.AdminId, columnsThis.Nickname}
+		field = []string{`id`, columnsThis.AdminId, columnsThis.Nickname}
 	}
 	/**--------权限验证 结束--------**/
 

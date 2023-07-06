@@ -30,7 +30,7 @@ func (controllerThis *Server) List(ctx context.Context, req *apiPlatform.ServerL
 
 	columnsThis := daoPlatform.Server.Columns()
 	allowField := daoPlatform.Server.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -43,7 +43,7 @@ func (controllerThis *Server) List(ctx context.Context, req *apiPlatform.ServerL
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `platformServerLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.ServerId}
+		field = []string{`id`, columnsThis.ServerId}
 	}
 	/**--------权限验证 结束--------**/
 
