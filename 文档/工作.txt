@@ -6,6 +6,9 @@
 固定宽高裁剪（会丢失）：?x-oss-process=image/resize,m_fill,h_500,w_500
 固定宽高缩放填充（会丢失）：?x-oss-process=image/resize,m_pad,h_500,w_500,color_FF0000
 
+阿里云oss视频某帧图片（t_1000表示第几帧）：?x-oss-process=video/snapshot,t_1000,m_fast
+
+
 关闭pc和手机自动跳转三个位置
     api/app/common/behavior/ReadHtmlCacheBehavior::run  关闭pc和手机互相跳转
     api/app/media/controller/BaseController::_initialize 关闭pc跳转手机
