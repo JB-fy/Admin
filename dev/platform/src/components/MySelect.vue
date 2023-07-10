@@ -159,9 +159,9 @@ const select = reactive({
             select.api.addOptions()
         }
     },
-    remoteMethod: (name: string) => {
-        if (name) {
-            select.api.param.filter[select.api.searchField] = name
+    remoteMethod: (label: string) => {
+        if (label) {
+            select.api.param.filter[select.api.searchField] = label
         } else {
             delete select.api.param.filter[select.api.searchField]
         }

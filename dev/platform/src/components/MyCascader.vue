@@ -210,7 +210,7 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
         :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
 
     <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
-        :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" :api="{ code: '/auth/menu/tree' }"
+        :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :api="{ code: '/auth/menu/tree' }"
         :props="{ checkStrictly: true, emitPath: false }" /> -->
     <!-------- 使用示例 结束-------->
 </template>
