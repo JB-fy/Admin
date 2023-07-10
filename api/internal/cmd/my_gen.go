@@ -347,6 +347,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`,
 		`Phone`,
 		`Account`,
+		`nickname`,
 	}
 	for _, v := range nameFieldList {
 		index := fieldCaseCamelArrG.Search(v)
