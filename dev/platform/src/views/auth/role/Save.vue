@@ -88,8 +88,8 @@ const saveDrawer = reactive({
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <ElFormItem :label="t('auth.role.name.roleName')" prop="roleName">
-                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')"
-                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('auth.role.name.sceneId')" prop="sceneId">
                     <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
@@ -98,7 +98,7 @@ const saveDrawer = reactive({
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuIdArr')" prop="menuIdArr">
                     <MyCascader v-model="saveForm.data.menuIdArr"
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
-                        :isPanel="true" :props="{ multiple: true, checkStrictly: false, emitPath: true }" />
+                        :isPanel="true" :props="{ multiple: true }" />
                 </ElFormItem>
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionIdArr')" prop="actionIdArr">
                     <MyTransfer v-model="saveForm.data.actionIdArr"

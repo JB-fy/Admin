@@ -26,8 +26,7 @@ const queryForm = reactive({
             <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </ElFormItem>
         <ElFormItem prop="menuName">
-            <ElInput v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')"
-                :clearable="true" />
+            <ElInput v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')" :clearable="true" />
         </ElFormItem>
         <ElFormItem prop="sceneId">
             <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.menu.name.sceneId')"
@@ -35,7 +34,8 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="pid">
             <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
-                :api="{ code: '/auth/menu/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
+                :api="{ code: '/auth/menu/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]"
+                :props="{ checkStrictly: true, emitPath: false }" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">
             <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')"

@@ -118,15 +118,14 @@ const saveDrawer = reactive({
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <ElFormItem :label="t('auth.menu.name.menuName')" prop="menuName">
-                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')"
-                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
-                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')"
-                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" minlength="1"
+                        maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true"
-                            :closable="false" />
+                        <ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
@@ -140,7 +139,8 @@ const saveDrawer = reactive({
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
                     <MyCascader v-model="saveForm.data.pid"
                         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excId: saveForm.data.id } } }"
-                        :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
+                        :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false"
+                        :props="{ checkStrictly: true, emitPath: false }" />
                 </ElFormItem>
                 <ElFormItem :label="t('auth.menu.name.extraData')" prop="extraData">
                     <ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />

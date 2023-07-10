@@ -44,13 +44,8 @@ const transfer = reactive({
     }),
     options: [...props.defaultOptions] as any,
     props: {
-        key: computed((): string => {
-            return props.props.key ?? transfer.api.param.field[0] ?? 'key'
-        }),
-        label: computed((): string => {
-            return props.props.label ?? transfer.api.param.field[1] ?? 'label'
-        }),
-        disabled: props.props.disabled ?? 'disabled',
+        key: props.api?.param?.field?.[0] ?? 'id',
+        label: props.api?.param?.field?.[1] ?? 'name',
         ...props.props,
     },
     initOptions: () => {

@@ -2027,7 +2027,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		case `pid`:
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" />
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
 		</ElFormItem>`
 		case `sort`, `weight`:
 		default:
@@ -2267,7 +2267,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" />
+                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, name: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
                 </ElFormItem>`
 		case `sort`, `weight`:
 			viewSaveRule += `

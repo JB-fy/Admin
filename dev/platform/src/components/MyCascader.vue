@@ -69,9 +69,8 @@ const cascader = reactive({
     }),
     options: [...props.defaultOptions] as any,
     props: {
-        multiple: false,
-        checkStrictly: true,
-        emitPath: false,
+        expandTrigger: 'hover' as any, //子级展开方式。click或hover
+        checkStrictly: false,
         lazy: false,    //不建议使用动态加载模式，使用体验很差
         lazyLoad: (node: any, resolve: any) => {
             if (node.level == 0) {
@@ -87,15 +86,8 @@ const cascader = reactive({
             }).catch((error) => { })
             delete cascader.api.param.filter[cascader.api.pidField]
         },
-        value: computed((): string => {
-            return props.props.value ?? cascader.api.param.field[0] ?? 'value'
-        }),
-        label: computed((): string => {
-            return props.props.label ?? cascader.api.param.field[1] ?? 'label'
-        }),
-        children: props.props.children ?? 'children',
-        disabled: props.props.disabled ?? 'disabled',
-        leaf: props.props.leaf ?? 'leaf',   //动态加载时用于终止继续加载。当checkStrictly为false时，该字段必须有，否则选中后值为null
+        value: props.api?.param?.field?.[0] ?? 'id',
+        label: props.api?.param?.field?.[1] ?? 'name',
         ...props.props,
     },
     initOptions: () => {
@@ -202,20 +194,23 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
         :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
 
     <!-------- 使用示例 开始-------->
-    <!-- <MyCascader v-model="saveCommon.data.menuIdArr"
+    <!-- <MyCascader v-model="saveCommon.data.menuId" :placeholder="t('common.name.rel.menuId')"
+        :api="{ code: '/auth/menu/tree', param: { field: ['id', 'menuName'] } }"
+        :props="{ emitPath: false, value: 'id', label: 'menuName' }" />
+
+    <MyCascader v-model="saveCommon.data.menuIdArr"
         :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }" :isPanel="true"
         :props="{ multiple: true }" />
-    <MyCascader v-model="saveCommon.data.menuId" :placeholder="t('common.name.rel.menuId')"
-        :api="{ code: '/auth/menu/tree', param: { field: ['id', 'menuName'] } }" :props="{ checkStrictly: false }" />
 
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }" />
+        :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }"
+        :props="{ checkStrictly: true, emitPath: false }" />
     <MyCascader v-model="saveCommon.data.pid"
-        :api="{ code: '/auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId }, field: ['id', 'menuName'] } }"
-        :props="{ lazy: true }" />
+        :api="{ code: '/auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId } } }"
+        :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
 
     <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
-        :defaultOptions="[{ id: 0, menuName: t('common.name.allTopLevel') }]"
-        :api="{ code: '/auth/menu/tree', param: { field: ['id', 'menuName'] } }" /> -->
+        :defaultOptions="[{ id: 0, name: t('common.name.allTopLevel') }]" :api="{ code: '/auth/menu/tree' }"
+        :props="{ checkStrictly: true, emitPath: false }" /> -->
     <!-------- 使用示例 结束-------->
 </template>
