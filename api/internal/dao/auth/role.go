@@ -228,7 +228,7 @@ func (daoThis *roleDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			case `name`:
+			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().RoleName + ` AS ` + v)
 			case `sceneName`:
 				m = m.Fields(Scene.Table() + `.` + v)
@@ -317,7 +317,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `name`:
+			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)
 			case `sceneCode`:
 				m = m.Where(Scene.Table()+`.`+Scene.Columns().SceneCode, v)

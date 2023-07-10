@@ -45,7 +45,7 @@ const transfer = reactive({
     options: [...props.defaultOptions] as any,
     props: {
         key: props.api?.param?.field?.[0] ?? 'id',
-        label: props.api?.param?.field?.[1] ?? 'name',
+        label: props.api?.param?.field?.[1] ?? 'label',
         ...props.props,
     },
     initOptions: () => {
@@ -60,7 +60,7 @@ const transfer = reactive({
         param: computed((): { filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number } => {
             return {
                 filter: {} as { [propName: string]: any },
-                field: ['id', 'name'],
+                field: ['id', 'label'],
                 sort: 'id desc',
                 page: 1,
                 limit: 0,

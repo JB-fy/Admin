@@ -332,7 +332,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey() . ' AS ' . $key);
                 return true;
-            case 'name':
+            case 'label':
                 $nameField = str_replace('Id', 'Name', $this->getKey());
                 if (in_array($nameField, $this->getAllColumn())) {
                     $this->builder->addSelect($this->getTable() . '.' . $nameField . ' AS ' . $key);
@@ -389,7 +389,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'endTime':
                 $this->builder->where($this->getTable() . '.createdAt', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
                 return true;
-            case 'name':
+            case 'label':
                 $nameField = str_replace('Id', 'Name', $this->getKey());
                 if (in_array($nameField, $this->getAllColumn())) {
                     $this->builder->where($this->getTable() . '.' . $nameField, $operator ?? 'Like', '%' . $value . '%', $boolean ?? 'and');
@@ -408,7 +408,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                         } else {
                             $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                         }
-                    } else if (strtolower(substr($key, -4)) === 'name') {
+                    } else if (strtolower(substr($key, -4)) === 'label') {
                         $this->builder->where($this->getTable() . '.' . $key, $operator ?? 'like', '%' . $value . '%', $boolean ?? 'and');
                     } else {
                         $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');

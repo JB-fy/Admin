@@ -31,7 +31,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 
 	columnsThis := daoAuth.Menu.Columns()
 	allowField := daoAuth.Menu.ColumnArr()
-	allowField = append(allowField, `id`, `name`, `sceneName`, `pMenuName`)
+	allowField = append(allowField, `id`, `label`, `sceneName`, `pMenuName`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -44,7 +44,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.MenuId, columnsThis.MenuName}
+		field = []string{`id`, `label`, columnsThis.MenuId, columnsThis.MenuName}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -67,7 +67,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) (res *apiAuth.MenuInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Menu.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -166,7 +166,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 
 	columnsThis := daoAuth.Menu.Columns()
 	allowField := daoAuth.Menu.ColumnArr()
-	allowField = append(allowField, `id`, `name`, `sceneName`, `pMenuName`)
+	allowField = append(allowField, `id`, `label`, `sceneName`, `pMenuName`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -179,7 +179,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.MenuId, columnsThis.MenuName}
+		field = []string{`id`, `label`, columnsThis.MenuId, columnsThis.MenuName}
 	}
 	/**--------权限验证 结束--------**/
 

@@ -27,7 +27,7 @@ class Role extends AbstractController
                     $allowField = $this->getAllowField(AuthRole::class);
                     $allowField = array_merge($allowField, ['sceneName', 'tableName']);
                 } else {
-                    $allowField = ['id', 'name', 'roleId', 'roleName'];
+                    $allowField = ['id', 'label', 'roleId', 'roleName'];
                 }
                 if (empty($data['field'])) {
                     $data['field'] = $allowField;

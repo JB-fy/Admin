@@ -219,7 +219,7 @@ func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			case `name`:
+			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ActionName + ` AS ` + v)
 			case `sceneIdArr`:
 				//需要id字段
@@ -289,7 +289,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `name`:
+			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)
 			case `sceneId`:
 				m = m.Where(ActionRelToScene.Table()+`.`+k, v)

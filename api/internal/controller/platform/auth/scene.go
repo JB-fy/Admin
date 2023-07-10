@@ -31,7 +31,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 
 	columnsThis := daoAuth.Scene.Columns()
 	allowField := daoAuth.Scene.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -44,7 +44,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `authSceneLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.SceneId, columnsThis.SceneName}
+		field = []string{`id`, `label`, columnsThis.SceneId, columnsThis.SceneName}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -72,7 +72,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq) (res *apiAuth.SceneInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Scene.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

@@ -37,7 +37,7 @@ type MyGenOption struct {
 type MyGenTpl struct {
 	TableColumnList            gdb.Result //表字段详情
 	PrimaryKey                 string     //表主键
-	NameField                  string     //dao层name对应的字段
+	LabelField                 string     //dao层label对应的字段(常用于前端组件)
 	SceneName                  string     //场景名称
 	SceneId                    int        //场景ID
 	RawTableNameCaseCamelLower string     //原始表名（小驼峰）
@@ -351,7 +351,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	for _, v := range nameFieldList {
 		index := fieldCaseCamelArrG.Search(v)
 		if index != -1 {
-			tpl.NameField = fieldArr[index]
+			tpl.LabelField = fieldArr[index]
 			return
 		}
 	}
@@ -376,19 +376,17 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 	tplDao := gfile.GetContents(saveFile)
 
-	if tpl.NameField != `` {
-		if tpl.NameField != `name` {
-			if gstr.Pos(tplDao, `case `+"`name`"+`:
+	if tpl.LabelField != `` {
+		if gstr.Pos(tplDao, `case `+"`label`"+`:
 				m = m.Fields(`) == -1 {
-				tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`name`"+`:
-				m = m.Fields(daoThis.Table() + `+"`.`"+` + daoThis.Columns().`+gstr.CaseCamel(tpl.NameField)+` + `+"` AS `"+` + v)
+			tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`label`"+`:
+				m = m.Fields(daoThis.Table() + `+"`.`"+` + daoThis.Columns().`+gstr.CaseCamel(tpl.LabelField)+` + `+"` AS `"+` + v)
 			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
-			}
 		}
-		if gstr.Pos(tplDao, `case `+"`name`"+`:
+		if gstr.Pos(tplDao, `case `+"`label`"+`:
 				m = m.WhereLike(`) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`name`"+`:
-				m = m.WhereLike(daoThis.Table()+`+"`.`"+`+daoThis.Columns().`+gstr.CaseCamel(tpl.NameField)+`, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)
+			tplDao = gstr.Replace(tplDao, `/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`label`"+`:
+				m = m.WhereLike(daoThis.Table()+`+"`.`"+`+daoThis.Columns().`+gstr.CaseCamel(tpl.LabelField)+`, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)
 			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
 		}
 	}
@@ -830,7 +828,7 @@ type ` + tpl.TableNameCaseCamel + `ListFilter struct {
 	ExcIdArr  []uint      ` + "`" + `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
 	StartTime *gtime.Time ` + "`" + `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"` + "`" + `
 	EndTime   *gtime.Time ` + "`" + `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"` + "`" + `
-	Name      string      ` + "`" + `c:"name,omitempty" json:"name" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称。后台公共列表常用"` + "`" + `
+	Label     string      ` + "`" + `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`" + `
 	/*--------公共参数 结束--------*/
 	` + apiReqFilterColumn + `
 }
@@ -922,8 +920,8 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	if tpl.PrimaryKey != `id` {
 		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, `
 	}
-	if tpl.NameField != `` && tpl.NameField != `name` {
-		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.NameField) + `, `
+	if tpl.LabelField != `` {
+		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
 	}
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
@@ -972,7 +970,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 
 	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
-	allowField = append(allowField, ` + "`id`, `name`" + `)`
+	allowField = append(allowField, ` + "`id`, `label`" + `)`
 		if controllerAlloweFieldDiff != `` {
 			tplController += `
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
@@ -995,7 +993,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
-		field = []string{` + "`id`, `name`"
+		field = []string{` + "`id`, `label`"
 			if controllerAlloweFieldAppend != `` {
 				tplController += `, ` + controllerAlloweFieldAppend
 			}
@@ -1032,7 +1030,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
-	allowField = append(allowField, ` + "`id`, `name`" + `)`
+	allowField = append(allowField, ` + "`id`, `label`" + `)`
 		if controllerAlloweFieldDiff != `` {
 			tplController += `
 	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()

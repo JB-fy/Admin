@@ -26,7 +26,7 @@ class Action extends AbstractController
                 if ($isAuth) {
                     $allowField = $this->getAllowField(AuthAction::class);
                 } else {
-                    $allowField = ['id', 'name', 'actionId', 'actionName'];
+                    $allowField = ['id', 'label', 'actionId', 'actionName'];
                 }
                 if (empty($data['field'])) {
                     $data['field'] = $allowField;

@@ -31,7 +31,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 
 	columnsThis := daoAuth.Role.Columns()
 	allowField := daoAuth.Role.ColumnArr()
-	allowField = append(allowField, `id`, `name`, `sceneName`, `tableName`)
+	allowField = append(allowField, `id`, `label`, `sceneName`, `tableName`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -44,7 +44,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `authRoleLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.RoleId, columnsThis.RoleName}
+		field = []string{`id`, `label`, columnsThis.RoleId, columnsThis.RoleName}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -67,7 +67,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) (res *apiAuth.RoleInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Role.ColumnArr()
-	allowField = append(allowField, `id`, `name`, `sceneName`, `menuIdArr`, `actionIdArr`)
+	allowField = append(allowField, `id`, `label`, `sceneName`, `menuIdArr`, `actionIdArr`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

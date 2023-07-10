@@ -196,7 +196,7 @@ func (daoThis *cronDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			case `name`:
+			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().CronName + ` AS ` + v)
 			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:

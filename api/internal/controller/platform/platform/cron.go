@@ -31,7 +31,7 @@ func (controllerThis *Cron) List(ctx context.Context, req *apiPlatform.CronListR
 
 	columnsThis := daoPlatform.Cron.Columns()
 	allowField := daoPlatform.Cron.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -44,7 +44,7 @@ func (controllerThis *Cron) List(ctx context.Context, req *apiPlatform.CronListR
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, `platformCronLook`)
 	if !isAuth {
-		field = []string{`id`, `name`, columnsThis.CronId, columnsThis.CronName}
+		field = []string{`id`, `label`, columnsThis.CronId, columnsThis.CronName}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -72,7 +72,7 @@ func (controllerThis *Cron) List(ctx context.Context, req *apiPlatform.CronListR
 func (controllerThis *Cron) Info(ctx context.Context, req *apiPlatform.CronInfoReq) (res *apiPlatform.CronInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoPlatform.Cron.ColumnArr()
-	allowField = append(allowField, `id`, `name`)
+	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

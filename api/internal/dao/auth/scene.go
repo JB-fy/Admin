@@ -200,7 +200,7 @@ func (daoThis *sceneDao) ParseField(field []string, joinTableArr *[]string) gdb.
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			case `name`:
+			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().SceneName + ` AS ` + v)
 			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
@@ -263,7 +263,7 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `name`:
+			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().SceneName, `%`+gconv.String(v)+`%`)
 			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
