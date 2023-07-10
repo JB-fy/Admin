@@ -38,7 +38,7 @@ type CronListRes struct {
 
 type CronItem struct {
 	Id          uint        `json:"id" dc:"ID"`
-	Name        string      `json:"name" dc:"名称"`
+	Label       string      `json:"label" dc:"标签。常用于前端组件"`
 	CronId      uint        `json:"cronId" dc:"定时器ID"`
 	CronName    string      `json:"cronName" dc:"名称"`
 	CronCode    string      `json:"cronCode" dc:"标识"`
@@ -64,7 +64,7 @@ type CronInfoRes struct {
 
 type CronInfo struct {
 	Id          uint        `json:"id" dc:"ID"`
-	Name        string      `json:"name" dc:"名称"`
+	Label       string      `json:"label" dc:"标签。常用于前端组件"`
 	CronId      uint        `json:"cronId" dc:"定时器ID"`
 	CronName    string      `json:"cronName" dc:"名称"`
 	CronCode    string      `json:"cronCode" dc:"标识"`

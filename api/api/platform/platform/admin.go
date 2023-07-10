@@ -39,7 +39,7 @@ type AdminListRes struct {
 
 type AdminItem struct {
 	Id        uint        `json:"id" dc:"ID"`
-	Name      string      `json:"name" dc:"名称"`
+	Label     string      `json:"label" dc:"标签。常用于前端组件"`
 	AdminId   uint        `json:"adminId" dc:"管理员ID"`
 	Account   string      `json:"account" dc:"账号"`
 	Phone     string      `json:"phone" dc:"手机号"`
@@ -65,7 +65,7 @@ type AdminInfoRes struct {
 
 type AdminInfo struct {
 	Id        uint        `json:"id" dc:"ID"`
-	Name      string      `json:"name" dc:"名称"`
+	Label     string      `json:"label" dc:"标签。常用于前端组件"`
 	AdminId   uint        `json:"adminId" dc:"管理员ID"`
 	Account   string      `json:"account" dc:"账号"`
 	Phone     string      `json:"phone" dc:"手机号"`

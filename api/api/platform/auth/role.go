@@ -39,7 +39,7 @@ type RoleListRes struct {
 
 type RoleItem struct {
 	Id        uint        `json:"id" dc:"ID"`
-	Name      string      `json:"name" dc:"名称"`
+	Label     string      `json:"label" dc:"标签。常用于前端组件"`
 	RoleId    uint        `json:"roleId" dc:"角色ID"`
 	RoleName  string      `json:"roleName" dc:"角色名称"`
 	SceneId   uint        `json:"sceneId" dc:"场景ID"`
@@ -67,7 +67,7 @@ type RoleInfoRes struct {
 
 type RoleInfo struct {
 	Id          uint        `json:"id" dc:"ID"`
-	Name        string      `json:"name" dc:"名称"`
+	Label       string      `json:"label" dc:"标签。常用于前端组件"`
 	RoleId      uint        `json:"roleId" dc:"角色ID"`
 	RoleName    string      `json:"roleName" dc:"角色名称"`
 	SceneId     uint        `json:"sceneId" dc:"场景ID"`

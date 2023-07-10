@@ -840,7 +840,7 @@ type ` + tpl.TableNameCaseCamel + `ListRes struct {
 
 type ` + tpl.TableNameCaseCamel + `Item struct {
 	Id          uint        ` + "`" + `json:"id" dc:"ID"` + "`" + `
-	Name        string      ` + "`" + `json:"name" dc:"名称"` + "`" + `
+	Label       string      ` + "`" + `json:"label" dc:"标签。常用于前端组件"` + "`" + `
 	` + apiResColumn + `
 }
 
@@ -862,7 +862,7 @@ type ` + tpl.TableNameCaseCamel + `InfoRes struct {
 
 type ` + tpl.TableNameCaseCamel + `Info struct {
 	Id          uint        ` + "`" + `json:"id" dc:"ID"` + "`" + `
-	Name        string      ` + "`" + `json:"name" dc:"名称"` + "`" + `
+	Label       string      ` + "`" + `json:"label" dc:"标签。常用于前端组件"` + "`" + `
 	` + apiResColumn + `
 }
 

@@ -39,7 +39,7 @@ type MenuListRes struct {
 
 type MenuItem struct {
 	Id        uint        `json:"id" dc:"ID"`
-	Name      string      `json:"name" dc:"名称"`
+	Label     string      `json:"label" dc:"标签。常用于前端组件"`
 	MenuId    uint        `json:"menuId" dc:"菜单ID"`
 	Pid       uint        `json:"pid" dc:"父级ID"`
 	SceneId   uint        `json:"sceneId" dc:"场景ID"`
@@ -72,7 +72,7 @@ type MenuInfoRes struct {
 
 type MenuInfo struct {
 	Id        uint        `json:"id" dc:"ID"`
-	Name      string      `json:"name" dc:"名称"`
+	Label     string      `json:"label" dc:"标签。常用于前端组件"`
 	MenuId    uint        `json:"menuId" dc:"菜单ID"`
 	Pid       uint        `json:"pid" dc:"父级ID"`
 	SceneId   uint        `json:"sceneId" dc:"场景ID"`
@@ -142,7 +142,7 @@ type MenuTreeRes struct {
 
 type MenuTree struct {
 	Id       uint        `json:"id" dc:"ID"`
-	Name     string      `json:"name" dc:"名称"`
+	Label    string      `json:"label" dc:"标签。常用于前端组件"`
 	MenuId   uint        `json:"menuId" dc:"菜单ID"`
 	Pid      uint        `json:"pid" dc:"父级ID"`
 	Children interface{} `json:"children" dc:"子级列表"`

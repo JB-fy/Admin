@@ -38,7 +38,7 @@ type SceneListRes struct {
 
 type SceneItem struct {
 	Id          uint        `json:"id" dc:"ID"`
-	Name        string      `json:"name" dc:"名称"`
+	Label       string      `json:"label" dc:"标签。常用于前端组件"`
 	SceneId     uint        `json:"sceneId" dc:"场景ID"`
 	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
 	SceneName   string      `json:"sceneName" dc:"场景名称"`
@@ -63,7 +63,7 @@ type SceneInfoRes struct {
 
 type SceneInfo struct {
 	Id          uint        `json:"id" dc:"ID"`
-	Name        string      `json:"name" dc:"名称"`
+	Label       string      `json:"label" dc:"标签。常用于前端组件"`
 	SceneId     uint        `json:"sceneId" dc:"场景ID"`
 	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
 	SceneName   string      `json:"sceneName" dc:"场景名称"`

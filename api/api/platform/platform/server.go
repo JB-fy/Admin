@@ -37,7 +37,7 @@ type ServerListRes struct {
 
 type ServerItem struct {
 	Id        uint        `json:"id" dc:"ID"`
-	Name      string      `json:"name" dc:"名称"`
+	Label     string      `json:"label" dc:"标签。常用于前端组件"`
 	ServerId  uint        `json:"cornId" dc:"服务器ID"`
 	NetworkIp string      `json:"networkIp" dc:"外网IP"`
 	LocalIp   string      `json:"localIp" dc:"内网IP"`

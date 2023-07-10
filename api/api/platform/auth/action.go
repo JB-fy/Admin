@@ -39,7 +39,7 @@ type ActionListRes struct {
 
 type ActionItem struct {
 	Id         uint        `json:"id" dc:"ID"`
-	Name       string      `json:"name" dc:"名称"`
+	Label      string      `json:"label" dc:"标签。常用于前端组件"`
 	ActionId   uint        `json:"actionId" dc:"操作ID"`
 	ActionName string      `json:"actionName" dc:"操作名称"`
 	ActionCode string      `json:"actionCode" dc:"操作标识"`
@@ -64,7 +64,7 @@ type ActionInfoRes struct {
 
 type ActionInfo struct {
 	Id         uint        `json:"id" dc:"ID"`
-	Name       string      `json:"name" dc:"名称"`
+	Label      string      `json:"label" dc:"标签。常用于前端组件"`
 	ActionId   uint        `json:"actionId" dc:"操作ID"`
 	ActionName string      `json:"actionName" dc:"操作名称"`
 	ActionCode string      `json:"actionCode" dc:"操作标识"`
