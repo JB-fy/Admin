@@ -1275,6 +1275,10 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
+			"\n", " ",
+			"\r", " ",
+		}))
 		switch field {
 		case `deletedAt`, `deleted_at`:
 			// rawDeletedAtField = field
@@ -1533,6 +1537,17 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//status或type后缀
 			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+				statusList := MyGenStatusList(comment)
+				tagTypeStr := ``
+				tagTypeArr := []string{``, `success`, `danger`, `info`, `warning`}
+				for index, status := range statusList {
+					if index < len(tagTypeArr) {
+						tagTypeStr += status[0] + `: '` + tagTypeArr[index] + `', `
+					} else {
+						tagTypeStr += status[0] + `: '', `
+					}
+				}
+				tagTypeStr = gstr.SubStr(tagTypeStr, 0, -len(`, `))
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -1541,7 +1556,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		align: 'center',
 		width: 100,
 		cellRenderer: (props: any): any => {
-			let typeObj: any = { 0: '', 1: 'success', 2: 'danger', 3: 'info', 4: 'warning' }
+			let typeObj: any = { ` + tagTypeStr + ` }
 			return [
 				h(ElTag as any, {
 					type: typeObj?.[props.rowData.` + field + `] ?? ''
@@ -2242,6 +2257,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
+			"\n", " ",
+			"\r", " ",
+		}))
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
 		switch field {
@@ -2402,13 +2421,31 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//status或type后缀
 			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+				statusList := MyGenStatusList(comment)
+				statusArr := make([]string, len(statusList))
+				for index, status := range statusList {
+					statusArr[index] = status[0]
+				}
+				statusStr := gstr.Join(statusArr, `, `)
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'enum', enum: [0, 1, 2], trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: [` + statusStr + `], trigger: 'change', message: t('validation.select') }
 		],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
+				//超过5个状态用select组件，小于5个用radio组件
+				if len(statusArr) > 5 {
+					viewSaveField += `
+					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />`
+				} else {
+					viewSaveField += `
+					<ElRadioGroup v-model="saveForm.data.` + field + `">
+                        <ElRadio v-for="(item, key) in tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any" :key="key" :label="item.value">
+                            {{ item.label }}
+                        </ElRadio>
+                    </ElRadioGroup>`
+				}
+				viewSaveField += `
 				</ElFormItem>`
 				continue
 			}
