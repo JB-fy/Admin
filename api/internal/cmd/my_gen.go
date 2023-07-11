@@ -27,12 +27,14 @@ import (
 		pid			父级（指向本表）
 		sort		排序
 		weight 		权重
+		gender 		性别
+		avatar		头像
 	其他类型字段：
 		名称和标识字段，命名用name或code后缀
 		手机号码字段，命名用mobile或phone后缀
 		链接地址字段，命名用url或link后缀
 		关联id字段和关联表主键保持一致，命名用id后缀
-		图片字段，命名用cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
+		图片字段，命名用icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
 		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀
 		ip字段，命名用Ip后缀
 		备注字段，命名用remark后缀
