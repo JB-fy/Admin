@@ -16,6 +16,21 @@ func NewTest() *Test {
 
 func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.TestMetaRes, err error) {
 	// time.Sleep(10 * time.Second)
+
+	// fmt.Println(g.RequestFromCtx(ctx).GetUrl())   // http://192.168.2.200:20080/testMeta?a=1&b=2
+	// fmt.Println(g.RequestFromCtx(ctx).GetHost())  // 192.168.2.200
+	// fmt.Println(g.RequestFromCtx(ctx).Host)       // 192.168.2.200:20080
+	// fmt.Println(g.RequestFromCtx(ctx).RequestURI) // /testMeta?a=1&b=2
+
+	// fmt.Println(g.RequestFromCtx(ctx).URL.String())     // /testMeta?a=1&b=2
+	// fmt.Println(g.RequestFromCtx(ctx).URL)              // /testMeta?a=1&b=2
+	// fmt.Println(g.RequestFromCtx(ctx).URL.Path)         // /testMeta
+	// fmt.Println(g.RequestFromCtx(ctx).URL.RawQuery)     // a=1&b=2
+	// fmt.Println(g.RequestFromCtx(ctx).URL.RequestURI()) // /testMeta?a=1&b=2
+
+	// fmt.Println(g.RequestFromCtx(ctx).Router)     // &{/testMeta GET default ^/testMeta$ [] 0}
+	// fmt.Println(g.RequestFromCtx(ctx).Router.Uri) // /testMeta
+
 	// utils.HttpFailJson(g.RequestFromCtx(ctx), utils.NewErrorCode(ctx, 99999999, ``))
 	// g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices

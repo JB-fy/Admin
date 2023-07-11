@@ -35,7 +35,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	//是否回调
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
 		callback := utils.AliyunOssCallback{
-			Url:      gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1),
+			Url:      gstr.Replace(request.GetUrl(), request.URL.String(), `/upload/notify`, 1),
 			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
 		}
@@ -77,7 +77,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 	//是否回调
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		res.CallbackUrl = gstr.Replace(request.GetUrl(), request.URL.Path, `/upload/notify`, 1)
+		res.CallbackUrl = gstr.Replace(request.GetUrl(), request.URL.String(), `/upload/notify`, 1)
 		res.CallbackBody = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 		res.CallbackBodyType = `application/x-www-form-urlencoded`
 		if g.Cfg().MustGet(ctx, `dev`).Bool() {

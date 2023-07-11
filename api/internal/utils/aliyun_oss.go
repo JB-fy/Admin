@@ -40,7 +40,7 @@ type AliyunOss struct {
 }
 
 type AliyunOssCallback struct {
-	Url      string `c:"url"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.Path, `/upload/notify`, 1)
+	Url      string `c:"url"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.String(), `/upload/notify`, 1)
 	Body     string `c:"body"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 	BodyType string `c:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
