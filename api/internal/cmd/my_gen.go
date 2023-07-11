@@ -1306,7 +1306,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					h(ElInputNumber as any, {
 						'ref': (el: any) => { currentRef = el; el?.focus() },
 						'model-value': currentVal,
-						'placeholder': t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `'),
+						'placeholder': t('common.tip.` + field + `'),
 						'precision': 0,
 						'min': 0,
 						'max': 100,
@@ -2296,7 +2296,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>
-                        <ElAlert :title="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+                        <ElAlert :title="t('common.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>`
 		default:
