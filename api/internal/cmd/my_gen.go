@@ -1306,7 +1306,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					h(ElInputNumber as any, {
 						'ref': (el: any) => { currentRef = el; el?.focus() },
 						'model-value': currentVal,
-						'placeholder': t('common.tip.` + field + `'),
+						'placeholder': t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `'),
 						'precision': 0,
 						'min': 0,
 						'max': 100,
@@ -2296,7 +2296,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>
-                        <ElAlert :title="t('common.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+                        <ElAlert :title="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>`
 		default:
@@ -2679,6 +2679,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	viewI18nName := ``
 	viewI18nStatus := ``
+	viewI18nTip := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
@@ -2689,6 +2690,11 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `sort`, `weight`:
+			viewI18nName += `
+		` + field + `: '` + comment + `',`
+			viewI18nTip += `
+		` + field + `: '` + comment + `',`
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
@@ -2716,6 +2722,8 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
     },
     status: {` + viewI18nStatus + `
     },
+    tip: {` + viewI18nTip + `
+    }
 }`
 
 	gfile.PutContents(saveFile, tplView)
