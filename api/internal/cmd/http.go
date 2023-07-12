@@ -61,5 +61,5 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	router.InitRouterPlatform(s) //平台后台接口注册
 	s.Run()
 	/*--------启动http服务 结束--------*/
-	return nil
+	return
 }
