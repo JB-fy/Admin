@@ -6,6 +6,7 @@ const i18n = createI18n({
     locale: getLanguage(),
     fallbackLocale: ['zh-cn', 'en'],
     messages: batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10),
+    warnHtmlMessage: false,
 })
 
 export default i18n
