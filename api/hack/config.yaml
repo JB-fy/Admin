@@ -13,9 +13,9 @@ gfcli:
         doPath: "model/do/auth"
         entityPath: "model/entity/auth"
         tables: "auth_test"
-        tplDaoIndexPath: "resource/template/gen_dao_template_dao.txt"
-        tplDaoInternalPath: "resource/template/gen_dao_template_dao_internal.txt"
+        tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
+        tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
         # # 关联表不建议使用gen_dao_template_dao.txt和gen_dao_template_dao_internal.txt模板，会产生很多无用代码。用以下方式生成dao
         # tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
-        # tplDaoIndexPath: "resource/template/gen_dao_template_dao_rel.txt"
+        # tplDaoIndexPath: "resource/gen/gen_dao_template_dao_rel.txt"
         # overwriteDao: true
