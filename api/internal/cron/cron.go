@@ -21,7 +21,10 @@ func InitCron(ctx context.Context) {
 	for _, cron := range cronList {
 		code := cron[columns.CronCode].String()
 		pattern := cron[columns.CronPattern].String()
-		gcron.AddSingleton(ctx, pattern, JobList[code], code)
+		_, ok := JobList[code]
+		if ok {
+			gcron.AddSingleton(ctx, pattern, JobList[code], code)
+		}
 	}
 }
 

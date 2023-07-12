@@ -82,7 +82,7 @@ type CronCreateReq struct {
 	g.Meta      `path:"/create" method:"post" tags:"平台后台/定时器" sm:"创建"`
 	CronName    *string `c:"cronName,omitempty" json:"cronName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	CronCode    *string `c:"cronCode,omitempty" json:"cronCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	CronPattern *string `c:"cronPattern,omitempty" json:"cronPattern" v:"length:1,30" dc:"表达式"`
+	CronPattern *string `c:"cronPattern,omitempty" json:"cronPattern" v:"required|length:1,30" dc:"表达式"`
 	Remark      *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
 	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
 }
