@@ -12,6 +12,8 @@ import (
 )
 
 func InitCron(ctx context.Context) {
+	LogHttpPartition(ctx) //先执行一次请求日志分区
+
 	columns := daoPlatform.Cron.Columns()
 	cronList, _ := daoPlatform.Cron.ParseDbCtx(ctx).Where(columns.IsStop, 0).All()
 	for _, cron := range cronList {
