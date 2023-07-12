@@ -93,7 +93,7 @@ const table = reactive({
                     default: () => {
                         const content = imageList.map((item) => {
                             return h(ElImage as any, {
-                                'style': 'width: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
+                                'style': 'width: 45px;',    //不想显示滚动条，需设置table属性row-height增加行高
                                 'src': item,
                                 'lazy': true,
                                 'hide-on-click-modal': true,
