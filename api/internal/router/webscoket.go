@@ -17,7 +17,8 @@ func InitRouterWebSocket(s *ghttp.Server) {
 			if err != nil {
 				return
 			}
-			if err = ws.WriteMessage(msgType, msg); err != nil {
+			err = ws.WriteMessage(msgType, msg)
+			if err != nil {
 				return
 			}
 		}
