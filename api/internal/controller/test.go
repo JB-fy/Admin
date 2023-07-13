@@ -3,11 +3,9 @@ package controller
 import (
 	"api/api"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/os/genv"
 )
 
 type Test struct{}
@@ -50,7 +48,6 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	// fmt.Println(genv.Set(`X_X`, `xx`))              //key必须由大写和_组成
 	// fmt.Println(g.Cfg().MustGetWithEnv(ctx, `X_X`)) //X_X或x_x或x.x方法都可以读取到
-	fmt.Println(genv.All())
 
 	// fmt.Println(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int())	//获取配置参数
 
