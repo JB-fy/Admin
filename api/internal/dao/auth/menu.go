@@ -227,7 +227,7 @@ func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
 				return
 			}
 
-			RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+			RoleRelToMenu.ParseDbCtx(ctx).Where(RoleRelToMenu.Columns().MenuId, idArr).Delete()
 			return
 		},
 	}
