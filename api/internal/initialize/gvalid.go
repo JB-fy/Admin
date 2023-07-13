@@ -10,13 +10,19 @@ import (
 )
 
 func init() {
-	gvalid.RegisterRule(`distinct`, func(ctx context.Context, in gvalid.RuleFuncInput) (err error) {
-		val := in.Value.Array()
-		if len(val) != garray.NewFrom(val).Unique().Len() {
-			//err = gerror.Newf(`%s字段具有重复值`, in.Field)
-			err = gerror.New(in.Message) //这样才会被i18n翻译
-			return
-		}
+	myRuleThis := myRule{}
+
+	gvalid.RegisterRule(`distinct`, myRuleThis.Distinct)
+}
+
+type myRule struct{}
+
+func (myRule) Distinct(ctx context.Context, in gvalid.RuleFuncInput) (err error) {
+	val := in.Value.Array()
+	if len(val) != garray.NewFrom(val).Unique().Len() {
+		//err = gerror.Newf(`%s字段具有重复值`, in.Field)
+		err = gerror.New(in.Message) //这样才会被i18n翻译
 		return
-	})
+	}
+	return
 }
