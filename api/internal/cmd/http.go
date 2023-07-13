@@ -19,6 +19,8 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	router.InitRouterCommon(s)   //公共接口注册
 	router.InitRouterPlatform(s) //平台后台接口注册
 
+	router.InitRouterWebSocket(s) //WebScoket注册
+
 	s.Run()
 	return
 }
