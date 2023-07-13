@@ -20,14 +20,6 @@ type (
 		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (err error)
 	}
-	ICron interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
-		Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error)
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
-		Delete(ctx context.Context, filter map[string]interface{}) (err error)
-	}
 	IServer interface {
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
@@ -36,31 +28,8 @@ type (
 
 var (
 	localAdmin  IAdmin
-	localCron   ICron
 	localServer IServer
 )
-
-func Admin() IAdmin {
-	if localAdmin == nil {
-		panic("implement not found for interface IAdmin, forgot register?")
-	}
-	return localAdmin
-}
-
-func RegisterAdmin(i IAdmin) {
-	localAdmin = i
-}
-
-func Cron() ICron {
-	if localCron == nil {
-		panic("implement not found for interface ICron, forgot register?")
-	}
-	return localCron
-}
-
-func RegisterCron(i ICron) {
-	localCron = i
-}
 
 func Server() IServer {
 	if localServer == nil {
@@ -71,4 +40,15 @@ func Server() IServer {
 
 func RegisterServer(i IServer) {
 	localServer = i
+}
+
+func Admin() IAdmin {
+	if localAdmin == nil {
+		panic("implement not found for interface IAdmin, forgot register?")
+	}
+	return localAdmin
+}
+
+func RegisterAdmin(i IAdmin) {
+	localAdmin = i
 }

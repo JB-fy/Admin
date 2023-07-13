@@ -1215,11 +1215,11 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 		//路由生成
 		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
-					controllerThis := controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
-					group.Bind(controllerThis)
-				})
-	
-				/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+				controllerThis := controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
+				group.Bind(controllerThis)
+			})
+
+			/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 		gfile.PutContents(saveFile, tplView)
 	}
 }

@@ -32,11 +32,17 @@ func (c *Test) TestMeta(ctx context.Context, req *api.TestMetaReq) (res *api.Tes
 	// fmt.Println(g.RequestFromCtx(ctx).Router.Uri) // /testMeta
 
 	// utils.HttpFailJson(g.RequestFromCtx(ctx), utils.NewErrorCode(ctx, 99999999, ``))
-	// g.RequestFromCtx(ctx).Response.Writeln(`TestMeta`)
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	res = &api.TestMetaRes{
 		Test: `测试`,
 	}
+	/* g.RequestFromCtx(ctx).Response.WriteJson(map[string]interface{}{
+		`code`: 0,
+		`msg`:  g.I18n().T(ctx, `code.0`),
+		`data`: map[string]interface{}{
+			`list`: []map[string]interface{}{},
+		},
+	}) */
 	return
 }
 

@@ -1,8 +1,7 @@
 package middleware
 
 import (
-	dao "api/internal/dao/log"
-
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -21,5 +20,5 @@ func Log(r *ghttp.Request) {
 		`resData`: r.Response.BufferString(),
 		`runTime`: runTime,
 	}
-	dao.Http.ParseDbCtx(r.GetCtx()).Data(data).Insert()
+	g.Log("loggerHttp").Info(r.GetCtx(), data)
 }
