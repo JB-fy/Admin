@@ -17,6 +17,7 @@ func init() {
 
 type myRule struct{}
 
+// 数组不能含有重复值
 func (myRule) Distinct(ctx context.Context, in gvalid.RuleFuncInput) (err error) {
 	val := in.Value.Array()
 	if len(val) != garray.NewFrom(val).Unique().Len() {
