@@ -1,0 +1,22 @@
+package initialize
+
+// 自定义校验规则注册
+import (
+	"context"
+
+	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/util/gvalid"
+)
+
+func init() {
+	gvalid.RegisterRule(`distinct`, func(ctx context.Context, in gvalid.RuleFuncInput) (err error) {
+		val := in.Value.Array()
+		if len(val) != garray.NewFrom(val).Unique().Len() {
+			//err = gerror.Newf(`%s字段具有重复值`, in.Field)
+			err = gerror.New(in.Message) //这样才会被i18n翻译
+			return
+		}
+		return
+	})
+}

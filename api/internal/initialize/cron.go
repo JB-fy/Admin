@@ -1,5 +1,6 @@
-package cron
+package initialize
 
+// 定时器设置
 import (
 	"context"
 )
