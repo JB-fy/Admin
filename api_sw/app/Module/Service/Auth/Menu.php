@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\Service\Auth;
 
+use App\Module\Db\Dao\Auth\RoleRelToMenu;
 use App\Module\Logic\Auth\Menu as LogicAuthMenu;
 use App\Module\Service\AbstractService;
 
@@ -111,6 +112,7 @@ class Menu extends AbstractService
         if (empty($result)) {
             throwFailJson();
         }
+        getDao(RoleRelToMenu::class)->parseFilter(['menuId' => $idArr])->delete();
         throwSuccessJson();
     }
 

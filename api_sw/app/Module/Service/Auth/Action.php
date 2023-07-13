@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Service\Auth;
 
 use App\Module\Db\Dao\Auth\ActionRelToScene;
+use App\Module\Db\Dao\Auth\RoleRelToAction;
 use App\Module\Logic\Auth\Action as AuthAction;
 use App\Module\Service\AbstractService;
 
@@ -66,6 +67,7 @@ class Action extends AbstractService
             throwFailJson();
         }
         getDao(ActionRelToScene::class)->parseFilter(['actionId' => $idArr])->delete();
+        getDao(RoleRelToAction::class)->parseFilter(['actionId' => $idArr])->delete();
         throwSuccessJson();
     }
 }
