@@ -20,27 +20,11 @@ type (
 		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
 		Delete(ctx context.Context, filter map[string]interface{}) (err error)
 	}
-	IServer interface {
-		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
-		List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error)
-	}
 )
 
 var (
-	localAdmin  IAdmin
-	localServer IServer
+	localAdmin IAdmin
 )
-
-func Server() IServer {
-	if localServer == nil {
-		panic("implement not found for interface IServer, forgot register?")
-	}
-	return localServer
-}
-
-func RegisterServer(i IServer) {
-	localServer = i
-}
 
 func Admin() IAdmin {
 	if localAdmin == nil {

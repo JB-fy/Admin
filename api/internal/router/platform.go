@@ -74,11 +74,6 @@ func InitRouterPlatform(s *ghttp.Server) {
 				group.Bind(controllerThis)
 			})
 
-			group.Group(`/platform/server`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerPlatform.NewServer()
-				group.Bind(controllerThis)
-			})
-
 			/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
 		})
 	})
