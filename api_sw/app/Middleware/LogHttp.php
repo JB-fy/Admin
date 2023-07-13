@@ -71,6 +71,6 @@ class LogHttp implements \Psr\Http\Server\MiddlewareInterface
             'resData' => $responseBody,
             'runTime' => round(($endTime - $startTime) * 1000, 3),
         ];
-        getContainer()->get(LoggerFactory::class)->get('http')->info(json_encode($LogData, JSON_UNESCAPED_UNICODE));
+        getContainer()->get(LoggerFactory::class)->get('请求记录', 'http')->info(json_encode($LogData, JSON_UNESCAPED_UNICODE));
     }
 }
