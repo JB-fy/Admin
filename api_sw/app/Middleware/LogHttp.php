@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use Hyperf\Logger\LoggerFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -63,11 +64,13 @@ class LogHttp implements \Psr\Http\Server\MiddlewareInterface
 
         $LogData = [
             'url' => getRequestUrl(1),
-            'header' => json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE),
-            'reqData' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
+            // 'header' => json_encode($request->getHeaders(), JSON_UNESCAPED_UNICODE),
+            // 'reqData' => json_encode($request->all(), JSON_UNESCAPED_UNICODE),
+            'header' => $request->getHeaders(),
+            'reqData' => $request->all(),
             'resData' => $responseBody,
             'runTime' => round(($endTime - $startTime) * 1000, 3),
         ];
-        getDao(\App\Module\Db\Dao\Log\Http::class)->parseInsert($LogData)->insert();
+        getContainer()->get(LoggerFactory::class)->get('http')->info(json_encode($LogData, JSON_UNESCAPED_UNICODE));
     }
 }

@@ -45,7 +45,7 @@ class BeforeStartCallback
         /**--------将数据库内的配置设置到config中（方便使用） 结束--------**/
 
         /**--------数据库表分区 开始--------**/
-        $this->container->get(\App\Crontab\LogHttp::class)->partition(); //请求日志
+        //$this->container->get(\App\Crontab\LogHttp::class)->partition(); //请求日志
         /**--------数据库表分区 结束--------**/
     }
 }

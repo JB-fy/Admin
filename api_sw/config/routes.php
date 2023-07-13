@@ -28,16 +28,6 @@ Router::get('/favicon.ico', function () {
 
 /**--------平台后台接口 开始--------**/
 Router::addGroup('/platform', function () {
-    //不做日志记录
-    Router::addGroup('', function () {
-        //需验证登录身份
-        Router::addGroup('', function () {
-            Router::addGroup('/log/http', function () {
-                Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Log\Http::class, 'list']);
-            });
-        }, ['middleware' => [\App\Middleware\SceneLoginOfPlatform::class]]);
-    }, ['middleware' => [\App\Middleware\Scene::class]]);
-
     //做日志记录
     Router::addGroup('', function () {
         Router::addGroup('', function () {
