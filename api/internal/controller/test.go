@@ -66,8 +66,8 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	return
 }
 
-func (c *Test) TestNoMeta(r *ghttp.Request) {
-	/* var req *api.TestNoMetaReq
+func (c *Test) Test1(r *ghttp.Request) {
+	/* var req *api.TestReq
 	err := r.Parse(&req)
 	if err != nil {
 		r.Response.Writeln(err.Error())

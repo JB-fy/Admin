@@ -11,7 +11,3 @@ type TestRes struct {
 	g.Meta `mime:"text/html" example:"string"`
 	Test   string `json:"test" dc:"测试"`
 }
-
-type TestNoMetaReq struct {
-	Test string `json:"test" v:"required|length:4,30#请输入账号|账号长度为:{min}到:{max}位"`
-}
