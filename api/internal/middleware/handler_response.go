@@ -34,7 +34,7 @@ func HandlerResponse(r *ghttp.Request) {
 	}
 
 	if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
-		msg := http.StatusText(r.Response.Status)
+		/* msg := http.StatusText(r.Response.Status)
 		code := gcode.CodeUnknown
 		switch r.Response.Status {
 		case http.StatusNotFound:
@@ -43,7 +43,8 @@ func HandlerResponse(r *ghttp.Request) {
 			code = gcode.CodeNotAuthorized
 		}
 		err = gerror.NewCode(code, msg)
-		r.SetError(err)
+		r.SetError(err) */
+		r.Response.WriteStatus(r.Response.Status)
 		return
 	}
 
