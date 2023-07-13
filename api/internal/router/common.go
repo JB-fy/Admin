@@ -23,7 +23,7 @@ func InitRouterCommon(s *ghttp.Server) {
 	//测试
 	s.Group(``, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewTest()
-		group.ALL(`/test`, controllerThis.Test)
-		group.Bind(controllerThis.TestMeta)
+		group.Bind(controllerThis.Test)
+		group.ALL(`/testNoMeta`, controllerThis.TestNoMeta)
 	})
 }
