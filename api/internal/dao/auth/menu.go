@@ -221,11 +221,13 @@ func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			/* row, _ := result.RowsAffected()
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
-			} */
+			}
+
+			RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 			return
 		},
 	}

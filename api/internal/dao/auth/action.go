@@ -203,6 +203,7 @@ func (daoThis *actionDao) HookDelete(idArr ...int) gdb.HookHandler {
 			}
 
 			ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+			RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
 			return
 		},
 	}
