@@ -2,7 +2,6 @@ package router
 
 import (
 	"api/internal/controller"
-	"api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
@@ -14,9 +13,6 @@ func InitRouterCommon(s *ghttp.Server) {
 	})
 	//上传
 	s.Group(`/upload`, func(group *ghttp.RouterGroup) {
-		group.Middleware(middleware.Cross, middleware.I18n)
-		group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。但如果是规范路由时则必须，且有用log中间件时，必须放在其后面，才能读取到响应数据
-
 		controllerThis := controller.NewUpload()
 		group.Bind(
 			// controllerThis.Sign, //建议放其他场景内验证权限后才可调用
@@ -26,9 +22,6 @@ func InitRouterCommon(s *ghttp.Server) {
 	})
 	//测试
 	s.Group(``, func(group *ghttp.RouterGroup) {
-		group.Middleware(middleware.Cross, middleware.I18n)
-		group.Middleware(middleware.HandlerResponse) // 不用规范路由方式可去掉。但如果是规范路由时则必须，且有用log中间件时，必须放在其后面，才能读取到响应数据
-
 		controllerThis := controller.NewTest()
 		group.ALL(`/test`, controllerThis.Test)
 		group.Bind(controllerThis.TestMeta)

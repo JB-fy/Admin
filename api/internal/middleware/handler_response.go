@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -30,20 +32,20 @@ func HandlerResponse(r *ghttp.Request) {
 		})
 		return
 	}
-	/* if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
-		msg = http.StatusText(r.Response.Status)
+
+	if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
+		msg := http.StatusText(r.Response.Status)
+		code := gcode.CodeUnknown
 		switch r.Response.Status {
 		case http.StatusNotFound:
 			code = gcode.CodeNotFound
 		case http.StatusForbidden:
 			code = gcode.CodeNotAuthorized
-		default:
-			code = gcode.CodeUnknown
 		}
 		err = gerror.NewCode(code, msg)
 		r.SetError(err)
 		return
-	} */
+	}
 
 	r.Response.WriteJson(map[string]interface{}{
 		`code`: 0,
