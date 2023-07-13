@@ -3,18 +3,22 @@ package initialize
 // 定时器设置
 import (
 	"context"
+	"fmt"
+
+	"github.com/gogf/gf/v2/os/gcron"
+	"github.com/gogf/gf/v2/os/gctx"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
-func InitCron(ctx context.Context) {
-	// myCronThis := myCron{}
+func init() {
+	ctx := gctx.New()
 
-	// myCronThis.LogHttpPartition(ctx) //先执行一次请求日志分区
-	// gcron.AddSingleton(ctx, `0 0 3 * * 1`, myCronThis.LogHttpPartition, `LogHttpPartition`)
+	myCronThis := myCron{}
+	gcron.AddSingleton(ctx, `*/5 * * * * *`, myCronThis.Test, `Test`)
 }
 
 type myCron struct{}
 
-// Http日志表每周新增分区
-func (myCron) LogHttpPartition(ctx context.Context) {
-	//utils.DbTablePartition(ctx, daoLog.Http.Group(), daoLog.Http.Table(), 7, 24*60*60, daoLog.Http.Columns().CreatedAt)
+func (myCron) Test(ctx context.Context) {
+	fmt.Println(gtime.Now().Format(`Y-m-d H:i:s`))
 }

@@ -3,15 +3,17 @@ package initialize
 // 环境变量设置。如：记录当前服务器IP
 import (
 	"api/internal/utils"
-	"context"
 
 	daoPlatform "api/internal/dao/platform"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/genv"
 )
 
-func InitGenv(ctx context.Context) {
+func init() {
+	ctx := gctx.New()
+
 	/**--------记录当前服务器IP 开始--------**/
 	serverNetworkIp := utils.GetServerNetworkIp()
 	serverLocalIp := utils.GetServerLocalIp()
