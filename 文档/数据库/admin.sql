@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 01/07/2023 15:39:03
+ Date: 13/07/2023 12:28:34
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `auth_action`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`actionId`) USING BTREE,
   UNIQUE INDEX `actionCode`(`actionCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action
@@ -58,12 +58,7 @@ INSERT INTO `auth_action` VALUES (19, '平台管理员-编辑', 'platformAdminUp
 INSERT INTO `auth_action` VALUES (20, '平台管理员-删除', 'platformAdminDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (23, 'Http日志-查看', 'logHttpLook', '', 0, '2023-06-17 13:47:28', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (24, '服务器-查看', 'platformServerLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (25, '定时器-查看', 'platformCronLook', '', 0, '2023-07-01 10:04:02', '2023-06-11 14:50:24');
-INSERT INTO `auth_action` VALUES (26, '定时器-新增', 'platformCronCreate', '', 0, '2023-07-01 10:04:02', '2023-06-11 14:50:44');
-INSERT INTO `auth_action` VALUES (27, '定时器-编辑', 'platformCronUpdate', '', 0, '2023-07-01 10:04:02', '2023-06-11 14:51:23');
-INSERT INTO `auth_action` VALUES (28, '定时器-删除', 'platformCronDelete', '', 0, '2023-07-01 10:04:02', '2023-06-11 14:51:35');
+INSERT INTO `auth_action` VALUES (23, '服务器-查看', 'platformServerLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -105,11 +100,6 @@ INSERT INTO `auth_action_rel_to_scene` VALUES (20, 1, '2023-06-09 12:03:30', '20
 INSERT INTO `auth_action_rel_to_scene` VALUES (21, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_action_rel_to_scene` VALUES (22, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_action_rel_to_scene` VALUES (23, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (24, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (25, 1, '2023-07-01 10:04:02', '2023-06-11 14:50:24');
-INSERT INTO `auth_action_rel_to_scene` VALUES (26, 1, '2023-07-01 10:04:02', '2023-06-11 14:50:44');
-INSERT INTO `auth_action_rel_to_scene` VALUES (27, 1, '2023-07-01 10:04:02', '2023-06-11 14:51:23');
-INSERT INTO `auth_action_rel_to_scene` VALUES (28, 1, '2023-07-01 10:04:02', '2023-06-11 14:51:35');
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -132,7 +122,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menuId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -147,10 +137,7 @@ INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'AutoiconEpUserFille
 INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage \", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-06-24 03:37:34', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (11, 1, 0, '日志管理', 'AutoiconEpDataAnalysis', '', 1, '0-11', '{\"i18n\": {\"title\": {\"en\": \"Log Manage \", \"zh-cn\": \"日志管理\"}}}', 95, 0, '2023-06-24 03:36:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (12, 1, 11, 'Http日志', 'AutoiconEpReading', '/log/http', 2, '0-11-12', '{\"i18n\": {\"title\": {\"en\": \"Http Log \", \"zh-cn\": \"Http日志\"}}}', 50, 0, '2023-06-21 00:40:08', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (13, 1, 8, '服务器', 'AutoiconEpCpu', '/platform/server', 2, '0-8-13', '{\"i18n\": {\"title\": {\"en\": \"Server \", \"zh-cn\": \"服务器\"}}}', 100, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (14, 1, 8, '定时器', 'AutoiconEpTimer', '/platform/cron', 2, '0-8-14', '{\"i18n\": {\"title\": {\"en\": \"Cron\", \"zh-cn\": \"定时器\"}}}', 100, 0, '2023-07-01 10:04:02', '2023-06-11 14:16:58');
+INSERT INTO `auth_menu` VALUES (11, 1, 8, '服务器', 'AutoiconEpCpu', '/platform/server', 2, '0-8-11', '{\"i18n\": {\"title\": {\"en\": \"Server \", \"zh-cn\": \"服务器\"}}}', 100, 0, '2023-07-13 11:40:29', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -232,11 +219,6 @@ INSERT INTO `auth_role_rel_to_action` VALUES (1, 20, '2023-06-09 12:03:30', '202
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 21, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 22, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 23, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 24, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 25, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 26, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 27, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 28, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
 
 -- ----------------------------
 -- Table structure for auth_role_rel_to_menu
@@ -266,9 +248,6 @@ INSERT INTO `auth_role_rel_to_menu` VALUES (1, 8, '2023-06-09 12:03:30', '2023-0
 INSERT INTO `auth_role_rel_to_menu` VALUES (1, 9, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_menu` VALUES (1, 10, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_menu` VALUES (1, 11, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 12, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 13, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 14, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
 
 -- ----------------------------
 -- Table structure for auth_scene
@@ -290,26 +269,6 @@ CREATE TABLE `auth_scene`  (
 -- Records of auth_scene
 -- ----------------------------
 INSERT INTO `auth_scene` VALUES (1, 'platform', '平台后台', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-14 21:52:16', '2023-06-09 12:03:30');
-
--- ----------------------------
--- Table structure for log_http
--- ----------------------------
-DROP TABLE IF EXISTS `log_http`;
-CREATE TABLE `log_http`  (
-  `httpId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'http记录ID',
-  `url` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '地址',
-  `header` json NULL COMMENT '请求头',
-  `reqData` json NULL COMMENT '请求数据',
-  `resData` json NULL COMMENT '响应数据',
-  `runTime` decimal(8, 3) UNSIGNED NOT NULL DEFAULT 0.000 COMMENT '运行时间（单位：毫秒）',
-  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`httpId`, `createdAt`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '日志-http记录表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of log_http
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for platform_admin
@@ -347,33 +306,16 @@ CREATE TABLE `platform_config`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-
--- ----------------------------
--- Table structure for platform_cron
--- ----------------------------
-DROP TABLE IF EXISTS `platform_cron`;
-CREATE TABLE `platform_cron`  (
-  `cronId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '定时器ID',
-  `cronName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `cronCode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '标识',
-  `cronPattern` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '表达式',
-  `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
-  `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
-  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`cronId`) USING BTREE,
-  UNIQUE INDEX `cornCode`(`cronCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '定时器表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of platform_cron
--- ----------------------------
-INSERT INTO `platform_cron` VALUES (1, 'Http日志表分区', 'LogHttpPartition', '0 0 3 * * 1', '每周星期一的凌晨3点对Http日志表执行分区', 0, '2023-07-01 10:04:38', '2023-06-10 05:36:58');
+INSERT INTO `platform_config` VALUES (1, 'aliyunOssRoleArn', 'acs:ram::1359390739767110:role/aliyunosstokengeneratorrole', '2023-07-13 12:22:32', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (2, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-07-13 12:23:14', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (3, 'aliyunOssBucket', 'jslx01', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (4, 'aliyunOssAccessKeyId', 'LTAI5t9jGNGpb9hhtV8M8q2x', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (5, 'aliyunOssAccessKeySecret', 'vhfbJ2QAZsFoTZ6m5XF0qwikqWeR0x', '2023-07-13 12:23:18', '2023-07-11 18:33:31');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -387,7 +329,7 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
