@@ -28,7 +28,7 @@ func (controllerThis *Login) EncryptStr(ctx context.Context, req *apiIndex.Login
 
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiIndex.LoginLoginReq) (res *api.CommonTokenRes, err error) {
-	token, err := service.Login().PlatformLogin(ctx, req.Account, req.Password)
+	token, err := service.Login().Platform(ctx, req.Account, req.Password)
 	if err != nil {
 		return
 	}

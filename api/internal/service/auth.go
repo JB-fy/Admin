@@ -48,10 +48,10 @@ type (
 )
 
 var (
+	localScene  IScene
 	localAction IAction
 	localMenu   IMenu
 	localRole   IRole
-	localScene  IScene
 )
 
 func Action() IAction {

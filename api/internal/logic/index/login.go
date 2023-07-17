@@ -31,8 +31,8 @@ func (logicThis *sLogin) EncryptStr(ctx context.Context, sceneCode string, accou
 	return
 }
 
-// 平台后台登录
-func (logicThis *sLogin) PlatformLogin(ctx context.Context, account string, password string) (token string, err error) {
+// 登录(平台后台)
+func (logicThis *sLogin) Platform(ctx context.Context, account string, password string) (token string, err error) {
 	sceneCode := `platform` //指定场景
 	/**--------验证账号密码 开始--------**/
 	info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()
