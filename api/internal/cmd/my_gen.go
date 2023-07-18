@@ -839,7 +839,7 @@ import (
 		tplApi += `
 /*--------列表 开始--------*/
 type ` + tpl.TableNameCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
 	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
@@ -878,7 +878,7 @@ type ` + tpl.TableNameCaseCamel + `Item struct {
 	if option.IsUpdate {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableNameCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
 	Id     uint     ` + "`" + `json:"id" v:"required|integer|min:1" dc:"ID"` + "`" + `
 	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"` + "`" + `
 }
@@ -900,7 +900,7 @@ type ` + tpl.TableNameCaseCamel + `Info struct {
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableNameCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/create" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"创建"` + "`" + `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/create" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"创建"` + "`" + `
 	` + apiReqCreateColumn + `
 }
 
@@ -912,7 +912,7 @@ type ` + tpl.TableNameCaseCamel + `CreateReq struct {
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"更新"` + "`" + `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"更新"` + "`" + `
 	IdArr       []uint  ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	` + apiReqUpdateColumn + `
 }
@@ -925,7 +925,7 @@ type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
 	IdArr  []uint ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 
@@ -1205,22 +1205,26 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	tplView := gfile.GetContents(saveFile)
 
-	if gstr.Pos(tplView, "`"+`/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+"`") == -1 { //路由不存在时需生成
-		//控制器不存在时导入
-		importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"`
-		if gstr.Pos(tplView, importControllerStr) == -1 {
-			tplView = gstr.Replace(tplView, `"api/internal/middleware"`, importControllerStr+`
+	//控制器不存在时导入
+	importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"`
+	if gstr.Pos(tplView, importControllerStr) == -1 {
+		tplView = gstr.Replace(tplView, `"api/internal/middleware"`, importControllerStr+`
 	"api/internal/middleware"`)
-		}
-
 		//路由生成
-		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
-				controllerThis := controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`()
-				group.Bind(controllerThis)
+		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
+				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())
 			})
 
 			/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 		gfile.PutContents(saveFile, tplView)
+	} else {
+		//路由不存在时需生成
+		if gstr.Pos(tplView, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`) == -1 {
+			//路由生成
+			tplView = gstr.Replace(tplView, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
+				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`)
+			gfile.PutContents(saveFile, tplView)
+		}
 	}
 }
 
