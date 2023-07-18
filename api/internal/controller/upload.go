@@ -60,7 +60,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/` + dir + `*"]}],"Version": "1"}`,
 	}
 
-	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证权限
+	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证登录token
 	if request.URL.Path == `/upload/sts` {
 		upload := utils.NewAliyunOss(ctx, config)
 		stsInfo, _ := upload.GetStsToken(option)
@@ -68,7 +68,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 		return
 	}
 
-	//App端实际上传时需用到的字段，但必须验证权限后才能拿到
+	//App端实际上传时需用到的字段，但必须验证登录token后才能拿到
 	res = &api.UploadStsRes{
 		Endpoint: gconv.String(config[`aliyunOssHost`]),
 		Bucket:   gconv.String(config[`aliyunOssBucket`]),
