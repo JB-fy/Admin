@@ -10,7 +10,12 @@
             "request": "launch",
             "mode": "auto",
             //"program": "${fileDirname}",
-            "program": "./api/main.go"
+            "program": "${workspaceFolder}/api/main.go",
+            "args": [
+                "xxxx"
+            ],
+            "env": {},
+            "showLog": true
         }
     ]
 }
