@@ -14,6 +14,8 @@ type MenuTreeRes struct {
 }
 
 type MenuTree struct {
+	Id       uint        `json:"id" dc:"ID"`
+	Label    string      `json:"label" dc:"标签。常用于前端组件"`
 	MenuId   uint        `json:"menuId" dc:"菜单ID"`
 	MenuIcon string      `json:"menuIcon" dc:"菜单图标"`
 	MenuName string      `json:"menuName" dc:"菜单名称"`

@@ -14,7 +14,7 @@ func NewMenu() *Menu {
 }
 
 // 菜单树
-func (controllerThis *Menu) MenuTree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
+func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	filter := map[string]interface{}{}
@@ -23,7 +23,7 @@ func (controllerThis *Menu) MenuTree(ctx context.Context, req *apiMy.MenuTreeReq
 		`sceneId`:   sceneInfo[`sceneId`].Int(),
 		`loginId`:   loginInfo[`adminId`].Int(),
 	}
-	field := []string{`menuTree`, `showMenu`}
+	field := []string{`id`, `label`, `menuTree`, `showMenu`}
 
 	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {
