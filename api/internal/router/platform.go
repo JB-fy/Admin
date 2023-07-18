@@ -5,7 +5,8 @@ import (
 
 	"api/internal/controller"
 	controllerAuth "api/internal/controller/platform/auth"
-	controllerIndex "api/internal/controller/platform/index"
+	controllerLogin "api/internal/controller/platform/login"
+	controllerMy "api/internal/controller/platform/my"
 	controllerPlatform "api/internal/controller/platform/platform"
 	"api/internal/middleware"
 )
@@ -16,11 +17,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 		//无需验证登录身份
 		group.Group(`/login`, func(group *ghttp.RouterGroup) {
-			controllerThis := controllerIndex.NewLogin()
-			group.Bind(
-				controllerThis.EncryptStr,
-				controllerThis.Login,
-			)
+			group.Bind(controllerLogin.NewAdmin())
 		})
 
 		//需验证登录身份
@@ -35,43 +32,36 @@ func InitRouterPlatform(s *ghttp.Server) {
 				)
 			})
 
-			group.Group(`/login`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerIndex.NewLogin()
-				group.Bind(
-					controllerThis.Info,
-					controllerThis.Update,
-					controllerThis.MenuTree,
-				)
+			group.Group(`/my/admin`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerMy.NewAdmin())
+			})
+
+			group.Group(`/my/menu`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerMy.NewMenu())
 			})
 
 			group.Group(`/auth/action`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerAuth.NewAction()
-				group.Bind(controllerThis)
+				group.Bind(controllerAuth.NewAction())
 			})
 
 			group.Group(`/auth/menu`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerAuth.NewMenu()
-				group.Bind(controllerThis)
+				group.Bind(controllerAuth.NewMenu())
 			})
 
 			group.Group(`/auth/role`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerAuth.NewRole()
-				group.Bind(controllerThis)
+				group.Bind(controllerAuth.NewRole())
 			})
 
 			group.Group(`/auth/scene`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerAuth.NewScene()
-				group.Bind(controllerThis)
+				group.Bind(controllerAuth.NewScene())
 			})
 
 			group.Group(`/platform/admin`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerPlatform.NewAdmin()
-				group.Bind(controllerThis)
+				group.Bind(controllerPlatform.NewAdmin())
 			})
 
 			group.Group(`/platform/config`, func(group *ghttp.RouterGroup) {
-				controllerThis := controllerPlatform.NewConfig()
-				group.Bind(controllerThis)
+				group.Bind(controllerPlatform.NewConfig())
 			})
 
 			/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
