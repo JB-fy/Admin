@@ -16,11 +16,15 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-//强烈建议搭配Git使用
 /*
+使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+
+强烈建议搭配Git使用
+
 表字段命名需要遵守以下规则，否则会根据字段类型默认处理
 主键必须是第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
 表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端组件)
+
 	部分常用字段：
 		password	密码
 		passwd		密码
@@ -41,8 +45,6 @@ import (
 		状态和类型字段，命名用status或type后缀
 		是否字段，命名用is_前缀
 */
-
-// 使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
 	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
