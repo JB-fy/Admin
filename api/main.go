@@ -19,6 +19,4 @@ func main() {
 	cmd.Main.AddCommand(&cmd.MyGen)
 	cmd.Main.AddCommand(&cmd.Http)
 	cmd.Main.Run(gctx.New())
-
-	// cmd.Http.Run(gctx.New())	//单跑
 }
