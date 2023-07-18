@@ -4,9 +4,9 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-/*--------用户菜单树 开始--------*/
+/*--------菜单树 开始--------*/
 type MenuTreeReq struct {
-	g.Meta `path:"/tree" method:"post" tags:"平台后台/登录" sm:"用户菜单树"`
+	g.Meta `path:"/tree" method:"post" tags:"平台后台/我的" sm:"菜单树"`
 }
 
 type MenuTreeRes struct {
@@ -24,4 +24,4 @@ type MenuTree struct {
 	//Children []LoginMenuTree `json:"children" dc:"子级列表"`
 }
 
-/*--------用户菜单树 结束--------*/
+/*--------菜单树 结束--------*/

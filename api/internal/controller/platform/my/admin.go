@@ -16,7 +16,7 @@ func NewAdmin() *Admin {
 	return &Admin{}
 }
 
-// 用户详情
+// 个人信息
 func (controllerThis *Admin) Info(ctx context.Context, req *apiMy.AdminInfoReq) (res *apiMy.AdminInfoRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	res = &apiMy.AdminInfoRes{}
