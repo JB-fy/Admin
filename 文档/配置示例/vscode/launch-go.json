@@ -15,7 +15,7 @@
                 "xxxx"
             ],
             "env": {},
-            "showLog": true
+            // "showLog": true
         }
     ]
 }
