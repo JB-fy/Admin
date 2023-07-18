@@ -40,6 +40,10 @@ func InitRouterPlatform(s *ghttp.Server) {
 				group.Bind(controllerMy.NewMenu())
 			})
 
+			group.Group(`/my/action`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerMy.NewAction())
+			})
+
 			group.Group(`/auth/action`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerAuth.NewAction())
 			})
