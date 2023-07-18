@@ -6,7 +6,7 @@ import (
 
 /*--------获取 开始--------*/
 type ConfigGetReq struct {
-	g.Meta       `path:"config/get" method:"post" tags:"平台后台/配置" sm:"获取"`
+	g.Meta       `path:"/config/get" method:"post" tags:"平台后台/配置" sm:"获取"`
 	ConfigKeyArr *[]string `c:"configKeyArr,omitempty" json:"configKeyArr" v:"required|distinct|foreach|min-length:1" dc:"配置项Key列表。传值参考默认返回的字段"`
 }
 
@@ -26,7 +26,7 @@ type Config struct {
 
 /*--------保存 开始--------*/
 type ConfigSaveReq struct {
-	g.Meta                   `path:"config/save" method:"post" tags:"平台后台/配置" sm:"保存"`
+	g.Meta                   `path:"/config/save" method:"post" tags:"平台后台/配置" sm:"保存"`
 	AliyunOssHost            *string `c:"aliyunOssHost,omitempty" json:"aliyunOssHost" v:"url" dc:"阿里云存储-域名"`
 	AliyunOssBucket          *string `c:"aliyunOssBucket,omitempty" json:"aliyunOssBucket" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云存储-Bucket"`
 	AliyunOssAccessKeyId     *string `c:"aliyunOssAccessKeyId,omitempty" json:"aliyunOssAccessKeyId" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云存储-AccessKeyId"`

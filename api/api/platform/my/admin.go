@@ -7,7 +7,7 @@ import (
 
 /*--------个人信息 开始--------*/
 type AdminInfoReq struct {
-	g.Meta `path:"admin/info" method:"post" tags:"平台后台/我的" sm:"个人信息"`
+	g.Meta `path:"/admin/info" method:"post" tags:"平台后台/我的" sm:"个人信息"`
 }
 
 type AdminInfoRes struct {
@@ -29,7 +29,7 @@ type AdminInfo struct {
 
 /*--------修改个人信息 开始--------*/
 type AdminUpdateReq struct {
-	g.Meta        `path:"admin/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
+	g.Meta        `path:"/admin/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
 	Account       *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone         *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
 	Nickname      *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
