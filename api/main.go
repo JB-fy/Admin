@@ -16,10 +16,7 @@ import (
 )
 
 func main() {
-	// cmd.MyGen.Run(gctx.New())
-	cmd.Http.Run(gctx.New())
-
-	// cmd.Main.AddCommand(&cmd.MyGen)
-	// cmd.Main.AddCommand(&cmd.Http)
-	// cmd.Main.Run(gctx.New())
+	cmd.Main.AddCommand(&cmd.MyGen)
+	cmd.Main.AddCommand(&cmd.Http)
+	cmd.Main.Run(gctx.New())
 }

@@ -42,7 +42,7 @@ import (
 		是否字段，命名用is_前缀
 */
 
-// 使用示例：./myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+// 使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
 	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
