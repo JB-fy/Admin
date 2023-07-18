@@ -35,7 +35,7 @@ Router::addGroup('/platform', function () {
             Router::addGroup('', function () {
                 Router::addGroup('/login', function () {
                     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/encryptStr', [\App\Controller\Login::class, 'encryptStr']);
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '', [\App\Controller\Login::class, 'login']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/login', [\App\Controller\Login::class, 'login']);
                 });
             });
 
@@ -45,10 +45,10 @@ Router::addGroup('/platform', function () {
                     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/sign', [\App\Controller\Upload::class, 'sign']);
                 });
 
-                Router::addGroup('/login', function () {
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/info', [\App\Controller\Login::class, 'info']);
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/update', [\App\Controller\Login::class, 'update']);
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/menuTree', [\App\Controller\Login::class, 'menuTree']);
+                Router::addGroup('/my', function () {
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/admin/info', [\App\Controller\Login::class, 'info']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/admin/update', [\App\Controller\Login::class, 'update']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/menu/tree', [\App\Controller\Login::class, 'menuTree']);
                 });
 
                 Router::addGroup('/auth/action', function () {
