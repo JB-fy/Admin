@@ -12,7 +12,7 @@ import (
 type (
 	ILogin interface {
 		EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error)
-		Platform(ctx context.Context, account string, password string) (token string, err error)
+		PlatformAdmin(ctx context.Context, account string, password string) (token string, err error)
 	}
 )
 
