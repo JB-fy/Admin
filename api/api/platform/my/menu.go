@@ -6,7 +6,7 @@ import (
 
 /*--------菜单树 开始--------*/
 type MenuTreeReq struct {
-	g.Meta `path:"/tree" method:"post" tags:"平台后台/我的" sm:"菜单树"`
+	g.Meta `path:"menu/tree" method:"post" tags:"平台后台/我的" sm:"菜单树"`
 }
 
 type MenuTreeRes struct {

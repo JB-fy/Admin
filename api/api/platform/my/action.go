@@ -6,7 +6,7 @@ import (
 
 /*--------列表 开始--------*/
 type ActionListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"平台后台/我的" sm:"操作列表"`
+	g.Meta `path:"action/list" method:"post" tags:"平台后台/我的" sm:"操作列表"`
 }
 
 type ActionListRes struct {

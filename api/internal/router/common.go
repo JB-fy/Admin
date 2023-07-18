@@ -12,7 +12,7 @@ func InitRouterCommon(s *ghttp.Server) {
 		r.Response.RedirectTo(`/view/platform`)
 	})
 	//上传
-	s.Group(`/upload`, func(group *ghttp.RouterGroup) {
+	s.Group(`upload`, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewUpload()
 		group.Bind(
 			// controllerThis.Sign, //建议放其他场景内验证权限后才可调用
@@ -24,6 +24,6 @@ func InitRouterCommon(s *ghttp.Server) {
 	s.Group(``, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewTest()
 		group.Bind(controllerThis.Test)
-		group.ALL(`/test1`, controllerThis.Test1)
+		group.ALL(`test1`, controllerThis.Test1)
 	})
 }

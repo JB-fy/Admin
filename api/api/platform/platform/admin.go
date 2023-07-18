@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type AdminListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"平台后台/管理员" sm:"列表"`
+	g.Meta `path:"admin/list" method:"post" tags:"平台后台/管理员" sm:"列表"`
 	Filter AdminListFilter `json:"filter" dc:"过滤条件"`
 	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
@@ -54,7 +54,7 @@ type AdminItem struct {
 
 /*--------详情 开始--------*/
 type AdminInfoReq struct {
-	g.Meta `path:"/info" method:"post" tags:"平台后台/管理员" sm:"详情"`
+	g.Meta `path:"admin/info" method:"post" tags:"平台后台/管理员" sm:"详情"`
 	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
 }
@@ -81,7 +81,7 @@ type AdminInfo struct {
 
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
-	g.Meta    `path:"/create" method:"post" tags:"平台后台/管理员" sm:"创建"`
+	g.Meta    `path:"admin/create" method:"post" tags:"平台后台/管理员" sm:"创建"`
 	Account   *string `c:"account,omitempty" json:"account" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone     *string `c:"phone,omitempty" json:"phone" v:"required-without:Account|phone" dc:"手机号"`
 	Password  *string `c:"password,omitempty" json:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}_-]+$" dc:"密码"`
@@ -95,7 +95,7 @@ type AdminCreateReq struct {
 
 /*--------修改 开始--------*/
 type AdminUpdateReq struct {
-	g.Meta    `path:"/update" method:"post" tags:"平台后台/管理员" sm:"更新"`
+	g.Meta    `path:"admin/update" method:"post" tags:"平台后台/管理员" sm:"更新"`
 	IdArr     []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	Account   *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone     *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
@@ -110,7 +110,7 @@ type AdminUpdateReq struct {
 
 /*--------删除 开始--------*/
 type AdminDeleteReq struct {
-	g.Meta `path:"/del" method:"post" tags:"平台后台/管理员" sm:"删除"`
+	g.Meta `path:"admin/del" method:"post" tags:"平台后台/管理员" sm:"删除"`
 	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
