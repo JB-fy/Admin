@@ -120,7 +120,7 @@ const exportButton = reactive({
 
     <!-------- 使用示例 开始-------->
     <!-- <MyExportButton :headerList="table.columns"
-        :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }" />
+        :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 
     <MyExportButton fileName="文件名.xlsx" :headerList="table.columns"
         :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
