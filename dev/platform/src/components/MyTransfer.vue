@@ -1,3 +1,9 @@
+<!-------- 使用示例 开始-------->
+<!-- <MyTransfer v-model="saveCommon.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
+
+<MyTransfer v-model="saveCommon.data.sceneIdArr"
+    :api="{ code: '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+<!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
@@ -109,11 +115,4 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
 <template>
     <ElTransfer :ref="(el: any) => { transfer.ref = el }" v-model="transfer.value" :data="transfer.options"
         :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
-
-    <!-------- 使用示例 开始-------->
-    <!-- <MyTransfer v-model="saveCommon.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
-
-    <MyTransfer v-model="saveCommon.data.sceneIdArr"
-        :api="{ code: '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
-    <!-------- 使用示例 结束-------->
 </template>

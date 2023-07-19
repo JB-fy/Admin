@@ -1,3 +1,8 @@
+<!-------- 使用示例 开始-------->
+<!-- <MyUpload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
+
+<MyUpload v-model="saveForm.data.avatar" accept="video/*" :isImage="false" /> -->
+<!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const { t } = useI18n()
 
@@ -248,12 +253,6 @@ upload.initSignInfo()   //初始化签名信息
             </template>
         </ElUpload>
     </div>
-
-    <!-------- 使用示例 开始-------->
-    <!-- <MyUpload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
-
-    <MyUpload v-model="saveForm.data.avatar" accept="video/*" :isImage="false" /> -->
-    <!-------- 使用示例 结束-------->
 </template>
 
 <style scoped>

@@ -1,3 +1,10 @@
+<!-------- 使用示例 开始-------->
+<!-- <MySelect v-model="saveCommon.data.sceneId" :api="{ code: '/auth/scene/list' }" />
+
+<MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
+    :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
+    :api="{ code: '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+<!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
@@ -237,13 +244,4 @@ watch(() => select.options, (newVal: any, oldVal: any) => {
     <ElSelectV2 v-else :ref="(el: any) => { select.ref = el }" v-model="select.value" :placeholder="placeholder"
         :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
         :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
-
-
-    <!-------- 使用示例 开始-------->
-    <!-- <MySelect v-model="saveCommon.data.sceneId" :api="{ code: '/auth/scene/list' }" />
-
-    <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
-        :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
-        :api="{ code: '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
-    <!-------- 使用示例 结束-------->
 </template>

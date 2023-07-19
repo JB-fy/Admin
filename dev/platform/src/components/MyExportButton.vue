@@ -1,3 +1,10 @@
+<!-------- 使用示例 开始-------->
+<!-- <MyExportButton :headerList="table.columns"
+    :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+
+<MyExportButton fileName="文件名.xlsx" :headerList="table.columns"
+    :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
+<!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const { t, tm } = useI18n()
 
@@ -117,12 +124,4 @@ const exportButton = reactive({
     <ElButton type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading">
         <AutoiconEpDownload />{{ t('common.export') }}
     </ElButton>
-
-    <!-------- 使用示例 开始-------->
-    <!-- <MyExportButton :headerList="table.columns"
-        :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
-
-    <MyExportButton fileName="文件名.xlsx" :headerList="table.columns"
-        :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
-    <!-------- 使用示例 结束-------->
 </template>
