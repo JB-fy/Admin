@@ -10,22 +10,22 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Admin struct{}
+type Profile struct{}
 
-func NewAdmin() *Admin {
-	return &Admin{}
+func NewProfile() *Profile {
+	return &Profile{}
 }
 
 // 个人信息
-func (controllerThis *Admin) Info(ctx context.Context, req *apiMy.AdminInfoReq) (res *apiMy.AdminInfoRes, err error) {
+func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoReq) (res *apiMy.ProfileInfoRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	res = &apiMy.AdminInfoRes{}
+	res = &apiMy.ProfileInfoRes{}
 	loginInfo.Struct(&res.Info)
 	return
 }
 
 // 修改个人信息
-func (controllerThis *Admin) Update(ctx context.Context, req *apiMy.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.MapDeep(req)
 	if len(data) == 0 {

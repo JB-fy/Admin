@@ -6,15 +6,15 @@ import (
 )
 
 /*--------个人信息 开始--------*/
-type AdminInfoReq struct {
-	g.Meta `path:"/admin/info" method:"post" tags:"平台后台/我的" sm:"个人信息"`
+type ProfileInfoReq struct {
+	g.Meta `path:"/profile/info" method:"post" tags:"平台后台/我的" sm:"个人信息"`
 }
 
-type AdminInfoRes struct {
-	Info AdminInfo `json:"info" dc:"详情"`
+type ProfileInfoRes struct {
+	Info ProfileInfo `json:"info" dc:"详情"`
 }
 
-type AdminInfo struct {
+type ProfileInfo struct {
 	AdminId   uint        `json:"adminId" dc:"管理员ID"`
 	Account   string      `json:"account" dc:"账号"`
 	Phone     string      `json:"phone" dc:"手机号"`
@@ -28,8 +28,8 @@ type AdminInfo struct {
 /*--------个人信息 结束--------*/
 
 /*--------修改个人信息 开始--------*/
-type AdminUpdateReq struct {
-	g.Meta        `path:"/admin/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
+type ProfileUpdateReq struct {
+	g.Meta        `path:"/profile/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
 	Account       *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone         *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
 	Nickname      *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`

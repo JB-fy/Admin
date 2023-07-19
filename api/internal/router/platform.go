@@ -33,7 +33,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 			})
 
 			group.Group(`/my`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerMy.NewAdmin())
+				group.Bind(controllerMy.NewProfile())
 				group.Bind(controllerMy.NewMenu())
 				group.Bind(controllerMy.NewAction())
 			})

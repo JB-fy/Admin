@@ -288,7 +288,7 @@ export const useAdminStore = defineStore('admin', {
      * 设置登录用户信息
      */
     async setInfo() {
-      const res = await request('/my/admin/info', {})
+      const res = await request('/my/profile/info', {})
       this.info = res.data.info
     },
     /**

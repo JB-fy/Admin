@@ -46,8 +46,8 @@ Router::addGroup('/platform', function () {
                 });
 
                 Router::addGroup('/my', function () {
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/admin/info', [\App\Controller\Login::class, 'info']);
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/admin/update', [\App\Controller\Login::class, 'update']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/profile/info', [\App\Controller\Login::class, 'info']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/profile/update', [\App\Controller\Login::class, 'update']);
                     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/menu/tree', [\App\Controller\Login::class, 'menuTree']);
                 });
 
