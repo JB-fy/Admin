@@ -38,8 +38,6 @@ server:
 database:
   logger:
     path: "log/sql/"
-    level: "all"
-    stdout: true
   default:
     - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
       # role: "master"              # 主从配置(master/slave)
