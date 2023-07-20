@@ -1,3 +1,14 @@
+/*--------使用方式 开始--------*/
+/* const route = useRoute()
+route.path
+route.query
+route.params.lotteryId
+route.fulPath
+
+const router = useRouter()
+router.push(url) 
+router.currentRoute.value  //当前页面路由 */
+/*--------使用方式 结束--------*/
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout/default/Index.vue'
 
@@ -194,15 +205,3 @@ router.afterEach((to) => {
 })
 
 export default router
-
-/*--------使用方式 开始--------*/
-/* const route = useRoute()
-route.path
-route.query
-route.params.lotteryId
-route.fulPath
-
-const router = useRouter()
-router.push(url) 
-router.currentRoute.value  //当前页面路由 */
-/*--------使用方式 结束--------*/

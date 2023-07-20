@@ -8,6 +8,22 @@
  * @param isErrorHandle 失败错误处理
  * @returns 
  */
+/*--------使用方式 开始--------*/
+/* request('/index/index', data).then((res) => {
+    console.log(res)
+}).catch((error) => {
+    errorHandle(<Error>error)   //request第四个参数为false时增加，否则已经做过错误处理
+}).finally(() => {
+})
+
+try {
+    const res = await request('/index/index', data)
+    console.log(res)
+} catch (error) {
+    //errorHandle(<Error>error) //request第四个参数为false时增加，否则已经做过错误处理
+} finally {
+} */
+/*--------使用方式 结束--------*/
 const apiList = batchImport(import.meta.globEager('@/api/**/*.ts'), 0, 10)    //放外面。这样每次调用都不要重新加载了
 export const request = async (apiCode: string, data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true): Promise<any> => {
     let apiCodeList: string[] = apiCode.split('/')
@@ -40,22 +56,6 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
         throw error
     }
 }
-/*--------使用方式 开始--------*/
-/* request('/index/index', data).then((res) => {
-    console.log(res)
-}).catch((error) => {
-    errorHandle(<Error>error)   //request第四个参数为false时增加，否则已经做过错误处理
-}).finally(() => {
-})
-
-try {
-    const res = await request('/index/index', data)
-    console.log(res)
-} catch (error) {
-    //errorHandle(<Error>error) //request第四个参数为false时增加，否则已经做过错误处理
-} finally {
-} */
-/*--------使用方式 结束--------*/
 
 /**
  * 导出excel

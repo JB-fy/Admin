@@ -22,6 +22,14 @@ export const handleBatchImportOfAsync = async (rawImportListOfAsync: any): Promi
  * @param type  类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；10：多维对象（键名保持原样）；11：多维对象（键名小驼峰法）；12：多维对象（键名大驼峰法）；
  * @returns 
  */
+/*--------使用方式 开始--------*/
+// console.log(batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10))
+// console.log(batchImport(import.meta.globEager('@/api/**/*.ts')))
+// console.log(batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')))
+// console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/i18n/language/**/*.ts')), 1, 10))
+// console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/api/**/*.ts'))))
+// console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs'))))
+/*--------使用方式 结束--------*/
 export const batchImport = (rawImportList: any, level: number = 0, type: number = 0): { [propName: string]: any } => {
     let importList: { [propName: string]: any } = {}
     let keyArr: string[] = []
@@ -138,11 +146,3 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
     }
     return importList
 }
-/*--------使用方式 开始--------*/
-// console.log(batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10))
-// console.log(batchImport(import.meta.globEager('@/api/**/*.ts')))
-// console.log(batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')))
-// console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/i18n/language/**/*.ts')), 1, 10))
-// console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/api/**/*.ts'))))
-// console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs'))))
-/*--------使用方式 结束--------*/
