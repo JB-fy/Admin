@@ -30,11 +30,11 @@ const queryForm = reactive({
         </ElFormItem>
         <ElFormItem prop="sceneId">
             <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.menu.name.sceneId')"
-                :api="{ code: '/auth/scene/list' }" />
+                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
         </ElFormItem>
         <ElFormItem prop="pid">
             <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
-                :api="{ code: '/auth/menu/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]"
+                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]"
                 :props="{ checkStrictly: true, emitPath: false }" />
         </ElFormItem>
         <ElFormItem prop="isStop" style="width: 100px;">

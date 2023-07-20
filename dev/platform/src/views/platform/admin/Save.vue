@@ -49,9 +49,9 @@ const saveForm = reactive({
             param.password ? param.password = md5(param.password) : delete param.password
             try {
                 if (param?.idArr?.length > 0) {
-                    await request('/platform/admin/update', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/update', param, true)
                 } else {
-                    await request('/platform/admin/create', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
@@ -116,7 +116,7 @@ const saveDrawer = reactive({
                 </ElFormItem>
                 <ElFormItem :label="t('platform.admin.name.roleIdArr')" prop="roleIdArr">
                     <MyTransfer v-model="saveForm.data.roleIdArr"
-                        :api="{ code: '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" />
+                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.admin.name.isStop')" prop="isStop">
                     <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"

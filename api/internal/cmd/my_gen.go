@@ -1900,7 +1900,7 @@ const handleBatchDelete = () => {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-	request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/info', { id: id }).then((res) => {
+	request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/info', { id: id }).then((res) => {
 		saveCommon.data = { ...res.data.info }
 		switch (type) {
 			case 'edit':
@@ -1927,7 +1927,7 @@ const handleDelete = (idArr: number[]) => {
 		center: true,
 		showClose: false,
 	}).then(() => {
-		request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/del', { idArr: idArr }, true).then((res) => {
+		request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/del', { idArr: idArr }, true).then((res) => {
 			getList()
 		}).catch(() => { })
 	}).catch(() => { })
@@ -1937,7 +1937,7 @@ const handleDelete = (idArr: number[]) => {
 		tplView += `
 //更新
 const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
-	await request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
+	await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
 }`
 	}
 	tplView += `
@@ -1973,7 +1973,7 @@ const getList = async (resetPage: boolean = false) => {
 	}
 	table.loading = true
 	try {
-		const res = await request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param)
+		const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param)
 		table.data = res.data.list?.length ? res.data.list : []
 		pagination.total = res.data.count
 	} catch (error) { }
@@ -2073,7 +2073,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		case `pid`:
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
+			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
 		</ElFormItem>`
 		case `sort`, `weight`:
 		default:
@@ -2085,7 +2085,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
+			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
 		</ElFormItem>`
 				continue
 			}
@@ -2317,7 +2317,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
+                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excId: saveForm.data.id } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
                 </ElFormItem>`
 		case `sort`, `weight`:
 			viewSaveRule += `
@@ -2344,7 +2344,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MySelect v-model="saveForm.data.` + field + `" :api="{ code: '/` + tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
+                    <MySelect v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
                 </ElFormItem>`
 				continue
 			}
@@ -2646,9 +2646,9 @@ const saveForm = reactive({
 	tplView += `
 			try {
 				if (param?.idArr?.length > 0) {
-					await request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
+					await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
 				} else {
-					await request('/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/create', param, true)
+					await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/create', param, true)
 				}
 				listCommon.ref.getList(true)
 				saveCommon.visible = false

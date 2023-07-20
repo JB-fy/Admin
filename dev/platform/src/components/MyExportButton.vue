@@ -1,9 +1,9 @@
 <!-------- 使用示例 开始-------->
 <!-- <MyExportButton :headerList="table.columns"
-    :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 
 <MyExportButton fileName="文件名.xlsx" :headerList="table.columns"
-    :api="{ code: '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const { t, tm } = useI18n()

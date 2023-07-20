@@ -216,7 +216,7 @@ const handleBatchDelete = () => {
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request('/platform/admin/info', { id: id }).then((res) => {
+    request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
@@ -240,14 +240,14 @@ const handleDelete = (idArr: number[]) => {
         center: true,
         showClose: false,
     }).then(() => {
-        request('/platform/admin/del', { idArr: idArr }, true).then((res) => {
+        request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/del', { idArr: idArr }, true).then((res) => {
             getList()
         }).catch(() => { })
     }).catch(() => { })
 }
 //更新
 const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
-    await request('/platform/admin/update', param, true)
+    await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/update', param, true)
 }
 
 //分页
@@ -281,7 +281,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request('/platform/admin/list', param)
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/list', param)
         table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
     } catch (error) { }

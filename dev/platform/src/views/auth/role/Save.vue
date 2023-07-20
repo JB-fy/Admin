@@ -45,9 +45,9 @@ const saveForm = reactive({
             })
             try {
                 if (param?.idArr?.length > 0) {
-                    await request('/auth/role/update', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/role/update', param, true)
                 } else {
-                    await request('/auth/role/create', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/role/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
@@ -92,17 +92,17 @@ const saveDrawer = reactive({
                         maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('auth.role.name.sceneId')" prop="sceneId">
-                    <MySelect v-model="saveForm.data.sceneId" :api="{ code: '/auth/scene/list' }"
+                    <MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
                         @change="() => { saveForm.data.menuIdArr = []; saveForm.data.actionIdArr = [] }" />
                 </ElFormItem>
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuIdArr')" prop="menuIdArr">
                     <MyCascader v-model="saveForm.data.menuIdArr"
-                        :api="{ code: '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
+                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
                         :isPanel="true" :props="{ multiple: true }" />
                 </ElFormItem>
                 <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionIdArr')" prop="actionIdArr">
                     <MyTransfer v-model="saveForm.data.actionIdArr"
-                        :api="{ code: '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
+                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </ElFormItem>
                 <ElFormItem :label="t('auth.role.name.isStop')" prop="isStop">
                     <ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true"

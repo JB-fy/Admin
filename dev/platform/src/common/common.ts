@@ -9,7 +9,7 @@
  * @returns 
  */
 /*--------使用方式 开始--------*/
-/* request('/index/index', data).then((res) => {
+/* request(t('config.VITE_HTTP_API_PREFIX') + '/index/index', data).then((res) => {
     console.log(res)
 }).catch((error) => {
     errorHandle(<Error>error)   //request第四个参数为false时增加，否则已经做过错误处理
@@ -17,7 +17,7 @@
 })
 
 try {
-    const res = await request('/index/index', data)
+    const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/index/index', data)
     console.log(res)
 } catch (error) {
     //errorHandle(<Error>error) //request第四个参数为false时增加，否则已经做过错误处理

@@ -1,9 +1,9 @@
 <!-------- 使用示例 开始-------->
-<!-- <MySelect v-model="saveCommon.data.sceneId" :api="{ code: '/auth/scene/list' }" />
+<!-- <MySelect v-model="saveCommon.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
 <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
     :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
-    :api="{ code: '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const props = defineProps({

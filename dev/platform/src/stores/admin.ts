@@ -272,10 +272,10 @@ export const useAdminStore = defineStore('admin', {
      * @returns 
      */
     async login(account: string, password: string) {
-      let res = await request('/login/encryptStr', {
+      let res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/encryptStr', {
         account: account
       })
-      res = await request('/login/login', {
+      res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/login', {
         account: account,
         password: md5(md5(password) + res.data.encryptStr)
       })
@@ -288,7 +288,7 @@ export const useAdminStore = defineStore('admin', {
      * 设置登录用户信息
      */
     async setInfo() {
-      const res = await request('/my/profile/info', {})
+      const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/profile/info', {})
       this.info = res.data.info
     },
     /**
@@ -327,7 +327,7 @@ export const useAdminStore = defineStore('admin', {
         }
         return menuTreeTmp
       }
-      const res = await request('/my/menu/tree')
+      const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/menu/tree')
       const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
       this.menuTree = handleMenuTree(tree)
     },

@@ -141,7 +141,7 @@ const upload = reactive({
     },
     api: {
         loading: false,
-        code: props.api?.code ?? 'upload/sign',
+        code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
         param: {
             ...props.api?.param
         },

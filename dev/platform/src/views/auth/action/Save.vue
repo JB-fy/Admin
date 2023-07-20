@@ -38,9 +38,9 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
                 if (param?.idArr?.length > 0) {
-                    await request('/auth/action/update', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/action/update', param, true)
                 } else {
-                    await request('/auth/action/create', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/action/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
@@ -92,7 +92,7 @@ const saveDrawer = reactive({
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('auth.action.name.sceneIdArr')" prop="sceneIdArr">
-                    <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: '/auth/scene/list' }" />
+                    <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </ElFormItem>
                 <ElFormItem :label="t('auth.action.name.remark')" prop="remark">
                     <ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" minlength="0"
