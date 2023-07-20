@@ -37,7 +37,7 @@ server:
 
 database:
   logger:
-    path: "log/sql"
+    path: "log/sql/"
     level: "all"
     stdout: true
   default:
