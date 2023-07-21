@@ -2,7 +2,7 @@
 # https://goframe.org/pages/viewpage.action?pageId=3673173
 gfcli:
   build:
-    packSrc:  "resource/i18n,manifest" # 需要打包资源目录。打包前manifest目录下的配置文件需改成正式环境
+    packSrc: "resource/i18n,manifest" # 需要打包资源目录。打包前manifest目录下的配置文件需改成正式环境
     # output: "../main"
   gen:
     dao:
@@ -19,3 +19,6 @@ gfcli:
         # tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
         # tplDaoIndexPath: "resource/gen/gen_dao_template_dao_rel.txt"
         # overwriteDao: true
+    pbentity:
+      - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
+        tables: "auth_test"
