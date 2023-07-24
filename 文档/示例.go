@@ -72,7 +72,7 @@ fmt.Printf("%#v\n", pageInfo) */
 /*--------gorm 开始--------*/
 /*
 var info map[string]interface{}
-db.Table("table").Where("id", id).Take(&info)
+db.Table("table").Where("id", id).Select("name", "age").Take(&info)
 
 var list []map[string]interface{}
 db.Table("table").Joins("left join table1 on table1.user_id=table.id").Find(&list)
