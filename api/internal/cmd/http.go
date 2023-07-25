@@ -18,6 +18,7 @@ func HttpFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 
 	router.InitRouterCommon(s)   //公共接口注册
 	router.InitRouterPlatform(s) //平台后台接口注册
+	router.InitRouterDemo(s)     //示例后台接口注册
 
 	// router.InitRouterWebSocket(s) //WebScoket注册（如需使用，建议把部分全局中间件移到对应接口分组内）
 
