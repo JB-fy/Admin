@@ -72,29 +72,29 @@ fmt.Printf("%#v\n", pageInfo) */
 /*--------gorm 开始--------*/
 /*
 var info map[string]interface{}
-db.Table("table").Where("id", id).Select("name", "age").Take(&info)
+db.Table(`table`).Where(`id`, id).Select(`name`, `age`).Take(&info)
 
 var list []map[string]interface{}
-db.Table("table").Joins("left join table1 on table1.user_id=table.id").Find(&list)
+db.Table(`table`).Joins(`left join table1 on table1.user_id=table.id`).Find(&list)
 
 var list []interface{}
-db.Table("table").Where("id", v).Pluck("id", &list)
+db.Table(`table`).Where(`id`, v).Pluck(`id`, &list)
 
 var sum int
-db.Model(&users).Where("id", 1).Pluck("SUM(price) as sum", &sum)
+db.Model(&users).Where(`id`, 1).Pluck(`SUM(price) as sum`, &sum)
 
 //下面这种场景需特别注意：Pluck取单字段时，是取结果集中的最后一个，而不是第一个。故需注意排序方式
 var id int
-db.Table("table").Where("man_num > current_num").Order("current_num desc").Pluck("id", &id)
+db.Table(`table`).Where(`man_num > current_num`).Order(`current_num desc`).Pluck(`id`, &id)
 
-xxxx := Xxxx{Name: "xxxx"}
+xxxx := Xxxx{Name: `xxxx`}
 db.Create(&xxxx) // model创建可通过xxxx.ID获取主键
 
-db.Table("table").Create(map[string]interface{}{"id":id})	//map创建不会返回主键
+db.Table(`table`).Create(map[string]interface{}{`id`:id})	//map创建不会返回主键
 
-db.Table("table").Updates(map[string]interface{}{"price": gorm.Expr("price + ?", 1)})
+db.Table(`table`).Updates(map[string]interface{}{`price`: gorm.Expr(`price + ?`, 1)})
 
-db.Where("id", id).Delete(&game.TabPromoteSettlement{})
+db.Where(`id`, id).Delete(&game.TabPromoteSettlement{})
 
 db.RowsAffected
 
