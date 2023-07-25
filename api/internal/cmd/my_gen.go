@@ -1221,11 +1221,11 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		tplView = gstr.Replace(tplView, `"api/internal/middleware"`, importControllerStr+`
 	"api/internal/middleware"`)
 		//路由生成
-		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
+		tplView = gstr.Replace(tplView, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
 				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())
 			})
 
-			/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 		gfile.PutContents(saveFile, tplView)
 	} else {
 		//路由不存在时需生成
@@ -2787,8 +2787,8 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
             },`
 
 	if gstr.Pos(tplView, `'`+path+`'`) == -1 { //路由不存在时新增
-		tplView = gstr.Replace(tplView, `/*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
-            /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+		tplView = gstr.Replace(tplView, `/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
+            /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
 		tplView, _ = gregex.ReplaceString(`\{
                 path: '`+path+`',[\s\S]*'`+path+`' \}
