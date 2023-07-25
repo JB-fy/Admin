@@ -50,60 +50,6 @@ const initRouteList = [
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/' }
             },
-            {
-                path: '/auth/action',
-                component: async () => {
-                    const component = await import('@/views/auth/action/Index.vue')
-                    component.default.name = '/auth/action'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/action' }
-            },
-            {
-                path: '/auth/menu',
-                component: async () => {
-                    const component = await import('@/views/auth/menu/Index.vue')
-                    component.default.name = '/auth/menu'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/menu' }
-            },
-            {
-                path: '/auth/role',
-                component: async () => {
-                    const component = await import('@/views/auth/role/Index.vue')
-                    component.default.name = '/auth/role'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/role' }
-            },
-            {
-                path: '/auth/scene',
-                component: async () => {
-                    const component = await import('@/views/auth/scene/Index.vue')
-                    component.default.name = '/auth/scene'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' }
-            },
-            {
-                path: '/platform/admin',
-                component: async () => {
-                    const component = await import('@/views/platform/admin/Index.vue')
-                    component.default.name = '/platform/admin'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/admin' }
-            },
-            {
-                path: '/platform/config',
-                component: async () => {
-                    const component = await import('@/views/platform/config/Index.vue')
-                    component.default.name = '/platform/config'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config' }
-            },
             /*--------自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {
                 path: '/profile',
@@ -119,6 +65,18 @@ const initRouteList = [
                 component: () => import('@/views/ThirdSite.vue'),
                 meta: { isAuth: true, keepAlive: false, menu: { i18n: { title: { 'en': 'Third Site', 'zh-cn': '第三方站点' } }, icon: 'AutoiconEpChromeFilled' } }
             },
+            // {
+            //     //待解决bug。带参数的路由，所有符合条件的下级路由，由于组件是同一个，如果其中一个下级路由页面刷新时，会删除所有下级路由的缓存
+            //     //带参数的路由，要么不设置缓存；要么忽略这个bug，毕竟没啥影响
+            //     //要解决这个bug，除非可以动态设置组件name，这点貌似无法实现
+            //     //其他解决方式过于麻烦，需要特意在组件onActivated()方法内实现
+            //     path: '/test/:userId?',
+            //     component: {
+            //         name: '/test',
+            //         template: '<input />',
+            //     },
+            //     meta: { isAuth: true, keepAlive: true, componentName: '/test', menu: { i18n: { title: { 'en': 'test', 'zh-cn': '测试' } }, icon: 'AutoiconEpBicycle' } }
+            // },
         ]
     },
     {
