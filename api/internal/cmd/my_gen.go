@@ -43,8 +43,8 @@ import (
 		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀（多视频时字段类型用json或text，保存格式为JSON格式）
 		ip字段，命名用Ip后缀
 		备注字段，命名用remark后缀
-		状态和类型字段，命名用status或type后缀
-		是否字段，命名用is_前缀
+		状态和类型字段，命名用status或type后缀且字段类型必须是int或tinyint。字段注释中多状态之间用[空格,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
+		是否字段，命名用is_前缀且字段类型必须是int或tinyint。默认：0否 1是
 */
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
@@ -1580,12 +1580,9 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				statusList := MyGenStatusList(comment)
 				tagTypeStr := ``
 				tagTypeArr := []string{``, `success`, `danger`, `info`, `warning`}
+				tagTypeLen := len(tagTypeArr)
 				for index, status := range statusList {
-					if index < len(tagTypeArr) {
-						tagTypeStr += status[0] + `: '` + tagTypeArr[index] + `', `
-					} else {
-						tagTypeStr += status[0] + `: '', `
-					}
+					tagTypeStr += status[0] + `: '` + tagTypeArr[index%tagTypeLen] + `', `
 				}
 				tagTypeStr = gstr.SubStr(tagTypeStr, 0, -len(`, `))
 				viewListColumn += `
@@ -1599,7 +1596,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			let typeObj: any = { ` + tagTypeStr + ` }
 			return [
 				h(ElTag as any, {
-					type: typeObj?.[props.rowData.` + field + `] ?? ''
+					type: typeObj[props.rowData.` + field + `]
 				}, {
 					default: () => (tm('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).find((item: any) => { return item.value == props.rowData.` + field + ` })?.label
 				})
