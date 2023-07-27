@@ -2747,7 +2747,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [`
 				for _, status := range statusList {
 					viewI18nStatus += `
-			{ label: '` + status[1] + `', value: ` + status[0] + ` },`
+			{ value: ` + status[0] + `, label: '` + status[1] + `' },`
 				}
 				viewI18nStatus += `
 		],`
