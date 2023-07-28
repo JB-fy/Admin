@@ -15,7 +15,7 @@ class SceneLoginOfPlatform implements \Psr\Http\Server\MiddlewareInterface
         try {
             $container = getContainer();
             $sceneCode = $container->get(\App\Module\Logic\Auth\Scene::class)->getCurrentSceneCode();
-            $container->get(\App\Module\Service\Login::class)->verifyToken($sceneCode);
+            $container->get(\App\Module\Service\Login\PlatformAdmin::class)->verifyToken($sceneCode);
             $response = $handler->handle($request);
             return $response;
         } catch (\Throwable $th) {

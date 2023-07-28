@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Service;
+namespace App\Module\Service\Login;
 
 use App\Module\Cache\Login as CacheLogin;
 use App\Module\Db\Dao\Platform\Admin;
+use App\Module\Service\AbstractService;
 use Hyperf\Di\Annotation\Inject;
 
-class Login extends AbstractService
+class PlatformAdmin extends AbstractService
 {
     #[Inject]
     protected \App\Module\Logic\Login $logic;

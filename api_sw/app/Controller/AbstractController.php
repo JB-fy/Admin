@@ -34,20 +34,22 @@ abstract class AbstractController
     {
         $className = get_class($this);
         //子类未定义时会自动设置。注意：目录的对应关系
+        $sceneCode = $this->scene->getCurrentSceneCode();
+        $strReplace = '\\Controller\\' . ucfirst($sceneCode)  . '\\';
         if (empty($this->service)) {
-            $serviceClassName = str_replace('\\Controller\\', '\\Module\\Service\\', $className);
+            $serviceClassName = str_replace($strReplace, '\\Module\\Service\\', $className);
             if (class_exists($serviceClassName)) {
                 $this->service = $this->container->get($serviceClassName);
             }
         }
         if (empty($this->validation)) {
-            $validationClassName = str_replace('\\Controller\\', '\\Module\\Validation\\', $className);
+            $validationClassName = str_replace($strReplace, '\\Module\\Validation\\', $className);
             if (class_exists($validationClassName)) {
                 $this->validation = $this->container->get($validationClassName);
             }
         }
         if (empty($this->actionCodePrefix)) {
-            $this->actionCodePrefix = lcfirst(str_replace('\\', '',  substr($className, strpos($className, '\\Controller\\') + strlen('\\Controller\\'))));
+            $this->actionCodePrefix = lcfirst(str_replace('\\', '',  substr($className, strpos($className, $strReplace) + strlen($strReplace))));
         }
     }
 
