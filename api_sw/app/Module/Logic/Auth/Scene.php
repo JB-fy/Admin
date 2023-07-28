@@ -37,6 +37,6 @@ class Scene extends AbstractLogic
     public function getCurrentSceneCode(): ?string
     {
         $sceneInfo = \Hyperf\Context\Context::get('sceneInfo');
-        return $sceneInfo->sceneCode;
+        return $sceneInfo?->sceneCode;
     }
 }

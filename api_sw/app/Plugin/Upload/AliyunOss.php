@@ -6,14 +6,6 @@ namespace App\Plugin\Upload;
 
 class AliyunOss extends AbstractUpload
 {
-    /* protected $config = [    //类生成实例后必须含有以下几个字段
-        'accessKeyId' => 'LTAI5tHx81H64BRJA971DPZF',   //LTAI5tSjYikt3bX33riHezmk
-        'accessKeySecret' => 'nJyNpTtUuIgZqx21FF4G2zi0WHOn51', //k4uRZU6flv73yz1j4LJu9VY5eNlHas
-        'host ' => 'http://oss-cn-hongkong.aliyuncs.com',   //https://oss-cn-hangzhou.aliyuncs.com
-        'bucket' => '4724382110',   //gamemt
-        //'bucketHost' => 'http://4724382110.oss-cn-hongkong.aliyuncs.com'    //web前端直传地址（内部用getBucketHost方法获取）
-    ]; */
-
     /**
      * 创建签名（web前端直传用）
      *
