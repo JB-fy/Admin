@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地-8.0.32
+ Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
- Source Server Version : 80032 (8.0.32)
- Source Host           : 192.168.0.16:3306
- Source Schema         : jxyz_vm
+ Source Server Version : 80033 (8.0.33)
+ Source Host           : 192.168.0.200:3306
+ Source Schema         : jxyz_wm
 
  Target Server Type    : MySQL
- Target Server Version : 80032 (8.0.32)
+ Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 29/04/2023 09:56:46
+ Date: 28/07/2023 20:35:56
 */
 
 SET NAMES utf8mb4;
@@ -34,13 +34,12 @@ CREATE TABLE `admin`  (
   UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   INDEX `authGroupId`(`authGroupId` ASC) USING BTREE,
   INDEX `isStop`(`isStop` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
 INSERT INTO `admin` VALUES (1, 0, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', 0, '2021-04-26 19:31:07', '2019-08-28 15:50:40');
-INSERT INTO `admin` VALUES (2, 1, 'platform', '96e79218965eb72c92a549dd5a330112', '', 0, '2021-04-26 17:30:05', '2021-04-26 17:26:00');
 
 -- ----------------------------
 -- Table structure for auth_group
@@ -287,7 +286,7 @@ CREATE TABLE `config`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of config
@@ -307,7 +306,7 @@ CREATE TABLE `log_request`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   PRIMARY KEY (`logRequestId`) USING BTREE,
   INDEX `requestUrl`(`requestUrl` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of log_request
@@ -331,7 +330,7 @@ CREATE TABLE `pay_channel`  (
   PRIMARY KEY (`payChannelId`) USING BTREE,
   INDEX `payChannelType`(`payChannelType` ASC) USING BTREE,
   INDEX `isStop`(`isStop` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_channel
@@ -361,7 +360,7 @@ CREATE TABLE `pay_order`  (
   INDEX `payChannelId`(`payChannelId` ASC) USING BTREE,
   INDEX `payOrderType`(`payOrderType` ASC) USING BTREE,
   INDEX `payStatus`(`payStatus` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_order
@@ -386,11 +385,12 @@ CREATE TABLE `ty_admin`  (
   INDEX `storeId`(`storeId` ASC) USING BTREE,
   INDEX `authGroupId`(`authGroupId` ASC) USING BTREE,
   INDEX `isStop`(`isStop` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_admin
 -- ----------------------------
+INSERT INTO `ty_admin` VALUES (1, 1, 2, 'testTyAdmin', 'e10adc3949ba59abbe56e057f20f883e', '外卖商家超级管理员', 0, '2023-07-28 20:26:59', '2023-07-28 20:26:37');
 
 -- ----------------------------
 -- Table structure for ty_comment
@@ -419,7 +419,7 @@ CREATE TABLE `ty_comment`  (
   INDEX `storeId`(`storeId` ASC) USING BTREE,
   INDEX `userId`(`userId` ASC) USING BTREE,
   INDEX `deliveryWorkerId`(`deliveryWorkerId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_comment
@@ -447,7 +447,7 @@ CREATE TABLE `ty_comment_reply`  (
   INDEX `userId`(`userId` ASC) USING BTREE,
   INDEX `storeId`(`storeId` ASC) USING BTREE,
   INDEX `deliveryWorkerId`(`deliveryWorkerId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_comment_reply
@@ -467,7 +467,7 @@ CREATE TABLE `ty_delivery_worker`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`deliveryWorkerId`) USING BTREE,
   UNIQUE INDEX `mobile`(`mobile` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_delivery_worker
@@ -502,7 +502,7 @@ CREATE TABLE `ty_goods`  (
   INDEX `storeId`(`storeId` ASC) USING BTREE,
   INDEX `categoryId`(`categoryId` ASC) USING BTREE,
   INDEX `goodsSn`(`goodsSn` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_goods
@@ -523,7 +523,7 @@ CREATE TABLE `ty_goods_category`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`categoryId`) USING BTREE,
   INDEX `storeId`(`storeId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_goods_category
@@ -542,7 +542,7 @@ CREATE TABLE `ty_goods_option`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`optionId`) USING BTREE,
   INDEX `storeId`(`storeId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_goods_option
@@ -566,7 +566,7 @@ CREATE TABLE `ty_goods_spec`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`specId`) USING BTREE,
   INDEX `goodsId`(`goodsId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_goods_spec
@@ -614,7 +614,7 @@ CREATE TABLE `ty_order`  (
   INDEX `storeId`(`storeId` ASC) USING BTREE,
   INDEX `payOrderId`(`payOrderId` ASC) USING BTREE,
   INDEX `isStoreDelivery`(`isStoreDelivery` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_order
@@ -647,7 +647,7 @@ CREATE TABLE `ty_order_action`  (
   INDEX `deliveryWorkerId`(`deliveryWorkerId` ASC) USING BTREE,
   INDEX `orderId`(`orderId` ASC) USING BTREE,
   INDEX `tyAdminId`(`tyAdminId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_order_action
@@ -678,7 +678,7 @@ CREATE TABLE `ty_order_goods`  (
   PRIMARY KEY (`orderGoodsId`) USING BTREE,
   INDEX `orderId`(`orderId` ASC) USING BTREE,
   INDEX `goodsId`(`goodsId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_order_goods
@@ -707,11 +707,12 @@ CREATE TABLE `ty_store`  (
   INDEX `isStop`(`isStop` ASC) USING BTREE,
   INDEX `longitude`(`longitude` ASC) USING BTREE,
   INDEX `latitude`(`latitude` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_store
 -- ----------------------------
+INSERT INTO `ty_store` VALUES (1, '测试店铺', '', 0.0000, 0.000000, '', '', '', '', 118.5700000, 24.8300000, 0, '2023-07-28 20:32:47', '2023-07-28 20:24:27');
 
 -- ----------------------------
 -- Table structure for ty_store_category
@@ -728,7 +729,7 @@ CREATE TABLE `ty_store_category`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`categoryId`) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_store_category
@@ -747,7 +748,7 @@ CREATE TABLE `ty_store_config`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `storeId`(`storeId` ASC, `configKey` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ty_store_config
@@ -786,7 +787,7 @@ CREATE TABLE `user`  (
   UNIQUE INDEX `userName`(`userName` ASC) USING BTREE,
   UNIQUE INDEX `mobile`(`mobile` ASC) USING BTREE,
   INDEX `isStop`(`isStop` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
@@ -810,7 +811,7 @@ CREATE TABLE `user_address`  (
   `addTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`addressId`) USING BTREE,
   INDEX `userId`(`userId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_address
