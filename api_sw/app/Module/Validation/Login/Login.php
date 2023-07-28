@@ -6,7 +6,7 @@ namespace App\Module\Validation\Login;
 
 use App\Module\Validation\AbstractValidation;
 
-class PlatformAdmin extends AbstractValidation
+class Login extends AbstractValidation
 {
     protected array $rule = [
         'account' => 'required|alpha_dash|between:4,30',
