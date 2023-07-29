@@ -4,14 +4,14 @@
  Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.2.200:3306
+ Source Host           : 192.168.0.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 13/07/2023 18:27:29
+ Date: 30/07/2023 00:26:59
 */
 
 SET NAMES utf8mb4;
@@ -271,9 +271,10 @@ INSERT INTO `auth_scene` VALUES (1, 'platform', '平台后台', '{\"signKey\": \
 DROP TABLE IF EXISTS `platform_admin`;
 CREATE TABLE `platform_admin`  (
   `adminId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
   `phone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '电话号码',
+  `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
   `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码（md5保存）',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '加密盐',
   `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '昵称',
   `avatar` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '头像',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否停用：0否 1是',
@@ -287,7 +288,7 @@ CREATE TABLE `platform_admin`  (
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES (1, 'admin', NULL, 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', 'https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230624/1687601922719_8091.gif?w=471&h=373', 0, '2023-06-24 10:18:53', '2023-06-09 12:03:30');
+INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230624/1687601922719_8091.gif?w=471&h=373', 0, '2023-07-30 00:26:45', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for platform_config
