@@ -26,9 +26,10 @@ type AdminDao struct {
 // AdminColumns defines and stores column names for table platform_admin.
 type AdminColumns struct {
 	AdminId   string // 管理员ID
-	Account   string // 账号
 	Phone     string // 电话号码
+	Account   string // 账号
 	Password  string // 密码（md5保存）
+	Salt      string // 密码盐
 	Nickname  string // 昵称
 	Avatar    string // 头像
 	IsStop    string // 是否停用：0否 1是
@@ -39,9 +40,10 @@ type AdminColumns struct {
 // adminColumns holds the columns for table platform_admin.
 var adminColumns = AdminColumns{
 	AdminId:   "adminId",
-	Account:   "account",
 	Phone:     "phone",
+	Account:   "account",
 	Password:  "password",
+	Salt:      "salt",
 	Nickname:  "nickname",
 	Avatar:    "avatar",
 	IsStop:    "isStop",
