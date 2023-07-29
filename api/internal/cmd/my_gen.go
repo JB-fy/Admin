@@ -446,12 +446,20 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	if passwordField != `` && saltField != `` {
-		passwordGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
+		passwordInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
+				salt := grand.S(8)
+				insertData[daoThis.Columns().` + gstr.CaseCamel(saltField) + `] = salt
+				insertData[daoThis.Columns().` + gstr.CaseCamel(passwordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
+		if gstr.Pos(tplDao, passwordInsertGenTpl) == -1 {
+			tplDao = gstr.Replace(tplDao, `/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordInsertGenTpl+`
+			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		}
+		passwordUpdateGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
 				salt := grand.S(8)
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(saltField) + `] = salt
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(passwordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
-		if gstr.Pos(tplDao, passwordGenTpl) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordGenTpl+`
+		if gstr.Pos(tplDao, passwordUpdateGenTpl) == -1 {
+			tplDao = gstr.Replace(tplDao, `/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordUpdateGenTpl+`
 			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
 		}
 	}

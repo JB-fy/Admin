@@ -261,6 +261,17 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 $this->insert[$index][$this->getKey()] = $value;
                 return true;
+            case 'password':
+                if (in_array('salt', $this->getAllColumn())) {
+                    $salt = randStr(8);
+                    $this->insert[$index]['salt'] = $salt;
+                    $this->insert[$index][$key] = md5($value . $salt);
+                } else {
+                    $this->insert[$index][$key] = $value;
+                }
+                return true;
+            case 'salt':    //password字段处理过程自动生成
+                return true;
             default:
                 //数据库不存在的字段过滤掉
                 if (in_array($key, $this->getAllColumn())) {
@@ -293,9 +304,15 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             case 'password':
-                $salt = randStr(8);
-                $this->update[$this->getTable() . '.salt'] = $salt;
-                $this->update[$this->getTable() . '.' . $key] = md5($value . $salt);
+                if (in_array('salt', $this->getAllColumn())) {
+                    $salt = randStr(8);
+                    $this->update[$this->getTable() . '.salt'] = $salt;
+                    $this->update[$this->getTable() . '.' . $key] = md5($value . $salt);
+                } else {
+                    $this->update[$this->getTable() . '.' . $key] = $value;
+                }
+                return true;
+            case 'salt':    //password字段处理过程自动生成
                 return true;
             default:
                 /* //暂时不考虑其他复杂字段。复杂字段建议直接写入parseUpdateOfAlone方法

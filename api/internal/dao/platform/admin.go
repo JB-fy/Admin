@@ -77,6 +77,10 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, fill ...bool
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
+			case daoThis.Columns().Password:
+				salt := grand.S(8)
+				insertData[daoThis.Columns().Salt] = salt
+				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			case `roleIdArr`:
 				hookData[k] = v
 			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
