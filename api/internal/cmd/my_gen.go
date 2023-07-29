@@ -446,6 +446,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	if passwordField != `` && saltField != `` {
+		if gstr.Pos(tplDao, `"github.com/gogf/gf/v2/crypto/gmd5"`) == -1 {
+			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/database/gdb"`, `"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"`)
+		}
+		if gstr.Pos(tplDao, `"github.com/gogf/gf/v2/util/grand"`) == -1 {
+			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"`)
+		}
 		passwordInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
 				salt := grand.S(8)
 				insertData[daoThis.Columns().` + gstr.CaseCamel(saltField) + `] = salt
