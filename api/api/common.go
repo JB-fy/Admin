@@ -7,8 +7,8 @@ type CommonCreateRes struct {
 	Id int64 `json:"id" dc:"ID"`
 }
 
-type CommonEncryptStrRes struct {
-	EncryptStr string `json:"encryptStr" dc:"加密盐"`
+type CommonSaltRes struct {
+	Salt string `json:"salt" dc:"加密盐"`
 }
 
 type CommonTokenRes struct {

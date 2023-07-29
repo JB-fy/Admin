@@ -11,7 +11,9 @@ import (
 
 type (
 	ILogin interface {
-		EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error)
+		// 获取登录加密字符串(前端登录操作用于加密密码后提交)
+		Salt(ctx context.Context, account string) (salt string, err error)
+		// 登录(平台后台管理员)
 		PlatformAdmin(ctx context.Context, account string, password string) (token string, err error)
 	}
 )

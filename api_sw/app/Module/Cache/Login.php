@@ -6,7 +6,7 @@ namespace App\Module\Cache;
 
 class Login extends AbstractCache
 {
-    protected string $encryptStrKey;
+    protected string $saltKey;
 
     /**
      * 设置加密字符串缓存key
@@ -15,21 +15,21 @@ class Login extends AbstractCache
      * @param string $sceneCode
      * @return void
      */
-    public function setEncryptStrKey(string $account, string $sceneCode)
+    public function setSaltKey(string $account, string $sceneCode)
     {
-        $this->encryptStrKey = sprintf(getConfig('app.cache.encryptStrFormat'), $sceneCode, $account);
+        $this->saltKey = sprintf(getConfig('app.cache.saltFormat'), $sceneCode, $account);
     }
 
     /**
      * 缓存加密字符串
      *
-     * @param string $encryptStr
+     * @param string $salt
      * @param integer $timeout
      * @return boolean
      */
-    public function setEncryptStr(string $encryptStr, int $timeout = 5): bool
+    public function setSalt(string $salt, int $timeout = 5): bool
     {
-        return $this->cache->set($this->encryptStrKey, $encryptStr, $timeout);
+        return $this->cache->set($this->saltKey, $salt, $timeout);
     }
 
     /**
@@ -37,11 +37,11 @@ class Login extends AbstractCache
      *
      * @return string|boolean
      */
-    public function getEncryptStr(): string|bool
+    public function getSalt(): string|bool
     {
-        $encryptStr = $this->cache->get($this->encryptStrKey);
-        $this->cache->del($this->encryptStrKey);
-        return $encryptStr;
+        $salt = $this->cache->get($this->saltKey);
+        $this->cache->del($this->saltKey);
+        return $salt;
     }
 
     /*----------------token相关 开始----------------*/

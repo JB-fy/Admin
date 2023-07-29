@@ -20,11 +20,11 @@ class Admin extends AbstractController
      *
      * @return void
      */
-    public function encryptStr()
+    public function salt()
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         $data = $this->validate(__FUNCTION__, $sceneCode);
-        $this->service->encryptStr($data['account'], $sceneCode);
+        $this->service->salt($data['account'], $sceneCode);
     }
 
     /**

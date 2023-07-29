@@ -14,7 +14,7 @@ class Login extends AbstractValidation
     ];
 
     protected array $scene = [
-        'encryptStr' => [
+        'salt' => [
             'only' => [
                 'account',
             ],

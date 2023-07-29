@@ -24,10 +24,16 @@ func init() {
 }
 
 // 获取登录加密字符串(前端登录操作用于加密密码后提交)
-func (logicThis *sLogin) EncryptStr(ctx context.Context, sceneCode string, account string) (encryptStr string, err error) {
-	encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
-	encryptStr = grand.S(8)
-	g.Redis().SetEX(ctx, encryptStrKey, encryptStr, 5)
+func (logicThis *sLogin) Salt(ctx context.Context, account string) (salt string, err error) {
+	sceneCode := `platform` //指定场景
+	info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 39990000, ``)
+		return
+	}
+	saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, account)
+	salt = grand.S(8)
+	g.Redis().SetEX(ctx, saltKey, salt, 5)
 	return
 }
 
@@ -44,9 +50,9 @@ func (logicThis *sLogin) PlatformAdmin(ctx context.Context, account string, pass
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
-	encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
-	encryptStr, _ := g.Redis().Get(ctx, encryptStrKey)
-	if encryptStr.String() == `` || gmd5.MustEncrypt(info[`password`].String()+encryptStr.String()) != password {
+	saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, account)
+	salt, _ := g.Redis().Get(ctx, saltKey)
+	if salt.String() == `` || gmd5.MustEncrypt(info[`password`].String()+salt.String()) != password {
 		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return
 	}

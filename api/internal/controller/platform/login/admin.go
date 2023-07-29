@@ -14,12 +14,12 @@ func NewAdmin() *Admin {
 }
 
 // 获取加密盐
-func (controllerThis *Admin) EncryptStr(ctx context.Context, req *apiLogin.AdminEncryptStrReq) (res *api.CommonEncryptStrRes, err error) {
-	encryptStr, err := service.Login().EncryptStr(ctx, `platform`, req.Account)
+func (controllerThis *Admin) Salt(ctx context.Context, req *apiLogin.AdminSaltReq) (res *api.CommonSaltRes, err error) {
+	salt, err := service.Login().Salt(ctx, req.Account)
 	if err != nil {
 		return
 	}
-	res = &api.CommonEncryptStrRes{EncryptStr: encryptStr}
+	res = &api.CommonSaltRes{Salt: salt}
 	return
 }
 

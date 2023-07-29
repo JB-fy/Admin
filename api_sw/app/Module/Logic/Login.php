@@ -15,13 +15,13 @@ class Login extends AbstractLogic
      * @param string $sceneCode
      * @return string
      */
-    public function createEncryptStr(string $account, string $sceneCode): string
+    public function createSalt(string $account, string $sceneCode): string
     {
         $cacheLogin = getCache(CacheLogin::class);
-        $cacheLogin->setEncryptStrKey($account, $sceneCode);
-        $encryptStr = randStr(8);
-        $cacheLogin->setEncryptStr($encryptStr);
-        return $encryptStr;
+        $cacheLogin->setSaltKey($account, $sceneCode);
+        $salt = randStr(8);
+        $cacheLogin->setSalt($salt);
+        return $salt;
     }
 
     /**
@@ -35,9 +35,9 @@ class Login extends AbstractLogic
     public function checkPassword(string $rawPassword, string $password, string $account, string $sceneCode): bool
     {
         $cacheLogin = getCache(CacheLogin::class);
-        $cacheLogin->setEncryptStrKey($account, $sceneCode);
-        $encryptStr = $cacheLogin->getEncryptStr();
-        return md5($rawPassword . $encryptStr) == $password;
+        $cacheLogin->setSaltKey($account, $sceneCode);
+        $salt = $cacheLogin->getSalt();
+        return md5($rawPassword . $salt) == $password;
     }
 
     /**

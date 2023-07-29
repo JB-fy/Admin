@@ -21,10 +21,10 @@ class Login extends AbstractService
      * @param string $sceneCode
      * @return void
      */
-    public function encryptStr(string $account, string $sceneCode)
+    public function salt(string $account, string $sceneCode)
     {
-        $encryptStr = $this->logic->createEncryptStr($account, $sceneCode);
-        throwSuccessJson(['encryptStr' => $encryptStr]);
+        $salt = $this->logic->createSalt($account, $sceneCode);
+        throwSuccessJson(['salt' => $salt]);
     }
 
     /**

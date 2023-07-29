@@ -5,8 +5,8 @@ import (
 )
 
 /*--------获取加密盐 开始--------*/
-type AdminEncryptStrReq struct {
-	g.Meta  `path:"/encryptStr" method:"post" tags:"平台后台/登录" sm:"获取加密盐"`
+type AdminSaltReq struct {
+	g.Meta  `path:"/salt" method:"post" tags:"平台后台/登录" sm:"获取加密盐"`
 	Account string `json:"account"  v:"required|length:4,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 }
 
