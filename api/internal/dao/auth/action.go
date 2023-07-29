@@ -76,6 +76,7 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...boo
 				insertData[daoThis.PrimaryKey()] = v
 			case `sceneIdArr`:
 				hookData[k] = v
+			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -122,6 +123,7 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, fill ...boo
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {

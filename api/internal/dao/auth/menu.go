@@ -84,6 +84,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool)
 					hookData[`pIdPath`] = `0`
 					hookData[`pLevel`] = 0
 				}
+			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -147,6 +148,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 				}
 				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = pLevel + 1
+			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
