@@ -87,7 +87,7 @@ class Admin extends AbstractController
         $data = $this->validate(__FUNCTION__, $sceneCode);
         //不能修改平台超级管理员
         if (in_array(getConfig('app.superPlatformAdminId'), $data['idArr'])) {
-            throwFailJson(39990004);
+            throwFailJson(30000000);
         }
         $this->checkAuth(__FUNCTION__, $sceneCode);
 
@@ -105,7 +105,7 @@ class Admin extends AbstractController
         $data = $this->validate(__FUNCTION__, $sceneCode);
         //不能删除平台超级管理员
         if (in_array(getConfig('app.superPlatformAdminId'), $data['idArr'])) {
-            throwFailJson(39990005);
+            throwFailJson(30000001);
         }
         $this->checkAuth(__FUNCTION__, $sceneCode);
 

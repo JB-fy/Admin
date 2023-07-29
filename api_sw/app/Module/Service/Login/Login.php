@@ -43,10 +43,10 @@ class Login extends AbstractService
             throwFailJson(39990000);
         }
         if ($info->isStop) {
-            throwFailJson(39990001);
+            throwFailJson(39990002);
         }
         if (!$this->logic->checkPassword($info->password, $password, $account, $sceneCode)) {
-            throwFailJson(39990000);
+            throwFailJson(39990001);
         }
         /**--------验证账号密码 结束--------**/
 

@@ -41,13 +41,13 @@ func (logicThis *sLogin) PlatformAdmin(ctx context.Context, account string, pass
 		return
 	}
 	if info[`isStop`].Int() > 0 {
-		err = utils.NewErrorCode(ctx, 39990001, ``)
+		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 	encryptStrKey := fmt.Sprintf(consts.CacheEncryptStrFormat, sceneCode, account)
 	encryptStr, _ := g.Redis().Get(ctx, encryptStrKey)
 	if encryptStr.String() == `` || gmd5.MustEncrypt(info[`password`].String()+encryptStr.String()) != password {
-		err = utils.NewErrorCode(ctx, 39990000, ``)
+		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return
 	}
 	/**--------验证账号密码 结束--------**/

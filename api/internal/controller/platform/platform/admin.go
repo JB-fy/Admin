@@ -135,7 +135,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 
 	/**--------不能修改平台超级管理员 开始--------**/
 	if garray.NewIntArrayFrom(gconv.SliceInt(filter[`id`])).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int()) {
-		err = utils.NewErrorCode(ctx, 39990004, ``)
+		err = utils.NewErrorCode(ctx, 30000000, ``)
 		return
 	}
 	/**--------不能修改平台超级管理员 结束--------**/
@@ -159,7 +159,7 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminD
 
 	/**--------不能删除平台超级管理员 开始--------**/
 	if garray.NewIntArrayFrom(gconv.SliceInt(filter[`id`])).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int()) {
-		err = utils.NewErrorCode(ctx, 39990005, ``)
+		err = utils.NewErrorCode(ctx, 30000001, ``)
 		return
 	}
 	/**--------不能删除平台超级管理员 结束--------**/

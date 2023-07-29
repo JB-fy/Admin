@@ -152,7 +152,7 @@ func (logicAction *sAction) CheckAuth(ctx context.Context, actionCode string) (i
 	daoAction := daoAuth.Action
 	count, err := daoAction.ParseDbCtx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
 	if count == 0 {
-		err = utils.NewErrorCode(ctx, 39990002, ``)
+		err = utils.NewErrorCode(ctx, 39999997, ``)
 		return
 	}
 	isAuth = true
