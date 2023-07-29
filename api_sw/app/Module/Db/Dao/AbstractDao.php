@@ -293,9 +293,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
             case 'password':
-                if (strlen($value) != 32) {
-                    $value = md5($value);
-                }
                 $salt = randStr(8);
                 $this->update[$this->getTable() . '.salt'] = $salt;
                 $this->update[$this->getTable() . '.' . $key] = md5($value . $salt);

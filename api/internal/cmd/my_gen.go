@@ -29,6 +29,7 @@ import (
 	部分常用字段：
 		password	密码
 		passwd		密码
+		salt		加密盐
 		pid			父级（指向本表）
 		sort		排序
 		weight 		权重
@@ -422,12 +423,17 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	imageVideoJsonFieldArr := []string{}
+	passwordField := ``
+	saltField := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`:
+			passwordField = field
+		case `salt`:
+			saltField = field
 		default:
 			//icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
 			//video,video_list,videoList,video_arr,videoArr等后缀
@@ -438,6 +444,18 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 		}
 	}
+
+	if passwordField != `` && saltField != `` {
+		passwordGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
+				salt := grand.S(8)
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(saltField) + `] = salt
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(passwordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
+		if gstr.Pos(tplDao, passwordGenTpl) == -1 {
+			tplDao = gstr.Replace(tplDao, `/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordGenTpl+`
+			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		}
+	}
+
 	if len(imageVideoJsonFieldArr) > 0 {
 		imageVideoJsonFieldStr := gstr.Join(imageVideoJsonFieldArr, `, `)
 		if gstr.Pos(tplDao, `m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
@@ -627,7 +645,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
 		switch field {
-		case `deletedAt`, `deleted_at`:
+		case `deletedAt`, `deleted_at`, `salt`:
 		case `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		case `password`, `passwd`:
@@ -965,7 +983,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		switch field {
-		case `password`, `passwd`:
+		case `password`, `passwd`, `salt`:
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 		}
 	}
@@ -1326,7 +1344,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			rawCreatedAtField = field
 		case `updatedAt`, `updated_at`:
 			rawUpdatedAtField = field
-		case `password`, `passwd`:
+		case `password`, `passwd`, `salt`:
 		case `sort`, `weight`:
 			viewListColumn += `
 	{
@@ -2074,7 +2092,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
-		case `password`, `passwd`:
+		case `password`, `passwd`, `salt`:
 		case `pid`:
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
@@ -2301,7 +2319,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`:
 		case `password`, `passwd`:
 			passwordField = field
 			viewSaveRule += `
@@ -2726,7 +2744,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}))
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`:
 		case `sort`, `weight`:
 			viewI18nName += `
 		` + field + `: '` + comment + `',`

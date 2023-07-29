@@ -34,7 +34,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	columnsThis := daoPlatform.Admin.Columns()
 	allowField := daoPlatform.Admin.ColumnArr()
 	allowField = append(allowField, `id`)
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
+	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password, columnsThis.Salt})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -72,7 +72,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	allowField := daoPlatform.Admin.ColumnArr()
 	allowField = append(allowField, `id`, `roleIdArr`)
 	columnsThis := daoPlatform.Admin.Columns()
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password})).Slice() //移除敏感字段
+	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password, columnsThis.Salt})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

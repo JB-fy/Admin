@@ -125,14 +125,11 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, fill ...bool
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
-			case `password`:
-				password := gconv.String(v)
-				if len(password) != 32 {
-					password = gmd5.MustEncrypt(password)
-				}
+			case daoThis.Columns().Password:
 				salt := grand.S(8)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(password + salt)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
+			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {

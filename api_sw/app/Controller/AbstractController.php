@@ -140,7 +140,7 @@ abstract class AbstractController
     {
         $allowField = getDao($className)->getAllColumn();
         $allowField = array_merge($allowField, ['id', 'label']);
-        $allowField = array_diff($allowField, ['password']);
+        $allowField = array_diff($allowField, ['password', 'salt']);
         return $allowField;
     }
 }
