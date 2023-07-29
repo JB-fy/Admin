@@ -29,7 +29,7 @@ type AdminColumns struct {
 	Phone     string // 电话号码
 	Account   string // 账号
 	Password  string // 密码（md5保存）
-	Salt      string // 密码盐
+	Salt      string // 加密盐
 	Nickname  string // 昵称
 	Avatar    string // 头像
 	IsStop    string // 是否停用：0否 1是
