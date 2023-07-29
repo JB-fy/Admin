@@ -7,6 +7,7 @@ import (
 	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -120,8 +121,8 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 			err = utils.NewErrorCode(ctx, 89999996, ``, map[string]interface{}{`errField`: `checkPassword`})
 			return
 		}
-		password, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr[0]).Value(`password`)
-		if gconv.String(data[`checkPassword`]) != password.String() {
+		oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr[0]).One()
+		if gmd5.MustEncrypt(gconv.String(data[`checkPassword`])+oldInfo[daoThis.Columns().Salt].String()) != oldInfo[daoThis.Columns().Password].String() {
 			err = utils.NewErrorCode(ctx, 39990003, ``)
 			return
 		}

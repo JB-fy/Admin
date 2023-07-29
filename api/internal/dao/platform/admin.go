@@ -15,11 +15,13 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 // internalAdminDao is internal type for wrapping internal DAO implements.
@@ -123,6 +125,14 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, fill ...bool
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+			case `password`:
+				password := gconv.String(v)
+				if len(password) != 32 {
+					password = gmd5.MustEncrypt(password)
+				}
+				salt := grand.S(8)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(password + salt)
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {

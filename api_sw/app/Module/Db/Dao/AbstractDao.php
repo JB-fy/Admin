@@ -292,6 +292,14 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
                 return true;
+            case 'password':
+                if (strlen($value) != 32) {
+                    $value = md5($value);
+                }
+                $salt = randStr(8);
+                $this->update[$this->getTable() . '.salt'] = $salt;
+                $this->update[$this->getTable() . '.' . $key] = md5($value . $salt);
+                return true;
             default:
                 /* //暂时不考虑其他复杂字段。复杂字段建议直接写入parseUpdateOfAlone方法
                 list($realKey) = explode('->', $key);   //json情况

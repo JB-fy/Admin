@@ -46,7 +46,8 @@ class Admin extends AbstractService
             if (count($idArr) > 1) { //该字段只支持单个用户更新
                 throwFailJson(89999996, trans('code.89999996', ['errField' => 'checkPassword']));
             }
-            if ($data['checkPassword'] != $this->getDao()->parseFilter($filter)->getBuilder()->value('password')) {
+            $oldInfo = $this->getDao()->parseFilter($filter)->info();
+            if (md5($data['checkPassword'] . $oldInfo->salt) != $oldInfo->password) {
                 throwFailJson(39990003);
             }
         }
