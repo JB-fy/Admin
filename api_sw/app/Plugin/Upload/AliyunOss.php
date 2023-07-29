@@ -68,10 +68,10 @@ class AliyunOss extends AbstractUpload
         $authorizationBase64 = $request->getHeader('authorization')[0] ?? '';
         $pubKeyUrlBase64 = $request->getHeader('x-oss-pub-key-url')[0] ?? '';
         if ($authorizationBase64 == '') {
-            throwFailJson(40000000);
+            throwFailJson(79990000);
         }
         if ($pubKeyUrlBase64 == '') {
-            throwFailJson(40000001);
+            throwFailJson(79990001);
         }
 
         // 2.获取OSS的签名
@@ -85,7 +85,7 @@ class AliyunOss extends AbstractUpload
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         $pubKey = curl_exec($ch);
         if ($pubKey == '') {
-            throwFailJson(40000002);
+            throwFailJson(79990002);
         }
 
         // 4.获取回调body
@@ -99,7 +99,7 @@ class AliyunOss extends AbstractUpload
         // 6.验证签名
         $ok = openssl_verify($authStr, $authorization, $pubKey, OPENSSL_ALGO_MD5);
         if ($ok != 1) {
-            throwFailJson(40000003);
+            throwFailJson(79990003);
         }
         $data = $request->post();
         $data['url'] = $this->getBucketHost() . '/' . $data['filename'];

@@ -160,12 +160,12 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 1.获取OSS的签名header和公钥url header
 	strAuthorizationBase64 := r.Header.Get(`authorization`)
 	if strAuthorizationBase64 == `` {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000000, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990000, err.Error())
 		return
 	}
 	publicKeyURLBase64 := r.Header.Get(`x-oss-pub-key-url`)
 	if publicKeyURLBase64 == `` {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000001, ``)
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990001, ``)
 		return
 	}
 
@@ -176,12 +176,12 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	publicKeyURL, _ := base64.StdEncoding.DecodeString(publicKeyURLBase64)
 	responsePublicKeyURL, err := http.Get(string(publicKeyURL))
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000002, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990002, err.Error())
 		return
 	}
 	bytePublicKey, err := ioutil.ReadAll(responsePublicKeyURL.Body)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000002, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990002, err.Error())
 		return
 	}
 	defer responsePublicKeyURL.Body.Close()
@@ -190,13 +190,13 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	bodyContent, err := ioutil.ReadAll(r.Body)
 	r.Body.Close()
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 	strCallbackBody := string(bodyContent)
 	strURLPathDecode, err := aliyunOssThis.unescapePath(r.URL.Path, encodePathSegment) //url.PathUnescape(r.URL.Path) for Golang v1.8.2+
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 
@@ -214,12 +214,12 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 5.拼接待签名字符串
 	pubBlock, _ := pem.Decode(bytePublicKey)
 	if pubBlock == nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, ``)
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, ``)
 		return
 	}
 	pubInterface, err := x509.ParsePKIXPublicKey(pubBlock.Bytes)
 	if (pubInterface == nil) || (err != nil) {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 	pub := pubInterface.(*rsa.PublicKey)
@@ -227,7 +227,7 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 6.验证签名
 	err = rsa.VerifyPKCS1v15(pub, crypto.MD5, byteMD5, byteAuthorization)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000003, err.Error())
+		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 	return
