@@ -13,32 +13,33 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-type sLogin struct{}
+type sPlatformAdmin struct{}
 
-func NewLogin() *sLogin {
-	return &sLogin{}
+func NewPlatformAdmin() *sPlatformAdmin {
+	return &sPlatformAdmin{}
 }
 
 func init() {
-	service.RegisterLogin(NewLogin())
+	service.RegisterPlatformAdmin(NewPlatformAdmin())
 }
 
-// 获取登录加密字符串(前端登录操作用于加密密码后提交)
-func (logicThis *sLogin) Salt(ctx context.Context, account string) (salt string, err error) {
+// 获取加密盐
+func (logicThis *sPlatformAdmin) Salt(ctx context.Context, account string) (saltStatic string, saltDynamic string, err error) {
 	sceneCode := `platform` //指定场景
 	info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
+	saltStatic = info[`salt`].String()
 	saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, account)
-	salt = grand.S(8)
-	g.Redis().SetEX(ctx, saltKey, salt, 5)
+	saltDynamic = grand.S(8)
+	g.Redis().SetEX(ctx, saltKey, saltDynamic, 5)
 	return
 }
 
-// 登录(平台后台管理员)
-func (logicThis *sLogin) PlatformAdmin(ctx context.Context, account string, password string) (token string, err error) {
+// 登录
+func (logicThis *sPlatformAdmin) Login(ctx context.Context, account string, password string) (token string, err error) {
 	sceneCode := `platform` //指定场景
 	/**--------验证账号密码 开始--------**/
 	info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()

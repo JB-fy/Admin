@@ -9,22 +9,28 @@ use App\Module\Db\Dao\Platform\Admin;
 use App\Module\Service\AbstractService;
 use Hyperf\Di\Annotation\Inject;
 
-class Login extends AbstractService
+class PlatformAdmin extends AbstractService
 {
     #[Inject]
     protected \App\Module\Logic\Login $logic;
 
     /**
-     * 获取加密字符串
+     * 获取加密盐
      *
      * @param string $account
      * @param string $sceneCode
      * @return void
      */
-    public function salt(string $account, string $sceneCode)
+    public function salt(string $account)
     {
-        $salt = $this->logic->createSalt($account, $sceneCode);
-        throwSuccessJson(['salt' => $salt]);
+        $info = getDao(Admin::class)->parseFilter(['accountOrPhone' => $account])->info();
+        if (empty($info)) {
+            throwFailJson(39990000);
+        }
+        $saltStatic = $info->salt;
+        $sceneCode = 'platform';
+        $saltDynamic = $this->logic->createSalt($account, $sceneCode);
+        throwSuccessJson(['saltStatic' => $saltStatic, 'saltDynamic' => $saltDynamic]);
     }
 
     /**
@@ -34,9 +40,9 @@ class Login extends AbstractService
      * @param string $password
      * @return void
      */
-    public function PlatformAdmin(string $account, string $password)
+    public function login(string $account, string $password)
     {
-        $sceneCode='platform';
+        $sceneCode = 'platform';
         /**--------验证账号密码 开始--------**/
         $info = getDao(Admin::class)->parseFilter(['accountOrPhone' => $account])->info();
         if (empty($info)) {

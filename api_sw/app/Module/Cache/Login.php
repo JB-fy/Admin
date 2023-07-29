@@ -9,7 +9,7 @@ class Login extends AbstractCache
     protected string $saltKey;
 
     /**
-     * 设置加密字符串缓存key
+     * 设置加密盐key
      *
      * @param string $account
      * @param string $sceneCode
@@ -21,7 +21,7 @@ class Login extends AbstractCache
     }
 
     /**
-     * 缓存加密字符串
+     * 缓存加密盐
      *
      * @param string $salt
      * @param integer $timeout
@@ -33,7 +33,7 @@ class Login extends AbstractCache
     }
 
     /**
-     * 获取加密字符串
+     * 获取加密盐
      *
      * @return string|boolean
      */

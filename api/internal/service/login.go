@@ -10,25 +10,25 @@ import (
 )
 
 type (
-	ILogin interface {
-		// 获取登录加密字符串(前端登录操作用于加密密码后提交)
-		Salt(ctx context.Context, account string) (salt string, err error)
-		// 登录(平台后台管理员)
-		PlatformAdmin(ctx context.Context, account string, password string) (token string, err error)
+	IPlatformAdmin interface {
+		// 获取加密盐
+		Salt(ctx context.Context, account string) (saltStatic string, saltDynamic string, err error)
+		// 登录
+		Login(ctx context.Context, account string, password string) (token string, err error)
 	}
 )
 
 var (
-	localLogin ILogin
+	localPlatformAdmin IPlatformAdmin
 )
 
-func Login() ILogin {
-	if localLogin == nil {
-		panic("implement not found for interface ILogin, forgot register?")
+func PlatformAdmin() IPlatformAdmin {
+	if localPlatformAdmin == nil {
+		panic("implement not found for interface IPlatformAdmin, forgot register?")
 	}
-	return localLogin
+	return localPlatformAdmin
 }
 
-func RegisterLogin(i ILogin) {
-	localLogin = i
+func RegisterPlatformAdmin(i IPlatformAdmin) {
+	localPlatformAdmin = i
 }

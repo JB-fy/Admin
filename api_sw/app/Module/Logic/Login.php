@@ -9,7 +9,7 @@ use App\Module\Cache\Login as CacheLogin;
 class Login extends AbstractLogic
 {
     /**
-     * 生成加密字符串
+     * 生成加密盐
      *
      * @param string $account
      * @param string $sceneCode

@@ -34,8 +34,8 @@ Router::addGroup('/platform', function () {
             //无需验证登录身份
             Router::addGroup('', function () {
                 Router::addGroup('/login', function () {
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/salt', [\App\Controller\Platform\Login\Admin::class, 'salt']);
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/login', [\App\Controller\Platform\Login\Admin::class, 'login']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/salt', [\App\Controller\Platform\Login\PlatformAdmin::class, 'salt']);
+                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/login', [\App\Controller\Platform\Login\PlatformAdmin::class, 'login']);
                 });
             });
 

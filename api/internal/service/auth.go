@@ -79,17 +79,6 @@ var (
 	localScene  IScene
 )
 
-func Action() IAction {
-	if localAction == nil {
-		panic("implement not found for interface IAction, forgot register?")
-	}
-	return localAction
-}
-
-func RegisterAction(i IAction) {
-	localAction = i
-}
-
 func Menu() IMenu {
 	if localMenu == nil {
 		panic("implement not found for interface IMenu, forgot register?")
@@ -121,4 +110,15 @@ func Scene() IScene {
 
 func RegisterScene(i IScene) {
 	localScene = i
+}
+
+func Action() IAction {
+	if localAction == nil {
+		panic("implement not found for interface IAction, forgot register?")
+	}
+	return localAction
+}
+
+func RegisterAction(i IAction) {
+	localAction = i
 }
