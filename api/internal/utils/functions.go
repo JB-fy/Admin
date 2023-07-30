@@ -167,11 +167,9 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 
 // 组成菜单树
 func Tree(list gdb.Result, id int, priKey string, pidKey string) (tree gdb.Result) {
-	for _, v := range list {
-		//list = append(list[:k], list[(k+1):]...) //删除元素，减少后面递归循环次数（有bug，待处理）
+	for k, v := range list {
 		if v[pidKey].Int() == id {
-			children := Tree(list, v[priKey].Int(), priKey, pidKey)
-			v[`children`] = gvar.New(children)
+			v[`children`] = gvar.New(Tree(list[(k+1):], v[priKey].Int(), priKey, pidKey))
 			tree = append(tree, v)
 		}
 	}
