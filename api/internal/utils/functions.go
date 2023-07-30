@@ -76,14 +76,14 @@ func GetCtxLoginInfo(ctx context.Context) gdb.Record {
 	return tmp.(gdb.Record)
 }
 
-// 设置服务器外网ip
+// 获取服务器外网ip
 func GetServerNetworkIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `curl -s ifconfig.me`)
 	output, _ := cmd.CombinedOutput()
 	return string(output)
 }
 
-// 设置服务器内网ip
+// 获取服务器内网ip
 func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
@@ -165,7 +165,7 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 	return
 }
 
-// 组成菜单树
+// 生成菜单树
 func Tree(list gdb.Result, id int, priKey string, pidKey string) (tree gdb.Result) {
 	for k, v := range list {
 		if v[pidKey].Int() == id {
