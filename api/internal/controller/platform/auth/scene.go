@@ -56,15 +56,11 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	if err != nil {
 		return
 	}
-	/* //不建议用这个返回，指定字段获取时，返回时其他字段也会返回，但都是空
+
 	res = &apiAuth.SceneListRes{
 		Count: count,
 	}
-	list.Structs(&res.List) */
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`count`: count,
-		`list`:  list,
-	}, 0, ``)
+	list.Structs(&res.List)
 	return
 }
 
@@ -94,12 +90,9 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	if err != nil {
 		return
 	}
-	/* //不建议用这个返回，指定字段获取时，返回时其他字段也会返回，但都是空
+
 	res = &apiAuth.SceneInfoRes{}
-	info.Struct(&res.Info) */
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`info`: info,
-	}, 0, ``)
+	info.Struct(&res.Info)
 	return
 }
 

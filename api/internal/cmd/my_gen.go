@@ -1082,15 +1082,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	if err != nil {
 		return
 	}
-	/* //不建议用这个返回，指定字段获取时，返回时其他字段也会返回，但都是空
+
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{
 		Count: count,
 	}
-	list.Structs(&res.List) */
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		` + "`count`" + `: count,
-		` + "`list`" + `:  list,
-	}, 0, ` + "``" + `)
+	list.Structs(&res.List)
 	return
 }
 
@@ -1136,12 +1132,9 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	if err != nil {
 		return
 	}
-	/* //不建议用这个返回，指定字段获取时，返回时其他字段也会返回，但都是空
+
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes{}
-	info.Struct(&res.Info) */
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		` + "`info`" + `: info,
-	}, 0, ` + "``" + `)
+	info.Struct(&res.Info)
 	return
 }
 

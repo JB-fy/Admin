@@ -56,10 +56,11 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	if err != nil {
 		return
 	}
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`count`: count,
-		`list`:  list,
-	}, 0, ``)
+
+	res = &apiAuth.MenuListRes{
+		Count: count,
+	}
+	list.Structs(&res.List)
 	return
 }
 
@@ -89,9 +90,9 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	if err != nil {
 		return
 	}
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`info`: info,
-	}, 0, ``)
+
+	res = &apiAuth.MenuInfoRes{}
+	info.Struct(&res.Info)
 	return
 }
 
@@ -191,6 +192,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 		return
 	}
 	tree := utils.Tree(list, 0, `menuId`, `pid`)
+
 	utils.HttpWriteJson(ctx, map[string]interface{}{
 		`tree`: tree,
 	}, 0, ``)
