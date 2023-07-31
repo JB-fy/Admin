@@ -60,12 +60,6 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 		return
 	}
 
-	/* // map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`count`: count,
-		`list`:  list,
-	}, 0, ``)
-	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回 */
 	res = &apiPlatform.AdminListRes{
 		Count: count,
 	}
@@ -102,11 +96,6 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 		return
 	}
 
-	/* // map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`info`: info,
-	}, 0, ``)
-	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回 */
 	res = &apiPlatform.AdminInfoRes{}
 	info.Struct(&res.Info)
 	return

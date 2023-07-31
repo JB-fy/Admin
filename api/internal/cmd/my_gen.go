@@ -1083,6 +1083,13 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		return
 	}
 
+	/* // 两种方式根据情况使用
+	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
+	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		` + "`count`" + `: count,
+		` + "`list`" + `:  list,
+	}, 0, ` + "``" + `) */
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{
 		Count: count,
 	}
@@ -1133,6 +1140,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		return
 	}
 
+	/* // 两种方式根据情况使用
+	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
+	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		` + "`info`" + `: info,
+	}, 0, ` + "``" + `) */
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes{}
 	info.Struct(&res.Info)
 	return
