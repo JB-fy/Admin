@@ -83,7 +83,7 @@ const exportButton = reactive({
         return data.map((item: any) => {
             const tmp: { [propName: string]: any } = {}
             for (const key in headerList) {
-                item[key] ? tmp[headerList[key]] = item[key] : null
+                key in item ? tmp[headerList[key]] = item[key] : null
             }
             return tmp
         })
@@ -99,11 +99,14 @@ const exportButton = reactive({
             while (true) {
                 try {
                     let data = await exportButton.api.getData()
+                    console.log(data)
+                    console.log(exportButton.headerList)
                     const length = data.length
                     if (data.length == 0) {
                         break
                     }
                     data = exportButton.dataHandle(data, exportButton.headerList)
+                    console.log(data)
                     exportExcel([{ data: data }], exportButton.fileName)
                     if (exportButton.api.param.limit === 0 || length < exportButton.api.param.limit) {
                         break
