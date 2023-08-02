@@ -19,12 +19,12 @@ git config --global --unset 配置项	//删除
 git init	//初始化本地仓库
 git add ./	//添加文件到本地仓库
 git commit -m "初始化"	//提交到本地仓库
-git remote add origin 仓库地址	//绑定远程仓库
-git push -u origin 分支名	//推送到远程仓库
-git pull origin 分支名	//拉取远程仓库到本地（直接合并，相当于git fetch + git merge）
-git fetch origin 分支名	//拉取远程仓库到本地（需要确认是否合并）
-git checkout 分支名 //切换分支
+git remote add 仓库名(自定义) 仓库地址	//绑定远程仓库
+git push -u 仓库名(自定义) 分支名	//推送到远程仓库
+git pull 仓库名(自定义) 分支名	//拉取远程仓库到本地（直接合并，相当于git fetch + git merge）
+git fetch 仓库名(自定义) 分支名	//拉取远程仓库到本地（需要确认是否合并）
 git merge 分支名    //将该分支合并到当前分支中
+git checkout 分支名 //切换分支
 git diff 分支1 分支2    //显示两个版本之间的差异
 
 
