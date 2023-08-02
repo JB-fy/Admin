@@ -1,0 +1,19 @@
+解压安装包
+    tar -xvf Clash.for.Windows-0.20.30-x64-linux.tar.gz
+移动到指定目录
+    mv Clash\ for\ Windows-0.20.30-x64-linux/ /server/tool/Clash-0.20.30
+创建桌面快捷方式
+    vi /usr/share/applications/Clash.desktop
+写入
+[Desktop Entry]
+Name=Clash for Windows
+Exec=/server/tool/Clash-0.20.30/cfw  --no-sandbox
+Type=Application
+StartupNotify=true
+Categories=TextEditor;Development;Utility;
+MimeType=text/plain;
+
+
+liunx没有系统代理选项，需要自己在系统网络位置手动设置代理
+地址：0.0.0.0
+端口：软件界面》常规》端口
