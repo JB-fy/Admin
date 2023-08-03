@@ -3,9 +3,9 @@
 1.GO服务端和PHP服务端
 
 # 常用命令
-后端从GO服务端和PHP服务端选其一使用
+GO服务端和PHP服务端任选一个使用即可
 
-1.GO服务端（推荐使用）
+1.GO服务端（推荐使用，有代码自动生成功能）
 ```bash
 # 服务启动
 gf run main.go -a "http"
@@ -20,7 +20,7 @@ gf gen service
 ./main myGen
 ```
 
-2.PHP服务端
+2.PHP服务端（无代码自动生成功能）
 ```bash
 # 服务启动
 php bin/hyperf.php start
