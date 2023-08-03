@@ -1,7 +1,14 @@
-# 启动命令
+# 常用命令
 
 ```bash
+# 服务启动
 gf run main.go -a "http"
+# dao层生成
+gf gen dao
+# service层生成
+gf gen service
+# 全自动代码生成（必须在项目api文件夹下且已经生成main文件）
+./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 ```
 
 # 代码自动生成流程
