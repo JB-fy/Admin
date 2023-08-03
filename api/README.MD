@@ -1,5 +1,7 @@
 # 启动命令
+
 1.服务端启动命令：gf run main.go -a "http"
+
 2.前端启动命令：npm run dev
 
 自动代码生成流程：
