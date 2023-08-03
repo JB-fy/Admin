@@ -39,6 +39,6 @@
 4.使用gf gen dao命令生成数据库模型
 
 5.使用./main myGen命令生成代码。如果main文件不存在或修改了api/internal/cmd/my_gen.go中的代码，需重新运行gf run main.go生成main文件
-- 该命令参数可以参考api/internal/cmd/my_gen.go中结构体MyGenOption中每个字段的注释
+- 该命令参数可以参考api/internal/cmd/my_gen.go内结构体MyGenOption每个字段的注释
 - 未带参数，则需要根据提示输入所有参数
 - 带参数示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
