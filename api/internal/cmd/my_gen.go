@@ -66,17 +66,27 @@ type MyGenOption struct {
 }
 
 type MyGenTpl struct {
-	TableColumnList            gdb.Result //表字段详情
-	PrimaryKey                 string     //表主键
-	LabelField                 string     //dao层label对应的字段(常用于前端组件)
-	SceneName                  string     //场景名称
-	SceneId                    int        //场景ID
-	RawTableNameCaseCamelLower string     //原始表名（小驼峰）
-	TableNameCaseCamelLower    string     //去除前缀表名（小驼峰）
-	TableNameCaseCamel         string     //去除前缀表名（大驼峰）
-	TableNameCaseSnake         string     //去除前缀表名（蛇形）
-	ModuleDirCaseCamelLower    string     //路径后缀（小驼峰）
-	ModuleDirCaseCamel         string     //路径后缀（大驼峰）
+	TableColumnList gdb.Result //表字段详情
+	PrimaryKey      string     //表主键
+	LabelField      string     //dao层label对应的字段(常用于前端组件)
+	PasswordHandle  struct {   //password|passwd,salt同时存在时特殊处理
+		PasswordField string //密码字段
+		SaltField     string //加密盐字段
+	}
+	PidHandle struct { //pid,level,idPath|id_path同时存在时特殊处理
+		PidField    string //父级字段
+		LevelField  string //层级字段
+		IdPathField string //层级路径字段
+	}
+	ImageVideoJsonFieldArr     []string //icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀。//video,video_list,videoList,video_arr,videoArr等后缀
+	SceneName                  string   //场景名称
+	SceneId                    int      //场景ID
+	RawTableNameCaseCamelLower string   //原始表名（小驼峰）
+	TableNameCaseCamelLower    string   //去除前缀表名（小驼峰）
+	TableNameCaseCamel         string   //去除前缀表名（大驼峰）
+	TableNameCaseSnake         string   //去除前缀表名（蛇形）
+	ModuleDirCaseCamelLower    string   //路径后缀（小驼峰）
+	ModuleDirCaseCamel         string   //路径后缀（大驼峰）
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -363,11 +373,32 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	fieldCaseCamelArr := make([]string, len(tpl.TableColumnList))
 	for index, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
-		fieldArr[index] = field
 		fieldCaseCamel := gstr.CaseCamel(field)
+		fieldArr[index] = field
 		fieldCaseCamelArr[index] = fieldCaseCamel
-		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
-			tpl.PrimaryKey = field
+		switch field {
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `password`, `passwd`:
+			tpl.PasswordHandle.PasswordField = field
+		case `salt`:
+			tpl.PasswordHandle.SaltField = field
+		case `pid`:
+			tpl.PidHandle.PidField = field
+		case `level`:
+			tpl.PidHandle.LevelField = field
+		case `idPath`, `id_path`:
+			tpl.PidHandle.IdPathField = field
+		default:
+			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
+				tpl.PrimaryKey = field
+			}
+			//icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
+			//video,video_list,videoList,video_arr,videoArr等后缀
+			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
+				if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
+					tpl.ImageVideoJsonFieldArr = append(tpl.ImageVideoJsonFieldArr, `daoThis.Columns().`+gstr.CaseCamel(field))
+				}
+			}
 		}
 	}
 
@@ -464,30 +495,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
-	imageVideoJsonFieldArr := []string{}
-	passwordField := ``
-	saltField := ``
-	for _, column := range tpl.TableColumnList {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
-		case `password`, `passwd`:
-			passwordField = field
-		case `salt`:
-			saltField = field
-		default:
-			//icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀
-			//video,video_list,videoList,video_arr,videoArr等后缀
-			if field == `avatar` || gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
-				if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
-					imageVideoJsonFieldArr = append(imageVideoJsonFieldArr, `daoThis.Columns().`+gstr.CaseCamel(field))
-				}
-			}
-		}
-	}
-
-	if passwordField != `` && saltField != `` {
+	if tpl.PasswordHandle.PasswordField != `` && tpl.PasswordHandle.SaltField != `` {
 		if gstr.Pos(tplDao, `"github.com/gogf/gf/v2/crypto/gmd5"`) == -1 {
 			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/database/gdb"`, `"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"`)
@@ -496,26 +504,26 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"`)
 		}
-		passwordInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
+		passwordInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
 				salt := grand.S(8)
-				insertData[daoThis.Columns().` + gstr.CaseCamel(saltField) + `] = salt
-				insertData[daoThis.Columns().` + gstr.CaseCamel(passwordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
+				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
+				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
 		if gstr.Pos(tplDao, passwordInsertGenTpl) == -1 {
 			tplDao = gstr.Replace(tplDao, `/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordInsertGenTpl+`
 			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
 		}
-		passwordUpdateGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(passwordField) + `:
+		passwordUpdateGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
 				salt := grand.S(8)
-				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(saltField) + `] = salt
-				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(passwordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
 		if gstr.Pos(tplDao, passwordUpdateGenTpl) == -1 {
 			tplDao = gstr.Replace(tplDao, `/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordUpdateGenTpl+`
 			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
 		}
 	}
 
-	if len(imageVideoJsonFieldArr) > 0 {
-		imageVideoJsonFieldStr := gstr.Join(imageVideoJsonFieldArr, `, `)
+	if len(tpl.ImageVideoJsonFieldArr) > 0 {
+		imageVideoJsonFieldStr := gstr.Join(tpl.ImageVideoJsonFieldArr, `, `)
 		if gstr.Pos(tplDao, `m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
 				afterField = append(afterField, v)`) == -1 {
 			tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+imageVideoJsonFieldStr+`:
@@ -528,7 +536,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				afterField = append\(afterField, v\)`, tplDao)
 			tplDao, _ = gregex.ReplaceString(`case [^:]*:
 				m = m\.Fields\(daoThis\.Table\(\) \+ `+"`"+`\.`+"`"+` \+ v\)
-				afterField = append\(afterField, v\)`, `case `+gstr.Join(gset.NewStrSetFrom(imageVideoJsonFieldArr).Union(gset.NewStrSetFrom(gstr.Split(tmp[1], `, `))).Slice(), `, `)+`:
+				afterField = append\(afterField, v\)`, `case `+gstr.Join(gset.NewStrSetFrom(tpl.ImageVideoJsonFieldArr).Union(gset.NewStrSetFrom(gstr.Split(tmp[1], `, `))).Slice(), `, `)+`:
 				m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
 				afterField = append(afterField, v)`, tplDao)
 		}
@@ -541,7 +549,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			tmp, _ := gregex.MatchString(`case ([^:]*):
 						record\[v\] = gvar\.New\(record\[v\]\.Slice\(\)\)`, tplDao)
 			tplDao, _ = gregex.ReplaceString(`case [^:]*:
-						record\[v\] = gvar\.New\(record\[v\]\.Slice\(\)\)`, `case `+gstr.Join(gset.NewStrSetFrom(imageVideoJsonFieldArr).Union(gset.NewStrSetFrom(gstr.Split(tmp[1], `, `))).Slice(), `, `)+`:
+						record\[v\] = gvar\.New\(record\[v\]\.Slice\(\)\)`, `case `+gstr.Join(gset.NewStrSetFrom(tpl.ImageVideoJsonFieldArr).Union(gset.NewStrSetFrom(gstr.Split(tmp[1], `, `))).Slice(), `, `)+`:
 						record[v] = gvar.New(record[v].Slice())`, tplDao)
 		}
 	}
