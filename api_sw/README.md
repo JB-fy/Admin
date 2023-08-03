@@ -1,9 +1,10 @@
 # 常用命令
 
 ```bash
-# 启动服务
+# 服务启动
 php bin/hyperf.php start
-# 启动服务（热更新）
+
+# 服务启动（热更新）
 php bin/hyperf.php server:watch
 
 # 快速生成模型类（--pool对应哪个库）
