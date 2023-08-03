@@ -21,10 +21,10 @@ import (
 使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 
 强烈建议搭配Git使用
-
-表字段命名需要遵守以下规则，否则会根据字段类型默认处理
+表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
 主键必须是第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
-表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端组件)
+表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端部分组件，服务端请求获取id和label两个字段用于列表展示)
+每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
 	部分常用字段：
 		password	密码
@@ -44,13 +44,13 @@ import (
 		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀（多视频时字段类型用json或text，保存格式为JSON格式）
 		ip字段，命名用Ip后缀
 		备注字段，命名用remark后缀
-		状态和类型字段，命名用status或type后缀且字段类型必须是int或tinyint。字段注释中多状态之间用[空格,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
+		状态和类型字段，命名用status或type后缀且字段类型必须是int或tinyint。字段注释中多状态之间用[\s,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
 		是否字段，命名用is_前缀且字段类型必须是int或tinyint。默认：0否 1是
 */
 type MyGenOption struct {
-	SceneCode    string `c:"sceneCode"`    //场景标识。示例：platform
+	SceneCode    string `c:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
 	DbGroup      string `c:"dbGroup"`      //db分组。示例：default
-	DbTable      string `c:"dbTable"`      //db表。示例：auth_scene
+	DbTable      string `c:"dbTable"`      //db表。示例：auth_test
 	RemovePrefix string `c:"removePrefix"` //要删除的db表前缀。示例：auth_
 	ModuleDir    string `c:"moduleDir"`    //模块目录，只支持单目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth
 	CommonName   string `c:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
@@ -655,8 +655,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", " ",
-			"\r", " ",
+			"\n", ` `,
+			"\r", ` `,
 		}))
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
@@ -1356,8 +1356,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", " ",
-			"\r", " ",
+			"\n", ` `,
+			"\r", ` `,
 		}))
 		switch field {
 		case `deletedAt`, `deleted_at`:
@@ -2337,8 +2337,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", " ",
-			"\r", " ",
+			"\n", ` `,
+			"\r", ` `,
 		}))
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
@@ -2762,25 +2762,26 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
+		tmp, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, column[`Comment`].String())
+		fieldName := gstr.Trim(tmp[0])
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", " ",
-			"\r", " ",
+			"\n", ` `,
+			"\r", ` `,
 		}))
-
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`:
 		case `sort`, `weight`:
 			viewI18nName += `
-		` + field + `: '` + comment + `',`
+		` + field + `: '` + fieldName + `',`
 			viewI18nTip += `
-		` + field + `: '` + comment + `',`
+		` + field + `: '` + fieldName + `',`
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				continue
 			}
 			viewI18nName += `
-		` + field + `: '` + comment + `',`
+		` + field + `: '` + fieldName + `',`
 
 			//status或type后缀
 			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
