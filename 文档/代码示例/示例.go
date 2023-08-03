@@ -17,6 +17,7 @@ func main() {
 // %U	Unicode 字符
 // %f	浮点数
 // %p	指针，十六进制方式显示
+
 /* type SearchApiParams struct {
 	OrderKey string `json:"orderKey"` // 排序
 	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
@@ -24,6 +25,24 @@ func main() {
 var pageInfo SearchApiParams
 fmt.Printf("%#v\n", pageInfo) */
 /*--------打印 结束--------*/
+
+/*--------时间相关 开始--------*/
+// cstZone, _ := time.LoadLocation("Asia/Shanghai")	//设置时区
+// time.Local = cstZone
+// //2006-01-02 15:04:05相当于php的y-m-d H:i:s
+// st, err := time.Parse("2006-01-02 15:04:05", "2023-01-01 00:00:00")
+// st, err := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.Local)
+// 时间戳 := st.Unix()
+/*--------时间相关 开始--------*/
+
+/*--------json 开始--------*/
+// var rawData map[string]interface{}{
+// 	"a":"a"
+// }
+// rawDataJson, _ := json.Marshal(rawData)
+// var orgData map[string]interface{}
+// json.Unmarshal(rawDataJson, &orgData)
+/*--------json 开始--------*/
 
 /*--------gin框架 开始--------*/
 //"github.com/gin-gonic/gin"
@@ -50,24 +69,6 @@ fmt.Printf("%#v\n", pageInfo) */
 // var errs map[string]error
 // errs = validate.ValidateMap(map[string]interface{}{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]interface{}{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
 /*--------验证器 结束--------*/
-
-/*--------时间相关 开始--------*/
-// cstZone, _ := time.LoadLocation("Asia/Shanghai")	//设置时区
-// time.Local = cstZone
-// //2006-01-02 15:04:05相当于php的y-m-d H:i:s
-// st, err := time.Parse("2006-01-02 15:04:05", "2023-01-01 00:00:00")
-// st, err := time.ParseInLocation("2006-01-02 15:04:05", "2023-01-01 00:00:00", time.Local)
-// 时间戳 := st.Unix()
-/*--------时间相关 开始--------*/
-
-/*--------json 开始--------*/
-// var rawData map[string]interface{}{
-// 	"a":"a"
-// }
-// rawDataJson, _ := json.Marshal(rawData)
-// var orgData map[string]interface{}
-// json.Unmarshal(rawDataJson, &orgData)
-/*--------json 开始--------*/
 
 /*--------gorm 开始--------*/
 /*
@@ -100,21 +101,8 @@ db.RowsAffected
 
 errors.Is(err, gorm.ErrRecordNotFound)	//Find方法不会报这个错
 */
-/*--------gorm 开始--------*/
 
 /*
-go开发流程
-	自动化package->新增
-	代码生成器->新增
-	断开服务
-	如果数据库中表已存在，删除server/initialize/gorm.go该表的自动创建，否则将导致原表被修改
-	如果数据库中表已存在，且没有created_by updated_by deleted_by字段，则将server/model/user/tab_user.go中
-		global.GVA_MODEL
-		替换成
-		ID        uint           `gorm:"primarykey"` // 主键ID
-	重启服务
-
-
 注意事项
 	使用结构体做创建和更新操作时，必须把设置全部数据库字段的值，或使用Select()或Omit()方法指定或排除某些字段。
 		如果字段没传时，创建时会插入null，导致数据库报错，除非在结构体中设置默认值gorm:"default:0;"，但是这也会导致更新操作时，未设置值的字段会被更新成默认值。
@@ -132,5 +120,5 @@ go开发流程
 
 	//会使关联表字符串类型的字段取出来的值类型为[]btye，根本不能给前端使用。用Table("tab_game_server")替换Model(&game.TabGameServer{})可解决
 	global.MustGetGlobalDBByDBName(dbName).Model(&game.TabGameServer{}).Joins("left join tab_game on tab_game.id = tab_game_server.game_id")
-
 */
+/*--------gorm 开始--------*/
