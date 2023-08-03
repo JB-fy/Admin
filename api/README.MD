@@ -15,10 +15,9 @@ gf gen service
 ```
 
 # 代码自动生成流程
+强烈建议搭配Git使用
 
-1.强烈建议搭配Git使用
-
-2.新建数据库表，如：auth_test
+1.新建数据库表。如：auth_test
 - 表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
 - 主键必须是第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
 - 表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端部分组件，向后端请求获取id和label两个字段用于展示)
@@ -44,11 +43,9 @@ gf gen service
         - 状态和类型字段，命名用status或type后缀且字段类型必须是int或tinyint。字段注释中多状态之间用[\s,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
         - 是否字段，命名用is_前缀且字段类型必须是int或tinyint。默认：0否 1是
 
-3.修改api/hack/config.yaml中gen dao的配置（详细操作参考goframe文档）
+2.修改api/hack/config.yaml中gen dao的配置，并使用gf gen dao命令生成dao层代码
 
-4.使用gf gen dao命令生成数据库模型
-
-5.使用./main myGen命令生成代码。如果main文件不存在或修改了api/internal/cmd/my_gen.go中的代码，需重新运行gf run main.go生成main文件
-- 该命令参数可以参考api/internal/cmd/my_gen.go内结构体MyGenOption每个字段的注释
-- 未带参数，则需要根据提示输入所有参数
-- 带参数示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+3.使用./main myGen命令生成前后端代码。如果main文件不存在或修改过api/internal/cmd/my_gen.go代码，需重新生成main文件
+- 命令参数可以参考api/internal/cmd/my_gen.go内结构体MyGenOption每个字段的注释
+- 未带参数启动，则需根据提示输入全部参数。示例：./main myGen
+- 带全部参数启动，则无提示直接生成。示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
