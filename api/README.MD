@@ -1,7 +1,6 @@
-# 使用说明
-
-服务端启动命令：gf run main.go -a "http"
-前端启动命令：npm run dev
+# 启动命令
+1.服务端启动命令：gf run main.go -a "http"
+2.前端启动命令：npm run dev
 
 自动代码生成流程：
     强烈建议搭配Git使用
