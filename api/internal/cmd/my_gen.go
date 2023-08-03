@@ -66,10 +66,18 @@ type MyGenOption struct {
 }
 
 type MyGenTpl struct {
-	TableColumnList gdb.Result //表字段详情
-	PrimaryKey      string     //表主键
-	LabelField      string     //dao层label对应的字段(常用于前端组件)
-	PasswordHandle  struct {   //password|passwd,salt同时存在时特殊处理
+	TableColumnList            gdb.Result //表字段详情
+	SceneName                  string     //场景名称
+	SceneId                    int        //场景ID
+	RawTableNameCaseCamelLower string     //原始表名（小驼峰）
+	TableNameCaseCamelLower    string     //去除前缀表名（小驼峰）
+	TableNameCaseCamel         string     //去除前缀表名（大驼峰）
+	TableNameCaseSnake         string     //去除前缀表名（蛇形）
+	ModuleDirCaseCamelLower    string     //路径后缀（小驼峰）
+	ModuleDirCaseCamel         string     //路径后缀（大驼峰）
+	PrimaryKey                 string     //表主键
+	LabelField                 string     //dao层label对应的字段(常用于前端组件)
+	PasswordHandle             struct {   //password|passwd,salt同时存在时特殊处理
 		PasswordField string //密码字段
 		SaltField     string //加密盐字段
 	}
@@ -78,15 +86,7 @@ type MyGenTpl struct {
 		LevelField  string //层级字段
 		IdPathField string //层级路径字段
 	}
-	ImageVideoJsonFieldArr     []string //icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀。//video,video_list,videoList,video_arr,videoArr等后缀
-	SceneName                  string   //场景名称
-	SceneId                    int      //场景ID
-	RawTableNameCaseCamelLower string   //原始表名（小驼峰）
-	TableNameCaseCamelLower    string   //去除前缀表名（小驼峰）
-	TableNameCaseCamel         string   //去除前缀表名（大驼峰）
-	TableNameCaseSnake         string   //去除前缀表名（蛇形）
-	ModuleDirCaseCamelLower    string   //路径后缀（小驼峰）
-	ModuleDirCaseCamel         string   //路径后缀（大驼峰）
+	ImageVideoJsonFieldArr []string //icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀。//video,video_list,videoList,video_arr,videoArr等后缀
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
