@@ -1,3 +1,6 @@
+服务端启动命令：gf run main.go -a "http"
+前端启动命令：npm run dev
+
 自动代码生成流程：
     强烈建议搭配Git使用
     新建数据库表，如：auth_test
@@ -31,6 +34,3 @@
         该命令参数可以参考api/internal/cmd/my_gen.go中结构体MyGenOption中每个字段的注释
         未带参数，则需要根据提示输入所有参数
         带参数示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
-    此时代码已经全部生成，可在根据自己需求修改代码以符合自己需求。
-        服务端使用命令gf run main.go -a "http"启动服务
-        前端使用npm run dev启动服务
