@@ -20,7 +20,7 @@ gf gen service
 ./main myGen
 ```
 
-2.PHP服务端（无代码自动生成功能）
+2.PHP服务端（无代码自动生成功能。可参考GO服务端api/internal/cmd/my_gen.go代码，自己实现）
 ```bash
 # 服务启动
 php bin/hyperf.php start
