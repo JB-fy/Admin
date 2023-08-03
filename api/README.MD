@@ -10,7 +10,7 @@ gf gen dao
 # service层生成
 gf gen service
 
-# 全自动代码生成（必须在项目api文件夹下且已经生成main文件）
+# 全自动前后端代码生成（必须先生成main文件。如修改过api/internal/cmd/my_gen.go代码，则需重新生成）
 ./main myGen
 ```
 
@@ -44,7 +44,7 @@ gf gen service
 
 2.修改api/hack/config.yaml中gen dao的配置，并使用gf gen dao命令生成dao层代码
 
-3.使用./main myGen命令生成前后端代码。如果main文件不存在或修改过api/internal/cmd/my_gen.go代码，需重新生成main文件
+3.使用./main myGen命令生成前后端代码
 - 命令参数可以参考api/internal/cmd/my_gen.go内结构体MyGenOption每个字段的注释
 - 未带参数启动，则需根据提示输入全部参数。示例：./main myGen
 - 带全部参数启动，则无提示直接生成。示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
