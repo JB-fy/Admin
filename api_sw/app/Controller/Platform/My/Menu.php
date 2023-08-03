@@ -26,7 +26,7 @@ class Menu extends AbstractController
             ]
         ];
         $field = [
-            'menuTree',
+            'tree',
             'showMenu'
         ];
         $this->container->get(\App\Module\Service\Auth\Menu::class)->tree($filter, $field);

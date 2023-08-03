@@ -23,7 +23,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 		`sceneId`:   sceneInfo[`sceneId`].Int(),
 		`loginId`:   loginInfo[`adminId`].Int(),
 	}
-	field := []string{`id`, `label`, `menuTree`, `showMenu`}
+	field := []string{`id`, `label`, `tree`, `showMenu`}
 
 	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {

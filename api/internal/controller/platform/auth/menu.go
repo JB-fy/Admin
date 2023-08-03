@@ -184,8 +184,8 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	filter[`isStop`] = 0              //补充条件
-	field = append(field, `menuTree`) //补充字段（菜单树所需）
+	filter[`isStop`] = 0          //补充条件
+	field = append(field, `tree`) //补充字段（菜单树所需）
 
 	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {

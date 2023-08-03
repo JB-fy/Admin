@@ -248,11 +248,11 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-			case `menuTree`: //树状需要以下字段和排序方式
+			case `tree`: //树状需要以下字段和排序方式
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().Pid)
 
-				m = daoThis.ParseOrder([]string{`menuTree`}, joinTableArr)(m) //排序方式
+				m = daoThis.ParseOrder([]string{`tree`}, joinTableArr)(m) //排序方式
 			case `showMenu`: //前端显示菜单需要以下字段，且title需要转换
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName)
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuIcon)
@@ -403,7 +403,7 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 			switch kArr[0] {
 			case `id`:
 				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), kArr[1])
-			case `menuTree`:
+			case `tree`:
 				m = m.Order(daoThis.Table()+`.`+daoThis.Columns().Pid, `ASC`)
 				m = m.Order(daoThis.Table()+`.`+daoThis.Columns().Sort, `ASC`)
 				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), `ASC`)

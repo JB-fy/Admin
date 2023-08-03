@@ -55,11 +55,11 @@ class Menu extends AbstractDao
     protected function parseFieldOfAlone(string $key): bool
     {
         switch ($key) {
-            case 'menuTree':    //树状需要以下字段和排序方式
+            case 'tree':    //树状需要以下字段和排序方式
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
                 $this->builder->addSelect($this->getTable() . '.' . 'pid');
 
-                $this->parseOrderOfAlone('menuTree');    //排序方式
+                $this->parseOrderOfAlone('tree');    //排序方式
                 return true;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
                 $this->builder->addSelect($this->getTable() . '.' . 'menuName');
@@ -129,7 +129,7 @@ class Menu extends AbstractDao
     protected function parseOrderOfAlone(string $key, $value = null): bool
     {
         switch ($key) {
-            case 'menuTree':
+            case 'tree':
                 $this->builder->orderBy($this->getTable() . '.' . 'pid', 'ASC');
                 $this->builder->orderBy($this->getTable() . '.' . 'sort', 'ASC');
                 $this->builder->orderBy($this->getTable() . '.' . 'menuId', 'ASC');

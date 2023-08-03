@@ -136,7 +136,7 @@ class Menu extends AbstractController
         }
 
         $data['filter'] = array_merge($data['filter'], ['isStop' => 0]);  //补充条件
-        $data['field'] = array_merge($data['field'], ['menuTree']); //补充字段（树状菜单所需）
+        $data['field'] = array_merge($data['field'], ['tree']); //补充字段（树状菜单所需）
         /**--------参数处理 结束--------**/
 
         $this->service->tree(...$data);
