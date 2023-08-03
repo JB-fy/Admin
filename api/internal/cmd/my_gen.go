@@ -29,8 +29,10 @@ import (
 	部分常用字段：
 		password	密码
 		passwd		密码
-		salt		加密盐
+		salt		加密盐（password,salt同时存在时特殊处理）
 		pid			父级（指向本表）
+		level		层级（pid,level,idPath同时存在时特殊处理）
+		idPath		层级路径（pid,level,idPath同时存在时特殊处理）
 		sort		排序
 		weight 		权重
 		gender 		性别
@@ -387,6 +389,47 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		}
 	}
 	return
+}
+
+// 自动生成操作
+func MyGenAction(ctx context.Context, sceneId int, actionCode string, actionName string) {
+	daoThis := daoAuth.Action
+	idVar, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().ActionCode, actionCode).Value(daoThis.PrimaryKey())
+	id := idVar.Int64()
+	if id == 0 {
+		id, _ = daoThis.ParseDbCtx(ctx).Data(map[string]interface{}{
+			daoThis.Columns().ActionCode: actionCode,
+			daoThis.Columns().ActionName: actionName,
+		}).InsertAndGetId()
+	} else {
+		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(daoThis.Columns().ActionName, actionName).Update()
+	}
+	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
+		daoAuth.ActionRelToScene.Columns().ActionId: id,
+		daoAuth.ActionRelToScene.Columns().SceneId:  sceneId,
+	}).Save()
+}
+
+// 自动生成菜单
+func MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string, menuNameOfEn string) {
+	daoThis := daoAuth.Menu
+	idVar, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().SceneId, sceneId).Where(daoThis.Columns().MenuUrl, menuUrl).Value(daoThis.PrimaryKey())
+	id := idVar.Int()
+	if id == 0 {
+		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(map[string]interface{}{
+			daoThis.Columns().SceneId:   sceneId,
+			daoThis.Columns().Pid:       0,
+			daoThis.Columns().MenuName:  menuName,
+			daoThis.Columns().MenuIcon:  `AutoiconEpLink`,
+			daoThis.Columns().MenuUrl:   menuUrl,
+			daoThis.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		})).InsertAndGetId()
+	} else {
+		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(map[string]interface{}{
+			daoThis.Columns().MenuName:  menuName,
+			daoThis.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		}).Update()
+	}
 }
 
 // status字段注释解析
@@ -1059,7 +1102,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
 			actionName := option.CommonName + `-查看`
-			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1124,7 +1167,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
 			actionName := option.CommonName + `-查看`
-			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1163,7 +1206,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Create`
 			actionName := option.CommonName + `-新增`
-			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1201,7 +1244,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Update`
 			actionName := option.CommonName + `-编辑`
-			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1229,7 +1272,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := tpl.RawTableNameCaseCamelLower + `Delete`
 			actionName := option.CommonName + `-删除`
-			daoAuth.Action.MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2836,5 +2879,5 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	}
 	gfile.PutContents(saveFile, tplView)
 
-	daoAuth.Menu.MyGenMenu(ctx, tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
+	MyGenMenu(ctx, tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
 }
