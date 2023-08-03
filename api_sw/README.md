@@ -1,14 +1,17 @@
-# 框架使用说明：
+# 常用命令
 
-1.启动服务
-- php bin/hyperf.php start
-- php bin/hyperf.php server:watch //热更新
+```bash
+# 启动服务
+php bin/hyperf.php start
+# 启动服务（热更新）
+php bin/hyperf.php server:watch
 
-2.快速生成模型类（--pool对应哪个库）
-- php bin/hyperf.php gen:model --pool=default 
+# 快速生成模型类（--pool对应哪个库）
+php bin/hyperf.php gen:model --pool=default 
 
-3.快速生成Dao类，需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再修改
-- php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
+# 快速生成Dao类，需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再修改
+php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
+```
     
 # 框架使用规范：
 

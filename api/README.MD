@@ -3,10 +3,13 @@
 ```bash
 # 服务启动
 gf run main.go -a "http"
+
 # dao层生成
 gf gen dao
+
 # service层生成
 gf gen service
+
 # 全自动代码生成（必须在项目api文件夹下且已经生成main文件）
 ./main myGen
 ```
