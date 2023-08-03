@@ -44,15 +44,6 @@ lsof -i:端口号	//查看端口使用情况
 nmcli networking on	//激活网络
 nmcli connection up ens33	//连接网络
 
-/**--------Centos9网络配置 开始--------**/
-vi /etc/NetworkManager/system-connections/ens33.nmconnection
-/**--------Centos9网络配置 结束--------**/
-
-/**--------时区设置 开始--------**/
-timedatectl //查看时区设置
-timedatectl list-timezones	//列出所有可用时区
-timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
-/**--------时区设置 结束--------**/
 
 /**--------设置环境变量 开始--------**/
 修改配置文件 /etc/profile 在最下面追加目录（多路径用冒号分开）
@@ -61,6 +52,7 @@ PATH=$PATH:/server/tool/nginx-1.24.0/sbin:/server/tool/mysql-8.0.33/bin:/server/
 //马上生效
 source /etc/profile
 /**--------设置环境变量 结束--------**/
+
 
 /**--------设置自启动 开始--------**/
 //一定要做，否则会造成权限不通过无法自启动。
@@ -76,8 +68,9 @@ systemctl disable 服务名		//禁止开机自启动
 systemctl enable 服务名		//开启开机自启动
 systemctl list-units --type=service //查看所有自启动服务
 
-//示例
+//新增自启动文件
 vi /etc/systemd/system/xxxx.service
+//文件示例
 [Unit]
 Description=nginx
 After=network.target
@@ -96,6 +89,23 @@ PrivateTmp=true
 WantedBy=multi-user.target
 /**--------设置自启动 结束--------**/
 
+
+/**--------创建桌面快捷方式 开始--------**/
+//新增桌面文件
+vi /usr/share/applications/xxxx.desktop
+//文件示例
+[Desktop Entry]
+Name=xxxx
+Comment=xxxx
+Exec=/server/tool/xxxx/code  --no-sandbox
+Icon=/server/tool/xxxx/resources/app/resources/linux/code.png
+Type=Application
+StartupNotify=true
+Categories=TextEditor;Development;Utility;
+MimeType=text/plain;
+/**--------创建桌面快捷方式 结束--------**/
+
+
 /**--------端口开放关闭（需要重启防火墙生效） 开始--------**/
 firewall-cmd --zone=public --add-port=0-65535/tcp --permanent	//开放全部端口
 firewall-cmd --zone=public --add-port=80/tcp --permanent		//开放指定端口
@@ -103,6 +113,18 @@ firewall-cmd --zone=public --remove-port=80/tcp --permanent		//关闭端口
 firewall-cmd --zone=public --list-ports							//查看所有开放的端口
 firewall-cmd --reload											//配置立即生效
 /**--------端口开放关闭（需要重启防火墙生效） 结束--------**/
+
+
+/**--------Centos9网络配置 开始--------**/
+vi /etc/NetworkManager/system-connections/ens33.nmconnection
+/**--------Centos9网络配置 结束--------**/
+
+
+/**--------时区设置 开始--------**/
+timedatectl //查看时区设置
+timedatectl list-timezones	//列出所有可用时区
+timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
+/**--------时区设置 结束--------**/
 
 /**--------生成ssl证书 开始--------**/
 生成RSA私钥（des3算法，长度2048位）
