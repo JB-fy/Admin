@@ -7,7 +7,6 @@ import (
 	"os/exec"
 
 	"github.com/gogf/gf/v2/container/garray"
-	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -490,50 +489,59 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 	tplDao := gfile.GetContents(saveFile)
 
+	daoImport := ``
+	daoParseInsert := ``
+	daoParseUpdate := ``
+	daoParseField := ``
+	daoHookSelect := ``
+	daoParseFilter := ``
+
 	if tpl.LabelField != `` {
-		if gstr.Pos(tplDao, `case `+"`label`"+`:
-				m = m.Fields(`) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`label`"+`:
-				m = m.Fields(daoThis.Table() + `+"`.`"+` + daoThis.Columns().`+gstr.CaseCamel(tpl.LabelField)+` + `+"` AS `"+` + v)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		daoParseFieldLabel := `
+			case ` + "`label`" + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)`
+		if gstr.Pos(tplDao, daoParseFieldLabel) == -1 {
+			daoParseField += daoParseFieldLabel
 		}
-		if gstr.Pos(tplDao, `case `+"`label`"+`:
-				m = m.WhereLike(`) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+"`label`"+`:
-				m = m.WhereLike(daoThis.Table()+`+"`.`"+`+daoThis.Columns().`+gstr.CaseCamel(tpl.LabelField)+`, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)
-			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		daoParseFilterLabel := `
+			case ` + "`label`" + `:
+				m = m.WhereLike(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+		if gstr.Pos(tplDao, daoParseFilterLabel) == -1 {
+			daoParseFilter += daoParseFilterLabel
 		}
 	}
 
 	if tpl.PasswordHandle.IsCoexist {
-		if gstr.Pos(tplDao, `"github.com/gogf/gf/v2/crypto/gmd5"`) == -1 {
-			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/database/gdb"`, `"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/database/gdb"`)
+		daoImportGdb := `
+	"github.com/gogf/gf/v2/database/gdb"`
+		if gstr.Pos(tplDao, daoImportGdb) == -1 {
+			daoImport += daoImportGdb
 		}
-		if gstr.Pos(tplDao, `"github.com/gogf/gf/v2/util/grand"`) == -1 {
-			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/grand"`)
+		daoImportGrand := `
+	"github.com/gogf/gf/v2/util/grand"`
+		if gstr.Pos(tplDao, daoImportGrand) == -1 {
+			daoImport += daoImportGrand
 		}
-		passwordInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
+		daoParseInsertPassword := `
+			case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
 				salt := grand.S(8)
 				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
 				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
-		if gstr.Pos(tplDao, passwordInsertGenTpl) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordInsertGenTpl+`
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		if gstr.Pos(tplDao, daoParseInsertPassword) == -1 {
+			daoParseInsert += daoParseInsertPassword
 		}
-		passwordUpdateGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
+		daoParseUpdatePassword := `
+			case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
 				salt := grand.S(8)
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `] = gmd5.MustEncrypt(gconv.String(v) + salt)`
-		if gstr.Pos(tplDao, passwordUpdateGenTpl) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, passwordUpdateGenTpl+`
-			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		if gstr.Pos(tplDao, daoParseUpdatePassword) == -1 {
+			daoParseUpdate += daoParseUpdatePassword
 		}
 	}
 
 	if tpl.PidHandle.IsCoexist {
-		pidInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
+		daoParseInsertPid := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
@@ -543,43 +551,60 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					hookData[` + "`" + `pIdPath` + "`" + `] = ` + "`0`" + `
 					hookData[` + "`" + `pLevel` + "`" + `] = 0
 				}`
-		if gstr.Pos(tplDao, pidInsertGenTpl) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, pidInsertGenTpl+`
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		if gstr.Pos(tplDao, daoParseInsertPid) == -1 {
+			daoParseInsert += daoParseInsertPid
 		}
 	}
 
 	if len(tpl.ImageVideoJsonFieldArr) > 0 {
 		imageVideoJsonFieldStr := gstr.Join(tpl.ImageVideoJsonFieldArr, `, `)
-		if gstr.Pos(tplDao, `m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
-				afterField = append(afterField, v)`) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+imageVideoJsonFieldStr+`:
-				m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
-				afterField = append(afterField, v)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
-		} else {
-			tmp, _ := gregex.MatchString(`case ([^:]*):
-				m = m\.Fields\(daoThis\.Table\(\) \+ `+"`"+`\.`+"`"+` \+ v\)
-				afterField = append\(afterField, v\)`, tplDao)
-			tplDao, _ = gregex.ReplaceString(`case [^:]*:
-				m = m\.Fields\(daoThis\.Table\(\) \+ `+"`"+`\.`+"`"+` \+ v\)
-				afterField = append\(afterField, v\)`, `case `+gstr.Join(gset.NewStrSetFrom(tpl.ImageVideoJsonFieldArr).Union(gset.NewStrSetFrom(gstr.Split(tmp[1], `, `))).Slice(), `, `)+`:
-				m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
-				afterField = append(afterField, v)`, tplDao)
+
+		daoParseFieldImageVideoJson := `
+			case ` + imageVideoJsonFieldStr + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + v)
+				afterField = append(afterField, v)`
+		if gstr.Pos(tplDao, daoParseFieldImageVideoJson) == -1 {
+			daoParseField += daoParseFieldImageVideoJson
 		}
 
-		if gstr.Pos(tplDao, `record[v] = gvar.New(record[v].Slice())`) == -1 {
-			tplDao = gstr.Replace(tplDao, `/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, `case `+imageVideoJsonFieldStr+`:
-						record[v] = gvar.New(record[v].Slice())
-					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
-		} else {
-			tmp, _ := gregex.MatchString(`case ([^:]*):
-						record\[v\] = gvar\.New\(record\[v\]\.Slice\(\)\)`, tplDao)
-			tplDao, _ = gregex.ReplaceString(`case [^:]*:
-						record\[v\] = gvar\.New\(record\[v\]\.Slice\(\)\)`, `case `+gstr.Join(gset.NewStrSetFrom(tpl.ImageVideoJsonFieldArr).Union(gset.NewStrSetFrom(gstr.Split(tmp[1], `, `))).Slice(), `, `)+`:
-						record[v] = gvar.New(record[v].Slice())`, tplDao)
+		daoHookSelectImageVideoJson := `
+					case ` + imageVideoJsonFieldStr + `:
+						record[v] = gvar.New(record[v].Slice())`
+		if gstr.Pos(tplDao, daoHookSelectImageVideoJson) == -1 {
+			daoHookSelect += daoHookSelectImageVideoJson
 		}
 	}
+
+	if daoImport != `` {
+		daoImportPoint := `"github.com/gogf/gf/v2/util/gconv"`
+		tplDao = gstr.Replace(tplDao, daoImportPoint, daoImportPoint+daoImport)
+	}
+	if daoParseInsert != `` {
+		daoParseInsertPoint := `case ` + "`id`" + `:
+				insertData[daoThis.PrimaryKey()] = v`
+		tplDao = gstr.Replace(tplDao, daoParseInsertPoint, daoParseInsertPoint+daoParseInsert)
+	}
+	if daoParseUpdate != `` {
+		daoParseUpdatePoint := `case ` + "`id`" + `:
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey()] = v`
+		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate)
+	}
+	if daoParseField != `` {
+		daoParseFieldPoint := `case ` + "`id`" + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey() + ` + "` AS `" + ` + v)`
+		tplDao = gstr.Replace(tplDao, daoParseFieldPoint, daoParseFieldPoint+daoParseField)
+	}
+	if daoHookSelect != `` {
+		daoHookSelectPoint := `/* case ` + "`xxxx`" + `:
+					record[v] = gvar.New(` + "``" + `) */`
+		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelectPoint+daoHookSelect)
+	}
+	if daoParseFilter != `` {
+		daoParseFilterPoint := `case ` + "`endTime`" + `:
+				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().CreatedAt, v)`
+		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter)
+	}
+
 	gfile.PutContents(saveFile, tplDao)
 }
 
@@ -1499,27 +1524,27 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
 
-	tplView := gfile.GetContents(saveFile)
+	tplRouter := gfile.GetContents(saveFile)
 
 	//控制器不存在时导入
 	importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"`
-	if gstr.Pos(tplView, importControllerStr) == -1 {
-		tplView = gstr.Replace(tplView, `"api/internal/middleware"`, importControllerStr+`
+	if gstr.Pos(tplRouter, importControllerStr) == -1 {
+		tplRouter = gstr.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
 	"api/internal/middleware"`)
 		//路由生成
-		tplView = gstr.Replace(tplView, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
+		tplRouter = gstr.Replace(tplRouter, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
 				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
-		gfile.PutContents(saveFile, tplView)
+		gfile.PutContents(saveFile, tplRouter)
 	} else {
 		//路由不存在时需生成
-		if gstr.Pos(tplView, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`) == -1 {
+		if gstr.Pos(tplRouter, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`) == -1 {
 			//路由生成
-			tplView = gstr.Replace(tplView, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
+			tplRouter = gstr.Replace(tplRouter, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
 				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`)
-			gfile.PutContents(saveFile, tplView)
+			gfile.PutContents(saveFile, tplRouter)
 		}
 	}
 }
@@ -3069,7 +3094,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/../dev/` + option.SceneCode + `/src/router/index.ts`
 
-	tplView := gfile.GetContents(saveFile)
+	tplViewRouter := gfile.GetContents(saveFile)
 
 	path := `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower
 	replaceStr := `{
@@ -3082,15 +3107,15 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
                 meta: { isAuth: true, keepAlive: true, componentName: '` + path + `' }
             },`
 
-	if gstr.Pos(tplView, `'`+path+`'`) == -1 { //路由不存在时新增
-		tplView = gstr.Replace(tplView, `/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
+	if gstr.Pos(tplViewRouter, `'`+path+`'`) == -1 { //路由不存在时新增
+		tplViewRouter = gstr.Replace(tplViewRouter, `/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
 	} else { //路由已存在则替换
-		tplView, _ = gregex.ReplaceString(`\{
+		tplViewRouter, _ = gregex.ReplaceString(`\{
                 path: '`+path+`',[\s\S]*'`+path+`' \}
-            \},`, replaceStr, tplView)
+            \},`, replaceStr, tplViewRouter)
 	}
-	gfile.PutContents(saveFile, tplView)
+	gfile.PutContents(saveFile, tplViewRouter)
 
 	MyGenMenu(ctx, tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
 }
