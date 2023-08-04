@@ -1110,7 +1110,8 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 	}
 
 	if option.IsList && tpl.PidHandle.IsCoexist {
-		tplApi += `/*--------树状列表 开始--------*/
+		tplApi += `
+/*--------树状列表 开始--------*/
 type ` + tpl.TableNameCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"树状列表"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
