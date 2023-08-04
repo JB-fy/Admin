@@ -580,7 +580,6 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-
 `
 	if tpl.PidHandle.IsCoexist {
 		tplLogic += `
