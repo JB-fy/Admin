@@ -2350,6 +2350,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
 		</ElFormItem>`
+		case `idPath`, `id_path`:
 		case `sort`, `weight`:
 		default:
 			//主键
@@ -2571,7 +2572,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`:
+		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`, `level`, `idPath`, `id_path`:
 		case `password`, `passwd`:
 			passwordField = field
 			viewSaveRule += `
