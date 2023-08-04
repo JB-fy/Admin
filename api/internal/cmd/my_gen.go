@@ -655,6 +655,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			daoParseOrder += daoParseOrderPid
 		}
 		daoFuncPid := `
+
 // 修改pid时，更新所有子孙级的idPath和level
 func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
 	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(g.Map{
@@ -750,8 +751,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin)
 	}
 	if daoFunc != `` {
-		daoFuncPoint := `// Fill with you ideas below.
-`
+		daoFuncPoint := `// Fill with you ideas below.`
 		tplDao = gstr.Replace(tplDao, daoFuncPoint, daoFuncPoint+daoFunc)
 	}
 
