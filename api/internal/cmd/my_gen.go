@@ -513,7 +513,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	if tpl.PasswordHandle.IsCoexist {
 		daoImportGdb := `
-	"github.com/gogf/gf/v2/database/gdb"`
+	"github.com/gogf/gf/v2/crypto/gmd5"`
 		if gstr.Pos(tplDao, daoImportGdb) == -1 {
 			daoImport += daoImportGdb
 		}
@@ -541,7 +541,8 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	if tpl.PidHandle.IsCoexist {
-		daoParseInsertPid := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
+		daoParseInsertPid := `
+			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
