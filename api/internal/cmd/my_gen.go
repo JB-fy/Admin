@@ -78,10 +78,12 @@ type MyGenTpl struct {
 	PrimaryKey                 string     //表主键
 	LabelField                 string     //dao层label对应的字段(常用于前端组件)
 	PasswordHandle             struct {   //password|passwd,salt同时存在时特殊处理
+		IsCoexist     bool   //是否同时存在
 		PasswordField string //密码字段
 		SaltField     string //加密盐字段
 	}
 	PidHandle struct { //pid,level,idPath|id_path同时存在时特殊处理
+		IsCoexist   bool   //是否同时存在
 		PidField    string //父级字段
 		LevelField  string //层级字段
 		IdPathField string //层级路径字段
@@ -402,6 +404,14 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		}
 	}
 
+	if tpl.PasswordHandle.PasswordField != `` && tpl.PasswordHandle.SaltField != `` {
+		tpl.PasswordHandle.IsCoexist = true
+	}
+
+	if tpl.PidHandle.PidField != `` && tpl.PidHandle.LevelField != `` && tpl.PidHandle.IdPathField != `` {
+		tpl.PidHandle.IsCoexist = true
+	}
+
 	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
 	// 根据name字段优先级排序
 	nameFieldList := []string{
@@ -495,7 +505,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
-	if tpl.PasswordHandle.PasswordField != `` && tpl.PasswordHandle.SaltField != `` {
+	if tpl.PasswordHandle.IsCoexist {
 		if gstr.Pos(tplDao, `"github.com/gogf/gf/v2/crypto/gmd5"`) == -1 {
 			tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/database/gdb"`, `"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"`)
@@ -1027,6 +1037,28 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 `
 	}
 
+	if tpl.PidHandle.IsCoexist {
+		tplApi += `/*--------树状列表 开始--------*/
+type ` + tpl.TableNameCaseCamel + `TreeReq struct {
+	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"树状列表"` + "`" + `
+	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
+	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+}
+
+type ` + tpl.TableNameCaseCamel + `TreeRes struct {
+	Tree []` + tpl.TableNameCaseCamel + `Tree ` + "`" + `json:"tree" dc:"树状列表"` + "`" + `
+}
+
+type ` + tpl.TableNameCaseCamel + `Tree struct {
+	Id       uint        ` + "`" + `json:"id" dc:"ID"` + "`" + `
+	Label    string      ` + "`" + `json:"label" dc:"标签。常用于前端组件"` + "`" + `
+	Children interface{} ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
+	` + apiResColumn + `
+}
+
+/*--------树状列表 结束--------*/
+`
+	}
 	gfile.PutContents(saveFile, tplApi)
 }
 

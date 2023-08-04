@@ -13,7 +13,7 @@ func NewMenu() *Menu {
 	return &Menu{}
 }
 
-// 菜单树
+// 树状列表
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)

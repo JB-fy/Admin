@@ -157,7 +157,7 @@ func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteR
 	return
 }
 
-// 菜单树
+// 树状列表
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) (res *apiAuth.MenuTreeRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.MapDeep(req.Filter)
@@ -185,7 +185,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------权限验证 结束--------**/
 
 	filter[`isStop`] = 0          //补充条件
-	field = append(field, `tree`) //补充字段（菜单树所需）
+	field = append(field, `tree`) //补充字段（树状列表所需）
 
 	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {

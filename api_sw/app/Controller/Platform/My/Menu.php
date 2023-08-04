@@ -9,7 +9,7 @@ use App\Controller\AbstractController;
 class Menu extends AbstractController
 {
     /**
-     * 获取后台用户菜单树
+     * 菜单树
      *
      * @return void
      */

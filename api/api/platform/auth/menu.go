@@ -129,15 +129,15 @@ type MenuDeleteReq struct {
 
 /*--------删除 结束--------*/
 
-/*--------菜单树 开始--------*/
+/*--------树状列表 开始--------*/
 type MenuTreeReq struct {
-	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/菜单" sm:"菜单树"`
+	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/菜单" sm:"树状列表"`
 	Field  []string       `json:"field" v:"foreach|min-length:1"`
 	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type MenuTreeRes struct {
-	Tree []MenuTree `json:"tree" dc:"菜单树"`
+	Tree []MenuTree `json:"tree" dc:"树状列表"`
 }
 
 type MenuTree struct {
@@ -149,4 +149,4 @@ type MenuTree struct {
 	//Children []MenuTree `json:"children" dc:"子级列表"`
 }
 
-/*--------菜单树 结束--------*/
+/*--------树状列表 结束--------*/

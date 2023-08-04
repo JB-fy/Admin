@@ -109,7 +109,7 @@ class Menu extends AbstractController
     }
 
     /**
-     * 获取菜单树
+     * 菜单树
      *
      * @return void
      */
