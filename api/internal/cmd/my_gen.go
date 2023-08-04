@@ -644,7 +644,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
 	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(g.Map{
 		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `: gdb.Raw(` + "`REPLACE(`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + ` + ` + "`, '`" + ` + oldIdPath + ` + "`', '`" + ` + newIdPath + ` + "`')`" + `),
-		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `:  gdb.Raw(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + " ` + `" + ` + gconv.String(newLevel-oldLevel)),
+		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `:  gdb.Raw(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + "` + `" + ` + gconv.String(newLevel-oldLevel)),
 	}).Update()
 }`
 		if gstr.Pos(tplDao, daoFuncPid) == -1 {
@@ -981,6 +981,9 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+			if tpl.PidHandle.IsCoexist && tpl.LabelField != `` {
+				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` uint ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `" dc:"` + comment + `"` + "`\n"
+			}
 		case `level`:
 			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
@@ -1325,6 +1328,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	}
 	if tpl.LabelField != `` {
 		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
+		if tpl.PidHandle.IsCoexist {
+			controllerAlloweFieldAppend += "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `, `
+		}
 	}
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
@@ -1637,7 +1643,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list, 0, ` + "`" + tpl.PrimaryKey + "`, `" + tpl.PidHandle.PidField + "`" + `)
+	tree := utils.Tree(list, 0, columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, columnsThis.` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
 
 	/* // 两种方式根据情况使用
 	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
@@ -1845,7 +1851,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		case `pid`:
 			viewListColumn += `
 	{
-		dataKey: '` + field + `',
+		dataKey: 'p` + gstr.CaseCamel(tpl.LabelField) + `',
 		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
