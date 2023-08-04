@@ -997,7 +997,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 			if tpl.PidHandle.IsCoexist && tpl.LabelField != `` {
-				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` uint ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `" dc:"` + comment + `"` + "`\n"
+				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `" dc:"` + comment + `"` + "`\n"
 			}
 		case `level`:
 			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
