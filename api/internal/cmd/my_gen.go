@@ -499,6 +499,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	daoParseFilter := ``
 	daoParseOrder := ``
 	daoParseJoin := ``
+	daoFunc := ``
 
 	if tpl.LabelField != `` {
 		daoParseFieldLabel := `
@@ -516,15 +517,16 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	if tpl.PasswordHandle.IsCoexist {
-		daoImportGdb := `
-	"github.com/gogf/gf/v2/crypto/gmd5"`
-		if gstr.Pos(tplDao, daoImportGdb) == -1 {
-			daoImport += daoImportGdb
+		daoImportPid := []string{
+			`"github.com/gogf/gf/v2/crypto/gmd5"`,
+			`"github.com/gogf/gf/v2/util/grand"`,
+			`"github.com/gogf/gf/v2/container/garray"`,
 		}
-		daoImportGrand := `
-	"github.com/gogf/gf/v2/util/grand"`
-		if gstr.Pos(tplDao, daoImportGrand) == -1 {
-			daoImport += daoImportGrand
+		for _, v := range daoImportPid {
+			if gstr.Pos(tplDao, v) == -1 {
+				daoImport += `
+	` + v
+			}
 		}
 		daoParseInsertPassword := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
@@ -637,6 +639,17 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.Pos(tplDao, daoParseJoinPid) == -1 {
 			daoParseJoin += daoParseJoinPid
 		}
+		daoFuncPid := `
+// 修改pid时，更新所有子孙级的idPath和level
+func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
+	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(g.Map{
+		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `: gdb.Raw(` + "`REPLACE(`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + ` + ` + "`, '`" + ` + oldIdPath + ` + "`', '`" + ` + newIdPath + ` + "`')`" + `),
+		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `:  gdb.Raw(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + ` + gconv.String(newLevel-oldLevel)),
+	}).Update()
+}`
+		if gstr.Pos(tplDao, daoFuncPid) == -1 {
+			daoFunc += daoFuncPid
+		}
 	}
 
 	if len(tpl.ImageVideoJsonFieldArr) > 0 {
@@ -720,6 +733,10 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			m = m.LeftJoin(relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
 		} */`
 		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin)
+	}
+	if daoFunc != `` {
+		daoFuncPoint := `// Fill with you ideas below.`
+		tplDao = gstr.Replace(tplDao, daoFuncPoint, daoFunc)
 	}
 
 	gfile.PutContents(saveFile, tplDao)

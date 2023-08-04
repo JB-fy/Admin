@@ -461,7 +461,7 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 
 // Fill with you ideas below.
 
-// 当某个菜单修改pid时，更新所有子孙级的idPath和level
+// 修改pid时，更新所有子孙级的idPath和level
 func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
 	daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, oldIdPath+`-%`).Data(g.Map{
 		daoThis.Columns().IdPath: gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + oldIdPath + `', '` + newIdPath + `')`),
