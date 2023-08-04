@@ -581,7 +581,18 @@ import (
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/database/gdb"
+`
+	if tpl.PidHandle.IsCoexist {
+		tplLogic += `
+		"github.com/gogf/gf/v2/container/garray"`
+	}
+	tplLogic += `
+	"github.com/gogf/gf/v2/database/gdb"`
+	if tpl.PidHandle.IsCoexist {
+		tplLogic += `
+	"github.com/gogf/gf/v2/text/gstr"`
+	}
+	tplLogic += `
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -673,7 +684,54 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, fi
 		return
 	}
 	hookData := map[string]interface{}{}
+`
+	if tpl.PidHandle.IsCoexist {
+		tplLogic += `
+	_, okPid := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]
+	if okPid {
+		pInfo := gdb.Record{}
+		pid := gconv.Int(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+		if pid > 0 {
+			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
+			if len(pInfo) == 0 {
+				err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
+				return
+			}
+		}
+		updateChildIdPathAndLevelList := []map[string]interface{}{}
+		for _, id := range idArr {
+			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
+			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
+				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
+				return
+			}
+			if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Int() {
+				pIdPath := ` + "`0`" + `
+				pLevel := 0
+				if pid > 0 {
+					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
+						err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
+						return
+					}
+					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
+					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Int()
+				}
+				updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
+					` + "`" + `newIdPath` + "`" + `: pIdPath + ` + "`-`" + ` + id.String(),
+					` + "`" + `oldIdPath` + "`" + `: oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `],
+					` + "`" + `newLevel` + "`" + `:  pLevel + 1,
+					` + "`" + `oldLevel` + "`" + `:  oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `],
+				})
+			}
+		}
 
+		if len(updateChildIdPathAndLevelList) > 0 {
+			hookData[` + "`" + `updateChildIdPathAndLevelList` + "`" + `] = updateChildIdPathAndLevelList
+		}
+	}
+`
+	}
+	tplLogic += `
 	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
 	if len(hookData) > 0 {
 		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
@@ -690,7 +748,17 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, fi
 		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
 		return
 	}
-
+`
+	if tpl.PidHandle.IsCoexist {
+		tplLogic += `
+	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, idArr).Count()
+	if count > 0 {
+		err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
+		return
+	}
+`
+	}
+	tplLogic += `
 	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
 	return
 }
