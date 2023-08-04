@@ -1193,8 +1193,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	order := []string{req.Sort}
 	page := req.Page
 	limit := req.Limit
-
-	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
+`
+		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldAppend != ``) {
+			tplController += `
+	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()`
+		}
+		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
 	allowField = append(allowField, ` + "`id`, `label`" + `)`
 		if controllerAlloweFieldDiff != `` {
@@ -1398,6 +1402,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
 	return
 }
+
 `
 	}
 
@@ -1409,8 +1414,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-
-	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
+`
+		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldAppend != ``) {
+			tplController += `
+	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()`
+		}
+		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
 	allowField = append(allowField, ` + "`id`, `label`" + `)`
 		if controllerAlloweFieldDiff != `` {
