@@ -532,6 +532,23 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
+	if tpl.PidHandle.IsCoexist {
+		pidInsertGenTpl := `case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
+				insertData[k] = v
+				if gconv.Int(v) > 0 {
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
+					hookData[` + "`" + `pIdPath` + "`" + `] = pInfo[daoThis.Columns().IdPath].String()
+					hookData[` + "`" + `pLevel` + "`" + `] = pInfo[daoThis.Columns().Level].Int()
+				} else {
+					hookData[` + "`" + `pIdPath` + "`" + `] = ` + "`0`" + `
+					hookData[` + "`" + `pLevel` + "`" + `] = 0
+				}`
+		if gstr.Pos(tplDao, pidInsertGenTpl) == -1 {
+			tplDao = gstr.Replace(tplDao, `/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`, pidInsertGenTpl+`
+			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/`)
+		}
+	}
+
 	if len(tpl.ImageVideoJsonFieldArr) > 0 {
 		imageVideoJsonFieldStr := gstr.Join(tpl.ImageVideoJsonFieldArr, `, `)
 		if gstr.Pos(tplDao, `m = m.Fields(daoThis.Table() + `+"`.`"+` + v)
@@ -1665,13 +1682,22 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			viewListColumn += `
 	},`
+		case `pid`:
+			viewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 150,
+	},`
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				continue
 			}
 			//id后缀
-			if field == `pid` || gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',

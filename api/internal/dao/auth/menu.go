@@ -74,7 +74,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool)
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
-			case `pid`:
+			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
@@ -137,7 +137,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
-			case `pid`:
+			case daoThis.Columns().Pid:
 				updateData[daoThis.Table()+`.`+k] = v
 				pIdPath := `0`
 				pLevel := 0
