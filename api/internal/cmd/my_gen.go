@@ -491,10 +491,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	daoImport := ``
 	daoParseInsert := ``
+	daoHookInsert := ``
 	daoParseUpdate := ``
+	daoHookUpdate := ``
 	daoParseField := ``
 	daoHookSelect := ``
 	daoParseFilter := ``
+	daoParseOrder := ``
+	daoParseJoin := ``
 
 	if tpl.LabelField != `` {
 		daoParseFieldLabel := `
@@ -546,14 +550,92 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
-					hookData[` + "`" + `pIdPath` + "`" + `] = pInfo[daoThis.Columns().IdPath].String()
-					hookData[` + "`" + `pLevel` + "`" + `] = pInfo[daoThis.Columns().Level].Int()
+					hookData[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
+					hookData[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Int()
 				} else {
-					hookData[` + "`" + `pIdPath` + "`" + `] = ` + "`0`" + `
-					hookData[` + "`" + `pLevel` + "`" + `] = 0
+					hookData[` + "`pIdPath`" + `] = ` + "`0`" + `
+					hookData[` + "`pLevel`" + `] = 0
 				}`
 		if gstr.Pos(tplDao, daoParseInsertPid) == -1 {
 			daoParseInsert += daoParseInsertPid
+		}
+		daoHookInsertPid := `
+			updateSelfData := map[string]interface{}{}
+			for k, v := range data {
+				switch k {
+				case ` + "`pIdPath`" + `:
+					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gconv.String(v) + ` + "`-`" + ` + gconv.String(id)
+				case ` + "`pLevel`" + `:
+					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gconv.Int(v) + 1
+				}
+			}
+			if len(updateSelfData) > 0 {
+				daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(updateSelfData).Update()
+			}`
+		if gstr.Pos(tplDao, daoHookInsertPid) == -1 {
+			daoHookInsert += daoHookInsertPid
+		}
+		daoParseUpdatePid := `
+			case daoThis.Columns().Pid:
+				updateData[daoThis.Table()+` + "`.`" + `+k] = v
+				pIdPath := ` + "`0`" + `
+				pLevel := 0
+				if gconv.Int(v) > 0 {
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
+					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
+					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Int()
+				}
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gdb.Raw(` + "`CONCAT('`" + ` + pIdPath + ` + "`-', `" + ` + daoThis.PrimaryKey() + ` + "`)`" + `)
+				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1`
+		if gstr.Pos(tplDao, daoParseUpdatePid) == -1 {
+			daoParseUpdate += daoParseUpdatePid
+		}
+		daoHookUpdatePid := `
+			for k, v := range data {
+				switch k {
+				case ` + "`updateChildIdPathAndLevelList`" + `: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{newIdPath: 父级新idPath, oldIdPath: 父级旧idPath, newLevel: 父级新level, oldLevel: 父级旧level}
+					val := v.([]map[string]interface{})
+					for _, v1 := range val {
+						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[` + "`newIdPath`" + `]), gconv.String(v1[` + "`oldIdPath`" + `]), gconv.Int(v1[` + "`newLevel`" + `]), gconv.Int(v1[` + "`oldLevel`" + `]))
+					}
+				}
+			}`
+		if gstr.Pos(tplDao, daoHookUpdatePid) == -1 {
+			daoHookUpdate += daoHookUpdatePid
+		}
+		daoParseFieldTree := `
+			case ` + "`tree`" + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+				m = daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr)(m)`
+		if gstr.Pos(tplDao, daoParseFieldTree) == -1 {
+			daoParseField += daoParseFieldTree
+		}
+		if tpl.LabelField != `` {
+			daoParseFieldPid := `
+				case ` + "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `:
+					m = m.Fields(` + "`p_`" + ` + daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)
+					m = daoThis.ParseJoin(` + "`p_`" + `+daoThis.Table(), joinTableArr)(m)`
+			if gstr.Pos(tplDao, daoParseFieldPid) == -1 {
+				daoParseField += daoParseFieldPid
+			}
+		}
+		daoParseOrderPid := `
+			case ` + "`tree`" + `:
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, ` + "`ASC`" + `)
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), ` + "`ASC`" + `)`
+		if gstr.Pos(tplDao, daoParseOrderPid) == -1 {
+			daoParseOrder += daoParseOrderPid
+		}
+		daoParseJoinPid := `
+		case ` + "`p_`" + ` + daoThis.Table():
+			relTable := ` + "`p_`" + ` + daoThis.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+			}`
+		if gstr.Pos(tplDao, daoParseJoinPid) == -1 {
+			daoParseJoin += daoParseJoinPid
 		}
 	}
 
@@ -585,10 +667,28 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				insertData[daoThis.PrimaryKey()] = v`
 		tplDao = gstr.Replace(tplDao, daoParseInsertPoint, daoParseInsertPoint+daoParseInsert)
 	}
+	if daoHookInsert != `` {
+		daoHookInsertPoint := `// id, _ := result.LastInsertId()`
+		tplDao = gstr.Replace(tplDao, daoHookInsertPoint, `id, _ := result.LastInsertId()`+daoHookInsert)
+	}
 	if daoParseUpdate != `` {
 		daoParseUpdatePoint := `case ` + "`id`" + `:
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey()] = v`
 		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate)
+	}
+	if daoHookUpdate != `` {
+		daoHookUpdatePoint := `// row, _ := result.RowsAffected()
+
+			/* if row == 0 {
+				// err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
+				return
+			} */`
+		tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `row, _ := result.RowsAffected()
+
+			if row == 0 {
+				// err = utils.NewErrorCode(ctx, 99999999, `+"``"+`)
+				return
+			}`+daoHookUpdate)
 	}
 	if daoParseField != `` {
 		daoParseFieldPoint := `case ` + "`id`" + `:
@@ -596,14 +696,30 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		tplDao = gstr.Replace(tplDao, daoParseFieldPoint, daoParseFieldPoint+daoParseField)
 	}
 	if daoHookSelect != `` {
-		daoHookSelectPoint := `/* case ` + "`xxxx`" + `:
+		daoHookSelectPoint := `
+					/* case ` + "`xxxx`" + `:
 					record[v] = gvar.New(` + "``" + `) */`
-		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelectPoint+daoHookSelect)
+		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect)
 	}
 	if daoParseFilter != `` {
 		daoParseFilterPoint := `case ` + "`endTime`" + `:
 				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().CreatedAt, v)`
 		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter)
+	}
+	if daoParseOrder != `` {
+		daoParseOrderPoint := `case ` + "`id`" + `:
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), kArr[1])`
+		tplDao = gstr.Replace(tplDao, daoParseOrderPoint, daoParseOrderPoint+daoParseOrder)
+	}
+	if daoParseJoin != `` {
+		daoParseJoinPoint := `
+		/* case Xxxx.Table():
+		relTable := Xxxx.Table()
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+			*joinTableArr = append(*joinTableArr, relTable)
+			m = m.LeftJoin(relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
+		} */`
+		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin)
 	}
 
 	gfile.PutContents(saveFile, tplDao)
