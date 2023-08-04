@@ -84,7 +84,6 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, fill ...bool)
 					hookData[`pIdPath`] = `0`
 					hookData[`pLevel`] = 0
 				}
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -148,7 +147,6 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, fill ...bool)
 				}
 				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = pLevel + 1
-			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -267,7 +265,6 @@ func (daoThis *menuDao) ParseField(field []string, joinTableArr *[]string) gdb.M
 			case `pMenuName`:
 				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 				m = daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr)(m)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -302,8 +299,6 @@ func (daoThis *menuDao) HookSelect(afterField []string) gdb.HookHandler {
 						if record[`i18n`] == nil {
 							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
 						}
-					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
-					default:
 					}
 				}
 				result[index] = record
@@ -353,7 +348,6 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
 				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
-			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

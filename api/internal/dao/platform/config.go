@@ -72,7 +72,6 @@ func (daoThis *configDao) ParseInsert(insert map[string]interface{}, fill ...boo
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -112,7 +111,6 @@ func (daoThis *configDao) ParseUpdate(update map[string]interface{}, fill ...boo
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
-			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -198,7 +196,6 @@ func (daoThis *configDao) ParseField(field []string, joinTableArr *[]string) gdb
 			afterField = append(afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -227,8 +224,6 @@ func (daoThis *configDao) HookSelect(afterField []string) gdb.HookHandler {
 					switch v {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
-					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
-					default:
 					}
 				}
 				result[index] = record
@@ -259,7 +254,6 @@ func (daoThis *configDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `endTime`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

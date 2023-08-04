@@ -72,7 +72,6 @@ func (daoThis *sceneDao) ParseInsert(insert map[string]interface{}, fill ...bool
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -112,7 +111,6 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]interface{}, fill ...bool
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
-			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -204,7 +202,6 @@ func (daoThis *sceneDao) ParseField(field []string, joinTableArr *[]string) gdb.
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().SceneName + ` AS ` + v)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -233,8 +230,6 @@ func (daoThis *sceneDao) HookSelect(afterField []string) gdb.HookHandler {
 					switch v {
 					/* case `xxxx`:
 					record[v] = gvar.New(``) */
-					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
-					default:
 					}
 				}
 				result[index] = record
@@ -267,7 +262,6 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().SceneName, `%`+gconv.String(v)+`%`)
-			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

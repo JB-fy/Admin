@@ -76,7 +76,6 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...boo
 				insertData[daoThis.PrimaryKey()] = v
 			case `sceneIdArr`:
 				hookData[k] = v
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -123,7 +122,6 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, fill ...boo
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
-			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -228,7 +226,6 @@ func (daoThis *actionDao) ParseField(field []string, joinTableArr *[]string) gdb
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				afterField = append(afterField, v)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -260,8 +257,6 @@ func (daoThis *actionDao) HookSelect(afterField []string) gdb.HookHandler {
 					case `sceneIdArr`:
 						idArr, _ := ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
 						record[v] = gvar.New(idArr)
-					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
-					default:
 					}
 				}
 				result[index] = record
@@ -317,7 +312,6 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
 				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
-			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

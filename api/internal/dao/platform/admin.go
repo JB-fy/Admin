@@ -83,7 +83,6 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, fill ...bool
 				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			case `roleIdArr`:
 				hookData[k] = v
-			/*--------ParseInsert自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -134,7 +133,6 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, fill ...bool
 				salt := grand.S(8)
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
-			/*--------ParseUpdate自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				//数据库不存在的字段过滤掉，未传值默认true
 				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
@@ -236,7 +234,6 @@ func (daoThis *adminDao) ParseField(field []string, joinTableArr *[]string) gdb.
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				afterField = append(afterField, v)
-			/*--------ParseField自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -268,8 +265,6 @@ func (daoThis *adminDao) HookSelect(afterField []string) gdb.HookHandler {
 					case `roleIdArr`:
 						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
 						record[v] = gvar.New(idArr)
-					/*--------HookSelect自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
-					default:
 					}
 				}
 				result[index] = record
@@ -309,7 +304,6 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 			case `roleId`:
 				m = m.Where(daoAuth.RoleRelOfPlatformAdmin.Table()+`.`+k, v)
 				m = daoThis.ParseJoin(daoAuth.RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
-			/*--------ParseFilter自动代码生成锚点（不允许修改和删除，否则将不能自动生成代码）--------*/
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {
