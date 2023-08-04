@@ -30,6 +30,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 		return
 	}
 	tree := utils.Tree(list, 0, `menuId`, `pid`)
+
 	res = &apiMy.MenuTreeRes{}
 	tree.Structs(&res.Tree)
 	return

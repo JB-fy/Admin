@@ -737,6 +737,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+		case `level`:
+			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
+			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+		case `idPath`, `id_path`:
+			apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		default:
 			//主键
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
@@ -1037,7 +1042,7 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 `
 	}
 
-	if tpl.PidHandle.IsCoexist {
+	if option.IsList && tpl.PidHandle.IsCoexist {
 		tplApi += `/*--------树状列表 开始--------*/
 type ` + tpl.TableNameCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"树状列表"` + "`" + `
@@ -1323,6 +1328,71 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 		}
 		tplController += `
 	err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
+	return
+}
+`
+	}
+
+	if option.IsList && tpl.PidHandle.IsCoexist {
+		tplController += `// 树状列表
+func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes, err error) {
+	/**--------参数处理 开始--------**/
+	filter := gconv.MapDeep(req.Filter)
+	if filter == nil {
+		filter = map[string]interface{}{}
+	}
+
+	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
+	allowField = append(allowField, ` + "`id`, `label`" + `)`
+		if controllerAlloweFieldDiff != `` {
+			tplController += `
+	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
+		}
+		tplController += `
+	field := allowField
+	if len(req.Field) > 0 {
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
+		if len(field) == 0 {
+			field = allowField
+		}
+	}
+	/**--------参数处理 结束--------**/
+`
+		if option.IsAuthAction {
+			actionCode := tpl.RawTableNameCaseCamelLower + `Look`
+			actionName := option.CommonName + `-查看`
+			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			tplController += `
+	/**--------权限验证 开始--------**/
+	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	if !isAuth {
+		field = []string{` + "`id`, `label`"
+			if controllerAlloweFieldAppend != `` {
+				tplController += `, ` + controllerAlloweFieldAppend
+			}
+			tplController += `}
+	}
+	/**--------权限验证 结束--------**/
+`
+		}
+		tplController += `
+	field = append(field, ` + "`tree`" + `) //补充字段（树状列表所需）
+
+	list, err := service.` + tpl.TableNameCaseCamel + `().List(ctx, filter, field, []string{}, 0, 0)
+	if err != nil {
+		return
+	}
+	tree := utils.Tree(list, 0, ` + "`" + tpl.PrimaryKey + "`, `" + tpl.PidHandle.PidField + "`" + `)
+
+	/* // 两种方式根据情况使用
+	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
+	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		` + "`tree`" + `: tree,
+	}, 0, ` + "``" + `) */
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes{}
+	tree.Structs(&res.Tree)
 	return
 }
 `

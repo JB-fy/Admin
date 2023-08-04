@@ -143,10 +143,10 @@ type MenuTreeRes struct {
 type MenuTree struct {
 	Id       uint        `json:"id" dc:"ID"`
 	Label    string      `json:"label" dc:"标签。常用于前端组件"`
-	MenuId   uint        `json:"menuId" dc:"菜单ID"`
-	Pid      uint        `json:"pid" dc:"父级ID"`
 	Children interface{} `json:"children" dc:"子级列表"`
 	//Children []MenuTree `json:"children" dc:"子级列表"`
+	Pid    uint `json:"pid" dc:"父级ID"`
+	MenuId uint `json:"menuId" dc:"菜单ID"`
 }
 
 /*--------树状列表 结束--------*/

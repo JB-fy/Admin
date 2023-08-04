@@ -16,14 +16,14 @@ type MenuTreeRes struct {
 type MenuTree struct {
 	Id       uint        `json:"id" dc:"ID"`
 	Label    string      `json:"label" dc:"标签。常用于前端组件"`
+	Children interface{} `json:"children" dc:"子级列表"`
+	//Children []MenuTree `json:"children" dc:"子级列表"`
+	Pid      uint        `json:"pid" dc:"父级ID"`
 	MenuId   uint        `json:"menuId" dc:"菜单ID"`
 	MenuIcon string      `json:"menuIcon" dc:"菜单图标"`
 	MenuName string      `json:"menuName" dc:"菜单名称"`
 	MenuUrl  string      `json:"menuUrl" dc:"菜单链接"`
-	Pid      uint        `json:"pid" dc:"父级ID"`
 	I18n     interface{} `json:"i18n" dc:"多语言"`
-	Children interface{} `json:"children" dc:"子级列表"`
-	//Children []LoginMenuTree `json:"children" dc:"子级列表"`
 }
 
 /*--------树状列表 结束--------*/
