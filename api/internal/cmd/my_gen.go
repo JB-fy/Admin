@@ -420,7 +420,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		index := fieldCaseCamelArrG.Search(v)
 		if index != -1 {
 			tpl.LabelField = fieldArr[index]
-			return
+			break
 		}
 	}
 
