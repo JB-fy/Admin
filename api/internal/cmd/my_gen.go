@@ -584,7 +584,7 @@ import (
 `
 	if tpl.PidHandle.IsCoexist {
 		tplLogic += `
-		"github.com/gogf/gf/v2/container/garray"`
+	"github.com/gogf/gf/v2/container/garray"`
 	}
 	tplLogic += `
 	"github.com/gogf/gf/v2/database/gdb"`
