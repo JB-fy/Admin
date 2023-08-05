@@ -17,19 +17,24 @@ gf gen service
 # 代码自动生成流程（强烈建议搭配Git使用）
 
 1.新建数据库表。如：auth_test
-- 表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
-- 主键必须是第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
-- 表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端部分组件，向后端请求获取id和label两个字段用于展示)
+表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
+
+主键必须在第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
+
+表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端部分组件，服务端请求获取id和label两个字段用于列表展示)
+
 - 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
+
     - 部分常用字段：
-        - password	密码
-        - passwd		密码
-        - salt		加密盐
-        - pid			父级（指向本表）
-        - sort		排序
-        - weight 		权重
-        - gender 		性别
-        - avatar		头像
+        - password|passwd	密码
+        - salt			加密盐（password|passwd,salt同时存在时特殊处理）
+        - pid				父级（指向本表）
+        - level			层级（pid,level,idPath|id_path同时存在时特殊处理）
+        - idPath|id_path	层级路径（pid,level,idPath|id_path同时存在时特殊处理）
+        - sort			排序
+        - weight 			权重
+        - gender 			性别
+        - avatar			头像
     - 其他类型字段：
         - 名称和标识字段，命名用name或code后缀
         - 手机号码字段，命名用mobile或phone后缀
