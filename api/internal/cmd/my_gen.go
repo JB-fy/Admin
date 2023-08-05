@@ -630,6 +630,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			daoParseUpdate += daoParseUpdatePid
 		}
 		daoHookUpdatePid := `
+
 			for k, v := range data {
 				switch k {
 				case ` + "`updateChildIdPathAndLevelList`" + `: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{newIdPath: 父级新idPath, oldIdPath: 父级旧idPath, newLevel: 父级新level, oldLevel: 父级旧level}
@@ -715,17 +716,17 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	}
 	if daoHookUpdate != `` {
 		daoHookUpdatePoint := `
-			
+
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */`
 		tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
-			
-			/* row, _ := result.RowsAffected()
+
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */`+daoHookUpdate)
+			}`+daoHookUpdate)
 	}
 	if daoParseField != `` {
 		daoParseFieldPoint := `case ` + "`id`" + `:
