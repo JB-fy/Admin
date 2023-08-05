@@ -1337,19 +1337,23 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		return
 	}
 
-	controllerAlloweFieldAdd := "`id`, "
-	controllerAlloweFieldAppend := "`id`, "
+	controllerAlloweFieldList := "`id`, "
+	controllerAlloweFieldInfo := "`id`, "
+	controllerAlloweFieldTree := "`id`, "
+	controllerAlloweFieldNoAuth := "`id`, "
 	if tpl.PrimaryKey != `id` {
-		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, `
+		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, `
 	}
 	if tpl.LabelField != `` {
-		controllerAlloweFieldAdd += "`label`, "
+		controllerAlloweFieldList += "`label`, "
+		controllerAlloweFieldInfo += "`label`, "
+		controllerAlloweFieldTree += "`label`, "
 		if tpl.PidHandle.PidField != `` {
-			controllerAlloweFieldAdd += "`p" + gstr.CaseCamel(tpl.LabelField) + "`, "
+			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.LabelField) + "`, "
+			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.LabelField) + "`, "
 		}
-
-		controllerAlloweFieldAppend += "`label`, "
-		controllerAlloweFieldAppend += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
+		controllerAlloweFieldNoAuth += "`label`, "
+		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
 	}
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
@@ -1360,8 +1364,8 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 		}
 	}
-	controllerAlloweFieldAdd = gstr.SubStr(controllerAlloweFieldAdd, 0, -len(`, `))
-	controllerAlloweFieldAppend = gstr.SubStr(controllerAlloweFieldAppend, 0, -len(`, `))
+	controllerAlloweFieldList = gstr.SubStr(controllerAlloweFieldList, 0, -len(`, `))
+	controllerAlloweFieldNoAuth = gstr.SubStr(controllerAlloweFieldNoAuth, 0, -len(`, `))
 	controllerAlloweFieldDiff = gstr.SubStr(controllerAlloweFieldDiff, 0, -len(`, `))
 
 	tplController := `package controller
@@ -1397,13 +1401,13 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	page := req.Page
 	limit := req.Limit
 `
-		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldAppend != ``) {
+		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldNoAuth != ``) {
 			tplController += `
 	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()`
 		}
 		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
-	allowField = append(allowField, ` + controllerAlloweFieldAdd + `)`
+	allowField = append(allowField, ` + controllerAlloweFieldList + `)`
 		if controllerAlloweFieldDiff != `` {
 			tplController += `
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
@@ -1426,7 +1430,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
-		field = []string{` + controllerAlloweFieldAppend + `}
+		field = []string{` + controllerAlloweFieldNoAuth + `}
 	}
 	/**--------权限验证 结束--------**/
 `
@@ -1462,7 +1466,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
-	allowField = append(allowField, ` + controllerAlloweFieldAdd + `)`
+	allowField = append(allowField, ` + controllerAlloweFieldInfo + `)`
 		if controllerAlloweFieldDiff != `` {
 			tplController += `
 	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
@@ -1614,13 +1618,13 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		filter = map[string]interface{}{}
 	}
 `
-		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldAppend != ``) {
+		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldNoAuth != ``) {
 			tplController += `
 	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()`
 		}
 		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
-	allowField = append(allowField, ` + controllerAlloweFieldAdd + `)`
+	allowField = append(allowField, ` + controllerAlloweFieldTree + `)`
 		if controllerAlloweFieldDiff != `` {
 			tplController += `
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
@@ -1643,7 +1647,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
-		field = []string{` + controllerAlloweFieldAppend + `}
+		field = []string{` + controllerAlloweFieldNoAuth + `}
 	}
 	/**--------权限验证 结束--------**/
 `
