@@ -87,6 +87,7 @@ type MyGenTpl struct {
 		PidField    string //父级字段
 		LevelField  string //层级字段
 		IdPathField string //层级路径字段
+		SortField   string //排序字段
 	}
 	ImageVideoJsonFieldArr []string //icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀。//video,video_list,videoList,video_arr,videoArr等后缀的字段列表
 	// RelIdFieldArr          []string //id后缀的字段（做自动联表，但关联表dao可能在不同目录，无法定位，暂时不做）
@@ -391,6 +392,8 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			tpl.PidHandle.LevelField = field
 		case `idPath`, `id_path`:
 			tpl.PidHandle.IdPathField = field
+		case `sort`:
+			tpl.PidHandle.SortField = field
 		default:
 			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 				tpl.PrimaryKey = field
@@ -649,7 +652,12 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		daoParseOrderPid := `
 			case ` + "`tree`" + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, ` + "`ASC`" + `)
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, ` + "`ASC`" + `)`
+		if tpl.PidHandle.SortField != `` {
+			daoParseOrderPid += `
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `, ` + "`ASC`" + `)`
+		}
+		daoParseOrderPid += `
 				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), ` + "`ASC`" + `)`
 		if gstr.Pos(tplDao, daoParseOrderPid) == -1 {
 			daoParseOrder += daoParseOrderPid
@@ -1365,6 +1373,8 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		}
 	}
 	controllerAlloweFieldList = gstr.SubStr(controllerAlloweFieldList, 0, -len(`, `))
+	controllerAlloweFieldInfo = gstr.SubStr(controllerAlloweFieldInfo, 0, -len(`, `))
+	controllerAlloweFieldTree = gstr.SubStr(controllerAlloweFieldTree, 0, -len(`, `))
 	controllerAlloweFieldNoAuth = gstr.SubStr(controllerAlloweFieldNoAuth, 0, -len(`, `))
 	controllerAlloweFieldDiff = gstr.SubStr(controllerAlloweFieldDiff, 0, -len(`, `))
 
