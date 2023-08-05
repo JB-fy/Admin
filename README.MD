@@ -5,8 +5,10 @@
 <div align=center>
 <img src="https://img.shields.io/badge/Golang-1.20-blue"/>
 <img src="https://img.shields.io/badge/GoFrame-2.5-lightBlue"/>
-<img src="https://img.shields.io/badge/Vue3-brightgreen"/>
-<img src="https://img.shields.io/badge/Element Plus-2.3.8-green"/>
+<img src="https://img.shields.io/badge/PHP-8.2-blue"/>
+<img src="https://img.shields.io/badge/Hyperf-3.0-lightBlue"/>
+<img src="https://img.shields.io/badge/Vue-3.2.38-blue"/>
+<img src="https://img.shields.io/badge/Element Plus-2.3.8-lightBlue"/>
 </div>
 
 # 常用命令（GO和PHP任选一个）
