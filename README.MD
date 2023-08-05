@@ -38,14 +38,18 @@ npm run dev
 npm run build
 ```
 
-### 微信交流群
+## 微信交流群
 | 微信 |
 |  :---:  | 
 | <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691250502303_7330.jpg"> 
 
 添加微信，备注"加入JB-Admin交流群"
 
-### 捐献
+## 捐献
 | 请作者喝饮料 |
 |  :---:  | 
 | <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691251000749_8189.jpg"> 
+
+## 10. 商用注意事项
+
+如果您将此项目用于商业用途，请遵守Apache2.0协议并保留作者技术支持声明。
