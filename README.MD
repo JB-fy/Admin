@@ -45,5 +45,5 @@ npm run build
 
 添加微信，备注"加入JB-Admin交流群"
 
-### 捐献
-<img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691251000749_8189.jpg"> 
+### 捐献（如果你觉得这个项目对你有帮助，你可以请作者喝饮料）
+| <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691251000749_8189.jpg"> 
