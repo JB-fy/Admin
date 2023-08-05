@@ -32,11 +32,11 @@ import (
 
 type AliyunOss struct {
 	Ctx             context.Context
-	Host            string `c:"aliyunOssHost"`            // https://oss-cn-hangzhou.aliyuncs.com
-	Bucket          string `c:"aliyunOssBucket"`          // jslx01
-	AccessKeyId     string `c:"aliyunOssAccessKeyId"`     // LTAI5t9jGNGpb9hhtV8M8q2x
-	AccessKeySecret string `c:"aliyunOssAccessKeySecret"` // vhfbJ2QAZsFoTZ6m5XF0qwikqWeR0x
-	RoleArn         string `c:"aliyunOssRoleArn"`         // acs:ram::1359390739767110:role/aliyunosstokengeneratorrole
+	Host            string `c:"aliyunOssHost"`
+	Bucket          string `c:"aliyunOssBucket"`
+	AccessKeyId     string `c:"aliyunOssAccessKeyId"`
+	AccessKeySecret string `c:"aliyunOssAccessKeySecret"`
+	RoleArn         string `c:"aliyunOssRoleArn"`
 }
 
 type AliyunOssCallback struct {
