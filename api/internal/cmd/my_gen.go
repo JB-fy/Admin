@@ -26,11 +26,11 @@ import (
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
 	部分常用字段：
-		password|passwd	密码
-		salt			加密盐（password|passwd,salt同时存在时特殊处理）
-		pid				父级（指向本表）
-		level			层级（pid,level,idPath|id_path同时存在时特殊处理）
-		idPath|id_path	层级路径（pid,level,idPath|id_path同时存在时特殊处理）
+		password|passwd	密码（password|passwd,salt同时存在时，有特殊处理）
+		salt			加密盐
+		pid				父级（指向本表。pid,level,idPath|id_path同时存在时，有特殊处理）
+		level			层级
+		idPath|id_path	层级路径
 		sort			排序
 		weight 			权重
 		gender 			性别

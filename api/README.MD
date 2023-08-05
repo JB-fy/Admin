@@ -22,13 +22,13 @@ gf gen service
 - 表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端部分组件，服务端请求获取id和label两个字段用于列表展示)
 - 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
     - 部分常用字段：
-        - password|passwd	密码
-        - salt			加密盐（password|passwd,salt同时存在时特殊处理）
-        - pid				父级（指向本表）
-        - level			层级（pid,level,idPath|id_path同时存在时特殊处理）
-        - idPath|id_path	层级路径（pid,level,idPath|id_path同时存在时特殊处理）
-        - sort			排序
-        - weight 			权重
+        - password|passwd	密码（password|passwd,salt同时存在时特殊处理）
+        - salt			    加密盐
+        - pid				父级（指向本表。pid,level,idPath|id_path同时存在时，有特殊处理）
+        - level			    层级
+        - idPath|id_path	层级路径
+        - sort			    排序
+        - weight            权重
         - gender 			性别
         - avatar			头像
     - 其他类型字段：
