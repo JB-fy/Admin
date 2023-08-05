@@ -193,7 +193,10 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	}
 	tree := utils.Tree(list, 0, `menuId`, `pid`)
 
-	res = &apiAuth.MenuTreeRes{}
-	tree.Structs(&res.Tree)
+	/* res = &apiAuth.MenuTreeRes{}
+	tree.Structs(&res.Tree) */
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`tree`: tree,
+	}, 0, ``)
 	return
 }

@@ -1455,10 +1455,10 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		return
 	}
 
-	/* // 两种方式根据情况使用
+	// 两种方式根据情况使用
 	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
 	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
-	utils.HttpWriteJson(ctx, map[string]interface{}{
+	/* utils.HttpWriteJson(ctx, map[string]interface{}{
 		` + "`count`" + `: count,
 		` + "`list`" + `:  list,
 	}, 0, ` + "``" + `) */
@@ -1512,10 +1512,10 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		return
 	}
 
-	/* // 两种方式根据情况使用
+	// 两种方式根据情况使用
 	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
 	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
-	utils.HttpWriteJson(ctx, map[string]interface{}{
+	/* utils.HttpWriteJson(ctx, map[string]interface{}{
 		` + "`info`" + `: info,
 	}, 0, ` + "``" + `) */
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes{}
@@ -1671,14 +1671,9 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	}
 	tree := utils.Tree(list, 0, columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, columnsThis.` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
 
-	/* // 两种方式根据情况使用
-	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
-	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
 	utils.HttpWriteJson(ctx, map[string]interface{}{
 		` + "`tree`" + `: tree,
-	}, 0, ` + "``" + `) */
-	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes{}
-	tree.Structs(&res.Tree)
+	}, 0, ` + "``" + `)
 	return
 }
 `
