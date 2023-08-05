@@ -4,7 +4,6 @@
 <div align=center>
 
 # JB Admin
-
 </div>
 <div align=center>
 <img src="https://img.shields.io/badge/Golang-1.20-blue"/>
