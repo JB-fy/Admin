@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 30/07/2023 00:26:59
+ Date: 06/08/2023 02:49:48
 */
 
 SET NAMES utf8mb4;
@@ -302,16 +302,11 @@ CREATE TABLE `platform_config`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'aliyunOssRoleArn', 'acs:ram::1359390739767110:role/aliyunosstokengeneratorrole', '2023-07-13 12:22:32', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (2, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-07-13 12:23:14', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (3, 'aliyunOssBucket', 'jslx01', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (4, 'aliyunOssAccessKeyId', 'LTAI5t9jGNGpb9hhtV8M8q2x', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (5, 'aliyunOssAccessKeySecret', 'vhfbJ2QAZsFoTZ6m5XF0qwikqWeR0x', '2023-07-13 12:23:18', '2023-07-11 18:33:31');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -325,7 +320,7 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
