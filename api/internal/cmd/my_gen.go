@@ -714,18 +714,18 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate)
 	}
 	if daoHookUpdate != `` {
-		daoHookUpdatePoint := `// row, _ := result.RowsAffected()
-
-			/* if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ` + "``" + `)
+		daoHookUpdatePoint := `
+			
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
 				return
 			} */`
-		tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `row, _ := result.RowsAffected()
-
+		tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
+			
+			/* row, _ := result.RowsAffected()
 			if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, `+"``"+`)
 				return
-			}`+daoHookUpdate)
+			} */`+daoHookUpdate)
 	}
 	if daoParseField != `` {
 		daoParseFieldPoint := `case ` + "`id`" + `:

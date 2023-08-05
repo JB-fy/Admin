@@ -157,9 +157,7 @@ func (daoThis *roleRelToMenuDao) HookUpdate(data map[string]interface{}, idArr .
 				return
 			}
 			// row, _ := result.RowsAffected()
-
 			/* if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return
@@ -177,7 +175,6 @@ func (daoThis *roleRelToMenuDao) HookDelete(idArr ...int) gdb.HookHandler {
 			}
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return

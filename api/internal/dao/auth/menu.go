@@ -193,9 +193,7 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 				return
 			}
 			row, _ := result.RowsAffected()
-
 			if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			}
 
@@ -221,13 +219,10 @@ func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			row, _ := result.RowsAffected()
+			/* row, _ := result.RowsAffected()
 			if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
-			}
-
-			RoleRelToMenu.ParseDbCtx(ctx).Where(RoleRelToMenu.Columns().MenuId, idArr).Delete()
+			} */
 			return
 		},
 	}

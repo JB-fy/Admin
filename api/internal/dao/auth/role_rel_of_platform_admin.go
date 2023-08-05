@@ -157,9 +157,7 @@ func (daoThis *roleRelOfPlatformAdminDao) HookUpdate(data map[string]interface{}
 				return
 			}
 			// row, _ := result.RowsAffected()
-
 			/* if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return
@@ -177,7 +175,6 @@ func (daoThis *roleRelOfPlatformAdminDao) HookDelete(idArr ...int) gdb.HookHandl
 			}
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
-				// err = utils.NewErrorCode(ctx, 99999999, ``)
 				return
 			} */
 			return
