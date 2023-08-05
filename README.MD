@@ -4,6 +4,8 @@
 <div align=center size=100>
 JB Admin
 </div>
+
+<span style="font-size: 120px;">这段文字字号为20px</span>
 <div align=center>
 <img src="https://img.shields.io/badge/Golang-1.20-blue"/>
 <img src="https://img.shields.io/badge/GoFrame-2.5-lightBlue"/>
