@@ -40,12 +40,12 @@ import (
 		手机号码字段，命名用mobile或phone后缀
 		链接地址字段，命名用url或link后缀
 		关联id字段和关联表主键保持一致，命名用id后缀
-		图片字段，命名用icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀（多图片时字段类型用json或text，保存格式为JSON格式）
-		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀（多视频时字段类型用json或text，保存格式为JSON格式）
+		图片字段，命名用icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀（多图片时类型用json或text，保存格式为JSON格式）
+		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀（多视频时类型用json或text，保存格式为JSON格式）
 		ip字段，命名用Ip后缀
 		备注字段，命名用remark后缀
-		状态和类型字段，命名用status或type后缀且字段类型必须是int或tinyint。字段注释中多状态之间用[\s,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
-		是否字段，命名用is_前缀且字段类型必须是int或tinyint。默认：0否 1是
+		状态和类型字段，命名用status或type后缀且必须是int，tinyint等int类型。字段注释中多状态之间用[\s,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
+		是否字段，命名用is_前缀且必须是int，tinyint等int类型。默认：0否 1是
 */
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
