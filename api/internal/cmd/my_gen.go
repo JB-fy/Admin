@@ -90,7 +90,6 @@ type MyGenTpl struct {
 		SortField   string //排序字段
 	}
 	ImageVideoJsonFieldArr []string //icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀。//video,video_list,videoList,video_arr,videoArr等后缀的字段列表
-	// RelIdFieldArr          []string //id后缀的字段（做自动联表，但关联表dao可能在不同目录，无法定位，暂时不做）
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
