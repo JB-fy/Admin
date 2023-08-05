@@ -11,6 +11,17 @@
 <img src="https://img.shields.io/badge/Element Plus-2.3.8-lightBlue"/>
 </div>
 
+# 重要提示
+
+1.本项目从起步到开发到部署均有文档和详细视频教程
+2.本项目需要您有一定的golang和vue基础
+
+3.您完全可以通过我们的教程和文档完成一切操作，因此我们不再提供免费的技术服务，如需服务请进行[付费支持](https://www.gin-vue-admin.com/coffee/payment.html)
+
+4.如果您将此项目用于商业用途，请遵守Apache2.0协议并保留作者技术支持声明。您需保留如下版权声明信息，其余信息功能不做任何限制。如需剔除请[购买授权](https://www.gin-vue-admin.com/empower/index.html)
+
+<img src="https://qmplusimg.henrongyi.top/%E6%8E%88%E6%9D%83.png" width="1000">
+
 # 常用命令（GO和PHP任选一个）
 
 #### GO服务端（推荐使用，有代码自动生成功能。所在目录：api）
