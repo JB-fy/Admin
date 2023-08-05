@@ -65,7 +65,7 @@ npm run build
 |  :---:  | 
 | <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691250502303_7330.jpg"> 
 
-添加微信，备注"加入JB-Admin交流群"
+添加微信，备注"加入JB Admin交流群"
 
 ## 捐献
 | 请作者喝饮料 |
