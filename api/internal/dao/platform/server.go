@@ -156,8 +156,9 @@ func (daoThis *serverDao) HookUpdate(data map[string]interface{}, idArr ...int) 
 				}
 				return
 			}
-			// row, _ := result.RowsAffected()
-			/* if row == 0 {
+
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
 				return
 			} */
 			return

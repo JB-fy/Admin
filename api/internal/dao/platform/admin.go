@@ -189,8 +189,8 @@ func (daoThis *adminDao) HookUpdate(data map[string]interface{}, idArr ...int) g
 				}
 			}
 
-			// row, _ := result.RowsAffected()
-			/* if row == 0 {
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
 				return
 			} */
 			return

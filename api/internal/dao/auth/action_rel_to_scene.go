@@ -156,8 +156,9 @@ func (daoThis *actionRelToSceneDao) HookUpdate(data map[string]interface{}, idAr
 				}
 				return
 			}
-			// row, _ := result.RowsAffected()
-			/* if row == 0 {
+
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
 				return
 			} */
 			return

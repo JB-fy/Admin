@@ -156,8 +156,9 @@ func (daoThis *roleRelOfPlatformAdminDao) HookUpdate(data map[string]interface{}
 				}
 				return
 			}
-			// row, _ := result.RowsAffected()
-			/* if row == 0 {
+
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
 				return
 			} */
 			return

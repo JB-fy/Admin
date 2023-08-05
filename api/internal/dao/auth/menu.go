@@ -192,6 +192,7 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 				}
 				return
 			}
+
 			row, _ := result.RowsAffected()
 			if row == 0 {
 				return

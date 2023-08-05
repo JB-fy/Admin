@@ -156,8 +156,9 @@ func (daoThis *roleRelToActionDao) HookUpdate(data map[string]interface{}, idArr
 				}
 				return
 			}
-			// row, _ := result.RowsAffected()
-			/* if row == 0 {
+
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
 				return
 			} */
 			return
