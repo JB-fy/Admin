@@ -500,7 +500,8 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	daoParseInsert := ``
 	daoHookInsert := ``
 	daoParseUpdate := ``
-	daoHookUpdate := ``
+	daoHookUpdateBefore := ``
+	daoHookUpdateAfter := ``
 	daoParseField := ``
 	daoHookSelect := ``
 	daoParseFilter := ``
@@ -585,6 +586,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	if tpl.PidHandle.IsCoexist {
 		daoParseInsertPid := `
+
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
@@ -629,7 +631,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.Pos(tplDao, daoParseUpdatePid) == -1 {
 			daoParseUpdate += daoParseUpdatePid
 		}
-		daoHookUpdatePid := `
+		daoHookUpdateAfterPid := `
 
 			for k, v := range data {
 				switch k {
@@ -640,8 +642,8 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 				}
 			}`
-		if gstr.Pos(tplDao, daoHookUpdatePid) == -1 {
-			daoHookUpdate += daoHookUpdatePid
+		if gstr.Pos(tplDao, daoHookUpdateAfterPid) == -1 {
+			daoHookUpdateAfter += daoHookUpdateAfterPid
 		}
 		daoParseFieldTree := `
 			case ` + "`tree`" + `:
@@ -714,19 +716,29 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey()] = v`
 		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate)
 	}
-	if daoHookUpdate != `` {
+	if daoHookUpdateBefore != `` || daoHookUpdateAfter != `` {
 		daoHookUpdatePoint := `
 
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */`
-		tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
+		if daoHookUpdateBefore != `` {
+			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, daoHookUpdateBefore+`
+
+			/* row, _ := result.RowsAffected()
+			if row == 0 {
+				return
+			} */`)
+		}
+		if daoHookUpdateAfter != `` {
+			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
 
 			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			}`+daoHookUpdate)
+			}`+daoHookUpdateAfter)
+		}
 	}
 	if daoParseField != `` {
 		daoParseFieldPoint := `case ` + "`id`" + `:
