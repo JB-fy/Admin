@@ -28,7 +28,7 @@ import (
 	部分常用字段：
 		password|passwd	密码（password|passwd,salt同时存在时，有特殊处理）
 		salt			加密盐
-		pid				父级（指向本表。pid,level,idPath|id_path同时存在时，有特殊处理）
+		pid				父级（指向本表主键。pid,level,idPath|id_path同时存在时，有特殊处理）
 		level			层级
 		idPath|id_path	层级路径
 		sort			排序
