@@ -1,7 +1,7 @@
 <div align=center>
 <img src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230806/1691260208998_6905.ico" width=300" height="300" />
 </div>
-<div align=center style="font-size: 100px;">
+<div align=center size=100>
 JB Admin
 </div>
 <div align=center>
