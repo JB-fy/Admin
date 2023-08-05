@@ -41,6 +41,6 @@ npm run build
 ### 微信交流群
 | 微信 |
 |  :---:  | 
-| <img width="150" src="http://qmplusimg.henrongyi.top/qrjjz.png"> 
+| <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691250502303_7330.jpg"> 
 
 添加微信，备注"加入JB-Admin交流群"
