@@ -103,7 +103,7 @@ const saveDrawer = reactive({
                     <ElInput v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
-                    <label v-if="saveForm.data.id">
+                    <label v-if="saveForm.data.idArr?.length">
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
