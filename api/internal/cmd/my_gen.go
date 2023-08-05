@@ -888,7 +888,7 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Create(ctx context.Context, da
 }
 
 // 修改
-func (logicThis *s` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -948,12 +948,12 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, fi
 	if len(hookData) > 0 {
 		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
-	_, err = model.UpdateAndGetAffected()
+	row, err = model.UpdateAndGetAffected()
 	return
 }
 
 // 删除
-func (logicThis *s` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
+func (logicThis *s` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -971,7 +971,8 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, fi
 `
 	}
 	tplLogic += `
-	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	row, _ = result.RowsAffected()
 	return
 }
 `
@@ -1597,7 +1598,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 `
 		}
 		tplController += `
-	err = service.` + tpl.TableNameCaseCamel + `().Update(ctx, filter, data)
+	_, err = service.` + tpl.TableNameCaseCamel + `().Update(ctx, filter, data)
 	return
 }
 
@@ -1625,7 +1626,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 `
 		}
 		tplController += `
-	err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
+	_, err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
 	return
 }
 

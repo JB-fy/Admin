@@ -22,9 +22,9 @@ type (
 		// 新增
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 		// 判断操作权限
 		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
 	}
@@ -38,9 +38,9 @@ type (
 		// 新增
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 	IRole interface {
 		// 总数
@@ -52,9 +52,9 @@ type (
 		// 新增
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 	IScene interface {
 		// 总数
@@ -66,9 +66,9 @@ type (
 		// 新增
 		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error)
+		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (err error)
+		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
 )
 
@@ -78,6 +78,17 @@ var (
 	localRole   IRole
 	localScene  IScene
 )
+
+func Action() IAction {
+	if localAction == nil {
+		panic("implement not found for interface IAction, forgot register?")
+	}
+	return localAction
+}
+
+func RegisterAction(i IAction) {
+	localAction = i
+}
 
 func Menu() IMenu {
 	if localMenu == nil {
@@ -110,15 +121,4 @@ func Scene() IScene {
 
 func RegisterScene(i IScene) {
 	localScene = i
-}
-
-func Action() IAction {
-	if localAction == nil {
-		panic("implement not found for interface IAction, forgot register?")
-	}
-	return localAction
-}
-
-func RegisterAction(i IAction) {
-	localAction = i
 }

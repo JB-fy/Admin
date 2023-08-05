@@ -148,7 +148,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 	}
 	/**--------权限验证 结束--------**/
 
-	err = service.Admin().Update(ctx, filter, data)
+	_, err = service.Admin().Update(ctx, filter, data)
 	return
 }
 
@@ -172,6 +172,6 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminD
 	}
 	/**--------权限验证 结束--------**/
 
-	err = service.Admin().Delete(ctx, filter)
+	_, err = service.Admin().Delete(ctx, filter)
 	return
 }

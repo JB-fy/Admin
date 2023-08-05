@@ -91,7 +91,7 @@ func (logicThis *sAction) Create(ctx context.Context, data map[string]interface{
 }
 
 // 修改
-func (logicThis *sAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (err error) {
+func (logicThis *sAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -110,12 +110,12 @@ func (logicThis *sAction) Update(ctx context.Context, filter map[string]interfac
 	if len(hookData) > 0 {
 		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
 	}
-	_, err = model.UpdateAndGetAffected()
+	row, err = model.UpdateAndGetAffected()
 	return
 }
 
 // 删除
-func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (err error) {
+func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -123,7 +123,8 @@ func (logicThis *sAction) Delete(ctx context.Context, filter map[string]interfac
 		return
 	}
 
-	_, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	row, _ = result.RowsAffected()
 	return
 }
 

@@ -136,7 +136,7 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 	}
 	/**--------权限验证 结束--------**/
 
-	err = service.Role().Update(ctx, filter, data)
+	_, err = service.Role().Update(ctx, filter, data)
 	return
 }
 
@@ -153,6 +153,6 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	}
 	/**--------权限验证 结束--------**/
 
-	err = service.Role().Delete(ctx, filter)
+	_, err = service.Role().Delete(ctx, filter)
 	return
 }
