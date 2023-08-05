@@ -1,6 +1,6 @@
 # 常用命令（GO和PHP任选一个）
 
-##### GO服务端（推荐使用，有代码自动生成功能）
+#### GO服务端（推荐使用，有代码自动生成功能）
 ```bash
 # 服务启动
 gf run main.go -a "http"
@@ -15,7 +15,7 @@ gf gen service
 ./main myGen
 ```
 
-##### PHP服务端（无代码自动生成功能。可参考GO服务端api/internal/cmd/my_gen.go代码实现）
+#### PHP服务端（无代码自动生成功能）
 ```bash
 # 服务启动
 php bin/hyperf.php start
@@ -30,7 +30,7 @@ php bin/hyperf.php gen:model --pool=default
 php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
 ```
 
-##### VUE前端
+#### VUE前端
 ```bash
 # 服务启动
 npm run dev
