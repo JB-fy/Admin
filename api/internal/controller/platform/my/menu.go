@@ -31,7 +31,8 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	}
 	tree := utils.Tree(list, 0, `menuId`, `pid`)
 
-	res = &apiMy.MenuTreeRes{}
-	tree.Structs(&res.Tree)
+	utils.HttpWriteJson(ctx, map[string]interface{}{
+		`tree`: tree,
+	}, 0, ``)
 	return
 }
