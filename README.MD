@@ -21,7 +21,7 @@
 
 <img src="https://img1.imgtp.com/2023/08/06/g3q4kjlq.png" width="1000">
 
-# 常用命令（GO和PHP任选一个）
+# 常用命令（服务端GO和PHP任选一个）
 
 #### GO服务端（推荐使用，有代码自动生成功能。所在目录：api）
 ```bash
