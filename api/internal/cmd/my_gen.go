@@ -998,6 +998,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
+			`"`, `\"`,
 		}))
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
@@ -1805,6 +1806,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
+			`"`, `\"`,
 		}))
 		switch field {
 		case `deletedAt`, `deleted_at`:
@@ -2796,6 +2798,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
+			`"`, `\"`,
 		}))
 		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 
@@ -3224,6 +3227,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
+			`"`, `\"`,
 		}))
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`:
