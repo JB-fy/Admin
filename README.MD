@@ -68,6 +68,11 @@ npm run build
 
 添加微信，备注"加入JB Admin交流群"
 
+## 捐献
+| 请作者喝饮料 |
+|  :---:  | 
+| <img width="150" src="https://img1.imgtp.com/2023/08/06/IEtUNe1P.jpg"> 
+
 ## 商用注意事项
 
 如果您将此项目用于商业用途，请遵守Apache2.0协议并保留作者技术支持声明。
