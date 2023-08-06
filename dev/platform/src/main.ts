@@ -7,10 +7,7 @@ import i18n from './i18n'
 import router from './router'
 import { createPinia } from 'pinia'
 
-import VueParticles from 'vue3-particles'
-
 const app = createApp(App)
-app.use(VueParticles)
 app.use(i18n)
 app.use(router)
 app.use(createPinia())
