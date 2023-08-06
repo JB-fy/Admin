@@ -17,7 +17,7 @@
 
 # 重要提示
 
-如果您将此项目用于商业用途，请遵守[Apache2.0协议](./LICENSE)并保留作者技术支持声明。您需保留如下版权声明信息，其余信息功能不做任何限制。如需剔除请联系作者购买授权（往下翻可添加作者微信）
+如果您将此项目用于商业用途，请遵守[Apache2.0协议](./LICENSE)并保留作者技术支持声明。您需保留如下版权声明信息，其余信息功能不做任何限制。如需剔除请联系作者购买授权（往下翻有作者微信）
 
 <img src="https://img1.imgtp.com/2023/08/06/g3q4kjlq.png" width="1000">
 
@@ -49,7 +49,7 @@ php bin/hyperf.php server:watch
 # 快速生成模型类（--pool对应哪个库）
 php bin/hyperf.php gen:model --pool=default 
 
-# 快速生成Dao类，需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再修改
+# 快速生成Dao类（需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再还原）
 php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
 ```
 

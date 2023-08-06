@@ -10,7 +10,7 @@ php bin/hyperf.php server:watch
 # 快速生成模型类（--pool对应哪个库）
 php bin/hyperf.php gen:model --pool=default 
 
-# 快速生成Dao类，需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再修改
+# 快速生成Dao类（需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再还原）
 php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
 ```
     
