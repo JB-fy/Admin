@@ -1,7 +1,70 @@
 <script setup lang="ts">
+//import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
+import { loadSlim } from "tsparticles-slim"; // if you are going to use `loadSlim`, install the "tsparticles-slim" package too.
+
+const particlesInit = async engine => {
+    //await loadFull(engine);
+    await loadSlim(engine);
+}
+
+const particlesLoaded = async container => {
+    console.log("Particles container loaded", container);
+}
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+
+const particleOptions = reactive({
+    fpsLimit: 120,
+    interactivity: {
+        events: {
+            onClick: {
+                enable: true,
+                mode: 'push'
+            },
+            resize: true
+        },
+        modes: {
+            bubble: {
+                distance: 400,
+                duration: 2,
+                opacity: 0.8,
+                size: 40
+            },
+            push: {
+                quantity: 4
+            },
+            repulse: {
+                distance: 200,
+                duration: 0.4
+            }
+        }
+    },
+    particles: {
+        links: {
+            color: '#ffffff',
+            distance: 150,
+            enable: true,
+            opacity: 0.5,
+            width: 1
+        },
+        move: {
+            direction: 'none',
+            enable: true,
+            outMode: 'bounce',
+            random: false,
+            speed: 4,
+            straight: false
+        },
+        number: {
+            value: 150
+        },
+        opacity: {
+            value: 0.5
+        }
+    },
+    detectRetina: true
+})
 
 const loginForm = reactive({
     ref: null as any,
@@ -35,6 +98,8 @@ const loginForm = reactive({
 </script>
 
 <template>
+    <vue-particles id="tsparticles" :particlesInit="particlesInit" :particlesLoaded="particlesLoaded"
+        :options="particleOptions" />
     <div class="particles"></div>
     <ElTag id="login-container">
         <ElDivider>
