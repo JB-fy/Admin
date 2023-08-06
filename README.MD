@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230806/1691260208998_6905.ico" width=300" height="300" />
+<img src="https://img1.imgtp.com/2023/08/06/l3DYneky.png" width=300" height="300" />
 </div>
 <div align=center>
 
@@ -19,7 +19,7 @@
 
 如果您将此项目用于商业用途，请遵守Apache2.0协议并保留作者技术支持声明。您需保留如下版权声明信息，其余信息功能不做任何限制。如需剔除请联系作者购买授权
 
-<img src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230806/1691262207933_9012.png" width="1000">
+<img src="https://img1.imgtp.com/2023/08/06/g3q4kjlq.png" width="1000">
 
 # 常用命令（GO和PHP任选一个）
 
@@ -64,14 +64,14 @@ npm run build
 ## 微信交流群
 | 微信 |
 |  :---:  | 
-| <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691250502303_7330.jpg"> 
+| <img width="150" src="https://img1.imgtp.com/2023/08/06/zsmbvYD5.jpg"> 
 
 添加微信，备注"加入JB Admin交流群"
 
 ## 捐献
 | 请作者喝饮料 |
 |  :---:  | 
-| <img width="150" src="https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230805/1691251000749_8189.jpg"> 
+| <img width="150" src="https://img1.imgtp.com/2023/08/06/IEtUNe1P.jpg"> 
 
 ## 商用注意事项
 
