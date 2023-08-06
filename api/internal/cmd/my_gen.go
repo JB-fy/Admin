@@ -620,6 +620,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			daoParseInsert += daoParseInsertPid
 		}
 		daoHookInsertPid := `
+
 			updateSelfData := map[string]interface{}{}
 			for k, v := range data {
 				switch k {
