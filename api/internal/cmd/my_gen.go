@@ -571,6 +571,26 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				daoParseField += daoParseFieldPid
 			}
 		}
+		daoParseFieldTree := `
+			case ` + "`tree`" + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+				m = daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr)(m)`
+		if gstr.Pos(tplDao, daoParseFieldTree) == -1 {
+			daoParseField += daoParseFieldTree
+		}
+		daoParseOrderPid := `
+			case ` + "`tree`" + `:
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, ` + "`ASC`" + `)`
+		if tpl.PidHandle.SortField != `` {
+			daoParseOrderPid += `
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `, ` + "`ASC`" + `)`
+		}
+		daoParseOrderPid += `
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), ` + "`ASC`" + `)`
+		if gstr.Pos(tplDao, daoParseOrderPid) == -1 {
+			daoParseOrder += daoParseOrderPid
+		}
 		daoParseJoinPid := `
 		case ` + "`p_`" + ` + daoThis.Table():
 			relTable := ` + "`p_`" + ` + daoThis.Table()
@@ -643,26 +663,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}`
 		if gstr.Pos(tplDao, daoHookUpdateAfterPid) == -1 {
 			daoHookUpdateAfter += daoHookUpdateAfterPid
-		}
-		daoParseFieldTree := `
-			case ` + "`tree`" + `:
-				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
-				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
-				m = daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr)(m)`
-		if gstr.Pos(tplDao, daoParseFieldTree) == -1 {
-			daoParseField += daoParseFieldTree
-		}
-		daoParseOrderPid := `
-			case ` + "`tree`" + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, ` + "`ASC`" + `)`
-		if tpl.PidHandle.SortField != `` {
-			daoParseOrderPid += `
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `, ` + "`ASC`" + `)`
-		}
-		daoParseOrderPid += `
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), ` + "`ASC`" + `)`
-		if gstr.Pos(tplDao, daoParseOrderPid) == -1 {
-			daoParseOrder += daoParseOrderPid
 		}
 		daoFuncPid := `
 
@@ -960,7 +960,7 @@ func (logicThis *s` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, fi
 		return
 	}
 `
-	if tpl.PidHandle.IsCoexist {
+	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
 	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, idArr).Count()
 	if count > 0 {
@@ -1017,7 +1017,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
-			if tpl.PidHandle.IsCoexist && tpl.LabelField != `` {
+			if tpl.PidHandle.PidField != `` && tpl.LabelField != `` {
 				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `" dc:"` + comment + `"` + "`\n"
 			}
 		case `level`:
@@ -1325,7 +1325,7 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 `
 	}
 
-	if option.IsList && tpl.PidHandle.IsCoexist {
+	if option.IsList && tpl.PidHandle.PidField != `` {
 		tplApi += `
 /*--------树状列表 开始--------*/
 type ` + tpl.TableNameCaseCamel + `TreeReq struct {
@@ -1632,7 +1632,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 `
 	}
 
-	if option.IsList && tpl.PidHandle.IsCoexist {
+	if option.IsList && tpl.PidHandle.PidField != `` {
 		tplController += `// 树状列表
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes, err error) {
 	/**--------参数处理 开始--------**/
