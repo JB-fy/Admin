@@ -25,6 +25,16 @@ export const useLanguageStore = defineStore('language', {
           //return (<any>state.elementPlusLoacleList)['/node_modules/element-plus/dist/locale/' + state.language + '.min.mjs'].default
           return state.elementPlusLoacleList[state.language]
       }
+    },
+    tinymceLocale: (state) => {
+      switch (state.language) {
+        case 'en':
+          return null
+        case 'zh-cn':
+          return 'zh_CN'
+        default:
+          return state.language
+      }
     }
   },
   actions: {

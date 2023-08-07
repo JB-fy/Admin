@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
 <!-- <MyUpload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
-<MyUpload v-model="saveForm.data.avatar" accept="video/*" :isImage="false" /> -->
+<MyUpload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" :isImage="false" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const { t } = useI18n()
@@ -49,7 +49,7 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
-    id: new Date().getTime() + '_' + randomInt(1000, 9999) as string,   //用于判断组件是否已经销毁，防止倒计时重复执行
+    id: 'MyUpload' + new Date().getTime() + '_' + randomInt(1000, 9999) as string,   //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
     value: ((): any => {
         if (props.multiple) {
