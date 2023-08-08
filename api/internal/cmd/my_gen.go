@@ -2719,7 +2719,7 @@ const queryCommon = inject('queryCommon') as { data: { [propName: string]: any }
 queryCommon.data = {
 	...queryCommon.data,
 	timeRange: (() => {
-		const date = new Date()
+		// const date = new Date()
 		return [
 			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
 			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
@@ -2762,10 +2762,7 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>` + viewQueryField + `
 		<ElFormItem prop="timeRange">
-			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-"
-				:default-time="queryCommon.data.timeRange" :start-placeholder="t('common.name.startTime')"
-				:end-placeholder="t('common.name.endTime')">
-			</ElDatePicker>
+			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.startTime')" :end-placeholder="t('common.name.endTime')" />
 		</ElFormItem>
 		<ElFormItem>
 			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
