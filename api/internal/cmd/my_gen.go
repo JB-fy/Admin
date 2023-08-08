@@ -46,7 +46,7 @@ import (
 		备注描述	命名：remark或desc后缀；类型：varchar（生成的表单组件：textarea多行文本输入框）
 		富文本		命名：intro或content后缀；类型：text（生成的表单组件：tinymce富文本编辑器）
 		状态和类型	命名：status或type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
-		是否		命名：is_前缀；类型：int等类型；注释：示例（默认：0否 1是）
+		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
 */
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
