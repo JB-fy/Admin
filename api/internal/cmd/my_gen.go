@@ -2653,7 +2653,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			//is_前缀
 			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
 				viewQueryField += `
-		<ElFormItem prop="` + field + `" style="width: 100px;">
+		<ElFormItem prop="` + field + `" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 				continue
