@@ -14,7 +14,7 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $salt 加密盐
  * @property string $nickname 昵称
  * @property string $avatar 头像
- * @property int $isStop 是否停用：0否 1是
+ * @property int $isStop 停用：0否 1是
  * @property string $updatedAt 更新时间
  * @property string $createdAt 创建时间
  */

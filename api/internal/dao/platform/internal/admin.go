@@ -32,7 +32,7 @@ type AdminColumns struct {
 	Salt      string // 加密盐
 	Nickname  string // 昵称
 	Avatar    string // 头像
-	IsStop    string // 是否停用：0否 1是
+	IsStop    string // 停用：0否 1是
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
 }

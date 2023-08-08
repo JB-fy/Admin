@@ -19,7 +19,7 @@ type Admin struct {
 	Salt      interface{} // 加密盐
 	Nickname  interface{} // 昵称
 	Avatar    interface{} // 头像
-	IsStop    interface{} // 是否停用：0否 1是
+	IsStop    interface{} // 停用：0否 1是
 	UpdatedAt *gtime.Time // 更新时间
 	CreatedAt *gtime.Time // 创建时间
 }

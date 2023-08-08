@@ -28,7 +28,7 @@ type ActionListFilter struct {
 	ActionId   *uint  `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
 	ActionName string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
 	ActionCode string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	IsStop     *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop     *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 	SceneId    *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 }
 
@@ -44,7 +44,7 @@ type ActionItem struct {
 	ActionName string      `json:"actionName" dc:"操作名称"`
 	ActionCode string      `json:"actionCode" dc:"操作标识"`
 	Remark     string      `json:"remark" dc:"备注"`
-	IsStop     uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop     uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt  *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt  *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
@@ -69,7 +69,7 @@ type ActionInfo struct {
 	ActionName string      `json:"actionName" dc:"操作名称"`
 	ActionCode string      `json:"actionCode" dc:"操作标识"`
 	Remark     string      `json:"remark" dc:"备注"`
-	IsStop     uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop     uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt  *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt  *gtime.Time `json:"createdAt" dc:"创建时间"`
 	SceneIdArr []uint      `json:"sceneIdArr" dc:"场景ID列表"`
@@ -83,7 +83,7 @@ type ActionCreateReq struct {
 	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
 	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
 	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
-	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
@@ -96,7 +96,7 @@ type ActionUpdateReq struct {
 	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
 	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
 	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
-	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 

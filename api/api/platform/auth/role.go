@@ -29,7 +29,7 @@ type RoleListFilter struct {
 	RoleName  string `c:"roleName,omitempty" json:"roleName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
 	SceneId   *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 	SceneCode string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
-	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type RoleListRes struct {
@@ -43,7 +43,7 @@ type RoleItem struct {
 	RoleId    uint        `json:"roleId" dc:"角色ID"`
 	RoleName  string      `json:"roleName" dc:"角色名称"`
 	SceneId   uint        `json:"sceneId" dc:"场景ID"`
-	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 	SceneName string      `json:"sceneName" dc:"场景名称"`
@@ -72,7 +72,7 @@ type RoleInfo struct {
 	RoleName    string      `json:"roleName" dc:"角色名称"`
 	SceneId     uint        `json:"sceneId" dc:"场景ID"`
 	Sort        uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop      uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop      uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
 	SceneName   string      `json:"sceneName" dc:"场景名称"`
@@ -90,7 +90,7 @@ type RoleCreateReq struct {
 	SceneId     *uint   `c:"sceneId,omitempty" json:"sceneId" v:"required|integer|min:1" dc:"场景ID"`
 	MenuIdArr   *[]uint `c:"menuIdArr,omitempty" json:"menuIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
 	ActionIdArr *[]uint `c:"actionIdArr,omitempty" json:"actionIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"操作ID列表"`
-	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -103,7 +103,7 @@ type RoleUpdateReq struct {
 	SceneId     *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 	MenuIdArr   *[]uint `c:"menuIdArr,omitempty" json:"menuIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
 	ActionIdArr *[]uint `c:"actionIdArr,omitempty" json:"actionIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"操作ID列表"`
-	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

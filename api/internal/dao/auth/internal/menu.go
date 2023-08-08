@@ -35,7 +35,7 @@ type MenuColumns struct {
 	IdPath    string // 层级路径
 	ExtraData string // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
 	Sort      string // 排序值（从小到大排序，默认50，范围0-100）
-	IsStop    string // 是否停用：0否 1是
+	IsStop    string // 停用：0否 1是
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
 }

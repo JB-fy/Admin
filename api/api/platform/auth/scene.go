@@ -28,7 +28,7 @@ type SceneListFilter struct {
 	SceneId   *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 	SceneCode string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
 	SceneName string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
-	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type SceneListRes struct {
@@ -43,7 +43,7 @@ type SceneItem struct {
 	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
 	SceneName   string      `json:"sceneName" dc:"场景名称"`
 	SceneConfig string      `json:"sceneConfig" dc:"场景配置"`
-	IsStop      uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop      uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
@@ -68,7 +68,7 @@ type SceneInfo struct {
 	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
 	SceneName   string      `json:"sceneName" dc:"场景名称"`
 	SceneConfig string      `json:"sceneConfig" dc:"场景配置"`
-	IsStop      uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop      uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
@@ -81,7 +81,7 @@ type SceneCreateReq struct {
 	SceneCode   *string `c:"sceneCode,omitempty" json:"sceneCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
 	SceneName   *string `c:"sceneName,omitempty" json:"sceneName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
 	SceneConfig *string `c:"sceneConfig,omitempty" json:"sceneConfig" v:"json" dc:"场景配置"`
-	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -93,7 +93,7 @@ type SceneUpdateReq struct {
 	SceneCode   *string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
 	SceneName   *string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
 	SceneConfig *string `c:"sceneConfig,omitempty" json:"sceneConfig" v:"json" dc:"场景配置"`
-	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

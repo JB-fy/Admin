@@ -20,7 +20,7 @@ type ProfileInfo struct {
 	Phone     string      `json:"phone" dc:"手机号"`
 	Nickname  string      `json:"nickname" dc:"昵称"`
 	Avatar    string      `json:"avatar" dc:"头像"`
-	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }

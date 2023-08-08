@@ -11,7 +11,7 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $actionName 名称
  * @property string $actionCode 标识（代码中用于判断权限）
  * @property string $remark 备注
- * @property int $isStop 是否停用：0否 1是
+ * @property int $isStop 停用：0否 1是
  * @property string $updatedAt 更新时间
  * @property string $createdAt 创建时间
  */

@@ -22,7 +22,7 @@ type Menu struct {
 	IdPath    interface{} // 层级路径
 	ExtraData interface{} // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
 	Sort      interface{} // 排序值（从小到大排序，默认50，范围0-100）
-	IsStop    interface{} // 是否停用：0否 1是
+	IsStop    interface{} // 停用：0否 1是
 	UpdatedAt *gtime.Time // 更新时间
 	CreatedAt *gtime.Time // 创建时间
 }

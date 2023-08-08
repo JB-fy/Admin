@@ -29,7 +29,7 @@ type AdminListFilter struct {
 	Account string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Phone   string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
 	RoleId  *uint  `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
-	IsStop  *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop  *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type AdminListRes struct {
@@ -45,7 +45,7 @@ type AdminItem struct {
 	Phone     string      `json:"phone" dc:"手机号"`
 	Avatar    string      `json:"avatar" dc:"头像"`
 	Nickname  string      `json:"nickname" dc:"昵称"`
-	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
@@ -71,7 +71,7 @@ type AdminInfo struct {
 	Phone     string      `json:"phone" dc:"手机号"`
 	Avatar    string      `json:"avatar" dc:"头像"`
 	Nickname  string      `json:"nickname" dc:"昵称"`
-	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 	RoleIdArr []uint      `json:"roleIdArr" dc:"角色ID列表"`
@@ -88,7 +88,7 @@ type AdminCreateReq struct {
 	RoleIdArr *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
 	Nickname  *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
 	Avatar    *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120" dc:"头像"`
-	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -103,7 +103,7 @@ type AdminUpdateReq struct {
 	RoleIdArr *[]uint `c:"roleIdArr,omitempty" json:"roleIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
 	Nickname  *string `c:"nickname,omitempty" json:"nickname" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
 	Avatar    *string `c:"avatar,omitempty" json:"avatar" v:"url|length:1,120" dc:"头像"`
-	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

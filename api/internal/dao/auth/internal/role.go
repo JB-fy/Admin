@@ -29,7 +29,7 @@ type RoleColumns struct {
 	SceneId   string // 权限场景ID
 	TableId   string // 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
 	RoleName  string // 名称
-	IsStop    string // 是否停用：0否 1是
+	IsStop    string // 停用：0否 1是
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
 }

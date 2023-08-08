@@ -16,7 +16,7 @@ type Scene struct {
 	SceneCode   interface{} // 标识（代码中用于识别调用接口的所在场景，做对应的身份鉴定及权力鉴定。如已在代码中使用，不建议更改）
 	SceneName   interface{} // 名称
 	SceneConfig interface{} // 配置（内容自定义。json格式：{"alg": "算法","key": "密钥","expTime": "签名有效时间",...}）
-	IsStop      interface{} // 是否停用：0否 1是
+	IsStop      interface{} // 停用：0否 1是
 	UpdatedAt   *gtime.Time // 更新时间
 	CreatedAt   *gtime.Time // 创建时间
 }

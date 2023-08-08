@@ -11,7 +11,7 @@ use App\Module\Db\Model\AbstractModel;
  * @property string $sceneCode 标识（代码中用于识别调用接口的所在场景，做对应的身份鉴定及权力鉴定。如已在代码中使用，不建议更改）
  * @property string $sceneName 名称
  * @property string $sceneConfig 配置（内容自定义。json格式：{"alg": "算法","key": "密钥","expTime": "签名有效时间",...}）
- * @property int $isStop 是否停用：0否 1是
+ * @property int $isStop 停用：0否 1是
  * @property string $updatedAt 更新时间
  * @property string $createdAt 创建时间
  */

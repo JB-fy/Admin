@@ -29,7 +29,7 @@ type ActionColumns struct {
 	ActionName string // 名称
 	ActionCode string // 标识（代码中用于判断权限）
 	Remark     string // 备注
-	IsStop     string // 是否停用：0否 1是
+	IsStop     string // 停用：0否 1是
 	UpdatedAt  string // 更新时间
 	CreatedAt  string // 创建时间
 }

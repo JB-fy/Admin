@@ -29,7 +29,7 @@ type MenuListFilter struct {
 	SceneId  *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 	Pid      *uint  `c:"pid,omitempty" json:"pid" v:"integer|min:0"`
 	MenuName string `c:"menuName,omitempty" json:"menuName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
-	IsStop   *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop   *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type MenuListRes struct {
@@ -50,7 +50,7 @@ type MenuItem struct {
 	Level     uint        `json:"level" dc:"层级"`
 	IdPath    string      `json:"idPath" dc:"层级路径"`
 	Sort      uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 	PMenuName string      `json:"pMenuName" dc:"父级菜单名称"`
@@ -83,7 +83,7 @@ type MenuInfo struct {
 	Level     uint        `json:"level" dc:"层级"`
 	IdPath    string      `json:"idPath" dc:"层级路径"`
 	Sort      uint        `json:"sort" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop    uint        `json:"isStop" dc:"是否停用：0否 1是"`
+	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
@@ -100,7 +100,7 @@ type MenuCreateReq struct {
 	MenuUrl   *string `c:"menuUrl,omitempty" json:"menuUrl" v:"length:1,120" dc:"菜单链接"`
 	ExtraData *string `c:"extraData,omitempty" json:"extraData" v:"json" dc:"额外数据"`
 	Sort      *uint   `c:"sort,omitempty" json:"sort" v:"integer|between:0,100" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -116,7 +116,7 @@ type MenuUpdateReq struct {
 	MenuUrl   *string `c:"menuUrl,omitempty" json:"menuUrl" v:"length:1,120" dc:"菜单链接"`
 	ExtraData *string `c:"extraData,omitempty" json:"extraData" v:"json" dc:"额外数据"`
 	Sort      *uint   `c:"sort,omitempty" json:"sort" v:"integer|between:0,100" dc:"排序值（从小到大排序，默认50，范围0-100）"`
-	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"是否停用：0否 1是"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

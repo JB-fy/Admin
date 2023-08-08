@@ -17,7 +17,7 @@ type Admin struct {
 	Salt      string      `json:"salt"      ` // 加密盐
 	Nickname  string      `json:"nickname"  ` // 昵称
 	Avatar    string      `json:"avatar"    ` // 头像
-	IsStop    uint        `json:"isStop"    ` // 是否停用：0否 1是
+	IsStop    uint        `json:"isStop"    ` // 停用：0否 1是
 	UpdatedAt *gtime.Time `json:"updatedAt" ` // 更新时间
 	CreatedAt *gtime.Time `json:"createdAt" ` // 创建时间
 }
