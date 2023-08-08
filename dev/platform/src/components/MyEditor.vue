@@ -64,12 +64,12 @@ const myEditor = reactive({
                 myEditor.signInfo?.callback ? data.callback = myEditor.signInfo.callback : null //是否回调服务器
                 data.file = blobInfo.blob()
                 axios.post(myEditor.signInfo.host, data, { headers: { "Content-Type": "multipart/form-data" } }).then((res) => {
-                    if (res.data.code !== 0) {
-                        reject(t('common.tip.uploadFail'))
-                        return
-                    }
                     let imgUrl = myEditor.signInfo.host + '/' + data.key
                     if (myEditor.signInfo?.callback) {    //如有回调服务器且有报错，则默认失败
+                        if (res.data.code !== 0) {
+                            reject(t('common.tip.uploadFail'))
+                            return
+                        }
                         imgUrl = res.data.data.url
                     }
                     resolve(imgUrl)
