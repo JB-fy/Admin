@@ -43,7 +43,8 @@ import (
 		图片字段，命名用icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀（多图片时类型用json或text，保存格式为JSON格式）
 		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀（多视频时类型用json或text，保存格式为JSON格式）
 		ip字段，命名用Ip后缀
-		备注字段，命名用remark后缀
+		备注描述字段，命名用remark或desc后缀（生成的表单组件：textarea多行文本输入框）
+		富文本字段，命名用intro或content后缀（生成的表单组件：tinymce富文本编辑器）
 		状态和类型字段，命名用status或type后缀且必须是int，tinyint等int类型。字段注释中多状态之间用[\s,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
 		是否字段，命名用is_前缀且必须是int，tinyint等int类型。默认：0否 1是
 */
@@ -2060,8 +2061,9 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	},`
 				continue
 			}
-			//remark后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` {
+			//remark或desc后缀
+			//intro或content后缀
+			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content` {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -2643,8 +2645,9 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		</ElFormItem>`
 				continue
 			}
-			//remark后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` {
+			//remark或desc后缀
+			//intro或content后缀
+			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content` {
 				continue
 			}
 			//is_前缀
@@ -2988,15 +2991,25 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				</ElFormItem>`
 				continue
 			}
-			//remark后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` {
+			//remark或desc后缀
+			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
+			{ type: 'string', max: ` + result[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + result[1] + ` }) },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
+				</ElFormItem>`
+				continue
+			}
+			//intro或content后缀
+			if gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content` {
+				viewSaveRule += `
+		` + field + `: [],`
+				viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<MyEditor v-model="saveForm.data.` + field + `" />
 				</ElFormItem>`
 				continue
 			}

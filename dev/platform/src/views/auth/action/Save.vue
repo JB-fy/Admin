@@ -23,7 +23,7 @@ const saveForm = reactive({
             { type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
         ],
         remark: [
-            { type: 'string', min: 0, max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }
+            { type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }
         ],
         isStop: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
