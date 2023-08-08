@@ -132,8 +132,14 @@ myEditor.initSignInfo()   //初始化签名信息
 
 <template>
     <div :id="myEditor.id" style="width: 100%;">
-        <Editor :ref="(el: any) => { myEditor.ref = el }" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
+        <Editor :ref="(el: any) => { myEditor.ref = el }" v-model="myEditor.value" :init="myEditor.init"
+            :disabled="disabled" />
     </div>
 </template>
 
-<style scoped></style>
+<!-- <style scoped> -->
+<style>
+.tox.tox-silver-sink.tox-tinymce-aux {
+    z-index: 10000 !important;
+}
+</style>
