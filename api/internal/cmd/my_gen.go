@@ -36,17 +36,17 @@ import (
 		gender 			性别
 		avatar			头像
 	其他类型字段：
-		名称和标识字段，命名用name或code后缀
-		手机号码字段，命名用mobile或phone后缀
-		链接地址字段，命名用url或link后缀
-		关联id字段和关联表主键保持一致，命名用id后缀
-		图片字段，命名用icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀（多图片时类型用json或text，保存格式为JSON格式）
-		视频字段，命名用video,video_list,videoList,video_arr,videoArr等后缀（多视频时类型用json或text，保存格式为JSON格式）
-		ip字段，命名用Ip后缀
-		备注描述字段，命名用remark或desc后缀（生成的表单组件：textarea多行文本输入框）
-		富文本字段，命名用intro或content后缀（生成的表单组件：tinymce富文本编辑器）
-		状态和类型字段，命名用status或type后缀且必须是int，tinyint等int类型。字段注释中多状态之间用[\s,，;；]等字符分隔。如（状态：0待处理 1已处理 2驳回）
-		是否字段，命名用is_前缀且必须是int，tinyint等int类型。默认：0否 1是
+		名称和标识字段。命名：name或code后缀；类型：varchar
+		手机号码字段。命名：mobile或phone后缀；类型：varchar
+		链接地址字段。命名：url或link后缀；类型：varchar
+		关联id字段和关联表主键保持一致。命名：id后缀；类型：int等类型
+		图片字段。命名：icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text且保存为JSON格式
+		视频字段。命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text且保存为JSON格式
+		ip字段。命名：Ip后缀；类型：varchar
+		备注描述字段。命名：remark或desc后缀；类型：varchar（生成的表单组件：textarea多行文本输入框）
+		富文本字段。命名：intro或content后缀；类型：text（生成的表单组件：tinymce富文本编辑器）
+		状态和类型字段。命名：status或type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
+		是否字段。命名：is_前缀；类型：int等类型；注释：示例（默认：0否 1是）
 */
 type MyGenOption struct {
 	SceneCode    string `c:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
