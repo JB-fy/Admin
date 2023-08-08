@@ -101,7 +101,7 @@ const myEditor = reactive({
                 //myEditor.initSignInfo()
                 //判断元素是否还存在，防止组件销毁后，倒计时却还在重复执行
                 document.getElementById(myEditor.id) ? myEditor.initSignInfo() : null
-            }, 2000)
+            }, timeout)
         }
     },
     api: {
