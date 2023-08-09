@@ -370,9 +370,17 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		TableNameCaseCamelLower:    gstr.CaseCamelLower(tableName),
 		TableNameCaseCamel:         gstr.CaseCamel(tableName),
 		TableNameCaseSnake:         gstr.CaseSnakeFirstUpper(tableName),
-		ModuleDirCaseCamelLower:    gstr.CaseCamelLower(option.ModuleDir),
-		ModuleDirCaseCamel:         gstr.CaseCamel(option.ModuleDir),
 	}
+	moduleDirArr := gstr.Split(option.ModuleDir, `/`)
+	ModuleDirCaseCamelLowerArr := []string{}
+	ModuleDirCaseCamelArr := []string{}
+	for _, v := range moduleDirArr {
+		ModuleDirCaseCamelLowerArr = append(ModuleDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
+		ModuleDirCaseCamelArr = append(ModuleDirCaseCamelArr, gstr.CaseCamel(v))
+	}
+	tpl.ModuleDirCaseCamelLower = gstr.Join(ModuleDirCaseCamelLowerArr, `/`)
+	tpl.ModuleDirCaseCamel = gstr.Join(ModuleDirCaseCamelArr, `/`)
+
 	fieldArr := make([]string, len(tpl.TableColumnList))
 	fieldCaseCamelArr := make([]string, len(tpl.TableColumnList))
 	for index, column := range tpl.TableColumnList {
