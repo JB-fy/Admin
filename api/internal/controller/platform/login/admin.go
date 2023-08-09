@@ -7,14 +7,14 @@ import (
 	"context"
 )
 
-type PlatformAdmin struct{}
+type Admin struct{}
 
-func NewPlatformAdmin() *PlatformAdmin {
-	return &PlatformAdmin{}
+func NewAdmin() *Admin {
+	return &Admin{}
 }
 
 // 获取加密盐
-func (controllerThis *PlatformAdmin) Salt(ctx context.Context, req *apiLogin.PlatformAdminSaltReq) (res *api.CommonSaltRes, err error) {
+func (controllerThis *Admin) Salt(ctx context.Context, req *apiLogin.AdminSaltReq) (res *api.CommonSaltRes, err error) {
 	saltStatic, saltDynamic, err := service.LoginPlatformAdmin().Salt(ctx, req.Account)
 	if err != nil {
 		return
@@ -24,7 +24,7 @@ func (controllerThis *PlatformAdmin) Salt(ctx context.Context, req *apiLogin.Pla
 }
 
 // 登录
-func (controllerThis *PlatformAdmin) Login(ctx context.Context, req *apiLogin.PlatformAdminLoginReq) (res *api.CommonTokenRes, err error) {
+func (controllerThis *Admin) Login(ctx context.Context, req *apiLogin.AdminLoginReq) (res *api.CommonTokenRes, err error) {
 	token, err := service.LoginPlatformAdmin().Login(ctx, req.Account, req.Password)
 	if err != nil {
 		return

@@ -17,7 +17,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 		//无需验证登录身份
 		group.Group(`/login`, func(group *ghttp.RouterGroup) {
-			group.Bind(controllerLogin.NewPlatformAdmin())
+			group.Bind(controllerLogin.NewAdmin())
 		})
 
 		//需验证登录身份
