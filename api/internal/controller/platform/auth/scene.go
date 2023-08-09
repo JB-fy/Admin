@@ -42,17 +42,17 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, `authSceneLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authSceneLook`)
 	if !isAuth {
 		field = []string{`id`, `label`, columnsThis.SceneId, columnsThis.SceneName}
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.Scene().Count(ctx, filter)
+	count, err := service.AuthScene().Count(ctx, filter)
 	if err != nil {
 		return
 	}
-	list, err := service.Scene().List(ctx, filter, field, order, page, limit)
+	list, err := service.AuthScene().List(ctx, filter, field, order, page, limit)
 	if err != nil {
 		return
 	}
@@ -80,13 +80,13 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authSceneLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authSceneLook`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.Scene().Info(ctx, filter, field)
+	info, err := service.AuthScene().Info(ctx, filter, field)
 	if err != nil {
 		return
 	}
@@ -103,13 +103,13 @@ func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreat
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authSceneCreate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authSceneCreate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	id, err := service.Scene().Create(ctx, data)
+	id, err := service.AuthScene().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -130,13 +130,13 @@ func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdat
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authSceneUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authSceneUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Scene().Update(ctx, filter, data)
+	_, err = service.AuthScene().Update(ctx, filter, data)
 	return
 }
 
@@ -147,12 +147,12 @@ func (controllerThis *Scene) Delete(ctx context.Context, req *apiAuth.SceneDelet
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authSceneDelete`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authSceneDelete`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Scene().Delete(ctx, filter)
+	_, err = service.AuthScene().Delete(ctx, filter)
 	return
 }

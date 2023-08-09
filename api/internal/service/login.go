@@ -10,7 +10,7 @@ import (
 )
 
 type (
-	IPlatformAdmin interface {
+	ILoginPlatformAdmin interface {
 		// 获取加密盐
 		Salt(ctx context.Context, account string) (saltStatic string, saltDynamic string, err error)
 		// 登录
@@ -19,16 +19,16 @@ type (
 )
 
 var (
-	localPlatformAdmin IPlatformAdmin
+	localLoginPlatformAdmin ILoginPlatformAdmin
 )
 
-func PlatformAdmin() IPlatformAdmin {
-	if localPlatformAdmin == nil {
-		panic("implement not found for interface IPlatformAdmin, forgot register?")
+func LoginPlatformAdmin() ILoginPlatformAdmin {
+	if localLoginPlatformAdmin == nil {
+		panic("implement not found for interface ILoginPlatformAdmin, forgot register?")
 	}
-	return localPlatformAdmin
+	return localLoginPlatformAdmin
 }
 
-func RegisterPlatformAdmin(i IPlatformAdmin) {
-	localPlatformAdmin = i
+func RegisterLoginPlatformAdmin(i ILoginPlatformAdmin) {
+	localLoginPlatformAdmin = i
 }

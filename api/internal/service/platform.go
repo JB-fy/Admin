@@ -12,7 +12,7 @@ import (
 )
 
 type (
-	IAdmin interface {
+	IPlatformAdmin interface {
 		// 总数
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		// 列表
@@ -29,16 +29,16 @@ type (
 )
 
 var (
-	localAdmin IAdmin
+	localPlatformAdmin IPlatformAdmin
 )
 
-func Admin() IAdmin {
-	if localAdmin == nil {
-		panic("implement not found for interface IAdmin, forgot register?")
+func PlatformAdmin() IPlatformAdmin {
+	if localPlatformAdmin == nil {
+		panic("implement not found for interface IPlatformAdmin, forgot register?")
 	}
-	return localAdmin
+	return localPlatformAdmin
 }
 
-func RegisterAdmin(i IAdmin) {
-	localAdmin = i
+func RegisterPlatformAdmin(i IPlatformAdmin) {
+	localPlatformAdmin = i
 }

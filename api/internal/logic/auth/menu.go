@@ -12,18 +12,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type sMenu struct{}
+type sAuthMenu struct{}
 
-func NewMenu() *sMenu {
-	return &sMenu{}
+func NewAuthMenu() *sAuthMenu {
+	return &sAuthMenu{}
 }
 
 func init() {
-	service.RegisterMenu(NewMenu())
+	service.RegisterAuthMenu(NewAuthMenu())
 }
 
 // 总数
-func (logicThis *sMenu) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logicThis *sAuthMenu) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -38,7 +38,7 @@ func (logicThis *sMenu) Count(ctx context.Context, filter map[string]interface{}
 }
 
 // 列表
-func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *sAuthMenu) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -62,7 +62,7 @@ func (logicThis *sMenu) List(ctx context.Context, filter map[string]interface{},
 }
 
 // 详情
-func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+func (logicThis *sAuthMenu) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := daoAuth.Menu
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -85,7 +85,7 @@ func (logicThis *sMenu) Info(ctx context.Context, filter map[string]interface{},
 }
 
 // 新增
-func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
 
 	_, okPid := data[daoThis.Columns().Pid]
@@ -110,7 +110,7 @@ func (logicThis *sMenu) Create(ctx context.Context, data map[string]interface{})
 }
 
 // 修改
-func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -180,7 +180,7 @@ func (logicThis *sMenu) Update(ctx context.Context, filter map[string]interface{
 }
 
 // 删除
-func (logicThis *sMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {

@@ -42,17 +42,17 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, `authMenuLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
 		field = []string{`id`, `label`, columnsThis.MenuId, columnsThis.MenuName}
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.Menu().Count(ctx, filter)
+	count, err := service.AuthMenu().Count(ctx, filter)
 	if err != nil {
 		return
 	}
-	list, err := service.Menu().List(ctx, filter, field, order, page, limit)
+	list, err := service.AuthMenu().List(ctx, filter, field, order, page, limit)
 	if err != nil {
 		return
 	}
@@ -80,13 +80,13 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authMenuLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.Menu().Info(ctx, filter, field)
+	info, err := service.AuthMenu().Info(ctx, filter, field)
 	if err != nil {
 		return
 	}
@@ -103,13 +103,13 @@ func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authMenuCreate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authMenuCreate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	id, err := service.Menu().Create(ctx, data)
+	id, err := service.AuthMenu().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -130,13 +130,13 @@ func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authMenuUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authMenuUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Menu().Update(ctx, filter, data)
+	_, err = service.AuthMenu().Update(ctx, filter, data)
 	return
 }
 
@@ -147,13 +147,13 @@ func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authMenuDelete`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authMenuDelete`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Menu().Delete(ctx, filter)
+	_, err = service.AuthMenu().Delete(ctx, filter)
 	return
 }
 
@@ -178,7 +178,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, `authMenuLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
 		field = []string{`id`, `label`, columnsThis.MenuId, columnsThis.MenuName}
 	}
@@ -187,7 +187,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	filter[`isStop`] = 0          //补充条件
 	field = append(field, `tree`) //补充字段（树状列表所需）
 
-	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := service.AuthMenu().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {
 		return
 	}

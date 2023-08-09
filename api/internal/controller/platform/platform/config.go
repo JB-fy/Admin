@@ -20,7 +20,7 @@ func NewConfig() *Config {
 // 获取
 func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGetReq) (res *apiPlatform.ConfigGetRes, err error) {
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `platformConfigLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformConfigLook`)
 	if err != nil {
 		return
 	}
@@ -48,7 +48,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `platformConfigSave`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformConfigSave`)
 	if err != nil {
 		return
 	}

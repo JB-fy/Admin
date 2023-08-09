@@ -1478,7 +1478,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
 		field = []string{` + controllerAlloweFieldNoAuth + `}
 	}
@@ -1539,7 +1539,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1578,7 +1578,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1616,7 +1616,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1644,7 +1644,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if err != nil {
 		return
 	}
@@ -1695,7 +1695,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
 		field = []string{` + controllerAlloweFieldNoAuth + `}
 	}

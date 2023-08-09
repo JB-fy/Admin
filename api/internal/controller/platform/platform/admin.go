@@ -45,17 +45,17 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, `platformAdminLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
 	if !isAuth {
 		field = []string{`id`, columnsThis.AdminId, columnsThis.Nickname}
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.Admin().Count(ctx, filter)
+	count, err := service.PlatformAdmin().Count(ctx, filter)
 	if err != nil {
 		return
 	}
-	list, err := service.Admin().List(ctx, filter, field, order, page, limit)
+	list, err := service.PlatformAdmin().List(ctx, filter, field, order, page, limit)
 	if err != nil {
 		return
 	}
@@ -85,13 +85,13 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `platformAdminLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.Admin().Info(ctx, filter, field)
+	info, err := service.PlatformAdmin().Info(ctx, filter, field)
 	if err != nil {
 		return
 	}
@@ -108,13 +108,13 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminC
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `platformAdminCreate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminCreate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	id, err := service.Admin().Create(ctx, data)
+	id, err := service.PlatformAdmin().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -142,13 +142,13 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 	/**--------不能修改平台超级管理员 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `platformAdminUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Admin().Update(ctx, filter, data)
+	_, err = service.PlatformAdmin().Update(ctx, filter, data)
 	return
 }
 
@@ -166,12 +166,12 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminD
 	/**--------不能删除平台超级管理员 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `platformAdminDelete`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminDelete`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Admin().Delete(ctx, filter)
+	_, err = service.PlatformAdmin().Delete(ctx, filter)
 	return
 }

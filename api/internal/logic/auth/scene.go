@@ -10,18 +10,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type sScene struct{}
+type sAuthScene struct{}
 
-func NewScene() *sScene {
-	return &sScene{}
+func NewAuthScene() *sAuthScene {
+	return &sAuthScene{}
 }
 
 func init() {
-	service.RegisterScene(NewScene())
+	service.RegisterAuthScene(NewAuthScene())
 }
 
 // 总数
-func (logicThis *sScene) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logicThis *sAuthScene) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := daoAuth.Scene
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -36,7 +36,7 @@ func (logicThis *sScene) Count(ctx context.Context, filter map[string]interface{
 }
 
 // 列表
-func (logicThis *sScene) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *sAuthScene) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoAuth.Scene
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -60,7 +60,7 @@ func (logicThis *sScene) List(ctx context.Context, filter map[string]interface{}
 }
 
 // 详情
-func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+func (logicThis *sAuthScene) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := daoAuth.Scene
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -83,14 +83,14 @@ func (logicThis *sScene) Info(ctx context.Context, filter map[string]interface{}
 }
 
 // 新增
-func (logicThis *sScene) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Scene
 	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
 	return
 }
 
 // 修改
-func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -108,7 +108,7 @@ func (logicThis *sScene) Update(ctx context.Context, filter map[string]interface
 }
 
 // 删除
-func (logicThis *sScene) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {

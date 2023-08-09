@@ -12,7 +12,7 @@ import (
 )
 
 type (
-	IAction interface {
+	IAuthAction interface {
 		// 总数
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		// 列表
@@ -28,7 +28,7 @@ type (
 		// 判断操作权限
 		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
 	}
-	IMenu interface {
+	IAuthMenu interface {
 		// 总数
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		// 列表
@@ -42,7 +42,7 @@ type (
 		// 删除
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
-	IRole interface {
+	IAuthRole interface {
 		// 总数
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		// 列表
@@ -56,7 +56,7 @@ type (
 		// 删除
 		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
 	}
-	IScene interface {
+	IAuthScene interface {
 		// 总数
 		Count(ctx context.Context, filter map[string]interface{}) (count int, err error)
 		// 列表
@@ -73,52 +73,52 @@ type (
 )
 
 var (
-	localAction IAction
-	localMenu   IMenu
-	localRole   IRole
-	localScene  IScene
+	localAuthScene  IAuthScene
+	localAuthAction IAuthAction
+	localAuthMenu   IAuthMenu
+	localAuthRole   IAuthRole
 )
 
-func Action() IAction {
-	if localAction == nil {
-		panic("implement not found for interface IAction, forgot register?")
+func AuthAction() IAuthAction {
+	if localAuthAction == nil {
+		panic("implement not found for interface IAuthAction, forgot register?")
 	}
-	return localAction
+	return localAuthAction
 }
 
-func RegisterAction(i IAction) {
-	localAction = i
+func RegisterAuthAction(i IAuthAction) {
+	localAuthAction = i
 }
 
-func Menu() IMenu {
-	if localMenu == nil {
-		panic("implement not found for interface IMenu, forgot register?")
+func AuthMenu() IAuthMenu {
+	if localAuthMenu == nil {
+		panic("implement not found for interface IAuthMenu, forgot register?")
 	}
-	return localMenu
+	return localAuthMenu
 }
 
-func RegisterMenu(i IMenu) {
-	localMenu = i
+func RegisterAuthMenu(i IAuthMenu) {
+	localAuthMenu = i
 }
 
-func Role() IRole {
-	if localRole == nil {
-		panic("implement not found for interface IRole, forgot register?")
+func AuthRole() IAuthRole {
+	if localAuthRole == nil {
+		panic("implement not found for interface IAuthRole, forgot register?")
 	}
-	return localRole
+	return localAuthRole
 }
 
-func RegisterRole(i IRole) {
-	localRole = i
+func RegisterAuthRole(i IAuthRole) {
+	localAuthRole = i
 }
 
-func Scene() IScene {
-	if localScene == nil {
-		panic("implement not found for interface IScene, forgot register?")
+func AuthScene() IAuthScene {
+	if localAuthScene == nil {
+		panic("implement not found for interface IAuthScene, forgot register?")
 	}
-	return localScene
+	return localAuthScene
 }
 
-func RegisterScene(i IScene) {
-	localScene = i
+func RegisterAuthScene(i IAuthScene) {
+	localAuthScene = i
 }

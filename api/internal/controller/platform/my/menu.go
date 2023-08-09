@@ -25,7 +25,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	}
 	field := []string{`id`, `label`, `tree`, `showMenu`}
 
-	list, err := service.Menu().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := service.AuthMenu().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {
 		return
 	}

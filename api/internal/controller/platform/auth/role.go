@@ -42,17 +42,17 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, `authRoleLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authRoleLook`)
 	if !isAuth {
 		field = []string{`id`, `label`, columnsThis.RoleId, columnsThis.RoleName}
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.Role().Count(ctx, filter)
+	count, err := service.AuthRole().Count(ctx, filter)
 	if err != nil {
 		return
 	}
-	list, err := service.Role().List(ctx, filter, field, order, page, limit)
+	list, err := service.AuthRole().List(ctx, filter, field, order, page, limit)
 	if err != nil {
 		return
 	}
@@ -80,13 +80,13 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authRoleLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authRoleLook`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.Role().Info(ctx, filter, field)
+	info, err := service.AuthRole().Info(ctx, filter, field)
 	if err != nil {
 		return
 	}
@@ -103,13 +103,13 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authRoleCreate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authRoleCreate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	id, err := service.Role().Create(ctx, data)
+	id, err := service.AuthRole().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -130,13 +130,13 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authRoleUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authRoleUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Role().Update(ctx, filter, data)
+	_, err = service.AuthRole().Update(ctx, filter, data)
 	return
 }
 
@@ -147,12 +147,12 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authRoleDelete`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authRoleDelete`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Role().Delete(ctx, filter)
+	_, err = service.AuthRole().Delete(ctx, filter)
 	return
 }

@@ -13,18 +13,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type sAdmin struct{}
+type sPlatformAdmin struct{}
 
-func NewAdmin() *sAdmin {
-	return &sAdmin{}
+func NewPlatformAdmin() *sPlatformAdmin {
+	return &sPlatformAdmin{}
 }
 
 func init() {
-	service.RegisterAdmin(NewAdmin())
+	service.RegisterPlatformAdmin(NewPlatformAdmin())
 }
 
 // 总数
-func (logicThis *sAdmin) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logicThis *sPlatformAdmin) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -39,7 +39,7 @@ func (logicThis *sAdmin) Count(ctx context.Context, filter map[string]interface{
 }
 
 // 列表
-func (logicThis *sAdmin) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *sPlatformAdmin) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -63,7 +63,7 @@ func (logicThis *sAdmin) List(ctx context.Context, filter map[string]interface{}
 }
 
 // 详情
-func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+func (logicThis *sPlatformAdmin) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := daoPlatform.Admin
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -86,7 +86,7 @@ func (logicThis *sAdmin) Info(ctx context.Context, filter map[string]interface{}
 }
 
 // 新增
-func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoPlatform.Admin
 
 	_, okRoleIdArr := data[`roleIdArr`]
@@ -106,7 +106,7 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]interface{}
 }
 
 // 修改
-func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -150,7 +150,7 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]interface
 }
 
 // 删除
-func (logicThis *sAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {

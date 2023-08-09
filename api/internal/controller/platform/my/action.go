@@ -27,7 +27,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	columns := daoAuth.Action.Columns()
 	field := []string{`id`, `label`, columns.ActionId, columns.ActionName}
 
-	list, err := service.Action().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := service.AuthAction().List(ctx, filter, field, []string{}, 0, 0)
 	if err != nil {
 		return
 	}

@@ -11,18 +11,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type sRole struct{}
+type sAuthRole struct{}
 
-func NewRole() *sRole {
-	return &sRole{}
+func NewAuthRole() *sAuthRole {
+	return &sAuthRole{}
 }
 
 func init() {
-	service.RegisterRole(NewRole())
+	service.RegisterAuthRole(NewAuthRole())
 }
 
 // 总数
-func (logicThis *sRole) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
+func (logicThis *sAuthRole) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
 	daoThis := daoAuth.Role
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -37,7 +37,7 @@ func (logicThis *sRole) Count(ctx context.Context, filter map[string]interface{}
 }
 
 // 列表
-func (logicThis *sRole) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
+func (logicThis *sAuthRole) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
 	daoThis := daoAuth.Role
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -61,7 +61,7 @@ func (logicThis *sRole) List(ctx context.Context, filter map[string]interface{},
 }
 
 // 详情
-func (logicThis *sRole) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
+func (logicThis *sAuthRole) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
 	daoThis := daoAuth.Role
 	joinTableArr := []string{}
 	model := daoThis.ParseDbCtx(ctx)
@@ -84,7 +84,7 @@ func (logicThis *sRole) Info(ctx context.Context, filter map[string]interface{},
 }
 
 // 新增
-func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Role
 	_, okMenuIdArr := data[`menuIdArr`]
 	if okMenuIdArr {
@@ -112,7 +112,7 @@ func (logicThis *sRole) Create(ctx context.Context, data map[string]interface{})
 }
 
 // 修改
-func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
@@ -169,7 +169,7 @@ func (logicThis *sRole) Update(ctx context.Context, filter map[string]interface{
 }
 
 // 删除
-func (logicThis *sRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {

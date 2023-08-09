@@ -42,17 +42,17 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.Action().CheckAuth(ctx, `authActionLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authActionLook`)
 	if !isAuth {
 		field = []string{`id`, `label`, columnsThis.ActionId, columnsThis.ActionName}
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.Action().Count(ctx, filter)
+	count, err := service.AuthAction().Count(ctx, filter)
 	if err != nil {
 		return
 	}
-	list, err := service.Action().List(ctx, filter, field, order, page, limit)
+	list, err := service.AuthAction().List(ctx, filter, field, order, page, limit)
 	if err != nil {
 		return
 	}
@@ -80,13 +80,13 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authActionLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authActionLook`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.Action().Info(ctx, filter, field)
+	info, err := service.AuthAction().Info(ctx, filter, field)
 	if err != nil {
 		return
 	}
@@ -103,13 +103,13 @@ func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCre
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authActionCreate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authActionCreate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	id, err := service.Action().Create(ctx, data)
+	id, err := service.AuthAction().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -130,13 +130,13 @@ func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpd
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authActionUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authActionUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Action().Update(ctx, filter, data)
+	_, err = service.AuthAction().Update(ctx, filter, data)
 	return
 }
 
@@ -147,12 +147,12 @@ func (controllerThis *Action) Delete(ctx context.Context, req *apiAuth.ActionDel
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.Action().CheckAuth(ctx, `authActionDelete`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authActionDelete`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.Action().Delete(ctx, filter)
+	_, err = service.AuthAction().Delete(ctx, filter)
 	return
 }
