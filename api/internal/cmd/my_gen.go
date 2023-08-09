@@ -379,7 +379,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		ModuleDirCaseCamelArr = append(ModuleDirCaseCamelArr, gstr.CaseCamel(v))
 	}
 	tpl.ModuleDirCaseCamelLower = gstr.Join(ModuleDirCaseCamelLowerArr, `/`)
-	tpl.ModuleDirCaseCamel = gstr.Join(ModuleDirCaseCamelArr, `/`)
+	tpl.ModuleDirCaseCamel = gstr.Join(ModuleDirCaseCamelArr, ``)
 
 	fieldArr := make([]string, len(tpl.TableColumnList))
 	fieldCaseCamelArr := make([]string, len(tpl.TableColumnList))
@@ -1037,9 +1037,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		default:
 			//主键
-			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` && field != `id` {
-				apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
-				apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+			if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
+				if field != `id` {
+					apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
+					apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+				}
 				continue
 			}
 			//id后缀
