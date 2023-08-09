@@ -2,14 +2,9 @@ package initialize
 
 // 多语言设置
 import (
-	"context"
-
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 )
-
-func InitI18n(ctx context.Context) {
-}
 
 func init() {
 	ctx := gctx.New()
