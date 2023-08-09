@@ -72,9 +72,9 @@ type MyGenTpl struct {
 	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
 	TableNameCaseCamel             string     //去除前缀表名（大驼峰）
 	TableNameCaseSnake             string     //去除前缀表名（蛇形）
-	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
 	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
+	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseSnake             string     //模块目录（蛇形，/会被去除）
 	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableNameCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	PrimaryKey                     string     //表主键
@@ -373,17 +373,17 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		TableNameCaseSnake:      gstr.CaseSnakeFirstUpper(tableName),
 	}
 	moduleDirArr := gstr.Split(option.ModuleDir, `/`)
-	ModuleDirCaseCamelArr := []string{}
 	ModuleDirCaseCamelLowerArr := []string{}
+	ModuleDirCaseCamelArr := []string{}
 	ModuleDirCaseSnakeArr := []string{}
 	for _, v := range moduleDirArr {
-		ModuleDirCaseCamelArr = append(ModuleDirCaseCamelArr, gstr.CaseCamel(v))
 		ModuleDirCaseCamelLowerArr = append(ModuleDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
+		ModuleDirCaseCamelArr = append(ModuleDirCaseCamelArr, gstr.CaseCamel(v))
 		ModuleDirCaseSnakeArr = append(ModuleDirCaseSnakeArr, gstr.CaseSnake(v))
 	}
-	tpl.ModuleDirCaseCamel = gstr.Join(ModuleDirCaseCamelArr, ``)
 	tpl.ModuleDirCaseCamelLower = gstr.Join(ModuleDirCaseCamelLowerArr, `/`)
 	tpl.ModuleDirCaseCamelLowerReplace = gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
+	tpl.ModuleDirCaseCamel = gstr.Join(ModuleDirCaseCamelArr, ``)
 	tpl.ModuleDirCaseSnake = gstr.Join(ModuleDirCaseSnakeArr, `_`)
 	if ModuleDirCaseSnakeArr[len(ModuleDirCaseSnakeArr)-1] == tpl.TableNameCaseSnake {
 		tpl.LogicStructName = tpl.ModuleDirCaseCamel
