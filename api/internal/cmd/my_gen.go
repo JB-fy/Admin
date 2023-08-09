@@ -1001,15 +1001,14 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			"\r", ` `,
 			`"`, `\"`,
 		}))
-		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
-
+		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 		switch field {
 		case `deletedAt`, `deleted_at`, `salt`:
 		case `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 		case `password`, `passwd`:
-			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `" dc:"` + comment + `"` + "`\n"
-			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 		case `sort`, `weight`:
 			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
@@ -1045,25 +1044,25 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//name或code后缀
 			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
-				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
+				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
+				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
+				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
 			//mobile或phone后缀
 			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
-				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
 			//url或link后缀
 			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
-				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
@@ -1074,8 +1073,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 					apiResColumn += fieldCaseCamel + ` []string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				} else {
-					apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-					apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
+					apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+					apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 					apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				}
 				continue
@@ -1087,17 +1086,17 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 					apiResColumn += fieldCaseCamel + ` []string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				} else {
-					apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-					apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
+					apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+					apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 					apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				}
 				continue
 			}
 			//Ip后缀
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
-				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
@@ -1126,39 +1125,44 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			//int类型
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-					apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer" dc:"` + comment + `"` + "`\n"
-					apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer" dc:"` + comment + `"` + "`\n"
-					apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer" dc:"` + comment + `"` + "`\n"
-					apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
+					apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
+					apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
+					apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 				} else {
 					apiReqFilterColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer" dc:"` + comment + `"` + "`\n"
 					apiReqCreateColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer" dc:"` + comment + `"` + "`\n"
 					apiReqUpdateColumn += fieldCaseCamel + ` *int ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer" dc:"` + comment + `"` + "`\n"
-					apiResColumn += fieldCaseCamel + ` int ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				}
+				apiResColumn += fieldCaseCamel + ` uint ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
 			//float类型
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
-				apiReqFilterColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float" dc:"` + comment + `"` + "`\n"
+				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					apiReqFilterColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float|min:0" dc:"` + comment + `"` + "`\n"
+					apiReqCreateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float|min:0" dc:"` + comment + `"` + "`\n"
+					apiReqUpdateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float|min:0" dc:"` + comment + `"` + "`\n"
+				} else {
+					apiReqFilterColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float" dc:"` + comment + `"` + "`\n"
+					apiReqCreateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float" dc:"` + comment + `"` + "`\n"
+					apiReqUpdateColumn += fieldCaseCamel + ` *float64 ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"float" dc:"` + comment + `"` + "`\n"
+				}
 				apiResColumn += fieldCaseCamel + ` float64 ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
 			//varchar类型
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
 			//char类型
 			if gstr.Pos(column[`Type`].String(), `char`) != -1 {
-				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `" dc:"` + comment + `"` + "`\n"
-				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + result[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `" dc:"` + comment + `"` + "`\n"
 				continue
 			}
@@ -1413,10 +1417,10 @@ type ` + tpl.TableNameCaseCamel + ` struct{}
 func New` + tpl.TableNameCaseCamel + `() *` + tpl.TableNameCaseCamel + ` {
 	return &` + tpl.TableNameCaseCamel + `{}
 }
-
 `
 	if option.IsList {
-		tplController += `// 列表
+		tplController += `
+// 列表
 func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.MapDeep(req.Filter)
@@ -1484,11 +1488,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	list.Structs(&res.List)
 	return
 }
-
 `
 	}
 	if option.IsUpdate {
-		tplController += `// 详情
+		tplController += `
+// 详情
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
@@ -1538,11 +1542,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	info.Struct(&res.Info)
 	return
 }
-
 `
 	}
 	if option.IsCreate {
-		tplController += `// 新增
+		tplController += `
+// 新增
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.MapDeep(req)
@@ -1569,12 +1573,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 	res = &api.CommonCreateRes{Id: id}
 	return
 }
-
 `
 	}
 
 	if option.IsUpdate {
-		tplController += `// 修改
+		tplController += `
+// 修改
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.MapDeep(req)
@@ -1603,12 +1607,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 	_, err = service.` + tpl.TableNameCaseCamel + `().Update(ctx, filter, data)
 	return
 }
-
 `
 	}
 
 	if option.IsDelete {
-		tplController += `// 删除
+		tplController += `
+// 删除
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
@@ -1631,12 +1635,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	_, err = service.` + tpl.TableNameCaseCamel + `().Delete(ctx, filter)
 	return
 }
-
 `
 	}
 
 	if option.IsList && tpl.PidHandle.PidField != `` {
-		tplController += `// 树状列表
+		tplController += `
+// 树状列表
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.MapDeep(req.Filter)
@@ -2573,7 +2577,11 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
-
+		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
+		resultFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, column[`Type`].String())
+		if len(resultFloat) < 3 {
+			resultFloat = []string{``, `10`, `2`}
+		}
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
 		case `password`, `passwd`, `salt`:
@@ -2601,7 +2609,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2609,7 +2617,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2617,7 +2625,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2633,7 +2641,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2660,25 +2668,39 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			}
 			//int类型
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 {
-				viewQueryField += `
+				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					viewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
+		</ElFormItem>`
+				} else {
+					viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" />
 		</ElFormItem>`
+				}
 				continue
 			}
 			//float类型
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
-				viewQueryField += `
+				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="2" :controls="false" />
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
 		</ElFormItem>`
+				} else {
+					viewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
+		</ElFormItem>`
+				}
 				continue
 			}
 			//varchar类型
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2686,7 +2708,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			if gstr.Pos(column[`Type`].String(), `char`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 				continue
 			}
@@ -2800,19 +2822,22 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			"\r", ` `,
 			`"`, `\"`,
 		}))
-		result, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
-
+		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
+		resultFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, column[`Type`].String())
+		if len(resultFloat) < 3 {
+			resultFloat = []string{``, `10`, `2`}
+		}
 		switch field {
 		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`, `level`, `idPath`, `id_path`:
 		case `password`, `passwd`:
 			passwordField = field
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
+                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
                     <label v-if="saveForm.data.idArr?.length">
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
@@ -2859,12 +2884,12 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', required: true, min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
+			{ type: 'string', required: true, min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2872,12 +2897,12 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2886,11 +2911,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.url') },
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'change', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'change', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2911,7 +2936,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
         ],`
 					viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -2937,7 +2962,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
         ],`
 					viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -2950,11 +2975,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) }
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -2992,7 +3017,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', max: ` + result[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + result[1] + ` }) },
+			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3024,37 +3049,59 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//int类型
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 {
-				viewSaveRule += `
+				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }
+		],`
+					viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false"/>
+				</ElFormItem>`
+				} else {
+					viewSaveRule += `
 		` + field + `: [
 			{ type: 'integer', trigger: 'change', message: '' }
 		],`
-				viewSaveField += `
+					viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false"/>
 				</ElFormItem>`
+				}
 				continue
 			}
 			//float类型
 			if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 {
-				viewSaveRule += `
+				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'float', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }
+		],`
+					viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false"/>
+				</ElFormItem>`
+				} else {
+					viewSaveRule += `
 		` + field + `: [
 			{ type: 'float', trigger: 'change', message: '' }
 		],`
-				viewSaveField += `
+					viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="2" :controls="false"/>
+					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false"/>
 				</ElFormItem>`
+				}
 				continue
 			}
 			//varchar类型
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', min: 1, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + result[1] + ` }) },
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -3062,11 +3109,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.Pos(column[`Type`].String(), `char`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', min: ` + result[1] + `, max: ` + result[1] + `, trigger: 'blur', message: t('validation.between.string', { min: ` + result[1] + `, max: ` + result[1] + ` }) },
+			{ type: 'string', min: ` + resultStr[1] + `, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: ` + resultStr[1] + `, max: ` + resultStr[1] + ` }) },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + result[1] + `" maxlength="` + result[1] + `" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>`
 				continue
 			}
@@ -3101,8 +3148,17 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
-				viewSaveRule += `
-		` + field + `: [],`
+				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
+		],`
+				} else {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', trigger: 'change', message: '' }
+		],`
+				}
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
@@ -3111,8 +3167,17 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//date类型
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
-				viewSaveRule += `
-		` + field + `: [],`
+				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
+		],`
+				} else {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', trigger: 'change', message: '' }
+		],`
+				}
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('` + tpl.ModuleDirCaseCamelLower + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
