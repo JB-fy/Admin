@@ -36,7 +36,6 @@ func NewJWT(ctx context.Context, config map[string]interface{}) *JWT {
 
 type CustomClaims struct {
 	LoginId  uint   `json:"loginId"`
-	Account  string `json:"account"`
 	Nickname string `json:"nickname"`
 	jwt.RegisteredClaims
 }

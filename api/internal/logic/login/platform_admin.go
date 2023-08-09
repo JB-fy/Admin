@@ -61,7 +61,6 @@ func (logicThis *sPlatformAdmin) Login(ctx context.Context, account string, pass
 
 	claims := utils.CustomClaims{
 		LoginId:  info[`adminId`].Uint(),
-		Account:  info[`account`].String(),
 		Nickname: info[`nickname`].String(),
 	}
 	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
