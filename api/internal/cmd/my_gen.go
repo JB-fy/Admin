@@ -76,7 +76,7 @@ type MyGenTpl struct {
 	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
 	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
 	ModuleDirCaseSnake             string     //模块目录（蛇形，/会被去除）
-	LogicStructName                string     //logic层结构体名称（蛇形，/会被去除）
+	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableNameCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	PrimaryKey                     string     //表主键
 	LabelField                     string     //dao层label对应的字段(常用于前端组件)
 	// 以下字段用于对某些表字段做特殊处理
