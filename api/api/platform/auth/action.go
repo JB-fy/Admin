@@ -9,7 +9,7 @@ import (
 type ActionListReq struct {
 	g.Meta `path:"/action/list" method:"post" tags:"平台后台/操作" sm:"列表"`
 	Filter ActionListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string         `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Field  []string         `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 	Sort   string           `json:"sort" default:"id DESC" dc:"排序"`
 	Page   int              `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
 	Limit  int              `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
@@ -55,7 +55,7 @@ type ActionItem struct {
 type ActionInfoReq struct {
 	g.Meta `path:"/action/info" method:"post" tags:"平台后台/操作" sm:"详情"`
 	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段。默认会返回全部查询字段。如果需要的字段较少，建议指定字段，传值参考默认返回的字段"`
+	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 }
 
 type ActionInfoRes struct {
