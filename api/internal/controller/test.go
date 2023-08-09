@@ -51,7 +51,9 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	// fmt.Println(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int())	//获取配置参数
 
-	//fmt.Println(ghttp.RestartAllServer(ctx))	//重启服务
+	// fmt.Println(g.DB(`lx`).Model(`tab_user_unsubscribe`).Safe().Ctx(ctx))	//数据库连接
+
+	// fmt.Println(ghttp.RestartAllServer(ctx))	//重启服务
 
 	/* utils.HttpWriteJson(ctx, map[string]interface{}{
 		`info`: map[string]interface{}{},
