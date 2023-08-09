@@ -281,9 +281,9 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				default:
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case `startTime`:
+			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `endTime`:
+			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)

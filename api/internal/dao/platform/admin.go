@@ -289,9 +289,9 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				default:
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case `startTime`:
+			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `endTime`:
+			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `accountOrPhone`:
 				if g.Validator().Rules(`required|integer`).Data(v).Run(m.GetCtx()) == nil {

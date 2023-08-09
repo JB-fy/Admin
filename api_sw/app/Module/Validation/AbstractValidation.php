@@ -22,8 +22,8 @@ abstract class AbstractValidation
         'excIdArr.*' => 'sometimes|required|integer|min:1',
         'label' => 'sometimes|required|alpha_dash|between:1,30',
 
-        'startTime' => 'sometimes|required|date',
-        'endTime' => 'sometimes|required|date|after_or_equal:startTime',
+        'timeRangeStart' => 'sometimes|required|date',
+        'timeRangeEnd' => 'sometimes|required|date|after_or_equal:timeRangeStart',
     ];
     protected array $rule = [];
 

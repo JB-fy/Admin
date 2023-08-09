@@ -753,7 +753,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect)
 	}
 	if daoParseFilter != `` {
-		daoParseFilterPoint := `case ` + "`endTime`" + `:
+		daoParseFilterPoint := `case ` + "`timeRangeEnd`" + `:
 				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().CreatedAt, v)`
 		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter)
 	}
@@ -1248,8 +1248,8 @@ type ` + tpl.TableNameCaseCamel + `ListFilter struct {
 	IdArr     []uint      ` + "`" + `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId     *uint       ` + "`" + `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"` + "`" + `
 	ExcIdArr  []uint      ` + "`" + `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
-	StartTime *gtime.Time ` + "`" + `c:"startTime,omitempty" json:"startTime" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"` + "`" + `
-	EndTime   *gtime.Time ` + "`" + `c:"endTime,omitempty" json:"endTime" v:"date-format:Y-m-d H:i:s|after-equal:StartTime" dc:"结束时间。示例：2000-01-01 00:00:00"` + "`" + `
+	TimeRangeStart *gtime.Time ` + "`" + `c:"timeRangeStart,omitempty" json:"timeRangeStart" v:"date-format:Y-m-d H:i:s" dc:"开始时间。示例：2000-01-01 00:00:00"` + "`" + `
+	TimeRangeEnd   *gtime.Time ` + "`" + `c:"timeRangeEnd,omitempty" json:"timeRangeEnd" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间。示例：2000-01-01 00:00:00"` + "`" + `
 	Label     string      ` + "`" + `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`" + `
 	/*--------公共参数 结束--------*/
 	` + apiReqFilterColumn + `
@@ -2725,13 +2725,13 @@ queryCommon.data = {
 			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
 		]
 	})(),
-	startTime: computed(() => {
+	timeRangeStart: computed(() => {
 		if (queryCommon.data.timeRange?.length) {
 			return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
 		}
 		return ''
 	}),
-	endTime: computed(() => {
+	timeRangeEnd: computed(() => {
 		if (queryCommon.data.timeRange?.length) {
 			return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
 		}
@@ -2762,7 +2762,7 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>` + viewQueryField + `
 		<ElFormItem prop="timeRange">
-			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.startTime')" :end-placeholder="t('common.name.endTime')" />
+			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
 		</ElFormItem>
 		<ElFormItem>
 			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">

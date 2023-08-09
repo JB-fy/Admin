@@ -308,9 +308,9 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				default:
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case `startTime`:
+			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `endTime`:
+			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)

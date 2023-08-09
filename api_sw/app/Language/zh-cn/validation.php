@@ -210,8 +210,8 @@ return [
         'isStop' => '停用',
         'remark' => '备注',
         'extraData' => '额外数据',
-        'startTime' => '开始时间',
-        'endTime' => '结束时间',
+        'timeRangeStart' => '开始时间',
+        'timeRangeEnd' => '结束时间',
 
         'account' => '账号',
         'phone' => '手机号',

@@ -248,9 +248,9 @@ func (daoThis *actionRelToSceneDao) ParseFilter(filter map[string]interface{}, j
 				default:
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case `startTime`:
+			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `endTime`:
+			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
