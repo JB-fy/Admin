@@ -76,7 +76,7 @@ func (logicThis *sAuthScene) Info(ctx context.Context, filter map[string]interfa
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 	return
@@ -94,7 +94,7 @@ func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]inter
 	daoThis := daoAuth.Scene
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 	hookData := map[string]interface{}{}
@@ -112,7 +112,7 @@ func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]inter
 	daoThis := daoAuth.Scene
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 

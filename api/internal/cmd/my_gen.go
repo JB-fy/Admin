@@ -893,7 +893,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Info(ctx context.Context, filter 
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
+		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
 	}
 	return
@@ -911,7 +911,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
+		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
 	}
 	hookData := map[string]interface{}{}
@@ -925,7 +925,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 		if pid > 0 {
 			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if len(pInfo) == 0 {
-				err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
+				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
 			}
 		}
@@ -933,7 +933,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 		for _, id := range idArr {
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
-				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
+				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 				return
 			}
 			if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Int() {
@@ -941,7 +941,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 				pLevel := 0
 				if pid > 0 {
 					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
-						err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
+						err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
 						return
 					}
 					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
@@ -976,7 +976,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ` + "``" + `)
+		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
 	}
 `
@@ -984,7 +984,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 		tplLogic += `
 	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, idArr).Count()
 	if count > 0 {
-		err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
+		err = utils.NewErrorCode(ctx, 29999994, ` + "``" + `)
 		return
 	}
 `

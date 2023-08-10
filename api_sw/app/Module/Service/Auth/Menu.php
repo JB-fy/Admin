@@ -21,7 +21,7 @@ class Menu extends AbstractService
         if (!empty($data['pid'])) {
             $pInfo = $this->getDao()->parseField(['idPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId']])->info();
             if (empty($pInfo)) {
-                throwFailJson(29999998);
+                throwFailJson(29999997);
             }
         }
         $id = $this->getDao()->parseInsert($data)->insert();
@@ -54,16 +54,16 @@ class Menu extends AbstractService
                 $filterOne = ['id' => $id];
                 $oldInfo = $this->getDao()->parseFilter($filterOne)->info();
                 if ($data['pid'] == $oldInfo->menuId) { //父级不能是自身
-                    throwFailJson(29999997);
+                    throwFailJson(29999996);
                 }
                 if ($data['pid'] != $oldInfo->pid) {
                     if ($data['pid'] > 0) {
                         $pInfo = $this->getDao()->parseField(['idPath', 'level'])->parseFilter(['id' => $data['pid'], 'sceneId' => $data['sceneId'] ?? $oldInfo->sceneId])->info();
                         if (empty($pInfo)) {
-                            throwFailJson(29999998);
+                            throwFailJson(29999997);
                         }
                         if (in_array($oldInfo->menuId, explode('-',  $pInfo->idPath))) {   //父级不能是自身的子孙级
-                            throwFailJson(29999996);
+                            throwFailJson(29999995);
                         }
                         $data['idPath'] =  $pInfo->idPath . '-' . $oldInfo->menuId;
                         $data['level'] = $pInfo->level + 1;
@@ -106,7 +106,7 @@ class Menu extends AbstractService
     {
         $idArr = $this->getIdArr($filter);
         if ($this->getDao()->parseFilter(['pid' => $idArr])->getBuilder()->exists()) {
-            throwFailJson(29999995);
+            throwFailJson(29999994);
         }
         $result = $this->getDao()->parseFilter($filter)->delete();
         if (empty($result)) {

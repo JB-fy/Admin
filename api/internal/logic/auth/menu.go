@@ -78,7 +78,7 @@ func (logicThis *sAuthMenu) Info(ctx context.Context, filter map[string]interfac
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 	return
@@ -94,7 +94,7 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 		if pid > 0 {
 			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(daoThis.Columns().SceneId, daoThis.Columns().IdPath, daoThis.Columns().Level).One()
 			if len(pInfo) == 0 {
-				err = utils.NewErrorCode(ctx, 29999998, ``)
+				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
 			sceneId := gconv.Int(data[daoThis.Columns().SceneId])
@@ -114,7 +114,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 	hookData := map[string]interface{}{}
@@ -126,7 +126,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		if pid > 0 {
 			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if len(pInfo) == 0 {
-				err = utils.NewErrorCode(ctx, 29999998, ``)
+				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
 		}
@@ -134,7 +134,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		for _, id := range idArr {
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
-				err = utils.NewErrorCode(ctx, 29999997, ``)
+				err = utils.NewErrorCode(ctx, 29999996, ``)
 				return
 			}
 			if pid != oldInfo[daoThis.Columns().Pid].Int() {
@@ -151,7 +151,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 						return
 					}
 					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().IdPath].String(), `-`)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
-						err = utils.NewErrorCode(ctx, 29999996, ``)
+						err = utils.NewErrorCode(ctx, 29999995, ``)
 						return
 					}
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
@@ -184,13 +184,13 @@ func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interf
 	daoThis := daoAuth.Menu
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
 	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().Pid, idArr).Count()
 	if count > 0 {
-		err = utils.NewErrorCode(ctx, 29999995, ``)
+		err = utils.NewErrorCode(ctx, 29999994, ``)
 		return
 	}
 

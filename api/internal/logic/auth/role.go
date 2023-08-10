@@ -77,7 +77,7 @@ func (logicThis *sAuthRole) Info(ctx context.Context, filter map[string]interfac
 		return
 	}
 	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 	return
@@ -116,7 +116,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 	daoThis := daoAuth.Role
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 	hookData := map[string]interface{}{}
@@ -173,7 +173,7 @@ func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interf
 	daoThis := daoAuth.Role
 	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
-		err = utils.NewErrorCode(ctx, 29999999, ``)
+		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 

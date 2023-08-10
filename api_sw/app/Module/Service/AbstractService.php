@@ -124,7 +124,7 @@ abstract class AbstractService
     {
         $info = $this->getDao()->parseField($field)->parseFilter($filter)->info();
         if (empty($info)) {
-            throwFailJson(29999999);
+            throwFailJson(29999998);
         }
         throwSuccessJson(['info' => $info]);
     }
