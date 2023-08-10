@@ -57,11 +57,6 @@ func GetCtxSceneInfo(ctx context.Context) gdb.Record {
 	return ctx.Value(consts.ConstCtxSceneInfoName).(gdb.Record)
 }
 
-// 获取场景标识
-func GetCtxSceneCode(ctx context.Context) string {
-	return GetCtxSceneInfo(ctx)[`sceneCode`].String()
-}
-
 // 设置登录身份信息
 func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
 	r.SetCtxVar(consts.ConstCtxLoginInfoName, info)
