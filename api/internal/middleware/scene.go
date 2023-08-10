@@ -24,7 +24,7 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-
 	utils.SetCtxSceneInfo(r, sceneInfo)
+
 	r.Middleware.Next()
 }
