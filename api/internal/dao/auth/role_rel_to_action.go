@@ -59,7 +59,7 @@ func (daoThis *roleRelToActionDao) ParseDbCtx(ctx context.Context, dbSelDataList
 	case 2:
 		return g.DB(daoThis.ParseDbGroup(ctx, dbSelDataList[0])).Model(daoThis.ParseDbTable(ctx, dbSelDataList[1])).Safe().Ctx(ctx)
 	default:
-		return daoThis.Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx, map[string]interface{}{})).Model(daoThis.ParseDbTable(ctx, map[string]interface{}{})).Safe().Ctx(ctx)
 	}
 }
 
