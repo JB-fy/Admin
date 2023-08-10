@@ -40,7 +40,8 @@ var (
 // 解析分库
 func (daoThis *actionDao) ParseDbGroup(ctx context.Context, dbGroupSeldata map[string]interface{}) string {
 	group := daoThis.Group()
-	/* if len(dbGroupSeldata) > 0 { //分库逻辑
+	// 分库逻辑
+	/* if len(dbGroupSeldata) > 0 {
 	} */
 	return group
 }
@@ -48,7 +49,8 @@ func (daoThis *actionDao) ParseDbGroup(ctx context.Context, dbGroupSeldata map[s
 // 解析分表
 func (daoThis *actionDao) ParseDbTable(ctx context.Context, dbTableSelData map[string]interface{}) string {
 	table := daoThis.Table()
-	/* if len(dbTableSelData) > 0 { //分表逻辑
+	// 分表逻辑
+	/* if len(dbTableSelData) > 0 {
 	} */
 	return table
 }
