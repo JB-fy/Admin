@@ -16,10 +16,10 @@ export const useSettingStore = defineStore('setting', {
       scrollSize: 20, //滚动加载等组件默认每页条数
       saveDrawer: { //保存组件抽屉的配置
         isTipClose: true, //退出是否提示
-        size: '50%',  //宽度
+        size: '60%',  //宽度
       },
       exportButton: { //导出按钮组件的配置
-        limit: 10000, //单文件最大导出数量
+        limit: 50000, //单文件最大导出数量
       },
     }
   },
