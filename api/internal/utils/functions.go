@@ -54,7 +54,11 @@ func SetCtxSceneInfo(r *ghttp.Request, info gdb.Record) {
 
 // 获取场景信息
 func GetCtxSceneInfo(ctx context.Context) gdb.Record {
-	return ctx.Value(consts.ConstCtxSceneInfoName).(gdb.Record)
+	tmp := ctx.Value(consts.ConstCtxSceneInfoName)
+	if tmp == nil {
+		return nil
+	}
+	return tmp.(gdb.Record)
 }
 
 // 设置登录身份信息
