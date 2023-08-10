@@ -16,14 +16,14 @@ class Scene implements \Psr\Http\Server\MiddlewareInterface
         $pathArr= explode('/', getRequest()->getPathInfo());
         $sceneCode= $pathArr[1] ?? '';
         if (empty($sceneCode)) {
-            throwFailJson(39999999);
+            throwFailJson(39999998);
         }
         $sceneInfo = getConfig('inDb.authScene.' . $sceneCode);
         if (empty($sceneInfo)) {
-            throwFailJson(39999999);
+            throwFailJson(39999998);
         }
         if ($sceneInfo->isStop) {
-            throwFailJson(39999998);
+            throwFailJson(39999997);
         }
         $logicAuthScene = getContainer()->get(\App\Module\Logic\Auth\Scene::class);
         $logicAuthScene->setCurrentSceneInfo($sceneInfo);
