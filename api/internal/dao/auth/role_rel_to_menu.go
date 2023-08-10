@@ -36,7 +36,7 @@ var (
 )
 
 // 解析分库
-func (daoThis *roleRelToMenuDao) ParseDbGroup(dbGroupSeldata map[string]interface{}) string {
+func (daoThis *roleRelToMenuDao) ParseDbGroup(ctx context.Context, dbGroupSeldata map[string]interface{}) string {
 	group := daoThis.Group()
 	/* if len(dbGroupSeldata) > 0 { //分库逻辑
 	} */
@@ -44,7 +44,7 @@ func (daoThis *roleRelToMenuDao) ParseDbGroup(dbGroupSeldata map[string]interfac
 }
 
 // 解析分表
-func (daoThis *roleRelToMenuDao) ParseDbTable(dbTableSelData map[string]interface{}) string {
+func (daoThis *roleRelToMenuDao) ParseDbTable(ctx context.Context, dbTableSelData map[string]interface{}) string {
 	table := daoThis.Table()
 	/* if len(dbTableSelData) > 0 { //分表逻辑
 	} */
@@ -55,9 +55,9 @@ func (daoThis *roleRelToMenuDao) ParseDbTable(dbTableSelData map[string]interfac
 func (daoThis *roleRelToMenuDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
 	switch len(dbSelDataList) {
 	case 1:
-		return g.DB(daoThis.ParseDbGroup(dbSelDataList[0])).Model(daoThis.Table()).Safe().Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx, dbSelDataList[0])).Model(daoThis.Table()).Safe().Ctx(ctx)
 	case 2:
-		return g.DB(daoThis.ParseDbGroup(dbSelDataList[0])).Model(daoThis.ParseDbTable(dbSelDataList[1])).Safe().Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx, dbSelDataList[0])).Model(daoThis.ParseDbTable(ctx, dbSelDataList[1])).Safe().Ctx(ctx)
 	default:
 		return daoThis.Ctx(ctx)
 	}
