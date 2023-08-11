@@ -30,14 +30,14 @@ class SceneLoginOfPlatform implements \Psr\Http\Server\MiddlewareInterface
             $payload = $jwt->verifyToken($token);
             /**--------验证token 结束--------**/
 
-            /**--------选做。限制多地登录，多设备登录等情况下可用（前提必须在登录时做过token缓存） 开始--------**/
+            /**--------选做。限制多地登录，多设备登录等情况下可用（前置条件：登录时做过token缓存） 开始--------**/
             $cacheLogin = getCache(CacheLogin::class);
             $cacheLogin->setTokenKey($payload['id'], $sceneCode);
             $checkToken = $cacheLogin->getToken();
             if ($checkToken != $token) {
                 throwFailJson(39994002);
             }
-            /**--------选做。限制多地登录，多设备登录等情况下可用（前提必须在登录时做过token缓存） 结束--------**/
+            /**--------选做。限制多地登录，多设备登录等情况下可用（前置条件：登录时做过token缓存） 结束--------**/
 
             /**--------获取登录用户信息并验证 开始--------**/
             $info = getDao(Admin::class)
