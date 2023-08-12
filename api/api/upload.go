@@ -22,7 +22,7 @@ type UploadSignRes struct {
 
 /*--------获取Sts Token 开始--------*/
 type UploadStsReq struct {
-	g.Meta `path:"/sts" method:"post" tags:"上传" sm:"获取Sts Token(App端直传用)"`
+	g.Meta `path:"/sts" method:"get,post" tags:"上传" sm:"获取Sts Token(App端直传用)"`
 	Type   string `json:"type"  v:"" dc:"类型(暂时没用)"`
 }
 
