@@ -405,9 +405,10 @@ func (daoThis *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 
 // 保存关联菜单
 func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []int, id int) {
-	relKey := RoleRelToMenu.Columns().MenuId
-	priKey := daoThis.PrimaryKey()
-	relIdArrOfOldTmp, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relDao := RoleRelToMenu
+	priKey := relDao.Columns().RoleId
+	relKey := relDao.Columns().MenuId
+	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联菜单 开始----**/
@@ -420,23 +421,24 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []int, id int)
 				relKey: v,
 			})
 		}
-		RoleRelToMenu.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联菜单 结束----**/
 
 	/**----删除关联菜单 开始----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		RoleRelToMenu.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
+		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联菜单 结束----**/
 }
 
 // 保存关联操作
 func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []int, id int) {
-	relKey := RoleRelToAction.Columns().ActionId
-	priKey := daoThis.PrimaryKey()
-	relIdArrOfOldTmp, _ := RoleRelToAction.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relDao := RoleRelToAction
+	priKey := relDao.Columns().RoleId
+	relKey := relDao.Columns().ActionId
+	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联操作 开始----**/
@@ -449,14 +451,14 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []int, id in
 				relKey: v,
 			})
 		}
-		RoleRelToAction.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联操作 开始----**/
 
 	/**----删除关联操作 结束----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		RoleRelToAction.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
+		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联操作 结束----**/
 }

@@ -416,9 +416,10 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 
 // 保存关联场景
 func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id int) {
-	relKey := ActionRelToScene.Columns().SceneId
-	priKey := daoThis.PrimaryKey()
-	relIdArrOfOldTmp, _ := ActionRelToScene.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relDao := ActionRelToScene
+	priKey := relDao.Columns().ActionId
+	relKey := relDao.Columns().SceneId
+	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联场景 开始----**/
@@ -431,14 +432,14 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id i
 				relKey: v,
 			})
 		}
-		ActionRelToScene.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联场景 结束----**/
 
 	/**----删除关联场景 开始----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		ActionRelToScene.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
+		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联场景 结束----**/
 }

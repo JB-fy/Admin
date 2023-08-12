@@ -390,9 +390,10 @@ func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.
 
 // 保存关联角色
 func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int) {
-	relKey := daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId
-	priKey := daoThis.PrimaryKey()
-	relIdArrOfOldTmp, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relDao := daoAuth.RoleRelOfPlatformAdmin
+	priKey := relDao.Columns().AdminId
+	relKey := relDao.Columns().RoleId
+	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
 	/**----新增关联角色 开始----**/
@@ -405,14 +406,14 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int
 				relKey: v,
 			})
 		}
-		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联角色 结束----**/
 
 	/**----删除关联角色 开始----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
+		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
 	/**----删除关联角色 结束----**/
 }
