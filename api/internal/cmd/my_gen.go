@@ -17,7 +17,7 @@ import (
 )
 
 /*
-使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 
 强烈建议搭配Git使用
 表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
@@ -56,7 +56,9 @@ type MyGenOption struct {
 	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。示例：auth_
 	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth，app/user
 	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
-	IsList       bool   `json:"isList" `      //是否生成列表接口(0,false,off,no,""为false，其他都为true)
+	IsList       bool   `json:"isList" `      //是否生成列表接口(no为false，""和yes其他都为true)
+	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
+	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
 	IsCreate     bool   `json:"isCreate"`     //是否生成创建接口
 	IsUpdate     bool   `json:"isUpdate"`     //是否生成更新接口
 	IsDelete     bool   `json:"isDelete"`     //是否生成删除接口
@@ -205,8 +207,8 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
 	}
-	// 是否生成列表接口
 noAllRestart:
+	// 是否生成列表接口
 	isList, ok := optionMap[`isList`]
 	if !ok {
 		isList = gcmd.Scan("> 是否生成列表接口，默认(yes):\n")
@@ -222,6 +224,42 @@ isListEnd:
 			break isListEnd
 		default:
 			isList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
+		}
+	}
+	// 列表接口是否返回总数
+	isCount, ok := optionMap[`isCount`]
+	if !ok {
+		isCount = gcmd.Scan("> 列表接口是否返回总数，默认(yes):\n")
+	}
+isCountEnd:
+	for {
+		switch isCount {
+		case ``, `yes`:
+			option.IsCount = true
+			break isCountEnd
+		case `no`:
+			option.IsCount = false
+			break isCountEnd
+		default:
+			isCount = gcmd.Scan("> 输入错误，请重新输入，列表接口是否返回总数，默认(yes):\n")
+		}
+	}
+	// 是否生成详情接口
+	isInfo, ok := optionMap[`isInfo`]
+	if !ok {
+		isInfo = gcmd.Scan("> 是否生成详情接口，默认(yes):\n")
+	}
+isInfoEnd:
+	for {
+		switch isInfo {
+		case ``, `yes`:
+			option.IsInfo = true
+			break isInfoEnd
+		case `no`:
+			option.IsInfo = false
+			break isInfoEnd
+		default:
+			isInfo = gcmd.Scan("> 输入错误，请重新输入，是否生成详情接口，默认(yes):\n")
 		}
 	}
 	// 是否生成创建接口
@@ -278,7 +316,7 @@ isDeleteEnd:
 			isDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
 		}
 	}
-	if !(option.IsList || option.IsCreate || option.IsUpdate || option.IsDelete) {
+	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
 		fmt.Println("请重新选择生成哪些接口，不能全是no！")
 		goto noAllRestart
 	}
@@ -1255,8 +1293,12 @@ type ` + tpl.TableNameCaseCamel + `ListFilter struct {
 	` + apiReqFilterColumn + `
 }
 
-type ` + tpl.TableNameCaseCamel + `ListRes struct {
-	Count int         ` + "`" + `json:"count" dc:"总数"` + "`" + `
+type ` + tpl.TableNameCaseCamel + `ListRes struct {`
+		if option.IsCount {
+			tplApi += `
+	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
+		}
+		tplApi += `
 	List  []` + tpl.TableNameCaseCamel + `Item ` + "`" + `json:"list" dc:"列表"` + "`" + `
 }
 
@@ -1270,7 +1312,7 @@ type ` + tpl.TableNameCaseCamel + `Item struct {
 
 `
 	}
-	if option.IsUpdate {
+	if option.IsInfo {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableNameCaseCamel + `InfoReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
@@ -1461,11 +1503,14 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	/**--------权限验证 结束--------**/
 `
 		}
-		tplController += `
+		if option.IsCount {
+			tplController += `
 	count, err := service.` + tpl.LogicStructName + `().Count(ctx, filter)
 	if err != nil {
 		return
-	}
+	}`
+		}
+		tplController += `
 	list, err := service.` + tpl.LogicStructName + `().List(ctx, filter, field, order, page, limit)
 	if err != nil {
 		return
@@ -1478,15 +1523,19 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		` + "`count`" + `: count,
 		` + "`list`" + `:  list,
 	}, 0, ` + "``" + `) */
-	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{`
+		if option.IsCount {
+			tplController += `
 		Count: count,
-	}
+	`
+		}
+		tplController += `}
 	list.Structs(&res.List)
 	return
 }
 `
 	}
-	if option.IsUpdate {
+	if option.IsInfo {
 		tplController += `
 // 详情
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
@@ -2075,7 +2124,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			const arrList = [props.rowData.` + field + `]`
 				}
 				viewListColumn += `
-			let typeObj: string[] = ['', 'success', 'danger', 'info', 'warning']
+			let typeArr: string[] = ['', 'success', 'danger', 'info', 'warning']
             return [
                 h(ElScrollbar, {
                     'wrap-style': 'display: flex; align-items: center;',
@@ -2084,7 +2133,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                     default: () => {
                         const content = arrList.map((item, index) => {
                             return h(ElTag as any, {
-                                'type': typeObj[index % 5]
+                                'type': typeArr[index % 5]
                             }, {
 								default: () => {
 									return item
@@ -3029,12 +3078,12 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
         ],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElTag v-for="item in saveForm.data.` + field + `" :key="item" :closable="true" style="margin-right: 10px;" @close="` + field + `Handle.close(item)">
+					<ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="tagListHandle.typeArr[index % 5]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
 						{{ item }}
 					</ElTag>
-					<!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.confirm" @blur="` + field + `Handle.confirm"  :controls="false" size="small" style="width: 100px;" /> -->
-					<ElInput v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.confirm" @blur="` + field + `Handle.confirm" size="small" style="width: 100px;" />
-					<ElButton v-else type="primary" size="small" @click="` + field + `Handle.show">
+					<!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue"  :controls="false" size="small" style="width: 100px;" /> -->
+					<ElInput v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
+					<ElButton v-else type="primary" size="small" @click="` + field + `Handle.visibleChange">
 						<AutoiconEpPlus />{{ t('common.add') }}
 					</ElButton>
 				</ElFormItem>`
@@ -3044,22 +3093,23 @@ const ` + field + `Handle = reactive({
 	ref: null as any,
 	visible: false,
 	value: undefined,
-	confirm: () => {
+	typeArr: ['', 'success', 'danger', 'info', 'warning'] as any,
+	visibleChange: () => {
+		` + field + `Handle.visible = true
+		nextTick(() => {
+			` + field + `Handle.ref?.focus()
+		})
+	},
+	addValue: () => {
 		if (` + field + `Handle.value) {
 			saveForm.data.` + field + `.push(` + field + `Handle.value)
 		}
 		` + field + `Handle.visible = false
 		` + field + `Handle.value = undefined
 	},
-	show: () => {
-		` + field + `Handle.visible = true
-		nextTick(() => {
-			` + field + `Handle.ref?.focus()
-		})
-	},
-	close: (item: any) => {
+	delValue: (item: any) => {
 		saveForm.data.` + field + `.splice(saveForm.data.` + field + `.indexOf(item), 1)
-	}
+	},
 })`
 				continue
 			}
