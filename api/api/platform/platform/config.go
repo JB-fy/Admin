@@ -15,11 +15,11 @@ type ConfigGetRes struct {
 }
 
 type Config struct {
-	AliyunOssHost            string `json:"aliyunOssHost" dc:"阿里云存储-域名"`
-	AliyunOssBucket          string `json:"aliyunOssBucket" dc:"阿里云存储-Bucket"`
-	AliyunOssAccessKeyId     string `json:"aliyunOssAccessKeyId" dc:"阿里云存储-AccessKeyId"`
-	AliyunOssAccessKeySecret string `json:"aliyunOssAccessKeySecret" dc:"阿里云存储-AccessKeySecret"`
-	AliyunOssRoleArn         string `json:"aliyunOssRoleArn" dc:"阿里云存储-RoleArn"`
+	AliyunOssHost            *string `json:"aliyunOssHost,omitempty" dc:"阿里云存储-域名"`
+	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" dc:"阿里云存储-Bucket"`
+	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" dc:"阿里云存储-AccessKeyId"`
+	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" dc:"阿里云存储-AccessKeySecret"`
+	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" dc:"阿里云存储-RoleArn"`
 }
 
 /*--------获取 结束--------*/

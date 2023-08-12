@@ -23,13 +23,13 @@ type AdminListFilter struct {
 	ExcIdArr       []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
 	TimeRangeStart *gtime.Time `c:"timeRangeStart,omitempty" json:"timeRangeStart" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `c:"timeRangeEnd,omitempty" json:"timeRangeEnd" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	Label          string      `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Label          *string     `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	AdminId *uint  `c:"adminId,omitempty" json:"adminId" v:"integer|min:1" dc:"管理员ID"`
-	Account string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
-	Phone   string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
-	RoleId  *uint  `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
-	IsStop  *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	AdminId *uint   `c:"adminId,omitempty" json:"adminId" v:"integer|min:1" dc:"管理员ID"`
+	Account *string `c:"account,omitempty" json:"account" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Phone   *string `c:"phone,omitempty" json:"phone" v:"phone" dc:"手机号"`
+	RoleId  *uint   `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
+	IsStop  *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type AdminListRes struct {
@@ -38,16 +38,16 @@ type AdminListRes struct {
 }
 
 type AdminItem struct {
-	Id        uint        `json:"id" dc:"ID"`
-	Label     string      `json:"label" dc:"标签。常用于前端组件"`
-	AdminId   uint        `json:"adminId" dc:"管理员ID"`
-	Account   string      `json:"account" dc:"账号"`
-	Phone     string      `json:"phone" dc:"手机号"`
-	Avatar    string      `json:"avatar" dc:"头像"`
-	Nickname  string      `json:"nickname" dc:"昵称"`
-	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
-	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
-	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
+	Id        *uint       `json:"id,omitempty" dc:"ID"`
+	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	AdminId   *uint       `json:"adminId,omitempty" dc:"管理员ID"`
+	Account   *string     `json:"account,omitempty" dc:"账号"`
+	Phone     *string     `json:"phone,omitempty" dc:"手机号"`
+	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
+	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
+	IsStop    *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -64,17 +64,17 @@ type AdminInfoRes struct {
 }
 
 type AdminInfo struct {
-	Id        uint        `json:"id" dc:"ID"`
-	Label     string      `json:"label" dc:"标签。常用于前端组件"`
-	AdminId   uint        `json:"adminId" dc:"管理员ID"`
-	Account   string      `json:"account" dc:"账号"`
-	Phone     string      `json:"phone" dc:"手机号"`
-	Avatar    string      `json:"avatar" dc:"头像"`
-	Nickname  string      `json:"nickname" dc:"昵称"`
-	IsStop    uint        `json:"isStop" dc:"停用：0否 1是"`
-	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
-	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
-	RoleIdArr []uint      `json:"roleIdArr" dc:"角色ID列表"`
+	Id        *uint       `json:"id,omitempty" dc:"ID"`
+	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	AdminId   *uint       `json:"adminId,omitempty" dc:"管理员ID"`
+	Account   *string     `json:"account,omitempty" dc:"账号"`
+	Phone     *string     `json:"phone,omitempty" dc:"手机号"`
+	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
+	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
+	IsStop    *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	RoleIdArr []uint      `json:"roleIdArr,omitempty" dc:"角色ID列表"`
 }
 
 /*--------详情 结束--------*/

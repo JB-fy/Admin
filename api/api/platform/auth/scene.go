@@ -23,12 +23,12 @@ type SceneListFilter struct {
 	ExcIdArr       []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
 	TimeRangeStart *gtime.Time `c:"timeRangeStart,omitempty" json:"timeRangeStart" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `c:"timeRangeEnd,omitempty" json:"timeRangeEnd" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	Label          string      `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Label          *string     `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	SceneId   *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
-	SceneCode string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
-	SceneName string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
-	IsStop    *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneId   *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	SceneCode *string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
+	SceneName *string `c:"sceneName,omitempty" json:"sceneName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
+	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type SceneListRes struct {
@@ -37,15 +37,15 @@ type SceneListRes struct {
 }
 
 type SceneItem struct {
-	Id          uint        `json:"id" dc:"ID"`
-	Label       string      `json:"label" dc:"标签。常用于前端组件"`
-	SceneId     uint        `json:"sceneId" dc:"场景ID"`
-	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
-	SceneName   string      `json:"sceneName" dc:"场景名称"`
-	SceneConfig string      `json:"sceneConfig" dc:"场景配置"`
-	IsStop      uint        `json:"isStop" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
+	SceneCode   *string     `json:"sceneCode,omitempty" dc:"场景标识"`
+	SceneName   *string     `json:"sceneName,omitempty" dc:"场景名称"`
+	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"场景配置"`
+	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -62,15 +62,15 @@ type SceneInfoRes struct {
 }
 
 type SceneInfo struct {
-	Id          uint        `json:"id" dc:"ID"`
-	Label       string      `json:"label" dc:"标签。常用于前端组件"`
-	SceneId     uint        `json:"sceneId" dc:"场景ID"`
-	SceneCode   string      `json:"sceneCode" dc:"场景标识"`
-	SceneName   string      `json:"sceneName" dc:"场景名称"`
-	SceneConfig string      `json:"sceneConfig" dc:"场景配置"`
-	IsStop      uint        `json:"isStop" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updatedAt" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"createdAt" dc:"创建时间"`
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
+	SceneCode   *string     `json:"sceneCode,omitempty" dc:"场景标识"`
+	SceneName   *string     `json:"sceneName,omitempty" dc:"场景名称"`
+	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"场景配置"`
+	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/

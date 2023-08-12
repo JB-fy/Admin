@@ -31,9 +31,8 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 		return
 	}
 
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`config`: config,
-	}, 0, ``)
+	res = &apiPlatform.ConfigGetRes{}
+	gconv.Struct(config, &res.Config)
 	return
 }
 

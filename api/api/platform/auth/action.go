@@ -23,13 +23,13 @@ type ActionListFilter struct {
 	ExcIdArr       []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
 	TimeRangeStart *gtime.Time `c:"timeRangeStart,omitempty" json:"timeRangeStart" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `c:"timeRangeEnd,omitempty" json:"timeRangeEnd" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	Label          string      `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Label          *string     `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	ActionId   *uint  `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
-	ActionName string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	IsStop     *uint  `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
-	SceneId    *uint  `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	ActionId   *uint   `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
+	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneId    *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
 }
 
 type ActionListRes struct {
@@ -38,15 +38,15 @@ type ActionListRes struct {
 }
 
 type ActionItem struct {
-	Id         uint        `json:"id" dc:"ID"`
-	Label      string      `json:"label" dc:"标签。常用于前端组件"`
-	ActionId   uint        `json:"actionId" dc:"操作ID"`
-	ActionName string      `json:"actionName" dc:"操作名称"`
-	ActionCode string      `json:"actionCode" dc:"操作标识"`
-	Remark     string      `json:"remark" dc:"备注"`
-	IsStop     uint        `json:"isStop" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updatedAt" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"createdAt" dc:"创建时间"`
+	Id         *uint       `json:"id,omitempty" dc:"ID"`
+	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	ActionId   *uint       `json:"actionId,omitempty" dc:"操作ID"`
+	ActionName *string     `json:"actionName,omitempty" dc:"操作名称"`
+	ActionCode *string     `json:"actionCode,omitempty" dc:"操作标识"`
+	Remark     *string     `json:"remark,omitempty" dc:"备注"`
+	IsStop     *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt  *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt  *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -63,16 +63,16 @@ type ActionInfoRes struct {
 }
 
 type ActionInfo struct {
-	Id         uint        `json:"id" dc:"ID"`
-	Label      string      `json:"label" dc:"标签。常用于前端组件"`
-	ActionId   uint        `json:"actionId" dc:"操作ID"`
-	ActionName string      `json:"actionName" dc:"操作名称"`
-	ActionCode string      `json:"actionCode" dc:"操作标识"`
-	Remark     string      `json:"remark" dc:"备注"`
-	IsStop     uint        `json:"isStop" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updatedAt" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"createdAt" dc:"创建时间"`
-	SceneIdArr []uint      `json:"sceneIdArr" dc:"场景ID列表"`
+	Id         *uint       `json:"id,omitempty" dc:"ID"`
+	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	ActionId   *uint       `json:"actionId,omitempty" dc:"操作ID"`
+	ActionName *string     `json:"actionName,omitempty" dc:"操作名称"`
+	ActionCode *string     `json:"actionCode,omitempty" dc:"操作标识"`
+	Remark     *string     `json:"remark,omitempty" dc:"备注"`
+	IsStop     *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt  *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt  *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	SceneIdArr []uint      `json:"sceneIdArr,omitempty" dc:"场景ID列表"`
 }
 
 /*--------详情 结束--------*/
