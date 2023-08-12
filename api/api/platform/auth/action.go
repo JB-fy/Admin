@@ -17,19 +17,19 @@ type ActionListReq struct {
 
 type ActionListFilter struct {
 	/*--------公共参数 开始--------*/
-	Id             *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
-	IdArr          []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
-	TimeRangeStart *gtime.Time `c:"timeRangeStart,omitempty" json:"timeRangeStart" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
-	TimeRangeEnd   *gtime.Time `c:"timeRangeEnd,omitempty" json:"timeRangeEnd" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	Label          *string     `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Id             *uint       `json:"id,omitempty" v:"integer|min:1" dc:"ID"`
+	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	ExcId          *uint       `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
+	Label          *string     `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	ActionId   *uint   `c:"actionId,omitempty" json:"actionId" v:"integer|min:1" dc:"操作ID"`
-	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
-	SceneId    *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
+	ActionId   *uint   `json:"actionId,omitempty" v:"integer|min:1" dc:"操作ID"`
+	ActionName *string `json:"actionName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `json:"actionCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	IsStop     *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneId    *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
 }
 
 type ActionListRes struct {
@@ -80,11 +80,11 @@ type ActionInfo struct {
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
 	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/操作" sm:"创建"`
-	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
-	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
-	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
+	ActionName *string `json:"actionName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `json:"actionCode,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	Remark     *string `json:"remark,omitempty" v:"length:1,120" dc:"备注"`
+	IsStop     *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneIdArr *[]uint `json:"sceneIdArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
 /*--------新增 结束--------*/
@@ -92,12 +92,12 @@ type ActionCreateReq struct {
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
 	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/操作" sm:"更新"`
-	IdArr      []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	ActionName *string `c:"actionName,omitempty" json:"actionName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `c:"actionCode,omitempty" json:"actionCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	Remark     *string `c:"remark,omitempty" json:"remark" v:"length:1,120" dc:"备注"`
-	IsStop     *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
-	SceneIdArr *[]uint `c:"sceneIdArr,omitempty" json:"sceneIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
+	IdArr      []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	ActionName *string `json:"actionName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode *string `json:"actionCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	Remark     *string `json:"remark,omitempty" v:"length:1,120" dc:"备注"`
+	IsStop     *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneIdArr *[]uint `json:"sceneIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"场景ID列表"`
 }
 
 /*--------修改 结束--------*/
@@ -105,7 +105,7 @@ type ActionUpdateReq struct {
 /*--------删除 开始--------*/
 type ActionDeleteReq struct {
 	g.Meta `path:"/action/del" method:"post" tags:"平台后台/操作" sm:"删除"`
-	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

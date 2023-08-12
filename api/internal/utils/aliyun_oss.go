@@ -32,17 +32,17 @@ import (
 
 type AliyunOss struct {
 	Ctx             context.Context
-	Host            string `c:"aliyunOssHost"`
-	Bucket          string `c:"aliyunOssBucket"`
-	AccessKeyId     string `c:"aliyunOssAccessKeyId"`
-	AccessKeySecret string `c:"aliyunOssAccessKeySecret"`
-	RoleArn         string `c:"aliyunOssRoleArn"`
+	Host            string `json:"aliyunOssHost"`
+	Bucket          string `json:"aliyunOssBucket"`
+	AccessKeyId     string `json:"aliyunOssAccessKeyId"`
+	AccessKeySecret string `json:"aliyunOssAccessKeySecret"`
+	RoleArn         string `json:"aliyunOssRoleArn"`
 }
 
 type AliyunOssCallback struct {
-	Url      string `c:"url"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.String(), `/upload/notify`, 1)
-	Body     string `c:"body"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-	BodyType string `c:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
+	Url      string `json:"url"`      //回调地址	gstr.Replace(r.GetUrl(), r.URL.String(), `/upload/notify`, 1)
+	Body     string `json:"body"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+	BodyType string `json:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
 type AliyunOssSignOption struct {

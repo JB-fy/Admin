@@ -10,9 +10,9 @@ import (
 
 type JWT struct {
 	Ctx        context.Context
-	SignKey    []byte `c:"signKey"`
-	ExpireTime uint   `c:"expireTime"`
-	SignType   string `c:"signType"`
+	SignKey    []byte `json:"signKey"`
+	ExpireTime uint   `json:"expireTime"`
+	SignType   string `json:"signType"`
 	SignMethod *jwt.SigningMethodHMAC
 }
 

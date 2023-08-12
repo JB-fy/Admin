@@ -17,19 +17,19 @@ type RoleListReq struct {
 
 type RoleListFilter struct {
 	/*--------公共参数 开始--------*/
-	Id             *uint       `c:"id,omitempty" json:"id" v:"integer|min:1" dc:"ID"`
-	IdArr          []uint      `c:"idArr,omitempty" json:"idArr" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `c:"excId,omitempty" json:"excId" v:"integer|min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `c:"excIdArr,omitempty" json:"excIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
-	TimeRangeStart *gtime.Time `c:"timeRangeStart,omitempty" json:"timeRangeStart" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
-	TimeRangeEnd   *gtime.Time `c:"timeRangeEnd,omitempty" json:"timeRangeEnd" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	Label          *string     `c:"label,omitempty" json:"label" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Id             *uint       `json:"id,omitempty" v:"integer|min:1" dc:"ID"`
+	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	ExcId          *uint       `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
+	Label          *string     `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	RoleId    *uint   `c:"roleId,omitempty" json:"roleId" v:"integer|min:1" dc:"角色ID"`
-	RoleName  *string `c:"roleName,omitempty" json:"roleName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
-	SceneId   *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
-	SceneCode *string `c:"sceneCode,omitempty" json:"sceneCode" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
-	IsStop    *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	RoleId    *uint   `json:"roleId,omitempty" v:"integer|min:1" dc:"角色ID"`
+	RoleName  *string `json:"roleName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
+	SceneId   *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
+	SceneCode *string `json:"sceneCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
+	IsStop    *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type RoleListRes struct {
@@ -85,11 +85,11 @@ type RoleInfo struct {
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
 	g.Meta      `path:"/role/create" method:"post" tags:"平台后台/角色" sm:"创建"`
-	RoleName    *string `c:"roleName,omitempty" json:"roleName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
-	SceneId     *uint   `c:"sceneId,omitempty" json:"sceneId" v:"required|integer|min:1" dc:"场景ID"`
-	MenuIdArr   *[]uint `c:"menuIdArr,omitempty" json:"menuIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
-	ActionIdArr *[]uint `c:"actionIdArr,omitempty" json:"actionIdArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"操作ID列表"`
-	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	RoleName    *string `json:"roleName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
+	SceneId     *uint   `json:"sceneId,omitempty" v:"required|integer|min:1" dc:"场景ID"`
+	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
+	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"操作ID列表"`
+	IsStop      *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -97,12 +97,12 @@ type RoleCreateReq struct {
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
 	g.Meta      `path:"/role/update" method:"post" tags:"平台后台/角色" sm:"更新"`
-	IdArr       []uint  `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	RoleName    *string `c:"roleName,omitempty" json:"roleName" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
-	SceneId     *uint   `c:"sceneId,omitempty" json:"sceneId" v:"integer|min:1" dc:"场景ID"`
-	MenuIdArr   *[]uint `c:"menuIdArr,omitempty" json:"menuIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
-	ActionIdArr *[]uint `c:"actionIdArr,omitempty" json:"actionIdArr" v:"distinct|foreach|integer|foreach|min:1" dc:"操作ID列表"`
-	IsStop      *uint   `c:"isStop,omitempty" json:"isStop" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	RoleName    *string `json:"roleName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
+	SceneId     *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
+	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
+	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"操作ID列表"`
+	IsStop      *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
@@ -110,7 +110,7 @@ type RoleUpdateReq struct {
 /*--------删除 开始--------*/
 type RoleDeleteReq struct {
 	g.Meta `path:"/role/del" method:"post" tags:"平台后台/角色" sm:"删除"`
-	IdArr  []uint `c:"idArr,omitempty" json:"idArr" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/
