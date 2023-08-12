@@ -1453,9 +1453,16 @@ import (`
 	}
 	tplController += `
 	"context"
-
-	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/util/gconv"
+`
+	if option.IsList && option.IsInfo {
+		tplController += `
+	"github.com/gogf/gf/v2/container/gset"`
+	}
+	if option.IsList && option.IsCreate || option.IsUpdate {
+		tplController += `
+	"github.com/gogf/gf/v2/util/gconv"`
+	}
+	tplController += `
 )
 
 type ` + tpl.TableNameCaseCamel + ` struct{}
