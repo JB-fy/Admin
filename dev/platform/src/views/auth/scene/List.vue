@@ -282,7 +282,7 @@ defineExpose({
                     </ElButton>
                     <template #dropdown>
                         <ElDropdownMenu>
-                            <ElDropdownItem v-for="(item, key) in table.columns" :key="key">
+                            <ElDropdownItem v-for="(item, index) in table.columns" :key="index">
                                 <ElCheckbox v-model="item.hidden">
                                     {{ item.title }}
                                 </ElCheckbox>

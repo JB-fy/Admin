@@ -14,13 +14,13 @@ defineProps({
 </script>
 
 <template>
-    <template v-for="(item, key) in tree" :key="key">
-        <ElSubMenu v-if="item.children.length" :index="subMenuIndexPrefix + '/' + key">
+    <template v-for="(item, index) in tree" :key="index">
+        <ElSubMenu v-if="item.children.length" :index="subMenuIndexPrefix + '/' + index">
             <template #title>
                 <MyIconDynamic :icon="item.icon" />
                 <span>{{ languageStore.getMenuTitle(item) }}</span>
             </template>
-            <LeftMenuItem :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + key" />
+            <LeftMenuItem :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + index" />
         </ElSubMenu>
         <ElMenuItem v-else :index="item.url">
             <MyIconDynamic :icon="item.icon" />

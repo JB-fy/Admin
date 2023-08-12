@@ -62,7 +62,7 @@ const menuTab = reactive({
                     <AutoiconEpFold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
                 </ElLink>
                 <ElBreadcrumb separator=">">
-                    <ElBreadcrumbItem v-for="(item, key) in adminStore.getCurrentMenuChain" :key="key">
+                    <ElBreadcrumbItem v-for="(item, index) in adminStore.getCurrentMenuChain" :key="index">
                         <ElSpace :size="0">
                             <MyIconDynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
@@ -122,7 +122,7 @@ const menuTab = reactive({
         <ElCol :span="24">
             <ElTabs class="menu-tabs" type="card" :model-value="route.fullPath" @tab-change="menuTab.change"
                 @tab-remove="menuTab.remove">
-                <template v-for="(item, key) in adminStore.getMenuTabList" :key="key">
+                <template v-for="(item, index) in adminStore.getMenuTabList" :key="index">
                     <ElTabPane :name="item.url" :closable="item.closable">
                         <template #label>
                             <ElDropdown :ref="(el: any) => { menuTab.refList[item.url] = el }" trigger="contextmenu"
