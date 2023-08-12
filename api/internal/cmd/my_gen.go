@@ -1055,7 +1055,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//id后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
@@ -1063,7 +1063,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//name或code后缀
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
+			if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
@@ -1071,7 +1071,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//mobile或phone后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
+			if (gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
@@ -1079,7 +1079,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//url或link后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
+			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
@@ -1113,7 +1113,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//Ip后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
@@ -1121,7 +1121,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//status或type后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+			if (field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type`) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				statusList := MyGenStatusList(comment)
 				statusArr := make([]string, len(statusList))
 				for index, status := range statusList {
@@ -1135,7 +1135,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//is_前缀
-			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
+			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1" dc:"` + comment + `"` + "`\n"
 				apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `c:"` + field + `,omitempty" json:"` + field + `" v:"integer|in:0,1" dc:"` + comment + `"` + "`\n"
@@ -1925,7 +1925,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//id后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -1937,7 +1937,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//name或code后缀
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
+			if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -1949,7 +1949,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//mobile或phone后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
+			if (gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -1961,7 +1961,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//url或link后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
+			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -2074,7 +2074,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//Ip后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -2087,7 +2087,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//remark或desc后缀
 			//intro或content后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content` {
+			if ((gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && column[`Type`].String() == `text`) {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -2100,7 +2100,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//status或type后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+			if (field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type`) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				statusList := MyGenStatusList(comment)
 				tagTypeStr := ``
 				tagTypeArr := []string{``, `success`, `danger`, `info`, `warning`}
@@ -2130,7 +2130,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//is_前缀
-			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
+			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewListColumn += `
 	{
 		dataKey: '` + field + `',
@@ -2618,7 +2618,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//id后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2)) + `/list' }" />
@@ -2626,7 +2626,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//name或code后缀
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
+			if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
@@ -2634,7 +2634,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//mobile或phone后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
+			if (gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
@@ -2642,7 +2642,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//url或link后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
+			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
@@ -2658,7 +2658,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//Ip后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
@@ -2666,7 +2666,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				continue
 			}
 			//status或type后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+			if (field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type`) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 100px;">
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
@@ -2675,11 +2675,11 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			}
 			//remark或desc后缀
 			//intro或content后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content` {
+			if ((gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && column[`Type`].String() == `text`) {
 				continue
 			}
 			//is_前缀
-			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
+			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
@@ -2889,7 +2889,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//id后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }
@@ -2901,7 +2901,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//name或code后缀
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` {
+			if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', required: true, min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
@@ -2914,7 +2914,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//mobile或phone后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` {
+			if (gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
@@ -2927,7 +2927,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//url或link后缀
-			if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` {
+			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.url') },
@@ -2992,7 +2992,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//Ip后缀
-			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` {
+			if gstr.SubStr(fieldCaseCamel, -2) == `Ip` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
@@ -3004,7 +3004,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//status或type后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+			if (field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type`) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				statusList := MyGenStatusList(comment)
 				statusArr := make([]string, len(statusList))
 				for index, status := range statusList {
@@ -3034,7 +3034,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//remark或desc后缀
-			if gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` {
+			if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
@@ -3046,7 +3046,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//intro或content后缀
-			if gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content` {
+			if (gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && column[`Type`].String() == `text` {
 				viewSaveRule += `
 		` + field + `: [],`
 				viewSaveField += `
@@ -3056,7 +3056,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				continue
 			}
 			//is_前缀
-			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` {
+			if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
             { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
@@ -3340,7 +3340,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: '` + fieldName + `',`
 
 			//status或type后缀
-			if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` {
+			if (field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type`) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				statusList := MyGenStatusList(comment)
 				viewI18nStatus += `
 		` + field + `: [`
