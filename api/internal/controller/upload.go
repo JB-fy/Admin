@@ -26,7 +26,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 		ExpireTime: 15 * 60,
 		Dir:        fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
 		MinSize:    0,
-		MaxSize:    100 * 1024 * 1024,
+		MaxSize:    1024 * 1024 * 1024,
 	}
 	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`})
 	upload := utils.NewAliyunOss(ctx, config)
