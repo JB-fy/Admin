@@ -1438,12 +1438,20 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 	tplController := `package controller
 
-import (
-	"api/api"
+import (`
+	if option.IsCreate || option.IsUpdate || option.IsDelete {
+		tplController += `
+	"api/api"`
+	}
+	tplController += `
 	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
-	"api/internal/service"
-	"api/internal/utils"
+	"api/internal/service"`
+	if option.IsUpdate || (option.IsList && tpl.PidHandle.PidField != ``) {
+		tplController += `
+	"api/internal/utils"`
+	}
+	tplController += `
 	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
@@ -1516,13 +1524,6 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		return
 	}
 
-	// 两种方式根据情况使用
-	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
-	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
-	/* utils.HttpWriteJson(ctx, map[string]interface{}{
-		` + "`count`" + `: count,
-		` + "`list`" + `:  list,
-	}, 0, ` + "``" + `) */
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{`
 		if option.IsCount {
 			tplController += `
@@ -1577,12 +1578,6 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		return
 	}
 
-	// 两种方式根据情况使用
-	// map方式：指定字段时只会返回对应字段。联表查询数字类型字段时返回的是字符串数字
-	// struct方式：指定字段时其他字段也会返回，但都是空。联表查询数字类型字段时也会按结构体定义的类型返回
-	/* utils.HttpWriteJson(ctx, map[string]interface{}{
-		` + "`info`" + `: info,
-	}, 0, ` + "``" + `) */
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes{}
 	info.Struct(&res.Info)
 	return
