@@ -37,8 +37,9 @@ gf gen service
 		手机号码	命名：mobile或phone后缀；类型：varchar
 		链接地址	命名：url或link后缀；类型：varchar
 		关联id		命名：id后缀；类型：int等类型
-		图片		命名：icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text且保存为JSON格式
-		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text且保存为JSON格式
+		图片		命名：icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
+		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
+		数组		命名：list或arr等后缀；类型：json或text
 		ip			命名：Ip后缀；类型：varchar
 		备注描述	命名：remark或desc后缀；类型：varchar（生成的表单组件：textarea多行文本输入框）
 		富文本		命名：intro或content后缀；类型：text（生成的表单组件：tinymce富文本编辑器）
