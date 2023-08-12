@@ -2135,6 +2135,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                     default: () => {
                         const content = arrList.map((item, index) => {
                             return h(ElTag as any, {
+                                'style': 'margin: auto 5px 5px auto;',
                                 'type': typeArr[index % 5]
                             }, {
 								default: () => {
