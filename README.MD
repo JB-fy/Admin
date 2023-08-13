@@ -29,7 +29,7 @@
 
 # 常用命令（服务端GO和PHP任选一个）
 
-#### GO服务端（推荐使用，有代码自动生成功能。所在目录：[api](./api)。[使用说明](./api/README.MD)。）
+#### GO服务端（推荐使用，有代码自动生成功能。[使用说明](./api/README.MD)。所在目录：[api](./api)）
 ```bash
 # 服务启动
 gf run main.go -a "http"
