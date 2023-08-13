@@ -59,7 +59,7 @@ php bin/hyperf.php gen:model --pool=default
 php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
 ```
 
-#### VUE前端（所在目录：dev/platform）
+#### VUE前端（代码目录：[dev/platform](./dev/platform)）
 ```bash
 # 服务启动
 npm run dev
