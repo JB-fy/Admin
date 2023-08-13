@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"api/internal/utils"
 	"net/http"
 
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -19,15 +20,21 @@ func HandlerResponse(r *ghttp.Request) {
 	err := r.GetError()
 	if err != nil {
 		code := gerror.Code(err)
+		msg := err.Error()
 		switch code {
 		case gcode.CodeNil:
 			code = gcode.CodeInternalError
 		case gcode.CodeValidationFailed:
 			code = gcode.New(89999999, ``, nil)
+		case gcode.CodeDbOperationError:
+			code = gcode.New(29999999, ``, nil)
+			if !utils.IsDev(r.GetCtx()) {
+				msg = g.I18n().T(r.GetCtx(), `code.29999999`)
+			}
 		}
 		r.Response.WriteJson(map[string]interface{}{
 			`code`: code.Code(),
-			`msg`:  err.Error(),
+			`msg`:  msg,
 			`data`: code.Detail(),
 		})
 		return

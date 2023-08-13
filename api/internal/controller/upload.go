@@ -39,7 +39,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
 		}
-		if g.Cfg().MustGet(ctx, `dev`).Bool() {
+		if utils.IsDev(ctx) {
 			callback.Url = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
 		}
 		signInfo[`callback`] = upload.CreateCallbackStr(callback)
@@ -80,7 +80,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 		res.CallbackUrl = gstr.Replace(request.GetUrl(), request.URL.String(), `/upload/notify`, 1)
 		res.CallbackBody = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 		res.CallbackBodyType = `application/x-www-form-urlencoded`
-		if g.Cfg().MustGet(ctx, `dev`).Bool() {
+		if utils.IsDev(ctx) {
 			res.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
 		}
 	}
