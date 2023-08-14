@@ -43,7 +43,7 @@ class Admin extends AbstractService
         }
 
         if (isset($data['checkPassword'])) {
-            if (count($idArr) > 1) { //该字段只支持单个用户更新
+            if (count($idArr) > 1) { //不支持批量修改
                 throwFailJson(89999996, trans('code.89999996', ['errField' => 'checkPassword']));
             }
             $oldInfo = $this->getDao()->parseFilter($filter)->info();

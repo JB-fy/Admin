@@ -117,7 +117,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 
 	_, okCheckPassword := data[`checkPassword`]
 	if okCheckPassword {
-		if len(idArr) > 1 { //该字段只支持单个用户更新
+		if len(idArr) > 1 { //不支持批量修改
 			err = utils.NewErrorCode(ctx, 89999996, ``, map[string]interface{}{`errField`: `checkPassword`})
 			return
 		}
