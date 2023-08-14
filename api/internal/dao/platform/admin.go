@@ -213,7 +213,7 @@ func (daoThis *adminDao) HookDelete(idArr ...int) gdb.HookHandler {
 				return
 			}
 
-			daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+			daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, idArr).Delete()
 			return
 		},
 	}

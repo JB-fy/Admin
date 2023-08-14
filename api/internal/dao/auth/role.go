@@ -209,9 +209,9 @@ func (daoThis *roleDao) HookDelete(idArr ...int) gdb.HookHandler {
 				return
 			}
 
-			RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
-			RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
-			RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr).Delete()
+			RoleRelToMenu.ParseDbCtx(ctx).Where(RoleRelToMenu.Columns().RoleId, idArr).Delete()
+			RoleRelToAction.ParseDbCtx(ctx).Where(RoleRelToAction.Columns().RoleId, idArr).Delete()
+			RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(RoleRelOfPlatformAdmin.Columns().RoleId, idArr).Delete()
 			return
 		},
 	}
