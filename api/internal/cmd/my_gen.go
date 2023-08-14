@@ -1694,12 +1694,8 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-`
-		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldNoAuth != ``) {
-			tplController += `
-	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()`
-		}
-		tplController += `
+
+	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
 	allowField = append(allowField, ` + controllerAlloweFieldTree + `)`
 		if controllerAlloweFieldDiff != `` {
