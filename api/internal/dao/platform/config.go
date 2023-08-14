@@ -341,7 +341,8 @@ func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (confi
 	}
 	config = map[string]interface{}{}
 	for _, v := range result {
-		config[v[columnsThis.ConfigKey].String()] = v[columnsThis.ConfigValue]
+		key := v[columnsThis.ConfigKey].String()
+		config[key] = v[columnsThis.ConfigValue]
 	}
 	return
 }
