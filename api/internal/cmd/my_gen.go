@@ -1454,11 +1454,11 @@ import (`
 	tplController += `
 	"context"
 `
-	if option.IsList && option.IsInfo {
+	if option.IsList || option.IsInfo {
 		tplController += `
 	"github.com/gogf/gf/v2/container/gset"`
 	}
-	if option.IsList && option.IsCreate || option.IsUpdate {
+	if option.IsList || option.IsCreate || option.IsUpdate {
 		tplController += `
 	"github.com/gogf/gf/v2/util/gconv"`
 	}
