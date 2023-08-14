@@ -437,7 +437,9 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		fieldArr[index] = field
 		fieldCaseCamelArr[index] = fieldCaseCamel
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`,
+			`updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`,
+			`createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
 		case `password`, `passwd`:
 			tpl.PasswordHandle.PasswordField = field
 		case `salt`:
@@ -1032,9 +1034,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}))
 		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 		switch field {
-		case `deletedAt`, `deleted_at`, `salt`:
-		case `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`:
+		case `updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`,
+			`createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
 			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
+		case `salt`:
 		case `password`, `passwd`:
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
@@ -1842,8 +1846,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		return
 	}
 
-	rawCreatedAtField := ``
 	rawUpdatedAtField := ``
+	rawCreatedAtField := ``
 	// rawDeletedAtField := ``
 	tableRowHeight := 50
 	viewListColumn := ``
@@ -1857,12 +1861,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			`"`, `\"`,
 		}))
 		switch field {
-		case `deletedAt`, `deleted_at`:
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`:
 			// rawDeletedAtField = field
-		case `createdAt`, `created_at`:
-			rawCreatedAtField = field
-		case `updatedAt`, `updated_at`:
+		case `updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`:
 			rawUpdatedAtField = field
+		case `createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
+			rawCreatedAtField = field
 		case `password`, `passwd`, `salt`:
 		case `sort`, `weight`:
 			viewListColumn += `
@@ -2677,7 +2681,9 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			resultFloat = []string{``, `10`, `2`}
 		}
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`:
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`,
+			`updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`,
+			`createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
 		case `password`, `passwd`, `salt`:
 		case `pid`:
 			viewQueryField += `
@@ -2924,7 +2930,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			resultFloat = []string{``, `10`, `2`}
 		}
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`, `level`, `idPath`, `id_path`:
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`,
+			`updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`,
+			`createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
+		case `salt`, `level`, `idPath`, `id_path`:
 		case `password`, `passwd`:
 			passwordField = field
 			viewSaveRule += `
@@ -3446,7 +3455,10 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			`"`, `\"`,
 		}))
 		switch field {
-		case `deletedAt`, `deleted_at`, `createdAt`, `created_at`, `updatedAt`, `updated_at`, `salt`:
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`,
+			`updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`,
+			`createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
+		case `salt`:
 		case `sort`, `weight`:
 			viewI18nName += `
 		` + field + `: '` + fieldName + `',`
