@@ -15,13 +15,13 @@ type ProfileInfoRes struct {
 }
 
 type ProfileInfo struct {
-	AdminId   *uint       `json:"adminId,omitempty" dc:"管理员ID"`
-	Account   *string     `json:"account,omitempty" dc:"账号"`
-	Phone     *string     `json:"phone,omitempty" dc:"手机号"`
-	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
-	UpdatedAt *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	AdminId   uint        `json:"adminId" dc:"管理员ID"`
+	Account   string      `json:"account" dc:"账号"`
+	Phone     string      `json:"phone" dc:"手机号"`
+	Nickname  string      `json:"nickname" dc:"昵称"`
+	Avatar    string      `json:"avatar" dc:"头像"`
+	UpdatedAt *gtime.Time `json:"updatedAt" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"createdAt" dc:"创建时间"`
 }
 
 /*--------个人信息 结束--------*/

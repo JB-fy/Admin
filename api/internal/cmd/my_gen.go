@@ -1221,7 +1221,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
 				}
 				apiReqUpdateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
-				apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
+				apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 				continue
 			}
 			//json类型
