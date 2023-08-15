@@ -424,7 +424,7 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 			relTable := Scene.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
 				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+Scene.PrimaryKey())
+				m = m.LeftJoin(relTable, relTable+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
 			}
 		case `p_` + daoThis.Table():
 			relTable := `p_` + daoThis.Table()
