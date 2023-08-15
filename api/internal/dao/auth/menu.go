@@ -395,9 +395,9 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 			case `id`:
 				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), kArr[1])
 			case `tree`:
-				m = m.Order(daoThis.Table()+`.`+daoThis.Columns().Pid, `ASC`)
-				m = m.Order(daoThis.Table()+`.`+daoThis.Columns().Sort, `ASC`)
-				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), `ASC`)
+				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Pid)
+				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Sort)
+				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					m = m.Order(daoThis.Table()+`.`+kArr[0], kArr[1])

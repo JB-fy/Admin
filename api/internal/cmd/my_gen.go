@@ -26,27 +26,33 @@ import (
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
 	部分常用字段：
-		密码 		password|passwd（salt同时存在时，有特殊处理）
-		加密盐 		salt
-		父级		pid（level,idPath|id_path同时存在时，有特殊处理）
-		层级		level
-		层级路径	idPath|id_path
-		排序		sort
-		权重		weight
-		性别		gender
-		头像		avatar
+		密码 		命名：password|passwd；类型：char(32)；注意：salt同时存在时，有特殊处理
+		加密盐 		命名：salt；类型：char(8)；
+		父级		命名：pid；类型：int等类型；注意：level,idPath|id_path同时存在时，有特殊处理
+		层级		命名：level；类型：int等类型
+		层级路径	命名：idPath|id_path；类型：varchar
+		排序		命名：sort；类型：int等类型
+		权重		命名：weight；类型：int等类型
+		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
+		头像		命名：avatar；类型：varchar
+		开始时间	命名：startTime；类型：datetime或timestamp
+		结束时间	命名：endTime；类型：datetime或timestamp
+		开始日期	命名：startDate；类型：date
+		结束日期	命名：endDate；类型：date
 	其他类型字段：
-		名称和标识	命名：name或code后缀；类型：varchar
-		手机号码	命名：mobile或phone后缀；类型：varchar
-		链接地址	命名：url或link后缀；类型：varchar
-		关联id		命名：id后缀；类型：int等类型
+		名称		命名：name后缀；类型：varchar
+		标识		命名：code后缀；类型：varchar
+		手机		命名：mobile或phone后缀；类型：varchar
+		链接		命名：url或link后缀；类型：varchar
+		关联ID		命名：id后缀；类型：int等类型
 		图片		命名：icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
 		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
 		数组		命名：list或arr等后缀；类型：json或text
-		ip			命名：Ip后缀；类型：varchar
+		IP			命名：Ip后缀；类型：varchar
 		备注描述	命名：remark或desc后缀；类型：varchar（生成的表单组件：textarea多行文本输入框）
 		富文本		命名：intro或content后缀；类型：text（生成的表单组件：tinymce富文本编辑器）
-		状态和类型	命名：status或type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
+		状态		命名：status后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
+		类型		命名：type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（类型：0安卓 1苹果）
 		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
 */
 type MyGenOption struct {
@@ -559,6 +565,40 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	daoParseJoin := ``
 	daoFunc := ``
 
+	for _, column := range tpl.TableColumnList {
+		field := column[`Field`].String()
+		fieldCaseCamel := gstr.CaseCamel(field)
+		switch field {
+		case `deletedAt`, `deleted_at`, `deleteAt`, `delete_at`, `deletedTime`, `deleted_time`, `deleteTime`, `delete_time`,
+			`updatedAt`, `updated_at`, `updateAt`, `update_at`, `updatedTime`, `updated_time`, `updateTime`, `update_time`,
+			`createdAt`, `created_at`, `createAt`, `create_at`, `createdTime`, `created_time`, `createTime`, `create_time`:
+		case `password`, `passwd`:
+		case `salt`:
+		case `pid`:
+		case `level`:
+		case `idPath`, `id_path`:
+		case `sort`, `weight`:
+			daoParseOrderTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, kArr[1])
+				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
+				daoParseOrder += daoParseOrderTmp
+			}
+		default:
+			//date类型
+			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+				daoParseOrderTmp := `
+				case daoThis.Columns().` + fieldCaseCamel + `:
+					m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, kArr[1])
+					m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
+					daoParseOrder += daoParseOrderTmp
+				}
+			}
+		}
+	}
+
 	if tpl.LabelField != `` {
 		daoParseFieldLabel := `
 			case ` + "`label`" + `:
@@ -632,13 +672,13 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		daoParseOrderPid := `
 			case ` + "`tree`" + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, ` + "`ASC`" + `)`
+				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)`
 		if tpl.PidHandle.SortField != `` {
 			daoParseOrderPid += `
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `, ` + "`ASC`" + `)`
+				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `)`
 		}
 		daoParseOrderPid += `
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), ` + "`ASC`" + `)`
+				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())`
 		if gstr.Pos(tplDao, daoParseOrderPid) == -1 {
 			daoParseOrder += daoParseOrderPid
 		}
@@ -1206,7 +1246,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
-				apiReqFilterColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
 					apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"required|date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
 				} else {
@@ -2814,10 +2853,6 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
-				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElDatePicker v-model="queryCommon.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
-		</ElFormItem>`
 				continue
 			}
 			//date类型
@@ -3489,7 +3524,6 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			viewI18nName += `
 		` + field + `: '` + fieldName + `',`
-
 			//status或type后缀
 			if (field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type`) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 				statusList := MyGenStatusList(comment)
