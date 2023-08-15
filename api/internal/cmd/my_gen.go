@@ -1230,7 +1230,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//json类型
 			if gstr.Pos(column[`Type`].String(), `json`) != -1 {
-				apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"json" dc:"` + comment + `"` + "`\n"
 				if column[`Null`].String() == `NO` {
 					apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"required|json" dc:"` + comment + `"` + "`\n"
 				} else {
@@ -1242,7 +1241,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			//text类型
 			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
-				apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 				if column[`Null`].String() == `NO` {
 					apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"required" dc:"` + comment + `"` + "`\n"
 				} else {
@@ -2292,19 +2290,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	},`
 				continue
 			}
-			//json类型
-			if column[`Type`].String() == `json` {
-				viewListColumn += `
-	{
-		dataKey: '` + field + `',
-		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
-		key: '` + field + `',
-		align: 'center',
-		width: 200,
-        hidden: true
-	},`
-				continue
-			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
 				viewListColumn += `
@@ -2328,6 +2313,20 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		align: 'center',
 		width: 100,
         sortable: true
+	},`
+				continue
+			}
+			//json类型
+			//text类型
+			if column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1 {
+				viewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 200,
+        hidden: true
 	},`
 				continue
 			}
@@ -2813,16 +2812,25 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		</ElFormItem>`
 				continue
 			}
-			//json类型
-			if column[`Type`].String() == `json` {
-				continue
-			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
+				viewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElDatePicker v-model="queryCommon.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+		</ElFormItem>`
 				continue
 			}
 			//date类型
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+				viewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElDatePicker v-model="queryCommon.data.` + field + `" type="date" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+		</ElFormItem>`
+				continue
+			}
+			//json类型
+			//text类型
+			if column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1 {
 				continue
 			}
 			//默认处理
@@ -3267,35 +3275,6 @@ const ` + field + `Handle = reactive({
 				</ElFormItem>`
 				continue
 			}
-			//json类型
-			if column[`Type`].String() == `json` {
-				viewSaveRule += `
-		` + field + `: [
-			{
-				type: 'object',
-				/* fields: {
-					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) }
-				}, */
-				transform(value: any) {
-					if (value === '' || value === null || value === undefined) {
-						return undefined
-					}
-					try {
-						return JSON.parse(value)
-					} catch (e) {
-						return value
-					}
-				},
-				trigger: 'blur',
-				message: t('validation.json')
-			},
-		],`
-				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
-				</ElFormItem>`
-				continue
-			}
 			//datetime和timestamp类型
 			if gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `timestamp`) != -1 {
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
@@ -3331,6 +3310,45 @@ const ` + field + `Handle = reactive({
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+				</ElFormItem>`
+				continue
+			}
+			//json类型
+			if column[`Type`].String() == `json` {
+				viewSaveRule += `
+		` + field + `: [
+			{
+				type: 'object',
+				/* fields: {
+					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) }
+				}, */
+				transform(value: any) {
+					if (value === '' || value === null || value === undefined) {
+						return undefined
+					}
+					try {
+						return JSON.parse(value)
+					} catch (e) {
+						return value
+					}
+				},
+				trigger: 'blur',
+				message: t('validation.json')
+			},
+		],`
+				viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
+				</ElFormItem>`
+				continue
+			}
+			//text类型
+			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
+				viewSaveRule += `
+		` + field + `: [],`
+				viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<MyEditor v-model="saveForm.data.` + field + `" />
 				</ElFormItem>`
 				continue
 			}
