@@ -46,6 +46,8 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	// fmt.Println(gset.NewIntSetFrom([]int{1, 2, 3}).Diff(gset.NewIntSetFrom([]int{1, 3})).Slice())	//差集
 
+	// g.Validator().Rules(`required|integer`).Data(`aaaa`).Run(ctx) //单独验证
+
 	// fmt.Println(genv.Set(`X_X`, `xx`))              //key必须由大写和_组成
 	// fmt.Println(g.Cfg().MustGetWithEnv(ctx, `X_X`)) //X_X或x_x或x.x方法都可以读取到
 
