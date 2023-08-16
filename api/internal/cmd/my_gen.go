@@ -625,7 +625,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 			daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, kArr[1])
+				m = m.Order(daoThis.Table()+` + "`.`" + `+kArr[0], kArr[1])
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 				daoParseOrder += daoParseOrderTmp
@@ -636,7 +636,12 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` && (gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1) {
 			daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, v)`
+				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+k, v)`
+			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+				daoParseFilterTmp = `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				m = m.Where(m.Builder().WhereGTE(daoThis.Table()+` + "`.`" + `+k, v).WhereOrNull(daoThis.Table() + ` + "`.`" + ` + k))`
+			}
 			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 				daoParseFilter += daoParseFilterTmp
 			}
@@ -646,7 +651,12 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` && (gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1) {
 			daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, v)`
+				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+k, v)`
+			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+				daoParseFilterTmp = `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				m = m.Where(m.Builder().WhereLTE(daoThis.Table()+` + "`.`" + `+k, v).WhereOrNull(daoThis.Table() + ` + "`.`" + ` + k))`
+			}
 			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 				daoParseFilter += daoParseFilterTmp
 			}
@@ -660,7 +670,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.Pos(column[`Type`].String(), `date`) != -1 {
 			daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, kArr[1])
+				m = m.Order(daoThis.Table()+` + "`.`" + `+kArr[0], kArr[1])
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 				daoParseOrder += daoParseOrderTmp
