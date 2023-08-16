@@ -2992,12 +2992,24 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			continue
 		}
 		//start_前缀
-		//end_前缀
-		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` || gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` {
+		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` {
 			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
-			<ElDatePicker v-model="queryCommon.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+			<ElDatePicker v-model="queryCommon.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :default-time="new Date(2000, 0, 1, 0, 0, 0)" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+		</ElFormItem>`
+				continue
+			}
+			/* if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+				continue
+			} */
+		}
+		//end_前缀
+		if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` {
+			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+				viewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElDatePicker v-model="queryCommon.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :default-time="new Date(2000, 0, 1, 23, 59, 59)" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
 		</ElFormItem>`
 				continue
 			}
@@ -3468,15 +3480,53 @@ const ` + field + `Handle = reactive({
 			continue
 		}
 		//start_前缀
-		//end_前缀
-		/* if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` || gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` {
+		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` {
 			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
+		],`
+				} else {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', trigger: 'change', message: '' }
+		],`
+				}
+				viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :default-time="new Date(2000, 0, 1, 0, 0, 0)" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+				</ElFormItem>`
 				continue
 			}
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+			/* if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+				continue
+			} */
+		}
+		//end_前缀
+		if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` {
+			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
+		],`
+				} else {
+					viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', trigger: 'change', message: '' }
+		],`
+				}
+				viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :default-time="new Date(2000, 0, 1, 23, 59, 59)" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+				</ElFormItem>`
 				continue
 			}
-		} */
+			/* if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+				continue
+			} */
+		}
 		//int类型
 		if gstr.Pos(column[`Type`].String(), `int`) != -1 {
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
