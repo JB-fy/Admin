@@ -32,10 +32,6 @@ gf gen service
 		权重		命名：weight；类型：int等类型
 		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
 		头像		命名：avatar；类型：varchar
-		开始时间	命名：startTime；类型：datetime或timestamp
-		结束时间	命名：endTime；类型：datetime或timestamp
-		开始日期	命名：startDate；类型：date
-		结束日期	命名：endDate；类型：date
 	其他类型字段：
 		名称		命名：name后缀；类型：varchar
 		标识		命名：code后缀；类型：varchar
@@ -45,12 +41,14 @@ gf gen service
 		图片		命名：icon,cover或img,img_list,imgList,img_arr,imgArr或image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
 		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
 		数组		命名：list或arr等后缀；类型：json或text
-		IP			命名：Ip后缀；类型：varchar
+		IP			命名：IP后缀；类型：varchar
 		备注描述	命名：remark或desc后缀；类型：varchar（生成的表单组件：textarea多行文本输入框）
 		富文本		命名：intro或content后缀；类型：text（生成的表单组件：tinymce富文本编辑器）
 		状态		命名：status后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
 		类型		命名：type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（类型：0安卓 1苹果）
 		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
+		开始时间	命名：start_前缀；类型：timestamp或datetime或date
+		结束时间	命名：end_前缀；类型：timestamp或datetime或date
 ```
 
 2.修改api/hack/config.yaml中gen dao的配置，并使用gf gen dao命令生成dao层代码
