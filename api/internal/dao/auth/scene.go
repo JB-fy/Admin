@@ -36,7 +36,7 @@ var (
 )
 
 // 解析分库
-func (daoThis *sceneDao) ParseDbGroup(ctx context.Context, dbGroupSeldata map[string]interface{}) string {
+func (daoThis *sceneDao) ParseDbGroup(ctx context.Context, dbGroupSeldata ...map[string]interface{}) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupSeldata) > 0 {
@@ -45,7 +45,7 @@ func (daoThis *sceneDao) ParseDbGroup(ctx context.Context, dbGroupSeldata map[st
 }
 
 // 解析分表
-func (daoThis *sceneDao) ParseDbTable(ctx context.Context, dbTableSelData map[string]interface{}) string {
+func (daoThis *sceneDao) ParseDbTable(ctx context.Context, dbTableSelData ...map[string]interface{}) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableSelData) > 0 {
