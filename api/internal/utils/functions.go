@@ -29,7 +29,7 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 	}
 	if msg == `` {
 		switch code {
-		case 29991062, 89999996:
+		case 89999996:
 			msg = g.I18n().Tf(ctx, `code.`+gconv.String(code), gconv.String(detail[`errField`]))
 			delete(detail, `errField`)
 		default:
