@@ -84,7 +84,10 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...boo
 				insertData[k] = v
 			}
 		}
-		m = m.Data(insertData).Hook(daoThis.HookInsert(hookData))
+		m = m.Data(insertData)
+		if len(hookData) > 0 {
+			m = m.Hook(daoThis.HookInsert(hookData))
+		}
 		return m
 	}
 }
