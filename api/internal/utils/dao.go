@@ -81,11 +81,11 @@ func (query *Query) Order(order []string) *Query {
 
 func (query *Query) Count() (count int, err error) {
 	// queryTmp := *(query.Model)
-	if len(*query.JoinTableArr) == 0 {
+	if len(*query.JoinTableArr) > 0 {
 		query.Model = query.Model.Group(query.Dao.Table() + `.` + query.Dao.PrimaryKey()).Distinct().Fields(query.Dao.Table() + `.` + query.Dao.PrimaryKey())
 	}
 	count, err = query.Model.Count()
-	// query.Model = &queryTmp
+	// query.Model = &queryTmp	//如果连续调用Count和List方法时,Count有联表,List方法调用时会受影响(多出一个Distinct主键字段)
 	return
 }
 
