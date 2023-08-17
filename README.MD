@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://img1.imgtp.com/2023/08/06/l3DYneky.png" width=300" height="300" />
+<img src="./文档/logo.png" width=300" height="300" />
 </div>
 <div align=center>
 
@@ -19,7 +19,7 @@
 
 如果您将此项目用于商业用途，请遵守[Apache2.0协议](./LICENSE)并保留作者技术支持声明。您需保留如下版权声明信息，其余信息功能不做任何限制。如需剔除请联系作者购买授权（往下翻有作者微信）
 
-<img src="./favicon.ico" width="1000">
+<img src="./文档/bqsm.png" width="1000">
 
 # [文档目录](./文档)说明
 
@@ -70,14 +70,14 @@ npm run build
 ## 微信交流群
 | 微信 |
 |  :---:  | 
-| <img width="150" src="https://img1.imgtp.com/2023/08/06/zsmbvYD5.jpg"> 
+| <img width="150" src="./文档/zzwx.jpg"> 
 
 添加微信，备注"加入JB Admin交流群"
 
 ## 捐献
 | 请作者喝饮料 |
 |  :---:  | 
-| <img width="150" src="https://img1.imgtp.com/2023/08/06/IEtUNe1P.jpg"> 
+| <img width="150" src="./文档/zzwxjx.jpg"> 
 
 ## 商用注意事项
 
