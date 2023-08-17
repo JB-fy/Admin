@@ -6,7 +6,6 @@ package dao
 
 import (
 	"api/internal/dao/platform/internal"
-	"api/internal/utils"
 	"context"
 	"database/sql"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -93,10 +91,6 @@ func (daoThis *serverDao) HookInsert(data map[string]interface{}) gdb.HookHandle
 		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
 			if err != nil {
-				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-				if len(match) > 0 {
-					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-				}
 				return
 			}
 			// id, _ := result.LastInsertId()
@@ -152,10 +146,6 @@ func (daoThis *serverDao) HookUpdate(data map[string]interface{}, idArr ...int) 
 			} */
 			result, err = in.Next(ctx)
 			if err != nil {
-				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-				if len(match) > 0 {
-					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-				}
 				return
 			}
 

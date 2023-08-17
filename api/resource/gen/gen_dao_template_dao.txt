@@ -93,10 +93,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) HookInsert(data map[string]inter
 		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
 			if err != nil {
-				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-				if len(match) > 0 {
-					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-				}
 				return
 			}
 			// id, _ := result.LastInsertId()
@@ -152,10 +148,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) HookUpdate(data map[string]inter
 			} */
 			result, err = in.Next(ctx)
 			if err != nil {
-				match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, err.Error())
-				if len(match) > 0 {
-					err = utils.NewErrorCode(ctx, 29991062, ``, map[string]interface{}{`errField`: match[1]})
-				}
 				return
 			}
 			
