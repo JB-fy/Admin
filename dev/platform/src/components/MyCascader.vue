@@ -1,17 +1,17 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyCascader v-model="saveCommon.data.menuId" :placeholder="t('common.name.rel.menuId')"
+<!-- <MyCascader v-model="saveForm.data.menuId" :placeholder="t('common.name.rel.menuId')"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { field: ['id', 'menuName'] } }"
     :props="{ emitPath: false, value: 'id', label: 'menuName' }" />
 
-<MyCascader v-model="saveCommon.data.menuIdArr"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }" :isPanel="true"
+<MyCascader v-model="saveForm.data.menuIdArr"
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true"
     :props="{ multiple: true }" />
 
-<MyCascader v-model="saveCommon.data.pid"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveCommon.data.sceneId } } }"
+<MyCascader v-model="saveForm.data.pid"
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
     :props="{ checkStrictly: true, emitPath: false }" />
-<MyCascader v-model="saveCommon.data.pid"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/list', param: { filter: { sceneId: saveCommon.data.sceneId } } }"
+<MyCascader v-model="saveForm.data.pid"
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/list', param: { filter: { sceneId: saveForm.data.sceneId } } }"
     :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
 
 <MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"

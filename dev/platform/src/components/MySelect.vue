@@ -1,5 +1,5 @@
 <!-------- 使用示例 开始-------->
-<!-- <MySelect v-model="saveCommon.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+<!-- <MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
 <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
     :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"

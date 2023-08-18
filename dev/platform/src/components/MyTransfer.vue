@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyTransfer v-model="saveCommon.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+<!-- <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<MyTransfer v-model="saveCommon.data.sceneIdArr"
+<MyTransfer v-model="saveForm.data.sceneIdArr"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="ts">
