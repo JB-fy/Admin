@@ -1224,7 +1224,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//name或code后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
+			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1232,7 +1232,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//mobile或phone后缀
 		if (gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"phone|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1240,7 +1240,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//url或link后缀
 		if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"url|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1270,7 +1270,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//IP后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Ip` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"ip|length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1355,7 +1355,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//varchar类型
 		if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1363,7 +1363,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//char类型
 		if gstr.Pos(column[`Type`].String(), `char`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
+			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"size:` + resultStr[1] + `" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1415,7 +1415,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//默认处理
-		apiReqFilterColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
+		apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 		apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 		apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 		apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1453,7 +1453,7 @@ type ` + tpl.TableNameCaseCamel + `ListFilter struct {
 	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
 	TimeRangeStart *gtime.Time ` + "`" + `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"` + "`" + `
 	TimeRangeEnd   *gtime.Time ` + "`" + `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"` + "`" + `
-	Label          *string     ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`" + `
+	Label          string      ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`" + `
 	/*--------公共参数 结束--------*/
 	` + apiReqFilterColumn + `
 }
