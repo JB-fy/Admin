@@ -636,11 +636,11 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` && (gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1) {
 			daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+k, v)`
+				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+k, v)`
 			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
 				daoParseFilterTmp = `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Where(m.Builder().WhereGTE(daoThis.Table()+` + "`.`" + `+k, v).WhereOrNull(daoThis.Table() + ` + "`.`" + ` + k))`
+				m = m.Where(m.Builder().WhereLTE(daoThis.Table()+` + "`.`" + `+k, v).WhereOrNull(daoThis.Table() + ` + "`.`" + ` + k))`
 			}
 			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 				daoParseFilter += daoParseFilterTmp
@@ -651,11 +651,11 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` && (gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1) {
 			daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+k, v)`
+				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+k, v)`
 			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
 				daoParseFilterTmp = `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Where(m.Builder().WhereLTE(daoThis.Table()+` + "`.`" + `+k, v).WhereOrNull(daoThis.Table() + ` + "`.`" + ` + k))`
+				m = m.Where(m.Builder().WhereGTE(daoThis.Table()+` + "`.`" + `+k, v).WhereOrNull(daoThis.Table() + ` + "`.`" + ` + k))`
 			}
 			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 				daoParseFilter += daoParseFilterTmp
