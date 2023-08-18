@@ -25,11 +25,11 @@ type MenuListFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	MenuId   *uint   `json:"menuId,omitempty" v:"integer|min:1" dc:"菜单ID"`
-	SceneId  *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
-	Pid      *uint   `json:"pid,omitempty" v:"integer|min:0"`
-	MenuName *string `json:"menuName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
-	IsStop   *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	MenuId   *uint  `json:"menuId,omitempty" v:"integer|min:1" dc:"菜单ID"`
+	SceneId  *uint  `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
+	Pid      *uint  `json:"pid,omitempty" v:"integer|min:0"`
+	MenuName string `json:"menuName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
+	IsStop   *uint  `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type MenuListRes struct {

@@ -25,10 +25,10 @@ type SceneListFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	SceneId   *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
-	SceneCode *string `json:"sceneCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
-	SceneName *string `json:"sceneName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
-	IsStop    *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneId   *uint  `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
+	SceneCode string `json:"sceneCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
+	SceneName string `json:"sceneName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
+	IsStop    *uint  `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type SceneListRes struct {

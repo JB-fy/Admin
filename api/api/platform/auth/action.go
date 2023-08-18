@@ -25,11 +25,11 @@ type ActionListFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	ActionId   *uint   `json:"actionId,omitempty" v:"integer|min:1" dc:"操作ID"`
-	ActionName *string `json:"actionName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
-	ActionCode *string `json:"actionCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
-	IsStop     *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
-	SceneId    *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
+	ActionId   *uint  `json:"actionId,omitempty" v:"integer|min:1" dc:"操作ID"`
+	ActionName string `json:"actionName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作名称"`
+	ActionCode string `json:"actionCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"操作标识"`
+	IsStop     *uint  `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	SceneId    *uint  `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
 }
 
 type ActionListRes struct {

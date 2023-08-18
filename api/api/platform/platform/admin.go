@@ -25,11 +25,11 @@ type AdminListFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	/*--------公共参数 结束--------*/
-	AdminId *uint   `json:"adminId,omitempty" v:"integer|min:1" dc:"管理员ID"`
-	Account *string `json:"account,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
-	Phone   *string `json:"phone,omitempty" v:"phone" dc:"手机号"`
-	RoleId  *uint   `json:"roleId,omitempty" v:"integer|min:1" dc:"角色ID"`
-	IsStop  *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	AdminId *uint  `json:"adminId,omitempty" v:"integer|min:1" dc:"管理员ID"`
+	Account string `json:"account,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Phone   string `json:"phone,omitempty" v:"phone" dc:"手机号"`
+	RoleId  *uint  `json:"roleId,omitempty" v:"integer|min:1" dc:"角色ID"`
+	IsStop  *uint  `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type AdminListRes struct {
