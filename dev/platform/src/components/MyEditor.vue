@@ -46,9 +46,11 @@ const myEditor = reactive({
         }
     }),
     init: {
-        width: "100%",
+        width: '100%',
+        // height: 'auto',
+        min_height: 500,
         language: languageStore.tinymceLocale,
-        plugins: 'lists link image table code wordcount fullscreen help',
+        plugins: 'lists link image table code wordcount fullscreen help',   //autoresize
         toolbar: 'undo redo | styles formatselect | bold italic | alignleft aligncenter alignright outdent indent bullist numlist | image fullscreen help',
         branding: false, // 右下角Tiny技术支持信息是否显示
         images_upload_handler: (blobInfo: any, progress: any) => {
