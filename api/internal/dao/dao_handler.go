@@ -1,4 +1,4 @@
-package utils
+package dao
 
 /* query := utils.NewQuery(ctx, &daoAuth.Scene)
 count, err := query.Filter(filter).Count()
@@ -15,21 +15,21 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
-type Query struct {
+type DaoHandler struct {
 	Ctx          context.Context
 	Dao          DaoInterface
 	Model        *gdb.Model
 	JoinTableArr *[]string
 }
 
-func NewQuery(ctx context.Context, dao DaoInterface) *Query {
-	queryObj := Query{
+func NewDaoHandler(ctx context.Context, dao DaoInterface) *DaoHandler {
+	daoHandlerObj := DaoHandler{
 		Ctx:          ctx,
 		Dao:          dao,
 		JoinTableArr: &[]string{},
 	}
-	queryObj.Model = queryObj.Dao.ParseDbCtx(ctx)
-	return &queryObj
+	daoHandlerObj.Model = daoHandlerObj.Dao.ParseDbCtx(ctx)
+	return &daoHandlerObj
 }
 
 // 定义接口
@@ -63,39 +63,38 @@ type DaoInterface interface {
 	ColumnArrG() *garray.StrArray
 }
 
-// func (logicThis *Query) List(ctx context.Context, daoThis Dao, filter map[string]interface{}, field []string, order []string) (list gdb.Result, err error) {
-func (query *Query) Filter(filter map[string]interface{}) *Query {
-	query.Model = query.Model.Handler(query.Dao.ParseFilter(filter, query.JoinTableArr))
-	return query
+func (daoHandler *DaoHandler) HandleFilter(filter map[string]interface{}) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseFilter(filter, daoHandler.JoinTableArr))
+	return daoHandler
 }
 
-func (query *Query) Field(field []string) *Query {
-	query.Model = query.Model.Handler(query.Dao.ParseField(field, query.JoinTableArr))
-	return query
+func (daoHandler *DaoHandler) HandleField(field []string) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseField(field, daoHandler.JoinTableArr))
+	return daoHandler
 }
 
-func (query *Query) Order(order []string) *Query {
-	query.Model = query.Model.Handler(query.Dao.ParseOrder(order, query.JoinTableArr))
-	return query
+func (daoHandler *DaoHandler) HandleOrder(order []string) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseOrder(order, daoHandler.JoinTableArr))
+	return daoHandler
 }
 
-func (query *Query) Count() (count int, err error) {
-	// queryTmp := *(query.Model)
-	if len(*query.JoinTableArr) > 0 {
-		query.Model = query.Model.Group(query.Dao.Table() + `.` + query.Dao.PrimaryKey()).Distinct().Fields(query.Dao.Table() + `.` + query.Dao.PrimaryKey())
+func (daoHandler *DaoHandler) Count() (count int, err error) {
+	// daoHandlerTmp := *(daoHandler.Model)
+	if len(*daoHandler.JoinTableArr) > 0 {
+		daoHandler.Model = daoHandler.Model.Group(daoHandler.Dao.Table() + `.` + daoHandler.Dao.PrimaryKey()).Distinct().Fields(daoHandler.Dao.Table() + `.` + daoHandler.Dao.PrimaryKey())
 	}
-	count, err = query.Model.Count()
-	// query.Model = &queryTmp	//如果连续调用Count和List方法时,Count有联表,List方法调用时会受影响(多出一个Distinct主键字段)
+	count, err = daoHandler.Model.Count()
+	// daoHandler.Model = &daoHandlerTmp	//如果连续调用Count和List方法时,Count有联表,List方法调用时会受影响(多出一个Distinct主键字段)
 	return
 }
 
-func (query *Query) List(page int, limit int) (list gdb.Result, err error) {
-	if len(*query.JoinTableArr) > 0 {
-		query.Model = query.Model.Group(query.Dao.Table() + `.` + query.Dao.PrimaryKey())
+func (daoHandler *DaoHandler) List(page int, limit int) (list gdb.Result, err error) {
+	if len(*daoHandler.JoinTableArr) > 0 {
+		daoHandler.Model = daoHandler.Model.Group(daoHandler.Dao.Table() + `.` + daoHandler.Dao.PrimaryKey())
 	}
 	if limit > 0 {
-		query.Model = query.Model.Offset((page - 1) * limit).Limit(limit)
+		daoHandler.Model = daoHandler.Model.Offset((page - 1) * limit).Limit(limit)
 	}
-	list, err = query.Model.All()
+	list, err = daoHandler.Model.All()
 	return
 }

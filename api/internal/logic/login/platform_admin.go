@@ -34,7 +34,7 @@ func (logicThis *sLoginPlatformAdmin) Salt(ctx context.Context, account string) 
 	saltStatic = info[`salt`].String()
 	saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, account)
 	saltDynamic = grand.S(8)
-	g.Redis().SetEX(ctx, saltKey, saltDynamic, 5)
+	err = g.Redis().SetEX(ctx, saltKey, saltDynamic, 5)
 	return
 }
 
