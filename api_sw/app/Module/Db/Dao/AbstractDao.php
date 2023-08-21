@@ -479,6 +479,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'id':
                 $this->builder->orderBy($this->getTable() . '.' . $this->getKey(), $value);
                 return true;
+            case 'sort':
+                $this->builder->orderBy($this->getTable() . '.' . $key, $value);
+                $this->builder->orderBy($this->getTable() . '.' . $this->getKey(), 'desc');
+                return true;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     $this->builder->orderBy($this->getTable() . '.' . $key, $value);
