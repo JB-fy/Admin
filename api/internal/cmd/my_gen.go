@@ -494,7 +494,8 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`,
 		`Phone`,
 		`Account`,
-		`nickname`,
+		`Nickname`,
+		`Title`,
 	}
 	for _, v := range nameFieldList {
 		index := fieldCaseCamelArrG.Search(v)
@@ -1002,10 +1003,7 @@ func (logicThis *s` + tpl.LogicStructName + `) List(ctx context.Context, filter 
 	if len(joinTableArr) > 0 {
 		model = model.Group(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
 	}
-	if limit > 0 {
-		model = model.Offset((page - 1) * limit).Limit(limit)
-	}
-	list, err = model.All()
+	list, err = model.Page(page, limit).All()
 	return
 }
 

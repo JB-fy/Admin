@@ -53,10 +53,7 @@ func (logicThis *sAuthRole) List(ctx context.Context, filter map[string]interfac
 	if len(joinTableArr) > 0 {
 		model = model.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
 	}
-	if limit > 0 {
-		model = model.Offset((page - 1) * limit).Limit(limit)
-	}
-	list, err = model.All()
+	list, err = model.Page(page, limit).All()
 	return
 }
 

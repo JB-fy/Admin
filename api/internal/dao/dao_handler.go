@@ -1,12 +1,12 @@
 package dao
 
-/* query := utils.NewQuery(ctx, &daoAuth.Scene)
-count, err := query.Filter(filter).Count()
+/* daoHandler := dao.NewDaoHandler(ctx, &daoAuth.Scene)
+count, err := daoHandler.Filter(filter).Count()
 // count, err := service.AuthScene().Count(ctx, filter)
 if err != nil {
 	return
 }
-list, err := query.Field(field).Order(order).List(page, limit)
+list, err := daoHandler.Field(field).Order(order).List(page, limit)
 // list, err := service.AuthScene().List(ctx, filter, field, order, page, limit) */
 import (
 	"context"
@@ -22,13 +22,13 @@ type DaoHandler struct {
 	JoinTableArr *[]string
 }
 
-func NewDaoHandler(ctx context.Context, dao DaoInterface) *DaoHandler {
+func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[string]interface{}) *DaoHandler {
 	daoHandlerObj := DaoHandler{
 		Ctx:          ctx,
 		Dao:          dao,
 		JoinTableArr: &[]string{},
 	}
-	daoHandlerObj.Model = daoHandlerObj.Dao.ParseDbCtx(ctx)
+	daoHandlerObj.Model = daoHandlerObj.Dao.ParseDbCtx(daoHandlerObj.Ctx, dbSelDataList...)
 	return &daoHandlerObj
 }
 
@@ -63,8 +63,27 @@ type DaoInterface interface {
 	ColumnArrG() *garray.StrArray
 }
 
-func (daoHandler *DaoHandler) HandleFilter(filter map[string]interface{}) *DaoHandler {
-	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseFilter(filter, daoHandler.JoinTableArr))
+/* func (daoHandler *DaoHandler) GetModel(joinCode string) *gdb.Model {
+	return daoHandler.Model
+} */
+
+func (daoHandler *DaoHandler) HandleInsert(data map[string]interface{}) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseInsert(data))
+	return daoHandler
+}
+
+func (daoHandler *DaoHandler) HandleUpdate(data map[string]interface{}) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseUpdate(data))
+	return daoHandler
+}
+
+func (daoHandler *DaoHandler) HandleHookUpdate(hookData map[string]interface{}, idArr ...int) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Hook(daoHandler.Dao.HookUpdate(hookData, idArr...))
+	return daoHandler
+}
+
+func (daoHandler *DaoHandler) HandleHookDelete(idArr ...int) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Hook(daoHandler.Dao.HookDelete(idArr...))
 	return daoHandler
 }
 
@@ -73,27 +92,47 @@ func (daoHandler *DaoHandler) HandleField(field []string) *DaoHandler {
 	return daoHandler
 }
 
+func (daoHandler *DaoHandler) HandleFilter(filter map[string]interface{}) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseFilter(filter, daoHandler.JoinTableArr))
+	return daoHandler
+}
+
+func (daoHandler *DaoHandler) HandleGroup(group []string) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseGroup(group, daoHandler.JoinTableArr))
+	return daoHandler
+}
+
 func (daoHandler *DaoHandler) HandleOrder(order []string) *DaoHandler {
 	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseOrder(order, daoHandler.JoinTableArr))
 	return daoHandler
 }
 
+func (daoHandler *DaoHandler) HandleJoin(joinCode string) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Handler(daoHandler.Dao.ParseJoin(joinCode, daoHandler.JoinTableArr))
+	return daoHandler
+}
+
+// 分页处理
+func (daoHandler *DaoHandler) Page(page int, limit int) *DaoHandler {
+	daoHandler.Model = daoHandler.Model.Page(page, limit)
+	return daoHandler
+}
+
+// 总数（有联表默认group主键）
 func (daoHandler *DaoHandler) Count() (count int, err error) {
-	// daoHandlerTmp := *(daoHandler.Model)
+	daoHandlerTmp := *(daoHandler.Model)
 	if len(*daoHandler.JoinTableArr) > 0 {
 		daoHandler.Model = daoHandler.Model.Group(daoHandler.Dao.Table() + `.` + daoHandler.Dao.PrimaryKey()).Distinct().Fields(daoHandler.Dao.Table() + `.` + daoHandler.Dao.PrimaryKey())
 	}
 	count, err = daoHandler.Model.Count()
-	// daoHandler.Model = &daoHandlerTmp	//如果连续调用Count和List方法时,Count有联表,List方法调用时会受影响(多出一个Distinct主键字段)
+	daoHandler.Model = &daoHandlerTmp //执行完还原model，以便继续调用List方法（连续调用Count和List方法时，Count有联表，List方法调用时会受影响，多出一个Distinct主键字段）
 	return
 }
 
-func (daoHandler *DaoHandler) List(page int, limit int) (list gdb.Result, err error) {
+// 列表（有联表默认group主键的）
+func (daoHandler *DaoHandler) List() (list gdb.Result, err error) {
 	if len(*daoHandler.JoinTableArr) > 0 {
 		daoHandler.Model = daoHandler.Model.Group(daoHandler.Dao.Table() + `.` + daoHandler.Dao.PrimaryKey())
-	}
-	if limit > 0 {
-		daoHandler.Model = daoHandler.Model.Offset((page - 1) * limit).Limit(limit)
 	}
 	list, err = daoHandler.Model.All()
 	return
