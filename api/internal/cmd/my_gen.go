@@ -953,6 +953,7 @@ import (
 	}
 	if tpl.PidHandle.IsCoexist {
 		tplLogic += `
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"`
 	}
 	tplLogic += `
@@ -1843,7 +1844,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `) //补充字段（树状列表所需）
 
-	list, err := service.` + tpl.LogicStructName + `().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}
