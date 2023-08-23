@@ -93,6 +93,10 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	if err != nil {
 		return
 	}
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 29999998, ``)
+		return
+	}
 
 	res = &apiAuth.SceneInfoRes{}
 	info.Struct(&res.Info)

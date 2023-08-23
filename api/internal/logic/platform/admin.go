@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -21,65 +20,6 @@ func NewPlatformAdmin() *sPlatformAdmin {
 
 func init() {
 	service.RegisterPlatformAdmin(NewPlatformAdmin())
-}
-
-// 总数
-func (logicThis *sPlatformAdmin) Count(ctx context.Context, filter map[string]interface{}) (count int, err error) {
-	daoThis := daoPlatform.Admin
-	joinTableArr := []string{}
-	model := daoThis.ParseDbCtx(ctx)
-	if len(filter) > 0 {
-		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	}
-	if len(joinTableArr) > 0 {
-		model = model.Group(daoThis.Table() + `.` + daoThis.PrimaryKey()).Distinct().Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
-	}
-	count, err = model.Count()
-	return
-}
-
-// 列表
-func (logicThis *sPlatformAdmin) List(ctx context.Context, filter map[string]interface{}, field []string, order []string, page int, limit int) (list gdb.Result, err error) {
-	daoThis := daoPlatform.Admin
-	joinTableArr := []string{}
-	model := daoThis.ParseDbCtx(ctx)
-	if len(filter) > 0 {
-		model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	}
-	if len(field) > 0 {
-		model = model.Handler(daoThis.ParseField(field, &joinTableArr))
-	}
-	if len(order) > 0 {
-		model = model.Handler(daoThis.ParseOrder(order, &joinTableArr))
-	}
-	if len(joinTableArr) > 0 {
-		model = model.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
-	}
-	list, err = model.Page(page, limit).All()
-	return
-}
-
-// 详情
-func (logicThis *sPlatformAdmin) Info(ctx context.Context, filter map[string]interface{}, field ...[]string) (info gdb.Record, err error) {
-	daoThis := daoPlatform.Admin
-	joinTableArr := []string{}
-	model := daoThis.ParseDbCtx(ctx)
-	model = model.Handler(daoThis.ParseFilter(filter, &joinTableArr))
-	if len(field) > 0 && len(field[0]) > 0 {
-		model = model.Handler(daoThis.ParseField(field[0], &joinTableArr))
-	}
-	if len(joinTableArr) > 0 {
-		model = model.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
-	}
-	info, err = model.One()
-	if err != nil {
-		return
-	}
-	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 29999998, ``)
-		return
-	}
-	return
 }
 
 // 新增

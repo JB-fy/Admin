@@ -93,6 +93,10 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	if err != nil {
 		return
 	}
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 29999998, ``)
+		return
+	}
 
 	res = &apiAuth.MenuInfoRes{}
 	info.Struct(&res.Info)
@@ -190,7 +194,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	filter[`isStop`] = 0          //补充条件
 	field = append(field, `tree`) //补充字段（树状列表所需）
 
-	list, err := service.AuthMenu().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := dao.NewDaoHandler(ctx, &daoAuth.Menu).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

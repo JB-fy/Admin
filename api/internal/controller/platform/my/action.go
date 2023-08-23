@@ -2,8 +2,8 @@ package controller
 
 import (
 	apiMy "api/api/platform/my"
+	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
-	"api/internal/service"
 	"api/internal/utils"
 	"context"
 )
@@ -27,7 +27,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	columns := daoAuth.Action.Columns()
 	field := []string{`id`, `label`, columns.ActionId, columns.ActionName}
 
-	list, err := service.AuthAction().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

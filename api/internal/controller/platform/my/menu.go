@@ -2,7 +2,8 @@ package controller
 
 import (
 	apiMy "api/api/platform/my"
-	"api/internal/service"
+	"api/internal/dao"
+	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"context"
 )
@@ -25,7 +26,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	}
 	field := []string{`id`, `label`, `tree`, `showMenu`}
 
-	list, err := service.AuthMenu().List(ctx, filter, field, []string{}, 0, 0)
+	list, err := dao.NewDaoHandler(ctx, &daoAuth.Menu).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}
