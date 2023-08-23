@@ -1685,17 +1685,19 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		field = []string{` + controllerAlloweFieldNoAuth + `}
 	}
 	/**--------权限验证 结束--------**/
-`
+
+	daoHandler := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `)
+	daoHandler.Filter(filter)`
 		}
 		if option.IsCount {
 			tplController += `
-	count, err := service.` + tpl.LogicStructName + `().Count(ctx, filter)
+	count, err := daoHandler.Count()
 	if err != nil {
 		return
 	}`
 		}
 		tplController += `
-	list, err := service.` + tpl.LogicStructName + `().List(ctx, filter, field, order, page, limit)
+	list, err := daoHandler.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
 	if err != nil {
 		return
 	}
