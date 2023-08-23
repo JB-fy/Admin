@@ -28,9 +28,7 @@ func HandlerResponse(r *ghttp.Request) {
 		case gcode.CodeValidationFailed:
 			code = gcode.New(89999999, ``, nil)
 		case gcode.CodeDbOperationError:
-			match, _ := gregex.MatchString(`1062.*Duplicate.*\.([^']*)'`, msg)
-			// match, _ := gregex.MatchString(`1062.*Duplicate.*'([^']*)'`, msg)
-			// match, _ := gregex.MatchString(`1062.*Duplicate[^']*'([^']*)'`, msg)
+			match, _ := gregex.MatchString(`1062.*Duplicate.*for key '(?:[^\.]*\.)?([^']*)'$`, msg)
 			if len(match) > 0 {
 				code = gcode.New(29991062, ``, nil)
 				msg = g.I18n().Tf(r.GetCtx(), `code.29991062`, match[1])
