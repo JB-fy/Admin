@@ -49,13 +49,13 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandler := dao.NewDaoHandler(ctx, &daoAuth.Role)
-	daoHandler.Filter(filter)
-	count, err := daoHandler.Count()
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Role)
+	daoHandlerThis.Filter(filter)
+	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
 	}
-	list, err := daoHandler.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
+	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
 	if err != nil {
 		return
 	}

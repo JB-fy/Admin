@@ -49,13 +49,13 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandler := dao.NewDaoHandler(ctx, &daoAuth.Scene)
-	daoHandler.Filter(filter)
-	count, err := daoHandler.Count()
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Scene)
+	daoHandlerThis.Filter(filter)
+	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
 	}
-	list, err := daoHandler.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
+	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
 	if err != nil {
 		return
 	}

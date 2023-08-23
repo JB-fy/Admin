@@ -942,6 +942,7 @@ func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	tplLogic := `package logic
 
 import (
+	"api/internal/dao"
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
 	"api/internal/service"
 	"api/internal/utils"
@@ -973,14 +974,15 @@ func init() {
 // 新增
 func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
+	id, err = dao.NewDaoHandler(ctx, &daoThis).Insert(data).GetModel().InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
+	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1034,18 +1036,19 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
+	daoHandlerThis.Update(data)
 	if len(hookData) > 0 {
-		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
+		daoHandlerThis.HookUpdate(hookData, gconv.SliceInt(idArr)...)
 	}
-	row, err = model.UpdateAndGetAffected()
+	row, err = daoHandlerThis.GetModel().UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
+	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1061,7 +1064,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }
@@ -1627,18 +1630,18 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandler := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `)
-	daoHandler.Filter(filter)`
+	daoHandlerThis := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `)
+	daoHandlerThis.Filter(filter)`
 		}
 		if option.IsCount {
 			tplController += `
-	count, err := daoHandler.Count()
+	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
 	}`
 		}
 		tplController += `
-	list, err := daoHandler.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
+	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
 	if err != nil {
 		return
 	}

@@ -15,13 +15,13 @@ type DaoHandler struct {
 }
 
 func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[string]interface{}) *DaoHandler {
-	daoHandlerObj := DaoHandler{
+	daoHandlerThisObj := DaoHandler{
 		ctx:          ctx,
 		dao:          dao,
 		joinTableArr: &[]string{},
 	}
-	daoHandlerObj.model = daoHandlerObj.dao.ParseDbCtx(daoHandlerObj.ctx, dbSelDataList...)
-	return &daoHandlerObj
+	daoHandlerThisObj.model = daoHandlerThisObj.dao.ParseDbCtx(daoHandlerThisObj.ctx, dbSelDataList...)
+	return &daoHandlerThisObj
 }
 
 // 定义接口
@@ -55,75 +55,77 @@ type DaoInterface interface {
 	ColumnArrG() *garray.StrArray
 }
 
-func (daoHandler *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseInsert(data))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) Update(data map[string]interface{}) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseUpdate(data))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseUpdate(data))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) HookUpdate(hookData map[string]interface{}, idArr ...int) *DaoHandler {
-	daoHandler.model = daoHandler.model.Hook(daoHandler.dao.HookUpdate(hookData, idArr...))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) HookUpdate(hookData map[string]interface{}, idArr ...int) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookUpdate(hookData, idArr...))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) HookDelete(idArr ...int) *DaoHandler {
-	daoHandler.model = daoHandler.model.Hook(daoHandler.dao.HookDelete(idArr...))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) HookDelete(idArr ...int) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookDelete(idArr...))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) Field(field []string) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseField(field, daoHandler.joinTableArr))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Field(field []string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField(field, daoHandlerThis.joinTableArr))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) Filter(filter map[string]interface{}) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseFilter(filter, daoHandler.joinTableArr))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Filter(filter map[string]interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis.joinTableArr))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) Group(group []string) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseGroup(group, daoHandler.joinTableArr))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Group(group []string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseGroup(group, daoHandlerThis.joinTableArr))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) Order(order []string) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseOrder(order, daoHandler.joinTableArr))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Order(order []string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseOrder(order, daoHandlerThis.joinTableArr))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) Join(joinCode string) *DaoHandler {
-	daoHandler.model = daoHandler.model.Handler(daoHandler.dao.ParseJoin(joinCode, daoHandler.joinTableArr))
-	return daoHandler
+func (daoHandlerThis *DaoHandler) Join(joinCode string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseJoin(joinCode, daoHandlerThis.joinTableArr))
+	return daoHandlerThis
 }
 
-func (daoHandler *DaoHandler) GetModel() *gdb.Model {
-	// return daoHandler.model.Clone()
-	return daoHandler.model
+func (daoHandlerThis *DaoHandler) GetModel(isClone ...bool) *gdb.Model {
+	if len(isClone) > 0 && isClone[0] {
+		return daoHandlerThis.model.Clone()
+	}
+	return daoHandlerThis.model
 }
 
 // 判断是否联表
-func (daoHandler *DaoHandler) IsJoin() bool {
-	return len(*daoHandler.joinTableArr) > 0
+func (daoHandlerThis *DaoHandler) IsJoin() bool {
+	return len(*daoHandlerThis.joinTableArr) > 0
 }
 
 // 联表则GroupBy主键
-func (daoHandler *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
-	if daoHandler.IsJoin() {
-		daoHandler.model = daoHandler.model.Group(daoHandler.dao.Table() + `.` + daoHandler.dao.PrimaryKey())
+func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
+	if daoHandlerThis.IsJoin() {
+		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.dao.Table() + `.` + daoHandlerThis.dao.PrimaryKey())
 	}
-	return daoHandler
+	return daoHandlerThis
 }
 
 // 总数（有联表默认group主键）
-func (daoHandler *DaoHandler) Count() (count int, err error) {
-	if daoHandler.IsJoin() {
-		count, err = daoHandler.model.Clone().Group(daoHandler.dao.Table() + `.` + daoHandler.dao.PrimaryKey()).Distinct().Fields(daoHandler.dao.Table() + `.` + daoHandler.dao.PrimaryKey()).Count()
+func (daoHandlerThis *DaoHandler) Count() (count int, err error) {
+	if daoHandlerThis.IsJoin() {
+		count, err = daoHandlerThis.GetModel(true).Group(daoHandlerThis.dao.Table() + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.dao.Table() + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
 		return
 	}
-	count, err = daoHandler.model.Count()
+	count, err = daoHandlerThis.model.Count()
 	return
 }
