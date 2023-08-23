@@ -1614,6 +1614,7 @@ import (`
 	}
 	tplController += `
 	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"
+	"api/internal/dao"
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
 	"api/internal/service"`
 	if option.IsUpdate || (option.IsList && tpl.PidHandle.PidField != ``) {
@@ -1751,7 +1752,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := service.` + tpl.LogicStructName + `().Info(ctx, filter, field)
+	info, err := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

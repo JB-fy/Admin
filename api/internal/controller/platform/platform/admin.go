@@ -3,6 +3,7 @@ package controller
 import (
 	"api/api"
 	apiPlatform "api/api/platform/platform"
+	"api/internal/dao"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
@@ -51,11 +52,13 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.PlatformAdmin().Count(ctx, filter)
+	daoHandler := dao.NewDaoHandler(ctx, &daoPlatform.Admin)
+	daoHandler.Filter(filter)
+	count, err := daoHandler.Count()
 	if err != nil {
 		return
 	}
-	list, err := service.PlatformAdmin().List(ctx, filter, field, order, page, limit)
+	list, err := daoHandler.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
 	if err != nil {
 		return
 	}
@@ -91,7 +94,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.PlatformAdmin().Info(ctx, filter, field)
+	info, err := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

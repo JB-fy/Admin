@@ -1,13 +1,5 @@
 package dao
 
-/* daoHandler := dao.NewDaoHandler(ctx, &daoAuth.Scene)
-count, err := daoHandler.Filter(filter).Count()
-// count, err := service.AuthScene().Count(ctx, filter)
-if err != nil {
-	return
-}
-list, err := daoHandler.Field(field).Order(order).List(page, limit)
-// list, err := service.AuthScene().List(ctx, filter, field, order, page, limit) */
 import (
 	"context"
 

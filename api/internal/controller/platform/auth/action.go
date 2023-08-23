@@ -3,6 +3,7 @@ package controller
 import (
 	"api/api"
 	apiAuth "api/api/platform/auth"
+	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
@@ -48,11 +49,13 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	}
 	/**--------权限验证 结束--------**/
 
-	count, err := service.AuthAction().Count(ctx, filter)
+	daoHandler := dao.NewDaoHandler(ctx, &daoAuth.Action)
+	daoHandler.Filter(filter)
+	count, err := daoHandler.Count()
 	if err != nil {
 		return
 	}
-	list, err := service.AuthAction().List(ctx, filter, field, order, page, limit)
+	list, err := daoHandler.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
 	if err != nil {
 		return
 	}
@@ -86,7 +89,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := service.AuthAction().Info(ctx, filter, field)
+	info, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}
