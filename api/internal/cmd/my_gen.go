@@ -1036,11 +1036,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	daoHandlerThis.Update(data)
-	if len(hookData) > 0 {
-		daoHandlerThis.HookUpdate(hookData, gconv.SliceInt(idArr)...)
-	}
-	row, err = daoHandlerThis.GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 

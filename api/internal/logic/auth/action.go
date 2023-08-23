@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
@@ -23,14 +24,15 @@ func init() {
 // 新增
 func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Action
-	id, err = daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(data)).InsertAndGetId()
+	id, err = dao.NewDaoHandler(ctx, &daoThis).Insert(data).GetModel().InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
-	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
+	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -43,24 +45,21 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]inte
 		delete(data, `sceneIdArr`)
 	}
 
-	model := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{}), daoThis.ParseUpdate(data))
-	if len(hookData) > 0 {
-		model = model.Hook(daoThis.HookUpdate(hookData, gconv.SliceInt(idArr)...))
-	}
-	row, err = model.UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
-	idArr, _ := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Array(daoThis.PrimaryKey())
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
+	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
 	if len(idArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	result, err := daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseFilter(filter, &[]string{})).Hook(daoThis.HookDelete(gconv.SliceInt(idArr)...)).Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }
@@ -87,8 +86,7 @@ func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string
 		}
 		//filter[`selfAction`].(map[string]interface{})[`loginId`] = loginInfo[`adminId`]
 	}
-	daoAction := daoAuth.Action
-	count, err := daoAction.ParseDbCtx(ctx).Handler(daoAction.ParseFilter(filter, &[]string{})).Count()
+	count, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).GetModel().Count()
 	if count == 0 {
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return

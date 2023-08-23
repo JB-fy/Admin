@@ -66,7 +66,9 @@ func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}) *DaoHandle
 }
 
 func (daoHandlerThis *DaoHandler) HookUpdate(hookData map[string]interface{}, idArr ...int) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookUpdate(hookData, idArr...))
+	if len(hookData) > 0 {
+		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookUpdate(hookData, idArr...))
+	}
 	return daoHandlerThis
 }
 

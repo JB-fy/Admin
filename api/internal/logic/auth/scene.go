@@ -38,11 +38,7 @@ func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]inter
 	}
 	hookData := map[string]interface{}{}
 
-	daoHandlerThis.Update(data)
-	if len(hookData) > 0 {
-		daoHandlerThis.HookUpdate(hookData, gconv.SliceInt(idArr)...)
-	}
-	row, err = daoHandlerThis.GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 

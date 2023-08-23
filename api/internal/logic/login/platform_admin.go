@@ -2,6 +2,7 @@ package logic
 
 import (
 	"api/internal/consts"
+	"api/internal/dao"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
@@ -26,7 +27,7 @@ func init() {
 // 获取加密盐
 func (logicThis *sLoginPlatformAdmin) Salt(ctx context.Context, account string) (saltStatic string, saltDynamic string, err error) {
 	sceneCode := `platform` //指定场景
-	info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()
+	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`accountOrPhone`: account}).GetModel().One()
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -42,7 +43,7 @@ func (logicThis *sLoginPlatformAdmin) Salt(ctx context.Context, account string) 
 func (logicThis *sLoginPlatformAdmin) Login(ctx context.Context, account string, password string) (token string, err error) {
 	sceneCode := `platform` //指定场景
 	/**--------验证账号密码 开始--------**/
-	info, _ := daoPlatform.Admin.ParseDbCtx(ctx).Handler(daoPlatform.Admin.ParseFilter(map[string]interface{}{`accountOrPhone`: account}, &[]string{})).One()
+	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`accountOrPhone`: account}).GetModel().One()
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
