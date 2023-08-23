@@ -3509,7 +3509,7 @@ const ` + field + `Handle = reactive({
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'float', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }
+			// { type: 'float', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }	// 组件有bug，值0时验证不能通过
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3518,7 +3518,7 @@ const ` + field + `Handle = reactive({
 			} else {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'float', trigger: 'change', message: '' }
+			// { type: 'float', trigger: 'change', message: '' }	// 组件有bug，值0时验证不能通过
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
