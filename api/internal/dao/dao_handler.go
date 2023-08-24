@@ -83,7 +83,9 @@ func (daoHandlerThis *DaoHandler) Field(field []string) *DaoHandler {
 }
 
 func (daoHandlerThis *DaoHandler) Filter(filter map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis.joinTableArr))
+	if len(filter) > 0 {
+		daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis.joinTableArr))
+	}
 	return daoHandlerThis
 }
 
