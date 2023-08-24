@@ -7,23 +7,6 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 )
 
-type DaoHandler struct {
-	ctx          context.Context
-	dao          DaoInterface
-	model        *gdb.Model
-	joinTableArr *[]string
-}
-
-func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[string]interface{}) *DaoHandler {
-	daoHandlerThisObj := DaoHandler{
-		ctx:          ctx,
-		dao:          dao,
-		joinTableArr: &[]string{},
-	}
-	daoHandlerThisObj.model = daoHandlerThisObj.dao.ParseDbCtx(daoHandlerThisObj.ctx, dbSelDataList...)
-	return &daoHandlerThisObj
-}
-
 // 定义接口
 type DaoInterface interface {
 	ParseDbGroup(ctx context.Context, dbGroupSeldata ...map[string]interface{}) string
@@ -53,6 +36,23 @@ type DaoInterface interface {
 	PrimaryKey() string
 	ColumnArr() []string
 	ColumnArrG() *garray.StrArray
+}
+
+type DaoHandler struct {
+	ctx          context.Context
+	dao          DaoInterface
+	model        *gdb.Model
+	joinTableArr *[]string
+}
+
+func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[string]interface{}) *DaoHandler {
+	daoHandlerThisObj := DaoHandler{
+		ctx:          ctx,
+		dao:          dao,
+		joinTableArr: &[]string{},
+	}
+	daoHandlerThisObj.model = daoHandlerThisObj.dao.ParseDbCtx(daoHandlerThisObj.ctx, dbSelDataList...)
+	return &daoHandlerThisObj
 }
 
 func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
