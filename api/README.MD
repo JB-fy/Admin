@@ -4,7 +4,7 @@
 # 服务启动
 gf run main.go -a "http"
 
-# dao层生成
+# dao层生成（遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/auth/allow)解决）
 gf gen dao
 
 # service层生成
