@@ -56,6 +56,6 @@ gf gen service
 - 未带参数执行，则需根据提示输入全部参数。示例：./main myGen
 - 带全部参数执行，则无提示直接生成。示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
 
-# 常用错误处理
+# 常见错误处理
 
 1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./internal/dao/auth/allow/allow.go)解决
