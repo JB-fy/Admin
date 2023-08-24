@@ -4,7 +4,7 @@
 # 服务启动
 gf run main.go -a "http"
 
-# dao层生成（遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/auth/allow)解决）
+# dao层生成
 gf gen dao
 
 # service层生成
@@ -13,7 +13,6 @@ gf gen service
 # 全自动前后端代码生成（必须先生成main文件。如修改过api/internal/cmd/my_gen.go代码，则需重新生成）
 ./main myGen
 ```
-
 # 代码自动生成流程（强烈建议搭配Git使用）
 
 1.新建数据库表。如：auth_test
@@ -56,3 +55,7 @@ gf gen service
 3.使用./main myGen命令生成前后端代码（参数参考api/internal/cmd/my_gen.go内结构体MyGenOption的字段注释）
 - 未带参数执行，则需根据提示输入全部参数。示例：./main myGen
 - 带全部参数执行，则无提示直接生成。示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+
+# 常用错误处理
+
+遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/auth/allow)解决
