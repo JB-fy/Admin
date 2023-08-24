@@ -55,11 +55,11 @@ func (daoThis *roleRelToActionDao) ParseDbTable(ctx context.Context, dbTableSelD
 func (daoThis *roleRelToActionDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model {
 	switch len(dbSelDataList) {
 	case 1:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbSelDataList[0])).Model(daoThis.ParseDbTable(ctx, g.Map{})).Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx, dbSelDataList[0])).Model(daoThis.ParseDbTable(ctx)).Ctx(ctx)
 	case 2:
 		return g.DB(daoThis.ParseDbGroup(ctx, dbSelDataList[0])).Model(daoThis.ParseDbTable(ctx, dbSelDataList[1])).Ctx(ctx)
 	default:
-		return g.DB(daoThis.ParseDbGroup(ctx, g.Map{})).Model(daoThis.ParseDbTable(ctx, g.Map{})).Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)).Ctx(ctx)
 	}
 }
 
