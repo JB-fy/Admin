@@ -575,7 +575,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 	tplDao := gfile.GetContents(saveFile)
 
-	daoImport := ``
 	daoParseInsert := ``
 	daoHookInsert := ``
 	daoParseUpdate := ``
@@ -697,16 +696,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	if tpl.PasswordHandle.IsCoexist {
-		daoImportTmp := []string{
-			`"github.com/gogf/gf/v2/crypto/gmd5"`,
-			`"github.com/gogf/gf/v2/util/grand"`,
-		}
-		for _, v := range daoImportTmp {
-			if gstr.Pos(tplDao, v) == -1 {
-				daoImport += `
-	` + v
-			}
-		}
 		daoParseInsertTmp := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `:
 				salt := grand.S(8)
@@ -726,15 +715,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 
 	if tpl.PidHandle.PidField != `` {
-		daoImportTmp := []string{
-			`"github.com/gogf/gf/v2/container/garray"`,
-		}
-		for _, v := range daoImportTmp {
-			if gstr.Pos(tplDao, v) == -1 {
-				daoImport += `
-	` + v
-			}
-		}
 		if tpl.LabelField != `` {
 			daoParseFieldTmp := `
 			case ` + "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `:
@@ -851,10 +831,6 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		}
 	}
 
-	if daoImport != `` {
-		daoImportPoint := `"github.com/gogf/gf/v2/util/gconv"`
-		tplDao = gstr.Replace(tplDao, daoImportPoint, daoImportPoint+daoImport)
-	}
 	if daoParseInsert != `` {
 		daoParseInsertPoint := `case ` + "`id`" + `:
 				insertData[daoThis.PrimaryKey()] = v`
@@ -929,7 +905,14 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = gstr.Replace(tplDao, daoFuncPoint, daoFuncPoint+daoFunc)
 	}
 
+	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/util/grand"
+	"github.com/gogf/gf/v2/container/garray"
+	`)
+
 	gfile.PutContents(saveFile, tplDao)
+	utils.GoFileFmt(saveFile)
 }
 
 // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
@@ -947,17 +930,10 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-`
-	if tpl.PidHandle.IsCoexist {
-		tplLogic += `
-	"github.com/gogf/gf/v2/container/garray"`
-	}
-	if tpl.PidHandle.IsCoexist {
-		tplLogic += `
+
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/text/gstr"`
-	}
-	tplLogic += `
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -1067,6 +1043,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 
 	gfile.PutContents(saveFile, tplLogic)
+	utils.GoFileFmt(saveFile)
 }
 
 // api模板生成
@@ -1495,6 +1472,7 @@ type ` + tpl.TableNameCaseCamel + `Tree struct {
 /*--------树状列表 结束--------*/
 `
 	}
+
 	gfile.PutContents(saveFile, tplApi)
 	utils.GoFileFmt(saveFile)
 }
@@ -1547,32 +1525,17 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 	tplController := `package controller
 
-import (`
-	if option.IsCreate || option.IsUpdate || option.IsDelete {
-		tplController += `
-	"api/api"`
-	}
-	tplController += `
+import (
+	"api/api"
 	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"
 	"api/internal/dao"
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
-	"api/internal/service"`
-	if option.IsUpdate || (option.IsList && tpl.PidHandle.PidField != ``) {
-		tplController += `
-	"api/internal/utils"`
-	}
-	tplController += `
+	"api/internal/service"
+	"api/internal/utils"
 	"context"
-`
-	if option.IsList || option.IsInfo {
-		tplController += `
-	"github.com/gogf/gf/v2/container/gset"`
-	}
-	if option.IsList || option.IsCreate || option.IsUpdate {
-		tplController += `
-	"github.com/gogf/gf/v2/util/gconv"`
-	}
-	tplController += `
+
+	"github.com/gogf/gf/v2/container/gset"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type ` + tpl.TableNameCaseCamel + ` struct{}
@@ -1859,6 +1822,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	}
 
 	gfile.PutContents(saveFile, tplController)
+	utils.GoFileFmt(saveFile)
 }
 
 // 后端路由生成
@@ -1888,6 +1852,8 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			gfile.PutContents(saveFile, tplRouter)
 		}
 	}
+
+	utils.GoFileFmt(saveFile)
 }
 
 // 视图模板Index生成
