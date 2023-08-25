@@ -777,7 +777,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	if tpl.PidHandle.IsCoexist {
 		daoParseInsertTmp := `
-
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Int(v) > 0 {
