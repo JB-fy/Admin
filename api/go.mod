@@ -19,4 +19,5 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	go.opentelemetry.io/otel/sdk v1.16.0 // indirect
 	golang.org/x/net v0.12.0 // indirect
+	golang.org/x/tools v0.6.0
 )

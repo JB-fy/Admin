@@ -11,9 +11,11 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"golang.org/x/tools/imports"
 )
 
 // 是否开发环境
@@ -106,6 +108,18 @@ func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
 	return gstr.Trim(string(output))
+}
+
+// go文件代码格式化
+func GoFileFmt(filePath string) {
+	fmtFuc := func(path, content string) string {
+		res, err := imports.Process(path, []byte(content), nil)
+		if err != nil {
+			return content
+		}
+		return string(res)
+	}
+	gfile.ReplaceFileFunc(fmtFuc, filePath)
 }
 
 // 数据库表按时间做分区（通用，默认以分区最大日期作为分区名）

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	daoAuth "api/internal/dao/auth"
+	"api/internal/utils"
 	"context"
 	"fmt"
 	"os/exec"
@@ -1495,6 +1496,7 @@ type ` + tpl.TableNameCaseCamel + `Tree struct {
 `
 	}
 	gfile.PutContents(saveFile, tplApi)
+	utils.GoFileFmt(saveFile)
 }
 
 // controller模板生成
