@@ -11,6 +11,7 @@ import (
 
 func init() {
 	myRuleThis := myRule{}
+
 	gvalid.RegisterRule(`distinct`, myRuleThis.Distinct)
 }
 

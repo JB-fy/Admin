@@ -10,8 +10,8 @@ import (
 
 func init() {
 	// ctx := gctx.New()
-
 	// myCronThis := myCron{}
+
 	// gcron.AddSingleton(ctx, `*/5 * * * * *`, myCronThis.Test, `Test`)
 }
 
