@@ -20,7 +20,6 @@ func NewUpload() *Upload {
 
 // 获取签名(web端直传用)
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	request := g.RequestFromCtx(ctx)
 	option := utils.AliyunOssSignOption{
 		ExpireTime: 15 * 60,
 		Dir:        fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
@@ -34,7 +33,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	//是否回调
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
 		callback := utils.AliyunOssCallback{
-			Url:      utils.GetRequestUrl(request, 0) + `/upload/notify`,
+			Url:      utils.GetRequestUrl(ctx, 0) + `/upload/notify`,
 			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
 		}
@@ -76,7 +75,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 	//是否回调
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		res.CallbackUrl = utils.GetRequestUrl(request, 0) + `/upload/notify`
+		res.CallbackUrl = utils.GetRequestUrl(ctx, 0) + `/upload/notify`
 		res.CallbackBody = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 		res.CallbackBodyType = `application/x-www-form-urlencoded`
 		if utils.IsDev(ctx) {

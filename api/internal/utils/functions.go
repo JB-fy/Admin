@@ -81,7 +81,8 @@ func GetCtxLoginInfo(ctx context.Context) gdb.Record {
 }
 
 // 获取当前请求Url
-func GetRequestUrl(r *ghttp.Request, flag int) (url string) {
+func GetRequestUrl(ctx context.Context, flag int) (url string) {
+	r := g.RequestFromCtx(ctx)
 	switch flag {
 	case 0: //http(s)://www.xxxx.com
 		url = gstr.Replace(r.GetUrl(), r.URL.String(), ``)
