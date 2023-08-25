@@ -80,6 +80,19 @@ func GetCtxLoginInfo(ctx context.Context) gdb.Record {
 	return tmp.(gdb.Record)
 }
 
+// 获取当前请求Url
+func GetRequestUrl(r *ghttp.Request, flag int) (url string) {
+	switch flag {
+	case 0: //http(s)://www.xxxx.com
+		url = gstr.Replace(r.GetUrl(), r.URL.String(), ``)
+	case 1: //http(s)://www.xxxx.com/test
+		url = gstr.Replace(r.GetUrl(), r.URL.String(), ``) + r.URL.Path
+	case 2: //http(s)://www.xxxx.com/test?a=1&b=2
+		url = r.GetUrl()
+	}
+	return
+}
+
 // 获取服务器外网ip
 func GetServerNetworkIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `curl -s ifconfig.me`)

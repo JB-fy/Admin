@@ -9,7 +9,6 @@ import (
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -35,7 +34,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	//是否回调
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
 		callback := utils.AliyunOssCallback{
-			Url:      gstr.Replace(request.GetUrl(), request.URL.String(), `/upload/notify`, 1),
+			Url:      utils.GetRequestUrl(request, 0) + `/upload/notify`,
 			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
 		}
@@ -77,7 +76,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 	//是否回调
 	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		res.CallbackUrl = gstr.Replace(request.GetUrl(), request.URL.String(), `/upload/notify`, 1)
+		res.CallbackUrl = utils.GetRequestUrl(request, 0) + `/upload/notify`
 		res.CallbackBody = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 		res.CallbackBodyType = `application/x-www-form-urlencoded`
 		if utils.IsDev(ctx) {
