@@ -3082,7 +3082,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		return
 	}
 
-	passwordField := ``
+	viewSaveDataInit := ``
 	viewSaveRule := ``
 	viewSaveField := ``
 	viewFieldHandle := ``
@@ -3116,7 +3116,6 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//password|passwd
 		if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` {
-			passwordField = field
 			viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
@@ -3276,6 +3275,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//list,arr等后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) {
+			viewSaveDataInit += `
+		` + field + `: [],`
 			viewSaveRule += `
 		` + field + `: [
             // { type: 'array', trigger: 'change', defaultField: { type: 'string', message: '' }, message: '' },
@@ -3351,6 +3352,8 @@ const ` + field + `Handle = reactive({
 				viewSaveField += `
 					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />`
 			} else {
+				viewSaveDataInit += `
+		` + field + `: ` + statusList[0][0] + `,`
 				viewSaveField += `
 					<ElRadioGroup v-model="saveForm.data.` + field + `">
                         <ElRadio v-for="(item, index) in tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any" :key="index" :label="item.value">
@@ -3601,7 +3604,7 @@ const ` + field + `Handle = reactive({
 	}
 
 	tplView := `<script setup lang="ts">`
-	if passwordField != `` {
+	if tpl.PasswordHandle.PasswordField != `` {
 		tplView += `
 import md5 from 'js-md5'
 `
@@ -3615,7 +3618,7 @@ const listCommon = inject('listCommon') as { ref: any }
 const saveForm = reactive({
 	ref: null as any,
 	loading: false,
-	data: {
+	data: {` + viewSaveDataInit + `
 		...saveCommon.data
 	} as { [propName: string]: any },
 	rules: {` + viewSaveRule + `
@@ -3627,9 +3630,9 @@ const saveForm = reactive({
 			}
 			saveForm.loading = true
 			const param = removeEmptyOfObj(saveForm.data, false)`
-	if passwordField != `` {
+	if tpl.PasswordHandle.PasswordField != `` {
 		tplView += `
-            param.` + passwordField + ` ? param.` + passwordField + ` = md5(param.` + passwordField + `) : delete param.` + passwordField
+            param.` + tpl.PasswordHandle.PasswordField + ` ? param.` + tpl.PasswordHandle.PasswordField + ` = md5(param.` + tpl.PasswordHandle.PasswordField + `) : delete param.` + tpl.PasswordHandle.PasswordField
 	}
 	tplView += `
 			try {
