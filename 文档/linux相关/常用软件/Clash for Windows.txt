@@ -14,6 +14,6 @@ Categories=TextEditor;Development;Utility;
 MimeType=text/plain;
 
 
-liunx没有系统代理选项，需要自己在系统网络位置手动设置代理
+liunx没有系统代理选项，需要在系统设置-网络-代理-手动开启并设置
 地址：0.0.0.0
 端口：软件界面-常规-端口
