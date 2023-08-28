@@ -1,15 +1,14 @@
-编译安装方式
-    解压安装包
-        tar -xvf git-2.40.1.tar.gz
-    进入解压目录编译
-        ./configure --prefix=/server/tool/git-2.40.1
-        make && make install
-    设置环境变量增加以下目录（参考linux常用命令）
-        /server/tool/git-2.40.1/bin
+解压安装包
+    tar -xvf git-2.40.1.tar.gz
+进入解压目录编译
+    ./configure --prefix=/server/tool/git-2.40.1
+    make && make install
+设置环境变量增加以下目录（参考linux常用命令）
+    /server/tool/git-2.40.1/bin
 
 
 
-/**----------------Git常用命令 开始----------------**/
+/**----------------常用命令 开始----------------**/
 git config --global user.name '名称'    //设置全局名称
 git config --global user.email '邮箱'	//设置全局邮箱
 git config --global credential.helper cache --timeout 缓存时间（默认：900）//缓存账号和密码
@@ -29,4 +28,4 @@ git diff 分支1 分支2    //显示两个版本之间的差异
 
 
 git diff 分支1 分支2 --name-only | xargs zip update.zip //将两个版本之间的差异文件导出
-/**----------------Git常用命令 结束----------------**/
+/**----------------常用命令 结束----------------**/

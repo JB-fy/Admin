@@ -50,10 +50,11 @@ process_name=%(program_name)s_%(process_num)02d
 
 
 
-相关命令
+/**----------------常用命令 开始----------------**/
 supervisorctl update            //更新配置
 supervisorctl reload            //重新启动所有进程
 supervisorctl status 进程名    //查看进程
 supervisorctl start 进程名     //启动进程
 supervisorctl stop 进程名      //停止进程
 supervisorctl restart 进程名   //重启进程
+/**----------------常用命令 结束----------------**/

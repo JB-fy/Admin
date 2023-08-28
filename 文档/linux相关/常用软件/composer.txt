@@ -6,12 +6,13 @@
     chmod 755 /server/tool/composer/composer
 设置环境变量增加以下目录（参考linux常用命令）
     /server/tool/composer
-修改镜像源（默认：https://repo.packagist.org）
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-删除镜像源变成默认镜像源
-    composer config -g --unset repos.packagist
-查看镜像源
-    composer config -g -l
 
-#指定php版本运行composer
-    /server/tool/php-7.4.33/bin/php /server/tool/composer/composer install
+
+
+/**----------------常用命令 开始----------------**/
+composer config -g -l   //查看镜像源
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ //修改镜像源（默认：https://repo.packagist.org）
+composer config -g --unset repos.packagist  //删除镜像源变成默认镜像源
+
+/server/tool/php-7.4.33/bin/php /server/tool/composer/composer install  //指定php版本运行composer
+/**----------------常用命令 结束----------------**/

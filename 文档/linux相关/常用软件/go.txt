@@ -1,8 +1,7 @@
-解压安装方式
-    解压安装包
-        tar -xvf go1.20.4.linux-amd64.tar.gz
-    移动到指定目录
-        mv /server/go /server/tool/go-1.20.4
+解压安装包
+    tar -xvf go1.20.4.linux-amd64.tar.gz
+移动到指定目录
+    mv /server/go /server/tool/go-1.20.4
 
 
 
