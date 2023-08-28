@@ -7,7 +7,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-// isForce 是否强制登录验证
+// isForce 是否强制验证登录
 func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 	return func(r *ghttp.Request) {
 		/**--------验证token 开始--------**/
