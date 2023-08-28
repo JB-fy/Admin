@@ -22,7 +22,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 		//需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.SceneLoginOfPlatform)
+			group.Middleware(middleware.SceneLoginOfPlatform(true))
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewUpload()
