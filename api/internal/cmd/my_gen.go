@@ -3753,7 +3753,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewI18nName += `
 		` + field + `: '` + fieldName + `',`
 			viewI18nTip += `
-		` + field + `: '` + fieldName + `',`
+		` + field + `: '` + comment + `',`
 			continue
 		}
 		viewI18nName += `
