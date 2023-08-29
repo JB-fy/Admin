@@ -1,6 +1,8 @@
 package api
 
-import "github.com/gogf/gf/v2/frame/g"
+import (
+	"github.com/gogf/gf/v2/frame/g"
+)
 
 type TestReq struct {
 	// g.Meta `path:"/test" method:"get,post" mime:"application/json" deprecated:"废弃标记" tags:"测试。标签，用于分类" sm:"接口名称" dc:"详细描述"`
@@ -10,5 +12,11 @@ type TestReq struct {
 
 type TestRes struct {
 	g.Meta `mime:"text/html" example:"string"`
-	Test   string `json:"test" dc:"测试"`
+	Info   *TestInfo `json:"info,omitempty" dc:"详情"`
+}
+
+type TestInfo struct {
+	Id     *uint   `json:"id,omitempty" dc:"ID"`
+	Label  *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	TestId *uint   `json:"testId,omitempty" dc:"测试ID"`
 }

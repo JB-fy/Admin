@@ -53,17 +53,20 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	// fmt.Println(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int())	//获取配置参数
 
-	// fmt.Println(g.DB(`lx`).Model(`tab_user_unsubscribe`).Safe().Ctx(ctx))	//数据库连接
+	// fmt.Println(g.DB(`default`).Model(`tab_user_unsubscribe`).Safe().Ctx(ctx))	//数据库连接
 
 	// fmt.Println(ghttp.RestartAllServer(ctx))	//重启服务
+
+	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
+
+	// err = utils.NewErrorCode(ctx, 99999999, ``)
 
 	/* utils.HttpWriteJson(ctx, map[string]interface{}{
 		`info`: map[string]interface{}{},
 	}, 0, ``) */
-	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
-	res = &api.TestRes{
-		Test: `测试`,
-	}
+	res = &api.TestRes{}
+	/* info, _ := g.DB().Model(`auth_scene`).Ctx(ctx).One()
+	info.Struct(&res.Info) */
 	return
 }
 
