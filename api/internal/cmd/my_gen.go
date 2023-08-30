@@ -3749,7 +3749,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		tip := gstr.Replace(comment, fieldName, ``, 1)
 		tmp, _ = gregex.MatchString(`\n\r\.。:：\(（`, column[`Comment`].String())
 		if len(tmp) > 0 {
-			gstr.TrimRight(tip, tmp[0])
+			gstr.TrimLeft(tip, tmp[0])
 		}
 		for _, v := range []string{"\n", "\r", `.`, `。`, `:`, `：`, `(`, `（`, `)`, `）`, ` `, `,`, `，`, `;`, `；`} {
 			tip = gstr.Trim(tip, v)
