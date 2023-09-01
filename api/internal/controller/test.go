@@ -42,6 +42,11 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// g.Log().Info(ctx, `日志打印`)
 	// fmt.Println(g.I18n().T(ctx, `code.99999999`))
 
+	/* //合并Map
+	rawMap := gmap.NewStrAnyMapFrom(g.Map{`a`: 1, `b`: 2})
+	rawMap.Merge(gmap.NewStrAnyMapFrom(g.Map{`a`: 4, `c`: 3}))
+	fmt.Println(rawMap.Map()) */
+
 	// fmt.Println(garray.NewStrArrayFrom([]string{`a`, `b`, `c`}).Contains(`a`))	//是否含有元素
 
 	// fmt.Println(gset.NewIntSetFrom([]int{1, 2, 3}).Diff(gset.NewIntSetFrom([]int{1, 3})).Slice())	//差集
