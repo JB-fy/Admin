@@ -1380,12 +1380,10 @@ type ` + tpl.TableNameCaseCamel + `ListReq struct {
 }
 
 type ` + tpl.TableNameCaseCamel + `ListFilter struct {
-	/*--------公共参数 开始--------*/
 	Id             *uint       ` + "`" + `json:"id,omitempty" v:"integer|min:1" dc:"ID"` + "`" + `
 	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"` + "`" + `
 	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
-	/*--------公共参数 结束--------*/
 	` + apiReqFilterColumn + `
 }
 
