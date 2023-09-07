@@ -498,6 +498,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	nameFieldList := []string{
 		tpl.TableNameCaseCamel + `Name`,
 		gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`,
+		`Name`,
 		`Phone`,
 		`Account`,
 		`Nickname`,
@@ -592,6 +593,21 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	daoParseJoin := ``
 	daoFunc := ``
 
+	if tpl.LabelField != `` {
+		daoParseFieldTmp := `
+			case ` + "`label`" + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)`
+		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+			daoParseField += daoParseFieldTmp
+		}
+		daoParseFilterTmp := `
+			case ` + "`label`" + `:
+				m = m.WhereLike(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+		if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
+			daoParseFilter += daoParseFilterTmp
+		}
+	}
+
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
@@ -604,6 +620,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
+			daoParseFilterTmp := `
+			case ` + "`timeRangeStart`" + `:
+				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, v)
+			case ` + "`timeRangeEnd`" + `:
+				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `, v)`
+			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
+				daoParseFilter += daoParseFilterTmp
+			}
 			continue
 		}
 		//password|passwd
@@ -682,32 +706,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				daoParseOrder += daoParseOrderTmp
 			}
 			continue
-		}
-	}
-
-	if tpl.CreatedField != `` {
-		daoParseFilterTmp := `
-			case ` + "`timeRangeStart`" + `:
-				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.CreatedField) + `, v)
-			case ` + "`timeRangeEnd`" + `:
-				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.CreatedField) + `, v)`
-		if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-			daoParseFilter += daoParseFilterTmp
-		}
-	}
-
-	if tpl.LabelField != `` {
-		daoParseFieldTmp := `
-			case ` + "`label`" + `:
-				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)`
-		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-			daoParseField += daoParseFieldTmp
-		}
-		daoParseFilterTmp := `
-			case ` + "`label`" + `:
-				m = m.WhereLike(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-		if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-			daoParseFilter += daoParseFilterTmp
 		}
 	}
 
@@ -1073,6 +1071,10 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	apiReqCreateColumn := ``
 	apiReqUpdateColumn := ``
 	apiResColumn := ``
+	if tpl.LabelField != `` {
+		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
+		apiResColumn += `Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`\n"
+	}
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
@@ -1092,6 +1094,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
+			apiReqFilterColumn += `TimeRangeStart *gtime.Time ` + "`" + `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"` + "`\n"
+			apiReqFilterColumn += `TimeRangeEnd   *gtime.Time ` + "`" + `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
 		}
@@ -1349,6 +1353,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 		apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 	}
+
 	apiReqFilterColumn = gstr.SubStr(apiReqFilterColumn, 0, -len("\n"))
 	apiReqCreateColumn = gstr.SubStr(apiReqCreateColumn, 0, -len("\n"))
 	apiReqUpdateColumn = gstr.SubStr(apiReqUpdateColumn, 0, -len("\n"))
@@ -1380,9 +1385,6 @@ type ` + tpl.TableNameCaseCamel + `ListFilter struct {
 	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"` + "`" + `
 	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
-	TimeRangeStart *gtime.Time ` + "`" + `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"` + "`" + `
-	TimeRangeEnd   *gtime.Time ` + "`" + `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"` + "`" + `
-	Label          string      ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`" + `
 	/*--------公共参数 结束--------*/
 	` + apiReqFilterColumn + `
 }
@@ -1398,7 +1400,6 @@ type ` + tpl.TableNameCaseCamel + `ListRes struct {`
 
 type ` + tpl.TableNameCaseCamel + `Item struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`" + `
 	` + apiResColumn + `
 }
 
@@ -1420,7 +1421,6 @@ type ` + tpl.TableNameCaseCamel + `InfoRes struct {
 
 type ` + tpl.TableNameCaseCamel + `Info struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`" + `
 	` + apiResColumn + `
 }
 
@@ -1479,7 +1479,6 @@ type ` + tpl.TableNameCaseCamel + `TreeRes struct {
 
 type ` + tpl.TableNameCaseCamel + `Tree struct {
 	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	Label    *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`" + `
 	Children interface{} ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 	` + apiResColumn + `
 }
@@ -1503,7 +1502,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	controllerAlloweFieldInfo := "`id`, "
 	controllerAlloweFieldTree := "`id`, "
 	controllerAlloweFieldNoAuth := "`id`, "
-	if tpl.PrimaryKey != `id` {
+	if tpl.PrimaryKey != `` && tpl.PrimaryKey != `id` {
 		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, `
 	}
 	if tpl.LabelField != `` {
@@ -1939,9 +1938,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		return
 	}
 
-	rawUpdatedAtField := ``
-	rawCreatedAtField := ``
-	// rawDeletedAtField := ``
 	tableRowHeight := 50
 	viewListColumn := ``
 	for _, column := range tpl.TableColumnList {
@@ -1955,15 +1951,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}))
 
 		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
-			// rawDeletedAtField = field
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
-			rawUpdatedAtField = field
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
-			rawCreatedAtField = field
 			continue
 		}
 		//主键
@@ -2533,17 +2526,17 @@ const table = reactive({
 	tplView += `
 	},` + viewListColumn + `
 	{
-		dataKey: '` + rawUpdatedAtField + `',
+		dataKey: '` + tpl.UpdatedField + `',
 		title: t('common.name.updatedAt'),
-		key: '` + rawUpdatedAtField + `',
+		key: '` + tpl.UpdatedField + `',
 		align: 'center',
 		width: 150,
 		sortable: true,
 	},
 	{
-		dataKey: '` + rawCreatedAtField + `',
+		dataKey: '` + tpl.CreatedField + `',
 		title: t('common.name.createdAt'),
-		key: '` + rawCreatedAtField + `',
+		key: '` + tpl.CreatedField + `',
 		align: 'center',
 		width: 150,
 		sortable: true
@@ -2801,6 +2794,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		return
 	}
 
+	viewQueryDataInit := ``
 	viewQueryField := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
@@ -2819,6 +2813,30 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
+			viewQueryDataInit += `
+	timeRange: (() => {
+		// const date = new Date()
+		return [
+			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+		]
+	})(),
+	timeRangeStart: computed(() => {
+		if (queryCommon.data.timeRange?.length) {
+			return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
+		}
+		return ''
+	}),
+	timeRangeEnd: computed(() => {
+		if (queryCommon.data.timeRange?.length) {
+			return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
+		}
+		return ''
+	})`
+			viewQueryField += `
+		<ElFormItem prop="timeRange">
+			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
+		</ElFormItem>`
 			continue
 		}
 		//主键
@@ -3028,26 +3046,7 @@ const { t, tm } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
-	...queryCommon.data,
-	timeRange: (() => {
-		// const date = new Date()
-		return [
-			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
-		]
-	})(),
-	timeRangeStart: computed(() => {
-		if (queryCommon.data.timeRange?.length) {
-			return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
-		}
-		return ''
-	}),
-	timeRangeEnd: computed(() => {
-		if (queryCommon.data.timeRange?.length) {
-			return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
-		}
-		return ''
-	})
+	...queryCommon.data,` + viewQueryDataInit + `
 }
 const listCommon = inject('listCommon') as { ref: any }
 const queryForm = reactive({
@@ -3072,9 +3071,6 @@ const queryForm = reactive({
 		<ElFormItem prop="id">
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>` + viewQueryField + `
-		<ElFormItem prop="timeRange">
-			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
-		</ElFormItem>
 		<ElFormItem>
 			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
 				<AutoiconEpSearch />{{ t('common.query') }}
