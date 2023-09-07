@@ -1954,9 +1954,27 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
+			viewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.updatedAt'),
+		key: '` + field + `',
+		align: 'center',
+		width: 150,
+		sortable: true,
+	},`
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
+			viewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('common.name.createdAt'),
+		key: '` + field + `',
+		align: 'center',
+		width: 150,
+		sortable: true
+	},`
 			continue
 		}
 		//主键
@@ -2524,23 +2542,7 @@ const table = reactive({
 		},`
 	}
 	tplView += `
-	},` + viewListColumn + `
-	{
-		dataKey: '` + tpl.UpdatedField + `',
-		title: t('common.name.updatedAt'),
-		key: '` + tpl.UpdatedField + `',
-		align: 'center',
-		width: 150,
-		sortable: true,
-	},
-	{
-		dataKey: '` + tpl.CreatedField + `',
-		title: t('common.name.createdAt'),
-		key: '` + tpl.CreatedField + `',
-		align: 'center',
-		width: 150,
-		sortable: true
-	},`
+	},` + viewListColumn
 	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
 	{
@@ -2832,7 +2834,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
 		}
 		return ''
-	})`
+	}),`
 			viewQueryField += `
 		<ElFormItem prop="timeRange">
 			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
