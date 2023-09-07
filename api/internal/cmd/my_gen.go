@@ -85,6 +85,9 @@ type MyGenTpl struct {
 	ModuleDirCaseSnake             string     //模块目录（蛇形，/会被去除）
 	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableNameCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	PrimaryKey                     string     //表主键
+	DeletedField                   string     //表删除时间字段
+	UpdatedField                   string     //表更新时间字段
+	CreatedField                   string     //表创建时间字段
 	LabelField                     string     //dao层label对应的字段(常用于前端组件)
 	// 以下字段用于对某些表字段做特殊处理
 	PasswordHandle struct { //password|passwd,salt同时存在时，需特殊处理
@@ -442,12 +445,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		fieldCaseCamelArr[index] = fieldCaseCamel
 
 		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
+			tpl.DeletedField = field
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
+			tpl.UpdatedField = field
 			continue
 		}
 		if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
+			tpl.CreatedField = field
 			continue
 		}
 		//主键
@@ -679,6 +685,17 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
+	if tpl.CreatedField != `` {
+		daoParseFilterTmp := `
+			case ` + "`timeRangeStart`" + `:
+				m = m.WhereGTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.CreatedField) + `, v)
+			case ` + "`timeRangeEnd`" + `:
+				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.CreatedField) + `, v)`
+		if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
+			daoParseFilter += daoParseFilterTmp
+		}
+	}
+
 	if tpl.LabelField != `` {
 		daoParseFieldTmp := `
 			case ` + "`label`" + `:
@@ -880,8 +897,8 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect)
 	}
 	if daoParseFilter != `` {
-		daoParseFilterPoint := `case ` + "`timeRangeEnd`" + `:
-				m = m.WhereLTE(daoThis.Table()+` + "`.`" + `+daoThis.Columns().CreatedAt, v)`
+		daoParseFilterPoint := `case ` + "`id`, `idArr`" + `:
+				m = m.Where(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), v)`
 		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter)
 	}
 	if daoParseOrder != `` {

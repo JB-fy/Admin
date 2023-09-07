@@ -231,8 +231,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]in
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case `id`, `idArr`:
-				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
@@ -243,10 +241,8 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]in
 				default:
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+			case `id`, `idArr`:
+				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 			default:
 				kArr := strings.Split(k, ` `) //支持`id > ?`等k
 				if !daoThis.ColumnArrG().Contains(kArr[0]) {

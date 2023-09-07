@@ -291,8 +291,6 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
-			case `id`, `idArr`:
-				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
@@ -303,6 +301,8 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				default:
 					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 				}
+			case `id`, `idArr`:
+				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
