@@ -3381,7 +3381,7 @@ const ` + field + `Handle = reactive({
 		` + field + `: ` + statusList[0][0] + `,`
 				viewSaveField += `
 					<ElRadioGroup v-model="saveForm.data.` + field + `">
-                        <ElRadio v-for="(item, index) in tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any" :key="index" :label="item.value">
+                        <ElRadio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
                             {{ item.label }}
                         </ElRadio>
                     </ElRadioGroup>`
