@@ -11,21 +11,22 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 type Local struct{}
 
 func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadApi`, `localSignKey`})
+	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileUrlPrefix`})
 	upload := internal.NewLocal(ctx, config)
 
 	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
 	expire := time.Now().Unix() + 15*60
 	signInfo = map[string]interface{}{
-		// `uploadUrl`: upload.Host + upload.UploadApi,
-		`uploadUrl`: upload.Host + `/upload/upload`,
+		`uploadUrl`: upload.Url,
 		// `uploadData`:  map[string]interface{}{},
-		`host`:   upload.Host,
+		`host`:   upload.FileUrlPrefix,
 		`dir`:    dir,
 		`expire`: expire,
 		`isRes`:  1,
@@ -34,7 +35,7 @@ func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[str
 	uploadData := map[string]interface{}{
 		`dir`:    dir,
 		`expire`: expire,
-		`time`:   time.Now().UnixMilli(),
+		`rand`:   grand.S(8),
 	}
 	uploadData[`sign`] = upload.CreateSign(uploadData)
 
@@ -47,20 +48,25 @@ func (*Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[strin
 }
 
 func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadApi`, `localSignKey`})
+	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileUrlPrefix`})
 	upload := internal.NewLocal(ctx, config)
 
 	r := g.RequestFromCtx(ctx)
-	dir := r.PostFormValue(`dir`)
 	expire := r.PostFormValue(`expire`)
-	time := r.PostFormValue(`time`)
+	if time.Now().Unix() > gconv.Int64(expire) {
+		err = utils.NewErrorCode(ctx, 79999999, `签名失效`)
+		return
+	}
+
+	dir := r.PostFormValue(`dir`)
+	rand := r.PostFormValue(`rand`)
 	key := r.PostFormValue(`key`)
 	sign := r.PostFormValue(`sign`)
 
 	signData := map[string]interface{}{
 		`dir`:    dir,
 		`expire`: expire,
-		`time`:   time,
+		`rand`:   rand,
 	}
 	if sign != upload.CreateSign(signData) {
 		err = utils.NewErrorCode(ctx, 79999999, `回调签名错误`)
@@ -68,17 +74,17 @@ func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, er
 	}
 
 	file := r.GetUploadFile(`file`)
-	isRandom := true
+	isRand := true
 	if key != `` {
-		isRandom = false
+		isRand = false
 		file.Filename = gstr.Replace(key, dir, ``) //修改保存文件名
 	}
-	filename, err := file.Save(`../`+dir, isRandom)
+	filename, err := file.Save(`../`+dir, isRand)
 	if err != nil {
 		return
 	}
 
 	notifyInfo = map[string]interface{}{}
-	notifyInfo[`url`] = upload.Host + `/` + filename
+	notifyInfo[`url`] = upload.FileUrlPrefix + `/` + filename
 	return
 }

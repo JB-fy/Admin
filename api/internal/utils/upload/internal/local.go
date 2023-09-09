@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"api/internal/utils"
 	"context"
 	"sort"
 
@@ -10,10 +9,10 @@ import (
 )
 
 type Local struct {
-	Ctx       context.Context
-	Host      string `json:"localHost"`
-	UploadApi string `json:"localUploadApi"`
-	SignKey   string `json:"localSignKey"`
+	Ctx           context.Context
+	Url           string `json:"localUploadUrl"`
+	SignKey       string `json:"localUploadSignKey"`
+	FileUrlPrefix string `json:"localUploadFileUrlPrefix"`
 }
 
 func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
@@ -21,9 +20,6 @@ func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
 		Ctx: ctx,
 	}
 	gconv.Struct(config, &localObj)
-	if localObj.Host == `` {
-		localObj.Host = utils.GetRequestUrl(ctx, 0)
-	}
 	return &localObj
 }
 

@@ -1,10 +1,14 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, tm } = useI18n()
 
 const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
+        uploadType: 'aliyunOss',
+        localUploadUrl: '',
+        localUploadSignKey: '',
+        localUploadFileUrlPrefix: '',
         aliyunOssHost: '',
         aliyunOssBucket: '',
         aliyunOssAccessKeyId: '',
@@ -13,6 +17,18 @@ const saveForm = reactive({
         aliyunOssCallbackUrl: '',
     } as { [propName: string]: any },
     rules: {
+        uploadType: [
+			{ type: 'enum', enum: [`local`, `aliyunOss`], trigger: 'change', message: t('validation.select') }
+        ],
+        localUploadUrl: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') }
+        ],
+        localUploadSignKey: [
+            { type: 'string', trigger: 'blur' }
+        ],
+        localUploadFileUrlPrefix: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') }
+        ],
         aliyunOssHost: [
             { type: 'url', trigger: 'blur', message: t('validation.url') }
         ],
@@ -68,44 +84,75 @@ saveForm.initData()
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
-            <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('platform.config.name.aliyunOssHost')"
-                :clearable="true" style="max-width: 500px;" />
-            <label>
-                <ElAlert :title="t('platform.config.tip.aliyunOssHost')" type="info" :show-icon="true" :closable="false" />
-            </label>
+        <ElFormItem :label="t('platform.config.name.uploadType')" prop="uploadType">
+            <ElRadioGroup v-model="saveForm.data.uploadType">
+                <ElRadio v-for="(item, index) in tm('platform.config.status.uploadType') as any" :key="index"
+                    :label="item.value">
+                    {{ item.label }}
+                </ElRadio>
+            </ElRadioGroup>
         </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
-            <ElInput v-model="saveForm.data.aliyunOssBucket" :placeholder="t('platform.config.name.aliyunOssBucket')"
-                :clearable="true" />
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
-            <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
+        <template v-if="saveForm.data.uploadType == 'local'">
+            <ElFormItem :label="t('platform.config.name.localUploadUrl')" prop="localUploadUrl">
+                <ElInput v-model="saveForm.data.localUploadUrl" :placeholder="t('platform.config.name.localUploadUrl')"
+                    :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.localUploadSignKey')" prop="localUploadSignKey">
+                <ElInput v-model="saveForm.data.localUploadSignKey"
+                    :placeholder="t('platform.config.name.localUploadSignKey')" :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.localUploadFileUrlPrefix')" prop="localUploadFileUrlPrefix">
+                <ElInput v-model="saveForm.data.localUploadFileUrlPrefix"
+                    :placeholder="t('platform.config.name.localUploadFileUrlPrefix')" :clearable="true"
+                    style="max-width: 500px;" />
+                <label>
+                    <ElAlert :title="t('platform.config.tip.localUploadFileUrlPrefix')" type="info" :show-icon="true"
+                        :closable="false" />
+                </label>
+            </ElFormItem>
+        </template>
+        <template v-if="saveForm.data.uploadType == 'aliyunOss'">
+            <ElFormItem :label="t('platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
+                <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('platform.config.name.aliyunOssHost')"
+                    :clearable="true" style="max-width: 500px;" />
+                <label>
+                    <ElAlert :title="t('platform.config.tip.aliyunOssHost')" type="info" :show-icon="true"
+                        :closable="false" />
+                </label>
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
+                <ElInput v-model="saveForm.data.aliyunOssBucket" :placeholder="t('platform.config.name.aliyunOssBucket')"
+                    :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
+                <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
                 :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" minlength="1" maxlength="30"
                 :show-word-limit="true" :clearable="true" /> -->
-            <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
-                :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeySecret')" prop="aliyunOssAccessKeySecret">
-            <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
-                :placeholder="t('platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
-            <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
-                :clearable="true" style="max-width: 500px;" />
-            <label>
-                <ElAlert :title="t('platform.config.tip.aliyunOssRoleArn')" type="info" :show-icon="true"
-                    :closable="false" />
-            </label>
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.aliyunOssCallbackUrl')" prop="aliyunOssCallbackUrl">
-            <ElInput v-model="saveForm.data.aliyunOssCallbackUrl"
-                :placeholder="t('platform.config.name.aliyunOssCallbackUrl')" :clearable="true" style="max-width: 500px;" />
-            <label>
-                <ElAlert :title="t('platform.config.tip.aliyunOssCallbackUrl')" type="info" :show-icon="true"
-                    :closable="false" />
-            </label>
-        </ElFormItem>
+                <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
+                    :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeySecret')" prop="aliyunOssAccessKeySecret">
+                <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
+                    :placeholder="t('platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
+                <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
+                    :clearable="true" style="max-width: 500px;" />
+                <label>
+                    <ElAlert :title="t('platform.config.tip.aliyunOssRoleArn')" type="info" :show-icon="true"
+                        :closable="false" />
+                </label>
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssCallbackUrl')" prop="aliyunOssCallbackUrl">
+                <ElInput v-model="saveForm.data.aliyunOssCallbackUrl"
+                    :placeholder="t('platform.config.name.aliyunOssCallbackUrl')" :clearable="true"
+                    style="max-width: 500px;" />
+                <label>
+                    <ElAlert :title="t('platform.config.tip.aliyunOssCallbackUrl')" type="info" :show-icon="true"
+                        :closable="false" />
+                </label>
+            </ElFormItem>
+        </template>
         <ElFormItem>
             <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
                 <AutoiconEpCircleCheck />{{ t('common.save') }}

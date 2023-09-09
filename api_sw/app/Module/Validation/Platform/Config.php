@@ -12,6 +12,10 @@ class Config extends AbstractValidation
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
         'configKeyArr.*' => 'sometimes|required|string|between:1,30|distinct',
 
+        'uploadType' => 'string',
+        'localUploadUrl' => 'url',
+        'localUploadSignKey' => 'string',
+        'localUploadFileUrlPrefix' => 'url',
         'aliyunOssHost' => 'url',
         'aliyunOssBucket' => 'string',
         'aliyunOssAccessKeyId' => 'alpha_dash',
@@ -29,6 +33,10 @@ class Config extends AbstractValidation
         ],
         'save' => [
             'only' => [
+                'uploadType',
+                'localUploadUrl',
+                'localUploadSignKey',
+                'localUploadFileUrlPrefix',
                 'aliyunOssHost',
                 'aliyunOssBucket',
                 'aliyunOssAccessKeyId',

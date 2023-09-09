@@ -14,7 +14,7 @@ func NewUpload(uploadType string) Upload {
 	switch uploadType {
 	case `local`:
 		return &Local{}
-	case `aliyun_oss`:
+	case `aliyunOss`:
 		return &AliyunOss{}
 	default:
 		return &Local{}
