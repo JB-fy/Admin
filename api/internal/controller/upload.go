@@ -50,7 +50,7 @@ func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyR
 	return
 }
 
-// 上传本地
+// 本地上传
 func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
 	notifyInfo, err := upload.NewUpload(ctx).Notify(ctx)
 	if err != nil {
