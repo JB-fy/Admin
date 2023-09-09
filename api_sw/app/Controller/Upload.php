@@ -27,7 +27,7 @@ class Upload extends AbstractController
          * @var \App\Plugin\Upload\AbstractUpload
          */
         $upload = make('upload');
-        $upload->createSign($option);
+        $upload->sign($option);
     }
 
     /**

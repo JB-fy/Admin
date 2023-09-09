@@ -2,7 +2,6 @@ package upload
 
 import (
 	daoPlatform "api/internal/dao/platform"
-	"api/internal/utils"
 	"api/internal/utils/upload/internal"
 	"context"
 	"fmt"
@@ -44,14 +43,12 @@ func (*AliyunOss) Sign(ctx context.Context, uploadFileType string) (signInfo map
 		`success_action_status`: `200`, //让服务端返回200,不然，默认会返回204
 	}
 	//是否回调
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
+	callbackUrl := gconv.String(config[`aliyunOssCallbackUrl`])
+	if callbackUrl != `` {
 		callback := internal.AliyunOssCallback{
-			Url:      utils.GetRequestUrl(ctx, 0) + `/upload/notify`,
+			Url:      callbackUrl,
 			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
-		}
-		if utils.IsDev(ctx) {
-			callback.Url = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
 		}
 		uploadData[`callback`] = upload.CreateCallbackStr(callback)
 		signInfo[`isRes`] = 1
@@ -84,13 +81,11 @@ func (*AliyunOss) Sts(ctx context.Context, uploadFileType string) (stsInfo map[s
 	stsInfo[`dir`] = dir
 
 	//是否回调
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		stsInfo[`callbackUrl`] = utils.GetRequestUrl(ctx, 0) + `/upload/notify`
+	callbackUrl := gconv.String(config[`aliyunOssCallbackUrl`])
+	if callbackUrl != `` {
+		stsInfo[`callbackUrl`] = callbackUrl
 		stsInfo[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 		stsInfo[`callbackBodyType`] = `application/x-www-form-urlencoded`
-		if utils.IsDev(ctx) {
-			stsInfo[`callbackUrl`] = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
-		}
 	}
 	return
 }

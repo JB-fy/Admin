@@ -14,12 +14,12 @@ abstract class AbstractUpload
     }
 
     /**
-     * 创建签名
+     * 签名
      *
      * @param array $option
      * @return void
      */
-    abstract public function createSign(array $option = []);
+    abstract public function sign(array $option = []);
 
     /**
      * 回调

@@ -36,15 +36,6 @@ func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[str
 		`expire`: expire,
 		`time`:   time.Now().UnixMilli(),
 	}
-	/* //是否回调
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		callback := utils.GetRequestUrl(ctx, 0) + `/upload/notify`
-		if utils.IsDev(ctx) {
-			callback = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
-		}
-		uploadData[`callback`] = callback
-		signInfo[`isRes`] = 1
-	} */
 	uploadData[`sign`] = upload.CreateSign(uploadData)
 
 	signInfo[`uploadData`] = uploadData

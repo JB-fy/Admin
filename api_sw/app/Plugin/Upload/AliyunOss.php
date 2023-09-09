@@ -12,7 +12,7 @@ class AliyunOss extends AbstractUpload
      * @param array $option
      * @return void
      */
-    public function createSign(array $option = [])
+    public function sign(array $option = [])
     {
         /*--------配置示例 开始--------*/
         /* $option = [
