@@ -20,6 +20,12 @@ return [
     },
     //上传组件
     'upload' => function (ContainerInterface $container) {
+        /* $uploadType = getConfig('inDb.platformConfig.uploadType');
+        switch ($uploadType) {
+            case 'local':
+            case 'aliyunOss':
+            default:
+        } */
         $config = [
             'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),
             'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),
