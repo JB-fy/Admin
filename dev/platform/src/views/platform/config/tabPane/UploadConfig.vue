@@ -10,6 +10,7 @@ const saveForm = reactive({
         aliyunOssAccessKeyId: '',
         aliyunOssAccessKeySecret: '',
         aliyunOssRoleArn: '',
+        aliyunOssCallbackUrl: '',
     } as { [propName: string]: any },
     rules: {
         aliyunOssHost: [
@@ -25,7 +26,12 @@ const saveForm = reactive({
         aliyunOssAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
-        aliyunOssRoleArn: [],
+        aliyunOssRoleArn: [
+            { type: 'string', trigger: 'blur' }
+        ],
+        aliyunOssCallbackUrl: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') }
+        ],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -64,7 +70,10 @@ saveForm.initData()
         :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.aliyunOssHost')" prop="aliyunOssHost">
             <ElInput v-model="saveForm.data.aliyunOssHost" :placeholder="t('platform.config.name.aliyunOssHost')"
-                :clearable="true" />
+                :clearable="true" style="max-width: 500px;" />
+            <label>
+                <ElAlert :title="t('platform.config.tip.aliyunOssHost')" type="info" :show-icon="true" :closable="false" />
+            </label>
         </ElFormItem>
         <ElFormItem :label="t('platform.config.name.aliyunOssBucket')" prop="aliyunOssBucket">
             <ElInput v-model="saveForm.data.aliyunOssBucket" :placeholder="t('platform.config.name.aliyunOssBucket')"
@@ -83,7 +92,19 @@ saveForm.initData()
         </ElFormItem>
         <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
             <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
-                :clearable="true" />
+                :clearable="true" style="max-width: 500px;" />
+            <label>
+                <ElAlert :title="t('platform.config.tip.aliyunOssRoleArn')" type="info" :show-icon="true"
+                    :closable="false" />
+            </label>
+        </ElFormItem>
+        <ElFormItem :label="t('platform.config.name.aliyunOssCallbackUrl')" prop="aliyunOssCallbackUrl">
+            <ElInput v-model="saveForm.data.aliyunOssCallbackUrl"
+                :placeholder="t('platform.config.name.aliyunOssCallbackUrl')" :clearable="true" style="max-width: 500px;" />
+            <label>
+                <ElAlert :title="t('platform.config.tip.aliyunOssCallbackUrl')" type="info" :show-icon="true"
+                    :closable="false" />
+            </label>
         </ElFormItem>
         <ElFormItem>
             <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">

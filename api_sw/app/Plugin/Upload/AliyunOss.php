@@ -16,7 +16,6 @@ class AliyunOss extends AbstractUpload
     {
         /*--------配置示例 开始--------*/
         /* $option = [
-            'callbackUrl' => "", //是否回调服务器。空字符串不回调
             'expireTime' => 15 * 60, //签名有效时间。单位：秒
             'dir' => 'common/' . date('Ymd') . '/',    //上传的文件前缀
             'minSize' => 0,    //限制上传的文件大小。单位：字节
@@ -48,10 +47,10 @@ class AliyunOss extends AbstractUpload
         ]));
         $uploadData['signature'] = base64_encode(hash_hmac('sha1', $uploadData['policy'], $this->config['accessKeySecret'], true));
         //是否回调
-        if (!empty($option['callbackUrl'])) {
-            $callbackUrl = getRequestUrl() . '/upload/notify';
+        if (!empty($this->config['callbackUrl'])) {
             $callback_param = [
-                'callbackUrl' => $callbackUrl,
+                // 'callbackUrl' => getRequestUrl() . '/upload/notify',
+                'callbackUrl' => $this->config['callbackUrl'],
                 'callbackBody' => 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}',
                 'callbackBodyType' => 'application/x-www-form-urlencoded'
             ];

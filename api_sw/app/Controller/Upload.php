@@ -16,16 +16,11 @@ class Upload extends AbstractController
         switch ($type) {
             default:
                 $option = [
-                    //'callbackUrl' => getRequestUrl() . '/upload/notify', //是否回调服务器。空字符串不回调
-                    'callbackUrl' => '', //是否回调服务器。空字符串不回调
-                    'expireTime' => 5 * 60, //签名有效时间
+                    'expireTime' => 15 * 60, //签名有效时间
                     'dir' => 'common/' . date('Ymd') . '/',    //上传的文件前缀
                     'minSize' => 0,    //限制上传的文件大小。单位：字节
                     'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
                 ];
-                if (env('UPLOAD_CALLBACK_ENABLE', true)) {
-                    $option['callbackUrl'] = getRequestUrl() . '/upload/notify';
-                }
                 break;
         }
         /**

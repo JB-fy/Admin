@@ -21,10 +21,11 @@ return [
     //上传组件
     'upload' => function (ContainerInterface $container) {
         $config = [
-            'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),  //LTAI5tHx81H64BRJA971DPZF  |   LTAI5tSjYikt3bX33riHezmk
-            'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),   //nJyNpTtUuIgZqx21FF4G2zi0WHOn51    |   k4uRZU6flv73yz1j4LJu9VY5eNlHas
-            'host' => getConfig('inDb.platformConfig.aliyunOssHost'),   //http://oss-cn-hongkong.aliyuncs.com    |   https://oss-cn-hangzhou.aliyuncs.com
-            'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),   //4724382110    |   gamemt
+            'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),
+            'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),
+            'host' => getConfig('inDb.platformConfig.aliyunOssHost'),
+            'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),
+            'callbackUrl' => getConfig('inDb.platformConfig.aliyunOssCallbackUrl'),
         ];
         return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
     },

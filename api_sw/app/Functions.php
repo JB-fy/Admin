@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 /*----------------基于业务逻辑封装的函数  开始----------------*/
+if (!function_exists('isDev')) {
+    /**
+     * 是否开发环境
+     *
+     * @return boolean
+     */
+    function isDev(): bool
+    {
+        return env('APP_ENV', 'dev') == 'dev';
+    }
+}
 
 if (!function_exists('getConfig')) {
     /**

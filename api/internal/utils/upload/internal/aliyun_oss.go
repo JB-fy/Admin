@@ -38,6 +38,7 @@ type AliyunOss struct {
 	AccessKeyId     string `json:"aliyunOssAccessKeyId"`
 	AccessKeySecret string `json:"aliyunOssAccessKeySecret"`
 	RoleArn         string `json:"aliyunOssRoleArn"`
+	CallbackUrl     string `json:"aliyunOssCallbackUrl"`
 }
 
 type AliyunOssCallback struct {

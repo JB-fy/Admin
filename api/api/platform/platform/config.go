@@ -20,6 +20,7 @@ type Config struct {
 	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" dc:"阿里云存储-AccessKeyId"`
 	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" dc:"阿里云存储-AccessKeySecret"`
 	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" dc:"阿里云存储-RoleArn"`
+	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" v:"" dc:"阿里云存储-回调地址"`
 }
 
 /*--------获取 结束--------*/
@@ -32,6 +33,7 @@ type ConfigSaveReq struct {
 	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云存储-AccessKeyId"`
 	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云存储-AccessKeySecret"`
 	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" v:"" dc:"阿里云存储-RoleArn"`
+	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" v:"" dc:"阿里云存储-回调地址"`
 }
 
 /*--------保存 结束--------*/

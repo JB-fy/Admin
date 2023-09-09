@@ -12,10 +12,12 @@ class Config extends AbstractValidation
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
         'configKeyArr.*' => 'sometimes|required|string|between:1,30|distinct',
 
-        'aliyunOssAccessKeyId' => 'alpha_dash',
-        'aliyunOssAccessKeySecret' => 'alpha_dash',
         'aliyunOssHost' => 'url',
         'aliyunOssBucket' => 'string',
+        'aliyunOssAccessKeyId' => 'alpha_dash',
+        'aliyunOssAccessKeySecret' => 'alpha_dash',
+        'aliyunOssRoleArn' => 'string',
+        'aliyunOssCallbackUrl' => 'string',
     ];
 
     protected array $scene = [
@@ -27,10 +29,12 @@ class Config extends AbstractValidation
         ],
         'save' => [
             'only' => [
-                'aliyunOssAccessKeyId',
-                'aliyunOssAccessKeySecret',
                 'aliyunOssHost',
                 'aliyunOssBucket',
+                'aliyunOssAccessKeyId',
+                'aliyunOssAccessKeySecret',
+                'aliyunOssRoleArn',
+                'aliyunOssCallbackUrl',
             ]
         ]
     ];

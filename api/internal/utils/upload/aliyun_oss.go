@@ -16,7 +16,7 @@ import (
 type AliyunOss struct{}
 
 func (*AliyunOss) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`})
+	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssCallbackUrl`})
 	upload := internal.NewAliyunOss(ctx, config)
 
 	bucketHost := upload.GetBucketHost()
@@ -62,7 +62,7 @@ func (*AliyunOss) Sign(ctx context.Context, uploadFileType string) (signInfo map
 }
 
 func (*AliyunOss) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssRoleArn`})
+	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssRoleArn`, `aliyunOssCallbackUrl`})
 	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
 	option := internal.AliyunOssStsOption{
 		SessionName: `oss_app_sts_token`,
@@ -101,7 +101,7 @@ func (*AliyunOss) Notify(ctx context.Context) (notifyInfo map[string]interface{}
 	width := r.Get(`width`).String()
 	height := r.Get(`height`).String()
 
-	config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`})
+	config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`})
 	upload := internal.NewAliyunOss(r.GetCtx(), config)
 	err = upload.Notify(r)
 	if err != nil {
