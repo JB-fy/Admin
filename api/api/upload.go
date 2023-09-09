@@ -1,6 +1,9 @@
 package api
 
-import "github.com/gogf/gf/v2/frame/g"
+import (
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
+)
 
 /*--------获取签名 开始--------*/
 type UploadSignReq struct {
@@ -61,11 +64,12 @@ type UploadNotifyRes struct {
 /*--------上传本地 开始--------*/
 type UploadUploadReq struct {
 	g.Meta `path:"/upload" method:"post" tags:"上传" sm:"上传本地"`
-	Dir    string `json:"dir" v:"" dc:"上传目录"`
-	Expire string `json:"expire" v:"" dc:"过期时间"`
-	Time   string `json:"time" v:"" dc:"当前时间毫秒"`
-	Sign   string `json:"sign" v:"" dc:"签名"`
-	Key    string `json:"key" v:"" dc:"文件名称"`
+	Dir    string            `json:"dir" v:"required" dc:"上传目录"`
+	Expire string            `json:"expire" v:"required" dc:"过期时间"`
+	Rand   string            `json:"rand" v:"required" dc:"随机字符串"`
+	Sign   string            `json:"sign" v:"required" dc:"签名"`
+	Key    string            `json:"key" v:"" dc:"文件名称"`
+	File   *ghttp.UploadFile `json:"file" v:"required" dc:"上传文件"`
 }
 
 /*--------上传本地 结束--------*/
