@@ -23,12 +23,31 @@ class AliyunOss extends AbstractUpload
             'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
         ]; */
         /*--------配置示例 结束--------*/
+
+        $bucketHost = $this->getBucketHost();
         $signInfo = [
-            'accessid' => $this->config['accessKeyId'],
-            'host' => $this->getBucketHost(),
+            'uploadUrl' => $bucketHost,
+            'host' => $bucketHost,
             'dir' => $option['dir'],
             'expire' => time() + $option['expireTime'],
+            'isRes' =>  0,
         ];
+
+        $uploadData = [
+            'OSSAccessKeyId' =>        $this->config['accessKeyId'],
+            'success_action_status' => '200', //让服务端返回200,不然，默认会返回204
+        ];
+        $expiration = date(DATE_ISO8601, $signInfo['expire']);
+        $expiration = substr($expiration, 0, strpos($expiration, '+')) . 'Z';
+        $uploadData['policy'] = base64_encode(json_encode([
+            'expiration' => $expiration,
+            'conditions' => [
+                ['content-length-range', $option['minSize'], $option['maxSize']],
+                ['starts-with', '$key', $option['dir']]
+            ]
+        ]));
+        $uploadData['signature'] = base64_encode(hash_hmac('sha1', $uploadData['policy'], $this->config['accessKeySecret'], true));
+        //是否回调
         if (!empty($option['callbackUrl'])) {
             $callbackUrl = getRequestUrl() . '/upload/notify';
             $callback_param = [
@@ -37,22 +56,11 @@ class AliyunOss extends AbstractUpload
                 'callbackBodyType' => 'application/x-www-form-urlencoded'
             ];
             $base64_callback_body = base64_encode(json_encode($callback_param));
-            $signInfo['callback'] = $base64_callback_body;
+            $uploadData['callback'] = $base64_callback_body;
+            $signInfo[`isRes`] = 1;
         }
 
-        // $mydatetime = new \DateTime(date('c', $signInfo['expire']));
-        // $expiration = $mydatetime->format(\DateTime::ISO8601);
-        $expiration = date(DATE_ISO8601, $signInfo['expire']);
-        $expiration = substr($expiration, 0, strpos($expiration, '+')) . 'Z';
-        $signInfo['policy'] = base64_encode(json_encode([
-            'expiration' => $expiration,
-            'conditions' => [
-                ['content-length-range', $option['minSize'], $option['maxSize']],
-                ['starts-with', '$key', $option['dir']]
-            ]
-        ]));
-        $signInfo['signature'] = base64_encode(hash_hmac('sha1', $signInfo['policy'], $this->config['accessKeySecret'], true));
-
+        $signInfo['uploadData'] = $uploadData;
         throwSuccessJson($signInfo);
     }
 
