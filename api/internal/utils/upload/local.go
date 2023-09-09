@@ -85,6 +85,6 @@ func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, er
 	}
 
 	notifyInfo = map[string]interface{}{}
-	notifyInfo[`url`] = upload.FileUrlPrefix + `/` + filename
+	notifyInfo[`url`] = upload.FileUrlPrefix + `/` + dir + filename
 	return
 }

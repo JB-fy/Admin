@@ -1,6 +1,9 @@
 package upload
 
-import "context"
+import (
+	daoPlatform "api/internal/dao/platform"
+	"context"
+)
 
 type Upload interface {
 	// UploadFile(file *multipart.FileHeader) (string, string, error)
@@ -10,8 +13,10 @@ type Upload interface {
 	Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error)
 }
 
-func NewUpload(uploadType string) Upload {
-	switch uploadType {
+func NewUpload(ctx context.Context) Upload {
+	platformConfigColumns := daoPlatform.Config.Columns()
+	uploadType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `uploadType`).Value(platformConfigColumns.ConfigValue)
+	switch uploadType.String() {
 	case `local`:
 		return &Local{}
 	case `aliyunOss`:

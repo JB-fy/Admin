@@ -17,7 +17,7 @@ func NewUpload() *Upload {
 
 // 获取签名(web端直传用)
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	signInfo, err := upload.NewUpload(`local`).Sign(ctx, req.Type)
+	signInfo, err := upload.NewUpload(ctx).Sign(ctx, req.Type)
 	if err != nil {
 		return
 	}
@@ -27,7 +27,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 
 // 获取Sts Token(App端直传用)
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	stsInfo, err := upload.NewUpload(`aliyunOss`).Sts(ctx, req.Type)
+	stsInfo, err := upload.NewUpload(ctx).Sts(ctx, req.Type)
 	if err != nil {
 		return
 	}
@@ -42,7 +42,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 // 回调
 func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(`aliyunOss`).Notify(ctx)
+	notifyInfo, err := upload.NewUpload(ctx).Notify(ctx)
 	if err != nil {
 		return
 	}
@@ -52,7 +52,7 @@ func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyR
 
 // 上传本地
 func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(`local`).Notify(ctx)
+	notifyInfo, err := upload.NewUpload(ctx).Notify(ctx)
 	if err != nil {
 		return
 	}
