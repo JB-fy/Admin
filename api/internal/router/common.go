@@ -9,7 +9,7 @@ import (
 func InitRouterCommon(s *ghttp.Server) {
 	//首页
 	s.BindHandler(`/`, func(r *ghttp.Request) {
-		r.Response.RedirectTo(`/view/platform`)
+		r.Response.RedirectTo(`/admin/platform`)
 	})
 	//上传
 	s.Group(`/upload`, func(group *ghttp.RouterGroup) {

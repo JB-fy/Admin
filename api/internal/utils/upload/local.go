@@ -79,7 +79,7 @@ func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, er
 		isRand = false
 		file.Filename = gstr.Replace(key, dir, ``) //修改保存文件名
 	}
-	filename, err := file.Save(`../`+dir, isRand)
+	filename, err := file.Save(`../public/`+dir, isRand)
 	if err != nil {
 		return
 	}
