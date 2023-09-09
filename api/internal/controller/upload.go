@@ -2,14 +2,11 @@ package controller
 
 import (
 	"api/api"
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
+	"api/internal/utils/upload"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Upload struct{}
@@ -20,87 +17,45 @@ func NewUpload() *Upload {
 
 // 获取签名(web端直传用)
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	option := utils.AliyunOssSignOption{
-		ExpireTime: 15 * 60,
-		Dir:        fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
-		MinSize:    0,
-		MaxSize:    1024 * 1024 * 1024,
+	signInfo, err := upload.NewUpload(`local`).Sign(ctx, req.Type)
+	if err != nil {
+		return
 	}
-	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`})
-	upload := utils.NewAliyunOss(ctx, config)
-	signInfo, _ := upload.CreateSign(option)
-
-	//是否回调
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		callback := utils.AliyunOssCallback{
-			Url:      utils.GetRequestUrl(ctx, 0) + `/upload/notify`,
-			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
-			BodyType: `application/x-www-form-urlencoded`,
-		}
-		if utils.IsDev(ctx) {
-			callback.Url = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
-		}
-		signInfo[`callback`] = upload.CreateCallbackStr(callback)
-	}
-	res = &api.UploadSignRes{}
-	gconv.Struct(signInfo, &res)
+	utils.HttpWriteJson(ctx, signInfo, 0, ``)
 	return
 }
 
 // 获取Sts Token(App端直传用)
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	request := g.RequestFromCtx(ctx)
-	config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssRoleArn`})
-	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
-	option := utils.AliyunOssStsOption{
-		SessionName: `oss_app_sts_token`,
-		ExpireTime:  15 * 60,
-		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + gconv.String(config[`aliyunOssBucket`]) + `/` + dir + `*"]}],"Version": "1"}`,
+	stsInfo, err := upload.NewUpload(`aliyun_oss`).Sts(ctx, req.Type)
+	if err != nil {
+		return
 	}
-
-	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证登录token
+	request := g.RequestFromCtx(ctx)
 	if request.URL.Path == `/upload/sts` {
-		upload := utils.NewAliyunOss(ctx, config)
-		stsInfo, _ := upload.GetStsToken(option)
 		request.Response.WriteJson(stsInfo)
 		return
 	}
-
-	//App端实际上传时需用到的字段，但必须验证登录token后才能拿到
-	res = &api.UploadStsRes{
-		Endpoint: gconv.String(config[`aliyunOssHost`]),
-		Bucket:   gconv.String(config[`aliyunOssBucket`]),
-		Dir:      dir,
-	}
-
-	//是否回调
-	if g.Cfg().MustGet(ctx, `upload.callbackEnable`).Bool() {
-		res.CallbackUrl = utils.GetRequestUrl(ctx, 0) + `/upload/notify`
-		res.CallbackBody = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-		res.CallbackBodyType = `application/x-www-form-urlencoded`
-		if utils.IsDev(ctx) {
-			res.CallbackUrl = g.Cfg().MustGet(ctx, `upload.callbackUrl`).String()
-		}
-	}
+	utils.HttpWriteJson(ctx, stsInfo, 0, ``)
 	return
 }
 
 // 回调
 func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyReq) (res *api.UploadNotifyRes, err error) {
-	r := g.RequestFromCtx(ctx)
-	filename := r.Get(`filename`).String()
-	width := r.Get(`width`).String()
-	height := r.Get(`height`).String()
-
-	config, _ := daoPlatform.Config.Get(r.GetCtx(), []string{`aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssHost`, `aliyunOssBucket`})
-	upload := utils.NewAliyunOss(r.GetCtx(), config)
-	err = upload.Notify(r)
+	notifyInfo, err := upload.NewUpload(`aliyun_oss`).Notify(ctx)
 	if err != nil {
 		return
 	}
+	utils.HttpWriteJson(ctx, notifyInfo, 0, ``)
+	return
+}
 
-	res = &api.UploadNotifyRes{
-		Url: upload.GetBucketHost() + `/` + filename + `?w=` + width + `&h=` + height, //需要记录宽高，ios显示瀑布流必须知道宽高。直接存在query内
+// 上传本地
+func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
+	notifyInfo, err := upload.NewUpload(`local`).Notify(ctx)
+	if err != nil {
+		return
 	}
+	utils.HttpWriteJson(ctx, notifyInfo, 0, ``)
 	return
 }

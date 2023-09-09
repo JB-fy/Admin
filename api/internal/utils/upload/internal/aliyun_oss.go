@@ -1,6 +1,7 @@
-package utils
+package internal
 
 import (
+	"api/internal/utils"
 	"context"
 	"crypto"
 	"crypto/hmac"
@@ -46,10 +47,10 @@ type AliyunOssCallback struct {
 }
 
 type AliyunOssSignOption struct {
-	ExpireTime int    //签名有效时间。单位：秒
-	Dir        string //上传的文件前缀
-	MinSize    int    //限制上传的文件大小。单位：字节
-	MaxSize    int    //限制上传的文件大小。单位：字节
+	Expire  int64  //签名有效时间戳。单位：秒
+	Dir     string //上传的文件前缀
+	MinSize int    //限制上传的文件大小。单位：字节
+	MaxSize int    //限制上传的文件大小。单位：字节
 }
 
 type AliyunOssStsOption struct {
@@ -66,31 +67,27 @@ func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss
 	return &aliyunOssObj
 }
 
-// 创建签名（web前端直传用）
-func (aliyunOssThis *AliyunOss) CreateSign(option AliyunOssSignOption) (signInfo map[string]interface{}, err error) {
-	expireEnd := time.Now().Unix() + int64(option.ExpireTime)
-	signInfo = map[string]interface{}{
-		`accessid`: aliyunOssThis.AccessKeyId,
-		`host`:     aliyunOssThis.GetBucketHost(),
-		`dir`:      option.Dir,
-		`expire`:   expireEnd,
-	}
+// 生成签名（web前端直传用）
+func (aliyunOssThis *AliyunOss) CreateSign(policyBase64 string) (sign string) {
+	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(aliyunOssThis.AccessKeySecret))
+	io.WriteString(h, policyBase64)
+	signBase64 := base64.StdEncoding.EncodeToString(h.Sum(nil))
+	sign = string(signBase64)
+	return
+}
 
-	policy := map[string]interface{}{
-		`expiration`: aliyunOssThis.GetGmtIso8601(expireEnd),
+// 生成PolicyBase64（web前端直传用）
+func (aliyunOssThis *AliyunOss) CreatePolicyBase64(option AliyunOssSignOption) (policyBase64 string) {
+	policyMap := map[string]interface{}{
+		`expiration`: aliyunOssThis.GetGmtIso8601(option.Expire),
 		`conditions`: [][]interface{}{
 			{`content-length-range`, option.MinSize, option.MaxSize},
 			{`starts-with`, `$key`, option.Dir},
 		},
 	}
-	policyStr, _ := json.Marshal(policy)
-	policyBase64 := base64.StdEncoding.EncodeToString(policyStr)
-	signInfo[`policy`] = string(policyBase64)
-
-	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(aliyunOssThis.AccessKeySecret))
-	io.WriteString(h, policyBase64)
-	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
-	signInfo[`signature`] = string(signedStr)
+	policyStr, _ := json.Marshal(policyMap)
+	policyBase64 = base64.StdEncoding.EncodeToString(policyStr)
+	// policy = string(policy)
 	return
 }
 
@@ -110,17 +107,17 @@ func (aliyunOssThis *AliyunOss) CreateCallbackStr(callback AliyunOssCallback) st
 func (aliyunOssThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo map[string]interface{}, err error) {
 	url, err := aliyunOssThis.GenerateSignedURL(option)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000004, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 40000004, err.Error())
 		return
 	}
 
 	body, status, err := aliyunOssThis.SendRequest(url)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000005, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 40000005, err.Error())
 		return
 	}
 	if status != http.StatusOK {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000005, ``)
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 40000005, ``)
 		return
 	}
 
@@ -142,7 +139,7 @@ func (aliyunOssThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo 
 	resp := StsResponse{}
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 40000005, ``)
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 40000005, ``)
 		return
 	}
 	stsInfo = map[string]interface{}{
@@ -160,12 +157,12 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 1.获取OSS的签名header和公钥url header
 	strAuthorizationBase64 := r.Header.Get(`authorization`)
 	if strAuthorizationBase64 == `` {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990000, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990000, err.Error())
 		return
 	}
 	publicKeyURLBase64 := r.Header.Get(`x-oss-pub-key-url`)
 	if publicKeyURLBase64 == `` {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990001, ``)
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990001, ``)
 		return
 	}
 
@@ -176,12 +173,12 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	publicKeyURL, _ := base64.StdEncoding.DecodeString(publicKeyURLBase64)
 	responsePublicKeyURL, err := http.Get(string(publicKeyURL))
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990002, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990002, err.Error())
 		return
 	}
 	bytePublicKey, err := ioutil.ReadAll(responsePublicKeyURL.Body)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990002, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990002, err.Error())
 		return
 	}
 	defer responsePublicKeyURL.Body.Close()
@@ -190,13 +187,13 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	bodyContent, err := ioutil.ReadAll(r.Body)
 	r.Body.Close()
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 	strCallbackBody := string(bodyContent)
 	strURLPathDecode, err := aliyunOssThis.unescapePath(r.URL.Path, encodePathSegment) //url.PathUnescape(r.URL.Path) for Golang v1.8.2+
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 
@@ -214,12 +211,12 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 5.拼接待签名字符串
 	pubBlock, _ := pem.Decode(bytePublicKey)
 	if pubBlock == nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, ``)
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990003, ``)
 		return
 	}
 	pubInterface, err := x509.ParsePKIXPublicKey(pubBlock.Bytes)
 	if (pubInterface == nil) || (err != nil) {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 	pub := pubInterface.(*rsa.PublicKey)
@@ -227,7 +224,7 @@ func (aliyunOssThis *AliyunOss) Notify(r *ghttp.Request) (err error) {
 	// 6.验证签名
 	err = rsa.VerifyPKCS1v15(pub, crypto.MD5, byteMD5, byteAuthorization)
 	if err != nil {
-		err = NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
+		err = utils.NewErrorCode(aliyunOssThis.Ctx, 79990003, err.Error())
 		return
 	}
 	return

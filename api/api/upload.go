@@ -5,7 +5,7 @@ import "github.com/gogf/gf/v2/frame/g"
 /*--------获取签名 开始--------*/
 type UploadSignReq struct {
 	g.Meta `path:"/sign" method:"post" tags:"上传" sm:"获取签名(web端直传用)"`
-	Type   string `json:"type"  v:"" dc:"类型(暂时没用)"`
+	Type   string `json:"type" v:"" dc:"类型(暂时没用)"`
 }
 
 type UploadSignRes struct {
@@ -23,7 +23,7 @@ type UploadSignRes struct {
 /*--------获取Sts Token 开始--------*/
 type UploadStsReq struct {
 	g.Meta `path:"/sts" method:"get,post" tags:"上传" sm:"获取Sts Token(App端直传用)"`
-	Type   string `json:"type"  v:"" dc:"类型(暂时没用)"`
+	Type   string `json:"type" v:"" dc:"类型(暂时没用)"`
 }
 
 type UploadStsRes struct {
@@ -57,3 +57,15 @@ type UploadNotifyRes struct {
 }
 
 /*--------回调 结束--------*/
+
+/*--------上传本地 开始--------*/
+type UploadUploadReq struct {
+	g.Meta `path:"/upload" method:"post" tags:"上传" sm:"上传本地"`
+	Dir    string `json:"dir" v:"" dc:"上传目录"`
+	Expire string `json:"expire" v:"" dc:"过期时间"`
+	Time   string `json:"time" v:"" dc:"当前时间毫秒"`
+	Sign   string `json:"sign" v:"" dc:"签名"`
+	Key    string `json:"key" v:"" dc:"文件名称"`
+}
+
+/*--------上传本地 结束--------*/

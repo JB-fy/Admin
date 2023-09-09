@@ -106,20 +106,14 @@ const upload = reactive({
     }),
     action: '' as string,
     data: {} as { [propName: string]: any },
-    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ accessid: "xxxx", host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, callback: "string", policy: "string", signature: "string" }
+    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await upload.api.getSignInfo()
         if (signInfo && Object.keys(signInfo).length) {
             upload.signInfo = { ...signInfo }
-            upload.action = upload.signInfo.host
-            upload.data = {
-                OSSAccessKeyId: upload.signInfo.accessid,
-                policy: upload.signInfo.policy,
-                signature: upload.signInfo.signature,
-                success_action_status: '200', //让服务端返回200,不然，默认会返回204
-            }
-            upload.signInfo?.callback ? upload.data.callback = upload.signInfo.callback : null //是否回调服务器
+            upload.action = upload.signInfo.uploadUrl
+            upload.data = { ...upload.signInfo.uploadData }
             //授权失效前，重新获取授权, 提前bufferTime更新，防止使用时失效
             let bufferTime = 10 * 1000 //缓冲时间
             let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
@@ -175,7 +169,7 @@ const upload = reactive({
         emits('update:modelValue', upload.value)
     },
     onSuccess: (res: any, file: any, fileList: any) => {
-        if (upload.signInfo?.callback) {    //如有回调服务器且有报错，则默认失败
+        if (upload.signInfo?.isRes) {    //如有回调服务器且有报错，则默认失败
             if (res.code !== 0) {
                 ElMessage.error(t('common.tip.uploadFail'))
                 fileList.splice(fileList.indexOf(file), 1)

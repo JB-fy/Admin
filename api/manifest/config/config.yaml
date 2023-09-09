@@ -4,7 +4,7 @@ superPlatformAdminId: 1 # 指定平台超级管理员ID
 
 upload:
   callbackEnable: true # 上传插件是否回调服务器。建议：线上(true)，本地(false)
-  callbackUrl: "http://xxxx.com/upload/notify" #开发环境下，且开启回调时用于指定线上地址用于回调
+  callbackUrl: "http://jslx.fuhua52.com/api/upload/notify" #开发环境下，且开启回调时用于指定线上地址用于回调
 
 i18n:
   path: "resource/i18n"

@@ -18,6 +18,7 @@ func InitRouterCommon(s *ghttp.Server) {
 			// controllerThis.Sign, //建议在场景内验证登录token后才可调用
 			controllerThis.Sts, //App端的SDK需设置一个地址来获取Sts Token，该地址不验证登录token。需同时在场景内设置需验证登录token的路由，用于给App端获取实际上传时需用到的字段
 			controllerThis.Notify,
+			controllerThis.Upload,
 		)
 	})
 	//测试
