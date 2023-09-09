@@ -70,7 +70,6 @@ func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, er
 		`dir`:    dir,
 		`expire`: expire,
 		`time`:   time,
-		`time1`:  `asda`,
 	}
 	if sign != upload.CreateSign(signData) {
 		err = utils.NewErrorCode(ctx, 79999999, `回调签名错误`)
