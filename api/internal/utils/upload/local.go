@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -103,12 +104,14 @@ func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, er
 		return
 	}
 
-	isRand := true
+	// isRand := true
 	if key != `` {
-		isRand = false
-		file.Filename = gstr.Replace(key, dir, ``) //修改保存文件名
+		// isRand = false
+		file.Filename = gstr.Replace(key, dir, ``)
+	} else {
+		file.Filename = dir + gconv.String(time.Now().UnixMilli()) + `_` + gconv.String(grand.N(10000000, 99999999)) + gfile.Ext(file.Filename)
 	}
-	filename, err := file.Save(upload.FileSaveDir+dir, isRand)
+	filename, err := file.Save(upload.FileSaveDir + dir /* , isRand */)
 	if err != nil {
 		return
 	}
