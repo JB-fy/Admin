@@ -21,10 +21,10 @@ func NewUpload(ctx context.Context) Upload {
 	uploadTypeTmp, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `uploadType`).Value(platformConfigColumns.ConfigValue)
 	uploadType := uploadTypeTmp.String()
 	switch uploadType {
-	case `local`:
-		return &Local{}
 	case `aliyunOss`:
 		return &AliyunOss{}
+	case `local`:
+		return &Local{}
 	default:
 		return &Local{}
 	}
