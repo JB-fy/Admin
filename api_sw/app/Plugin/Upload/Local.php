@@ -20,7 +20,7 @@ class Local extends AbstractUpload
                     'dir' => 'common/' . date('Ymd') . '/',    //上传的文件目录
                     'expire' => time() + 15 * 60, //签名有效时间戳。单位：秒
                     'minSize' => 0,    //限制上传的文件大小。单位：字节
-                    'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
+                    'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节。需要同时设置配置文件api_sw/config/autoload/server.php中的OPTION_PACKAGE_MAX_LENGTH字段
                 ];
                 break;
         }
