@@ -93,7 +93,7 @@ class Local extends AbstractUpload
             mkdir($dirPath, 0777, true);
         }
         if (empty($data['key'])) {
-            $filename = $data['dir'] . round(microtime(true) * 1000) . '.' . $file->getExtension();
+            $filename = $data['dir'] . round(microtime(true) * 1000) . '_' . mt_rand(10000000, 99999999) . '.' . $file->getExtension();
         } else {
             $filename = $data['key'];
         }

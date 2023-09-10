@@ -126,7 +126,7 @@ const upload = reactive({
         }
     },
     createSaveInfo: (rawFile: any) => {
-        let fileName = upload.signInfo.dir + rawFile.uid + '_' + randomInt(1000, 9999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
+        let fileName = upload.signInfo.dir + rawFile.uid + '_' + randomInt(10000000, 99999999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
         let url = upload.signInfo.host + '/' + fileName
         return {
             fileName: fileName,
