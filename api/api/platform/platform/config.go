@@ -18,6 +18,7 @@ type Config struct {
 	UploadType               *string `json:"uploadType,omitempty" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" dc:"本地-上传地址"`
 	LocalUploadSignKey       *string `json:"localUploadSignKey,omitempty" dc:"本地-密钥"`
+	LocalUploadFileSaveDir   *string `json:"localUploadFileSaveDir,omitempty" dc:"本地-文件保存目录"`
 	LocalUploadFileUrlPrefix *string `json:"localUploadFileUrlPrefix,omitempty" dc:"本地-文件地址前缀"`
 	AliyunOssHost            *string `json:"aliyunOssHost,omitempty" dc:"阿里云存储-域名"`
 	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" dc:"阿里云存储-Bucket"`
@@ -35,6 +36,7 @@ type ConfigSaveReq struct {
 	UploadType               *string `json:"uploadType,omitempty" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" v:"url" dc:"本地-上传地址"`
 	LocalUploadSignKey       *string `json:"localUploadSignKey,omitempty" v:"" dc:"本地-密钥"`
+	LocalUploadFileSaveDir   *string `json:"localUploadFileSaveDir,omitempty" v:"" dc:"本地-文件保存目录"`
 	LocalUploadFileUrlPrefix *string `json:"localUploadFileUrlPrefix,omitempty" v:"url" dc:"本地-文件地址前缀"`
 	AliyunOssHost            *string `json:"aliyunOssHost,omitempty" v:"url" dc:"阿里云存储-域名"`
 	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" v:"" dc:"阿里云存储-Bucket"`

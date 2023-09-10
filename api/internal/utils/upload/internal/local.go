@@ -12,6 +12,7 @@ type Local struct {
 	Ctx           context.Context
 	Url           string `json:"localUploadUrl"`
 	SignKey       string `json:"localUploadSignKey"`
+	FileSaveDir   string `json:"localUploadFileSaveDir"`
 	FileUrlPrefix string `json:"localUploadFileUrlPrefix"`
 }
 

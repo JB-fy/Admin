@@ -18,7 +18,7 @@ import (
 type Local struct{}
 
 func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileUrlPrefix`})
+	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
 	upload := internal.NewLocal(ctx, config)
 
 	type Option struct {
@@ -65,7 +65,7 @@ func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, er
 }
 
 func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileUrlPrefix`})
+	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
 	upload := internal.NewLocal(ctx, config)
 
 	r := g.RequestFromCtx(ctx)
@@ -108,7 +108,7 @@ func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, er
 		isRand = false
 		file.Filename = gstr.Replace(key, dir, ``) //修改保存文件名
 	}
-	filename, err := file.Save(`../public/`+dir, isRand)
+	filename, err := file.Save(upload.FileSaveDir+dir, isRand)
 	if err != nil {
 		return
 	}

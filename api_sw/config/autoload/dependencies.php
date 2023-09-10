@@ -36,6 +36,7 @@ return [
                 $config = [
                     'url' =>  getConfig('inDb.platformConfig.localUploadUrl'),
                     'signKey' => getConfig('inDb.platformConfig.localUploadSignKey'),
+                    'fileSaveDir' => getConfig('inDb.platformConfig.localUploadFileSaveDir'),
                     'fileUrlPrefix' => getConfig('inDb.platformConfig.localUploadFileUrlPrefix'),
                 ];
                 return make(\App\Plugin\Upload\Local::class, ['config' => $config]);

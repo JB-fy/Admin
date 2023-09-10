@@ -8,6 +8,7 @@ const saveForm = reactive({
         uploadType: 'aliyunOss',
         localUploadUrl: '',
         localUploadSignKey: '',
+        localUploadFileSaveDir: '',
         localUploadFileUrlPrefix: '',
         aliyunOssHost: '',
         aliyunOssBucket: '',
@@ -24,6 +25,9 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') }
         ],
         localUploadSignKey: [
+            { type: 'string', trigger: 'blur' }
+        ],
+        localUploadFileSaveDir: [
             { type: 'string', trigger: 'blur' }
         ],
         localUploadFileUrlPrefix: [
@@ -101,6 +105,15 @@ saveForm.initData()
         <ElFormItem :label="t('platform.config.name.localUploadSignKey')" prop="localUploadSignKey">
             <ElInput v-model="saveForm.data.localUploadSignKey" :placeholder="t('platform.config.name.localUploadSignKey')"
                 :clearable="true" />
+        </ElFormItem>
+        <ElFormItem :label="t('platform.config.name.localUploadFileSaveDir')" prop="localUploadFileSaveDir">
+            <ElInput v-model="saveForm.data.localUploadFileSaveDir"
+                :placeholder="t('platform.config.name.localUploadFileSaveDir')" :clearable="true"
+                style="max-width: 500px;" />
+            <label>
+                <ElAlert :title="t('platform.config.tip.localUploadFileSaveDir')" type="info" :show-icon="true"
+                    :closable="false" />
+            </label>
         </ElFormItem>
         <ElFormItem :label="t('platform.config.name.localUploadFileUrlPrefix')" prop="localUploadFileUrlPrefix">
             <ElInput v-model="saveForm.data.localUploadFileUrlPrefix"

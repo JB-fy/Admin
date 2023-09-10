@@ -88,8 +88,7 @@ class Local extends AbstractUpload
             throwFailJson(79999999, '文件不能大于' . ($data['maxSize'] / (1024 * 1024)) . 'MB');
         }
 
-        $savePath = '../public/';
-        $dirPath = $savePath . $data['dir'];
+        $dirPath = $this->config['fileSaveDir'] . $data['dir'];
         if (!is_dir($dirPath)) {
             mkdir($dirPath, 0777, true);
         }
@@ -98,7 +97,7 @@ class Local extends AbstractUpload
         } else {
             $filename = $data['key'];
         }
-        $filePath = $savePath . $filename;
+        $filePath = $this->config['fileSaveDir'] . $filename;
         $file->moveTo($filePath);
         if (!$file->isMoved()) {
             throwFailJson(79999999, '文件保存失败，请检查目录及权限');
