@@ -12,23 +12,25 @@ class AliyunOss extends AbstractUpload
      * @param array $option
      * @return void
      */
-    public function sign(array $option = [])
+    public function sign($uploadFileType = '')
     {
-        /*--------配置示例 开始--------*/
-        /* $option = [
-            'expireTime' => 15 * 60, //签名有效时间。单位：秒
-            'dir' => 'common/' . date('Ymd') . '/',    //上传的文件前缀
-            'minSize' => 0,    //限制上传的文件大小。单位：字节
-            'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
-        ]; */
-        /*--------配置示例 结束--------*/
+        switch ($uploadFileType) {
+            default:
+                $option = [
+                    'dir' => 'common/' . date('Ymd') . '/',    //上传的文件目录
+                    'expire' => time() + 15 * 60, //签名有效时间戳。单位：秒
+                    'minSize' => 0,    //限制上传的文件大小。单位：字节
+                    'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
+                ];
+                break;
+        }
 
         $bucketHost = $this->getBucketHost();
         $signInfo = [
             'uploadUrl' => $bucketHost,
             'host' => $bucketHost,
             'dir' => $option['dir'],
-            'expire' => time() + $option['expireTime'],
+            'expire' => $option['expire'],
             'isRes' =>  0,
         ];
 
@@ -56,7 +58,7 @@ class AliyunOss extends AbstractUpload
             ];
             $base64_callback_body = base64_encode(json_encode($callback_param));
             $uploadData['callback'] = $base64_callback_body;
-            $signInfo[`isRes`] = 1;
+            $signInfo['isRes'] = 1;
         }
 
         $signInfo['uploadData'] = $uploadData;
@@ -108,9 +110,20 @@ class AliyunOss extends AbstractUpload
         if ($ok != 1) {
             throwFailJson(79990003);
         }
-        $data = $request->post();
-        $data['url'] = $this->getBucketHost() . '/' . $data['filename'];
-        throwSuccessJson($data);
+
+        $resData = [
+            'url' => $this->getBucketHost() . '/' . $request->post('filename')
+        ];
+        throwSuccessJson($resData);
+    }
+
+    /**
+     * 上传
+     *
+     * @return void
+     */
+    public function upload()
+    {
     }
 
     /**

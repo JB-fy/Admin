@@ -19,23 +19,23 @@ func (*AliyunOss) Sign(ctx context.Context, uploadFileType string) (signInfo map
 	upload := internal.NewAliyunOss(ctx, config)
 
 	bucketHost := upload.GetBucketHost()
-	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
-	expire := time.Now().Unix() + 15*60
+	option := internal.AliyunOssSignOption{
+		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
+		Expire:  time.Now().Unix() + 15*60,
+		MinSize: 0,
+		MaxSize: 100 * 1024 * 1024,
+	}
+
 	signInfo = map[string]interface{}{
 		`uploadUrl`: bucketHost,
 		// `uploadData`:  map[string]interface{}{},
 		`host`:   bucketHost,
-		`dir`:    dir,
-		`expire`: expire,
+		`dir`:    option.Dir,
+		`expire`: option.Expire,
 		`isRes`:  0,
 	}
 
-	policyBase64 := upload.CreatePolicyBase64(internal.AliyunOssSignOption{
-		Expire:  expire,
-		Dir:     dir,
-		MinSize: 0,
-		MaxSize: 1024 * 1024 * 1024,
-	})
+	policyBase64 := upload.CreatePolicyBase64(option)
 	uploadData := map[string]interface{}{
 		`OSSAccessKeyId`:        upload.AccessKeyId,
 		`policy`:                string(policyBase64),
@@ -105,5 +105,9 @@ func (*AliyunOss) Notify(ctx context.Context) (notifyInfo map[string]interface{}
 
 	notifyInfo = map[string]interface{}{}
 	notifyInfo[`url`] = upload.GetBucketHost() + `/` + filename + `?w=` + width + `&h=` + height //需要记录宽高，ios显示瀑布流必须知道宽高。直接存在query内
+	return
+}
+
+func (*AliyunOss) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
 	return
 }

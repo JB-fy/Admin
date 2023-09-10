@@ -72,4 +72,8 @@ type UploadUploadReq struct {
 	File   *ghttp.UploadFile `json:"file" v:"required" dc:"上传文件"`
 }
 
+type UploadUploadRes struct {
+	Url string `json:"url" dc:"地址"`
+}
+
 /*--------上传本地 结束--------*/

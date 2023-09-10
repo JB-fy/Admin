@@ -19,6 +19,7 @@ Router::addRoute(['GET', 'POST', 'OPTIONS'], '/test', [\App\Controller\Test::cla
 
 Router::addGroup('/upload', function () {
     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/notify', [\App\Controller\Upload::class, 'notify']);
+    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/upload', [\App\Controller\Upload::class, 'upload']);
 });
 
 Router::get('/favicon.ico', function () {

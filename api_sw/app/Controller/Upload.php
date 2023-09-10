@@ -12,22 +12,12 @@ class Upload extends AbstractController
      */
     public function sign()
     {
-        $type = $this->request->input('type');
-        switch ($type) {
-            default:
-                $option = [
-                    'expireTime' => 15 * 60, //签名有效时间
-                    'dir' => 'common/' . date('Ymd') . '/',    //上传的文件前缀
-                    'minSize' => 0,    //限制上传的文件大小。单位：字节
-                    'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节
-                ];
-                break;
-        }
+        $uploadFileType = $this->request->input('type');
         /**
          * @var \App\Plugin\Upload\AbstractUpload
          */
         $upload = make('upload');
-        $upload->sign($option);
+        $upload->sign($this->request->input('type'));
     }
 
     /**
@@ -41,5 +31,18 @@ class Upload extends AbstractController
          */
         $upload = make('upload');
         $upload->notify();
+    }
+
+    /**
+     * 上传
+     *
+     */
+    public function upload()
+    {
+        /**
+         * @var \App\Plugin\Upload\AbstractUpload
+         */
+        $upload = make('upload');
+        $upload->upload();
     }
 }

@@ -19,7 +19,7 @@ abstract class AbstractUpload
      * @param array $option
      * @return void
      */
-    abstract public function sign(array $option = []);
+    abstract public function sign($uploadFileType = '');
 
     /**
      * 回调
@@ -27,4 +27,11 @@ abstract class AbstractUpload
      * @return void
      */
     abstract public function notify();
+
+    /**
+     * 上传
+     *
+     * @return void
+     */
+    abstract public function upload();
 }

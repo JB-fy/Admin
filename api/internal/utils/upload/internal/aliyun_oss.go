@@ -48,10 +48,10 @@ type AliyunOssCallback struct {
 }
 
 type AliyunOssSignOption struct {
-	Expire  int64  //签名有效时间戳。单位：秒
-	Dir     string //上传的文件前缀
-	MinSize int    //限制上传的文件大小。单位：字节
-	MaxSize int    //限制上传的文件大小。单位：字节
+	Dir     string //上传的文件目录
+	Expire  int64  //有效时间戳。单位：秒
+	MinSize int64  //限制上传的文件大小。单位：字节
+	MaxSize int64  //限制上传的文件大小。单位：字节
 }
 
 type AliyunOssStsOption struct {
@@ -92,7 +92,7 @@ func (aliyunOssThis *AliyunOss) CreatePolicyBase64(option AliyunOssSignOption) (
 	return
 }
 
-// 创建回调字符串（web前端直传用）
+// 生成回调字符串（web前端直传用）
 func (aliyunOssThis *AliyunOss) CreateCallbackStr(callback AliyunOssCallback) string {
 	callbackParam := map[string]interface{}{
 		`callbackUrl`:      callback.Url,
@@ -104,7 +104,7 @@ func (aliyunOssThis *AliyunOss) CreateCallbackStr(callback AliyunOssCallback) st
 	return string(callbackBase64)
 }
 
-// 创建sts Token（App前端直传用）
+// 生成sts Token（App前端直传用）
 func (aliyunOssThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo map[string]interface{}, err error) {
 	url, err := aliyunOssThis.GenerateSignedURL(option)
 	if err != nil {

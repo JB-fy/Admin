@@ -21,21 +21,34 @@ func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[str
 	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileUrlPrefix`})
 	upload := internal.NewLocal(ctx, config)
 
-	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
-	expire := time.Now().Unix() + 15*60
+	type Option struct {
+		Dir     string //上传的文件目录
+		Expire  int64  //签名有效时间戳。单位：秒
+		MinSize int64  //限制上传的文件大小。单位：字节
+		MaxSize int64  //限制上传的文件大小。单位：字节。需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
+	}
+	option := Option{
+		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
+		Expire:  time.Now().Unix() + 15*60,
+		MinSize: 0,
+		MaxSize: 100 * 1024 * 1024,
+	}
+
 	signInfo = map[string]interface{}{
 		`uploadUrl`: upload.Url,
 		// `uploadData`:  map[string]interface{}{},
 		`host`:   upload.FileUrlPrefix,
-		`dir`:    dir,
-		`expire`: expire,
+		`dir`:    option.Dir,
+		`expire`: option.Expire,
 		`isRes`:  1,
 	}
 
 	uploadData := map[string]interface{}{
-		`dir`:    dir,
-		`expire`: expire,
-		`rand`:   grand.S(8),
+		`dir`:     option.Dir,
+		`expire`:  option.Expire,
+		`minSize`: option.MinSize,
+		`maxSize`: option.MaxSize,
+		`rand`:    grand.S(8),
 	}
 	uploadData[`sign`] = upload.CreateSign(uploadData)
 
@@ -48,32 +61,48 @@ func (*Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[strin
 }
 
 func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
+	return
+}
+
+func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
 	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileUrlPrefix`})
 	upload := internal.NewLocal(ctx, config)
 
 	r := g.RequestFromCtx(ctx)
-	expire := r.PostFormValue(`expire`)
-	if time.Now().Unix() > gconv.Int64(expire) {
-		err = utils.NewErrorCode(ctx, 79999999, `签名失效`)
+	dir := r.Get(`dir`).String()
+	expire := r.Get(`expire`).Int64()
+	minSize := r.Get(`minSize`).Int64()
+	maxSize := r.Get(`maxSize`).Int64()
+	rand := r.Get(`rand`).String()
+	key := r.Get(`key`).String()
+	sign := r.Get(`sign`).String()
+
+	if time.Now().Unix() > expire {
+		err = utils.NewErrorCode(ctx, 79999999, `签名过期`)
 		return
 	}
-
-	dir := r.PostFormValue(`dir`)
-	rand := r.PostFormValue(`rand`)
-	key := r.PostFormValue(`key`)
-	sign := r.PostFormValue(`sign`)
-
 	signData := map[string]interface{}{
-		`dir`:    dir,
-		`expire`: expire,
-		`rand`:   rand,
+		`dir`:     dir,
+		`expire`:  expire,
+		`minSize`: minSize,
+		`maxSize`: maxSize,
+		`rand`:    rand,
 	}
 	if sign != upload.CreateSign(signData) {
-		err = utils.NewErrorCode(ctx, 79999999, `回调签名错误`)
+		err = utils.NewErrorCode(ctx, 79999999, `签名错误`)
 		return
 	}
 
 	file := r.GetUploadFile(`file`)
+	if minSize > 0 && minSize > file.Size {
+		err = utils.NewErrorCode(ctx, 79999999, `文件不能小于`+gconv.String(minSize/(1024*1024))+`MB`)
+		return
+	}
+	if maxSize > 0 && maxSize < file.Size {
+		err = utils.NewErrorCode(ctx, 79999999, `文件不能大于`+gconv.String(maxSize/(1024*1024))+`MB`)
+		return
+	}
+
 	isRand := true
 	if key != `` {
 		isRand = false
@@ -84,7 +113,7 @@ func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, er
 		return
 	}
 
-	notifyInfo = map[string]interface{}{}
-	notifyInfo[`url`] = upload.FileUrlPrefix + `/` + dir + filename
+	uploadInfo = map[string]interface{}{}
+	uploadInfo[`url`] = upload.FileUrlPrefix + `/` + dir + filename
 	return
 }

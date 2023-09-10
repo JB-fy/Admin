@@ -20,19 +20,25 @@ return [
     },
     //上传组件
     'upload' => function (ContainerInterface $container) {
-        /* $uploadType = getConfig('inDb.platformConfig.uploadType');
+        $uploadType = getConfig('inDb.platformConfig.uploadType');
         switch ($uploadType) {
-            case 'local':
             case 'aliyunOss':
+                $config = [
+                    'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),
+                    'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),
+                    'host' => getConfig('inDb.platformConfig.aliyunOssHost'),
+                    'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),
+                    'callbackUrl' => getConfig('inDb.platformConfig.aliyunOssCallbackUrl'),
+                ];
+                return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
+            case 'local':
             default:
-        } */
-        $config = [
-            'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),
-            'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),
-            'host' => getConfig('inDb.platformConfig.aliyunOssHost'),
-            'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),
-            'callbackUrl' => getConfig('inDb.platformConfig.aliyunOssCallbackUrl'),
-        ];
-        return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
+                $config = [
+                    'url' =>  getConfig('inDb.platformConfig.localUploadUrl'),
+                    'signKey' => getConfig('inDb.platformConfig.localUploadSignKey'),
+                    'fileUrlPrefix' => getConfig('inDb.platformConfig.localUploadFileUrlPrefix'),
+                ];
+                return make(\App\Plugin\Upload\Local::class, ['config' => $config]);
+        }
     },
 ];

@@ -23,7 +23,7 @@ func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
 	return &localObj
 }
 
-// 签名
+// 生成签名
 func (localThis *Local) CreateSign(signData map[string]interface{}) (sign string) {
 	keyArr := []string{}
 	for k := range signData {
