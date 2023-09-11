@@ -1,13 +1,13 @@
 package upload
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
-	"api/internal/utils/upload/internal"
 	"context"
 	"fmt"
+	"sort"
 	"time"
 
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gtime"
@@ -16,12 +16,23 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-type Local struct{}
+type Local struct {
+	Ctx           context.Context
+	Url           string `json:"localUploadUrl"`
+	SignKey       string `json:"localUploadSignKey"`
+	FileSaveDir   string `json:"localUploadFileSaveDir"`
+	FileUrlPrefix string `json:"localUploadFileUrlPrefix"`
+}
 
-func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
-	upload := internal.NewLocal(ctx, config)
+func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
+	localObj := Local{
+		Ctx: ctx,
+	}
+	gconv.Struct(config, &localObj)
+	return &localObj
+}
 
+func (uploadThis *Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
 	type Option struct {
 		Dir     string //上传的文件目录
 		Expire  int64  //签名有效时间戳。单位：秒
@@ -36,9 +47,9 @@ func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[str
 	}
 
 	signInfo = map[string]interface{}{
-		`uploadUrl`: upload.Url,
+		`uploadUrl`: uploadThis.Url,
 		// `uploadData`:  map[string]interface{}{},
-		`host`:   upload.FileUrlPrefix,
+		`host`:   uploadThis.FileUrlPrefix,
 		`dir`:    option.Dir,
 		`expire`: option.Expire,
 		`isRes`:  1,
@@ -51,24 +62,21 @@ func (*Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[str
 		`maxSize`: option.MaxSize,
 		`rand`:    grand.S(8),
 	}
-	uploadData[`sign`] = upload.CreateSign(uploadData)
+	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
 
 	signInfo[`uploadData`] = uploadData
 	return
 }
 
-func (*Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
 	return
 }
 
-func (*Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
 	return
 }
 
-func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
-	config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
-	upload := internal.NewLocal(ctx, config)
-
+func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
 	r := g.RequestFromCtx(ctx)
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
@@ -89,7 +97,7 @@ func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, er
 		`maxSize`: maxSize,
 		`rand`:    rand,
 	}
-	if sign != upload.CreateSign(signData) {
+	if sign != uploadThis.CreateSign(signData) {
 		err = utils.NewErrorCode(ctx, 79999999, `签名错误`)
 		return
 	}
@@ -111,12 +119,28 @@ func (*Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, er
 	} else {
 		file.Filename = dir + gconv.String(time.Now().UnixMilli()) + `_` + gconv.String(grand.N(10000000, 99999999)) + gfile.Ext(file.Filename)
 	}
-	filename, err := file.Save(upload.FileSaveDir + dir /* , isRand */)
+	filename, err := file.Save(uploadThis.FileSaveDir + dir /* , isRand */)
 	if err != nil {
 		return
 	}
 
 	uploadInfo = map[string]interface{}{}
-	uploadInfo[`url`] = upload.FileUrlPrefix + `/` + dir + filename
+	uploadInfo[`url`] = uploadThis.FileUrlPrefix + `/` + dir + filename
+	return
+}
+
+// 生成签名
+func (uploadThis *Local) CreateSign(signData map[string]interface{}) (sign string) {
+	keyArr := []string{}
+	for k := range signData {
+		keyArr = append(keyArr, k)
+	}
+	sort.Strings(keyArr)
+	str := ``
+	for _, k := range keyArr {
+		str += k + `=` + gconv.String(signData[k]) + `&`
+	}
+	str += `key=` + uploadThis.SignKey
+	sign = gmd5.MustEncryptString(str)
 	return
 }
