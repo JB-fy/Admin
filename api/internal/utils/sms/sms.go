@@ -1,6 +1,6 @@
 package sms
 
-/* import (
+import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
 )
@@ -22,4 +22,4 @@ func NewSms(ctx context.Context) Sms {
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunSmsAccessKeyId`, `aliyunSmsAccessKeySecret`, `aliyunSmsSignName`, `aliyunSmsTemplateCode`})
 		return NewAliyunSms(ctx, config)
 	}
-} */
+}

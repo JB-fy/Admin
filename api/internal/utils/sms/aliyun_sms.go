@@ -1,6 +1,6 @@
 package sms
 
-/* import (
+import (
 	"context"
 	"errors"
 	"strings"
@@ -92,4 +92,4 @@ func (smsThis *AliyunSms) CreateClient() (client *dysmsapi20170525.Client, err e
 
 	client, err = dysmsapi20170525.NewClient(config)
 	return
-} */
+}
