@@ -12,6 +12,9 @@ class Config extends AbstractValidation
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
         'configKeyArr.*' => 'sometimes|required|string|between:1,30|distinct',
 
+        'userAgreement' => 'string',
+        'privacyAgreement' => 'string',
+
         'uploadType' => 'string|in:local,aliyunOss',
         'localUploadUrl' => 'url',
         'localUploadSignKey' => 'string',
@@ -40,6 +43,9 @@ class Config extends AbstractValidation
         ],
         'save' => [
             'only' => [
+                'userAgreement',
+                'privacyAgreement',
+
                 'uploadType',
                 'localUploadUrl',
                 'localUploadSignKey',

@@ -1,10 +1,13 @@
 export default {
     label: {
-        siteConfig: '站点配置',
+        websiteConfig: '网站',
         uploadConfig: '上传',
         smsConfig: '短信',
     },
     name: {
+        userAgreement: '用户协议',
+        privacyAgreement: '隐私协议',
+
         uploadType: '上传方式',
         localUploadUrl: '本地-上传地址',
         localUploadSignKey: '本地-密钥',

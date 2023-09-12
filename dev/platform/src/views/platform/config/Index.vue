@@ -8,6 +8,7 @@ export default {
 <!--直接批量导入组件 结束-->
 <script setup lang="ts">
 //import UploadConfig from './tabPane/UploadConfig.vue'
+const WebsiteConfig = defineAsyncComponent(() => import('./tabPane/WebsiteConfig.vue'))   //好处：该组件会被打包成单独一个文件
 const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.vue'))   //好处：该组件会被打包成单独一个文件
 const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))   //好处：该组件会被打包成单独一个文件
 
@@ -21,6 +22,9 @@ const { t } = useI18n()
                 <!-- <ElTabPane :label="t('platform.config.label.testConfig')" :lazy="true">
                     <UploadConfig />
                 </ElTabPane> -->
+                <ElTabPane :label="t('platform.config.label.websiteConfig')" :lazy="true">
+                    <WebsiteConfig />
+                </ElTabPane>
                 <ElTabPane :label="t('platform.config.label.uploadConfig')" :lazy="true">
                     <UploadConfig />
                 </ElTabPane>

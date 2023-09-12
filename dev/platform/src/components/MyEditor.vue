@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
 <!-- <MyEditor v-model="saveForm.data.content" />
 
-<MyEditor v-model="saveForm.data.content" :api="{ param: { type: 'common' } }" :disabled="true" /> -->
+<MyEditor v-model="saveForm.data.content" :api="{ param: { type: 'common' } }" :init="{width: '375px'}" :disabled="true" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="ts">
 import axios from 'axios'
@@ -55,19 +55,13 @@ const myEditor = reactive({
         branding: false, // 右下角Tiny技术支持信息是否显示
         images_upload_handler: (blobInfo: any, progress: any) => {
             return new Promise((resolve, reject) => {
-                let data: { [propName: string]: any } = {
-                    OSSAccessKeyId: myEditor.signInfo.accessid,
-                    policy: myEditor.signInfo.policy,
-                    signature: myEditor.signInfo.signature,
-                    success_action_status: '200', //让服务端返回200,不然，默认会返回204
-                }
+                let data: { [propName: string]: any } = { ...myEditor.signInfo.uploadData }
                 const filename = blobInfo.filename()
                 data.key = myEditor.signInfo.dir + blobInfo.id() + '_' + randomInt(1000, 9999) + filename.slice(filename.lastIndexOf('.'))
-                myEditor.signInfo?.callback ? data.callback = myEditor.signInfo.callback : null //是否回调服务器
                 data.file = blobInfo.blob()
-                axios.post(myEditor.signInfo.host, data, { headers: { "Content-Type": "multipart/form-data" } }).then((res) => {
+                axios.post(myEditor.signInfo.uploadUrl, data, { headers: { "Content-Type": "multipart/form-data" } }).then((res) => {
                     let imgUrl = myEditor.signInfo.host + '/' + data.key
-                    if (myEditor.signInfo?.callback) {    //如有回调服务器且有报错，则默认失败
+                    if (myEditor.signInfo?.isRes) {
                         if (res.data.code !== 0) {
                             reject(t('common.tip.uploadFail'))
                             return
@@ -88,7 +82,7 @@ const myEditor = reactive({
         } */
         ...props.init,
     },
-    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ accessid: "xxxx", host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, callback: "string", policy: "string", signature: "string" }
+    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await myEditor.api.getSignInfo()
