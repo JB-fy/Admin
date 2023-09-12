@@ -7,6 +7,15 @@ namespace App\Plugin\Upload;
 class AliyunOss extends AbstractUpload
 {
     /**
+     * 上传
+     *
+     * @return void
+     */
+    public function upload()
+    {
+    }
+
+    /**
      * 创建签名（web前端直传用）
      *
      * @param array $option
@@ -115,15 +124,6 @@ class AliyunOss extends AbstractUpload
             'url' => $this->getBucketHost() . '/' . $request->post('filename')
         ];
         throwSuccessJson($resData);
-    }
-
-    /**
-     * 上传
-     *
-     * @return void
-     */
-    public function upload()
-    {
     }
 
     /**

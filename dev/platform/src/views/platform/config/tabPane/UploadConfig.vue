@@ -140,9 +140,6 @@ saveForm.initData()
                     :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.aliyunOssAccessKeyId')" prop="aliyunOssAccessKeyId">
-                <!-- <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
-                :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" minlength="1" maxlength="30"
-                :show-word-limit="true" :clearable="true" /> -->
                 <ElInput v-model="saveForm.data.aliyunOssAccessKeyId"
                     :placeholder="t('platform.config.name.aliyunOssAccessKeyId')" :clearable="true" />
             </ElFormItem>

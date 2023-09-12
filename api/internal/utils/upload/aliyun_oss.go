@@ -69,6 +69,10 @@ type AliyunOssCallback struct {
 	BodyType string `json:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
+func (uploadThis *AliyunOss) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
+	return
+}
+
 func (uploadThis *AliyunOss) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
 	bucketHost := uploadThis.GetBucketHost()
 	option := AliyunOssSignOption{
@@ -228,10 +232,6 @@ func (uploadThis *AliyunOss) Notify(ctx context.Context) (notifyInfo map[string]
 
 	notifyInfo = map[string]interface{}{}
 	notifyInfo[`url`] = uploadThis.GetBucketHost() + `/` + filename + `?w=` + width + `&h=` + height //需要记录宽高，ios显示瀑布流必须知道宽高。直接存在query内
-	return
-}
-
-func (uploadThis *AliyunOss) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
 	return
 }
 

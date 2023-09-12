@@ -32,50 +32,6 @@ func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
 	return &localObj
 }
 
-func (uploadThis *Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
-	type Option struct {
-		Dir     string //上传的文件目录
-		Expire  int64  //签名有效时间戳。单位：秒
-		MinSize int64  //限制上传的文件大小。单位：字节
-		MaxSize int64  //限制上传的文件大小。单位：字节。需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
-	}
-	option := Option{
-		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
-		Expire:  time.Now().Unix() + 15*60,
-		MinSize: 0,
-		MaxSize: 100 * 1024 * 1024,
-	}
-
-	signInfo = map[string]interface{}{
-		`uploadUrl`: uploadThis.Url,
-		// `uploadData`:  map[string]interface{}{},
-		`host`:   uploadThis.FileUrlPrefix,
-		`dir`:    option.Dir,
-		`expire`: option.Expire,
-		`isRes`:  1,
-	}
-
-	uploadData := map[string]interface{}{
-		`dir`:     option.Dir,
-		`expire`:  option.Expire,
-		`minSize`: option.MinSize,
-		`maxSize`: option.MaxSize,
-		`rand`:    grand.S(8),
-	}
-	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
-
-	signInfo[`uploadData`] = uploadData
-	return
-}
-
-func (uploadThis *Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
-	return
-}
-
-func (uploadThis *Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
-	return
-}
-
 func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
 	r := g.RequestFromCtx(ctx)
 	dir := r.Get(`dir`).String()
@@ -126,6 +82,50 @@ func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]inte
 
 	uploadInfo = map[string]interface{}{}
 	uploadInfo[`url`] = uploadThis.FileUrlPrefix + `/` + dir + filename
+	return
+}
+
+func (uploadThis *Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
+	type Option struct {
+		Dir     string //上传的文件目录
+		Expire  int64  //签名有效时间戳。单位：秒
+		MinSize int64  //限制上传的文件大小。单位：字节
+		MaxSize int64  //限制上传的文件大小。单位：字节。需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
+	}
+	option := Option{
+		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
+		Expire:  time.Now().Unix() + 15*60,
+		MinSize: 0,
+		MaxSize: 100 * 1024 * 1024,
+	}
+
+	signInfo = map[string]interface{}{
+		`uploadUrl`: uploadThis.Url,
+		// `uploadData`:  map[string]interface{}{},
+		`host`:   uploadThis.FileUrlPrefix,
+		`dir`:    option.Dir,
+		`expire`: option.Expire,
+		`isRes`:  1,
+	}
+
+	uploadData := map[string]interface{}{
+		`dir`:     option.Dir,
+		`expire`:  option.Expire,
+		`minSize`: option.MinSize,
+		`maxSize`: option.MaxSize,
+		`rand`:    grand.S(8),
+	}
+	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
+
+	signInfo[`uploadData`] = uploadData
+	return
+}
+
+func (uploadThis *Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
+	return
+}
+
+func (uploadThis *Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
 	return
 }
 

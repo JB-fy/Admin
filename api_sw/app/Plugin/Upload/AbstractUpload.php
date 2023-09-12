@@ -13,6 +13,14 @@ abstract class AbstractUpload
         $this->config = $config;
     }
 
+
+    /**
+     * 上传
+     *
+     * @return void
+     */
+    abstract public function upload();
+
     /**
      * 签名
      *
@@ -27,11 +35,4 @@ abstract class AbstractUpload
      * @return void
      */
     abstract public function notify();
-
-    /**
-     * 上传
-     *
-     * @return void
-     */
-    abstract public function upload();
 }

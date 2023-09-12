@@ -7,55 +7,6 @@ namespace App\Plugin\Upload;
 class Local extends AbstractUpload
 {
     /**
-     * 签名
-     *
-     * @param array $option
-     * @return void
-     */
-    public function sign($uploadFileType = '')
-    {
-        switch ($uploadFileType) {
-            default:
-                $option = [
-                    'dir' => 'common/' . date('Ymd') . '/',    //上传的文件目录
-                    'expire' => time() + 15 * 60, //签名有效时间戳。单位：秒
-                    'minSize' => 0,    //限制上传的文件大小。单位：字节
-                    'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节。需要同时设置配置文件api_sw/config/autoload/server.php中的OPTION_UPLOAD_MAX_FILESIZE字段
-                ];
-                break;
-        }
-
-        $signInfo = [
-            'uploadUrl' => $this->config['url'],
-            'host' => $this->config['fileUrlPrefix'],
-            'dir' => $option['dir'],
-            'expire' => $option['expire'],
-            'isRes' =>  1,
-        ];
-
-        $uploadData = [
-            'dir' =>     $option['dir'],
-            'expire' =>  $option['expire'],
-            'minSize' => $option['minSize'],
-            'maxSize' => $option['maxSize'],
-            'rand' =>    randStr(8),
-        ];
-        $uploadData['sign'] = $this->createSign($uploadData);
-
-        $signInfo['uploadData'] = $uploadData;
-        throwSuccessJson($signInfo);
-    }
-
-    /**
-     * 回调（web前端直传用）
-     *
-     * @return void
-     */
-    public function notify()
-    {
-    }
-
-    /**
      * 上传
      *
      * @return void
@@ -108,6 +59,55 @@ class Local extends AbstractUpload
             'url' => $this->config['fileUrlPrefix'] . '/' . $filename
         ];
         throwSuccessJson($resData);
+    }
+
+    /**
+     * 签名
+     *
+     * @param array $option
+     * @return void
+     */
+    public function sign($uploadFileType = '')
+    {
+        switch ($uploadFileType) {
+            default:
+                $option = [
+                    'dir' => 'common/' . date('Ymd') . '/',    //上传的文件目录
+                    'expire' => time() + 15 * 60, //签名有效时间戳。单位：秒
+                    'minSize' => 0,    //限制上传的文件大小。单位：字节
+                    'maxSize' => 100 * 1024 * 1024,    //限制上传的文件大小。单位：字节。需要同时设置配置文件api_sw/config/autoload/server.php中的OPTION_UPLOAD_MAX_FILESIZE字段
+                ];
+                break;
+        }
+
+        $signInfo = [
+            'uploadUrl' => $this->config['url'],
+            'host' => $this->config['fileUrlPrefix'],
+            'dir' => $option['dir'],
+            'expire' => $option['expire'],
+            'isRes' =>  1,
+        ];
+
+        $uploadData = [
+            'dir' =>     $option['dir'],
+            'expire' =>  $option['expire'],
+            'minSize' => $option['minSize'],
+            'maxSize' => $option['maxSize'],
+            'rand' =>    randStr(8),
+        ];
+        $uploadData['sign'] = $this->createSign($uploadData);
+
+        $signInfo['uploadData'] = $uploadData;
+        throwSuccessJson($signInfo);
+    }
+
+    /**
+     * 回调（web前端直传用）
+     *
+     * @return void
+     */
+    public function notify()
+    {
     }
 
     /**

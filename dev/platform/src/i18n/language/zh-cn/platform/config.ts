@@ -1,4 +1,9 @@
 export default {
+    label: {
+        siteConfig: '站点配置',
+        uploadConfig: '上传',
+        smsConfig: '短信',
+    },
     name: {
         uploadType: '上传方式',
         localUploadUrl: '本地-上传地址',
@@ -11,11 +16,20 @@ export default {
         aliyunOssAccessKeySecret: '阿里云OSS-AccessKeySecret',
         aliyunOssRoleArn: '阿里云OSS-RoleArn',
         aliyunOssCallbackUrl: '阿里云OSS-回调地址',
+
+        smsType: '短信方式',
+        aliyunSmsAccessKeyId: '阿里云SMS-AccessKeyId',
+        aliyunSmsAccessKeySecret: '阿里云SMS-AccessKeySecret',
+        aliyunSmsSignName: '阿里云SMS-签名',
+        aliyunSmsTemplateCode: '阿里云SMS-模板标识',
     },
     status: {
         uploadType: [
             { value: `local`, label: '本地' },
             { value: `aliyunOss`, label: '阿里云' },
+        ],
+        smsType: [
+            { value: `aliyunSms`, label: '阿里云' },
         ],
     },
     tip: {
@@ -24,8 +38,5 @@ export default {
         aliyunOssHost: '不含Bucket部分',
         aliyunOssRoleArn: '只在APP直传时使用，可不设置',
         aliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
-    },
-    label: {
-        uploadConfig: '上传',
     },
 }

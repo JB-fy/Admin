@@ -6,12 +6,10 @@ import (
 )
 
 type Upload interface {
-	// UploadFile(file *multipart.FileHeader) (string, string, error)
-	// DeleteFile(key string) error
+	Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error)
 	Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error)
 	Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error)
 	Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error)
-	Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error)
 }
 
 func NewUpload(ctx context.Context) Upload {
