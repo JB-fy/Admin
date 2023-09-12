@@ -8,6 +8,7 @@ const saveForm = reactive({
         smsType: 'aliyunSms',
         aliyunSmsAccessKeyId: '',
         aliyunSmsAccessKeySecret: '',
+        aliyunSmsEndpoint: '',
         aliyunSmsSignName: '',
         aliyunSmsTemplateCode: '',
     } as { [propName: string]: any },
@@ -21,6 +22,9 @@ const saveForm = reactive({
         ],
         aliyunSmsAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+        ],
+        aliyunSmsEndpoint: [
+            { type: 'string', trigger: 'blur' }
         ],
         aliyunSmsSignName: [
             { type: 'string', trigger: 'blur' }
@@ -81,6 +85,10 @@ saveForm.initData()
             <ElFormItem :label="t('platform.config.name.aliyunSmsAccessKeySecret')" prop="aliyunSmsAccessKeySecret">
                 <ElInput v-model="saveForm.data.aliyunSmsAccessKeySecret"
                     :placeholder="t('platform.config.name.aliyunSmsAccessKeySecret')" :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunSmsEndpoint')" prop="aliyunSmsEndpoint">
+                <ElInput v-model="saveForm.data.aliyunSmsEndpoint"
+                    :placeholder="t('platform.config.name.aliyunSmsEndpoint')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.aliyunSmsSignName')" prop="aliyunSmsSignName">
                 <ElInput v-model="saveForm.data.aliyunSmsSignName"

@@ -31,10 +31,11 @@ type Config struct {
 	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" dc:"阿里云OSS-回调地址"`
 
 	SmsType                  *string `json:"smsType,omitempty" dc:"短信方式"`
-	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" dc:"阿里云短信-AccessKeyId"`
-	AliyunSmsAccessKeySecret *string `json:"aliyunSmsAccessKeySecret,omitempty" dc:"阿里云短信-AccessKeySecret"`
-	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" dc:"阿里云短信-签名"`
-	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" dc:"阿里云短信-模板标识"`
+	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
+	AliyunSmsAccessKeySecret *string `json:"aliyunSmsAccessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
+	AliyunSmsEndpoint        *string `json:"aliyunSmsEndpoint,omitempty" dc:"阿里云SMS-Endpoint"`
+	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" dc:"阿里云SMS-签名"`
+	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" dc:"阿里云SMS-模板标识"`
 }
 
 /*--------获取 结束--------*/
@@ -59,10 +60,11 @@ type ConfigSaveReq struct {
 	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" v:"url" dc:"阿里云OSS-回调地址"`
 
 	SmsType                  *string `json:"smsType,omitempty" v:"in:aliyunSms" dc:"短信方式"`
-	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云短信-AccessKeyId"`
-	AliyunSmsAccessKeySecret *string `json:"aliyunSmsAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云短信-AccessKeySecret"`
-	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" v:"" dc:"阿里云短信-签名"`
-	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" v:"" dc:"阿里云短信-模板标识"`
+	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
+	AliyunSmsAccessKeySecret *string `json:"aliyunSmsAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeySecret"`
+	AliyunSmsEndpoint        *string `json:"aliyunSmsEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
+	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
+	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
 }
 
 /*--------保存 结束--------*/

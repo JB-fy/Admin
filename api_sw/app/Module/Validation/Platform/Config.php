@@ -30,6 +30,7 @@ class Config extends AbstractValidation
         'smsType' => 'string|in:aliyunSms',
         'aliyunSmsAccessKeyId' => 'alpha_dash',
         'aliyunSmsAccessKeySecret' => 'alpha_dash',
+        'aliyunSmsEndpoint' => 'string',
         'aliyunSmsSignName' => 'string',
         'aliyunSmsTemplateCode' => 'string',
     ];
@@ -61,6 +62,7 @@ class Config extends AbstractValidation
                 'smsType',
                 'aliyunSmsAccessKeyId',
                 'aliyunSmsAccessKeySecret',
+                'aliyunSmsEndpoint',
                 'aliyunSmsSignName',
                 'aliyunSmsTemplateCode',
             ]

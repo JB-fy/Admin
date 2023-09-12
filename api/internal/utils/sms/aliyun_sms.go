@@ -16,6 +16,7 @@ type AliyunSms struct {
 	Ctx             context.Context
 	AccessKeyId     string `json:"aliyunSmsAccessKeyId"`
 	AccessKeySecret string `json:"aliyunSmsAccessKeySecret"`
+	Endpoint        string `json:"aliyunSmsEndpoint"`
 	SignName        string `json:"aliyunSmsSignName"`
 	TemplateCode    string `json:"aliyunSmsTemplateCode"`
 }
@@ -87,9 +88,8 @@ func (smsThis *AliyunSms) CreateClient() (client *dysmsapi20170525.Client, err e
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(smsThis.AccessKeyId),
 		AccessKeySecret: tea.String(smsThis.AccessKeySecret),
-		Endpoint:        tea.String(`dysmsapi.aliyuncs.com`),
+		Endpoint:        tea.String(smsThis.Endpoint),
 	}
-
 	client, err = dysmsapi20170525.NewClient(config)
 	return
 }

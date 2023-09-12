@@ -23,6 +23,7 @@ export default {
         smsType: '短信方式',
         aliyunSmsAccessKeyId: '阿里云SMS-AccessKeyId',
         aliyunSmsAccessKeySecret: '阿里云SMS-AccessKeySecret',
+        aliyunSmsEndpoint: '阿里云SMS-Endpoint',
         aliyunSmsSignName: '阿里云SMS-签名',
         aliyunSmsTemplateCode: '阿里云SMS-模板标识',
     },

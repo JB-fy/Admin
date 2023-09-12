@@ -51,6 +51,7 @@ return [
                 $config = [
                     'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunSmsAccessKeyId'),
                     'accessKeySecret' => getConfig('inDb.platformConfig.aliyunSmsAccessKeySecret'),
+                    'endpoint' => getConfig('inDb.platformConfig.aliyunSmsEndpoint'),
                     'signName' => getConfig('inDb.platformConfig.aliyunSmsSignName'),
                     'templateCode' => getConfig('inDb.platformConfig.aliyunSmsTemplateCode'),
                 ];
