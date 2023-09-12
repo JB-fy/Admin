@@ -17,7 +17,7 @@ func NewUpload() *Upload {
 
 // 本地上传
 func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadUploadRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx).Upload(ctx)
+	notifyInfo, err := upload.NewUpload(ctx).Upload()
 	if err != nil {
 		return
 	}
@@ -27,7 +27,7 @@ func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadR
 
 // 获取签名(web端直传用)
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	signInfo, err := upload.NewUpload(ctx).Sign(ctx, req.Type)
+	signInfo, err := upload.NewUpload(ctx).Sign(req.Type)
 	if err != nil {
 		return
 	}
@@ -37,7 +37,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 
 // 获取Sts Token(App端直传用)
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	stsInfo, err := upload.NewUpload(ctx).Sts(ctx, req.Type)
+	stsInfo, err := upload.NewUpload(ctx).Sts(req.Type)
 	if err != nil {
 		return
 	}
@@ -52,7 +52,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 // 回调
 func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx).Notify(ctx)
+	notifyInfo, err := upload.NewUpload(ctx).Notify()
 	if err != nil {
 		return
 	}

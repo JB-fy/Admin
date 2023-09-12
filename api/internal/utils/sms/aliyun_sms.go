@@ -29,12 +29,12 @@ func NewAliyunSms(ctx context.Context, config map[string]interface{}) *AliyunSms
 	return &aliyunSmsObj
 }
 
-func (smsThis *AliyunSms) Send(ctx context.Context, phone string, code string) (err error) {
-	err = smsThis.SendSms(ctx, []string{phone}, `{"code": "`+code+`"}`)
+func (smsThis *AliyunSms) Send(phone string, code string) (err error) {
+	err = smsThis.SendSms([]string{phone}, `{"code": "`+code+`"}`)
 	return
 }
 
-func (smsThis *AliyunSms) SendSms(ctx context.Context, phoneArr []string, templateParam string) (err error) {
+func (smsThis *AliyunSms) SendSms(phoneArr []string, templateParam string) (err error) {
 	client, err := smsThis.CreateClient()
 	if err != nil {
 		return

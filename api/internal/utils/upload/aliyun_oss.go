@@ -69,11 +69,11 @@ type AliyunOssCallback struct {
 	BodyType string `json:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
-func (uploadThis *AliyunOss) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Upload() (uploadInfo map[string]interface{}, err error) {
 	return
 }
 
-func (uploadThis *AliyunOss) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Sign(uploadFileType string) (signInfo map[string]interface{}, err error) {
 	bucketHost := uploadThis.GetBucketHost()
 	option := AliyunOssSignOption{
 		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
@@ -113,7 +113,7 @@ func (uploadThis *AliyunOss) Sign(ctx context.Context, uploadFileType string) (s
 	return
 }
 
-func (uploadThis *AliyunOss) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Sts(uploadFileType string) (stsInfo map[string]interface{}, err error) {
 	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
 	option := AliyunOssStsOption{
 		SessionName: `oss_app_sts_token`,
@@ -122,7 +122,7 @@ func (uploadThis *AliyunOss) Sts(ctx context.Context, uploadFileType string) (st
 	}
 
 	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证登录token
-	if g.RequestFromCtx(ctx).URL.Path == `/upload/sts` {
+	if g.RequestFromCtx(uploadThis.Ctx).URL.Path == `/upload/sts` {
 		stsInfo, _ = uploadThis.GetStsToken(option)
 		return
 	}
@@ -142,12 +142,12 @@ func (uploadThis *AliyunOss) Sts(ctx context.Context, uploadFileType string) (st
 	return
 }
 
-func (uploadThis *AliyunOss) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Notify() (notifyInfo map[string]interface{}, err error) {
 	if uploadThis.CallbackUrl == `` {
 		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `请先设置回调地址`)
 		return
 	}
-	r := g.RequestFromCtx(ctx)
+	r := g.RequestFromCtx(uploadThis.Ctx)
 	filename := r.Get(`filename`).String()
 	width := r.Get(`width`).String()
 	height := r.Get(`height`).String()

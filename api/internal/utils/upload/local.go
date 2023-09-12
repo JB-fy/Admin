@@ -32,8 +32,8 @@ func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
 	return &localObj
 }
 
-func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]interface{}, err error) {
-	r := g.RequestFromCtx(ctx)
+func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error) {
+	r := g.RequestFromCtx(uploadThis.Ctx)
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
 	minSize := r.Get(`minSize`).Int64()
@@ -43,7 +43,7 @@ func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]inte
 	sign := r.Get(`sign`).String()
 
 	if time.Now().Unix() > expire {
-		err = utils.NewErrorCode(ctx, 79999999, `签名过期`)
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `签名过期`)
 		return
 	}
 	signData := map[string]interface{}{
@@ -54,17 +54,17 @@ func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]inte
 		`rand`:    rand,
 	}
 	if sign != uploadThis.CreateSign(signData) {
-		err = utils.NewErrorCode(ctx, 79999999, `签名错误`)
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `签名错误`)
 		return
 	}
 
 	file := r.GetUploadFile(`file`)
 	if minSize > 0 && minSize > file.Size {
-		err = utils.NewErrorCode(ctx, 79999999, `文件不能小于`+gconv.String(minSize/(1024*1024))+`MB`)
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `文件不能小于`+gconv.String(minSize/(1024*1024))+`MB`)
 		return
 	}
 	if maxSize > 0 && maxSize < file.Size {
-		err = utils.NewErrorCode(ctx, 79999999, `文件不能大于`+gconv.String(maxSize/(1024*1024))+`MB`)
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `文件不能大于`+gconv.String(maxSize/(1024*1024))+`MB`)
 		return
 	}
 
@@ -85,7 +85,7 @@ func (uploadThis *Local) Upload(ctx context.Context) (uploadInfo map[string]inte
 	return
 }
 
-func (uploadThis *Local) Sign(ctx context.Context, uploadFileType string) (signInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Sign(uploadFileType string) (signInfo map[string]interface{}, err error) {
 	type Option struct {
 		Dir     string //上传的文件目录
 		Expire  int64  //签名有效时间戳。单位：秒
@@ -121,11 +121,11 @@ func (uploadThis *Local) Sign(ctx context.Context, uploadFileType string) (signI
 	return
 }
 
-func (uploadThis *Local) Sts(ctx context.Context, uploadFileType string) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Sts(uploadFileType string) (stsInfo map[string]interface{}, err error) {
 	return
 }
 
-func (uploadThis *Local) Notify(ctx context.Context) (notifyInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Notify() (notifyInfo map[string]interface{}, err error) {
 	return
 }
 
