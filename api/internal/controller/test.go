@@ -2,7 +2,6 @@ package controller
 
 import (
 	"api/api"
-	"api/internal/utils/sms"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -17,7 +16,7 @@ func NewTest() *Test {
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
 	// time.Sleep(10 * time.Second)
-	sms.NewSms(ctx).Send(`13599995734`, `1234`)
+
 	// fmt.Println(g.RequestFromCtx(ctx).GetUrl())   // http://192.168.2.200:20080/testMeta?a=1&b=2
 	// fmt.Println(g.RequestFromCtx(ctx).GetHost())  // 192.168.2.200
 	// fmt.Println(g.RequestFromCtx(ctx).Host)       // 192.168.2.200:20080
