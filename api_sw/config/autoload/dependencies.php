@@ -42,4 +42,19 @@ return [
                 return make(\App\Plugin\Upload\Local::class, ['config' => $config]);
         }
     },
+    //短信组件
+    'sms' => function (ContainerInterface $container) {
+        $smsType = getConfig('inDb.platformConfig.smsType');
+        switch ($smsType) {
+            case 'aliyunSms':
+            default:
+                $config = [
+                    'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunSmsAccessKeyId'),
+                    'accessKeySecret' => getConfig('inDb.platformConfig.aliyunSmsAccessKeySecret'),
+                    'signName' => getConfig('inDb.platformConfig.aliyunSmsSignName'),
+                    'templateCode' => getConfig('inDb.platformConfig.aliyunSmsTemplateCode'),
+                ];
+                return make(\App\Plugin\Sms\AliyunSms::class, ['config' => $config]);
+        }
+    },
 ];
