@@ -39,7 +39,7 @@ class AliyunSms extends AbstractSms
     {
         $client = $this->createClient();
         $sendSmsRequest = new SendSmsRequest([
-            'phoneNumbers' => 'your_value',
+            'phoneNumbers' => implode(',', $phoneArr),
             'signName' => $this->config['signName'],
             'templateCode' => $this->config['templateCode'],
             'templateParam' => $templateParam,
@@ -48,15 +48,17 @@ class AliyunSms extends AbstractSms
         try {
             $result = $client->sendSmsWithOptions($sendSmsRequest, new RuntimeOptions([]));
             $result = $result->toMap();
-            if (!(isset($result['body']['Code']) && $result['body']['Code'] == 'OK')) {
-                throwFailJson(79999999, '阿里云SMS错误：' . $result['body']['Message']);
-            }
         } catch (Exception $error) {
             if (!($error instanceof TeaError)) {
                 $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
             }
             $errMsg = Utils::assertAsString($error->message);
-            throwFailJson(79999999, '阿里云SMS错误：' . $errMsg);
+            if (!empty($errMsg)) {
+                throwFailJson(79999999, $errMsg);
+            }
+        }
+        if (!(isset($result['body']['Code']) && $result['body']['Code'] == 'OK')) {
+            throwFailJson(79999999, $result['body']['Message']);
         }
     }
 
@@ -70,9 +72,9 @@ class AliyunSms extends AbstractSms
     {
         $config = new Config([
             'accessKeyId' => $this->config['accessKeyId'],
-            'accessKeySecret' => $this->config['accessKeySecret']
+            'accessKeySecret' => $this->config['accessKeySecret'],
+            'endpoint' => $this->config['endpoint']
         ]);
-        $config->endpoint = 'dysmsapi.aliyuncs.com';
         return new Dysmsapi($config);
     }
 }

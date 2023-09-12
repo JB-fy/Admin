@@ -17,7 +17,7 @@ class Upload extends AbstractController
          * @var \App\Plugin\Upload\AbstractUpload
          */
         $upload = make('upload');
-        $upload->sign($this->request->input('type'));
+        $upload->sign($uploadFileType);
     }
 
     /**
