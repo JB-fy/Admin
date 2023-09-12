@@ -15,12 +15,9 @@ type Upload interface {
 }
 
 func NewUpload(ctx context.Context) Upload {
-	/* config, _ := daoPlatform.Config.Get(ctx, []string{`uploadType`})
-	uploadType := gconv.String(config[`uploadType`]) */
 	platformConfigColumns := daoPlatform.Config.Columns()
-	uploadTypeTmp, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `uploadType`).Value(platformConfigColumns.ConfigValue)
-	uploadType := uploadTypeTmp.String()
-	switch uploadType {
+	uploadType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `uploadType`).Value(platformConfigColumns.ConfigValue)
+	switch uploadType.String() {
 	case `aliyunOss`:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssRoleArn`, `aliyunOssCallbackUrl`})
 		return NewAliyunOss(ctx, config)
