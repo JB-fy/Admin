@@ -353,34 +353,19 @@ if (!function_exists('getHttpClient')) {
      */
     function getHttpClient(array $config = []): \GuzzleHttp\Client
     {
-        $defaultConfig = [
+        /* $config = [
             //'base_uri' => 'http://127.0.0.1:8080',
+            // 'headers' => ['XxxxToken' => 'xxxx'],
+            //'timeout' => 5
             'handler' => \GuzzleHttp\HandlerStack::create(new \Hyperf\Guzzle\CoroutineHandler()), //客户端协程化（\Hyperf\Guzzle\ClientFactory默认就是这个）
             //'handler' => (new \Hyperf\Guzzle\HandlerStackFactory())->create(),//客户端做连接池优化
-            //'timeout' => 5
             // 'swoole' => [   //也可直接修改Swoole配置，不过这项配置在Curl Guzzle客户端中是无法生效的，所以谨慎使用。
             //     'timeout' => 10,    //这会替换原来的配置，外层timeout5会被替换成10
             //     'socket_buffer_size' => 1024 * 1024 * 2,
             // ],
-        ];
-        $config = array_merge($defaultConfig, $config);
-        //return make(\GuzzleHttp\Client::class, ['config' => $config]);
-        return \Hyperf\Guzzle\ClientFactory::create($config);
-
-        /* //使用方式
-        $httpClient = getHttpClient(['timeout' => 5]);
-        $option = [
-            //'json' => ['key' => 'value'],
-            'form_params' => ['key' => 'value']
-        ];
-        try {
-            $uri = 'http://www.xxxx.com/forward';
-            //$response = $client->get($uri);
-            $response = $httpClient->post($uri, $option);
-            $result = $response->getBody()->getContents();
-        } catch (\Throwable $th) {
-            throwFailJson(99999999, $th->getMessage());
-        } */
+        ]; */
+        //通过ClientFactory创建的Client对象，为短生命周期对象
+        return getContainer()->get(\Hyperf\Guzzle\ClientFactory::class)->create($config);
     }
 }
 

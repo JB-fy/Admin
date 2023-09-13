@@ -58,7 +58,7 @@ class AliyunSms extends AbstractSms
             }
         }
         if (!(isset($result['body']['Code']) && $result['body']['Code'] == 'OK')) {
-            throwFailJson(79999999, $result['body']['Message']);
+            throwFailJson(79999999, $result['body']['Message'] ?? '');
         }
     }
 

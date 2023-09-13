@@ -51,5 +51,7 @@ export default {
         aliyunOssHost: '不含Bucket部分',
         aliyunOssRoleArn: '只在APP直传时使用，可不设置',
         aliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
+
+        aliyunIdCardHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
     },
 }

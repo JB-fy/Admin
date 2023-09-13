@@ -26,7 +26,6 @@ func NewAliyunIdCard(ctx context.Context, config map[string]interface{}) *Aliyun
 }
 
 func (idCardThis *AliyunIdCard) Auth(idCardName string, idCardNo string) (idCardInfo map[string]interface{}, err error) {
-	// res, err := idCardThis.CreateClient().Get(idCardThis.Ctx, idCardThis.Host+idCardThis.Path+`?cardno=`+idCardNo+`&name=`+url.QueryEscape(idCardName))
 	res, err := idCardThis.CreateClient().Get(idCardThis.Ctx, idCardThis.Host+idCardThis.Path, g.Map{
 		`cardno`: idCardNo,
 		`name`:   idCardName,

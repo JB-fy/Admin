@@ -275,17 +275,17 @@ func (uploadThis *AliyunOss) CreateCallbackStr(callback AliyunOssCallback) strin
 func (uploadThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo map[string]interface{}, err error) {
 	url, err := uploadThis.GenerateSignedURL(option)
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 40000004, err.Error())
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, err.Error())
 		return
 	}
 
 	body, status, err := uploadThis.SendRequest(url)
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 40000005, err.Error())
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, err.Error())
 		return
 	}
 	if status != http.StatusOK {
-		err = utils.NewErrorCode(uploadThis.Ctx, 40000005, ``)
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, ``)
 		return
 	}
 
@@ -307,7 +307,7 @@ func (uploadThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo map
 	resp := StsResponse{}
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 40000005, ``)
+		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, ``)
 		return
 	}
 	stsInfo = map[string]interface{}{
