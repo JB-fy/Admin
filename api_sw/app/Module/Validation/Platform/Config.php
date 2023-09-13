@@ -33,6 +33,11 @@ class Config extends AbstractValidation
         'aliyunSmsEndpoint' => 'string',
         'aliyunSmsSignName' => 'string',
         'aliyunSmsTemplateCode' => 'string',
+
+        'idCardType' => 'string|in:aliyunIdCard',
+        'aliyunIdCardHost' => 'url',
+        'aliyunIdCardPath' => 'string',
+        'aliyunIdCardAppcode' => 'string',
     ];
 
     protected array $scene = [
@@ -65,6 +70,11 @@ class Config extends AbstractValidation
                 'aliyunSmsEndpoint',
                 'aliyunSmsSignName',
                 'aliyunSmsTemplateCode',
+
+                'idCardType',
+                'aliyunIdCardHost',
+                'aliyunIdCardPath',
+                'aliyunIdCardAppcode',
             ]
         ]
     ];

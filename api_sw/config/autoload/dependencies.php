@@ -58,4 +58,18 @@ return [
                 return make(\App\Plugin\Sms\AliyunSms::class, ['config' => $config]);
         }
     },
+    //实名认证组件
+    'idCard' => function (ContainerInterface $container) {
+        $idCardType = getConfig('inDb.platformConfig.idCardType');
+        switch ($idCardType) {
+            case 'aliyunIdCard':
+            default:
+                $config = [
+                    'host' =>  getConfig('inDb.platformConfig.aliyunIdCardHost'),
+                    'path' => getConfig('inDb.platformConfig.aliyunIdCardPath'),
+                    'appcode' => getConfig('inDb.platformConfig.aliyunIdCardAppcode'),
+                ];
+                return make(\App\Plugin\IdCard\AliyunIdCard::class, ['config' => $config]);
+        }
+    },
 ];

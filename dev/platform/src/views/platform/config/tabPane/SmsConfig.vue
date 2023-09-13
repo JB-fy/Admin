@@ -17,7 +17,6 @@ const saveForm = reactive({
             { type: 'enum', enum: [`aliyunSms`], trigger: 'change', message: t('validation.select') }
         ],
         aliyunSmsAccessKeyId: [
-            //{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
         ],
         aliyunSmsAccessKeySecret: [

@@ -36,6 +36,11 @@ type Config struct {
 	AliyunSmsEndpoint        *string `json:"aliyunSmsEndpoint,omitempty" dc:"阿里云SMS-Endpoint"`
 	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" dc:"阿里云SMS-签名"`
 	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" dc:"阿里云SMS-模板标识"`
+
+	IdCardType          *string `json:"idCardType,omitempty" dc:"实名认证方式"`
+	AliyunIdCardHost    *string `json:"aliyunIdCardHost,omitempty" dc:"阿里云IdCard-域名"`
+	AliyunIdCardPath    *string `json:"aliyunIdCardPath,omitempty" dc:"阿里云IdCard-请求路径"`
+	AliyunIdCardAppcode *string `json:"aliyunIdCardAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
 }
 
 /*--------获取 结束--------*/
@@ -65,6 +70,11 @@ type ConfigSaveReq struct {
 	AliyunSmsEndpoint        *string `json:"aliyunSmsEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
 	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
 	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
+
+	IdCardType          *string `json:"idCardType,omitempty" v:"in:aliyunIdCard" dc:"实名认证方式"`
+	AliyunIdCardHost    *string `json:"aliyunIdCardHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`
+	AliyunIdCardPath    *string `json:"aliyunIdCardPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
+	AliyunIdCardAppcode *string `json:"aliyunIdCardAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
 }
 
 /*--------保存 结束--------*/

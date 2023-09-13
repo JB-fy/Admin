@@ -5,15 +5,22 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
-        userAgreement: '',
-        privacyAgreement: '',
+        idCardType: 'aliyunIdCard',
+        aliyunIdCardHost: '',
+        aliyunIdCardPath: '',
+        aliyunIdCardAppcode: '',
     } as { [propName: string]: any },
     rules: {
-        userAgreement: [
-            //{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+        idCardType: [
+            { type: 'enum', enum: [`aliyunIdCard`], trigger: 'change', message: t('validation.select') }
+        ],
+        aliyunIdCardHost: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') }
+        ],
+        aliyunIdCardPath: [
             { type: 'string', trigger: 'blur' }
         ],
-        privacyAgreement: [
+        aliyunIdCardAppcode: [
             { type: 'string', trigger: 'blur' }
         ],
     } as any,
@@ -52,12 +59,30 @@ saveForm.initData()
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('platform.config.name.userAgreement')" prop="userAgreement">
-            <MyEditor v-model="saveForm.data.userAgreement" />
+        <ElFormItem :label="t('platform.config.name.idCardType')" prop="idCardType">
+            <ElRadioGroup v-model="saveForm.data.idCardType">
+                <ElRadio v-for="(item, index) in (tm('platform.config.status.idCardType') as any)" :key="index"
+                    :label="item.value">
+                    {{ item.label }}
+                </ElRadio>
+            </ElRadioGroup>
         </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.privacyAgreement')" prop="privacyAgreement">
-            <MyEditor v-model="saveForm.data.privacyAgreement" />
-        </ElFormItem>
+
+        <template v-if="saveForm.data.idCardType == 'aliyunIdCard'">
+            <ElFormItem :label="t('platform.config.name.aliyunIdCardHost')" prop="aliyunIdCardHost">
+                <ElInput v-model="saveForm.data.aliyunIdCardHost" :placeholder="t('platform.config.name.aliyunIdCardHost')"
+                    :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunIdCardPath')" prop="aliyunIdCardPath">
+                <ElInput v-model="saveForm.data.aliyunIdCardPath" :placeholder="t('platform.config.name.aliyunIdCardPath')"
+                    :clearable="true" />
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunIdCardAppcode')" prop="aliyunIdCardAppcode">
+                <ElInput v-model="saveForm.data.aliyunIdCardAppcode"
+                    :placeholder="t('platform.config.name.aliyunIdCardAppcode')" :clearable="true" />
+            </ElFormItem>
+        </template>
+
         <ElFormItem>
             <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
                 <AutoiconEpCircleCheck />{{ t('common.save') }}

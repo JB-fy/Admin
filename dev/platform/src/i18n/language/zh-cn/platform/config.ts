@@ -3,6 +3,7 @@ export default {
         websiteConfig: '网站',
         uploadConfig: '上传',
         smsConfig: '短信',
+        idCardConfig: '实名认证',
     },
     name: {
         userAgreement: '用户协议',
@@ -26,6 +27,11 @@ export default {
         aliyunSmsEndpoint: '阿里云SMS-Endpoint',
         aliyunSmsSignName: '阿里云SMS-签名',
         aliyunSmsTemplateCode: '阿里云SMS-模板标识',
+
+        idCardType: '实名认证方式',
+        aliyunIdCardHost: '阿里云IdCard-域名',
+        aliyunIdCardPath: '阿里云IdCard-请求路径',
+        aliyunIdCardAppcode: '阿里云IdCard-Appcode',
     },
     status: {
         uploadType: [
@@ -34,6 +40,9 @@ export default {
         ],
         smsType: [
             { value: `aliyunSms`, label: '阿里云' },
+        ],
+        idCardType: [
+            { value: `aliyunIdCard`, label: '阿里云' },
         ],
     },
     tip: {
