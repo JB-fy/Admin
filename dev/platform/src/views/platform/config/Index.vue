@@ -8,9 +8,11 @@ export default {
 <!--直接批量导入组件 结束-->
 <script setup lang="ts">
 //import UploadConfig from './tabPane/UploadConfig.vue'
-const WebsiteConfig = defineAsyncComponent(() => import('./tabPane/WebsiteConfig.vue'))   //好处：该组件会被打包成单独一个文件
-const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.vue'))   //好处：该组件会被打包成单独一个文件
-const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))   //好处：该组件会被打包成单独一个文件
+//好处：该组件会被打包成单独一个文件
+const WebsiteConfig = defineAsyncComponent(() => import('./tabPane/WebsiteConfig.vue'))
+const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.vue'))
+const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))
+const IdCardConfig = defineAsyncComponent(() => import('./tabPane/IdCardConfig.vue'))
 
 const { t } = useI18n()
 </script>
@@ -30,6 +32,9 @@ const { t } = useI18n()
                 </ElTabPane>
                 <ElTabPane :label="t('platform.config.label.smsConfig')" :lazy="true">
                     <SmsConfig />
+                </ElTabPane>
+                <ElTabPane :label="t('platform.config.label.idCardConfig')" :lazy="true">
+                    <IdCardConfig />
                 </ElTabPane>
             </ElTabs>
         </ElMain>
