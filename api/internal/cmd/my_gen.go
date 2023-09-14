@@ -18,9 +18,8 @@ import (
 )
 
 /*
-使用示例：
-./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
-./main myGen -sceneCode=app -dbGroup=lx -dbTable=user -removePrefix= -moduleDir=lx/user -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
+后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isCover=0
+APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefix= -moduleDir=xxxx/user -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
 
 强烈建议搭配Git使用
 表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
@@ -59,9 +58,9 @@ type MyGenOption struct {
 	SceneCode    string `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
 	DbGroup      string `json:"dbGroup"`      //db分组。示例：default
 	DbTable      string `json:"dbTable"`      //db表。示例：auth_test
-	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。示例：auth_
-	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth，app/user
-	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
+	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。必须和hack/config.yaml内removePrefix保持一致，示例：auth_
+	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，app/user
+	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景，权限/操作
 	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
 	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
