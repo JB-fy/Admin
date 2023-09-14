@@ -59,8 +59,8 @@ type MyGenOption struct {
 	DbGroup      string `json:"dbGroup"`      //db分组。示例：default
 	DbTable      string `json:"dbTable"`      //db表。示例：auth_test
 	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，app/user
-	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景，权限/操作
+	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
+	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景，权限/测试
 	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
 	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
