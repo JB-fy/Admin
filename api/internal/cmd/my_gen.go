@@ -18,7 +18,10 @@ import (
 )
 
 /*
-使用示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+使用示例：
+./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
+
+./main myGen -sceneCode=app -dbGroup=lx -dbTable=user -removePrefix= -moduleDir=lx/user -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
 
 强烈建议搭配Git使用
 表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
@@ -60,7 +63,7 @@ type MyGenOption struct {
 	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。示例：auth_
 	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hcak/config.yaml内daoPath的后面部分保持一致，示例：auth，app/user
 	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
-	IsList       bool   `json:"isList" `      //是否生成列表接口(no为false，""和yes其他都为true)
+	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
 	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
 	IsCreate     bool   `json:"isCreate"`     //是否生成创建接口
@@ -223,10 +226,10 @@ noAllRestart:
 isListEnd:
 	for {
 		switch isList {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsList = true
 			break isListEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsList = false
 			break isListEnd
 		default:
@@ -241,10 +244,10 @@ isListEnd:
 isCountEnd:
 	for {
 		switch isCount {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsCount = true
 			break isCountEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsCount = false
 			break isCountEnd
 		default:
@@ -259,10 +262,10 @@ isCountEnd:
 isInfoEnd:
 	for {
 		switch isInfo {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsInfo = true
 			break isInfoEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsInfo = false
 			break isInfoEnd
 		default:
@@ -277,10 +280,10 @@ isInfoEnd:
 isCreateEnd:
 	for {
 		switch isCreate {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsCreate = true
 			break isCreateEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsCreate = false
 			break isCreateEnd
 		default:
@@ -295,10 +298,10 @@ isCreateEnd:
 isUpdateEnd:
 	for {
 		switch isUpdate {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsUpdate = true
 			break isUpdateEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsUpdate = false
 			break isUpdateEnd
 		default:
@@ -313,10 +316,10 @@ isUpdateEnd:
 isDeleteEnd:
 	for {
 		switch isDelete {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsDelete = true
 			break isDeleteEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsDelete = false
 			break isDeleteEnd
 		default:
@@ -335,10 +338,10 @@ isDeleteEnd:
 isApiEnd:
 	for {
 		switch isApi {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsApi = true
 			break isApiEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsApi = false
 			break isApiEnd
 		default:
@@ -354,10 +357,10 @@ isApiEnd:
 	isAuthActionEnd:
 		for {
 			switch isAuthAction {
-			case ``, `yes`:
+			case ``, `1`, `yes`:
 				option.IsAuthAction = true
 				break isAuthActionEnd
-			case `no`:
+			case `0`, `no`:
 				option.IsAuthAction = false
 				break isAuthActionEnd
 			default:
@@ -373,10 +376,10 @@ isApiEnd:
 isViewEnd:
 	for {
 		switch isView {
-		case ``, `yes`:
+		case ``, `1`, `yes`:
 			option.IsView = true
 			break isViewEnd
-		case `no`:
+		case `0`, `no`:
 			option.IsView = false
 			break isViewEnd
 		default:
@@ -391,10 +394,10 @@ isViewEnd:
 isCoverEnd:
 	for {
 		switch isCover {
-		case `yes`:
+		case `1`, `yes`:
 			option.IsCover = true
 			break isCoverEnd
-		case ``, `no`:
+		case ``, `0`, `no`:
 			option.IsCover = false
 			break isCoverEnd
 		default:
