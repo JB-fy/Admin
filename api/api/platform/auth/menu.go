@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type MenuListReq struct {
-	g.Meta `path:"/menu/list" method:"post" tags:"平台后台/菜单" sm:"列表"`
+	g.Meta `path:"/menu/list" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表"`
 	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
 	Field  []string       `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 	Sort   string         `json:"sort" default:"id DESC" dc:"排序"`
@@ -61,7 +61,7 @@ type MenuItem struct {
 
 /*--------详情 开始--------*/
 type MenuInfoReq struct {
-	g.Meta `path:"/menu/info" method:"post" tags:"平台后台/菜单" sm:"详情"`
+	g.Meta `path:"/menu/info" method:"post" tags:"平台后台/权限管理/菜单" sm:"详情"`
 	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 }
@@ -92,7 +92,7 @@ type MenuInfo struct {
 
 /*--------新增 开始--------*/
 type MenuCreateReq struct {
-	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/菜单" sm:"创建"`
+	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"创建"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"required|integer|min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"integer|min:0" dc:"父级ID"`
 	MenuName  *string `json:"menuName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"菜单名称"`
@@ -107,7 +107,7 @@ type MenuCreateReq struct {
 
 /*--------修改 开始--------*/
 type MenuUpdateReq struct {
-	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/菜单" sm:"更新"`
+	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"更新"`
 	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"integer|min:0" dc:"父级ID"`
@@ -123,21 +123,21 @@ type MenuUpdateReq struct {
 
 /*--------删除 开始--------*/
 type MenuDeleteReq struct {
-	g.Meta `path:"/menu/del" method:"post" tags:"平台后台/菜单" sm:"删除"`
+	g.Meta `path:"/menu/del" method:"post" tags:"平台后台/权限管理/菜单" sm:"删除"`
 	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/
 
-/*--------树状列表 开始--------*/
+/*--------列表（树状） 开始--------*/
 type MenuTreeReq struct {
-	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/菜单" sm:"树状列表"`
+	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表（树状）"`
 	Field  []string       `json:"field" v:"foreach|min-length:1"`
 	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type MenuTreeRes struct {
-	Tree []MenuTree `json:"tree" dc:"树状列表"`
+	Tree []MenuTree `json:"tree" dc:"列表（树状）"`
 }
 
 type MenuTree struct {
@@ -149,4 +149,4 @@ type MenuTree struct {
 	MenuId *uint `json:"menuId,omitempty" dc:"菜单ID"`
 }
 
-/*--------树状列表 结束--------*/
+/*--------列表（树状） 结束--------*/

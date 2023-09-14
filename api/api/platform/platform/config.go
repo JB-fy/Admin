@@ -6,7 +6,7 @@ import (
 
 /*--------获取 开始--------*/
 type ConfigGetReq struct {
-	g.Meta       `path:"/config/get" method:"post" tags:"平台后台/配置" sm:"获取"`
+	g.Meta       `path:"/config/get" method:"post" tags:"平台后台/配置中心/平台配置" sm:"获取"`
 	ConfigKeyArr *[]string `json:"configKeyArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"配置项Key列表。传值参考默认返回的字段"`
 }
 
@@ -47,7 +47,7 @@ type Config struct {
 
 /*--------保存 开始--------*/
 type ConfigSaveReq struct {
-	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置" sm:"保存"`
+	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置中心/平台配置" sm:"保存"`
 
 	UserAgreement    *string `json:"userAgreement,omitempty" v:"" dc:"用户协议"`
 	PrivacyAgreement *string `json:"privacyAgreement,omitempty" v:"" dc:"隐私协议"`

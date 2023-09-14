@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type SceneListReq struct {
-	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/场景" sm:"列表"`
+	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/权限管理/场景" sm:"列表"`
 	Filter SceneListFilter `json:"filter" dc:"查询条件"`
 	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
@@ -52,7 +52,7 @@ type SceneItem struct {
 
 /*--------详情 开始--------*/
 type SceneInfoReq struct {
-	g.Meta `path:"/scene/info" method:"post" tags:"平台后台/场景" sm:"详情"`
+	g.Meta `path:"/scene/info" method:"post" tags:"平台后台/权限管理/场景" sm:"详情"`
 	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 }
@@ -77,7 +77,7 @@ type SceneInfo struct {
 
 /*--------新增 开始--------*/
 type SceneCreateReq struct {
-	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/场景" sm:"创建"`
+	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"创建"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
 	SceneName   *string `json:"sceneName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
 	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"场景配置"`
@@ -88,7 +88,7 @@ type SceneCreateReq struct {
 
 /*--------修改 开始--------*/
 type SceneUpdateReq struct {
-	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/场景" sm:"更新"`
+	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"更新"`
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景标识"`
 	SceneName   *string `json:"sceneName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"场景名称"`
@@ -100,7 +100,7 @@ type SceneUpdateReq struct {
 
 /*--------删除 开始--------*/
 type SceneDeleteReq struct {
-	g.Meta `path:"/scene/del" method:"post" tags:"平台后台/场景" sm:"删除"`
+	g.Meta `path:"/scene/del" method:"post" tags:"平台后台/权限管理/场景" sm:"删除"`
 	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 

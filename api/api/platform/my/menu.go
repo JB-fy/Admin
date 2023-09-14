@@ -4,13 +4,13 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-/*--------树状列表 开始--------*/
+/*--------菜单列表（树状） 开始--------*/
 type MenuTreeReq struct {
-	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/我的" sm:"树状列表"`
+	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/我的" sm:"菜单列表（树状）"`
 }
 
 type MenuTreeRes struct {
-	Tree []MenuTree `json:"tree" dc:"树状列表"`
+	Tree []MenuTree `json:"tree" dc:"菜单列表（树状）"`
 }
 
 type MenuTree struct {
@@ -26,4 +26,4 @@ type MenuTree struct {
 	I18n     interface{} `json:"i18n,omitempty" dc:"多语言"`
 }
 
-/*--------树状列表 结束--------*/
+/*--------菜单列表（树状） 结束--------*/

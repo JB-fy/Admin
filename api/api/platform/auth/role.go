@@ -7,7 +7,7 @@ import (
 
 /*--------列表 开始--------*/
 type RoleListReq struct {
-	g.Meta `path:"/role/list" method:"post" tags:"平台后台/角色" sm:"列表"`
+	g.Meta `path:"/role/list" method:"post" tags:"平台后台/权限管理/角色" sm:"列表"`
 	Filter RoleListFilter `json:"filter" dc:"过滤条件"`
 	Field  []string       `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 	Sort   string         `json:"sort" default:"id DESC" dc:"排序"`
@@ -56,7 +56,7 @@ type RoleItem struct {
 
 /*--------详情 开始--------*/
 type RoleInfoReq struct {
-	g.Meta `path:"/role/info" method:"post" tags:"平台后台/角色" sm:"详情"`
+	g.Meta `path:"/role/info" method:"post" tags:"平台后台/权限管理/角色" sm:"详情"`
 	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 }
@@ -84,7 +84,7 @@ type RoleInfo struct {
 
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
-	g.Meta      `path:"/role/create" method:"post" tags:"平台后台/角色" sm:"创建"`
+	g.Meta      `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"创建"`
 	RoleName    *string `json:"roleName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
 	SceneId     *uint   `json:"sceneId,omitempty" v:"required|integer|min:1" dc:"场景ID"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"菜单ID列表"`
@@ -96,7 +96,7 @@ type RoleCreateReq struct {
 
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
-	g.Meta      `path:"/role/update" method:"post" tags:"平台后台/角色" sm:"更新"`
+	g.Meta      `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"更新"`
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	RoleName    *string `json:"roleName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"角色名称"`
 	SceneId     *uint   `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
@@ -109,7 +109,7 @@ type RoleUpdateReq struct {
 
 /*--------删除 开始--------*/
 type RoleDeleteReq struct {
-	g.Meta `path:"/role/del" method:"post" tags:"平台后台/角色" sm:"删除"`
+	g.Meta `path:"/role/del" method:"post" tags:"平台后台/权限管理/角色" sm:"删除"`
 	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 }
 

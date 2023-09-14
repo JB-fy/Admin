@@ -197,7 +197,7 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 	return
 }
 
-// 生成树状列表
+// 列表转树状
 func Tree(list gdb.Result, id int, priKey string, pidKey string) (tree gdb.Result) {
 	for k, v := range list {
 		if v[pidKey].Int() == id {

@@ -1465,15 +1465,15 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 
 	if option.IsList && tpl.PidHandle.PidField != `` {
 		tplApi += `
-/*--------树状列表 开始--------*/
+/*--------列表（树状） 开始--------*/
 type ` + tpl.TableNameCaseCamel + `TreeReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"树状列表"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
 	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 
 type ` + tpl.TableNameCaseCamel + `TreeRes struct {
-	Tree []` + tpl.TableNameCaseCamel + `Tree ` + "`" + `json:"tree" dc:"树状列表"` + "`" + `
+	Tree []` + tpl.TableNameCaseCamel + `Tree ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
 }
 
 type ` + tpl.TableNameCaseCamel + `Tree struct {
@@ -1482,7 +1482,7 @@ type ` + tpl.TableNameCaseCamel + `Tree struct {
 	` + apiResColumn + `
 }
 
-/*--------树状列表 结束--------*/
+/*--------列表（树状） 结束--------*/
 `
 	}
 
@@ -1779,7 +1779,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 
 	if option.IsList && tpl.PidHandle.PidField != `` {
 		tplController += `
-// 树状列表
+// 列表（树状）
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.MapDeep(req.Filter)
@@ -1818,7 +1818,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 `
 		}
 		tplController += `
-	field = append(field, ` + "`tree`" + `) //补充字段（树状列表所需）
+	field = append(field, ` + "`tree`" + `)
 
 	list, err := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
