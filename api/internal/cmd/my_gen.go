@@ -20,7 +20,6 @@ import (
 /*
 使用示例：
 ./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=yes -isCount=yes -isInfo=yes -isCreate=yes -isUpdate=yes -isDelete=yes -isApi=yes -isAuthAction=yes -isView=yes -isCover=no
-
 ./main myGen -sceneCode=app -dbGroup=lx -dbTable=user -removePrefix= -moduleDir=lx/user -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
 
 强烈建议搭配Git使用
