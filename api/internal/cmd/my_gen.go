@@ -657,6 +657,10 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			continue
 		}
+		//主键
+		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
+			continue
+		}
 		//password|passwd
 		if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` {
 			continue
@@ -741,9 +745,9 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
 				relTableDao := gstr.CaseCamel(relTableNameCaseSnake)
-				relFieldName := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
+				relNameField := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
 				daoParseFieldTmp := `
-			case ` + "`" + relFieldName + "`" + `:
+			case ` + "`" + relNameField + "`" + `:
 				m = m.Fields(` + relTableDao + `.Table() + ` + "`.`" + ` + v)
 				m = daoThis.ParseJoin(` + relTableDao + `.Table(), joinTableArr)(m)`
 				if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
@@ -1127,6 +1131,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	apiReqCreateColumn := ``
 	apiReqUpdateColumn := ``
 	apiResColumn := ``
+	apiResColumnAlloweFieldList := ``
 	if tpl.LabelField != `` {
 		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
 		apiResColumn += `Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`\n"
@@ -1182,7 +1187,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			if tpl.LabelField != `` {
-				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `,omitempty" dc:"父级"` + "`\n"
+				apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `,omitempty" dc:"父级"` + "`\n"
 			}
 			continue
 		}
@@ -1214,12 +1219,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			//模块内存在对应的dao层时，自动做表关联
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
-				relFieldName := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
-				dc := fieldName
-				if gstr.ToUpper(gstr.SubStr(dc, -2)) == `ID` {
-					dc = gstr.SubStr(dc, 0, -2)
+				relNameField := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
+				if gstr.ToUpper(gstr.SubStr(fieldName, -2)) == `ID` {
+					fieldName = gstr.SubStr(fieldName, 0, -2)
 				}
-				apiResColumn += relFieldName + ` *string ` + "`" + `json:"` + relFieldName + `,omitempty" dc:"` + dc + `"` + "`\n"
+				apiResColumnAlloweFieldList += gstr.CaseCamel(relNameField) + ` *string ` + "`" + `json:"` + relNameField + `,omitempty" dc:"` + fieldName + `"` + "`\n"
 			}
 			continue
 		}
@@ -1466,6 +1470,7 @@ type ` + tpl.TableNameCaseCamel + `ListRes struct {`
 type ` + tpl.TableNameCaseCamel + `Item struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
 	` + apiResColumn + `
+	` + apiResColumnAlloweFieldList + `
 }
 
 /*--------列表 结束--------*/
@@ -1567,9 +1572,6 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	controllerAlloweFieldInfo := "`id`, "
 	controllerAlloweFieldTree := "`id`, "
 	controllerAlloweFieldNoAuth := "`id`, "
-	if tpl.PrimaryKey != `` && tpl.PrimaryKey != `id` {
-		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, `
-	}
 	if tpl.LabelField != `` {
 		controllerAlloweFieldList += "`label`, "
 		controllerAlloweFieldInfo += "`label`, "
@@ -1585,6 +1587,13 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
+		//主键
+		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
+			if field != `id` {
+				controllerAlloweFieldNoAuth += `columnsThis.` + fieldCaseCamel + `, `
+			}
+			continue
+		}
 		//password|passwd
 		if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` {
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
@@ -1593,6 +1602,16 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		//salt
 		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
+			continue
+		}
+		//id后缀
+		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			//模块内存在对应的dao层时，自动做表关联
+			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
+			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
+				relNameField := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
+				controllerAlloweFieldList += "`" + relNameField + "`, "
+			}
 			continue
 		}
 	}
@@ -2169,9 +2188,15 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			//模块内存在对应的dao层时，自动做表关联
+			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
+			relNameField := field
+			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
+				relNameField = gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
+			}
 			viewListColumn += `
 	{
-		dataKey: '` + field + `',
+		dataKey: '` + relNameField + `',
 		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
@@ -3904,6 +3929,19 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: '` + fieldName + `',`
 			viewI18nTip += `
 		` + field + `: '` + tip + `',`
+			continue
+		}
+		//id后缀
+		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			//模块内存在对应的dao层时，自动做表关联
+			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
+			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
+				if gstr.ToUpper(gstr.SubStr(fieldName, -2)) == `ID` {
+					fieldName = gstr.SubStr(fieldName, 0, -2)
+				}
+			}
+			viewI18nName += `
+		` + field + `: '` + fieldName + `',`
 			continue
 		}
 		//icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
