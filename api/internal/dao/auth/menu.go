@@ -391,9 +391,9 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Pid)
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Sort)
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.PrimaryKey())
-			case daoThis.Columns().Sort:
+			case daoThis.Columns().Sort, daoThis.Columns().Level:
 				m = m.Order(daoThis.Table()+`.`+kArr[0], kArr[1])
-				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey()) //防止分页错乱
+				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(kArr[0]) {
 					m = m.Order(daoThis.Table()+`.`+kArr[0], kArr[1])

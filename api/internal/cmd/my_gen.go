@@ -29,31 +29,31 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
 	部分常用字段：
-		密码 		命名：password|passwd；类型：char(32)；注意：salt同时存在时，有特殊处理
-		加密盐 		命名：salt；类型：char(8)；
-		父级		命名：pid；类型：int等类型；注意：level,idPath|id_path同时存在时，有特殊处理
-		层级		命名：level；类型：int等类型
-		层级路径	命名：idPath|id_path；类型：varchar
-		排序		命名：sort；类型：int等类型
-		权重		命名：weight；类型：int等类型
+		密码 		命名：password|passwd；类型：char(32)；注意：password|passwd,salt同时存在时，有特殊处理
+		加密盐 		命名：salt；类型：char(8)；注意：password|passwd,salt同时存在时，(才)有特殊处理
+		父级		命名：pid；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，有特殊处理
+		层级		命名：level；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		层级路径	命名：idPath|id_path；类型：varchar；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		排序		命名：sort；类型：int等类型；
+		权重		命名：weight；类型：int等类型；
 		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
-		头像		命名：avatar；类型：varchar
+		头像		命名：avatar；类型：varchar；
 	其他类型字段：
-		名称		命名：name后缀；类型：varchar
-		标识		命名：code后缀；类型：varchar
-		手机		命名：mobile,phone后缀；类型：varchar
-		链接		命名：url,link后缀；类型：varchar
-		关联ID		命名：id后缀；类型：int等类型
+		名称		命名：name后缀；类型：varchar；
+		标识		命名：code后缀；类型：varchar；
+		手机		命名：mobile,phone后缀；类型：varchar；
+		链接		命名：url,link后缀；类型：varchar；
+		关联ID		命名：id后缀；类型：int等类型；
 		图片		命名：icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
 		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
-		数组		命名：list,arr等后缀；类型：json或text
-		IP			命名：IP后缀；类型：varchar
+		数组		命名：list,arr等后缀；类型：json或text；
+		IP			命名：IP后缀；类型：varchar；
 		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端生成表单组件：textarea文本输入框或tinymce富文本编辑器
 		状态		命名：status后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
 		类型		命名：type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（类型：0安卓 1苹果）
 		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
-		开始时间	命名：start_前缀；类型：timestamp或datetime或date
-		结束时间	命名：end_前缀；类型：timestamp或datetime或date
+		开始时间	命名：start_前缀；类型：timestamp或datetime或date；
+		结束时间	命名：end_前缀；类型：timestamp或datetime或date；
 */
 type MyGenOption struct {
 	SceneCode    string `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
@@ -662,7 +662,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
 		//pid
@@ -670,11 +670,18 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//level
-		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
+			daoParseOrderTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				m = m.Order(daoThis.Table()+` + "`.`" + `+kArr[0], kArr[1])
+				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
+				daoParseOrder += daoParseOrderTmp
+			}
 			continue
 		}
 		//idPath|id_path
-		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		}
 		//sort
@@ -1141,7 +1148,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
 		//pid
@@ -1156,13 +1163,13 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//level
-		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
 			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
 		}
 		//idPath|id_path
-		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 && tpl.PidHandle.IsCoexist {
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
 		}
@@ -1551,7 +1558,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 			continue
 		}
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 			continue
 		}
@@ -2011,7 +2018,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
 		//pid
@@ -2027,13 +2034,32 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//level
-		/* if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
+			viewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+        width: 100,
+        sortable: true,
+	},`
 			continue
-		} */
+		}
 		//idPath|id_path
-		/* if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 && tpl.PidHandle.IsCoexist {
+			viewListColumn += `
+	{
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+        width: 150,
+        hidden: true,
+	},`
 			continue
-		} */
+
+		}
 		//sort
 		//weight
 		if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
@@ -2875,7 +2901,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			continue
 		}
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
 		//pid
@@ -2886,12 +2912,12 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		</ElFormItem>`
 			continue
 		}
-		//level
-		/* if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		/* //level
+		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		} */
 		//idPath|id_path
-		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		}
 		//sort
@@ -3170,7 +3196,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
 		//pid
@@ -3188,11 +3214,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		}
 		//level
-		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		}
 		//idPath|id_path
-		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		}
 		//sort
@@ -3820,19 +3846,19 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} */
 		//salt
-		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` {
+		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
-		//pid
-		/* if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		/* //pid
+		if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 			continue
-		} */
+		}
 		//level
-		/* if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
-		} */
+		}
 		//idPath|id_path
-		/* if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+		if fieldCaseCamel == `IdPath` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		} */
 		//sort
