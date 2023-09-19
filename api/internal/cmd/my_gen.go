@@ -600,6 +600,41 @@ func MyGenStatusList(comment string) (statusList [][2]string) {
 	return
 }
 
+// id后缀字段获取关联dao层
+func MyGenGetRelDao(field string, currentDaoPath string) (relTableNameCaseSnake string) {
+	// currentDaoPath := tpl.ModuleDirCaseCamelLower
+	/* relTableNameCaseSnake = gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
+	fileArr, _ := gfile.ScanDirFile(gfile.SelfDir()+`/internal/dao/`, relTableNameCaseSnake+`\.go`, true)
+	relDaoPath := ``
+	isSamePath := false
+	relDaoPathArr := []string{}
+	relDaoCount := 0 //疑似关联dao层的目录数量
+	for _, v := range fileArr {
+		if gstr.Count(v, `/internal/`) == 1 {
+			relDaoPathTmp := gstr.Replace(v, gfile.SelfDir()+`/internal/dao/`, ``)
+			relDaoPathTmp = gstr.Replace(relDaoPath, `/`+relTableNameCaseSnake+`.go`, ``)
+			if relDaoPathTmp == currentDaoPath { //dao目录一致时，直接返回
+				relDaoPath = relDaoPathTmp
+				isSamePath = true
+				break
+			}
+			gstr.SubStr(currentDaoPath, 0, gstr.PosR(currentDaoPath, `/`))
+			relDaoPathArr = append(relDaoPathArr, relDaoPath)
+		}
+	} */
+
+	/* a := struct {
+		RelTableNameCaseSnake string
+		RelDaoPath            string
+		IsSamePath            bool
+	}{
+		RelTableNameCaseSnake: relTableNameCaseSnake,
+		RelDaoPath:            relDaoPath,
+		IsSamePath:            isSamePath,
+	} */
+	return
+}
+
 // dao层存在时，增加或修改部分字段的解析代码
 func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
