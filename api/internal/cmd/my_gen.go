@@ -2,6 +2,7 @@ package cmd
 
 import (
 	daoAuth "api/internal/dao/auth"
+	"api/internal/service"
 	"api/internal/utils"
 	"context"
 	"fmt"
@@ -18,7 +19,7 @@ import (
 )
 
 /*
-后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isCover=0
+后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefix=auth_ -moduleDir=auth -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isCover=0
 APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefix= -moduleDir=xxxx/user -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
 
 强烈建议搭配Git使用
@@ -60,7 +61,7 @@ type MyGenOption struct {
 	DbTable      string `json:"dbTable"`      //db表。示例：auth_test
 	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。必须和hack/config.yaml内removePrefix保持一致，示例：auth_
 	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
-	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景，权限/测试
+	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
 	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
 	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
@@ -204,16 +205,16 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
-	// 公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用。示例：场景
+	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
 	_, ok = optionMap[`commonName`]
 	if !ok {
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
 	}
 	for {
 		if option.CommonName != `` {
 			break
 		}
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签名称，菜单名称和操作名称中使用:\n")
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
 	}
 noAllRestart:
 	// 是否生成列表接口
@@ -526,15 +527,18 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 // 自动生成操作
 func MyGenAction(ctx context.Context, sceneId int, actionCode string, actionName string) {
 	daoThis := daoAuth.Action
-	idVar, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().ActionCode, actionCode).Value(daoThis.PrimaryKey())
+	columnsThis := daoAuth.Action.Columns()
+	actionName = gstr.Replace(actionName, `/`, `-`)
+
+	idVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.ActionCode, actionCode).Value(daoThis.PrimaryKey())
 	id := idVar.Int64()
 	if id == 0 {
 		id, _ = daoThis.ParseDbCtx(ctx).Data(map[string]interface{}{
-			daoThis.Columns().ActionCode: actionCode,
-			daoThis.Columns().ActionName: actionName,
+			columnsThis.ActionCode: actionCode,
+			columnsThis.ActionName: actionName,
 		}).InsertAndGetId()
 	} else {
-		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(daoThis.Columns().ActionName, actionName).Update()
+		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(columnsThis.ActionName, actionName).Update()
 	}
 	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
 		daoAuth.ActionRelToScene.Columns().ActionId: id,
@@ -545,22 +549,44 @@ func MyGenAction(ctx context.Context, sceneId int, actionCode string, actionName
 // 自动生成菜单
 func MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string, menuNameOfEn string) {
 	daoThis := daoAuth.Menu
-	idVar, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().SceneId, sceneId).Where(daoThis.Columns().MenuUrl, menuUrl).Value(daoThis.PrimaryKey())
+	columnsThis := daoAuth.Menu.Columns()
+	menuNameArr := gstr.Split(menuName, `/`)
+
+	var pid int64 = 0
+	for _, v := range menuNameArr[:len(menuNameArr)-1] {
+		pidVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.SceneId, sceneId).Where(columnsThis.MenuName, v).Value(daoThis.PrimaryKey())
+		if pidVar.Int() == 0 {
+			pid, _ = service.AuthMenu().Create(ctx, g.Map{
+				columnsThis.SceneId:   sceneId,
+				columnsThis.Pid:       pid,
+				columnsThis.MenuName:  v,
+				columnsThis.MenuIcon:  `AutoiconEpLink`,
+				columnsThis.MenuUrl:   ``,
+				columnsThis.ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
+			})
+		} else {
+			pid = pidVar.Int64()
+		}
+	}
+
+	menuName = menuNameArr[len(menuNameArr)-1]
+	idVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.SceneId, sceneId).Where(columnsThis.MenuUrl, menuUrl).Value(daoThis.PrimaryKey())
 	id := idVar.Int()
 	if id == 0 {
-		daoThis.ParseDbCtx(ctx).Handler(daoThis.ParseInsert(map[string]interface{}{
-			daoThis.Columns().SceneId:   sceneId,
-			daoThis.Columns().Pid:       0,
-			daoThis.Columns().MenuName:  menuName,
-			daoThis.Columns().MenuIcon:  `AutoiconEpLink`,
-			daoThis.Columns().MenuUrl:   menuUrl,
-			daoThis.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		})).InsertAndGetId()
+		service.AuthMenu().Create(ctx, g.Map{
+			columnsThis.SceneId:   sceneId,
+			columnsThis.Pid:       pid,
+			columnsThis.MenuName:  menuName,
+			columnsThis.MenuIcon:  `AutoiconEpLink`,
+			columnsThis.MenuUrl:   menuUrl,
+			columnsThis.ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		})
 	} else {
-		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(map[string]interface{}{
-			daoThis.Columns().MenuName:  menuName,
-			daoThis.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		}).Update()
+		service.AuthMenu().Update(ctx, g.Map{daoThis.PrimaryKey(): id}, g.Map{
+			columnsThis.MenuName:  menuName,
+			columnsThis.Pid:       pid,
+			columnsThis.ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		})
 	}
 }
 
