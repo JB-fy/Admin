@@ -25,7 +25,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 强烈建议搭配Git使用
 表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
 主键必须在第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
-表内尽量根据表名设置xxxxId和xxxxName两个字段(这两字段，常用于前端部分组件，服务端请求获取id和label两个字段用于列表展示)
+表内尽量根据表名设置xxxxId主键和xxxxName名称两个字段(常用于前端部分组件，如：MySelect.vue组件；还有当其它表存在与该表主键同名的关联字段时，会自动生成联表查询代码)
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
 	部分常用字段：
@@ -741,7 +741,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			//模块内存在对应的dao层时，自动做表关联
+			//模块内存在对应的dao层时，做联表查询
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
 				relTableDao := gstr.CaseCamel(relTableNameCaseSnake)
@@ -1216,7 +1216,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
-			//模块内存在对应的dao层时，自动做表关联
+			//模块内存在对应的dao层时，做联表查询
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
 				relNameField := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
@@ -1606,7 +1606,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			//模块内存在对应的dao层时，自动做表关联
+			//模块内存在对应的dao层时，做联表查询
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
 				relNameField := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
@@ -2188,7 +2188,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			//模块内存在对应的dao层时，自动做表关联
+			//模块内存在对应的dao层时，做联表查询
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			relNameField := field
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
@@ -3933,7 +3933,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			//模块内存在对应的dao层时，自动做表关联
+			//模块内存在对应的dao层时，做联表查询
 			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
 			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
 				if gstr.ToUpper(gstr.SubStr(fieldName, -2)) == `ID` {
