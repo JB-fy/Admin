@@ -1635,10 +1635,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		field = []string{` + controllerAlloweFieldNoAuth + `}
 	}
 	/**--------权限验证 结束--------**/
-
+`
+		}
+		tplController += `
 	daoHandlerThis := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `)
 	daoHandlerThis.Filter(filter)`
-		}
 		if option.IsCount {
 			tplController += `
 	count, err := daoHandlerThis.Count()
