@@ -667,6 +667,45 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//pid
 		if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			if tpl.LabelField != `` {
+				daoParseFieldTmp := `
+			case ` + "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `:
+				m = m.Fields(` + "`p_`" + ` + daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)
+				m = daoThis.ParseJoin(` + "`p_`" + `+daoThis.Table(), joinTableArr)(m)`
+				if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+					daoParseField += daoParseFieldTmp
+				}
+			}
+			daoParseFieldTmp := `
+			case ` + "`tree`" + `:
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
+				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + fieldCaseCamel + `)
+				m = daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr)(m)`
+			if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+				daoParseField += daoParseFieldTmp
+			}
+			daoParseOrderTmp := `
+			case ` + "`tree`" + `:
+				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + fieldCaseCamel + `)`
+			if tpl.PidHandle.SortField != `` {
+				daoParseOrderTmp += `
+				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `)`
+			}
+			daoParseOrderTmp += `
+				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())`
+			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
+				daoParseOrder += daoParseOrderTmp
+			}
+			daoParseJoinTmp := `
+		case ` + "`p_`" + ` + daoThis.Table():
+			relTable := ` + "`p_`" + ` + daoThis.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
+			}`
+			if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
+				daoParseJoin += daoParseJoinTmp
+			}
 			continue
 		}
 		//level
@@ -693,6 +732,33 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 				daoParseOrder += daoParseOrderTmp
+			}
+			continue
+		}
+		//id后缀
+		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			//模块内存在对应的dao层时，自动做表关联
+			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
+			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
+				relTableDao := gstr.CaseCamel(relTableNameCaseSnake)
+				relFieldName := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
+				daoParseFieldTmp := `
+			case ` + "`" + relFieldName + "`" + `:
+				m = m.Fields(` + relTableDao + `.Table() + ` + "`.`" + ` + v)
+				m = daoThis.ParseJoin(` + relTableDao + `.Table(), joinTableArr)(m)`
+				if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+					daoParseField += daoParseFieldTmp
+				}
+				daoParseJoinTmp := `
+		case ` + relTableDao + `.Table():
+			relTable := ` + relTableDao + `.Table()
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
+				*joinTableArr = append(*joinTableArr, relTable)
+				m = m.LeftJoin(relTable, relTable+` + "`.`" + `+` + relTableDao + `.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
+			}`
+				if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
+					daoParseJoin += daoParseJoinTmp
+				}
 			}
 			continue
 		}
@@ -762,48 +828,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 	}
 
-	if tpl.PidHandle.PidField != `` {
-		if tpl.LabelField != `` {
-			daoParseFieldTmp := `
-			case ` + "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `:
-				m = m.Fields(` + "`p_`" + ` + daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)
-				m = daoThis.ParseJoin(` + "`p_`" + `+daoThis.Table(), joinTableArr)(m)`
-			if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-				daoParseField += daoParseFieldTmp
-			}
-		}
-		daoParseFieldTmp := `
-			case ` + "`tree`" + `:
-				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
-				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
-				m = daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr)(m)`
-		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-			daoParseField += daoParseFieldTmp
-		}
-		daoParseOrderTmp := `
-			case ` + "`tree`" + `:
-				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)`
-		if tpl.PidHandle.SortField != `` {
-			daoParseOrderTmp += `
-				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `)`
-		}
-		daoParseOrderTmp += `
-				m = m.OrderAsc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())`
-		if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
-			daoParseOrder += daoParseOrderTmp
-		}
-		daoParseJoinTmp := `
-		case ` + "`p_`" + ` + daoThis.Table():
-			relTable := ` + "`p_`" + ` + daoThis.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
-			}`
-		if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
-			daoParseJoin += daoParseJoinTmp
-		}
-	}
-
 	if tpl.PidHandle.IsCoexist {
 		daoParseInsertTmp := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
@@ -866,7 +890,6 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			daoHookUpdateAfter += daoHookUpdateAfterTmp
 		}
 		daoFuncTmp := `
-
 // 修改pid时，更新所有子孙级的idPath和level
 func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
 	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(g.Map{
@@ -949,8 +972,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin)
 	}
 	if daoFunc != `` {
-		daoFuncPoint := `// Fill with you ideas below.`
-		tplDao = gstr.Replace(tplDao, daoFuncPoint, daoFuncPoint+daoFunc)
+		tplDao = tplDao + daoFunc
 	}
 
 	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
@@ -1113,6 +1135,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		tmp, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, column[`Comment`].String())
+		fieldName := gstr.Trim(tmp[0])
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
@@ -1157,8 +1181,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:0" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
-			if tpl.PidHandle.PidField != `` && tpl.LabelField != `` {
-				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `,omitempty" dc:"` + comment + `"` + "`\n"
+			if tpl.LabelField != `` {
+				apiResColumn += `P` + gstr.CaseCamel(tpl.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `,omitempty" dc:"父级"` + "`\n"
 			}
 			continue
 		}
@@ -1176,7 +1200,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//sort
 		//weight
 		if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			apiReqFilterColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|between:0,100" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
@@ -1188,6 +1211,16 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
+			//模块内存在对应的dao层时，自动做表关联
+			relTableNameCaseSnake := gstr.CaseSnakeFirstUpper(gstr.SubStr(field, 0, -2))
+			if gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + relTableNameCaseSnake + `.go`) {
+				relFieldName := gstr.CaseCamelLower(relTableNameCaseSnake) + `Name`
+				dc := fieldName
+				if gstr.ToUpper(gstr.SubStr(dc, -2)) == `ID` {
+					dc = gstr.SubStr(dc, 0, -2)
+				}
+				apiResColumn += relFieldName + ` *string ` + "`" + `json:"` + relFieldName + `,omitempty" dc:"` + dc + `"` + "`\n"
+			}
 			continue
 		}
 		//name或code后缀
@@ -3850,11 +3883,13 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if garray.NewStrArrayFrom([]string{`salt`}).Contains(field) && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist {
 			continue
 		}
-		/* //pid
+		//pid
 		if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			viewI18nName += `
+		` + field + `: '父级',`
 			continue
 		}
-		//level
+		/* //level
 		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
 			continue
 		}
