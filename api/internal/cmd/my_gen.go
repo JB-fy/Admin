@@ -3175,6 +3175,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//pid
 		if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
+			viewSaveDataInit += `
+		` + field + `: 0,`
 			viewSaveRule += `
 		` + field + `: [
 			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
