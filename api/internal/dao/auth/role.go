@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"strings"
+	"sync"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
@@ -258,29 +259,34 @@ func (daoThis *roleDao) HookSelect(afterField []string) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
-					case `menuIdArr`:
-						idArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
-						record[v] = gvar.New(idArr)
-					case `actionIdArr`:
-						idArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
-						record[v] = gvar.New(idArr)
-					case `tableName`:
-						if record[daoThis.Columns().TableId].Int() == 0 {
-							record[v] = gvar.New(`平台`)
-							continue
-						}
-						switch record[Scene.Columns().SceneCode].String() {
-						case `platform`:
+			var wg sync.WaitGroup
+			for _, record := range result {
+				wg.Add(1)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					for _, v := range afterField {
+						switch v {
+						/* case `xxxx`:
+						record[v] = gvar.New(``) */
+						case `menuIdArr`:
+							idArr, _ := RoleRelToMenu.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
+							record[v] = gvar.New(idArr)
+						case `actionIdArr`:
+							idArr, _ := RoleRelToAction.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
+							record[v] = gvar.New(idArr)
+						case `tableName`:
+							if record[daoThis.Columns().TableId].Int() == 0 {
+								record[v] = gvar.New(`平台`)
+								continue
+							}
+							switch record[Scene.Columns().SceneCode].String() {
+							case `platform`:
+							}
 						}
 					}
-				}
-				result[index] = record
+				}(record)
 			}
+			wg.Wait()
 			return
 		},
 	}

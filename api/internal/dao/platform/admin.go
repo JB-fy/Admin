@@ -10,6 +10,7 @@ import (
 	"context"
 	"database/sql"
 	"strings"
+	"sync"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
@@ -250,18 +251,23 @@ func (daoThis *adminDao) HookSelect(afterField []string) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
-					case `roleIdArr`:
-						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
-						record[v] = gvar.New(idArr)
+			var wg sync.WaitGroup
+			for _, record := range result {
+				wg.Add(1)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					for _, v := range afterField {
+						switch v {
+						/* case `xxxx`:
+						record[v] = gvar.New(``) */
+						case `roleIdArr`:
+							idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
+							record[v] = gvar.New(idArr)
+						}
 					}
-				}
-				result[index] = record
+				}(record)
 			}
+			wg.Wait()
 			return
 		},
 	}

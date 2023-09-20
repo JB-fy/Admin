@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"strings"
+	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -218,15 +219,20 @@ func (daoThis *sceneDao) HookSelect(afterField []string) gdb.HookHandler {
 			if err != nil {
 				return
 			}
-			for index, record := range result {
-				for _, v := range afterField {
-					switch v {
-					/* case `xxxx`:
-					record[v] = gvar.New(``) */
+			var wg sync.WaitGroup
+			for _, record := range result {
+				wg.Add(1)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					for _, v := range afterField {
+						switch v {
+						/* case `xxxx`:
+						record[v] = gvar.New(``) */
+						}
 					}
-				}
-				result[index] = record
+				}(record)
 			}
+			wg.Wait()
 			return
 		},
 	}
