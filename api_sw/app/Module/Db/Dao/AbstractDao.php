@@ -384,6 +384,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
+            case 'idArr':
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '=', array_shift($value), $boolean ?? 'and');
@@ -395,6 +396,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 }
                 return true;
             case 'excId':
+            case 'excIdArr':
                 if (is_array($value)) {
                     if (count($value) === 1) {
                         $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '<>', array_shift($value), $boolean ?? 'and');
@@ -704,9 +706,16 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         $this->handleLimit($offset, $limit);
         $list = $this->builder->get()->toArray();
         if (!empty($this->afterField)) {
+            $wg = new \Hyperf\Utils\WaitGroup();
             foreach ($list as &$v) {
-                $this->afterField($v);
+                $wg->add(1);
+                co(function () use ($wg, $v) {
+                    // \Swoole\Coroutine::sleep(3);
+                    $this->afterField($v);
+                    $wg->done();
+                });
             }
+            $wg->wait();
         }
         return $list;
     }
