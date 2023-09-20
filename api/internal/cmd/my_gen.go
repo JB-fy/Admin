@@ -78,8 +78,8 @@ type MyGenTpl struct {
 	TableColumnList                gdb.Result //表字段详情
 	SceneName                      string     //场景名称
 	SceneId                        int        //场景ID
-	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
 	TableNameCaseCamel             string     //去除前缀表名（大驼峰）
+	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
 	TableNameCaseSnake             string     //去除前缀表名（蛇形）
 	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
@@ -428,8 +428,8 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		TableColumnList:         tableColumnList,
 		SceneName:               sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
 		SceneId:                 sceneInfo[daoAuth.Scene.Columns().SceneId].Int(),
-		TableNameCaseCamelLower: gstr.CaseCamelLower(tableName),
 		TableNameCaseCamel:      gstr.CaseCamel(tableName),
+		TableNameCaseCamelLower: gstr.CaseCamelLower(tableName),
 		TableNameCaseSnake:      gstr.CaseSnakeFirstUpper(tableName),
 		RelTableMap:             map[string]RelTableItem{},
 	}
