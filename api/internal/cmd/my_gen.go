@@ -1987,11 +1987,10 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list, 0, columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, columnsThis.` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+	tree := utils.Tree(list.List(), 0, columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, columnsThis.` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
 
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		` + "`tree`" + `: tree,
-	}, 0, ` + "``" + `)
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes{}
+	gconv.Structs(tree, &res.Tree)
 	return
 }
 `
