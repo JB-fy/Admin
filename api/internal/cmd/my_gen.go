@@ -667,6 +667,7 @@ func MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string
 
 // status字段注释解析
 func MyGenStatusList(comment string) (statusList [][2]string) {
+	comment = gstr.TrimRight(gstr.TrimRight(comment, `)`), `）`)
 	tmp, _ := gregex.MatchAllString(`(\d+)([^\d\s,，;；]+)`, comment)
 	statusList = make([][2]string, len(tmp))
 	for k, v := range tmp {
