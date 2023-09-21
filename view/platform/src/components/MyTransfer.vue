@@ -116,3 +116,10 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
     <ElTransfer :ref="(el: any) => { transfer.ref = el }" v-model="transfer.value" :data="transfer.options"
         :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
 </template>
+
+<style scoped>
+:deep(.el-transfer-panel) {
+    width: auto;
+    min-width: var(--el-transfer-panel-width);
+}
+</style>
