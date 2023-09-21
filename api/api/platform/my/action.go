@@ -10,10 +10,10 @@ type ActionListReq struct {
 }
 
 type ActionListRes struct {
-	List []ActionItem `json:"list" dc:"列表"`
+	List []ActionListItem `json:"list" dc:"列表"`
 }
 
-type ActionItem struct {
+type ActionListItem struct {
 	Id         *uint   `json:"id,omitempty" dc:"ID"`
 	Label      *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	ActionId   *uint   `json:"actionId,omitempty" dc:"操作ID"`

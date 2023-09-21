@@ -1543,10 +1543,10 @@ type ` + tpl.TableNameCaseCamel + `ListRes struct {`
 	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
 		}
 		tplApi += `
-	List  []` + tpl.TableNameCaseCamel + `Item ` + "`" + `json:"list" dc:"列表"` + "`" + `
+	List  []` + tpl.TableNameCaseCamel + `ListItem ` + "`" + `json:"list" dc:"列表"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `Item struct {
+type ` + tpl.TableNameCaseCamel + `ListItem struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
 	` + apiResColumn + `
 	` + apiResColumnAlloweFieldList + `
@@ -1623,12 +1623,12 @@ type ` + tpl.TableNameCaseCamel + `TreeReq struct {
 }
 
 type ` + tpl.TableNameCaseCamel + `TreeRes struct {
-	Tree []` + tpl.TableNameCaseCamel + `Tree ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
+	Tree []` + tpl.TableNameCaseCamel + `TreeItem ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `Tree struct {
+type ` + tpl.TableNameCaseCamel + `TreeItem struct {
 	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	Children interface{} ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
+	Children []` + tpl.TableNameCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 	` + apiResColumn + `
 }
 

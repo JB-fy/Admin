@@ -6,6 +6,8 @@ import (
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"context"
+
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Menu struct{}
@@ -30,10 +32,10 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list, 0, `menuId`, `pid`)
+	menuColumns := daoAuth.Menu.Columns()
+	tree := utils.Tree(list.List(), 0, menuColumns.MenuId, menuColumns.Pid)
 
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`tree`: tree,
-	}, 0, ``)
+	res = &apiMy.MenuTreeRes{}
+	gconv.Structs(tree, &res.Tree)
 	return
 }

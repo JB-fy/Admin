@@ -5,7 +5,6 @@ import (
 	"context"
 	"os/exec"
 
-	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -198,10 +197,11 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 }
 
 // 列表转树状
-func Tree(list gdb.Result, id int, priKey string, pidKey string) (tree gdb.Result) {
+func Tree(list g.List, id int, priKey string, pidKey string) (tree g.List) {
+	tree = g.List{}
 	for k, v := range list {
-		if v[pidKey].Int() == id {
-			v[`children`] = gvar.New(Tree(list[(k+1):], v[priKey].Int(), priKey, pidKey))
+		if gconv.Int(v[pidKey]) == id {
+			v[`children`] = Tree(list[(k+1):], gconv.Int(v[priKey]), priKey, pidKey)
 			tree = append(tree, v)
 		}
 	}

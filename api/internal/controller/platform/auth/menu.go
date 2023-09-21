@@ -198,10 +198,9 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list, 0, `menuId`, `pid`)
+	tree := utils.Tree(list.List(), 0, columnsThis.MenuId, columnsThis.Pid)
 
-	utils.HttpWriteJson(ctx, map[string]interface{}{
-		`tree`: tree,
-	}, 0, ``)
+	res = &apiAuth.MenuTreeRes{}
+	gconv.Structs(tree, &res.Tree)
 	return
 }

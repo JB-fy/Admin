@@ -16,28 +16,26 @@ type AdminListReq struct {
 }
 
 type AdminListFilter struct {
-	/*--------公共参数 开始--------*/
 	Id             *uint       `json:"id,omitempty" v:"integer|min:1" dc:"ID"`
 	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	ExcId          *uint       `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	AdminId        *uint       `json:"adminId,omitempty" v:"integer|min:1" dc:"管理员ID"`
+	Account        string      `json:"account,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Phone          string      `json:"phone,omitempty" v:"phone" dc:"手机号"`
+	RoleId         *uint       `json:"roleId,omitempty" v:"integer|min:1" dc:"角色ID"`
+	IsStop         *uint       `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
-	/*--------公共参数 结束--------*/
-	AdminId *uint  `json:"adminId,omitempty" v:"integer|min:1" dc:"管理员ID"`
-	Account string `json:"account,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
-	Phone   string `json:"phone,omitempty" v:"phone" dc:"手机号"`
-	RoleId  *uint  `json:"roleId,omitempty" v:"integer|min:1" dc:"角色ID"`
-	IsStop  *uint  `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
 type AdminListRes struct {
-	Count int         `json:"count" dc:"总数"`
-	List  []AdminItem `json:"list" dc:"列表"`
+	Count int             `json:"count" dc:"总数"`
+	List  []AdminListItem `json:"list" dc:"列表"`
 }
 
-type AdminItem struct {
+type AdminListItem struct {
 	Id        *uint       `json:"id,omitempty" dc:"ID"`
 	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	AdminId   *uint       `json:"adminId,omitempty" dc:"管理员ID"`
