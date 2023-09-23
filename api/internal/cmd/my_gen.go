@@ -1061,7 +1061,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		tplDao = tplDao + daoFunc
 	}
 	if daoImportOtherDao != `` {
-		daoImportOtherDaoPoint := `"api/internal/dao/auth/internal"`
+		daoImportOtherDaoPoint := `"api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/internal"`
 		tplDao = gstr.Replace(tplDao, daoImportOtherDaoPoint, daoImportOtherDaoPoint+daoImportOtherDao)
 	}
 
