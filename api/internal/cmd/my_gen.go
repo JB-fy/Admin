@@ -531,8 +531,8 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					if v == selfDir+`/internal/dao/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseSnake+`.go` { //自身跳过
 						continue
 					}
-					relDaoDirTmp := gstr.Replace(v, selfDir+`/internal/dao/`, ``)
-					relDaoDirTmp = gstr.Replace(relDaoDirTmp, `/`+relTableItem.RelTableNameCaseSnake+`.go`, ``)
+					relDaoDirTmp := gstr.Replace(v, selfDir+`/internal/dao/`, ``, 1)
+					relDaoDirTmp = gstr.Replace(relDaoDirTmp, `/`+relTableItem.RelTableNameCaseSnake+`.go`, ``, 1)
 					if relDaoDirTmp == tpl.ModuleDirCaseCamelLower { //关联dao层在相同目录下时，直接返回
 						relTableItem.IsExistRelTableDao = true
 						relTableItem.RelDaoDir = relDaoDirTmp
@@ -995,16 +995,16 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	if daoParseInsert != `` {
 		daoParseInsertPoint := `case ` + "`id`" + `:
 				insertData[daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, daoParseInsertPoint, daoParseInsertPoint+daoParseInsert)
+		tplDao = gstr.Replace(tplDao, daoParseInsertPoint, daoParseInsertPoint+daoParseInsert, 1)
 	}
 	if daoHookInsert != `` {
 		daoHookInsertPoint := `// id, _ := result.LastInsertId()`
-		tplDao = gstr.Replace(tplDao, daoHookInsertPoint, `id, _ := result.LastInsertId()`+daoHookInsert)
+		tplDao = gstr.Replace(tplDao, daoHookInsertPoint, `id, _ := result.LastInsertId()`+daoHookInsert, 1)
 	}
 	if daoParseUpdate != `` {
 		daoParseUpdatePoint := `case ` + "`id`" + `:
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate)
+		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate, 1)
 	}
 	if daoHookUpdateBefore != `` || daoHookUpdateAfter != `` {
 		daoHookUpdatePoint := `
@@ -1019,7 +1019,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */`)
+			} */`, 1)
 		}
 		if daoHookUpdateAfter != `` {
 			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
@@ -1027,29 +1027,29 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			}`+daoHookUpdateAfter)
+			}`+daoHookUpdateAfter, 1)
 		}
 	}
 	if daoParseField != `` {
 		daoParseFieldPoint := `case ` + "`id`" + `:
 				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey() + ` + "` AS `" + ` + v)`
-		tplDao = gstr.Replace(tplDao, daoParseFieldPoint, daoParseFieldPoint+daoParseField)
+		tplDao = gstr.Replace(tplDao, daoParseFieldPoint, daoParseFieldPoint+daoParseField, 1)
 	}
 	if daoHookSelect != `` {
 		daoHookSelectPoint := `
 						/* case ` + "`xxxx`" + `:
 						record[v] = gvar.New(` + "``" + `) */`
-		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect)
+		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect, 1)
 	}
 	if daoParseFilter != `` {
 		daoParseFilterPoint := `case ` + "`id`, `idArr`" + `:
 				m = m.Where(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), v)`
-		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter)
+		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter, 1)
 	}
 	if daoParseOrder != `` {
 		daoParseOrderPoint := `case ` + "`id`" + `:
 				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), kArr[1])`
-		tplDao = gstr.Replace(tplDao, daoParseOrderPoint, daoParseOrderPoint+daoParseOrder)
+		tplDao = gstr.Replace(tplDao, daoParseOrderPoint, daoParseOrderPoint+daoParseOrder, 1)
 	}
 	if daoParseJoin != `` {
 		daoParseJoinPoint := `
@@ -1059,21 +1059,21 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 			*joinTableArr = append(*joinTableArr, relTable)
 			m = m.LeftJoin(relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
 		} */`
-		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin)
+		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin, 1)
 	}
 	if daoFunc != `` {
 		tplDao = tplDao + daoFunc
 	}
 	if daoImportOtherDao != `` {
 		daoImportOtherDaoPoint := `"api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/internal"`
-		tplDao = gstr.Replace(tplDao, daoImportOtherDaoPoint, daoImportOtherDaoPoint+daoImportOtherDao)
+		tplDao = gstr.Replace(tplDao, daoImportOtherDaoPoint, daoImportOtherDaoPoint+daoImportOtherDao, 1)
 	}
 
 	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/util/grand"
 	"github.com/gogf/gf/v2/container/garray"
-	`)
+	`, 1)
 
 	gfile.PutContents(saveFile, tplDao)
 	utils.GoFileFmt(saveFile)
@@ -2014,20 +2014,20 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"`
 	if gstr.Pos(tplRouter, importControllerStr) == -1 {
 		tplRouter = gstr.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
-	"api/internal/middleware"`)
+	"api/internal/middleware"`, 1)
 		//路由生成
 		tplRouter = gstr.Replace(tplRouter, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
 				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())
 			})
 
-			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
 		gfile.PutContents(saveFile, tplRouter)
 	} else {
 		//路由不存在时需生成
 		if gstr.Pos(tplRouter, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`) == -1 {
 			//路由生成
 			tplRouter = gstr.Replace(tplRouter, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
-				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`)
+				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`, 1)
 			gfile.PutContents(saveFile, tplRouter)
 		}
 	}
@@ -4101,7 +4101,7 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 	if gstr.Pos(tplViewRouter, `'`+path+`'`) == -1 { //路由不存在时新增
 		tplViewRouter = gstr.Replace(tplViewRouter, `/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
-            /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`)
+            /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
 	} else { //路由已存在则替换
 		tplViewRouter, _ = gregex.ReplaceString(`\{
                 path: '`+path+`',[\s\S]*'`+path+`' \}
