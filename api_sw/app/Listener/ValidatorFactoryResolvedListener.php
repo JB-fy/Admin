@@ -28,7 +28,7 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
         /**
          *  注册了 required_if_null 验证器（必须使用extendImplicit方法注册）
          *  添加原因：不在\Hyperf\Validation\Validator::implicitRules内的规则，在值是null和空字符串时，不会做验证
-         *  一般用于array规则可为空数组的情况，其他规则一般使用require就行了
+         *  一般用于array规则可为空数组的情况，其它规则一般使用require就行了
          *  示例：
          *      'attr' => 'array'，当attr传空字符串''时，不会报错
          *      'attr' => 'required|array'，当attr传[]时，会报错必须

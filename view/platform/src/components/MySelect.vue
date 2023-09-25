@@ -87,7 +87,7 @@ const select = reactive({
         select.api.isEnd = false
     },
     loading: computed((): boolean => {
-        //ElSelectV2的loading属性建议在远程数据全部加载时使用，其他情况下都为false。
+        //ElSelectV2的loading属性建议在远程数据全部加载时使用，其它情况下都为false。
         //例如：分页加载时使用会导致因出现加载中元素节点而导致滚动条节点丢失再出现。虽然可根据这个重新处理滚动事件，但视觉效果也不好
         if (select.api.param.page == 1 && select.api.param.limit == 0) {
             return select.api.loading

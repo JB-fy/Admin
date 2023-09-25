@@ -20,7 +20,7 @@ export default {
     loading: '加载中...',
     refresh: '刷新',
     close: '关闭',
-    closeOther: '关闭其他',
+    closeOther: '关闭其它',
     closeLeft: '关闭左侧',
     closeRight: '关闭右侧',
     closeAll: '关闭全部',

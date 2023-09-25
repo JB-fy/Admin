@@ -31,7 +31,7 @@ gf gen service
 		权重		命名：weight；类型：int等类型；
 		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
 		头像		命名：avatar；类型：varchar；
-	其他类型字段：
+	其它类型字段：
 		名称		命名：name后缀；类型：varchar；
 		标识		命名：code后缀；类型：varchar；
 		手机		命名：mobile,phone后缀；类型：varchar；

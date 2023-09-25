@@ -101,7 +101,7 @@ class Menu extends AbstractDao
                 $this->builder->where($this->getTable() . '.isStop', '=', 0, 'and');
                 switch ($value['sceneCode']) {
                     case 'platform':
-                        if ($value['loginId'] === getConfig('app.superPlatformAdminId')) { //平台超级管理员，不再需要其他条件
+                        if ($value['loginId'] === getConfig('app.superPlatformAdminId')) { //平台超级管理员，不再需要其它条件
                             return true;
                         }
                         $this->builder->where(getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and');

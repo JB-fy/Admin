@@ -9,7 +9,7 @@ use App\Module\Db\Model\AbstractModel;
 /**
  * @property int $roleId 权限角色ID
  * @property int $sceneId 权限场景ID
- * @property int $tableId 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
+ * @property int $tableId 关联表ID（0表示平台创建，其它值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
  * @property string $roleName 名称
  * @property int $isStop 停用：0否 1是
  * @property string $updatedAt 更新时间

@@ -12,7 +12,7 @@ import (
 type Role struct {
 	RoleId    uint        `json:"roleId"    ` // 权限角色ID
 	SceneId   uint        `json:"sceneId"   ` // 权限场景ID
-	TableId   uint        `json:"tableId"   ` // 关联表ID（0表示平台创建，其他值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
+	TableId   uint        `json:"tableId"   ` // 关联表ID（0表示平台创建，其它值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
 	RoleName  string      `json:"roleName"  ` // 名称
 	IsStop    uint        `json:"isStop"    ` // 停用：0否 1是
 	UpdatedAt *gtime.Time `json:"updatedAt" ` // 更新时间

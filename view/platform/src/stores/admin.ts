@@ -205,7 +205,7 @@ export const useAdminStore = defineStore('admin', {
       }
     },
     /**
-     * 关闭其他菜单标签
+     * 关闭其它菜单标签
      * @param {*} fullPath  菜单标签的路由路径
      */
     closeOtherMenuTab(fullPath: string) {

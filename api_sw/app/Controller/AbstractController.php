@@ -87,7 +87,7 @@ abstract class AbstractController
                 break;
             case 'update':
                 $data = $this->validation->make($data, $sceneName)->validate();
-                if (count($data) < 2) { //更新除了id还必须有其他参数，所以至少需要两个参数
+                if (count($data) < 2) { //更新除了id还必须有其它参数，所以至少需要两个参数
                     throwFailJson(89999999);
                 }
                 break;

@@ -40,7 +40,7 @@ http {
     keepalive_timeout   65; #设置会话保持时间，单位是秒
     gzip    on;         #开启文件压缩
     client_max_body_size 1024m; #最大上传文件大小，php也得设置，以双方最小值为准  
-    include /server/tool/nginx-1.24.0/conf/web/*.conf;   #导入其他路径的配置文件
+    include /server/tool/nginx-1.24.0/conf/web/*.conf;   #导入其它路径的配置文件
 }
 
         创建目录 mkdir -p /server/tool/nginx-1.24.0/conf/web

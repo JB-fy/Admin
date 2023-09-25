@@ -68,7 +68,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           ElementPlusResolver(),  //ElementPlus
           VantResolver(), //Vant
           IconsResolver({ //图标（格式：前缀-集合名-图标名。例：<i-ep-lock />）
-            prefix: 'Autoicon',  //标签前缀。默认前缀"i"，false取消前缀。（必须设置且是唯一字符串。代码中除图标使用外，其他地方不能以该字符串开头，否则会被当作图标处理。比如该值未设置，自定义组件rightHeader、布尔值false等会被当作图标处理）
+            prefix: 'Autoicon',  //标签前缀。默认前缀"i"，false取消前缀。（必须设置且是唯一字符串。代码中除图标使用外，其它地方不能以该字符串开头，否则会被当作图标处理。比如该值未设置，自定义组件rightHeader、布尔值false等会被当作图标处理）
             /* enabledCollections: ['ep'], //启用哪个图标集合，默认启用全部。全部可选集合：https://icones.js.org/
             alias: { //一些复杂的集合名称设置别名
               //别名: '集合名',

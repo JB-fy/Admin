@@ -218,7 +218,7 @@ socket=/server/webtool/mysql-8.0.19/mysql.sock
 #max_connect_errors=100
 #数据库事务隔离级别：REPEATABLE-READ(可重读，默认) READ-UNCOMMITTED(读取未提交内容) READ-COMMITTED(读取提交内容) SERIERLIZED(可串行化)
 #transaction_isolation=READ-COMMITTED
-#mysql中TIMESTAMP类型和其他的类型有点不一样(在没有设置explicit_defaults_for_timestamp=1的情况下）
+#mysql中TIMESTAMP类型和其它的类型有点不一样(在没有设置explicit_defaults_for_timestamp=1的情况下）
 #explicit_defaults_for_timestamp=1
 #当我们的join是ALL,index,rang或者Index_merge的时候使用的buffer。 实际上这种join被称为FULL JOIN
 #join_buffer_size=128M

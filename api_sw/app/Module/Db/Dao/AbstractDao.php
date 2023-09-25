@@ -315,7 +315,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'salt':    //password字段处理过程自动生成
                 return true;
             default:
-                /* //暂时不考虑其他复杂字段。复杂字段建议直接写入parseUpdateOfAlone方法
+                /* //暂时不考虑其它复杂字段。复杂字段建议直接写入parseUpdateOfAlone方法
                 list($realKey) = explode('->', $key);   //json情况
                 list($realKey) = explode(' AS ', $realKey); //别名情况
                 list($realKey) = explode(' as ', $realKey); //别名情况
