@@ -523,11 +523,15 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				relTableItem.RelNameFieldName = gstr.SubStr(relTableItem.RelNameFieldName, 0, -2)
 			}
 
-			fileArr, _ := gfile.ScanDirFile(gfile.SelfDir()+`/internal/dao/`, relTableItem.RelTableNameCaseSnake+`\.go`, true)
+			selfDir := gfile.SelfDir()
+			fileArr, _ := gfile.ScanDirFile(selfDir+`/internal/dao/`, relTableItem.RelTableNameCaseSnake+`\.go`, true)
 			relDaoDirList := []string{}
 			for _, v := range fileArr {
 				if gstr.Count(v, `/internal/`) == 1 {
-					relDaoDirTmp := gstr.Replace(v, gfile.SelfDir()+`/internal/dao/`, ``)
+					if v == selfDir+`/internal/dao/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseSnake+`.go` { //自身跳过
+						continue
+					}
+					relDaoDirTmp := gstr.Replace(v, selfDir+`/internal/dao/`, ``)
 					relDaoDirTmp = gstr.Replace(relDaoDirTmp, `/`+relTableItem.RelTableNameCaseSnake+`.go`, ``)
 					if relDaoDirTmp == tpl.ModuleDirCaseCamelLower { //关联dao层在相同目录下时，直接返回
 						relTableItem.IsExistRelTableDao = true
