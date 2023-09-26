@@ -351,7 +351,7 @@ func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{
 	columnsThis := daoThis.Columns()
 	err = daoThis.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
-			_, err = tx.Model(daoThis.Table()).Data(g.Map{columnsThis.ConfigKey: k, columnsThis.ConfigValue: v}).Save()
+			_, err = tx.Model(daoThis.ParseDbTable(ctx)).Data(g.Map{columnsThis.ConfigKey: k, columnsThis.ConfigValue: v}).Save()
 			if err != nil {
 				return
 			}
