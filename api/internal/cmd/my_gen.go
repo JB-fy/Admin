@@ -508,17 +508,28 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			relTableNameRaw := gstr.SubStr(field, 0, -2)
+			relTableNameCaseCamel := gstr.SubStr(fieldCaseCamel, 0, -2)
 			relTableItem := RelTableItem{
 				IsExistRelTableDao:         false,
 				RelDaoDir:                  ``,
 				IsSameDir:                  false,
-				RelTableNameCaseCamel:      gstr.CaseCamel(relTableNameRaw),
-				RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameRaw),
-				RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameRaw),
-				RelNameFieldCaseCamelLower: gstr.CaseCamelLower(relTableNameRaw) + `Name`,
+				RelTableNameCaseCamel:      relTableNameCaseCamel,
+				RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel),
+				RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameCaseCamel),
+				RelNameFieldCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel) + `Name`,
 				RelNameFieldName:           fieldName,
 			}
+			/* //表中已存在同名冗余字段，则不再做联表
+			isExistName := false
+			for _, column := range tpl.TableColumnList {
+				if relTableItem.RelNameFieldCaseCamelLower == gstr.CaseCamelLower(column[`Field`].String()) {
+					isExistName = true
+					break
+				}
+			}
+			if isExistName {
+				continue
+			} */
 			if gstr.ToUpper(gstr.SubStr(relTableItem.RelNameFieldName, -2)) == `ID` {
 				relTableItem.RelNameFieldName = gstr.SubStr(relTableItem.RelNameFieldName, 0, -2)
 			}
