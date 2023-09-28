@@ -2289,7 +2289,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 			relNameField := field
-			if tpl.RelTableMap[field].IsExistRelTableDao {
+			if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 				relTable := tpl.RelTableMap[field]
 				relNameField = relTable.RelNameField
 			}
@@ -4042,7 +4042,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			if tpl.RelTableMap[field].IsExistRelTableDao {
+			if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 				relTable := tpl.RelTableMap[field]
 				fieldName = relTable.RelNameFieldName
 			}
