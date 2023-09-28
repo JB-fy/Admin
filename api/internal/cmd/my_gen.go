@@ -115,7 +115,8 @@ type RelTableItem struct {
 	RelTableNameCaseCamel      string //关联表名（大驼峰）
 	RelTableNameCaseCamelLower string //关联表名（小驼峰）
 	RelTableNameCaseSnake      string //关联表名（蛇形）
-	RelNameFieldCaseCamelLower string //关联表名称字段（小驼峰）
+	IsRedundRelNameField       bool   //当前表是否冗余过关联表名称字段
+	RelNameField               string //关联表名称字段
 	RelNameFieldName           string //关联表名称字段名称
 }
 
@@ -454,6 +455,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	for index, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
+		fieldCaseCamelLower := gstr.CaseCamelLower(field)
 		tmp, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, column[`Comment`].String())
 		fieldName := gstr.Trim(tmp[0])
 		fieldArr[index] = field
@@ -512,24 +514,22 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			relTableItem := RelTableItem{
 				IsExistRelTableDao:         false,
 				RelDaoDir:                  ``,
+				RelDaoDirCaseCamel:         ``,
+				RelDaoDirCaseCamelLower:    ``,
 				IsSameDir:                  false,
 				RelTableNameCaseCamel:      relTableNameCaseCamel,
 				RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel),
 				RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameCaseCamel),
-				RelNameFieldCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel) + `Name`,
+				IsRedundRelNameField:       false,
+				RelNameField:               ``,
 				RelNameFieldName:           fieldName,
 			}
-			/* //表中已存在同名冗余字段，则不再做联表
-			isExistName := false
-			for _, column := range tpl.TableColumnList {
-				if relTableItem.RelNameFieldCaseCamelLower == gstr.CaseCamelLower(column[`Field`].String()) {
-					isExistName = true
-					break
-				}
+			//判断字段是小驼峰还是蛇形
+			if fieldCaseCamelLower == field {
+				relTableItem.RelNameField = relTableItem.RelTableNameCaseCamelLower + `Name`
+			} else {
+				relTableItem.RelNameField = relTableItem.RelTableNameCaseSnake + `_name`
 			}
-			if isExistName {
-				continue
-			} */
 			if gstr.ToUpper(gstr.SubStr(relTableItem.RelNameFieldName, -2)) == `ID` {
 				relTableItem.RelNameFieldName = gstr.SubStr(relTableItem.RelNameFieldName, 0, -2)
 			}
@@ -601,6 +601,13 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		if index != -1 {
 			tpl.LabelField = fieldArr[index]
 			break
+		}
+	}
+
+	for k, v := range tpl.RelTableMap {
+		if garray.NewStrArrayFrom(fieldArr).Contains(v.RelNameField) {
+			v.IsRedundRelNameField = true
+			tpl.RelTableMap[k] = v
 		}
 	}
 
@@ -843,12 +850,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 						daoImportOtherDao += daoImportOtherDaoTmp
 					}
 				}
-				daoParseFieldTmp := `
-			case ` + "`" + relTable.RelNameFieldCaseCamelLower + "`" + `:
+				if !tpl.RelTableMap[field].IsRedundRelNameField {
+					daoParseFieldTmp := `
+			case ` + "`" + relTable.RelNameField + "`" + `:
 				m = m.Fields(` + daoPath + `.Table() + ` + "`.`" + ` + v)
 				m = daoThis.ParseJoin(` + daoPath + `.Table(), joinTableArr)(m)`
-				if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-					daoParseField += daoParseFieldTmp
+					if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+						daoParseField += daoParseFieldTmp
+					}
 				}
 				daoParseJoinTmp := `
 		case ` + daoPath + `.Table():
@@ -1315,9 +1324,9 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqCreateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" v:"integer|min:1" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *uint ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
-			if tpl.RelTableMap[field].IsExistRelTableDao {
+			if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 				relTable := tpl.RelTableMap[field]
-				apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelNameFieldCaseCamelLower) + ` *string ` + "`" + `json:"` + relTable.RelNameFieldCaseCamelLower + `,omitempty" dc:"` + relTable.RelNameFieldName + `"` + "`\n"
+				apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelNameField) + ` *string ` + "`" + `json:"` + relTable.RelNameField + `,omitempty" dc:"` + relTable.RelNameFieldName + `"` + "`\n"
 			}
 			continue
 		}
@@ -1700,9 +1709,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		}
 		//id后缀
 		if gstr.SubStr(fieldCaseCamel, -2) == `Id` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
-			if tpl.RelTableMap[field].IsExistRelTableDao {
+			if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 				relTable := tpl.RelTableMap[field]
-				controllerAlloweFieldList += "`" + relTable.RelNameFieldCaseCamelLower + "`, "
+				controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
 			}
 			continue
 		}
@@ -2282,7 +2291,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			relNameField := field
 			if tpl.RelTableMap[field].IsExistRelTableDao {
 				relTable := tpl.RelTableMap[field]
-				relNameField = relTable.RelNameFieldCaseCamelLower
+				relNameField = relTable.RelNameField
 			}
 			viewListColumn += `
 	{
