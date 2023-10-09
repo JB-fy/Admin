@@ -4,14 +4,14 @@
  Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.0.200:3306
+ Source Host           : 192.168.2.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 06/08/2023 02:49:48
+ Date: 09/10/2023 18:00:29
 */
 
 SET NAMES utf8mb4;
@@ -302,11 +302,16 @@ CREATE TABLE `platform_config`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
+INSERT INTO `platform_config` VALUES (1, 'aliyunOssRoleArn', 'acs:ram::1359390739767110:role/aliyunosstokengeneratorrole', '2023-07-13 12:22:32', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (2, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-07-13 12:23:14', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (3, 'aliyunOssBucket', 'jslx01', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (4, 'aliyunOssAccessKeyId', 'LTAI5t9jGNGpb9hhtV8M8q2x', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (5, 'aliyunOssAccessKeySecret', 'vhfbJ2QAZsFoTZ6m5XF0qwikqWeR0x', '2023-07-13 12:23:18', '2023-07-11 18:33:31');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -320,10 +325,38 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user`  (
+  `userId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `phone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机',
+  `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码（md5保存）',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '加密盐',
+  `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
+  `avatar` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '头像',
+  `gender` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '性别：0未设置 1男 2女',
+  `birthday` date NULL DEFAULT NULL COMMENT '生日',
+  `address` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '详细地址',
+  `idCardName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证姓名',
+  `idCardNo` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`userId`) USING BTREE,
+  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of user
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
