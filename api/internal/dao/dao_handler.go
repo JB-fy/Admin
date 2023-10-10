@@ -55,13 +55,13 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[s
 	return &daoHandlerThisObj
 }
 
-func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data))
+func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}, fill ...bool) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data, fill...))
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseUpdate(data))
+func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}, fill ...bool) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseUpdate(data, fill...))
 	return daoHandlerThis
 }
 
