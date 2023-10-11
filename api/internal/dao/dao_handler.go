@@ -12,9 +12,9 @@ type DaoInterface interface {
 	ParseDbGroup(ctx context.Context, dbGroupSeldata ...map[string]interface{}) string
 	ParseDbTable(ctx context.Context, dbTableSelData ...map[string]interface{}) string
 	ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model
-	ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler
+	ParseInsert(insert map[string]interface{}) gdb.ModelHandler
 	HookInsert(data map[string]interface{}) gdb.HookHandler
-	ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler
+	ParseUpdate(update map[string]interface{}) gdb.ModelHandler
 	HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler
 	HookDelete(idArr ...int) gdb.HookHandler
 	ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler
@@ -59,13 +59,13 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[s
 	return &daoHandlerThisObj
 }
 
-func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}, fill ...bool) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data, fill...))
+func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data))
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}, fill ...bool) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseUpdate(data, fill...))
+func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseUpdate(data))
 	return daoHandlerThis
 }
 

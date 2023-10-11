@@ -67,7 +67,7 @@ func (daoThis *actionDao) ParseDbCtx(ctx context.Context, dbSelDataList ...map[s
 }
 
 // 解析insert
-func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *actionDao) ParseInsert(insert map[string]interface{}) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
 		hookData := map[string]interface{}{}
@@ -78,11 +78,9 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, fill ...boo
 			case `sceneIdArr`:
 				hookData[k] = v
 			default:
-				//数据库不存在的字段过滤掉，未传值默认true
-				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
-					continue
+				if daoThis.ColumnArrG().Contains(k) {
+					insertData[k] = v
 				}
-				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -115,7 +113,7 @@ func (daoThis *actionDao) HookInsert(data map[string]interface{}) gdb.HookHandle
 }
 
 // 解析update
-func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler {
+func (daoThis *actionDao) ParseUpdate(update map[string]interface{}) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
@@ -123,11 +121,9 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, fill ...boo
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
 			default:
-				//数据库不存在的字段过滤掉，未传值默认true
-				if (len(fill) == 0 || fill[0]) && !daoThis.ColumnArrG().Contains(k) {
-					continue
+				if daoThis.ColumnArrG().Contains(k) {
+					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 				}
-				updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 			}
 		}
 		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
