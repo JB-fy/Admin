@@ -3670,7 +3670,7 @@ const ` + field + `Handle = reactive({
 				}
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', ` + requiredStr + ` trigger: 'blur', message: t('validation.input') },
+			{ type: 'string',` + requiredStr + ` trigger: 'blur', message: t('validation.input') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
