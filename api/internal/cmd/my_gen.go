@@ -2217,8 +2217,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
-        width: 100,
-        sortable: true,
+		width: 100,
+		sortable: true,
 	},`
 			continue
 		}
@@ -2230,8 +2230,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
 		key: '` + field + `',
 		align: 'center',
-        width: 150,
-        hidden: true,
+		width: 150,
+		hidden: true,
 	},`
 			continue
 
@@ -2368,15 +2368,15 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if field == `avatar` || gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` {
 			viewListColumn += `
 	{
-        dataKey: '` + field + `',
-        title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
-        key: '` + field + `',
-        align: 'center',
-        width: 100,
-        cellRenderer: (props: any): any => {
-            if (!props.rowData.` + field + `) {
-                return
-            }`
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 100,
+		cellRenderer: (props: any): any => {
+			if (!props.rowData.` + field + `) {
+				return
+			}`
 			if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
 				viewListColumn += `
 			let imageList: string[]
@@ -2390,28 +2390,28 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			const imageList = [props.rowData.` + field + `]`
 			}
 			viewListColumn += `
-            return [
-                h(ElScrollbar, {
-                    'wrap-style': 'display: flex; align-items: center;',
-                    'view-style': 'margin: auto;',
-                }, {
-                    default: () => {
-                        const content = imageList.map((item) => {
-                            return h(ElImage as any, {
-                                'style': 'width: 45px;',    //不想显示滚动条，需设置table属性row-height增加行高
-                                'src': item,
-                                'lazy': true,
-                                'hide-on-click-modal': true,
-                                'preview-teleported': true,
-                                'preview-src-list': imageList
-                            })
-                        })
-                        return content
-                    }
-                })
-            ]
-        },
-    },`
+			return [
+				h(ElScrollbar, {
+					'wrap-style': 'display: flex; align-items: center;',
+					'view-style': 'margin: auto;',
+				}, {
+					default: () => {
+						const content = imageList.map((item) => {
+							return h(ElImage as any, {
+								'style': 'width: 45px;',    //不想显示滚动条，需设置table属性row-height增加行高
+								'src': item,
+								'lazy': true,
+								'hide-on-click-modal': true,
+								'preview-teleported': true,
+								'preview-src-list': imageList
+							})
+						})
+						return content
+					}
+				})
+			]
+		},
+	},`
 			continue
 		}
 		//video,video_list,videoList,video_arr,videoArr等后缀
@@ -2421,15 +2421,15 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			viewListColumn += `
 	{
-        dataKey: '` + field + `',
-        title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
-        key: '` + field + `',
-        align: 'center',
-        width: 150,
-        cellRenderer: (props: any): any => {
-            if (!props.rowData.` + field + `) {
-                return
-            }`
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 150,
+		cellRenderer: (props: any): any => {
+			if (!props.rowData.` + field + `) {
+				return
+			}`
 			if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
 				viewListColumn += `
 			let videoList: string[]
@@ -2443,41 +2443,41 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			const videoList = [props.rowData.` + field + `]`
 			}
 			viewListColumn += `
-            return [
-                h(ElScrollbar, {
-                    'wrap-style': 'display: flex; align-items: center;',
-                    'view-style': 'margin: auto;',
-                }, {
-                    default: () => {
-                        const content = videoList.map((item) => {
-                            return h('video', {
+			return [
+				h(ElScrollbar, {
+					'wrap-style': 'display: flex; align-items: center;',
+					'view-style': 'margin: auto;',
+				}, {
+					default: () => {
+						const content = videoList.map((item) => {
+							return h('video', {
 								'style': 'width: 120px; height: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
 								'preload': 'none',
 								'controls': true,
 								'src': item
 							})
-                        })
-                        return content
-                    }
-                })
-            ]
-        },
-    },`
+						})
+						return content
+					}
+				})
+			]
+		},
+	},`
 			continue
 		}
 		//list,arr等后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) {
 			viewListColumn += `
 	{
-        dataKey: '` + field + `',
-        title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
-        key: '` + field + `',
-        align: 'center',
-        width: 100,
-        cellRenderer: (props: any): any => {
-            if (!props.rowData.` + field + `) {
-                return
-            }`
+		dataKey: '` + field + `',
+		title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),
+		key: '` + field + `',
+		align: 'center',
+		width: 100,
+		cellRenderer: (props: any): any => {
+			if (!props.rowData.` + field + `) {
+				return
+			}`
 			if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
 				viewListColumn += `
 			let arrList: any[]
@@ -2492,28 +2492,28 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			viewListColumn += `
 			let typeArr: string[] = ['', 'success', 'danger', 'info', 'warning']
-            return [
-                h(ElScrollbar, {
-                    'wrap-style': 'display: flex; align-items: center;',
-                    'view-style': 'margin: auto;',
-                }, {
-                    default: () => {
-                        const content = arrList.map((item, index) => {
-                            return h(ElTag as any, {
-                                'style': 'margin: auto 5px 5px auto;',
-                                'type': typeArr[index % 5]
-                            }, {
+			return [
+				h(ElScrollbar, {
+					'wrap-style': 'display: flex; align-items: center;',
+					'view-style': 'margin: auto;',
+				}, {
+					default: () => {
+						const content = arrList.map((item, index) => {
+							return h(ElTag as any, {
+								'style': 'margin: auto 5px 5px auto;',
+								'type': typeArr[index % 5]
+							}, {
 								default: () => {
 									return item
 								}
 							})
-                        })
-                        return content
-                    }
-                })
-            ]
-        },
-    },`
+						})
+						return content
+					}
+				})
+			]
+		},
+	},`
 			continue
 		}
 		//IP后缀
@@ -2676,7 +2676,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		key: '` + field + `',
 		align: 'center',
 		width: 150,
-        sortable: true
+		sortable: true
 	},`
 			continue
 		}
@@ -2689,7 +2689,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		key: '` + field + `',
 		align: 'center',
 		width: 100,
-        sortable: true
+		sortable: true
 	},`
 			continue
 		}
@@ -2703,7 +2703,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		key: '` + field + `',
 		align: 'center',
 		width: 200,
-        hidden: true
+		hidden: true
 	},`
 			continue
 		}
@@ -2974,8 +2974,8 @@ defineExpose({
 		</ElCol>
 		<ElCol :span="8" style="text-align: right;">
 			<ElSpace :size="10" style="height: 100%;">
-                <MyExportButton :headerList="table.columns"
-                    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+				<MyExportButton :headerList="table.columns"
+					:api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 				<ElDropdown max-height="300" :hide-on-click="false">
 					<ElButton type="info" :circle="true">
 						<AutoiconEpHide />
@@ -3376,11 +3376,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
-                    <label v-if="saveForm.data.idArr?.length">
-                        <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                    </label>
-                </ElFormItem>`
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
+					<label v-if="saveForm.data.idArr?.length">
+						<ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+					</label>
+				</ElFormItem>`
 			continue
 		}
 		//salt
@@ -3397,8 +3397,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
-                </ElFormItem>`
+					<MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
+				</ElFormItem>`
 			continue
 		}
 		//level
@@ -3420,11 +3420,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + column[`Default`].String() + `" />
-                    <label>
-                        <ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
-                    </label>
-                </ElFormItem>`
+					<ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + column[`Default`].String() + `" />
+					<label>
+						<ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+					</label>
+				</ElFormItem>`
 			continue
 		}
 		//id后缀
@@ -3440,8 +3440,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MySelect v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
-                </ElFormItem>`
+					<MySelect v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
+				</ElFormItem>`
 			continue
 		}
 		//name后缀
@@ -3456,9 +3456,9 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
-                    <label>
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+					<label>
+						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+					</label>
 				</ElFormItem>`
 			} else {
 				viewSaveField += `
@@ -3504,10 +3504,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				viewSaveRule += `
 		` + field + `: [
-            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-            // { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
-            // { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
-        ],`
+			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
+			// { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
+			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*" :multiple="true" />
@@ -3517,11 +3517,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
 			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
-        ],`
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MyUpload v-model="saveForm.data.` + field + `" accept="image/*" />
-                </ElFormItem>`
+					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*" />
+				</ElFormItem>`
 			}
 			continue
 		}
@@ -3534,10 +3534,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				viewSaveRule += `
 		` + field + `: [
-            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-            // { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
-            // { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
-        ],`
+			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
+			// { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
+			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" :multiple="true" />
@@ -3547,11 +3547,11 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
 			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
-        ],`
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" />
-                </ElFormItem>`
+					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false" />
+				</ElFormItem>`
 			}
 			continue
 		}
@@ -3565,10 +3565,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			viewSaveRule += `
 		` + field + `: [
-            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required')/* , defaultField: { type: 'string', message: t('validation.input') } */ },
-            // { type: 'array', min: 1, trigger: 'change', message: '' },
-            // { type: 'array', max: 10, trigger: 'change', message: '' }
-        ],`
+			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required')/* , defaultField: { type: 'string', message: t('validation.input') } */ },
+			// { type: 'array', min: 1, trigger: 'change', message: '' },
+			// { type: 'array', max: 10, trigger: 'change', message: '' }
+		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.typeArr[index % 5]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
@@ -3642,10 +3642,10 @@ const ` + field + `Handle = reactive({
 		` + field + `: ` + statusList[0][0] + `,`
 				viewSaveField += `
 					<ElRadioGroup v-model="saveForm.data.` + field + `">
-                        <ElRadio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
-                            {{ item.label }}
-                        </ElRadio>
-                    </ElRadioGroup>`
+						<ElRadio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
+							{{ item.label }}
+						</ElRadio>
+					</ElRadioGroup>`
 			}
 			viewSaveField += `
 				</ElFormItem>`
@@ -3683,12 +3683,12 @@ const ` + field + `Handle = reactive({
 		if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 			viewSaveRule += `
 		` + field + `: [
-            { type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
-        ],`
+			{ type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
+		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
-                </ElFormItem>`
+					<ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
+				</ElFormItem>`
 			continue
 		}
 		//start_前缀
@@ -3789,9 +3789,9 @@ const ` + field + `Handle = reactive({
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
-                    <label>
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+					<label>
+						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+					</label>
 				</ElFormItem>`
 			} else {
 				viewSaveField += `
@@ -3811,9 +3811,9 @@ const ` + field + `Handle = reactive({
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
-                    <label>
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+					<label>
+						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+					</label>
 				</ElFormItem>`
 			} else {
 				viewSaveField += `
@@ -3880,7 +3880,7 @@ const ` + field + `Handle = reactive({
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+					<ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
 					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>`
 			continue
@@ -3933,7 +3933,7 @@ const saveForm = reactive({
 			const param = removeEmptyOfObj(saveForm.data, false)`
 	if tpl.PasswordHandle.PasswordField != `` {
 		tplView += `
-            param.` + tpl.PasswordHandle.PasswordField + ` ? param.` + tpl.PasswordHandle.PasswordField + ` = md5(param.` + tpl.PasswordHandle.PasswordField + `) : delete param.` + tpl.PasswordHandle.PasswordField
+			param.` + tpl.PasswordHandle.PasswordField + ` ? param.` + tpl.PasswordHandle.PasswordField + ` = md5(param.` + tpl.PasswordHandle.PasswordField + `) : delete param.` + tpl.PasswordHandle.PasswordField
 	}
 	tplView += `
 			try {
@@ -4123,12 +4123,12 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: '` + fieldName + `',`
 	}
 	tplView := `export default {
-    name:{` + viewI18nName + `
-    },
-    status: {` + viewI18nStatus + `
-    },
-    tip: {` + viewI18nTip + `
-    }
+	name:{` + viewI18nName + `
+	},
+	status: {` + viewI18nStatus + `
+	},
+	tip: {` + viewI18nTip + `
+	}
 }`
 
 	gfile.PutContents(saveFile, tplView)
@@ -4142,22 +4142,22 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 
 	path := `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower
 	replaceStr := `{
-                path: '` + path + `',
-                component: async () => {
-                    const component = await import('@/views` + path + `/Index.vue')
-                    component.default.name = '` + path + `'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '` + path + `' }
-            },`
+				path: '` + path + `',
+				component: async () => {
+					const component = await import('@/views` + path + `/Index.vue')
+					component.default.name = '` + path + `'
+					return component
+				},
+				meta: { isAuth: true, keepAlive: true, componentName: '` + path + `' }
+			},`
 
 	if gstr.Pos(tplViewRouter, `'`+path+`'`) == -1 { //路由不存在时新增
 		tplViewRouter = gstr.Replace(tplViewRouter, `/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
-            /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
+			/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
 	} else { //路由已存在则替换
 		tplViewRouter, _ = gregex.ReplaceString(`\{
-                path: '`+path+`',[\s\S]*'`+path+`' \}
-            \},`, replaceStr, tplViewRouter)
+				path: '`+path+`',[\s\S]*'`+path+`' \}
+			\},`, replaceStr, tplViewRouter)
 	}
 	gfile.PutContents(saveFile, tplViewRouter)
 
