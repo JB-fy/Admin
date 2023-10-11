@@ -16,7 +16,6 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -325,6 +324,8 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+			case daoThis.Columns().MenuName:
+				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
@@ -349,18 +350,11 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
-				kArr := strings.Split(k, ` `) //支持`id > ?`等k
-				if !daoThis.ColumnArrG().Contains(kArr[0]) {
+				if daoThis.ColumnArrG().Contains(k) {
+					m = m.Where(daoThis.Table()+`.`+k, v)
+				} else {
 					m = m.Where(k, v)
-					continue
 				}
-				if len(kArr) == 1 {
-					if gstr.SubStr(gstr.CaseCamel(kArr[0]), -4) == `Name` {
-						m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
-						continue
-					}
-				}
-				m = m.Where(daoThis.Table()+`.`+k, v)
 			}
 		}
 		return m

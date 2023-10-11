@@ -254,18 +254,11 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]in
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
 			default:
-				kArr := strings.Split(k, ` `) //支持`id > ?`等k
-				if !daoThis.ColumnArrG().Contains(kArr[0]) {
+				if daoThis.ColumnArrG().Contains(k) {
+					m = m.Where(daoThis.Table()+`.`+k, v)
+				} else {
 					m = m.Where(k, v)
-					continue
 				}
-				if len(kArr) == 1 {
-					if gstr.SubStr(gstr.CaseCamel(kArr[0]), -4) == `Name` {
-						m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
-						continue
-					}
-				}
-				m = m.Where(daoThis.Table()+`.`+k, v)
 			}
 		}
 		return m

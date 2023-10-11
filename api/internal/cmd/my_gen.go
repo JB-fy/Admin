@@ -872,6 +872,16 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			continue
 		}
+		// name后缀
+		if gstr.SubStr(fieldCaseCamel, -4) == `Name` && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+			daoParseFilterTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				m = m.WhereLike(daoThis.Table()+` + "`.`" + `+k, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
+				daoParseFilter += daoParseFilterTmp
+			}
+			continue
+		}
 		//start_前缀
 		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` && (gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1) {
 			daoParseFilterTmp := `
@@ -1330,7 +1340,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			continue
 		}
-		//name或code后缀
+		//name后缀
+		//code后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 			apiReqFilterColumn += fieldCaseCamel + ` string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
 			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"length:1,` + resultStr[1] + `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"` + comment + `"` + "`\n"
@@ -2303,7 +2314,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	},`
 			continue
 		}
-		//name或code后缀
+		//name后缀
+		//code后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 			viewListColumn += `
 	{
@@ -3096,7 +3108,8 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		</ElFormItem>`
 			continue
 		}
-		//name或code后缀
+		//name后缀
+		//code后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
@@ -3419,7 +3432,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                 </ElFormItem>`
 			continue
 		}
-		//name或code后缀
+		//name后缀
+		//code后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 			viewSaveRule += `
 		` + field + `: [
