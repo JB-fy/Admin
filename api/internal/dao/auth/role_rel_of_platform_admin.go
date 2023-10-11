@@ -180,7 +180,7 @@ func (daoThis *roleRelOfPlatformAdminDao) HookDelete(idArr ...int) gdb.HookHandl
 }
 
 // 解析field
-func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableArr *[]string) gdb.ModelHandler {
+func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableArr *[]string, fieldWithParam ...map[string]interface{}) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		afterField := []string{}
 		for _, v := range field {
@@ -198,15 +198,24 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, joinTableAr
 				}
 			}
 		}
-		if len(afterField) > 0 {
-			m = m.Hook(daoThis.HookSelect(afterField))
+		afterFieldWithParam := map[string]interface{}{}
+		if len(fieldWithParam) > 0 {
+			for k, v := range fieldWithParam[0] {
+				switch k {
+				default:
+					afterFieldWithParam[k] = v
+				}
+			}
+		}
+		if len(afterField) > 0 || len(afterFieldWithParam) > 0 {
+			m = m.Hook(daoThis.HookSelect(afterField, afterFieldWithParam))
 		}
 		return m
 	}
 }
 
 // hook select
-func (daoThis *roleRelOfPlatformAdminDao) HookSelect(afterField []string) gdb.HookHandler {
+func (daoThis *roleRelOfPlatformAdminDao) HookSelect(afterField []string, afterFieldWithParam ...map[string]interface{}) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -224,6 +233,14 @@ func (daoThis *roleRelOfPlatformAdminDao) HookSelect(afterField []string) gdb.Ho
 						record[v] = gvar.New(``) */
 						}
 					}
+					/* if len(afterFieldWithParam) > 0 {
+						for k, v := range afterFieldWithParam[0] {
+							switch k {
+							case `xxxx`:
+								record[k] = gvar.New(v)
+							}
+						}
+					} */
 				}(record)
 			}
 			wg.Wait()
