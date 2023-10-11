@@ -312,14 +312,14 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
-			case daoThis.Columns().RoleName:
-				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)
+			case daoThis.Columns().RoleName:
+				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 			case `sceneCode`:
 				m = m.Where(Scene.Table()+`.`+Scene.Columns().SceneCode, v)
 				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)

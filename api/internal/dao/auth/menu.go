@@ -324,14 +324,14 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
-			case daoThis.Columns().MenuName:
-				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
+			case daoThis.Columns().MenuName:
+				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := v.(map[string]interface{})
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().SceneId, val[`sceneId`])
