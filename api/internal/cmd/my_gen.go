@@ -1370,7 +1370,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//video,video_list,videoList,video_arr,videoArr等后缀
 		if field == `avatar` || gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
 			if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
-				apiReqCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `json:"` + field + `,omitempty" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
+				requiredStr := ``
+				if column[`Null`].String() == `NO` {
+					requiredStr = `required|`
+				}
+				apiReqCreateColumn += fieldCaseCamel + ` *[]string ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *[]string ` + "`" + `json:"` + field + `,omitempty" v:"distinct|foreach|url|foreach|min-length:1" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` []string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			} else {
@@ -1382,7 +1386,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//list,arr等后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) {
-			apiReqCreateColumn += fieldCaseCamel + ` *[]interface{} ` + "`" + `json:"` + field + `,omitempty" v:"distinct" dc:"` + comment + `"` + "`\n"
+			requiredStr := ``
+			if column[`Null`].String() == `NO` {
+				requiredStr = `required|`
+			}
+			apiReqCreateColumn += fieldCaseCamel + ` *[]interface{} ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `distinct" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *[]interface{} ` + "`" + `json:"` + field + `,omitempty" v:"distinct" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` []interface{} ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
@@ -1397,7 +1405,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//remark,desc,msg,message,intro,content后缀
 		if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) {
-			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
+			requiredStr := ``
+			if column[`Null`].String() == `NO` && column[`Type`].String() == `text` {
+				requiredStr = `required`
+			}
+			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
@@ -1430,11 +1442,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` || gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` {
 			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
 				apiReqFilterColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
+				requiredStr := ``
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-					apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"required|date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
-				} else {
-					apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
+					requiredStr = `required|`
 				}
+				apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
 				apiReqUpdateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
 				apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 				continue
@@ -1489,11 +1501,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 		//timestamp或datetime类型
 		if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+			requiredStr := ``
 			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-				apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"required|date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
-			} else {
-				apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
+				requiredStr = `required|`
 			}
+			apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d H:i:s" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
@@ -1501,33 +1513,33 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//date类型
 		if gstr.Pos(column[`Type`].String(), `date`) != -1 {
 			apiReqFilterColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
+			requiredStr := ``
 			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-				apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"required|date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
-			} else {
-				apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
+				requiredStr = `required|`
 			}
+			apiReqCreateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *gtime.Time ` + "`" + `json:"` + field + `,omitempty" v:"date-format:Y-m-d" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
 		}
 		//json类型
 		if gstr.Pos(column[`Type`].String(), `json`) != -1 {
+			requiredStr := ``
 			if column[`Null`].String() == `NO` {
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"required|json" dc:"` + comment + `"` + "`\n"
-			} else {
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"json" dc:"` + comment + `"` + "`\n"
+				requiredStr = `required|`
 			}
+			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `json" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"json" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
 		}
 		//text类型
 		if gstr.Pos(column[`Type`].String(), `text`) != -1 {
+			requiredStr := ``
 			if column[`Null`].String() == `NO` {
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"required" dc:"` + comment + `"` + "`\n"
-			} else {
-				apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
+				requiredStr = `required`
 			}
+			apiReqCreateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"` + requiredStr + `" dc:"` + comment + `"` + "`\n"
 			apiReqUpdateColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" v:"" dc:"` + comment + `"` + "`\n"
 			apiResColumn += fieldCaseCamel + ` *string ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 			continue
@@ -3486,9 +3498,13 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 		if field == `avatar` || gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` {
 			if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
+				requiredStr := ``
+				if column[`Null`].String() == `NO` {
+					requiredStr = ` required: true,`
+				}
 				viewSaveRule += `
 		` + field + `: [
-            { type: 'array', trigger: 'change', defaultField: { type: 'url', message: t('validation.url') }, message: t('validation.upload') },
+            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
             // { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
             // { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
         ],`
@@ -3512,9 +3528,13 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//video,video_list,videoList,video_arr,videoArr等后缀
 		if gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr` {
 			if column[`Type`].String() == `json` || column[`Type`].String() == `text` {
+				requiredStr := ``
+				if column[`Null`].String() == `NO` {
+					requiredStr = ` required: true,`
+				}
 				viewSaveRule += `
 		` + field + `: [
-            { type: 'array', trigger: 'change', defaultField: { type: 'url', message: t('validation.url') }, message: t('validation.upload') },
+            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
             // { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
             // { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
         ],`
@@ -3539,9 +3559,13 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) {
 			viewSaveDataInit += `
 		` + field + `: [],`
+			requiredStr := ``
+			if column[`Null`].String() == `NO` {
+				requiredStr = ` required: true,`
+			}
 			viewSaveRule += `
 		` + field + `: [
-            // { type: 'array', trigger: 'change', defaultField: { type: 'string', message: '' }, message: '' },
+            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required')/* , defaultField: { type: 'string', message: t('validation.input') } */ },
             // { type: 'array', min: 1, trigger: 'change', message: '' },
             // { type: 'array', max: 10, trigger: 'change', message: '' }
         ],`
@@ -3640,8 +3664,14 @@ const ` + field + `Handle = reactive({
 				</ElFormItem>`
 				continue
 			} else if column[`Type`].String() == `text` {
+				requiredStr := ``
+				if column[`Null`].String() == `NO` {
+					requiredStr = ` required: true,`
+				}
 				viewSaveRule += `
-		` + field + `: [],`
+		` + field + `: [
+			{ type: 'string', ` + requiredStr + ` trigger: 'blur', message: t('validation.input') },
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyEditor v-model="saveForm.data.` + field + `" />
@@ -3664,17 +3694,14 @@ const ` + field + `Handle = reactive({
 		//start_前缀
 		if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` {
 			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+				requiredStr := ``
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-					viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
-		],`
-				} else {
-					viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', trigger: 'change', message: '' }
-		],`
+					requiredStr = ` required: true,`
 				}
+				viewSaveRule += `
+		` + field + `: [
+			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') }
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :default-time="new Date(2000, 0, 1, 0, 0, 0)" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
@@ -3688,17 +3715,14 @@ const ` + field + `Handle = reactive({
 		//end_前缀
 		if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` {
 			if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+				requiredStr := ``
 				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-					viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
-		],`
-				} else {
-					viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', trigger: 'change', message: '' }
-		],`
+					requiredStr = ` required: true,`
 				}
+				viewSaveRule += `
+		` + field + `: [
+			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') }
+		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :default-time="new Date(2000, 0, 1, 23, 59, 59)" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
@@ -3723,7 +3747,7 @@ const ` + field + `Handle = reactive({
 			} else {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'integer', trigger: 'change', message: '' }
+			{ type: 'integer', trigger: 'change', message: t('validation.input') }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3746,7 +3770,7 @@ const ` + field + `Handle = reactive({
 			} else {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'number'/* 'float' */, trigger: 'change', message: '' }	// 类型float值为0时验证不能通过
+			{ type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') }	// 类型float值为0时验证不能通过
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3801,17 +3825,14 @@ const ` + field + `Handle = reactive({
 		}
 		//timestamp或datetime类型
 		if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 {
+			requiredStr := ``
 			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
-		],`
-			} else {
-				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', trigger: 'change', message: '' }
-		],`
+				requiredStr = ` required: true,`
 			}
+			viewSaveRule += `
+		` + field + `: [
+			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') }
+		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
@@ -3820,17 +3841,14 @@ const ` + field + `Handle = reactive({
 		}
 		//date类型
 		if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+			requiredStr := ``
 			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
-				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', required: true, trigger: 'change', message: t('validation.select') }
-		],`
-			} else {
-				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', trigger: 'change', message: '' }
-		],`
+				requiredStr = ` required: true,`
 			}
+			viewSaveRule += `
+		` + field + `: [
+			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') }
+		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="date" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />

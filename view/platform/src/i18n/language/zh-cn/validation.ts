@@ -17,6 +17,8 @@ export default {
     json: '必须是有效的JSON格式',
     url: '必须是有效的URL格式',
     email: '必须是有效的EMAIL格式',
+    required: '必须的',
+    input: '请输入',
     select: '请选择',
     upload: '请上传',
     //account: '必须包含以下有效字符 (中文/英文，数字)',
