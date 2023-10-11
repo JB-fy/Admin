@@ -180,14 +180,13 @@ func (daoThis *roleRelToMenuDao) HookDelete(idArr ...int) gdb.HookHandler {
 }
 
 // 解析field
-func (daoThis *roleRelToMenuDao) ParseField(field []string, joinTableArr *[]string, fieldWithParam ...map[string]interface{}) gdb.ModelHandler {
+func (daoThis *roleRelToMenuDao) ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		afterField := []string{}
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
 			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
-			afterField = append(afterField, v) */
+			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			default:
@@ -198,24 +197,18 @@ func (daoThis *roleRelToMenuDao) ParseField(field []string, joinTableArr *[]stri
 				}
 			}
 		}
-		afterFieldWithParam := map[string]interface{}{}
-		if len(fieldWithParam) > 0 {
-			for k, v := range fieldWithParam[0] {
-				switch k {
-				default:
-					afterFieldWithParam[k] = v
-				}
+		for k, v := range fieldWithParam {
+			switch k {
+			default:
+				afterFieldWithParam[k] = v
 			}
-		}
-		if len(afterField) > 0 || len(afterFieldWithParam) > 0 {
-			m = m.Hook(daoThis.HookSelect(afterField, afterFieldWithParam))
 		}
 		return m
 	}
 }
 
 // hook select
-func (daoThis *roleRelToMenuDao) HookSelect(afterField []string, afterFieldWithParam ...map[string]interface{}) gdb.HookHandler {
+func (daoThis *roleRelToMenuDao) HookSelect(afterField *[]string, afterFieldWithParam map[string]interface{}) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -227,18 +220,16 @@ func (daoThis *roleRelToMenuDao) HookSelect(afterField []string, afterFieldWithP
 				wg.Add(1)
 				go func(record gdb.Record) {
 					defer wg.Done()
-					for _, v := range afterField {
+					for _, v := range *afterField {
 						switch v {
 						/* case `xxxx`:
 						record[v] = gvar.New(``) */
 						}
 					}
-					/* if len(afterFieldWithParam) > 0 {
-						for k, v := range afterFieldWithParam[0] {
-							switch k {
-							case `xxxx`:
-								record[k] = gvar.New(v)
-							}
+					/* for k, v := range afterFieldWithParam {
+						switch k {
+						case `xxxx`:
+							record[k] = gvar.New(v)
 						}
 					} */
 				}(record)

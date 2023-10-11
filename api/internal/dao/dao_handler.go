@@ -17,8 +17,8 @@ type DaoInterface interface {
 	ParseUpdate(update map[string]interface{}, fill ...bool) gdb.ModelHandler
 	HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler
 	HookDelete(idArr ...int) gdb.HookHandler
-	ParseField(field []string, joinTableArr *[]string, fieldWithParam ...map[string]interface{}) gdb.ModelHandler
-	HookSelect(afterField []string, afterFieldWithParam ...map[string]interface{}) gdb.HookHandler
+	ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler
+	HookSelect(afterField *[]string, afterFieldWithParam map[string]interface{}) gdb.HookHandler
 	ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler
 	ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler
 	ParseOrder(order []string, joinTableArr *[]string) gdb.ModelHandler
@@ -39,17 +39,21 @@ type DaoInterface interface {
 }
 
 type DaoHandler struct {
-	ctx          context.Context
-	dao          DaoInterface
-	model        *gdb.Model
-	joinTableArr *[]string
+	ctx                 context.Context
+	dao                 DaoInterface
+	model               *gdb.Model
+	afterField          *[]string
+	afterFieldWithParam map[string]interface{}
+	joinTableArr        *[]string
 }
 
 func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[string]interface{}) *DaoHandler {
 	daoHandlerThisObj := DaoHandler{
-		ctx:          ctx,
-		dao:          dao,
-		joinTableArr: &[]string{},
+		ctx:                 ctx,
+		dao:                 dao,
+		afterField:          &[]string{},
+		afterFieldWithParam: map[string]interface{}{},
+		joinTableArr:        &[]string{},
 	}
 	daoHandlerThisObj.model = daoHandlerThisObj.dao.ParseDbCtx(daoHandlerThisObj.ctx, dbSelDataList...)
 	return &daoHandlerThisObj
@@ -77,8 +81,15 @@ func (daoHandlerThis *DaoHandler) HookDelete(idArr ...int) *DaoHandler {
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParam ...map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField(field, daoHandlerThis.joinTableArr, fieldWithParam...))
+func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParamL ...map[string]interface{}) *DaoHandler {
+	fieldWithParam := map[string]interface{}{}
+	if len(fieldWithParamL) > 0 {
+		fieldWithParam = fieldWithParamL[0]
+	}
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField(field, fieldWithParam, daoHandlerThis.afterField, daoHandlerThis.afterFieldWithParam, daoHandlerThis.joinTableArr))
+	if len(*daoHandlerThis.afterField) > 0 || len(daoHandlerThis.afterFieldWithParam) > 0 {
+		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookSelect(daoHandlerThis.afterField, daoHandlerThis.afterFieldWithParam))
+	}
 	return daoHandlerThis
 }
 
