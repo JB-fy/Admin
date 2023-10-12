@@ -27,9 +27,9 @@
 
 其内含有环境搭建，配置示例等文件。例如：[项目的nginx配置文件示例](./文档/配置示例/nginx/admin.conf)
 
-# 常用命令（服务端GO和PHP任选一个）
+# 常用命令（服务端GO和PHP任选一个。推荐使用GO服务端，功能更多，如全自动代码生成）
 
-#### GO服务端（推荐使用，有代码自动生成功能。代码目录：[api](./api)）
+#### GO服务端（推荐。代码目录：[api](./api)）
 ```bash
 # 服务启动
 gf run main.go -a "http"
@@ -40,11 +40,11 @@ gf gen dao
 # service层生成
 gf gen service
 
-# 全自动前后端代码生成（必须先生成main文件。如修改过api/internal/cmd/my_gen.go代码，则需重新生成）
+# 全自动代码生成（需先编译生成可执行文件。如修改api/internal/cmd/my_gen.go代码，需重新编译才会生效）
 ./main myGen
 ```
 
-#### PHP服务端（无代码自动生成功能。代码目录：[api_sw](./api_sw)）
+#### PHP服务端（不推荐。代码目录：[api_sw](./api_sw)）
 ```bash
 # 服务启动
 php bin/hyperf.php start

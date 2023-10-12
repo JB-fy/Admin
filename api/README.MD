@@ -10,7 +10,7 @@ gf gen dao
 # service层生成
 gf gen service
 
-# 全自动前后端代码生成（必须先生成main文件。如修改过api/internal/cmd/my_gen.go代码，则需重新生成）
+# 全自动代码生成（需先编译生成可执行文件。如修改api/internal/cmd/my_gen.go代码，需重新编译才会生效）
 ./main myGen
 ```
 # 代码自动生成流程（强烈建议搭配Git使用）
