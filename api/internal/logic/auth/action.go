@@ -80,7 +80,7 @@ func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string
 
 	switch sceneCode {
 	case `platform`:
-		if loginInfo[`adminId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
+		if loginInfo[`adminId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，无权限限制
 			isAuth = true
 			return
 		}
