@@ -3339,6 +3339,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	viewSaveDataInit := ``
 	viewSaveRule := ``
 	viewSaveField := ``
+	viewSaveFieldUniqueEmptyDel := ``
 	viewFieldHandle := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
@@ -3447,25 +3448,29 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		//name后缀
 		//code后缀
 		if (gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-			viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
-			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
-		],`
+			requiredStr := ``
+			viewSaveFieldTmp := ` />`
 			if column[`Key`].String() == `UNI` {
-				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+				if column[`Null`].String() == `NO` {
+					requiredStr = ` required: true,`
+				} else {
+					viewSaveFieldUniqueEmptyDel += `
+            param.` + field + ` || delete param.` + field
+				}
+				viewSaveFieldTmp = ` style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-					</label>
-				</ElFormItem>`
-			} else {
-				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true" />
-				</ElFormItem>`
+					</label>`
 			}
+			viewSaveRule += `
+		` + field + `: [
+			{ type: 'string',` + requiredStr + ` min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
+			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+		],`
+			viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTmp + `
+				</ElFormItem>`
 			continue
 		}
 		//mobile,phone后缀
