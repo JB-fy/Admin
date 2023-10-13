@@ -36,17 +36,17 @@ gf gen service
 		标识		命名：code后缀；类型：varchar；
 		手机		命名：mobile,phone后缀；类型：varchar；
 		链接		命名：url,link后缀；类型：varchar；
-		关联ID		命名：id后缀；类型：int等类型；
-		图片		命名：icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
-		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
-		数组		命名：list,arr等后缀；类型：json或text；
 		IP			命名：IP后缀；类型：varchar；
-		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端生成表单组件：textarea文本输入框或tinymce富文本编辑器
+		关联ID		命名：id后缀；类型：int等类型；
 		状态		命名：status后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
 		类型		命名：type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（类型：0安卓 1苹果）
 		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
 		开始时间	命名：start_前缀；类型：timestamp或datetime或date；
 		结束时间	命名：end_前缀；类型：timestamp或datetime或date；
+		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端生成表单组件：textarea文本输入框或tinymce富文本编辑器
+		图片		命名：icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
+		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
+		数组		命名：list,arr等后缀；类型：json或text；
 ```
 
 2.修改api/hack/config.yaml中gen dao的配置，并使用gf gen dao命令生成dao层代码
