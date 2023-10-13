@@ -824,7 +824,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
 				daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
+				m = m.Order(daoThis.Table() + ` + "`.`" + ` + v)
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 				if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 					daoParseOrder += daoParseOrderTmp
@@ -832,7 +832,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) { //sort //weight
 				daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
+				m = m.Order(daoThis.Table() + ` + "`.`" + ` + v)
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 				if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 					daoParseOrder += daoParseOrderTmp
@@ -874,7 +874,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
+				m = m.Order(daoThis.Table() + ` + "`.`" + ` + v)
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 				if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 					daoParseOrder += daoParseOrderTmp
