@@ -1675,8 +1675,8 @@ type ` + tpl.TableNameCaseCamel + `TreeRes struct {
 
 type ` + tpl.TableNameCaseCamel + `TreeItem struct {
 	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	Children []` + tpl.TableNameCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 	` + apiResColumn + `
+	Children []` + tpl.TableNameCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 }
 
 /*--------列表（树状） 结束--------*/
