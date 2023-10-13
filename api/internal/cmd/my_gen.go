@@ -814,7 +814,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 && tpl.PidHandle.IsCoexist {
 			daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+kArr[0], kArr[1])
+				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 				daoParseOrder += daoParseOrderTmp
@@ -830,7 +830,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) && gstr.Pos(column[`Type`].String(), `int`) != -1 {
 			daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+kArr[0], kArr[1])
+				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 				daoParseOrder += daoParseOrderTmp
@@ -920,7 +920,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		if gstr.Pos(column[`Type`].String(), `date`) != -1 {
 			daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+kArr[0], kArr[1])
+				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
 				m = m.OrderDesc(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 				daoParseOrder += daoParseOrderTmp
@@ -1078,7 +1078,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	}
 	if daoParseOrder != `` {
 		daoParseOrderPoint := `case ` + "`id`" + `:
-				m = m.Order(daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey(), kArr[1])`
+				m = m.Order(daoThis.Table() + ` + "`.`" + ` + gstr.Replace(v, ` + "`id`" + `, daoThis.PrimaryKey(), 1))`
 		tplDao = gstr.Replace(tplDao, daoParseOrderPoint, daoParseOrderPoint+daoParseOrder, 1)
 	}
 	if daoParseJoin != `` {

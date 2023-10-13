@@ -18,6 +18,7 @@ import (
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
 )
@@ -341,18 +342,16 @@ func (daoThis *adminDao) ParseGroup(group []string, joinTableArr *[]string) gdb.
 func (daoThis *adminDao) ParseOrder(order []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
-			kArr := strings.Split(v, ` `)
-			if len(kArr) == 1 {
-				kArr = append(kArr, `ASC`)
-			}
-			switch kArr[0] {
+			v = gstr.Trim(v)
+			k := gstr.Split(v, ` `)[0]
+			switch k {
 			case `id`:
-				m = m.Order(daoThis.Table()+`.`+daoThis.PrimaryKey(), kArr[1])
+				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, `id`, daoThis.PrimaryKey(), 1))
 			default:
-				if daoThis.ColumnArrG().Contains(kArr[0]) {
-					m = m.Order(daoThis.Table()+`.`+kArr[0], kArr[1])
+				if daoThis.ColumnArrG().Contains(k) {
+					m = m.Order(daoThis.Table() + `.` + v)
 				} else {
-					m = m.Order(kArr[0], kArr[1])
+					m = m.Order(v)
 				}
 			}
 		}
