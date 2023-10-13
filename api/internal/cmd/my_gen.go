@@ -1078,7 +1078,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	}
 	if daoParseOrder != `` {
 		daoParseOrderPoint := `case ` + "`id`" + `:
-				m = m.Order(daoThis.Table() + ` + "`.`" + ` + gstr.Replace(v, ` + "`id`" + `, daoThis.PrimaryKey(), 1))`
+				m = m.Order(daoThis.Table() + ` + "`.`" + ` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`
 		tplDao = gstr.Replace(tplDao, daoParseOrderPoint, daoParseOrderPoint+daoParseOrder, 1)
 	}
 	if daoParseJoin != `` {

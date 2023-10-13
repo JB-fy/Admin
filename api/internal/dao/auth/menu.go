@@ -389,7 +389,7 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 			k := gstr.Split(v, ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, `id`, daoThis.PrimaryKey(), 1))
+				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			case `tree`:
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Pid)
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Sort)

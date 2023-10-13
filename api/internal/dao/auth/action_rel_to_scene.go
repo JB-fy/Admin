@@ -296,7 +296,7 @@ func (daoThis *actionRelToSceneDao) ParseOrder(order []string, joinTableArr *[]s
 			k := gstr.Split(v, ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, `id`, daoThis.PrimaryKey(), 1))
+				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Order(daoThis.Table() + `.` + v)
