@@ -2769,9 +2769,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
 		</ElFormItem>`
-			} else /* if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
-				continue
-			} else  */if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) { //sort //weight
+			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) { //sort //weight
 			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
 				if tpl.RelTableMap[field].IsExistRelTableDao {
