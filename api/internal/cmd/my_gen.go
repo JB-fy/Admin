@@ -870,8 +870,8 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 				}
 			}
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
+			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.Order(daoThis.Table()+` + "`.`" + `+v)
@@ -1422,7 +1422,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 			//默认处理（float类型）
 			typeReqFilter = ``
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
+		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			typeReqFilter = ``
 			typeReqCreate = `*gtime.Time`
 			typeReqUpdate = `*gtime.Time`
@@ -1430,7 +1430,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqFilter = `date-format:Y-m-d H:i:s`
 			ruleReqCreate = `date-format:Y-m-d H:i:s`
 			ruleReqUpdate = `date-format:Y-m-d H:i:s`
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				typeReqFilter = `*gtime.Time`
 				typeRes = `*string`
 				ruleReqFilter = `date-format:Y-m-d`
@@ -1484,7 +1484,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			apiReqUpdateColumn += fieldCaseCamel + ` ` + typeReqUpdate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqUpdate + `" dc:"` + comment + `"` + "`\n"
 		}
 		if typeRes != `` {
-			apiResColumn += fieldCaseCamel + ` *` + typeRes + ` ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
+			apiResColumn += fieldCaseCamel + ` ` + typeRes + ` ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 		}
 	}
 
@@ -2363,10 +2363,10 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			]
 		},`
 			}
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
+		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			sortableOfColumn = `
 		sortable: true,`
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				widthOfColumn = `width: 100,`
 			}
 		} else if column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
@@ -2817,11 +2817,11 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
 		</ElFormItem>`
 			}
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
+		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			typeDatePicker := `datetime`
 			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
 			defaultTimeDatePicker := ``
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				typeDatePicker = `date`
 				formatDatePicker = `YYYY-MM-DD`
 			}
@@ -3237,11 +3237,11 @@ const ` + field + `Handle = reactive({
 					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false"/>
 				</ElFormItem>`
 			}
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `datetime`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
+		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			typeDatePicker := `datetime`
 			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
 			defaultTimeDatePicker := ``
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 {
+			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				typeDatePicker = `date`
 				formatDatePicker = `YYYY-MM-DD`
 			}
