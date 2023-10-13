@@ -21,6 +21,47 @@ use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
 class Admin extends AbstractDao
 {
     /**
+     * 解析insert（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @param integer $index
+     * @return boolean
+     */
+    protected function parseInsertOfAlone(string $key, $value, int $index = 0): bool
+    {
+        switch ($key) {
+            case 'phone':
+                $this->insert[$index][$key] = $value;
+				if ($value === '') {
+                    $this->insert[$index][$key] = null;
+				}
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 解析update（独有的）
+     *
+     * @param string $key
+     * @param [type] $value
+     * @return boolean
+     */
+    protected function parseUpdateOfAlone(string $key, $value = null): bool
+    {
+        switch ($key) {
+            case 'phone':
+                $this->update[$key] = $value;
+				if ($value === '') {
+                    $this->update[$key] = null;
+				}
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * 解析field（独有的）
      *
      * @param string $key
