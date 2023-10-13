@@ -8,7 +8,6 @@ import (
 	"api/internal/dao/auth/internal"
 	"context"
 	"database/sql"
-	"strings"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -128,7 +127,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]interfac
 				valueArr = append(valueArr, v)
 			}
 		}
-		data := []interface{}{strings.Join(fieldArr, `,`)}
+		data := []interface{}{gstr.Join(fieldArr, `,`)}
 		data = append(data, valueArr...)
 		m = m.Data(data...)
 		return m
