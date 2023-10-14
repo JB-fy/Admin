@@ -11,10 +11,12 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 // internalUserDao is internal type for wrapping internal DAO implements.
@@ -72,6 +74,20 @@ func (daoThis *userDao) ParseInsert(insert map[string]interface{}) gdb.ModelHand
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
+			case daoThis.Columns().Phone:
+				insertData[k] = v
+				if gconv.String(v) == `` {
+					insertData[k] = nil
+				}
+			case daoThis.Columns().Account:
+				insertData[k] = v
+				if gconv.String(v) == `` {
+					insertData[k] = nil
+				}
+			case daoThis.Columns().Password:
+				salt := grand.S(8)
+				insertData[daoThis.Columns().Salt] = salt
+				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					insertData[k] = v
@@ -108,6 +124,20 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}) gdb.ModelHand
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+			case daoThis.Columns().Phone:
+				updateData[daoThis.Table()+`.`+k] = v
+				if gconv.String(v) == `` {
+					updateData[daoThis.Table()+`.`+k] = nil
+				}
+			case daoThis.Columns().Account:
+				updateData[daoThis.Table()+`.`+k] = v
+				if gconv.String(v) == `` {
+					updateData[daoThis.Table()+`.`+k] = nil
+				}
+			case daoThis.Columns().Password:
+				salt := grand.S(8)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
@@ -184,6 +214,8 @@ func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]int
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+			case `label`:
+				m = m.Fields(`IFNULL(` + daoThis.Table() + `.` + daoThis.Columns().Account + `, ` + daoThis.Table() + `.` + daoThis.Columns().Phone + `) AS ` + v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -252,6 +284,14 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+			case `label`:
+				m = m.Where(m.Builder().WhereLike(daoThis.Table()+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoThis.Table()+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))
+			case daoThis.Columns().IdCardName:
+				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+			case `timeRangeStart`:
+				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+			case `timeRangeEnd`:
+				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Where(daoThis.Table()+`.`+k, v)
@@ -292,6 +332,9 @@ func (daoThis *userDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 			switch k {
 			case `id`:
 				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+			case daoThis.Columns().Birthday:
+				m = m.Order(daoThis.Table() + `.` + v)
+				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Order(daoThis.Table() + `.` + v)

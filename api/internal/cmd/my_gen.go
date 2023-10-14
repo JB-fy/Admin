@@ -3072,7 +3072,7 @@ const ` + field + `Handle = reactive({
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
 			} else if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` { //mobile,phone后缀
 				ruleStr += `
-			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
+			{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`
 			} else if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` { //url,link后缀
 				ruleStr += `
 			{ type: 'url', trigger: 'change', message: t('validation.url') },`

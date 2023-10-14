@@ -13,13 +13,13 @@ const saveForm = reactive({
         ...saveCommon.data
     } as { [propName: string]: any },
     rules: {
-        account: [
-            { type: 'string', required: computed((): boolean => { return saveForm.data.phone ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') }
-        ],
         phone: [
             { type: 'string', required: computed((): boolean => { return saveForm.data.account ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') }
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
+        ],
+        account: [
+            { type: 'string', required: computed((): boolean => { return saveForm.data.phone ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
         ],
         password: [
             { type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }

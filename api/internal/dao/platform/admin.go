@@ -86,6 +86,11 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}) gdb.ModelHan
 				if gconv.String(v) == `` {
 					insertData[k] = nil
 				}
+			case daoThis.Columns().Account:
+				insertData[k] = v
+				if gconv.String(v) == `` {
+					insertData[k] = nil
+				}
 			case `roleIdArr`:
 				hookData[k] = v
 			default:
@@ -136,6 +141,11 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}) gdb.ModelHan
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			case daoThis.Columns().Phone:
+				updateData[daoThis.Table()+`.`+k] = v
+				if gconv.String(v) == `` {
+					updateData[daoThis.Table()+`.`+k] = nil
+				}
+			case daoThis.Columns().Account:
 				updateData[daoThis.Table()+`.`+k] = v
 				if gconv.String(v) == `` {
 					updateData[daoThis.Table()+`.`+k] = nil

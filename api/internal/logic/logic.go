@@ -8,4 +8,5 @@ import (
 	_ "api/internal/logic/auth"
 	_ "api/internal/logic/login"
 	_ "api/internal/logic/platform"
+	_ "api/internal/logic/user"
 )

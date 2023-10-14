@@ -53,17 +53,6 @@ var (
 	localAuthScene  IAuthScene
 )
 
-func AuthMenu() IAuthMenu {
-	if localAuthMenu == nil {
-		panic("implement not found for interface IAuthMenu, forgot register?")
-	}
-	return localAuthMenu
-}
-
-func RegisterAuthMenu(i IAuthMenu) {
-	localAuthMenu = i
-}
-
 func AuthRole() IAuthRole {
 	if localAuthRole == nil {
 		panic("implement not found for interface IAuthRole, forgot register?")
@@ -95,4 +84,15 @@ func AuthAction() IAuthAction {
 
 func RegisterAuthAction(i IAuthAction) {
 	localAuthAction = i
+}
+
+func AuthMenu() IAuthMenu {
+	if localAuthMenu == nil {
+		panic("implement not found for interface IAuthMenu, forgot register?")
+	}
+	return localAuthMenu
+}
+
+func RegisterAuthMenu(i IAuthMenu) {
+	localAuthMenu = i
 }

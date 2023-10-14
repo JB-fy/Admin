@@ -33,9 +33,15 @@ class Admin extends AbstractDao
         switch ($key) {
             case 'phone':
                 $this->insert[$index][$key] = $value;
-				if ($value === '') {
+                if ($value === '') {
                     $this->insert[$index][$key] = null;
-				}
+                }
+                return true;
+            case 'account':
+                $this->insert[$index][$key] = $value;
+                if ($value === '') {
+                    $this->insert[$index][$key] = null;
+                }
                 return true;
         }
         return false;
@@ -53,9 +59,15 @@ class Admin extends AbstractDao
         switch ($key) {
             case 'phone':
                 $this->update[$key] = $value;
-				if ($value === '') {
+                if ($value === '') {
                     $this->update[$key] = null;
-				}
+                }
+                return true;
+            case 'account':
+                $this->update[$key] = $value;
+                if ($value === '') {
+                    $this->update[$key] = null;
+                }
                 return true;
         }
         return false;
