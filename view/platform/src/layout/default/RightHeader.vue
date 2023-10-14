@@ -97,7 +97,7 @@ const menuTab = reactive({
                 <ElDropdown @visible-change="userDropdown.visibleChange">
                     <ElLink :underline="false">
                         <ElAvatar :src="adminStore.info.avatar" :size="40">
-                            <AutoiconEpUserFilled />
+                            <AutoiconEpAvatar />
                         </ElAvatar>
                         <span>{{ adminStore.info.nickname }}</span>
                         <AutoiconEpArrowDown :class="{ 'dropdown-icon': true, 'is-dropdown': userDropdown.status }" />
