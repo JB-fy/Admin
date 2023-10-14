@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 14/10/2023 15:20:38
+ Date: 14/10/2023 16:24:23
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `auth_action`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`actionId`) USING BTREE,
   UNIQUE INDEX `actionCode`(`actionCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action
@@ -58,6 +58,8 @@ INSERT INTO `auth_action` VALUES (19, '平台管理员-编辑', 'platformAdminUp
 INSERT INTO `auth_action` VALUES (20, '平台管理员-删除', 'platformAdminDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
 INSERT INTO `auth_action` VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
+INSERT INTO `auth_action` VALUES (23, '用户-查看', 'userLook', '', 0, '2023-10-14 16:03:55', '2023-10-14 15:32:37');
+INSERT INTO `auth_action` VALUES (24, '用户-编辑', 'userUpdate', '', 0, '2023-10-14 16:03:59', '2023-10-14 15:32:37');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -98,6 +100,8 @@ INSERT INTO `auth_action_rel_to_scene` VALUES (19, 1, '2023-06-09 12:03:30', '20
 INSERT INTO `auth_action_rel_to_scene` VALUES (20, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_action_rel_to_scene` VALUES (21, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_action_rel_to_scene` VALUES (22, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
+INSERT INTO `auth_action_rel_to_scene` VALUES (23, 1, '2023-10-14 15:32:37', '2023-10-14 15:32:37');
+INSERT INTO `auth_action_rel_to_scene` VALUES (24, 1, '2023-10-14 15:32:37', '2023-10-14 15:32:37');
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -120,7 +124,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menuId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -131,10 +135,12 @@ INSERT INTO `auth_menu` VALUES (3, 1, 2, '场景', 'AutoiconEpFlag', '/auth/scen
 INSERT INTO `auth_menu` VALUES (4, 1, 2, '操作', 'AutoiconEpCoordinate', '/auth/action', 2, '0-2-4', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 90, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (5, 1, 2, '菜单', 'AutoiconEpMenu', '/auth/menu', 2, '0-2-5', '{\"i18n\": {\"title\": {\"en\": \"Menu\", \"zh-cn\": \"菜单\"}}}', 80, 0, '2023-09-20 23:02:10', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (6, 1, 2, '角色', 'AutoiconEpView', '/auth/role', 2, '0-2-6', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 70, 0, '2023-09-20 23:02:11', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'AutoiconEpUserFilled', '/platform/admin', 2, '0-2-7', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-09-20 23:02:13', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'Vant-manager-o', '/platform/admin', 2, '0-2-7', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-10-14 16:18:16', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage\", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-09-20 23:02:14', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config\", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-09-20 23:02:18', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (11, 1, 0, '用户管理', 'Vant-friends', '', 1, '0-11', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 50, 0, '2023-10-14 16:14:56', '2023-10-14 15:32:37');
+INSERT INTO `auth_menu` VALUES (12, 1, 11, '用户', 'Vant-user-o', '/user/user', 2, '0-11-12', '{\"i18n\": {\"title\": {\"en\": \"User\", \"zh-cn\": \"用户\"}}}', 50, 0, '2023-10-14 16:17:28', '2023-10-14 15:32:37');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -156,7 +162,7 @@ CREATE TABLE `auth_role`  (
 -- ----------------------------
 -- Records of auth_role
 -- ----------------------------
-INSERT INTO `auth_role` VALUES (1, 1, 0, '超级管理员', 0, '2023-07-13 18:25:18', '2023-06-09 12:03:30');
+INSERT INTO `auth_role` VALUES (1, 1, 0, '超级管理员', 0, '2023-10-14 16:22:51', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for auth_role_rel_of_platform_admin
@@ -215,6 +221,8 @@ INSERT INTO `auth_role_rel_to_action` VALUES (1, 19, '2023-06-09 12:03:30', '202
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 20, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 21, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
 INSERT INTO `auth_role_rel_to_action` VALUES (1, 22, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 23, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
+INSERT INTO `auth_role_rel_to_action` VALUES (1, 24, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
 
 -- ----------------------------
 -- Table structure for auth_role_rel_to_menu
@@ -243,6 +251,8 @@ INSERT INTO `auth_role_rel_to_menu` VALUES (1, 7, '2023-06-09 12:03:30', '2023-0
 INSERT INTO `auth_role_rel_to_menu` VALUES (1, 8, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_menu` VALUES (1, 9, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
 INSERT INTO `auth_role_rel_to_menu` VALUES (1, 10, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
+INSERT INTO `auth_role_rel_to_menu` VALUES (1, 11, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
+INSERT INTO `auth_role_rel_to_menu` VALUES (1, 12, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
 
 -- ----------------------------
 -- Table structure for auth_scene
@@ -325,11 +335,12 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
 -- ----------------------------
+INSERT INTO `platform_server` VALUES (1, '112.47.245.219', '192.168.0.200', '2023-10-14 15:52:15', '2023-10-14 15:32:12');
 
 -- ----------------------------
 -- Table structure for user
@@ -352,7 +363,8 @@ CREATE TABLE `user`  (
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`userId`) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE
+  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
+  UNIQUE INDEX `account`(`account` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
