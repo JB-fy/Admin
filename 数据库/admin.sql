@@ -4,14 +4,14 @@
  Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.2.200:3306
+ Source Host           : 192.168.0.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 09/10/2023 18:00:29
+ Date: 14/10/2023 15:20:38
 */
 
 SET NAMES utf8mb4;
@@ -126,15 +126,15 @@ CREATE TABLE `auth_menu`  (
 -- Records of auth_menu
 -- ----------------------------
 INSERT INTO `auth_menu` VALUES (1, 1, 0, '主页', 'AutoiconEpHomeFilled', '/', 1, '0-1', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 0, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', 'AutoiconEpLock', '', 1, '0-2', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage \", \"zh-cn\": \"权限管理\"}}}', 90, 0, '2023-06-24 03:37:38', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (2, 1, 0, '权限管理', 'AutoiconEpLock', '', 1, '0-2', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage\", \"zh-cn\": \"权限管理\"}}}', 90, 0, '2023-09-20 23:02:07', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (3, 1, 2, '场景', 'AutoiconEpFlag', '/auth/scene', 2, '0-2-3', '{\"i18n\": {\"title\": {\"en\": \"Scene\", \"zh-cn\": \"场景\"}}}', 100, 0, '2023-06-30 17:51:35', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (4, 1, 2, '操作', 'AutoiconEpCoordinate', '/auth/action', 2, '0-2-4', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 90, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (5, 1, 2, '菜单', 'AutoiconEpMenu', '/auth/menu', 2, '0-2-5', '{\"i18n\": {\"title\": {\"en\": \"Menu \", \"zh-cn\": \"菜单\"}}}', 80, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (6, 1, 2, '角色', 'AutoiconEpView', '/auth/role', 2, '0-2-6', '{\"i18n\": {\"title\": {\"en\": \"Role \", \"zh-cn\": \"角色\"}}}', 70, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'AutoiconEpUserFilled', '/platform/admin', 2, '0-2-7', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin \", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage \", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-06-24 03:37:34', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (5, 1, 2, '菜单', 'AutoiconEpMenu', '/auth/menu', 2, '0-2-5', '{\"i18n\": {\"title\": {\"en\": \"Menu\", \"zh-cn\": \"菜单\"}}}', 80, 0, '2023-09-20 23:02:10', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (6, 1, 2, '角色', 'AutoiconEpView', '/auth/role', 2, '0-2-6', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 70, 0, '2023-09-20 23:02:11', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (7, 1, 2, '平台管理员', 'AutoiconEpUserFilled', '/platform/admin', 2, '0-2-7', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-09-20 23:02:13', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (8, 1, 0, '系统管理', 'AutoiconEpPlatform', '', 1, '0-8', '{\"i18n\": {\"title\": {\"en\": \"System Manage\", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-09-20 23:02:14', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (9, 1, 8, '配置中心', 'AutoiconEpSetting', '', 2, '0-8-9', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config \", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (10, 1, 9, '平台配置', '', '/platform/config', 3, '0-8-9-10', '{\"i18n\": {\"title\": {\"en\": \"Platform Config\", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-09-20 23:02:18', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -288,7 +288,7 @@ CREATE TABLE `platform_admin`  (
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'https://jslx01.oss-cn-hangzhou.aliyuncs.com/common/20230624/1687601922719_8091.gif?w=471&h=373', 0, '2023-07-30 00:26:45', '2023-06-09 12:03:30');
+INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'http://www.admin.com/common/20230920/1695222477127_79698554.png', 0, '2023-09-20 23:09:17', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for platform_config
@@ -307,11 +307,11 @@ CREATE TABLE `platform_config`  (
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'aliyunOssRoleArn', 'acs:ram::1359390739767110:role/aliyunosstokengeneratorrole', '2023-07-13 12:22:32', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (2, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-07-13 12:23:14', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (3, 'aliyunOssBucket', 'jslx01', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (4, 'aliyunOssAccessKeyId', 'LTAI5t9jGNGpb9hhtV8M8q2x', '2023-07-13 12:23:15', '2023-07-11 18:33:31');
-INSERT INTO `platform_config` VALUES (5, 'aliyunOssAccessKeySecret', 'vhfbJ2QAZsFoTZ6m5XF0qwikqWeR0x', '2023-07-13 12:23:18', '2023-07-11 18:33:31');
+INSERT INTO `platform_config` VALUES (1, 'uploadType', 'local', '2023-09-20 22:59:42', '2023-09-20 22:59:42');
+INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://192.168.0.200:20080/upload/upload', '2023-09-20 22:59:47', '2023-09-20 22:59:47');
+INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-09-20 22:59:56', '2023-09-20 22:59:56');
+INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-09-20 23:00:49', '2023-09-20 23:00:05');
+INSERT INTO `platform_config` VALUES (5, 'localUploadFileUrlPrefix', 'http://www.admin.com', '2023-09-20 23:00:46', '2023-09-20 23:00:14');
 
 -- ----------------------------
 -- Table structure for platform_server
