@@ -21,8 +21,8 @@ const saveForm = reactive({
 			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
 		],
 		menuIcon: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
 		],
 		menuUrl: [
 			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
@@ -34,16 +34,14 @@ const saveForm = reactive({
 			{
 				type: 'object',
 				fields: {
-                    title: {
-                        type: 'object',
-                        fields: {
-                            'zh-cn': { type: 'string', required: true, min: 1, message: 'title.zh-cn' + t('validation.min.string', { min: 1 }) },
-                            en: { type: 'string', min: 1, message: 'title.en' + t('validation.min.string', { min: 1 }) }
-                        },
-                        message: 'title' + t('validation.regex')
-                    },
-                    icon: { type: 'string', min: 1, message: 'icon' + t('validation.min.string', { min: 1 }) },
-                    url: { type: 'string', min: 1, message: 'url' + t('validation.min.string', { min: 1 }) }
+					title: {
+						type: 'object',
+						fields: {
+							'zh-cn': { type: 'string', required: true, min: 1, message: 'title.zh-cn' + t('validation.min.string', { min: 1 }) },
+							en: { type: 'string', min: 1, message: 'title.en' + t('validation.min.string', { min: 1 }) },
+						},
+						message: 'title' + t('validation.regex'),
+					},
 				},
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
@@ -121,12 +119,12 @@ const saveDrawer = reactive({
 				<ElFormItem :label="t('auth.menu.name.sceneId')" prop="sceneId">
 					<MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => { saveForm.data.pid = 0 }" />
 				</ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
-                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
-                    <label>
-                        <ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
-                    </label>
-                </ElFormItem>
+				<ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
+					<ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+					<label>
+						<ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
+					</label>
+				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
 					<ElInput v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" minlength="1" maxlength="120" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>

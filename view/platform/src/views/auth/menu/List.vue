@@ -78,7 +78,7 @@ const table = reactive({
 			return [
 				h(MyIconDynamic as any, {
 					icon: props.rowData.menuIcon,
-					size: '18px'
+					size: '18px',
 				})
 			]
 		},
