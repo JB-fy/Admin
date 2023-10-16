@@ -258,14 +258,14 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().SceneName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().SceneName:
 				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+			case `timeRangeStart`:
+				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+			case `timeRangeEnd`:
+				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Where(daoThis.Table()+`.`+k, v)

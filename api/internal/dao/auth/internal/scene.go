@@ -25,10 +25,10 @@ type SceneDao struct {
 
 // SceneColumns defines and stores column names for table auth_scene.
 type SceneColumns struct {
-	SceneId     string // 权限场景ID
-	SceneCode   string // 标识（代码中用于识别调用接口的所在场景，做对应的身份鉴定及权力鉴定。如已在代码中使用，不建议更改）
+	SceneId     string // 场景ID
 	SceneName   string // 名称
-	SceneConfig string // 配置（内容自定义。json格式：{"alg": "算法","key": "密钥","expTime": "签名有效时间",...}）
+	SceneCode   string // 标识
+	SceneConfig string // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expTime": 过期时间,...}
 	IsStop      string // 停用：0否 1是
 	UpdatedAt   string // 更新时间
 	CreatedAt   string // 创建时间
@@ -37,8 +37,8 @@ type SceneColumns struct {
 // sceneColumns holds the columns for table auth_scene.
 var sceneColumns = SceneColumns{
 	SceneId:     "sceneId",
-	SceneCode:   "sceneCode",
 	SceneName:   "sceneName",
+	SceneCode:   "sceneCode",
 	SceneConfig: "sceneConfig",
 	IsStop:      "isStop",
 	UpdatedAt:   "updatedAt",

@@ -2640,8 +2640,7 @@ defineExpose({
 		</ElCol>
 		<ElCol :span="8" style="text-align: right;">
 			<ElSpace :size="10" style="height: 100%;">
-				<MyExportButton :headerList="table.columns"
-					:api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+				<MyExportButton :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 				<ElDropdown max-height="300" :hide-on-click="false">
 					<ElButton type="info" :circle="true">
 						<AutoiconEpHide />
@@ -2860,8 +2859,7 @@ const queryForm = reactive({
 </script>
 
 <template>
-	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
-		@keyup.enter="queryForm.submit">
+	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
 		<ElFormItem prop="id">
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>` + viewQueryField + `
@@ -3271,7 +3269,7 @@ const ` + field + `Handle = reactive({
 					}
 				},
 				trigger: 'blur',
-				message: t('validation.json')
+				message: t('validation.json'),
 			},
 		],`
 			viewSaveField += `
@@ -3367,11 +3365,9 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-	<ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible"
-		:title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+	<ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
 		<ElScrollbar>
-			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
-				label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
+			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
 			</ElForm>
 		</ElScrollbar>
 		<template #footer>
