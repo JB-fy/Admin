@@ -2100,12 +2100,10 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
 			titleOfColumn = `title: t('common.name.updatedAt'),`
-			sortableOfColumn = `
-		sortable: true,`
+			sortableOfColumn = `sortable: true,`
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
 			titleOfColumn = `title: t('common.name.createdAt'),`
-			sortableOfColumn = `
-		sortable: true,`
+			sortableOfColumn = `sortable: true,`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
 		} else if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` { //password|passwd
@@ -2114,8 +2112,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			widthOfColumn = `width: 100,`
-			cellRendererOfColumn = `
-		cellRenderer: (props: any): any => {
+			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
 				return
 			}`
@@ -2157,8 +2154,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if tableRowHeight < 100 {
 				tableRowHeight = 100
 			}
-			cellRendererOfColumn = `
-		cellRenderer: (props: any): any => {
+			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
 				return
 			}`
@@ -2196,8 +2192,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		},`
 		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //list,arr等后缀
 			widthOfColumn = `width: 100,`
-			cellRendererOfColumn = `
-		cellRenderer: (props: any): any => {
+			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
 				return
 			}`
@@ -2231,12 +2226,10 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			]
 		},`
 		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
-			hiddenOfColumn = `
-		hidden: true,`
+			hiddenOfColumn = `hidden: true,`
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist { //idPath|id_path
-				hiddenOfColumn = `
-		hidden: true,`
+				hiddenOfColumn = `hidden: true,`
 			} else if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //url,link后缀
 				widthOfColumn = `width: 300,`
 			}
@@ -2245,15 +2238,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.LabelField) + `',`
 			} else if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
 				widthOfColumn = `width: 100,`
-				sortableOfColumn = `
-		sortable: true,`
+				sortableOfColumn = `sortable: true,`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) { //sort //weight
 				widthOfColumn = `width: 100,`
-				sortableOfColumn = `
-		sortable: true,`
+				sortableOfColumn = `sortable: true,`
 				if option.IsUpdate {
-					cellRendererOfColumn = `
-		cellRenderer: (props: any): any => {
+					cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (props.rowData.edit` + gstr.CaseCamel(field) + `) {
 				let currentRef: any
 				let currentVal = props.rowData.` + field + `
@@ -2323,8 +2313,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				tagTypeStr = gstr.SubStr(tagTypeStr, 0, -len(`, `))
 				widthOfColumn = `width: 100,`
-				cellRendererOfColumn = `
-		cellRenderer: (props: any): any => {
+				cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			let typeObj: any = { ` + tagTypeStr + ` }
 			return [
 				h(ElTag as any, {
@@ -2336,8 +2325,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		},`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				widthOfColumn = `width: 100,`
-				cellRendererOfColumn = `
-		cellRenderer: (props: any): any => {
+				cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			return [
 				h(ElSwitch as any, {
 					'model-value': props.rowData.` + field + `,
@@ -2364,15 +2352,13 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		},`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			sortableOfColumn = `
-		sortable: true,`
+			sortableOfColumn = `sortable: true,`
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
 				widthOfColumn = `width: 100,`
 			}
 		} else if column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
 			widthOfColumn = `width: 200,`
-			hiddenOfColumn = `
-		hidden: true,`
+			hiddenOfColumn = `hidden: true,`
 		}
 
 		viewListColumn += `
@@ -2381,7 +2367,20 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + titleOfColumn + `
 		` + keyOfColumn + `
 		` + alignOfColumn + `
-		` + widthOfColumn + sortableOfColumn + hiddenOfColumn + cellRendererOfColumn + `
+		` + widthOfColumn
+		if sortableOfColumn != `` {
+			viewListColumn += `
+		` + sortableOfColumn
+		}
+		if hiddenOfColumn != `` {
+			viewListColumn += `
+		` + hiddenOfColumn
+		}
+		if cellRendererOfColumn != `` {
+			viewListColumn += `
+		` + cellRendererOfColumn
+		}
+		viewListColumn += `
 	},`
 	}
 
