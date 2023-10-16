@@ -13,8 +13,8 @@ import (
 type Config struct {
 	g.Meta      `orm:"table:platform_config, do:true"`
 	ConfigId    interface{} // 配置ID
-	ConfigKey   interface{} // 配置项Key
-	ConfigValue interface{} // 配置项值（设置大点。以后可能需要保存富文本内容，如公司简介或协议等等）
+	ConfigKey   interface{} // 配置Key
+	ConfigValue interface{} // 配置值
 	UpdatedAt   *gtime.Time // 更新时间
 	CreatedAt   *gtime.Time // 创建时间
 }

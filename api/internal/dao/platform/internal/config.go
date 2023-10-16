@@ -26,8 +26,8 @@ type ConfigDao struct {
 // ConfigColumns defines and stores column names for table platform_config.
 type ConfigColumns struct {
 	ConfigId    string // 配置ID
-	ConfigKey   string // 配置项Key
-	ConfigValue string // 配置项值（设置大点。以后可能需要保存富文本内容，如公司简介或协议等等）
+	ConfigKey   string // 配置Key
+	ConfigValue string // 配置值
 	UpdatedAt   string // 更新时间
 	CreatedAt   string // 创建时间
 }
