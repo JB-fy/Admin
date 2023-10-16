@@ -25,8 +25,8 @@ type RoleRelOfPlatformAdminDao struct {
 
 // RoleRelOfPlatformAdminColumns defines and stores column names for table auth_role_rel_of_platform_admin.
 type RoleRelOfPlatformAdminColumns struct {
-	RoleId    string // 权限角色ID
-	AdminId   string // 平台管理员ID
+	RoleId    string // 角色ID
+	AdminId   string // 管理员ID
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
 }

@@ -25,8 +25,8 @@ type ActionRelToSceneDao struct {
 
 // ActionRelToSceneColumns defines and stores column names for table auth_action_rel_to_scene.
 type ActionRelToSceneColumns struct {
-	ActionId  string // 权限操作ID
-	SceneId   string // 权限场景ID
+	ActionId  string // 操作ID
+	SceneId   string // 场景ID
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
 }

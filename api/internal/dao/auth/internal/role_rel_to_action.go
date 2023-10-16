@@ -25,8 +25,8 @@ type RoleRelToActionDao struct {
 
 // RoleRelToActionColumns defines and stores column names for table auth_role_rel_to_action.
 type RoleRelToActionColumns struct {
-	RoleId    string // 权限角色ID
-	ActionId  string // 权限操作ID
+	RoleId    string // 角色ID
+	ActionId  string // 操作ID
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
 }
