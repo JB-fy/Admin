@@ -2405,7 +2405,7 @@ const table = reactive({
 				h('div', {
 					class: 'id-checkbox',
 					onClick: (event: any) => {
-						event.stopPropagation();    //阻止冒泡
+						event.stopPropagation();	//阻止冒泡
 					},
 				}, {
 					default: () => [
