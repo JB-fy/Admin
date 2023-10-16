@@ -18,10 +18,10 @@ const saveForm = reactive({
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		sceneId: [
-			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') },
 		],
 		pid: [
-			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
+			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
 		],
 		menuIcon: [
 			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
@@ -34,7 +34,7 @@ const saveForm = reactive({
 			{
 				type: 'object',
 				/* fields: {
-					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) }
+					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) },
 				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
@@ -51,10 +51,10 @@ const saveForm = reactive({
 			},
 		],
 		sort: [
-			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) }
+			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
 		],
 		isStop: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
 	} as any,
 	submit: () => {

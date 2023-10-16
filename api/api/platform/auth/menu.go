@@ -144,6 +144,7 @@ type MenuTreeItem struct {
 	Label    *string        `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	MenuId   *uint          `json:"menuId,omitempty" dc:"菜单ID"`
 	MenuName *string        `json:"menuName,omitempty" dc:"名称"`
+	SceneId  *uint          `json:"sceneId,omitempty" dc:"场景ID"`
 	Pid      *uint          `json:"pid,omitempty" dc:"父ID"`
 	Children []MenuTreeItem `json:"children" dc:"子级列表"`
 }

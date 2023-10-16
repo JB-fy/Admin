@@ -25,9 +25,9 @@ type ActionListFilter struct {
 	ActionName     string      `json:"actionName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	ActionCode     string      `json:"actionCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
-	SceneId        *uint       `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
+	SceneId        *uint       `json:"sceneId,omitempty" v:"integer|min:1" dc:"场景ID"`
 }
 
 type ActionListRes struct {

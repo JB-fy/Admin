@@ -25,7 +25,7 @@ const saveForm = reactive({
 				fields: {
                     signKey: { type: 'string', min: 1, message: 'signKey' + t('validation.min.string', { min: 1 }) },
                     signType: { type: 'string', min: 1, message: 'signType' + t('validation.min.string', { min: 1 }) },
-                    expireTime: { type: 'integer', min: 1, message: 'expireTime' + t('validation.min.number', { min: 1 }) }
+                    expireTime: { type: 'integer', min: 1, message: 'expireTime' + t('validation.min.number', { min: 1 }) },
                 },
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
@@ -42,7 +42,7 @@ const saveForm = reactive({
 			},
 		],
 		isStop: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
 	} as any,
 	submit: () => {

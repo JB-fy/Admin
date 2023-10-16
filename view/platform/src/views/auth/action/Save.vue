@@ -19,15 +19,15 @@ const saveForm = reactive({
 			{ type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
-        sceneIdArr: [
-            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }
-        ],
 		remark: [
 			{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) },
 		],
 		isStop: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
+        sceneIdArr: [
+            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }
+        ],
 	} as any,
 	submit: () => {
 		saveForm.ref.validate(async (valid: boolean) => {
@@ -87,7 +87,7 @@ const saveDrawer = reactive({
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>
-                <ElFormItem :label="t('auth.action.name.sceneIdArr')" prop="sceneIdArr">
+                <ElFormItem :label="t('auth.action.name.sceneId')" prop="sceneIdArr">
                     <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </ElFormItem>
 				<ElFormItem :label="t('auth.action.name.remark')" prop="remark">
