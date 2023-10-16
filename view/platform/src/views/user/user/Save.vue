@@ -23,20 +23,20 @@ const saveForm = reactive({
             { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
 		],
 		password: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 32, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 32 }) }
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 32, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 32 }) },
 		],
 		nickname: [
 			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
 		],
 		avatar: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
+			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
 		],
 		gender: [
-			{ type: 'enum', enum: [0, 1, 2], trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('user.user.status.gender') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
 		birthday: [
-			{ type: 'string', trigger: 'change', message: t('validation.select') }
+			{ type: 'string', trigger: 'change', message: t('validation.select') },
 		],
 		address: [
 			{ type: 'string', min: 1, max: 60, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 60 }) },
@@ -49,7 +49,7 @@ const saveForm = reactive({
 			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
 		],
 		isStop: [
-			{ type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
 	} as any,
 	submit: () => {
@@ -99,11 +99,9 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-	<ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible"
-		:title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+	<ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
 		<ElScrollbar>
-			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
-				label-width="auto" :status-icon="true" :scroll-to-error="true">
+			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
 				<ElFormItem :label="t('user.user.name.phone')" prop="phone">
 					<ElInput v-model="saveForm.data.phone" :placeholder="t('user.user.name.phone')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>

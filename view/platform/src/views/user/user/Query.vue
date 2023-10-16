@@ -44,8 +44,7 @@ const queryForm = reactive({
 </script>
 
 <template>
-	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true"
-		@keyup.enter="queryForm.submit">
+	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
 		<ElFormItem prop="id">
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>
