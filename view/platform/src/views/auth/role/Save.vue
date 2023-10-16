@@ -16,16 +16,16 @@ const saveForm = reactive({
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		sceneId: [
-			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
+			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') },
 		],
 		isStop: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
 		menuIdArr: [
-			{ type: 'array', trigger: 'change', message: t('validation.select') }
+			{ type: 'array', trigger: 'change', message: t('validation.select') },
 		],
 		actionIdArr: [
-			{ type: 'array', defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
+			{ type: 'array', defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') },
 		],
 	} as any,
 	submit: () => {
