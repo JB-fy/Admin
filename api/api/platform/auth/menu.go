@@ -132,7 +132,7 @@ type MenuDeleteReq struct {
 type MenuTreeReq struct {
 	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表（树状）"`
 	Field  []string       `json:"field" v:"foreach|min-length:1"`
-	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
+	Filter MenuListFilter `json:"filter" dc:"查询条件"`
 }
 
 type MenuTreeRes struct {

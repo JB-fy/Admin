@@ -4,17 +4,17 @@ const { t, tm } = useI18n()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
+    data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         userAgreement: '',
         privacyAgreement: '',
     } as { [propName: string]: any },
     rules: {
         userAgreement: [
             //{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         privacyAgreement: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
     } as any,
     initData: async () => {

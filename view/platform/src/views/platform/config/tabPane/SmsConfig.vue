@@ -4,7 +4,7 @@ const { t, tm } = useI18n()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
+    data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         smsType: 'aliyunSms',
         aliyunSmsAccessKeyId: '',
         aliyunSmsAccessKeySecret: '',
@@ -14,22 +14,22 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         smsType: [
-            { type: 'enum', enum: [`aliyunSms`], trigger: 'change', message: t('validation.select') }
+            { type: 'enum', enum: [`aliyunSms`], trigger: 'change', message: t('validation.select') },
         ],
         aliyunSmsAccessKeyId: [
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         aliyunSmsAccessKeySecret: [
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         aliyunSmsEndpoint: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         aliyunSmsSignName: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         aliyunSmsTemplateCode: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
     } as any,
     initData: async () => {

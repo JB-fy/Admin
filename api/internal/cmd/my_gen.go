@@ -1603,7 +1603,7 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 type ` + tpl.TableNameCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
-	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
 }
 
 type ` + tpl.TableNameCaseCamel + `TreeRes struct {

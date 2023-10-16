@@ -4,7 +4,7 @@ const { t, tm } = useI18n()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: { //此处必须列出全部需要设置的配置项key，用于向服务器获取对应的配置项value
+    data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         uploadType: 'local',
         localUploadUrl: '',
         localUploadSignKey: '',
@@ -19,37 +19,37 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         uploadType: [
-            { type: 'enum', enum: [`local`, `aliyunOss`], trigger: 'change', message: t('validation.select') }
+            { type: 'enum', enum: [`local`, `aliyunOss`], trigger: 'change', message: t('validation.select') },
         ],
         localUploadUrl: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') }
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         localUploadSignKey: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         localUploadFileSaveDir: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         localUploadFileUrlPrefix: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') }
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         aliyunOssHost: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') }
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         aliyunOssBucket: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         aliyunOssAccessKeyId: [
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         aliyunOssAccessKeySecret: [
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         aliyunOssRoleArn: [
-            { type: 'string', trigger: 'blur' }
+            { type: 'string', trigger: 'blur' },
         ],
         aliyunOssCallbackUrl: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') }
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
     } as any,
     initData: async () => {
