@@ -15,7 +15,7 @@ gfcli:
         tables: "auth_test"
         tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
         tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-        overwriteDao: true
+        overwriteDao: false
     pbentity:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         tables: "auth_test"
