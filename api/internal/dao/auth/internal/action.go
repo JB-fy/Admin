@@ -25,9 +25,9 @@ type ActionDao struct {
 
 // ActionColumns defines and stores column names for table auth_action.
 type ActionColumns struct {
-	ActionId   string // 权限操作ID
+	ActionId   string // 操作ID
 	ActionName string // 名称
-	ActionCode string // 标识（代码中用于判断权限）
+	ActionCode string // 标识
 	Remark     string // 备注
 	IsStop     string // 停用：0否 1是
 	UpdatedAt  string // 更新时间

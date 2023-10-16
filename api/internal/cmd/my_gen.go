@@ -2662,8 +2662,7 @@ defineExpose({
 	<ElMain>
 		<ElAutoResizer>
 			<template #default="{ height, width }">
-				<ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort"
-					@column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(tableRowHeight) + `">
+				<ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(tableRowHeight) + `">
 					<template v-if="table.loading" #overlay>
 						<ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
 							<AutoiconEpLoading />
@@ -2676,10 +2675,7 @@ defineExpose({
 
 	<ElRow class="main-table-pagination">
 		<ElCol :span="24">
-			<ElPagination :total="pagination.total" v-model:currentPage="pagination.page"
-				v-model:page-size="pagination.size" @size-change="pagination.sizeChange"
-				@current-change="pagination.pageChange" :page-sizes="pagination.sizeList" :layout="pagination.layout"
-				:background="true" />
+			<ElPagination :total="pagination.total" v-model:currentPage="pagination.page" v-model:page-size="pagination.size" @size-change="pagination.sizeChange" @current-change="pagination.pageChange" :page-sizes="pagination.sizeList" :layout="pagination.layout" :background="true" />
 		</ElCol>
 	</ElRow>
 </template>`

@@ -211,7 +211,6 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]i
 			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ActionName + ` AS ` + v)
 			case `sceneIdArr`:
-				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				*afterField = append(*afterField, v)
 			default:
@@ -285,14 +284,14 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().ActionName:
 				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+			case `timeRangeStart`:
+				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+			case `timeRangeEnd`:
+				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `sceneId`:
 				m = m.Where(ActionRelToScene.Table()+`.`+k, v)
 				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
