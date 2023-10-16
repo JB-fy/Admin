@@ -34,7 +34,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 
 	columnsThis := daoPlatform.Admin.Columns()
 	allowField := daoPlatform.Admin.ColumnArr()
-	allowField = append(allowField, `id`)
+	allowField = append(allowField, `id`, `label`)
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password, columnsThis.Salt})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
@@ -48,7 +48,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
 	if !isAuth {
-		field = []string{`id`, columnsThis.AdminId, columnsThis.Nickname}
+		field = []string{`id`, `label`, columnsThis.Phone, columnsThis.AdminId}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -74,7 +74,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInfoReq) (res *apiPlatform.AdminInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoPlatform.Admin.ColumnArr()
-	allowField = append(allowField, `id`, `roleIdArr`)
+	allowField = append(allowField, `id`, `label`, `roleIdArr`)
 	columnsThis := daoPlatform.Admin.Columns()
 	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password, columnsThis.Salt})).Slice() //移除敏感字段
 	field := allowField

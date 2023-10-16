@@ -2909,7 +2909,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		} else if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` { //password|passwd
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -2925,7 +2925,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
 		],`
 			} else {
 				multipleStr = ` :multiple="true"`
@@ -2937,7 +2937,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
 			// { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
-			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
+			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) },
 		],`
 			}
 			viewSaveField += `
@@ -2950,7 +2950,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) }
+			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
 		],`
 			} else {
 				multipleStr = ` :multiple="true"`
@@ -2962,7 +2962,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
 			// { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
-			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) }
+			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) },
 		],`
 			}
 			viewSaveField += `
@@ -2980,7 +2980,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required')/* , defaultField: { type: 'string', message: t('validation.input') } */ },
 			// { type: 'array', min: 1, trigger: 'change', message: '' },
-			// { type: 'array', max: 10, trigger: 'change', message: '' }
+			// { type: 'array', max: 10, trigger: 'change', message: '' },
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3105,7 +3105,7 @@ const ` + field + `Handle = reactive({
 		` + field + `: 0,`
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
+			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3117,7 +3117,7 @@ const ` + field + `Handle = reactive({
 		` + field + `: ` + column[`Default`].String() + `,`
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) }
+			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3134,7 +3134,7 @@ const ` + field + `Handle = reactive({
 				}
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }
+			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3144,7 +3144,7 @@ const ` + field + `Handle = reactive({
 				statusList := MyGenStatusList(comment)
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
@@ -3167,7 +3167,7 @@ const ` + field + `Handle = reactive({
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3177,7 +3177,7 @@ const ` + field + `Handle = reactive({
 				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 					viewSaveRule += `
 		` + field + `: [
-			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }
+			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },
 		],`
 					viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3186,7 +3186,7 @@ const ` + field + `Handle = reactive({
 				} else {
 					viewSaveRule += `
 		` + field + `: [
-			{ type: 'integer', trigger: 'change', message: t('validation.input') }
+			{ type: 'integer', trigger: 'change', message: t('validation.input') },
 		],`
 					viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3198,7 +3198,7 @@ const ` + field + `Handle = reactive({
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }	// 类型float值为0时验证不能通过
+			{ type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },	// 类型float值为0时验证不能通过
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3207,7 +3207,7 @@ const ` + field + `Handle = reactive({
 			} else {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') }	// 类型float值为0时验证不能通过
+			{ type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') },	// 类型float值为0时验证不能通过
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3235,7 +3235,7 @@ const ` + field + `Handle = reactive({
 
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') }
+			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') },
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3247,7 +3247,7 @@ const ` + field + `Handle = reactive({
 			{
 				type: 'object',
 				/* fields: {
-					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) }
+					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) },
 				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {

@@ -77,10 +77,6 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}) gdb.ModelHan
 			switch k {
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
-			case daoThis.Columns().Password:
-				salt := grand.S(8)
-				insertData[daoThis.Columns().Salt] = salt
-				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			case daoThis.Columns().Phone:
 				insertData[k] = v
 				if gconv.String(v) == `` {
@@ -91,6 +87,10 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}) gdb.ModelHan
 				if gconv.String(v) == `` {
 					insertData[k] = nil
 				}
+			case daoThis.Columns().Password:
+				salt := grand.S(8)
+				insertData[daoThis.Columns().Salt] = salt
+				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			case `roleIdArr`:
 				hookData[k] = v
 			default:
@@ -136,10 +136,6 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}) gdb.ModelHan
 			switch k {
 			case `id`:
 				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
-			case daoThis.Columns().Password:
-				salt := grand.S(8)
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			case daoThis.Columns().Phone:
 				updateData[daoThis.Table()+`.`+k] = v
 				if gconv.String(v) == `` {
@@ -150,6 +146,10 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}) gdb.ModelHan
 				if gconv.String(v) == `` {
 					updateData[daoThis.Table()+`.`+k] = nil
 				}
+			case daoThis.Columns().Password:
+				salt := grand.S(8)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
@@ -238,8 +238,9 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]in
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+			case `label`:
+				m = m.Fields(`IFNULL(` + daoThis.Table() + `.` + daoThis.Columns().Account + `, ` + daoThis.Table() + `.` + daoThis.Columns().Phone + `) AS ` + v)
 			case `roleIdArr`:
-				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				*afterField = append(*afterField, v)
 			default:
@@ -313,6 +314,8 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+			case `label`:
+				m = m.Where(m.Builder().WhereLike(daoThis.Table()+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoThis.Table()+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))
 			case `timeRangeStart`:
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:

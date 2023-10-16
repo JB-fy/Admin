@@ -13,9 +13,9 @@ import (
 type Admin struct {
 	g.Meta    `orm:"table:platform_admin, do:true"`
 	AdminId   interface{} // 管理员ID
-	Phone     interface{} // 电话号码
+	Phone     interface{} // 手机
 	Account   interface{} // 账号
-	Password  interface{} // 密码（md5保存）
+	Password  interface{} // 密码。md5保存
 	Salt      interface{} // 加密盐
 	Nickname  interface{} // 昵称
 	Avatar    interface{} // 头像
