@@ -25,16 +25,16 @@ type MenuDao struct {
 
 // MenuColumns defines and stores column names for table auth_menu.
 type MenuColumns struct {
-	MenuId    string // 权限菜单ID
-	SceneId   string // 权限场景ID（只能是auth_scene表中sceneType为0的菜单类型场景）
-	Pid       string // 父ID
+	MenuId    string // 菜单ID
 	MenuName  string // 名称
+	SceneId   string // 场景ID
 	MenuIcon  string // 图标
 	MenuUrl   string // 链接
+	Pid       string // 父ID
 	Level     string // 层级
 	IdPath    string // 层级路径
-	ExtraData string // 额外数据。（json格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}）
-	Sort      string // 排序值（从小到大排序，默认50，范围0-100）
+	ExtraData string // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
+	Sort      string // 排序值。从小到大排序，默认50，范围0-100
 	IsStop    string // 停用：0否 1是
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
@@ -43,11 +43,11 @@ type MenuColumns struct {
 // menuColumns holds the columns for table auth_menu.
 var menuColumns = MenuColumns{
 	MenuId:    "menuId",
-	SceneId:   "sceneId",
-	Pid:       "pid",
 	MenuName:  "menuName",
+	SceneId:   "sceneId",
 	MenuIcon:  "menuIcon",
 	MenuUrl:   "menuUrl",
+	Pid:       "pid",
 	Level:     "level",
 	IdPath:    "idPath",
 	ExtraData: "extraData",

@@ -2231,7 +2231,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist { //idPath|id_path
 				hiddenOfColumn = `hidden: true,`
 			} else if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //url,link后缀
-				widthOfColumn = `width: 300,`
+				widthOfColumn = `width: 200,`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
 			if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) { //pid

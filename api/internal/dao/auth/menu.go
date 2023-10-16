@@ -232,10 +232,16 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-			case `tree`: //树状需要以下字段和排序方式
+			case `sceneName`:
+				m = m.Fields(Scene.Table() + `.` + v)
+				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
+			case `pMenuName`:
+				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
+				m = daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr)(m)
+			case `tree`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().Pid)
-				m = daoThis.ParseOrder([]string{`tree`}, joinTableArr)(m) //排序方式
+				m = daoThis.ParseOrder([]string{`tree`}, joinTableArr)(m)
 			case `showMenu`: //前端显示菜单需要以下字段，且title需要转换
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName)
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuIcon)
@@ -244,12 +250,6 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				// m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))	//mysql不能直接转成对象返回
 				*afterField = append(*afterField, v)
-			case `sceneName`:
-				m = m.Fields(Scene.Table() + `.` + v)
-				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
-			case `pMenuName`:
-				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-				m = daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr)(m)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -324,14 +324,14 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				}
 			case `id`, `idArr`:
 				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `label`:
 				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().MenuName:
 				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+			case `timeRangeStart`:
+				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+			case `timeRangeEnd`:
+				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := v.(map[string]interface{})
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().SceneId, val[`sceneId`])
@@ -393,7 +393,10 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Pid)
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Sort)
 				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.PrimaryKey())
-			case daoThis.Columns().Sort, daoThis.Columns().Level:
+			case daoThis.Columns().Level:
+				m = m.Order(daoThis.Table() + `.` + v)
+				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey())
+			case daoThis.Columns().Sort:
 				m = m.Order(daoThis.Table() + `.` + v)
 				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
@@ -412,12 +415,6 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
-		/* case Xxxx.Table():
-		relTable := Xxxx.Table()
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-			*joinTableArr = append(*joinTableArr, relTable)
-			m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		} */
 		case Scene.Table():
 			relTable := Scene.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
@@ -459,7 +456,7 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 
 // 修改pid时，更新所有子孙级的idPath和level
 func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
-	daoThis.ParseDbCtx(ctx).WhereLike(`idPath`, oldIdPath+`-%`).Data(g.Map{
+	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().IdPath, oldIdPath+`-%`).Data(g.Map{
 		daoThis.Columns().IdPath: gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + oldIdPath + `', '` + newIdPath + `')`),
 		daoThis.Columns().Level:  gdb.Raw(daoThis.Columns().Level + ` + ` + gconv.String(newLevel-oldLevel)),
 	}).Update()
