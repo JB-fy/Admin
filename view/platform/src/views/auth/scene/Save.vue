@@ -40,25 +40,9 @@ const saveForm = reactive({
 				trigger: 'blur',
 				message: t('validation.json'),
 			},
-            /* {
-                validator: (rule: any, value: any, callback: any) => {
-                    try {
-                        if (value === '' || value === null || value === undefined) {
-                            callback()
-                        }
-                        JSON.parse(value)
-                        callback()
-                    } catch (e) {
-                        callback(new Error())
-                    }
-                },
-                trigger: 'blur',
-                message: t('validation.json')
-            }, */
 		],
 		isStop: [
-			/* { type: 'enum', enum: tm('common.status.whether').map((item) => item.value), trigger: 'change', message: t('validation.select') }, */
-			{ type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
 		],
 	} as any,
 	submit: () => {

@@ -3146,19 +3146,14 @@ const ` + field + `Handle = reactive({
 				</ElFormItem>`
 			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
 				statusList := MyGenStatusList(comment)
-				statusArr := make([]string, len(statusList))
-				for index, status := range statusList {
-					statusArr[index] = status[0]
-				}
-				statusStr := gstr.Join(statusArr, `, `)
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'enum', enum: [` + statusStr + `], trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
 				//超过5个状态用select组件，小于5个用radio组件
-				if len(statusArr) > 5 {
+				if len(statusList) > 5 {
 					viewSaveField += `
 					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />`
 				} else {
@@ -3176,7 +3171,7 @@ const ` + field + `Handle = reactive({
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'enum', enum: [0, 1], trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
