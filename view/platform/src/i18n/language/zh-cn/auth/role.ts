@@ -1,10 +1,14 @@
 export default {
-    name:{
-        roleName: '角色名称',
-        tableId: '所属机构',
-        sceneId: '所属场景',
-        menuIdArr: '所含菜单',
-        actionIdArr: '所含操作',
-        isStop: '停用',
-    },
+	name: {
+		roleName: '名称',
+		sceneId: '场景',
+		tableId: '关联表ID',
+		isStop: '停用',
+        menuIdArr: '菜单',
+        actionIdArr: '操作',
+	},
+	status: {
+	},
+	tip: {
+	}
 }

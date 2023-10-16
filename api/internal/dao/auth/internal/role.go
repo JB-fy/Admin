@@ -25,10 +25,10 @@ type RoleDao struct {
 
 // RoleColumns defines and stores column names for table auth_role.
 type RoleColumns struct {
-	RoleId    string // 权限角色ID
-	SceneId   string // 权限场景ID
-	TableId   string // 关联表ID（0表示平台创建，其它值根据authSceneId对应不同表，表示是哪个表内哪个机构或个人创建）
+	RoleId    string // 角色ID
 	RoleName  string // 名称
+	SceneId   string // 场景ID
+	TableId   string // 关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建
 	IsStop    string // 停用：0否 1是
 	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
@@ -37,9 +37,9 @@ type RoleColumns struct {
 // roleColumns holds the columns for table auth_role.
 var roleColumns = RoleColumns{
 	RoleId:    "roleId",
+	RoleName:  "roleName",
 	SceneId:   "sceneId",
 	TableId:   "tableId",
-	RoleName:  "roleName",
 	IsStop:    "isStop",
 	UpdatedAt: "updatedAt",
 	CreatedAt: "createdAt",

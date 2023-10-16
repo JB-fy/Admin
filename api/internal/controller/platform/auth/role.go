@@ -45,7 +45,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authRoleLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, columnsThis.RoleId, columnsThis.RoleName}
+		field = []string{`id`, `label`, columnsThis.RoleName, columnsThis.RoleId}
 	}
 	/**--------权限验证 结束--------**/
 

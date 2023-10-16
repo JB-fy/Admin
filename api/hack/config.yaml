@@ -12,7 +12,7 @@ gfcli:
         daoPath: "dao/auth"
         doPath: "model/do/auth"
         entityPath: "model/entity/auth"
-        tables: "auth_menu"
+        tables: "auth_role"
         tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
         tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
         overwriteDao: true
