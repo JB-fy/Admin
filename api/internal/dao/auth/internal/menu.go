@@ -28,11 +28,11 @@ type MenuColumns struct {
 	MenuId    string // 菜单ID
 	MenuName  string // 名称
 	SceneId   string // 场景ID
-	MenuIcon  string // 图标
-	MenuUrl   string // 链接
 	Pid       string // 父ID
 	Level     string // 层级
 	IdPath    string // 层级路径
+	MenuIcon  string // 图标
+	MenuUrl   string // 链接
 	ExtraData string // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      string // 排序值。从小到大排序，默认50，范围0-100
 	IsStop    string // 停用：0否 1是
@@ -45,11 +45,11 @@ var menuColumns = MenuColumns{
 	MenuId:    "menuId",
 	MenuName:  "menuName",
 	SceneId:   "sceneId",
-	MenuIcon:  "menuIcon",
-	MenuUrl:   "menuUrl",
 	Pid:       "pid",
 	Level:     "level",
 	IdPath:    "idPath",
+	MenuIcon:  "menuIcon",
+	MenuUrl:   "menuUrl",
 	ExtraData: "extraData",
 	Sort:      "sort",
 	IsStop:    "isStop",

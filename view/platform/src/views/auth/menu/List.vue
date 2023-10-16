@@ -69,28 +69,6 @@ const table = reactive({
 		width: 150,
 	},
 	{
-		dataKey: 'menuIcon',
-		title: t('auth.menu.name.menuIcon'),
-		key: 'menuIcon',
-		align: 'center',
-		width: 100,
-		cellRenderer: (props: any): any => {
-			return [
-				h(MyIconDynamic as any, {
-					icon: props.rowData.menuIcon,
-					size: '18px',
-				})
-			]
-		},
-	},
-	{
-		dataKey: 'menuUrl',
-		title: t('auth.menu.name.menuUrl'),
-		key: 'menuUrl',
-		align: 'center',
-		width: 200,
-	},
-	{
 		dataKey: 'pMenuName',
 		title: t('auth.menu.name.pid'),
 		key: 'pid',
@@ -112,6 +90,28 @@ const table = reactive({
 		align: 'center',
 		width: 150,
 		hidden: true,
+	},
+	{
+		dataKey: 'menuIcon',
+		title: t('auth.menu.name.menuIcon'),
+		key: 'menuIcon',
+		align: 'center',
+		width: 100,
+		cellRenderer: (props: any): any => {
+			return [
+				h(MyIconDynamic as any, {
+					icon: props.rowData.menuIcon,
+					size: '18px',
+				})
+			]
+		},
+	},
+	{
+		dataKey: 'menuUrl',
+		title: t('auth.menu.name.menuUrl'),
+		key: 'menuUrl',
+		align: 'center',
+		width: 200,
 	},
 	{
 		dataKey: 'extraData',

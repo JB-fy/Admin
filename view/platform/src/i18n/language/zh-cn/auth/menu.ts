@@ -2,11 +2,11 @@ export default {
 	name: {
 		menuName: '名称',
 		sceneId: '场景',
-		menuIcon: '图标',
-		menuUrl: '链接',
 		pid: '父级',
 		level: '层级',
 		idPath: '层级路径',
+		menuIcon: '图标',
+		menuUrl: '链接',
 		extraData: '额外数据',
 		sort: '排序值',
 		isStop: '停用',

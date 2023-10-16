@@ -13,11 +13,11 @@ type Menu struct {
 	MenuId    uint        `json:"menuId"    ` // 菜单ID
 	MenuName  string      `json:"menuName"  ` // 名称
 	SceneId   uint        `json:"sceneId"   ` // 场景ID
-	MenuIcon  string      `json:"menuIcon"  ` // 图标
-	MenuUrl   string      `json:"menuUrl"   ` // 链接
 	Pid       uint        `json:"pid"       ` // 父ID
 	Level     uint        `json:"level"     ` // 层级
 	IdPath    string      `json:"idPath"    ` // 层级路径
+	MenuIcon  string      `json:"menuIcon"  ` // 图标
+	MenuUrl   string      `json:"menuUrl"   ` // 链接
 	ExtraData string      `json:"extraData" ` // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      uint        `json:"sort"      ` // 排序值。从小到大排序，默认50，范围0-100
 	IsStop    uint        `json:"isStop"    ` // 停用：0否 1是

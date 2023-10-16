@@ -15,11 +15,11 @@ type Menu struct {
 	MenuId    interface{} // 菜单ID
 	MenuName  interface{} // 名称
 	SceneId   interface{} // 场景ID
-	MenuIcon  interface{} // 图标
-	MenuUrl   interface{} // 链接
 	Pid       interface{} // 父ID
 	Level     interface{} // 层级
 	IdPath    interface{} // 层级路径
+	MenuIcon  interface{} // 图标
+	MenuUrl   interface{} // 链接
 	ExtraData interface{} // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      interface{} // 排序值。从小到大排序，默认50，范围0-100
 	IsStop    interface{} // 停用：0否 1是

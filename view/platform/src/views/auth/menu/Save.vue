@@ -20,29 +20,22 @@ const saveForm = reactive({
 		sceneId: [
 			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }
 		],
+		pid: [
+			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
+		],
 		menuIcon: [
 			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		menuUrl: [
 			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
 		],
-		pid: [
-			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }
-		],
 		extraData: [
 			{
 				type: 'object',
-				fields: {
-					title: {
-						type: 'object',
-						fields: {
-							'zh-cn': { type: 'string', required: true, min: 1, message: 'title.zh-cn' + t('validation.min.string', { min: 1 }) },
-							en: { type: 'string', min: 1, message: 'title.en' + t('validation.min.string', { min: 1 }) },
-						},
-						message: 'title' + t('validation.regex'),
-					},
-				},
+				/* fields: {
+					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) }
+				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
 						return undefined
@@ -119,6 +112,9 @@ const saveDrawer = reactive({
 				<ElFormItem :label="t('auth.menu.name.sceneId')" prop="sceneId">
 					<MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => { saveForm.data.pid = 0 }" />
 				</ElFormItem>
+				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
+					<MyCascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
+				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
 					<ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>
@@ -127,9 +123,6 @@ const saveDrawer = reactive({
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
 					<ElInput v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" minlength="1" maxlength="120" :show-word-limit="true" :clearable="true" />
-				</ElFormItem>
-				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
-					<MyCascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.extraData')" prop="extraData">
 					<ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
