@@ -7,7 +7,6 @@ export default {
 		avatar: '头像',
 		isStop: '停用',
 		roleId: '角色',
-		roleIdArr: '角色',
 	},
 	status: {
 	},

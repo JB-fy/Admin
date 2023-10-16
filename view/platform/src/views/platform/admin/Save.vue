@@ -29,13 +29,13 @@ const saveForm = reactive({
 		],
 		avatar: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
+			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
 		],
 		isStop: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }
+			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
 		roleIdArr: [
-			{ type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }
+			{ type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') },
 		],
 	} as any,
 	submit: () => {
@@ -112,7 +112,7 @@ const saveDrawer = reactive({
 				<ElFormItem :label="t('platform.admin.name.avatar')" prop="avatar">
 					<MyUpload v-model="saveForm.data.avatar" accept="image/*" />
 				</ElFormItem>
-				<ElFormItem :label="t('platform.admin.name.roleIdArr')" prop="roleIdArr">
+				<ElFormItem :label="t('platform.admin.name.roleId')" prop="roleIdArr">
 					<MyTransfer v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" />
 				</ElFormItem>
 				<ElFormItem :label="t('platform.admin.name.isStop')" prop="isStop">
