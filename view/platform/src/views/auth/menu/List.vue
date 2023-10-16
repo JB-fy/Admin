@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import MyIconDynamic from '@/components/MyIconDynamic.vue';
+
 const { t, tm } = useI18n()
 
 const table = reactive({
@@ -86,7 +88,7 @@ const table = reactive({
 		title: t('auth.menu.name.menuUrl'),
 		key: 'menuUrl',
 		align: 'center',
-		width: 150,
+		width: 200,
 	},
 	{
 		dataKey: 'pMenuName',
