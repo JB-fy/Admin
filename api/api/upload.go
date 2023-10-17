@@ -22,10 +22,10 @@ type UploadUploadRes struct {
 
 /*--------上传本地 结束--------*/
 
-/*--------获取签名 开始--------*/
+/*--------获取签名（H5直传用） 开始--------*/
 type UploadSignReq struct {
-	g.Meta `path:"/sign" method:"post" tags:"上传" sm:"获取签名(web端直传用)"`
-	Type   string `json:"type" v:"" dc:"类型(暂时没用)"`
+	g.Meta `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
+	Type   string `json:"type" v:"" dc:"类型"`
 }
 
 type UploadSignRes struct {
@@ -37,34 +37,41 @@ type UploadSignRes struct {
 	IsRes      uint                   `json:"isRes,omitempty" dc:"上传是否有响应数据：0否 1是"`
 }
 
-/*--------获取签名 结束--------*/
+/*--------获取签名（H5直传用） 结束--------*/
 
-/*--------获取Sts Token 开始--------*/
-type UploadStsReq struct {
-	g.Meta `path:"/sts" method:"get,post" tags:"上传" sm:"获取Sts Token(App端直传用)"`
-	Type   string `json:"type" v:"" dc:"类型(暂时没用)"`
+/*--------获取配置信息（APP直传前调用，后期也可用在其它地方） 开始--------*/
+type UploadConfigReq struct {
+	g.Meta `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用，后期也可用在其它地方）"`
+	Type   string `json:"type" v:"" dc:"类型"`
 }
 
-type UploadStsRes struct {
-	/*--------App端的SDK需设置一个地址来获取Sts Token，且必须按要求以下字段 开始--------*/
-	StatusCode      int    `json:"StatusCode,omitempty" dc:"状态码"`
-	AccessKeyId     string `json:"AccessKeyId,omitempty" dc:"阿里云OSS-AccessKeyId"`
-	AccessKeySecret string `json:"AccessKeySecret,omitempty" dc:"阿里云OSS-AccessKeySecret"`
-	SecurityToken   string `json:"SecurityToken,omitempty" dc:"阿里云OSS-SecurityToken"`
-	Expiration      string `json:"Expiration,omitempty" dc:"Expiration"`
-	/*--------App端的SDK需设置一个地址来获取Sts Token，且必须按要求以下字段 结束--------*/
-
-	/*--------App端实际上传时需用到的字段，但必须验证权限后才能拿到 开始--------*/
+type UploadConfigRes struct {
 	Endpoint         string `json:"endpoint,omitempty" dc:"阿里云OSS-endpoint"`
 	Bucket           string `json:"bucket,omitempty" dc:"阿里云OSS-bucket"`
 	Dir              string `json:"dir,omitempty" dc:"上传文件目录"`
 	CallbackUrl      string `json:"callbackUrl,omitempty" dc:"回调地址"`
 	CallbackBody     string `json:"callbackBody,omitempty" dc:"回调参数"`
 	CallbackBodyType string `json:"callbackBodyType,omitempty" dc:"回调方式"`
-	/*--------App端实际上传时需用到的字段，但必须验证权限后才能拿到 结束--------*/
 }
 
-/*--------获取Sts Token 结束--------*/
+/*--------获取Sts 获取配置信息（APP直传前调用，后期也可用在其它地方） 结束--------*/
+
+/*--------获取Sts Token（APP直传用） 开始--------*/
+//阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
+type UploadStsReq struct {
+	g.Meta `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
+	Type   string `json:"type" v:"" dc:"类型"`
+}
+
+type UploadStsRes struct {
+	StatusCode      int    `json:"StatusCode,omitempty" dc:"状态码"`
+	AccessKeyId     string `json:"AccessKeyId,omitempty" dc:"阿里云OSS-AccessKeyId"`
+	AccessKeySecret string `json:"AccessKeySecret,omitempty" dc:"阿里云OSS-AccessKeySecret"`
+	SecurityToken   string `json:"SecurityToken,omitempty" dc:"阿里云OSS-SecurityToken"`
+	Expiration      string `json:"Expiration,omitempty" dc:"Expiration"`
+}
+
+/*--------获取Sts Token（APP直传用） 结束--------*/
 
 /*--------回调 开始--------*/
 type UploadNotifyReq struct {

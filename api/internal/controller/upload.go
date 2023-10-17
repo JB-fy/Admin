@@ -25,7 +25,7 @@ func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadR
 	return
 }
 
-// 获取签名(web端直传用)
+// 获取签名（H5直传用）
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
 	signInfo, err := upload.NewUpload(ctx).Sign(req.Type)
 	if err != nil {
@@ -35,18 +35,23 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	return
 }
 
-// 获取Sts Token(App端直传用)
+// 获取配置信息（APP直传前调用，后期也可用在其它地方）
+func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigReq) (res *api.UploadConfigRes, err error) {
+	config, err := upload.NewUpload(ctx).Config(req.Type)
+	if err != nil {
+		return
+	}
+	utils.HttpWriteJson(ctx, config, 0, ``)
+	return
+}
+
+// 获取Sts Token（APP直传用）
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
 	stsInfo, err := upload.NewUpload(ctx).Sts(req.Type)
 	if err != nil {
 		return
 	}
-	request := g.RequestFromCtx(ctx)
-	if request.URL.Path == `/upload/sts` {
-		request.Response.WriteJson(stsInfo)
-		return
-	}
-	utils.HttpWriteJson(ctx, stsInfo, 0, ``)
+	g.RequestFromCtx(ctx).Response.WriteJson(stsInfo)
 	return
 }
 

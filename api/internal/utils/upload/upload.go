@@ -6,10 +6,11 @@ import (
 )
 
 type Upload interface {
-	Upload() (uploadInfo map[string]interface{}, err error)
-	Sign(uploadFileType string) (signInfo map[string]interface{}, err error)
-	Sts(uploadFileType string) (stsInfo map[string]interface{}, err error)
-	Notify() (notifyInfo map[string]interface{}, err error)
+	Upload() (uploadInfo map[string]interface{}, err error)                  // 本地上传
+	Sign(uploadFileType string) (signInfo map[string]interface{}, err error) // 获取签名（H5直传用）
+	Config(uploadFileType string) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用，后期也可用在其它地方）
+	Sts(uploadFileType string) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
+	Notify() (notifyInfo map[string]interface{}, err error)                  // 回调
 }
 
 func NewUpload(ctx context.Context) Upload {

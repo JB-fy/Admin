@@ -32,6 +32,7 @@ func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
 	return &localObj
 }
 
+// 本地上传
 func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error) {
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	dir := r.Get(`dir`).String()
@@ -85,6 +86,7 @@ func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error)
 	return
 }
 
+// 获取签名（H5直传用）
 func (uploadThis *Local) Sign(uploadFileType string) (signInfo map[string]interface{}, err error) {
 	type Option struct {
 		Dir     string //上传的文件目录
@@ -121,10 +123,17 @@ func (uploadThis *Local) Sign(uploadFileType string) (signInfo map[string]interf
 	return
 }
 
+// 获取配置信息（APP直传前调用，后期也可用在其它地方）
+func (uploadThis *Local) Config(uploadFileType string) (config map[string]interface{}, err error) {
+	return
+}
+
+// 获取Sts Token（APP直传用）
 func (uploadThis *Local) Sts(uploadFileType string) (stsInfo map[string]interface{}, err error) {
 	return
 }
 
+// 回调
 func (uploadThis *Local) Notify() (notifyInfo map[string]interface{}, err error) {
 	return
 }

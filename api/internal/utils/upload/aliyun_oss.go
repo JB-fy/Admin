@@ -69,10 +69,12 @@ type AliyunOssCallback struct {
 	BodyType string `json:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
+// 本地上传
 func (uploadThis *AliyunOss) Upload() (uploadInfo map[string]interface{}, err error) {
 	return
 }
 
+// 获取签名（H5直传用）
 func (uploadThis *AliyunOss) Sign(uploadFileType string) (signInfo map[string]interface{}, err error) {
 	bucketHost := uploadThis.GetBucketHost()
 	option := AliyunOssSignOption{
@@ -113,6 +115,25 @@ func (uploadThis *AliyunOss) Sign(uploadFileType string) (signInfo map[string]in
 	return
 }
 
+// 获取配置信息（APP直传前调用，后期也可用在其它地方）
+func (uploadThis *AliyunOss) Config(uploadFileType string) (config map[string]interface{}, err error) {
+	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
+
+	config = map[string]interface{}{
+		`endpoint`: uploadThis.Host,
+		`bucket`:   uploadThis.Bucket,
+		`dir`:      dir,
+	}
+	//是否回调
+	if uploadThis.CallbackUrl != `` {
+		config[`callbackUrl`] = uploadThis.CallbackUrl
+		config[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+		config[`callbackBodyType`] = `application/x-www-form-urlencoded`
+	}
+	return
+}
+
+// 获取Sts Token（APP直传用）
 func (uploadThis *AliyunOss) Sts(uploadFileType string) (stsInfo map[string]interface{}, err error) {
 	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
 	option := AliyunOssStsOption{
@@ -120,28 +141,11 @@ func (uploadThis *AliyunOss) Sts(uploadFileType string) (stsInfo map[string]inte
 		ExpireTime:  15 * 60,
 		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + dir + `*"]}],"Version": "1"}`,
 	}
-
-	//App端的SDK需设置一个地址来获取Sts Token，且必须按要求格式返回，该地址不验证登录token
-	if g.RequestFromCtx(uploadThis.Ctx).URL.Path == `/upload/sts` {
-		stsInfo, _ = uploadThis.GetStsToken(option)
-		return
-	}
-
-	stsInfo = map[string]interface{}{}
-	//App端实际上传时需用到的字段，但必须验证登录token后才能拿到
-	stsInfo[`endpoint`] = uploadThis.Host
-	stsInfo[`bucket`] = uploadThis.Bucket
-	stsInfo[`dir`] = dir
-
-	//是否回调
-	if uploadThis.CallbackUrl != `` {
-		stsInfo[`callbackUrl`] = uploadThis.CallbackUrl
-		stsInfo[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-		stsInfo[`callbackBodyType`] = `application/x-www-form-urlencoded`
-	}
+	stsInfo, _ = uploadThis.GetStsToken(option)
 	return
 }
 
+// 回调
 func (uploadThis *AliyunOss) Notify() (notifyInfo map[string]interface{}, err error) {
 	if uploadThis.CallbackUrl == `` {
 		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `请先设置回调地址`)

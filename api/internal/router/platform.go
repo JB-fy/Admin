@@ -29,7 +29,6 @@ func InitRouterPlatform(s *ghttp.Server) {
 				controllerThis := controller.NewUpload()
 				group.Bind(
 					controllerThis.Sign,
-					controllerThis.Sts,
 				)
 			})
 
