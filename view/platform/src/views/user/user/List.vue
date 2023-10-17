@@ -198,24 +198,6 @@ const table = reactive({
 		align: 'center',
 		width: 150,
 		sortable: true,
-	},
-	{
-		title: t('common.name.action'),
-		key: 'action',
-		align: 'center',
-		width: 250,
-		fixed: 'right',
-		cellRenderer: (props: any): any => {
-			return [
-				h(ElButton, {
-					type: 'primary',
-					size: 'small',
-					onClick: () => handleEditCopy(props.rowData.id)
-				}, {
-					default: () => [h(AutoiconEpEdit), t('common.edit')]
-				}),
-			]
-		},
 	}] as any,
 	data: [],
 	loading: false,
@@ -227,25 +209,6 @@ const table = reactive({
 	},
 })
 
-const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
-//编辑|复制
-const handleEditCopy = (id: number, type: string = 'edit') => {
-	request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/info', { id: id }).then((res) => {
-		saveCommon.data = { ...res.data.info }
-		switch (type) {
-			case 'edit':
-				saveCommon.data.idArr = [saveCommon.data.id]
-				delete saveCommon.data.id
-				saveCommon.title = t('common.edit')
-				break;
-			case 'copy':
-				delete saveCommon.data.id
-				saveCommon.title = t('common.copy')
-				break;
-		}
-		saveCommon.visible = true
-	}).catch(() => { })
-}
 //更新
 const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
 	await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/update', param, true)
