@@ -94,8 +94,8 @@ type UserUpdateReq struct {
 	g.Meta     `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"更新"`
 	IdArr      []uint      `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	Phone      *string     `json:"phone,omitempty" v:"length:1,30|phone" dc:"手机"`
-	Account    *string     `json:"account,omitempty" v:"length:1,30" dc:"账号"`
-	Password   *string     `json:"password,omitempty" v:"size:32" dc:"密码（md5保存）"`
+	Account    *string     `json:"account,omitempty" v:"length:1,30|passport" dc:"账号"`
+	Password   *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	Nickname   *string     `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
 	Avatar     *string     `json:"avatar,omitempty" v:"length:1,120|url" dc:"头像"`
 	Gender     *uint       `json:"gender,omitempty" v:"integer|in:0,1,2" dc:"性别：0未设置 1男 2女"`

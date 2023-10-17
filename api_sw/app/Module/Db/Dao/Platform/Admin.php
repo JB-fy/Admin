@@ -11,7 +11,7 @@ use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
  * @property int $adminId 管理员ID
  * @property string $account 账号
  * @property string $phone 电话号码
- * @property string $password 密码（md5保存）
+ * @property string $password 密码。md5保存
  * @property string $nickname 昵称
  * @property string $avatar 头像
  * @property int $isStop 停用：0否 1是

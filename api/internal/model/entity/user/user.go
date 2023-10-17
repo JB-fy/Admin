@@ -13,7 +13,7 @@ type User struct {
 	UserId     uint        `json:"userId"     ` // 用户ID
 	Phone      string      `json:"phone"      ` // 手机
 	Account    string      `json:"account"    ` // 账号
-	Password   string      `json:"password"   ` // 密码（md5保存）
+	Password   string      `json:"password"   ` // 密码。md5保存
 	Salt       string      `json:"salt"       ` // 加密盐
 	Nickname   string      `json:"nickname"   ` // 昵称
 	Avatar     string      `json:"avatar"     ` // 头像

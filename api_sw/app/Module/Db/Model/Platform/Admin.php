@@ -10,7 +10,7 @@ use App\Module\Db\Model\AbstractModel;
  * @property int $adminId 管理员ID
  * @property string $phone 电话号码
  * @property string $account 账号
- * @property string $password 密码（md5保存）
+ * @property string $password 密码。md5保存
  * @property string $salt 加密盐
  * @property string $nickname 昵称
  * @property string $avatar 头像

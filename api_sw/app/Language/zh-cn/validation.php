@@ -214,7 +214,7 @@ return [
         'timeRangeEnd' => '结束时间',
 
         'account' => '账号',
-        'phone' => '手机号',
+        'phone' => '手机',
         'password' => '密码',
         'checkPassword' => '验证密码',
         'nickname' => '昵称',

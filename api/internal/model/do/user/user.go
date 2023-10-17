@@ -15,7 +15,7 @@ type User struct {
 	UserId     interface{} // 用户ID
 	Phone      interface{} // 手机
 	Account    interface{} // 账号
-	Password   interface{} // 密码（md5保存）
+	Password   interface{} // 密码。md5保存
 	Salt       interface{} // 加密盐
 	Nickname   interface{} // 昵称
 	Avatar     interface{} // 头像

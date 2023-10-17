@@ -28,7 +28,7 @@ type UserColumns struct {
 	UserId     string // 用户ID
 	Phone      string // 手机
 	Account    string // 账号
-	Password   string // 密码（md5保存）
+	Password   string // 密码。md5保存
 	Salt       string // 加密盐
 	Nickname   string // 昵称
 	Avatar     string // 头像
