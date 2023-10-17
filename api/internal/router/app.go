@@ -16,15 +16,18 @@ func InitRouterApp(s *ghttp.Server) {
 			// group.Bind(controllerLogin.NewAdmin())
 		})
 
+		/* // 无需验证登录身份，但带token时，需解析token
+		group.Group(``, func(group *ghttp.RouterGroup) {
+			group.Middleware(middleware.SceneLoginOfApp(false))
+		}) */
+
 		//需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfApp(true))
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewUpload()
-				group.Bind(
-					controllerThis.Config,
-				)
+				group.Bind(controllerThis.Config)
 			})
 
 			/* group.Group(`/my`, func(group *ghttp.RouterGroup) {
