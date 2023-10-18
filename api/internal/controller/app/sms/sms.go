@@ -21,7 +21,7 @@ func NewSms() *Sms {
 	return &Sms{}
 }
 
-// 获取加密盐
+// 发送短信
 func (controllerThis *Sms) Send(ctx context.Context, req *apiSms.SmsSendReq) (res *api.CommonNoDataRes, err error) {
 	phone := req.Phone
 	switch req.UseScene {
