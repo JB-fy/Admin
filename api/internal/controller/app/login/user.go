@@ -77,11 +77,14 @@ func (controllerThis *User) Login(ctx context.Context, req *apiLogin.UserLoginRe
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
 		}
-	} else if req.SmsCode != `` { //验证码
-
-	} else {
-		err = utils.NewErrorCode(ctx, 89999999, ``)
-		return
+	} else if req.SmsCode != `` { //短信验证码
+		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.LoginName, 0) //使用场景：0登录
+		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
+		smsCode := smsCodeVar.String()
+		if smsCode == `` || smsCode != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39990008, ``)
+			return
+		}
 	}
 
 	claims := utils.CustomClaims{LoginId: info[`userId`].Uint()}

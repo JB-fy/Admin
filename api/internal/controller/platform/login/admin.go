@@ -67,7 +67,7 @@ func (controllerThis *Admin) Login(ctx context.Context, req *apiLogin.AdminLogin
 	}
 
 	claims := utils.CustomClaims{LoginId: info[`adminId`].Uint()}
-	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
+	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
