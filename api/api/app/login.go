@@ -6,7 +6,7 @@ import (
 
 /*--------获取加密盐 开始--------*/
 type LoginSaltReq struct {
-	g.Meta    `path:"/salt" method:"post" tags:"APP/登录" sm:"获取加密盐"`
+	g.Meta    `path:"/login/salt" method:"post" tags:"APP/登录" sm:"获取加密盐"`
 	LoginName string `json:"loginName" v:"required|length:1,30" dc:"账号/手机"`
 }
 
