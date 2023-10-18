@@ -5,6 +5,7 @@ import (
 
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/app"
+	controllerMy "api/internal/controller/app/my"
 	"api/internal/middleware"
 )
 
@@ -33,9 +34,9 @@ func InitRouterApp(s *ghttp.Server) {
 				group.Bind(controllerThis.Config)
 			})
 
-			/* group.Group(`/my`, func(group *ghttp.RouterGroup) {
+			group.Group(`/my`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerMy.NewProfile())
-			}) */
+			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
 		})
