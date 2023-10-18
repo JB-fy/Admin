@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	apiSms "api/api/app/sms"
+	apiCurrent "api/api/app"
 	"api/internal/consts"
 	"api/internal/dao"
 	daoUser "api/internal/dao/user"
@@ -22,7 +22,7 @@ func NewSms() *Sms {
 }
 
 // 发送短信
-func (controllerThis *Sms) Send(ctx context.Context, req *apiSms.SmsSendReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq) (res *api.CommonNoDataRes, err error) {
 	phone := req.Phone
 	switch req.UseScene {
 	case 0, 2: //登录，密码找回

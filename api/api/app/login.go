@@ -5,7 +5,7 @@ import (
 )
 
 /*--------获取加密盐 开始--------*/
-type UserSaltReq struct {
+type LoginSaltReq struct {
 	g.Meta    `path:"/salt" method:"post" tags:"APP/登录" sm:"获取加密盐"`
 	LoginName string `json:"loginName" v:"required|length:1,30" dc:"账号/手机"`
 }
@@ -13,7 +13,7 @@ type UserSaltReq struct {
 /*--------获取加密盐 结束--------*/
 
 /*--------登录 开始--------*/
-type UserLoginReq struct {
+type LoginLoginReq struct {
 	g.Meta    `path:"/login" method:"post" tags:"APP/登录" sm:"登录"`
 	LoginName string `json:"loginName" v:"required|length:1,30" dc:"账号/手机"`
 	Password  string `json:"password" v:"required-without:SmsCode|size:32|regex:^[\\p{L}\\p{N}]+$" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态加密盐)+动态加密盐)"`

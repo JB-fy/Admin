@@ -4,8 +4,8 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"api/internal/controller"
+	controllerCurrent "api/internal/controller/platform"
 	controllerAuth "api/internal/controller/platform/auth"
-	controllerLogin "api/internal/controller/platform/login"
 	controllerMy "api/internal/controller/platform/my"
 	controllerPlatform "api/internal/controller/platform/platform"
 	controllerUser "api/internal/controller/platform/user"
@@ -19,7 +19,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 		// 无需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Group(`/login`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerLogin.NewAdmin())
+				group.Bind(controllerCurrent.NewLogin())
 			})
 		})
 

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	apiLogin "api/api/app/login"
+	apiCurrent "api/api/app"
 	"api/internal/consts"
 	"api/internal/dao"
 	daoUser "api/internal/dao/user"
@@ -15,14 +15,14 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-type User struct{}
+type Login struct{}
 
-func NewUser() *User {
-	return &User{}
+func NewLogin() *Login {
+	return &Login{}
 }
 
 // 获取加密盐
-func (controllerThis *User) Salt(ctx context.Context, req *apiLogin.UserSaltReq) (res *api.CommonSaltRes, err error) {
+func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
 	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`passport`).Data(req.LoginName).Run(ctx) != nil {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
 		return
@@ -51,7 +51,7 @@ func (controllerThis *User) Salt(ctx context.Context, req *apiLogin.UserSaltReq)
 }
 
 // 登录
-func (controllerThis *User) Login(ctx context.Context, req *apiLogin.UserLoginReq) (res *api.CommonTokenRes, err error) {
+func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
 	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`passport`).Data(req.LoginName).Run(ctx) != nil {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
 		return

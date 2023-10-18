@@ -4,8 +4,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"api/internal/controller"
-	controllerLogin "api/internal/controller/app/login"
-	controllerSms "api/internal/controller/app/sms"
+	controllerCurrent "api/internal/controller/app"
 	"api/internal/middleware"
 )
 
@@ -16,7 +15,7 @@ func InitRouterApp(s *ghttp.Server) {
 		// 无需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Group(`/login`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerLogin.NewUser())
+				group.Bind(controllerCurrent.NewLogin())
 			})
 		})
 
@@ -25,7 +24,7 @@ func InitRouterApp(s *ghttp.Server) {
 			group.Middleware(middleware.SceneLoginOfApp(false))
 
 			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerSms.NewSms())
+				group.Bind(controllerCurrent.NewSms())
 			})
 		})
 

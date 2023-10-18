@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	apiLogin "api/api/platform/login"
+	apiCurrent "api/api/platform"
 	"api/internal/consts"
 	"api/internal/dao"
 	daoPlatform "api/internal/dao/platform"
@@ -15,14 +15,14 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-type Admin struct{}
+type Login struct{}
 
-func NewAdmin() *Admin {
-	return &Admin{}
+func NewLogin() *Login {
+	return &Login{}
 }
 
 // 获取加密盐
-func (controllerThis *Admin) Salt(ctx context.Context, req *apiLogin.AdminSaltReq) (res *api.CommonSaltRes, err error) {
+func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
 	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
@@ -45,7 +45,7 @@ func (controllerThis *Admin) Salt(ctx context.Context, req *apiLogin.AdminSaltRe
 }
 
 // 登录
-func (controllerThis *Admin) Login(ctx context.Context, req *apiLogin.AdminLoginReq) (res *api.CommonTokenRes, err error) {
+func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
 	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
