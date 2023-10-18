@@ -104,7 +104,7 @@ class Admin extends AbstractDao
     protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
     {
         switch ($key) {
-            case 'accountOrPhone':
+            case 'loginName':
                 if (is_numeric($value)) {
                     $this->builder->where($this->getTable() . '.' . 'phone', $operator ?? '=', $value, $boolean ?? 'and');
                 } else {

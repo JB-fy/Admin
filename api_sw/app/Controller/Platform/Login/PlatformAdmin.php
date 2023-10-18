@@ -17,7 +17,7 @@ class PlatformAdmin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         $data = $this->validate(__FUNCTION__, $sceneCode);
-        $this->service->salt($data['account']);
+        $this->service->salt($data['loginName']);
     }
 
     /**
@@ -29,6 +29,6 @@ class PlatformAdmin extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         $data = $this->validate(__FUNCTION__, $sceneCode);
-        $this->service->login($data['account'], $data['password']);
+        $this->service->login($data['loginName'], $data['password']);
     }
 }

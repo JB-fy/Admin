@@ -34,7 +34,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------选做。限制多地登录，多设备登录等情况下可用（前置条件：登录时做过token缓存） 开始--------**/
-		/* TokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.Account)
+		/* TokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.LoginId)
 		checkToken, _ := g.Redis().Get(r.GetCtx(), TokenKey)
 		if checkToken.String() != token {
 			if isForce {

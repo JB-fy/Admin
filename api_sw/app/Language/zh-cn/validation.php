@@ -193,6 +193,7 @@ return [
         'serverId' => '服务器id',
 
         'pid' => '父ID',
+        'loginName' => '账号/手机',
 
         'actionIdArr' => '操作列表',
         'actionIdArr.*' => '操作列表内所有值',

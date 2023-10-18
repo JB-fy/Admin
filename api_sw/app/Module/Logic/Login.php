@@ -11,14 +11,14 @@ class Login extends AbstractLogic
     /**
      * 生成加密盐
      *
-     * @param string $account
+     * @param string $loginName
      * @param string $sceneCode
      * @return string
      */
-    public function createSalt(string $account, string $sceneCode): string
+    public function createSalt(string $loginName, string $sceneCode): string
     {
         $cacheLogin = getCache(CacheLogin::class);
-        $cacheLogin->setSaltKey($account, $sceneCode);
+        $cacheLogin->setSaltKey($loginName, $sceneCode);
         $salt = randStr(8);
         $cacheLogin->setSalt($salt);
         return $salt;
@@ -32,10 +32,10 @@ class Login extends AbstractLogic
      * @param string $sceneCode
      * @return boolean
      */
-    public function checkPassword(string $rawPassword, string $password, string $account, string $sceneCode): bool
+    public function checkPassword(string $rawPassword, string $password, string $loginName, string $sceneCode): bool
     {
         $cacheLogin = getCache(CacheLogin::class);
-        $cacheLogin->setSaltKey($account, $sceneCode);
+        $cacheLogin->setSaltKey($loginName, $sceneCode);
         $salt = $cacheLogin->getSalt();
         return md5($rawPassword . $salt) == $password;
     }

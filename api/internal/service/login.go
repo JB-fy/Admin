@@ -12,13 +12,20 @@ import (
 type (
 	ILoginPlatformAdmin interface {
 		// 获取加密盐
-		Salt(ctx context.Context, account string) (saltStatic string, saltDynamic string, err error)
+		Salt(ctx context.Context, loginName string) (saltStatic string, saltDynamic string, err error)
 		// 登录
-		Login(ctx context.Context, account string, password string) (token string, err error)
+		Login(ctx context.Context, loginName string, password string) (token string, err error)
+	}
+	ILoginUser interface {
+		// 获取加密盐
+		Salt(ctx context.Context, loginName string) (saltStatic string, saltDynamic string, err error)
+		// 登录
+		Login(ctx context.Context, loginName string, password string, code string) (token string, err error)
 	}
 )
 
 var (
+	localLoginUser          ILoginUser
 	localLoginPlatformAdmin ILoginPlatformAdmin
 )
 
@@ -31,4 +38,15 @@ func LoginPlatformAdmin() ILoginPlatformAdmin {
 
 func RegisterLoginPlatformAdmin(i ILoginPlatformAdmin) {
 	localLoginPlatformAdmin = i
+}
+
+func LoginUser() ILoginUser {
+	if localLoginUser == nil {
+		panic("implement not found for interface ILoginUser, forgot register?")
+	}
+	return localLoginUser
+}
+
+func RegisterLoginUser(i ILoginUser) {
+	localLoginUser = i
 }

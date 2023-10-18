@@ -11,13 +11,13 @@ class Login extends AbstractCache
     /**
      * 设置加密盐key
      *
-     * @param string $account
+     * @param string $loginName
      * @param string $sceneCode
      * @return void
      */
-    public function setSaltKey(string $account, string $sceneCode)
+    public function setSaltKey(string $loginName, string $sceneCode)
     {
-        $this->saltKey = sprintf(getConfig('app.cache.saltFormat'), $sceneCode, $account);
+        $this->saltKey = sprintf(getConfig('app.cache.saltFormat'), $sceneCode, $loginName);
     }
 
     /**

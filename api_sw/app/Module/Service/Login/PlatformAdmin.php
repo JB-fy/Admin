@@ -17,41 +17,41 @@ class PlatformAdmin extends AbstractService
     /**
      * 获取加密盐
      *
-     * @param string $account
+     * @param string $loginName
      * @param string $sceneCode
      * @return void
      */
-    public function salt(string $account)
+    public function salt(string $loginName)
     {
-        $info = getDao(Admin::class)->parseFilter(['accountOrPhone' => $account])->info();
+        $info = getDao(Admin::class)->parseFilter(['loginName' => $loginName])->info();
         if (empty($info)) {
             throwFailJson(39990000);
         }
         $saltStatic = $info->salt;
         $sceneCode = 'platform';
-        $saltDynamic = $this->logic->createSalt($account, $sceneCode);
+        $saltDynamic = $this->logic->createSalt($loginName, $sceneCode);
         throwSuccessJson(['saltStatic' => $saltStatic, 'saltDynamic' => $saltDynamic]);
     }
 
     /**
      * 登录
      *
-     * @param string $account
+     * @param string $loginName
      * @param string $password
      * @return void
      */
-    public function login(string $account, string $password)
+    public function login(string $loginName, string $password)
     {
         $sceneCode = 'platform';
         /**--------验证账号密码 开始--------**/
-        $info = getDao(Admin::class)->parseFilter(['accountOrPhone' => $account])->info();
+        $info = getDao(Admin::class)->parseFilter(['loginName' => $loginName])->info();
         if (empty($info)) {
             throwFailJson(39990000);
         }
         if ($info->isStop) {
             throwFailJson(39990002);
         }
-        if (!$this->logic->checkPassword($info->password, $password, $account, $sceneCode)) {
+        if (!$this->logic->checkPassword($info->password, $password, $loginName, $sceneCode)) {
             throwFailJson(39990001);
         }
         /**--------验证账号密码 结束--------**/

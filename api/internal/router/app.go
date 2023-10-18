@@ -4,6 +4,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"api/internal/controller"
+	controllerLogin "api/internal/controller/app/login"
 	"api/internal/middleware"
 )
 
@@ -13,7 +14,7 @@ func InitRouterApp(s *ghttp.Server) {
 
 		//无需验证登录身份
 		group.Group(`/login`, func(group *ghttp.RouterGroup) {
-			// group.Bind(controllerLogin.NewAdmin())
+			group.Bind(controllerLogin.NewUser())
 		})
 
 		/* // 无需验证登录身份，但带token时，需解析token

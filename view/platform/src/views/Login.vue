@@ -6,11 +6,11 @@ const { t } = useI18n()
 const loginForm = reactive({
     ref: null as any,
     data: {
-        account: '',
+        loginName: '',
         password: ''
     },
     rules: {
-        account: [
+        loginName: [
             { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
         ],
         password: [
@@ -25,7 +25,7 @@ const loginForm = reactive({
             }
             loginForm.loading = true
             try {
-                await useAdminStore().login(loginForm.data.account, loginForm.data.password)
+                await useAdminStore().login(loginForm.data.loginName, loginForm.data.password)
                 router.replace((route.query.redirect ? route.query.redirect : '/') as string)
             } catch (error) { }
             loginForm.loading = false
@@ -42,9 +42,8 @@ const loginForm = reactive({
         </ElDivider>
         <ElForm :ref="(el: any) => { loginForm.ref = el }" :model="loginForm.data" :rules="loginForm.rules"
             @keyup.enter="loginForm.submit">
-            <ElFormItem prop="account">
-                <ElInput v-model="loginForm.data.account"
-                    :placeholder="t('login.name.account') + '/' + t('login.name.phone')">
+            <ElFormItem prop="loginName">
+                <ElInput v-model="loginForm.data.loginName" :placeholder="t('login.name.loginName')">
                     <template #prefix>
                         <AutoiconEpUser />
                     </template>

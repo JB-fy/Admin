@@ -320,8 +320,8 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `accountOrPhone`:
-				if g.Validator().Rules(`required|integer`).Data(v).Run(m.GetCtx()) == nil {
+			case `loginName`:
+				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
 					m = m.Where(daoThis.Table()+`.`+daoThis.Columns().Phone, v)
 				} else {
 					m = m.Where(daoThis.Table()+`.`+daoThis.Columns().Account, v)
