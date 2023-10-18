@@ -5,6 +5,7 @@ import (
 
 	"api/internal/controller"
 	controllerLogin "api/internal/controller/app/login"
+	controllerSms "api/internal/controller/app/sms"
 	"api/internal/middleware"
 )
 
@@ -12,17 +13,23 @@ func InitRouterApp(s *ghttp.Server) {
 	s.Group(`/app`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Scene)
 
-		//无需验证登录身份
-		group.Group(`/login`, func(group *ghttp.RouterGroup) {
-			group.Bind(controllerLogin.NewUser())
+		// 无需验证登录身份
+		group.Group(``, func(group *ghttp.RouterGroup) {
+			group.Group(`/login`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerLogin.NewUser())
+			})
 		})
 
-		/* // 无需验证登录身份，但带token时，需解析token
+		// 无需验证登录身份（但存在token时，会做解析，且忽视错误）
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfApp(false))
-		}) */
 
-		//需验证登录身份
+			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerSms.NewSms())
+			})
+		})
+
+		// 需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfApp(true))
 

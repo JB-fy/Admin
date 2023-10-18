@@ -48,7 +48,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 
 		/**--------获取登录用户信息并验证 开始--------**/
 		info, _ := daoUser.User.ParseDbCtx(r.GetCtx()).Where(`userId`, claims.LoginId).One()
-		if len(info) == 0 {
+		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))
 			} else {
@@ -56,7 +56,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[`isStop`].Int() > 0 {
+		if info[`isStop`].Int() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994004, ``))
 			} else {

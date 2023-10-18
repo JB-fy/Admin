@@ -20,7 +20,7 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	if sceneInfo[`isStop`].Int() > 0 {
+	if sceneInfo[`isStop`].Int() == 1 {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999997, ``))
 		return
 	}

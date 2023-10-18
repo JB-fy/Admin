@@ -27,9 +27,13 @@ func init() {
 // 获取加密盐
 func (logicThis *sLoginPlatformAdmin) Salt(ctx context.Context, loginName string) (saltStatic string, saltDynamic string, err error) {
 	sceneCode := `platform` //指定场景
-	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: loginName}).GetModel().One()
-	if len(info) == 0 {
+	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: loginName, `isStop`: 0}).GetModel().One()
+	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
+		return
+	}
+	if info[`isStop`].Int() == 1 {
+		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 	saltStatic = info[`salt`].String()
@@ -42,13 +46,12 @@ func (logicThis *sLoginPlatformAdmin) Salt(ctx context.Context, loginName string
 // 登录
 func (logicThis *sLoginPlatformAdmin) Login(ctx context.Context, loginName string, password string) (token string, err error) {
 	sceneCode := `platform` //指定场景
-	/**--------验证账号密码 开始--------**/
 	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: loginName}).GetModel().One()
 	if len(info) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[`isStop`].Int() > 0 {
+	if info[`isStop`].Int() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
@@ -59,11 +62,9 @@ func (logicThis *sLoginPlatformAdmin) Login(ctx context.Context, loginName strin
 		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return
 	}
-	/**--------验证账号密码 结束--------**/
 
 	claims := utils.CustomClaims{
-		LoginId:  info[`adminId`].Uint(),
-		Nickname: info[`nickname`].String(),
+		LoginId: info[`adminId`].Uint(),
 	}
 	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
 	token, err = jwt.CreateToken(claims)

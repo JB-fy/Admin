@@ -16,12 +16,14 @@ func InitRouterPlatform(s *ghttp.Server) {
 	s.Group(`/platform`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Scene)
 
-		//无需验证登录身份
-		group.Group(`/login`, func(group *ghttp.RouterGroup) {
-			group.Bind(controllerLogin.NewAdmin())
+		// 无需验证登录身份
+		group.Group(``, func(group *ghttp.RouterGroup) {
+			group.Group(`/login`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerLogin.NewAdmin())
+			})
 		})
 
-		//需验证登录身份
+		// 需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfPlatform(true))
 

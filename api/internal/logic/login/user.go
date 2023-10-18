@@ -28,8 +28,12 @@ func init() {
 func (logicThis *sLoginUser) Salt(ctx context.Context, loginName string) (saltStatic string, saltDynamic string, err error) {
 	sceneCode := `app` //指定场景
 	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: loginName}).GetModel().One()
-	if len(info) == 0 {
+	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
+		return
+	}
+	if info[`isStop`].Int() == 1 {
+		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 	saltStatic = info[`salt`].String()
@@ -47,7 +51,7 @@ func (logicThis *sLoginUser) Login(ctx context.Context, loginName string, passwo
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[`isStop`].Int() > 0 {
+	if info[`isStop`].Int() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}

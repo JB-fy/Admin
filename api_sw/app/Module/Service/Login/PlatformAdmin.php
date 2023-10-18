@@ -27,6 +27,9 @@ class PlatformAdmin extends AbstractService
         if (empty($info)) {
             throwFailJson(39990000);
         }
+        if ($info->isStop) {
+            throwFailJson(39990002);
+        }
         $saltStatic = $info->salt;
         $sceneCode = 'platform';
         $saltDynamic = $this->logic->createSalt($loginName, $sceneCode);
