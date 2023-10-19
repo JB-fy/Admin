@@ -15,14 +15,18 @@ func InitRouterApp(s *ghttp.Server) {
 
 		// 无需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Bind(controllerCurrent.NewLogin())
+			group.Group(`/login`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerCurrent.NewLogin())
+			})
 		})
 
 		// 无需验证登录身份（但存在token时，会做解析，且忽视错误）
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfApp(false))
 
-			group.Bind(controllerCurrent.NewSms())
+			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerCurrent.NewSms())
+			})
 		})
 
 		// 需验证登录身份

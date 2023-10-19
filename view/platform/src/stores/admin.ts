@@ -275,7 +275,7 @@ export const useAdminStore = defineStore('admin', {
       let res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/salt', {
         loginName: loginName
       })
-      res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login', {
+      res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/login', {
         loginName: loginName,
         password: md5(md5(md5(password) + res.data.saltStatic) + res.data.saltDynamic)
       })

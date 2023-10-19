@@ -45,7 +45,7 @@ type ProfileUpdateReq struct {
 	CheckPassword        *string     `json:"checkPassword,omitempty" v:"required-with:Account,Password|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号，手机，密码时checkPassword和smsCodeToPassword必传其一"`
 	SmsCodeToPassword    *string     `json:"smsCodeToPassword,omitempty" v:"required-with:Password|size:4" dc:"短信验证码。修改密码用，checkPassword和smsCodeToPassword传一个即可"`
 	SmsCodeToBindPhone   *string     `json:"smsCodeToBindPhone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。绑定手机用"`
-	SmsCodeToUnbingPhone *string     `json:"smsCodeToUnbingPhone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。解绑手机用"`
+	SmsCodeToUnbingPhone *string     `json:"smsCodeToUnbingPhone,omitempty" v:"size:4" dc:"短信验证码。解绑手机用"`
 }
 
 /*--------修改个人信息 结束--------*/

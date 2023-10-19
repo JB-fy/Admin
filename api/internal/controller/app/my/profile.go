@@ -45,24 +45,42 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-		case `smsCodeToPassword`, `smsCodeToBindPhone`, `smsCodeToUnbingPhone`:
+		case `smsCodeToPassword`, `smsCodeToUnbingPhone`:
 			phone := loginInfo[`phone`].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
 			}
 			useScene := 3 //使用场景：3密码修改
-			if k == `smsCodeToBindPhone` {
-				useScene = 4 //使用场景：4绑定手机
-			} else if k == `smsCodeToUnbingPhone` {
+			if k == `smsCodeToUnbingPhone` {
 				useScene = 5 //使用场景：5解绑手机
+				data[`phone`] = nil
 			}
 
 			sceneInfo := utils.GetCtxSceneInfo(ctx)
 			sceneCode := sceneInfo[`sceneCode`].String()
 			smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, useScene)
-			smsCode, _ := g.Redis().Get(ctx, smsKey)
-			if smsCode.String() != gconv.String(v) {
+			smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
+			smsCode := smsCodeVar.String()
+			if smsCode == `` || smsCode != gconv.String(v) {
+				err = utils.NewErrorCode(ctx, 39990008, ``)
+				return
+			}
+			delete(data, k)
+		case `smsCodeToBindPhone`:
+			phone := gconv.String(data[`phone`])
+			if loginInfo[`phone`].String() != `` {
+				err = utils.NewErrorCode(ctx, 39990005, ``)
+				return
+			}
+			useScene := 4 //使用场景：4绑定手机
+
+			sceneInfo := utils.GetCtxSceneInfo(ctx)
+			sceneCode := sceneInfo[`sceneCode`].String()
+			smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, useScene)
+			smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
+			smsCode := smsCodeVar.String()
+			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
 			}

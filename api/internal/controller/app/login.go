@@ -10,7 +10,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
 )
@@ -70,13 +69,13 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[`sceneCode`].String()
 	if req.Password != `` { //密码
-		saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, req.LoginName)
+		/* saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, req.LoginName)
 		saltVar, _ := g.Redis().Get(ctx, saltKey)
 		salt := saltVar.String()
 		if salt == `` || gmd5.MustEncrypt(info[`password`].String()+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
-		}
+		} */
 	} else if req.SmsCode != `` { //短信验证码
 		phone := info[`phone`].String()
 		if phone == `` {
