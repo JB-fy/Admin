@@ -52,7 +52,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
 		}
-	case 4: //绑定
+	case 4: //绑定手机
 		loginInfo := utils.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
@@ -67,7 +67,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39990006, ``)
 			return
 		}
-	case 5: //解绑
+	case 5: //解绑手机
 		loginInfo := utils.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)

@@ -64,8 +64,6 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		delete(info, `password`)
-		delete(info, `isStop`)
 
 		utils.SetCtxLoginInfo(r, info) //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/

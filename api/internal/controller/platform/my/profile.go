@@ -7,6 +7,7 @@ import (
 	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -33,6 +34,17 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 	loginInfo := utils.GetCtxLoginInfo(ctx)
+	for k, v := range data {
+		switch k {
+		case `checkPassword`:
+			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[`salt`].String()) != loginInfo[`password`].String() {
+				err = utils.NewErrorCode(ctx, 39990003, ``)
+				return
+			}
+			delete(data, k)
+		}
+	}
+
 	filter := map[string]interface{}{`id`: loginInfo[`adminId`]}
 	/**--------参数处理 结束--------**/
 

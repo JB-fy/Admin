@@ -78,7 +78,13 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			return
 		}
 	} else if req.SmsCode != `` { //短信验证码
-		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.LoginName, 0) //使用场景：0登录
+		phone := info[`phone`].String()
+		if phone == `` {
+			err = utils.NewErrorCode(ctx, 39990007, ``)
+			return
+		}
+		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, 0) //使用场景：0登录
+		// smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.LoginName, 0) //使用场景：0登录
 		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
 		smsCode := smsCodeVar.String()
 		if smsCode == `` || smsCode != req.SmsCode {
