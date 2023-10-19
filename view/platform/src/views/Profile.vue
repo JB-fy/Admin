@@ -19,22 +19,22 @@ const saveForm = reactive({
     rules: {
         account: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') }
+            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
         ],
         phone: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') }
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
         ],
         nickname: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         avatar: [
-			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) }
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
+            { type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
         ],
         password: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
         ],
         repeatPassword: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
@@ -46,7 +46,7 @@ const saveForm = reactive({
                     }
                     callback()
                 }, trigger: 'blur', message: t('validation.repeatPassword')
-            }
+            },
         ],
         checkPassword: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
@@ -60,7 +60,7 @@ const saveForm = reactive({
                     }
                     callback()
                 }, trigger: 'blur', message: t('validation.newPasswordDiffOldPassword')
-            }
+            },
         ],
     } as any,
     submit: () => {
@@ -144,8 +144,7 @@ const saveForm = reactive({
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('profile.tip.checkPassword')" type="info" :show-icon="true"
-                            :closable="false" />
+                        <ElAlert :title="t('profile.tip.checkPassword')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem>

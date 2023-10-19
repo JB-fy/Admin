@@ -85,7 +85,7 @@ class Admin extends AbstractValidation
             ],
             'append' => [
                 'password' => ['different:checkPassword'],
-                //'checkPassword' => ['required_with:account,phone,password', 'size:32'],
+                // 'checkPassword' => ['different:password'],
             ]
         ],
     ];
