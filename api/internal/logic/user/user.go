@@ -7,6 +7,7 @@ import (
 	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -37,6 +38,20 @@ func (logicThis *sUser) Update(ctx context.Context, filter map[string]interface{
 		return
 	}
 	hookData := map[string]interface{}{}
+
+	_, okCheckPassword := data[`checkPassword`]
+	if okCheckPassword {
+		if len(idArr) > 1 { //不支持批量修改
+			err = utils.NewErrorCode(ctx, 89999996, ``, map[string]interface{}{`errField`: `checkPassword`})
+			return
+		}
+		oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), idArr[0]).One()
+		if gmd5.MustEncrypt(gconv.String(data[`checkPassword`])+oldInfo[daoThis.Columns().Salt].String()) != oldInfo[daoThis.Columns().Password].String() {
+			err = utils.NewErrorCode(ctx, 39990003, ``)
+			return
+		}
+		delete(data, `checkPassword`)
+	}
 
 	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
 	return

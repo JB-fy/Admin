@@ -123,8 +123,8 @@ const saveForm = reactive({
                 <ElFormItem :label="t('profile.name.avatar')" prop="avatar">
                     <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
-                <ElFormItem :label="t('profile.name.newPassword')" prop="password">
-                    <ElInput v-model="saveForm.data.password" :placeholder="t('profile.name.newPassword')" minlength="1"
+                <ElFormItem :label="t('profile.name.password')" prop="password">
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="1"
                         maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
@@ -139,8 +139,8 @@ const saveForm = reactive({
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('profile.name.oldPassword')" prop="checkPassword">
-                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('profile.name.oldPassword')"
+                <ElFormItem :label="t('profile.name.checkPassword')" prop="checkPassword">
+                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('profile.name.checkPassword')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>

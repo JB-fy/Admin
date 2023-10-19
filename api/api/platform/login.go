@@ -16,7 +16,7 @@ type LoginSaltReq struct {
 type LoginLoginReq struct {
 	g.Meta    `path:"/login" method:"post" tags:"平台后台/登录" sm:"登录"`
 	LoginName string `json:"loginName" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号/手机"`
-	Password  string `json:"password" v:"required|size:32|regex:^[\\p{L}\\p{N}]+$" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态加密盐)+动态加密盐)"`
+	Password  string `json:"password" v:"required|size:32" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态加密盐)+动态加密盐)"`
 }
 
 /*--------登录 结束--------*/

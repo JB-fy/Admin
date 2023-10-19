@@ -33,9 +33,9 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	filter := map[string]interface{}{`id`: loginInfo[`adminId`]}
+	filter := map[string]interface{}{`id`: loginInfo[`UserId`]}
 	/**--------参数处理 结束--------**/
 
-	_, err = service.PlatformAdmin().Update(ctx, filter, data)
+	_, err = service.User().Update(ctx, filter, data)
 	return
 }
