@@ -22,6 +22,8 @@ func NewSms() *Sms {
 
 // 发送短信
 func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq) (res *api.CommonNoDataRes, err error) {
+	userDao := daoUser.User
+	userColumns := userDao.Columns()
 	phone := req.Phone
 	switch req.UseScene {
 	case 0, 2: //登录，密码找回
@@ -46,7 +48,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		phone = loginInfo[`phone`].String()
+		phone = loginInfo[userColumns.Phone].String()
 		if phone != `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
@@ -57,7 +59,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		if loginInfo[`phone`].String() != `` {
+		if loginInfo[userColumns.Phone].String() != `` {
 			err = utils.NewErrorCode(ctx, 39990005, ``)
 			return
 		}
@@ -72,7 +74,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		phone = loginInfo[`phone`].String()
+		phone = loginInfo[userColumns.Phone].String()
 		if phone == `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return

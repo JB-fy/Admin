@@ -22,7 +22,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	filter[`selfAction`] = map[string]interface{}{
 		`sceneCode`: sceneInfo[`sceneCode`].String(),
 		`sceneId`:   sceneInfo[`sceneId`].Int(),
-		`loginId`:   loginInfo[`merchantId`].Int(),
+		`loginId`:   loginInfo[`adminId`].Int(),
 	}
 	columns := daoAuth.Action.Columns()
 	field := []string{`id`, `label`, columns.ActionId, columns.ActionName}

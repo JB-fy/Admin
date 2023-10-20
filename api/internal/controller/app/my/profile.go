@@ -37,13 +37,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-	loginInfo := utils.GetCtxLoginInfo(ctx)
 	userDao := daoUser.User
 	userColumns := userDao.Columns()
+	loginInfo := utils.GetCtxLoginInfo(ctx)
 	for k, v := range data {
 		switch k {
 		/* case `account`: //前端太懒，可能把个人信息全部传回来，导致account有值，故不能用required-with:Account直接验证
-		if gconv.String(v) != loginInfo[`account`].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
+		if gconv.String(v) != loginInfo[userColumns.Account].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
 			err = utils.NewErrorCode(ctx, 89999999, ``)
 			return
 		} */
@@ -53,13 +53,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 		case `passwordToCheck`:
-			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[`salt`].String()) != loginInfo[`password`].String() {
+			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[userColumns.Salt].String()) != loginInfo[userColumns.Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
 			delete(data, k)
 		case `smsCodeToPassword`:
-			phone := loginInfo[`phone`].String()
+			phone := loginInfo[userColumns.Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
@@ -73,7 +73,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			delete(data, k)
 		case `smsCodeToBindPhone`:
 			phone := gconv.String(data[`phone`])
-			if loginInfo[`phone`].String() != `` {
+			if loginInfo[userColumns.Phone].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990005, ``)
 				return
 			}
@@ -85,7 +85,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `smsCodeToUnbingPhone`:
-			phone := loginInfo[`phone`].String()
+			phone := loginInfo[userColumns.Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
@@ -97,7 +97,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-			data[`phone`] = nil
+			data[userColumns.Phone] = nil
 		case `idCardName`:
 			idCardInfo, errTmp := idCard.NewIdCard(ctx).Auth(gconv.String(data[`idCardName`]), gconv.String(data[`idCardNo`]))
 			if errTmp != nil {
@@ -116,7 +116,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		}
 	}
 
-	filter := map[string]interface{}{`id`: loginInfo[`userId`]}
+	filter := map[string]interface{}{`id`: loginInfo[userDao.PrimaryKey()]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.User().Update(ctx, filter, data)

@@ -3,6 +3,7 @@ package controller
 import (
 	"api/api"
 	apiMy "api/api/platform/my"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -33,11 +34,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
+	adminDao := daoPlatform.Admin
+	adminColumns := adminDao.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	for k, v := range data {
 		switch k {
 		case `passwordToCheck`:
-			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[`salt`].String()) != loginInfo[`password`].String() {
+			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[adminColumns.Salt].String()) != loginInfo[adminColumns.Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
@@ -45,7 +48,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		}
 	}
 
-	filter := map[string]interface{}{`id`: loginInfo[`adminId`]}
+	filter := map[string]interface{}{`id`: loginInfo[adminDao.PrimaryKey()]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.PlatformAdmin().Update(ctx, filter, data)
