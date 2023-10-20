@@ -98,7 +98,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	if err != nil {
 		return
 	}
-	if len(info) == 0 {
+	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}

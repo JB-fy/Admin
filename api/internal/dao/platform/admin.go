@@ -89,8 +89,12 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}) gdb.ModelHan
 				}
 			case daoThis.Columns().Password:
 				salt := grand.S(8)
+				password := gconv.String(v)
+				if len(password) != 32 {
+					password = gmd5.MustEncrypt(password)
+				}
 				insertData[daoThis.Columns().Salt] = salt
-				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
+				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(password + salt)
 			case `roleIdArr`:
 				hookData[k] = v
 			default:
@@ -148,8 +152,12 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}) gdb.ModelHan
 				}
 			case daoThis.Columns().Password:
 				salt := grand.S(8)
+				password := gconv.String(v)
+				if len(password) != 32 {
+					password = gmd5.MustEncrypt(password)
+				}
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(gconv.String(v) + salt)
+				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(password + salt)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式

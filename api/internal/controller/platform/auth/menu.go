@@ -93,7 +93,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	if err != nil {
 		return
 	}
-	if len(info) == 0 {
+	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}

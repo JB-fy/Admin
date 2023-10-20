@@ -24,10 +24,12 @@ type LoginLoginReq struct {
 
 /*--------注册 开始--------*/
 type LoginRegisterReq struct {
-	g.Meta    `path:"/register" method:"post" tags:"APP/登录" sm:"注册"`
-	LoginName string `json:"loginName" v:"required|length:1,30" dc:"账号/手机"`
-	Password  string `json:"password" v:"required-without:SmsCode|size:32" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态加密盐)+动态加密盐)"`
-	SmsCode   string `json:"smsCode" v:"required-without:Password|size:4" dc:"短信验证码"`
+	g.Meta `path:"/register" method:"post" tags:"APP/登录" sm:"注册"`
+	// LoginName string `json:"loginName" v:"required|length:1,30" dc:"账号/手机"`
+	Phone    string `json:"phone,omitempty" v:"required-without:Account|length:1,30|phone" dc:"手机"`
+	Account  string `json:"account,omitempty" v:"required-without:Phone|length:1,30|passport" dc:"账号"`
+	Password string `json:"password" v:"required|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
+	SmsCode  string `json:"smsCode" v:"required-with:Phone|size:4" dc:"短信验证码"`
 }
 
 /*--------登录 结束--------*/

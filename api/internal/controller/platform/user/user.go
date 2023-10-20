@@ -96,7 +96,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	if err != nil {
 		return
 	}
-	if len(info) == 0 {
+	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}

@@ -58,7 +58,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
-	if len(info) == 0 {
+	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
@@ -84,7 +84,6 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			return
 		}
 		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, 0) //使用场景：0登录
-		// smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.LoginName, 0) //使用场景：0登录
 		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
 		smsCode := smsCodeVar.String()
 		if smsCode == `` || smsCode != req.SmsCode {
@@ -108,37 +107,54 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`passport`).Data(req.LoginName).Run(ctx) != nil {
-		err = utils.NewErrorCode(ctx, 89990000, ``)
-		return
-	}
-
-	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
-	if len(info) == 0 {
-		err = utils.NewErrorCode(ctx, 39990000, ``)
-		return
-	}
-	if info[`isStop`].Int() == 1 {
-		err = utils.NewErrorCode(ctx, 39990002, ``)
-		return
-	}
-
+	userDao := daoUser.User
+	userColumns := userDao.Columns()
+	data := g.Map{}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[`sceneCode`].String()
-	phone := info[`phone`].String()
-	if phone == `` {
-		err = utils.NewErrorCode(ctx, 39990007, ``)
-		return
+	if req.Account != `` {
+		info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
+		if !info.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39990004, ``)
+			return
+		}
+		data[userColumns.Account] = req.Account
 	}
-	smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, 0) //使用场景：0登录
-	// smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.LoginName, 0) //使用场景：0登录
-	smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
-	smsCode := smsCodeVar.String()
-	if smsCode == `` || smsCode != req.SmsCode {
-		err = utils.NewErrorCode(ctx, 39990008, ``)
+	if req.Password != `` {
+		data[userColumns.Password] = req.Password
+	}
+	if req.Phone != `` {
+		sceneCode := sceneInfo[`sceneCode`].String()
+		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.Phone, 1) //使用场景：1注册
+		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
+		smsCode := smsCodeVar.String()
+		if smsCode == `` || smsCode != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39990008, ``)
+			return
+		}
+
+		info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
+		if !info.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39990004, ``)
+			return
+		}
+		data[userColumns.Phone] = req.Phone
+		data[userColumns.Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
+	}
+
+	userId, err := dao.NewDaoHandler(ctx, &userDao).Insert(data).GetModel().InsertAndGetId()
+	if err != nil {
 		return
 	}
 
-	res = &api.CommonTokenRes{}
+	claims := utils.CustomClaims{LoginId: uint(userId)}
+	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
+	token, err := jwt.CreateToken(claims)
+	if err != nil {
+		return
+	}
+	/* //缓存token（选做。限制多地登录，多设备登录等情况下可用）
+	tokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.LoginId)
+	g.Redis().SetEX(ctx, tokenKey, token, int64(jwt.ExpireTime)) */
+	res = &api.CommonTokenRes{Token: token}
 	return
 }

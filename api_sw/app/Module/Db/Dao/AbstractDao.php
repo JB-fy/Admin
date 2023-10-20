@@ -264,6 +264,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'password':
                 if (in_array('salt', $this->getAllColumn())) {
                     $salt = randStr(8);
+                    if (strlen($value) != 32) {
+                        $value = md5($value);
+                    }
                     $this->insert[$index]['salt'] = $salt;
                     $this->insert[$index][$key] = md5($value . $salt);
                 } else {
@@ -306,6 +309,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             case 'password':
                 if (in_array('salt', $this->getAllColumn())) {
                     $salt = randStr(8);
+                    if (strlen($value) != 32) {
+                        $value = md5($value);
+                    }
                     $this->update[$this->getTable() . '.salt'] = $salt;
                     $this->update[$this->getTable() . '.' . $key] = md5($value . $salt);
                 } else {
