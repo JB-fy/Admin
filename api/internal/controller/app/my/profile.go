@@ -54,19 +54,14 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-		case `smsCodeToPassword`, `smsCodeToUnbingPhone`:
+		case `smsCodeToPassword`:
 			phone := loginInfo[`phone`].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
 			}
 
-			useScene := 3 //使用场景：3密码修改
-			if k == `smsCodeToUnbingPhone` {
-				useScene = 5 //使用场景：5解绑手机
-				data[`phone`] = nil
-			}
-			smsCode, _ := cache.NewSms(ctx, phone, useScene).Get()
+			smsCode, _ := cache.NewSms(ctx, phone, 3).Get() //使用场景：3密码修改
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
@@ -85,6 +80,20 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
+		case `smsCodeToUnbingPhone`:
+			phone := loginInfo[`phone`].String()
+			if phone == `` {
+				err = utils.NewErrorCode(ctx, 39990007, ``)
+				return
+			}
+
+			smsCode, _ := cache.NewSms(ctx, phone, 5).Get() //使用场景：5解绑手机
+			if smsCode == `` || smsCode != gconv.String(v) {
+				err = utils.NewErrorCode(ctx, 39990008, ``)
+				return
+			}
+			delete(data, k)
+			data[`phone`] = nil
 		}
 	}
 
