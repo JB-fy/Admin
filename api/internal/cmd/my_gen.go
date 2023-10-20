@@ -1155,7 +1155,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 		pid := gconv.Int(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
 			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
-			if len(pInfo) == 0 {
+			if len(ppInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
 			}
