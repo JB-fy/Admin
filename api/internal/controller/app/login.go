@@ -4,12 +4,10 @@ import (
 	"api/api"
 	apiCurrent "api/api/app"
 	"api/internal/cache"
-	"api/internal/consts"
 	"api/internal/dao"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
@@ -39,11 +37,8 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[`sceneCode`].String()
-	saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, req.LoginName)
 	saltDynamic := grand.S(8)
-	err = g.Redis().SetEX(ctx, saltKey, saltDynamic, 5)
+	err = cache.NewSalt(ctx, req.LoginName).Set(saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -67,13 +62,8 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
-
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[`sceneCode`].String()
 	if req.Password != `` { //密码
-		saltKey := fmt.Sprintf(consts.CacheSaltFormat, sceneCode, req.LoginName)
-		saltVar, _ := g.Redis().Get(ctx, saltKey)
-		salt := saltVar.String()
+		salt, _ := cache.NewSalt(ctx, req.LoginName).Get()
 		if salt == `` || gmd5.MustEncrypt(info[`password`].String()+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
@@ -85,22 +75,22 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			return
 		}
 
-		smsCode, _ := cache.NewSms(ctx, phone, 0).GetSmsCode() //使用场景：0登录
+		smsCode, _ := cache.NewSms(ctx, phone, 0).Get() //使用场景：0登录
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
 		}
 	}
 
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	claims := utils.CustomClaims{LoginId: info[`userId`].Uint()}
 	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
 	}
-	/* //缓存token（选做。限制多地登录，多设备登录等情况下可用）
-	tokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.LoginId)
-	g.Redis().SetEX(ctx, tokenKey, token, int64(jwt.ExpireTime)) */
+	// cache.NewToken(ctx, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
+
 	res = &api.CommonTokenRes{Token: token}
 	return
 }
@@ -123,7 +113,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Password] = req.Password
 	}
 	if req.Phone != `` {
-		smsCode, _ := cache.NewSms(ctx, req.Phone, 1).GetSmsCode() //使用场景：1注册
+		smsCode, _ := cache.NewSms(ctx, req.Phone, 1).Get() //使用场景：1注册
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
@@ -150,9 +140,8 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	if err != nil {
 		return
 	}
-	/* //缓存token（选做。限制多地登录，多设备登录等情况下可用）
-	tokenKey := fmt.Sprintf(consts.CacheTokenFormat, sceneCode, claims.LoginId)
-	g.Redis().SetEX(ctx, tokenKey, token, int64(jwt.ExpireTime)) */
+	// cache.NewToken(ctx, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
+
 	res = &api.CommonTokenRes{Token: token}
 	return
 }
