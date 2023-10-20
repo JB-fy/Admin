@@ -36,7 +36,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	for k, v := range data {
 		switch k {
-		case `checkPassword`:
+		case `passwordToCheck`:
 			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[`salt`].String()) != loginInfo[`password`].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return

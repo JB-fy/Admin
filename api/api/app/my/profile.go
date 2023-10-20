@@ -42,8 +42,8 @@ type ProfileUpdateReq struct {
 	IdCardName           *string     `json:"idCardName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
 	IdCardNo             *string     `json:"idCardNo,omitempty" v:"length:1,30" dc:"身份证号码"`
 	Password             *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
-	CheckPassword        *string     `json:"checkPassword,omitempty" v:"required-with:Account,Password|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号，手机，密码时checkPassword和smsCodeToPassword必传其一"`
-	SmsCodeToPassword    *string     `json:"smsCodeToPassword,omitempty" v:"required-with:Password|size:4" dc:"短信验证码。修改密码用，checkPassword和smsCodeToPassword传一个即可"`
+	PasswordToCheck      *string     `json:"passwordToCheck,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号|密码用，passwordToCheck和smsCodeToPassword传一个即可"`
+	SmsCodeToPassword    *string     `json:"smsCodeToPassword,omitempty" v:"size:4" dc:"短信验证码。修改密码用，passwordToCheck和smsCodeToPassword传一个即可"`
 	SmsCodeToBindPhone   *string     `json:"smsCodeToBindPhone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。绑定手机用"`
 	SmsCodeToUnbingPhone *string     `json:"smsCodeToUnbingPhone,omitempty" v:"size:4" dc:"短信验证码。解绑手机用"`
 }

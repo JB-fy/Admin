@@ -217,7 +217,7 @@ return [
         'account' => '账号',
         'phone' => '手机',
         'password' => '密码',
-        'checkPassword' => '验证密码',
+        'passwordToCheck' => '密码核对',
         'nickname' => '昵称',
         'avatar' => '头像',
 

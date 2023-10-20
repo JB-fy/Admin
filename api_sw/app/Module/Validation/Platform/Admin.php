@@ -19,7 +19,7 @@ class Admin extends AbstractValidation
         'roleIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'isStop' => 'sometimes|required|integer|in:0,1',
 
-        'checkPassword' => 'sometimes|required_with:account,phone,password|size:32',   //当修改账号，手机，密码时必须
+        'passwordToCheck' => 'sometimes|required_with:account,phone,password|size:32',   //当修改账号，手机，密码时必须
 
         'roleId' => 'sometimes|required|integer|min:1',
     ];
@@ -78,14 +78,14 @@ class Admin extends AbstractValidation
                 'nickname',
                 'avatar',
                 'password',
-                'checkPassword'
+                'passwordToCheck'
             ],
             'remove' => [
-                'checkPassword' => ['sometimes']
+                'passwordToCheck' => ['sometimes']
             ],
             'append' => [
-                'password' => ['different:checkPassword'],
-                // 'checkPassword' => ['different:password'],
+                'password' => ['different:passwordToCheck'],
+                // 'passwordToCheck' => ['different:password'],
             ]
         ],
     ];

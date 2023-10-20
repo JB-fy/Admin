@@ -105,3 +105,40 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	res = &api.CommonTokenRes{Token: token}
 	return
 }
+
+// 注册
+func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`passport`).Data(req.LoginName).Run(ctx) != nil {
+		err = utils.NewErrorCode(ctx, 89990000, ``)
+		return
+	}
+
+	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	if len(info) == 0 {
+		err = utils.NewErrorCode(ctx, 39990000, ``)
+		return
+	}
+	if info[`isStop`].Int() == 1 {
+		err = utils.NewErrorCode(ctx, 39990002, ``)
+		return
+	}
+
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[`sceneCode`].String()
+	phone := info[`phone`].String()
+	if phone == `` {
+		err = utils.NewErrorCode(ctx, 39990007, ``)
+		return
+	}
+	smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, 0) //使用场景：0登录
+	// smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.LoginName, 0) //使用场景：0登录
+	smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
+	smsCode := smsCodeVar.String()
+	if smsCode == `` || smsCode != req.SmsCode {
+		err = utils.NewErrorCode(ctx, 39990008, ``)
+		return
+	}
+
+	res = &api.CommonTokenRes{}
+	return
+}

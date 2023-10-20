@@ -14,7 +14,7 @@ const saveForm = reactive({
         avatar: adminStore.info.avatar,
         password: '',
         repeatPassword: '',
-        checkPassword: '',
+        passwordToCheck: '',
     } as { [propName: string]: any },
     rules: {
         account: [
@@ -48,14 +48,14 @@ const saveForm = reactive({
                 }, trigger: 'blur', message: t('validation.repeatPassword')
             },
         ],
-        checkPassword: [
+        passwordToCheck: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
             {
-                required: computed((): boolean => { return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false; }), trigger: 'blur', message: t('profile.tip.checkPassword')
+                required: computed((): boolean => { return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false; }), trigger: 'blur', message: t('profile.tip.passwordToCheck')
             },
             {
                 validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password && saveForm.data.password == saveForm.data.checkPassword) {
+                    if (saveForm.data.password && saveForm.data.password == saveForm.data.passwordToCheck) {
                         callback(new Error())
                     }
                     callback()
@@ -74,7 +74,7 @@ const saveForm = reactive({
             param.phone || delete param.phone
             param.password ? param.password = md5(param.password) : delete param.password
             delete param.repeatPassword
-            param.checkPassword ? param.checkPassword = md5(param.checkPassword) : delete param.checkPassword
+            param.passwordToCheck ? param.passwordToCheck = md5(param.passwordToCheck) : delete param.passwordToCheck
             try {
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/my/profile/update', param, true)
                 //成功则更新用户信息
@@ -139,12 +139,12 @@ const saveForm = reactive({
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
-                <ElFormItem :label="t('profile.name.checkPassword')" prop="checkPassword">
-                    <ElInput v-model="saveForm.data.checkPassword" :placeholder="t('profile.name.checkPassword')"
+                <ElFormItem :label="t('profile.name.passwordToCheck')" prop="passwordToCheck">
+                    <ElInput v-model="saveForm.data.passwordToCheck" :placeholder="t('profile.name.passwordToCheck')"
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('profile.tip.checkPassword')" type="info" :show-icon="true" :closable="false" />
+                        <ElAlert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem>

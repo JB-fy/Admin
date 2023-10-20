@@ -42,12 +42,12 @@ class Admin extends AbstractService
             throwFailJson(99999999);
         }
 
-        if (isset($data['checkPassword'])) {
+        if (isset($data['passwordToCheck'])) {
             if (count($idArr) > 1) { //不支持批量修改
-                throwFailJson(89999996, trans('code.89999996', ['errField' => 'checkPassword']));
+                throwFailJson(89999996, trans('code.89999996', ['errField' => 'passwordToCheck']));
             }
             $oldInfo = $this->getDao()->parseFilter($filter)->info();
-            if (md5($data['checkPassword'] . $oldInfo->salt) != $oldInfo->password) {
+            if (md5($data['passwordToCheck'] . $oldInfo->salt) != $oldInfo->password) {
                 throwFailJson(39990003);
             }
         }

@@ -39,7 +39,17 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	for k, v := range data {
 		switch k {
-		case `checkPassword`:
+		/* case `account`: //前端太懒，可能把个人信息全部传回来，导致account有值，故不能用required-with:Account直接验证
+		if gconv.String(v) != loginInfo[`account`].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
+			err = utils.NewErrorCode(ctx, 89999999, ``)
+			return
+		} */
+		case `password`:
+			if g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil && g.Validator().Rules(`required`).Data(req.SmsCodeToPassword).Run(ctx) != nil {
+				err = utils.NewErrorCode(ctx, 89999999, ``)
+				return
+			}
+		case `passwordToCheck`:
 			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[`salt`].String()) != loginInfo[`password`].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
