@@ -119,6 +119,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[userColumns.Account] = req.Account
+		data[userColumns.Nickname] = req.Account
 	}
 	if req.Password != `` {
 		data[userColumns.Password] = req.Password
