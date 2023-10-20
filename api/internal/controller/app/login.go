@@ -27,12 +27,14 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	userDao := daoUser.User
+	userColumns := userDao.Columns()
+	info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[`isStop`].Int() == 1 {
+	if info[userColumns.IsStop].Int() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
@@ -42,7 +44,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	if err != nil {
 		return
 	}
-	res = &api.CommonSaltRes{SaltStatic: info[`salt`].String(), SaltDynamic: saltDynamic}
+	res = &api.CommonSaltRes{SaltStatic: info[userColumns.Salt].String(), SaltDynamic: saltDynamic}
 	return
 }
 
