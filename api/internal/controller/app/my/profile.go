@@ -73,12 +73,12 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `smsCodeToBindPhone`:
-			phone := gconv.String(data[`phone`])
 			if loginInfo[userColumns.Phone].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990005, ``)
 				return
 			}
 
+			phone := gconv.String(data[`phone`])
 			smsCode, _ := cache.NewSms(ctx, phone, 4).Get() //使用场景：4绑定手机
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
@@ -99,7 +99,12 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 			data[userColumns.Phone] = nil
-		case `idCardName`:
+		case `idCardNo`:
+			if loginInfo[userColumns.IdCardNo].String() != `` {
+				err = utils.NewErrorCode(ctx, 39990009, ``)
+				return
+			}
+
 			idCardInfo, errTmp := idCard.NewIdCard(ctx).Auth(gconv.String(data[`idCardName`]), gconv.String(data[`idCardNo`]))
 			if errTmp != nil {
 				err = errTmp
