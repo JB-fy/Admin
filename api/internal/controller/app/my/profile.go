@@ -37,6 +37,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
+
 	userDao := daoUser.User
 	userColumns := userDao.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)

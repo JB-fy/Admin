@@ -34,6 +34,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
+
 	adminDao := daoPlatform.Admin
 	adminColumns := adminDao.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)
