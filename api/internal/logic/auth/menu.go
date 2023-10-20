@@ -65,7 +65,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		pid := gconv.Int(data[daoThis.Columns().Pid])
 		if pid > 0 {
 			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
-			if len(ppInfo.IsEmpty() {
+			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
