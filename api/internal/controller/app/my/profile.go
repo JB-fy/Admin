@@ -4,8 +4,10 @@ import (
 	"api/api"
 	apiMy "api/api/app/my"
 	"api/internal/cache"
+	daoUser "api/internal/dao/user"
 	"api/internal/service"
 	"api/internal/utils"
+	"api/internal/utils/idCard"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -36,6 +38,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 	loginInfo := utils.GetCtxLoginInfo(ctx)
+	userDao := daoUser.User
+	userColumns := userDao.Columns()
 	for k, v := range data {
 		switch k {
 		/* case `account`: //前端太懒，可能把个人信息全部传回来，导致account有值，故不能用required-with:Account直接验证
@@ -94,6 +98,21 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 			data[`phone`] = nil
+		case `idCardName`:
+			idCardInfo, errTmp := idCard.NewIdCard(ctx).Auth(gconv.String(data[`idCardName`]), gconv.String(data[`idCardNo`]))
+			if errTmp != nil {
+				err = errTmp
+				return
+			}
+			if idCardInfo.Gender != 0 {
+				data[userColumns.Gender] = idCardInfo.Gender
+			}
+			if idCardInfo.Address != `` {
+				data[userColumns.Address] = idCardInfo.Address
+			}
+			if idCardInfo.Birthday != `` {
+				data[userColumns.Birthday] = idCardInfo.Birthday
+			}
 		}
 	}
 
