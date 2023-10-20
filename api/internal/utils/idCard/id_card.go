@@ -5,15 +5,15 @@ import (
 	"context"
 )
 
-type IdCard interface {
-	Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error)
-}
-
 type IdCardInfo struct {
 	Gender uint // 性别：0未设置 1男 2女
 	// Birthday *gtime.Time // 生日
 	Birthday string // 生日
 	Address  string // 详细地址
+}
+
+type IdCard interface {
+	Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error)
 }
 
 func NewIdCard(ctx context.Context) IdCard {

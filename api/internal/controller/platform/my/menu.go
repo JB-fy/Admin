@@ -4,6 +4,7 @@ import (
 	apiMy "api/api/platform/my"
 	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
 	"context"
 
@@ -20,11 +21,14 @@ func NewMenu() *Menu {
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	adminDao := daoPlatform.Admin
+	sceneDao := daoAuth.Scene
+	sceneColumns := sceneDao.Columns()
 	filter := map[string]interface{}{}
 	filter[`selfMenu`] = map[string]interface{}{
-		`sceneCode`: sceneInfo[`sceneCode`].String(),
-		`sceneId`:   sceneInfo[`sceneId`].Int(),
-		`loginId`:   loginInfo[`adminId`].Int(),
+		`sceneCode`: sceneInfo[sceneColumns.SceneCode].String(),
+		`sceneId`:   sceneInfo[sceneDao.PrimaryKey()].Int(),
+		`loginId`:   loginInfo[adminDao.PrimaryKey()].Int(),
 	}
 	field := []string{`id`, `label`, `tree`, `showMenu`}
 
