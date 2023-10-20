@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"api/internal/consts"
 	"api/internal/utils"
 	"context"
 	"fmt"
@@ -16,21 +17,14 @@ type Salt struct {
 }
 
 // loginName 账号/手机
-// sceneCodeS 场景标识。注意：当一个权限场景（auth_scene表）存在不同用户表的短信验证码时，第二个用户表需要传sceneCodeS（自定义），否则两个用户表缓存时互相覆盖导致BUG
-func NewSalt(ctx context.Context, loginName string, sceneCodeS ...string) *Salt {
-	sceneCode := ``
-	if len(sceneCodeS) > 0 && sceneCodeS[0] != `` {
-		sceneCode = sceneCodeS[0]
-	} else {
-		sceneInfo := utils.GetCtxSceneInfo(ctx)
-		sceneCode = sceneInfo[`sceneCode`].String()
-	}
+// sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
+func NewSalt(ctx context.Context, loginName string, sceneCode ...string) *Salt {
 	//可以做分库逻辑
 	redis := g.Redis()
 	return &Salt{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(`salt_%s_%s`, sceneCode, loginName),
+		Key:   fmt.Sprintf(consts.CacheSaltFormat, utils.GetSceneCode(ctx, sceneCode...), loginName),
 	}
 }
 
