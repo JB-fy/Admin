@@ -145,3 +145,24 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	res = &api.CommonTokenRes{Token: token}
 	return
 }
+
+// 密码找回
+func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
+	userDao := daoUser.User
+	userColumns := userDao.Columns()
+	smsCode, _ := cache.NewSms(ctx, req.Phone, 2).Get() //使用场景：2密码找回
+	if smsCode == `` || smsCode != req.SmsCode {
+		err = utils.NewErrorCode(ctx, 39990008, ``)
+		return
+	}
+
+	row, err := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Phone: req.Phone}).Update(g.Map{userColumns.Password: req.Password}).GetModel().UpdateAndGetAffected()
+	if err != nil {
+		return
+	}
+	if row == 0 {
+		err = utils.NewErrorCode(ctx, 39990000, ``)
+		return
+	}
+	return
+}

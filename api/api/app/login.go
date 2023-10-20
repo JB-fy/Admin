@@ -32,4 +32,14 @@ type LoginRegisterReq struct {
 	SmsCode  string `json:"smsCode" v:"required-with:Phone|size:4" dc:"短信验证码"`
 }
 
-/*--------登录 结束--------*/
+/*--------注册 结束--------*/
+
+/*--------密码找回 开始--------*/
+type LoginPasswordRecoveryReq struct {
+	g.Meta   `path:"/passwordRecovery" method:"post" tags:"APP/登录" sm:"密码找回"`
+	Phone    string `json:"phone,omitempty" v:"required|length:1,30|phone" dc:"手机"`
+	SmsCode  string `json:"smsCode" v:"required|size:4" dc:"短信验证码"`
+	Password string `json:"password" v:"required|lsize:32" dc:"密码。加密后发送，公式：md5(密码)"`
+}
+
+/*--------密码找回 结束--------*/
