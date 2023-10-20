@@ -79,11 +79,8 @@ const saveForm = reactive({
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/my/profile/update', param, true)
                 //成功则更新用户信息
                 for (let k in param) {
-                    switch (k) {
-                        case 'nickname':
-                        case 'avatar':
-                            adminStore.info[k] = param[k]
-                            break;
+                    if (adminStore.info.hasOwnProperty(k)) {
+                        adminStore.info[k] = param[k]
                     }
                 }
             } catch (error) { }
@@ -144,7 +141,8 @@ const saveForm = reactive({
                         minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
-                        <ElAlert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true" :closable="false" />
+                        <ElAlert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true"
+                            :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem>
