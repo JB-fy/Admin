@@ -84,8 +84,6 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 	if err != nil {
 		return
 	}
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[`sceneCode`].String()
-	err = cache.NewSms(ctx, sceneCode, phone, req.UseScene).SetSmsCode(smsCode, 5*60)
+	err = cache.NewSms(ctx, phone, req.UseScene).SetSmsCode(smsCode, 5*60)
 	return
 }

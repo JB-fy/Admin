@@ -85,7 +85,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			return
 		}
 
-		smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 0).GetSmsCode() //使用场景：0登录
+		smsCode, _ := cache.NewSms(ctx, phone, 0).GetSmsCode() //使用场景：0登录
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
@@ -107,8 +107,6 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[`sceneCode`].String()
 	userDao := daoUser.User
 	userColumns := userDao.Columns()
 	data := g.Map{}
@@ -125,7 +123,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Password] = req.Password
 	}
 	if req.Phone != `` {
-		smsCode, _ := cache.NewSms(ctx, sceneCode, req.Phone, 1).GetSmsCode() //使用场景：1注册
+		smsCode, _ := cache.NewSms(ctx, req.Phone, 1).GetSmsCode() //使用场景：1注册
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
@@ -145,6 +143,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		return
 	}
 
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	claims := utils.CustomClaims{LoginId: uint(userId)}
 	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)

@@ -61,14 +61,12 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneCode := sceneInfo[`sceneCode`].String()
 			useScene := 3 //使用场景：3密码修改
 			if k == `smsCodeToUnbingPhone` {
 				useScene = 5 //使用场景：5解绑手机
 				data[`phone`] = nil
 			}
-			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, useScene).GetSmsCode()
+			smsCode, _ := cache.NewSms(ctx, phone, useScene).GetSmsCode()
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
@@ -81,10 +79,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneCode := sceneInfo[`sceneCode`].String()
-			useScene := 4 //使用场景：4绑定手机
-			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, useScene).GetSmsCode()
+			smsCode, _ := cache.NewSms(ctx, phone, 4).GetSmsCode() //使用场景：4绑定手机
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
