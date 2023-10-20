@@ -3,6 +3,7 @@ package controller
 import (
 	"api/api"
 	apiCurrent "api/api/app"
+	"api/internal/cache"
 	"api/internal/consts"
 	"api/internal/dao"
 	daoUser "api/internal/dao/user"
@@ -83,9 +84,8 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
 		}
-		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, 0) //使用场景：0登录
-		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
-		smsCode := smsCodeVar.String()
+
+		smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 0).GetSmsCode() //使用场景：0登录
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
@@ -125,9 +125,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Password] = req.Password
 	}
 	if req.Phone != `` {
-		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.Phone, 1) //使用场景：1注册
-		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
-		smsCode := smsCodeVar.String()
+		smsCode, _ := cache.NewSms(ctx, sceneCode, req.Phone, 1).GetSmsCode() //使用场景：1注册
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return

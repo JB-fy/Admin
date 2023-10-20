@@ -3,11 +3,10 @@ package controller
 import (
 	"api/api"
 	apiMy "api/api/app/my"
-	"api/internal/consts"
+	"api/internal/cache"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
@@ -61,17 +60,15 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
 			}
+
+			sceneInfo := utils.GetCtxSceneInfo(ctx)
+			sceneCode := sceneInfo[`sceneCode`].String()
 			useScene := 3 //使用场景：3密码修改
 			if k == `smsCodeToUnbingPhone` {
 				useScene = 5 //使用场景：5解绑手机
 				data[`phone`] = nil
 			}
-
-			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneCode := sceneInfo[`sceneCode`].String()
-			smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, useScene)
-			smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
-			smsCode := smsCodeVar.String()
+			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, useScene).GetSmsCode()
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
@@ -83,13 +80,11 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39990005, ``)
 				return
 			}
-			useScene := 4 //使用场景：4绑定手机
 
 			sceneInfo := utils.GetCtxSceneInfo(ctx)
 			sceneCode := sceneInfo[`sceneCode`].String()
-			smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, useScene)
-			smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
-			smsCode := smsCodeVar.String()
+			useScene := 4 //使用场景：4绑定手机
+			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, useScene).GetSmsCode()
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return

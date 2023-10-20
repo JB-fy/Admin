@@ -3,13 +3,12 @@ package controller
 import (
 	"api/api"
 	apiCurrent "api/api/app"
-	"api/internal/consts"
+	"api/internal/cache"
 	"api/internal/dao"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
 	"api/internal/utils/sms"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
@@ -87,7 +86,6 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 	}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[`sceneCode`].String()
-	smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, phone, req.UseScene)
-	err = g.Redis().SetEX(ctx, smsKey, smsCode, 5*60)
+	err = cache.NewSms(ctx, sceneCode, phone, req.UseScene).SetSmsCode(smsCode, 5*60)
 	return
 }
