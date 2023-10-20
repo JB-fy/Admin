@@ -107,10 +107,11 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[`sceneCode`].String()
 	userDao := daoUser.User
 	userColumns := userDao.Columns()
 	data := g.Map{}
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	if req.Account != `` {
 		info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
 		if !info.IsEmpty() {
@@ -123,7 +124,6 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Password] = req.Password
 	}
 	if req.Phone != `` {
-		sceneCode := sceneInfo[`sceneCode`].String()
 		smsKey := fmt.Sprintf(consts.CacheSmsFormat, sceneCode, req.Phone, 1) //使用场景：1注册
 		smsCodeVar, _ := g.Redis().Get(ctx, smsKey)
 		smsCode := smsCodeVar.String()
