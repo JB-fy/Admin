@@ -22,8 +22,7 @@ func NewSms() *Sms {
 
 // 发送短信
 func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq) (res *api.CommonNoDataRes, err error) {
-	userDao := daoUser.User
-	userColumns := userDao.Columns()
+	userColumns := daoUser.User.Columns()
 	phone := req.Phone
 	switch req.UseScene {
 	case 0, 2: //登录，密码找回

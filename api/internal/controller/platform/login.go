@@ -22,9 +22,8 @@ func NewLogin() *Login {
 
 // 获取加密盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
-	adminDao := daoPlatform.Admin
-	adminColumns := adminDao.Columns()
-	info, _ := dao.NewDaoHandler(ctx, &adminDao).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	adminColumns := daoPlatform.Admin.Columns()
+	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -45,24 +44,25 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
+	adminColumns := daoPlatform.Admin.Columns()
 	info, _ := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[`isStop`].Int() == 1 {
+	if info[adminColumns.IsStop].Int() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 
 	salt, _ := cache.NewSalt(ctx, req.LoginName).Get()
-	if salt == `` || gmd5.MustEncrypt(info[`password`].String()+salt) != req.Password {
+	if salt == `` || gmd5.MustEncrypt(info[adminColumns.Password].String()+salt) != req.Password {
 		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return
 	}
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	claims := utils.CustomClaims{LoginId: info[`adminId`].Uint()}
+	claims := utils.CustomClaims{LoginId: info[daoPlatform.Admin.PrimaryKey()].Uint()}
 	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {

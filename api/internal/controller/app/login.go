@@ -27,9 +27,8 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	userDao := daoUser.User
-	userColumns := userDao.Columns()
-	info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	userColumns := daoUser.User.Columns()
+	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -55,23 +54,25 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
+	userColumns := daoUser.User.Columns()
 	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[`isStop`].Int() == 1 {
+	if info[userColumns.IsStop].Int() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
+
 	if req.Password != `` { //密码
 		salt, _ := cache.NewSalt(ctx, req.LoginName).Get()
-		if salt == `` || gmd5.MustEncrypt(info[`password`].String()+salt) != req.Password {
+		if salt == `` || gmd5.MustEncrypt(info[userColumns.Password].String()+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
 		}
 	} else if req.SmsCode != `` { //短信验证码
-		phone := info[`phone`].String()
+		phone := info[userColumns.Phone].String()
 		if phone == `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
@@ -85,7 +86,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	claims := utils.CustomClaims{LoginId: info[`userId`].Uint()}
+	claims := utils.CustomClaims{LoginId: info[daoUser.User.PrimaryKey()].Uint()}
 	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
@@ -99,11 +100,10 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
-	userDao := daoUser.User
-	userColumns := userDao.Columns()
+	userColumns := daoUser.User.Columns()
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
+		info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -121,7 +121,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
+		info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -130,7 +130,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 
-	userId, err := dao.NewDaoHandler(ctx, &userDao).Insert(data).GetModel().InsertAndGetId()
+	userId, err := dao.NewDaoHandler(ctx, &daoUser.User).Insert(data).GetModel().InsertAndGetId()
 	if err != nil {
 		return
 	}
@@ -150,15 +150,14 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 
 // 密码找回
 func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
-	userDao := daoUser.User
-	userColumns := userDao.Columns()
+	userColumns := daoUser.User.Columns()
 	smsCode, _ := cache.NewSms(ctx, req.Phone, 2).Get() //使用场景：2密码找回
 	if smsCode == `` || smsCode != req.SmsCode {
 		err = utils.NewErrorCode(ctx, 39990008, ``)
 		return
 	}
 
-	row, err := dao.NewDaoHandler(ctx, &userDao).Filter(g.Map{userColumns.Phone: req.Phone}).Update(g.Map{userColumns.Password: req.Password}).GetModel().UpdateAndGetAffected()
+	row, err := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{userColumns.Phone: req.Phone}).Update(g.Map{userColumns.Password: req.Password}).GetModel().UpdateAndGetAffected()
 	if err != nil {
 		return
 	}
