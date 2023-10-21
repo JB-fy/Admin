@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 21/10/2023 17:18:48
+ Date: 21/10/2023 17:26:52
 */
 
 SET NAMES utf8mb4;
@@ -268,12 +268,13 @@ CREATE TABLE `auth_scene`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`sceneId`) USING BTREE,
   UNIQUE INDEX `sceneCode`(`sceneCode` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
 INSERT INTO `auth_scene` VALUES (1, '平台后台', 'platform', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-14 21:52:16', '2023-06-09 12:03:30');
+INSERT INTO `auth_scene` VALUES (2, 'APP', 'app', '{\"signKey\": \"www.admin.com_app\", \"signType\": \"HS256\", \"expireTime\": 604800}', 0, '2023-10-21 17:21:15', '2023-10-21 17:21:15');
 
 -- ----------------------------
 -- Table structure for platform_admin
