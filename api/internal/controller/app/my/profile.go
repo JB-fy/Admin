@@ -38,8 +38,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 
-	userDao := daoUser.User
-	userColumns := userDao.Columns()
+	userColumns := daoUser.User.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	for k, v := range data {
 		switch k {
@@ -122,7 +121,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		}
 	}
 
-	filter := map[string]interface{}{`id`: loginInfo[userDao.PrimaryKey()]}
+	filter := map[string]interface{}{`id`: loginInfo[daoUser.User.PrimaryKey()]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.User().Update(ctx, filter, data)

@@ -296,12 +296,15 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.Where(ActionRelToScene.Table()+`.`+k, v)
 				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
 			case `selfAction`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`=>场景id, `loginId`: 登录身份id}
-				val := v.(map[string]interface{})
-
+				val := gconv.Map(v)
+				if val[`sceneCode`] == nil || val[`sceneId`] == nil || val[`loginId`] == nil {
+					m = m.Where(`1 = 0`)
+					continue
+				}
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
 				m = m.Where(ActionRelToScene.Table()+`.`+ActionRelToScene.Columns().SceneId, val[`sceneId`])
 				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
-				switch val[`sceneCode`].(string) {
+				switch gconv.String(val[`sceneCode`]) {
 				case `platform`:
 					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
 						continue
@@ -313,7 +316,6 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 					m = daoThis.ParseJoin(Role.Table(), joinTableArr)(m)
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
 				}
-				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Where(daoThis.Table()+`.`+k, v)

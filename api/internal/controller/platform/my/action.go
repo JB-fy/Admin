@@ -19,17 +19,15 @@ func NewAction() *Action {
 func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq) (res *apiMy.ActionListRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	adminDao := daoPlatform.Admin
-	sceneDao := daoAuth.Scene
-	sceneColumns := sceneDao.Columns()
+	sceneColumns := daoAuth.Scene.Columns()
 	filter := map[string]interface{}{}
 	filter[`selfAction`] = map[string]interface{}{
-		`sceneCode`: sceneInfo[sceneColumns.SceneCode].String(),
-		`sceneId`:   sceneInfo[sceneDao.PrimaryKey()].Int(),
-		`loginId`:   loginInfo[adminDao.PrimaryKey()].Int(),
+		`sceneCode`: sceneInfo[sceneColumns.SceneCode],
+		`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+		`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
 	}
-	columns := daoAuth.Action.Columns()
-	field := []string{`id`, `label`, columns.ActionId, columns.ActionName}
+	actionColumns := daoAuth.Action.Columns()
+	field := []string{`id`, `label`, actionColumns.ActionId, actionColumns.ActionName}
 
 	list, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {

@@ -35,8 +35,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 
-	adminDao := daoPlatform.Admin
-	adminColumns := adminDao.Columns()
+	adminColumns := daoPlatform.Admin.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	for k, v := range data {
 		switch k {
@@ -49,7 +48,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		}
 	}
 
-	filter := map[string]interface{}{`id`: loginInfo[adminDao.PrimaryKey()]}
+	filter := map[string]interface{}{`id`: loginInfo[daoPlatform.Admin.PrimaryKey()]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.PlatformAdmin().Update(ctx, filter, data)
