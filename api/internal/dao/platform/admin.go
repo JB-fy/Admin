@@ -400,10 +400,9 @@ func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.
 			// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
 		case daoAuth.RoleRelOfPlatformAdmin.Table():
-			relTable := daoAuth.RoleRelOfPlatformAdmin.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
 		}
 		return m

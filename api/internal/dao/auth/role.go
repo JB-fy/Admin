@@ -380,10 +380,9 @@ func (daoThis *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		case Scene.Table():
-			relTable := Scene.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
 			}
 		}
 		return m

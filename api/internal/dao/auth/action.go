@@ -377,28 +377,24 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 			// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
 		case ActionRelToScene.Table():
-			relTable := ActionRelToScene.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+ActionRelToScene.Columns().ActionId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
 		case RoleRelToAction.Table():
-			relTable := RoleRelToAction.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelToAction.Columns().ActionId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
 		case Role.Table():
-			relTable := Role.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.Table()+`.`+Role.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.Table()+`.`+RoleRelToAction.Columns().RoleId)
 			}
 		case RoleRelOfPlatformAdmin.Table():
-			relTable := RoleRelOfPlatformAdmin.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.Table()+`.`+Role.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToAction.Table()+`.`+RoleRelToAction.Columns().RoleId)
 			}
 		}
 		return m
