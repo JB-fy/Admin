@@ -1030,12 +1030,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 				return
 			} */`
 		if daoHookUpdateBefore != `` {
-			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, daoHookUpdateBefore+`
-
-			/* row, _ := result.RowsAffected()
-			if row == 0 {
-				return
-			} */`, 1)
+			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, daoHookUpdateBefore+daoHookUpdatePoint, 1)
 		}
 		if daoHookUpdateAfter != `` {
 			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
@@ -1055,7 +1050,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		daoHookSelectPoint := `
 						/* case ` + "`xxxx`" + `:
 						record[v] = gvar.New(` + "``" + `) */`
-		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect, 1)
+		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelectPoint+daoHookSelect, 1)
 	}
 	if daoParseFilter != `` {
 		daoParseFilterPoint := `case ` + "`id`, `idArr`" + `:
@@ -1075,7 +1070,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 			m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
 			// m = m.LeftJoin(Xxxx.Table()+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
 		} */`
-		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoin, 1)
+		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoinPoint+daoParseJoin, 1)
 	}
 	if daoFunc != `` {
 		tplDao = tplDao + daoFunc
