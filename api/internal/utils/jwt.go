@@ -26,7 +26,7 @@ func NewJWT(ctx context.Context, config map[string]interface{}) *JWT {
 		jwtObj.SignMethod = jwt.SigningMethodHS256
 	case `HS384`:
 		jwtObj.SignMethod = jwt.SigningMethodHS384
-	case `S512`:
+	case `HS512`:
 		jwtObj.SignMethod = jwt.SigningMethodHS512
 	default:
 		jwtObj.SignMethod = jwt.SigningMethodHS256
