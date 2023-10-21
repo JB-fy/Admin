@@ -334,10 +334,6 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
-				if val[`sceneCode`] == nil || val[`sceneId`] == nil || val[`loginId`] == nil {
-					m = m.Where(`1 = 0`)
-					continue
-				}
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().SceneId, val[`sceneId`])
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
 				switch gconv.String(val[`sceneCode`]) {
