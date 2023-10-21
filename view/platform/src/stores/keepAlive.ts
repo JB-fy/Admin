@@ -8,7 +8,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
   state: () => {
     return {
       appContainerExclude: [] as string[], //用于页面刷新
-      appContainerMax: 10 as number   //缓存组件最大数量
+      appContainerMax: 20 as number,  //缓存组件最大数量
     }
   },
   getters: {
