@@ -72,12 +72,12 @@ func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string
 	filter := map[string]interface{}{
 		`actionCode`: actionCode,
 		`selfAction`: map[string]interface{}{
-			`sceneCode`: sceneInfo[`sceneCode`],
-			`sceneId`:   sceneInfo[`sceneId`],
+			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
+			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
 			`loginId`:   loginInfo[`adminId`],
 		},
 	}
-	switch sceneInfo[`sceneCode`].String() {
+	switch sceneInfo[daoAuth.Scene.Columns().SceneCode].String() {
 	case `platform`:
 		if loginInfo[`adminId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，无权限限制
 			isAuth = true

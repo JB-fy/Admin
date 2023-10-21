@@ -22,10 +22,9 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 
 	actionColumns := daoAuth.Action.Columns()
 	field := []string{`id`, `label`, actionColumns.ActionId, actionColumns.ActionName}
-	sceneColumns := daoAuth.Scene.Columns()
 	filter := map[string]interface{}{
 		`selfAction`: map[string]interface{}{
-			`sceneCode`: sceneInfo[sceneColumns.SceneCode],
+			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
 			`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
 		},

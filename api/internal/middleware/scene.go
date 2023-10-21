@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	dao "api/internal/dao/auth"
+	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"strings"
 
@@ -15,12 +15,12 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	sceneInfo, _ := dao.Scene.ParseDbCtx(r.GetCtx()).Where(`sceneCode`, sceneCode).One()
+	sceneInfo, _ := daoAuth.Scene.ParseDbCtx(r.GetCtx()).Where(daoAuth.Scene.Columns().SceneCode, sceneCode).One()
 	if sceneInfo.IsEmpty() {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	if sceneInfo[`isStop`].Int() == 1 {
+	if sceneInfo[daoAuth.Scene.Columns().IsStop].Int() == 1 {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999997, ``))
 		return
 	}

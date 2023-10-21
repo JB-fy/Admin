@@ -61,9 +61,8 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	claims := utils.CustomClaims{LoginId: info[daoPlatform.Admin.PrimaryKey()].Uint()}
-	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
+	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return

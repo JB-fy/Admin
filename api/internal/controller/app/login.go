@@ -85,9 +85,8 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		}
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	claims := utils.CustomClaims{LoginId: info[daoUser.User.PrimaryKey()].Uint()}
-	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
+	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
@@ -135,9 +134,8 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		return
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	claims := utils.CustomClaims{LoginId: uint(userId)}
-	jwt := utils.NewJWT(ctx, sceneInfo[`sceneConfig`].Map())
+	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return

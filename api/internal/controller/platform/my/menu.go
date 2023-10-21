@@ -23,10 +23,9 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 
 	field := []string{`id`, `label`, `tree`, `showMenu`}
-	sceneColumns := daoAuth.Scene.Columns()
 	filter := map[string]interface{}{
 		`selfMenu`: map[string]interface{}{
-			`sceneCode`: sceneInfo[sceneColumns.SceneCode],
+			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
 			`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
 		},
