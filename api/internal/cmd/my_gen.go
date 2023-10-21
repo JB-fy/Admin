@@ -813,10 +813,9 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				daoParseJoinTmp := `
 		case ` + "`p_`" + ` + daoThis.Table():
-			relTable := ` + "`p_`" + ` + daoThis.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+relTable, relTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
 			}`
 				if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
 					daoParseJoin += daoParseJoinTmp
@@ -860,10 +859,9 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					daoParseJoinTmp := `
 		case ` + daoPath + `.Table():
-			relTable := ` + daoPath + `.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
 			}`
 					if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
 						daoParseJoin += daoParseJoinTmp
