@@ -28,7 +28,6 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 			`loginId`:   loginInfo[`loginId`],
 		},
 	}
-
 	list, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Field(field).Filter(filter).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
