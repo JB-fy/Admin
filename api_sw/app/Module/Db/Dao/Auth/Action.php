@@ -71,10 +71,10 @@ class Action extends AbstractDao
                             return true;
                         }
                         $this->builder->where(getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and');
-                        $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and');
-
                         $this->parseJoinOfAlone('roleRelToAction');
                         $this->parseJoinOfAlone('role');
+
+                        $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and');
                         $this->parseJoinOfAlone('roleRelOfPlatformAdmin');
                         break;
                 }

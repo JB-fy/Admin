@@ -306,11 +306,13 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 						continue
 					}
 					m = m.Where(Role.Table()+`.`+Role.Columns().IsStop, 0)
-					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
-
 					m = daoThis.ParseJoin(RoleRelToAction.Table(), joinTableArr)(m)
 					m = daoThis.ParseJoin(Role.Table(), joinTableArr)(m)
+
+					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
 					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
+				default:
+					m = m.Where(`1 = 0`)
 				}
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
