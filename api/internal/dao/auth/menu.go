@@ -232,9 +232,6 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-			case `sceneName`:
-				m = m.Fields(Scene.Table() + `.` + v)
-				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 			case `pMenuName`:
 				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 				m = daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr)(m)
@@ -250,6 +247,9 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				// m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))	//mysql不能直接转成对象返回
 				*afterField = append(*afterField, v)
+			case Scene.Columns().SceneName:
+				m = m.Fields(Scene.Table() + `.` + v)
+				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)

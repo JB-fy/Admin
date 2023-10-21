@@ -323,25 +323,23 @@ func (daoThis *configDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config map[string]interface{}, err error) {
-	columnsThis := daoThis.Columns()
-	result, err := daoThis.ParseDbCtx(ctx).Where(columnsThis.ConfigKey, configKeyArr).Fields(columnsThis.ConfigKey, columnsThis.ConfigValue).All()
+	result, err := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().ConfigKey, configKeyArr).Fields(daoThis.Columns().ConfigKey, daoThis.Columns().ConfigValue).All()
 	if err != nil {
 		return
 	}
 	config = map[string]interface{}{}
 	for _, v := range result {
-		key := v[columnsThis.ConfigKey].String()
-		config[key] = v[columnsThis.ConfigValue]
+		key := v[daoThis.Columns().ConfigKey].String()
+		config[key] = v[daoThis.Columns().ConfigValue]
 	}
 	return
 }
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{}) (err error) {
-	columnsThis := daoThis.Columns()
 	err = daoThis.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
-			_, err = tx.Model(daoThis.ParseDbTable(ctx)).Data(g.Map{columnsThis.ConfigKey: k, columnsThis.ConfigValue: v}).Save()
+			_, err = tx.Model(daoThis.ParseDbTable(ctx)).Data(g.Map{daoThis.Columns().ConfigKey: k, daoThis.Columns().ConfigValue: v}).Save()
 			if err != nil {
 				return
 			}

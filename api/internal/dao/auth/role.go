@@ -218,7 +218,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().RoleName + ` AS ` + v)
-			case `sceneName`:
+			case Scene.Columns().SceneName:
 				m = m.Fields(Scene.Table() + `.` + v)
 				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 			case `menuIdArr`, `actionIdArr`:
@@ -320,8 +320,8 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
-			case `sceneCode`:
-				m = m.Where(Scene.Table()+`.`+Scene.Columns().SceneCode, v)
+			case Scene.Columns().SceneCode:
+				m = m.Where(Scene.Table()+`.`+k, v)
 				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
@@ -400,7 +400,7 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []int, id int)
 	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
-	/**----新增关联菜单 开始----**/
+	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
 	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
@@ -412,14 +412,14 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []int, id int)
 		}
 		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
-	/**----新增关联菜单 结束----**/
+	/**----新增关联 结束----**/
 
-	/**----删除关联菜单 开始----**/
+	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
 		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
-	/**----删除关联菜单 结束----**/
+	/**----删除关联 结束----**/
 }
 
 // 保存关联操作
@@ -430,7 +430,7 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []int, id in
 	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
-	/**----新增关联操作 开始----**/
+	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
 	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
@@ -442,12 +442,12 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []int, id in
 		}
 		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
-	/**----新增关联操作 开始----**/
+	/**----新增关联 开始----**/
 
-	/**----删除关联操作 结束----**/
+	/**----删除关联 结束----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
 		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
-	/**----删除关联操作 结束----**/
+	/**----删除关联 结束----**/
 }

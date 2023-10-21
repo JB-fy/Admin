@@ -75,7 +75,7 @@ func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string
 	}
 
 	filter := map[string]interface{}{
-		`actionCode`: actionCode,
+		daoAuth.Action.Columns().ActionCode: actionCode,
 		`selfAction`: map[string]interface{}{
 			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],

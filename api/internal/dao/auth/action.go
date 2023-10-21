@@ -415,7 +415,7 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id i
 	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
-	/**----新增关联场景 开始----**/
+	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
 	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
@@ -427,12 +427,12 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id i
 		}
 		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
-	/**----新增关联场景 结束----**/
+	/**----新增关联 结束----**/
 
-	/**----删除关联场景 开始----**/
+	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
 		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
-	/**----删除关联场景 结束----**/
+	/**----删除关联 结束----**/
 }

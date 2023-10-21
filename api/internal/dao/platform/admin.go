@@ -94,7 +94,7 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}) gdb.ModelHan
 					password = gmd5.MustEncrypt(password)
 				}
 				insertData[daoThis.Columns().Salt] = salt
-				insertData[daoThis.Columns().Password] = gmd5.MustEncrypt(password + salt)
+				insertData[k] = gmd5.MustEncrypt(password + salt)
 			case `roleIdArr`:
 				hookData[k] = v
 			default:
@@ -157,7 +157,7 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}) gdb.ModelHan
 					password = gmd5.MustEncrypt(password)
 				}
 				updateData[daoThis.Table()+`.`+daoThis.Columns().Salt] = salt
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Password] = gmd5.MustEncrypt(password + salt)
+				updateData[daoThis.Table()+`.`+k] = gmd5.MustEncrypt(password + salt)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
@@ -403,7 +403,7 @@ func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.
 			relTable := daoAuth.RoleRelOfPlatformAdmin.Table()
 			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
 				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+				m = m.LeftJoin(relTable, relTable+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
 		}
 		return m
@@ -420,7 +420,7 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int
 	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
 
-	/**----新增关联角色 开始----**/
+	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
 	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
@@ -432,12 +432,12 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int
 		}
 		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
 	}
-	/**----新增关联角色 结束----**/
+	/**----新增关联 结束----**/
 
-	/**----删除关联角色 开始----**/
+	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
 		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}
-	/**----删除关联角色 结束----**/
+	/**----删除关联 结束----**/
 }

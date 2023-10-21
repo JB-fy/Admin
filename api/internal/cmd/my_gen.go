@@ -918,7 +918,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					password = gmd5.MustEncrypt(password)
 				}
 				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
-				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `] = gmd5.MustEncrypt(password + salt)`
+				insertData[k] = gmd5.MustEncrypt(password + salt)`
 		if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
 			daoParseInsert += daoParseInsertTmp
 		}
@@ -930,7 +930,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					password = gmd5.MustEncrypt(password)
 				}
 				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
-				updateData[daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.PasswordField) + `] = gmd5.MustEncrypt(password + salt)`
+				updateData[daoThis.Table()+` + "`.`" + `+k] = gmd5.MustEncrypt(password + salt)`
 		if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
 			daoParseUpdate += daoParseUpdateTmp
 		}
