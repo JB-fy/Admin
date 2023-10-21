@@ -262,7 +262,7 @@ CREATE TABLE `auth_scene`  (
   `sceneId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '场景ID',
   `sceneName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `sceneCode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '标识',
-  `sceneConfig` json NULL COMMENT '配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expTime\": 过期时间,...}',
+  `sceneConfig` json NULL COMMENT '配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

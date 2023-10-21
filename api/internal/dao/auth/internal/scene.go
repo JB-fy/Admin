@@ -28,7 +28,7 @@ type SceneColumns struct {
 	SceneId     string // 场景ID
 	SceneName   string // 名称
 	SceneCode   string // 标识
-	SceneConfig string // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expTime": 过期时间,...}
+	SceneConfig string // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
 	IsStop      string // 停用：0否 1是
 	UpdatedAt   string // 更新时间
 	CreatedAt   string // 创建时间

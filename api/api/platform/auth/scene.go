@@ -40,7 +40,7 @@ type SceneListItem struct {
 	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
 	SceneName   *string     `json:"sceneName,omitempty" dc:"名称"`
 	SceneCode   *string     `json:"sceneCode,omitempty" dc:"标识"`
-	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expTime\": 过期时间,...}"`
+	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
@@ -65,7 +65,7 @@ type SceneInfo struct {
 	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
 	SceneName   *string     `json:"sceneName,omitempty" dc:"名称"`
 	SceneCode   *string     `json:"sceneCode,omitempty" dc:"标识"`
-	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expTime\": 过期时间,...}"`
+	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
@@ -78,7 +78,7 @@ type SceneCreateReq struct {
 	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"创建"`
 	SceneName   *string `json:"sceneName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expTime\": 过期时间,...}"`
+	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -90,7 +90,7 @@ type SceneUpdateReq struct {
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
 	SceneName   *string `json:"sceneName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expTime\": 过期时间,...}"`
+	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 }
 

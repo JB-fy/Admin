@@ -15,7 +15,7 @@ type Scene struct {
 	SceneId     interface{} // 场景ID
 	SceneName   interface{} // 名称
 	SceneCode   interface{} // 标识
-	SceneConfig interface{} // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expTime": 过期时间,...}
+	SceneConfig interface{} // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
 	IsStop      interface{} // 停用：0否 1是
 	UpdatedAt   *gtime.Time // 更新时间
 	CreatedAt   *gtime.Time // 创建时间

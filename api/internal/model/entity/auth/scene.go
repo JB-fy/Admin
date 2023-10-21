@@ -13,7 +13,7 @@ type Scene struct {
 	SceneId     uint        `json:"sceneId"     ` // 场景ID
 	SceneName   string      `json:"sceneName"   ` // 名称
 	SceneCode   string      `json:"sceneCode"   ` // 标识
-	SceneConfig string      `json:"sceneConfig" ` // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expTime": 过期时间,...}
+	SceneConfig string      `json:"sceneConfig" ` // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
 	IsStop      uint        `json:"isStop"      ` // 停用：0否 1是
 	UpdatedAt   *gtime.Time `json:"updatedAt"   ` // 更新时间
 	CreatedAt   *gtime.Time `json:"createdAt"   ` // 创建时间

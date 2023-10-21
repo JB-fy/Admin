@@ -8,6 +8,6 @@ export default {
 	status: {
 	},
 	tip: {
-		sceneConfig: 'JSON格式：' + "{'{'}" + '"signType": "算法","signKey": "密钥","expTime": 过期时间,...' + "{'}'}" + '',
+		sceneConfig: 'JSON格式：' + "{'{'}" + '"signType": "算法","signKey": "密钥","expireTime": 过期时间,...' + "{'}'}" + '',
 	}
 }
