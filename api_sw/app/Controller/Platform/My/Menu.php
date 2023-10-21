@@ -22,7 +22,7 @@ class Menu extends AbstractController
             'selfMenu' => [
                 'sceneCode' => $sceneCode,
                 'sceneId' => $sceneInfo->sceneId,
-                'loginId' => $loginInfo->adminId
+                'loginId' => $loginInfo->loginId
             ]
         ];
         $field = [

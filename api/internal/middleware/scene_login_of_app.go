@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	daoAuth "api/internal/dao/auth"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -21,7 +23,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			return
 		}
 
-		jwt := utils.NewJWT(r.GetCtx(), utils.GetCtxSceneInfo(r.GetCtx())[`sceneConfig`].Map())
+		jwt := utils.NewJWT(r.GetCtx(), utils.GetCtxSceneInfo(r.GetCtx())[daoAuth.Scene.Columns().SceneConfig].Map())
 		claims, err := jwt.ParseToken(token)
 		if err != nil {
 			if isForce {
@@ -46,7 +48,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		/**--------限制多地登录，多设备登录等情况下用（前置条件：登录时做过token缓存） 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoUser.User.ParseDbCtx(r.GetCtx()).Where(`userId`, claims.LoginId).One()
+		info, _ := daoUser.User.ParseDbCtx(r.GetCtx()).Where(daoUser.User.PrimaryKey(), claims.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))
@@ -55,7 +57,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[`isStop`].Int() == 1 {
+		if info[daoUser.User.Columns().IsStop].Int() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994004, ``))
 			} else {
@@ -64,7 +66,8 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			return
 		}
 
-		utils.SetCtxLoginInfo(r, info) //用户信息保存在协程上下文
+		info[`loginId`] = gvar.New(claims.LoginId) //所有场景追加这个字段，方便统一调用
+		utils.SetCtxLoginInfo(r, info)             //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/
 
 		r.Middleware.Next()

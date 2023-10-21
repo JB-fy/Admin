@@ -50,9 +50,8 @@ class SceneLoginOfPlatform implements \Psr\Http\Server\MiddlewareInterface
             if ($info->isStop) {
                 throwFailJson(39994004);
             }
-            unset($info->password);
-            unset($info->isStop);
 
+            $info->loginId  = $payload['id']; //所有场景追加这个字段，方便统一调用
             $this->logic->setCurrentInfo($info, $sceneCode);    //用户信息保存在协程上下文
             /**--------获取用户信息并验证 结束--------**/
 

@@ -4,7 +4,6 @@ import (
 	apiMy "api/api/platform/my"
 	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
 	"context"
 )
@@ -26,7 +25,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 		`selfAction`: map[string]interface{}{
 			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-			`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
+			`loginId`:   loginInfo[`loginId`],
 		},
 	}
 

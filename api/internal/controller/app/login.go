@@ -5,6 +5,7 @@ import (
 	apiCurrent "api/api/app"
 	"api/internal/cache"
 	"api/internal/dao"
+	daoAuth "api/internal/dao/auth"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
 	"context"
@@ -86,7 +87,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	claims := utils.CustomClaims{LoginId: info[daoUser.User.PrimaryKey()].Uint()}
-	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
+	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
@@ -135,7 +136,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	}
 
 	claims := utils.CustomClaims{LoginId: uint(userId)}
-	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[`sceneConfig`].Map())
+	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return

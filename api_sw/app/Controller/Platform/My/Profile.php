@@ -17,6 +17,9 @@ class Profile extends AbstractController
     {
         $sceneCode = $this->scene->getCurrentSceneCode();
         $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
+        unset($loginInfo->password);
+        unset($loginInfo->salt);
+        unset($loginInfo->isStop);
         throwSuccessJson(['info' => $loginInfo]);
     }
 
@@ -34,6 +37,6 @@ class Profile extends AbstractController
 
         $sceneCode = $this->scene->getCurrentSceneCode();
         $loginInfo = $this->container->get(\App\Module\Logic\Login::class)->getCurrentInfo($sceneCode);
-        $this->container->get(\App\Module\Service\Platform\Admin::class)->update($data, ['id' => $loginInfo->adminId]);
+        $this->container->get(\App\Module\Service\Platform\Admin::class)->update($data, ['id' => $loginInfo->loginId]);
     }
 }

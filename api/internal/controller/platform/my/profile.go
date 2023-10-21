@@ -48,7 +48,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		}
 	}
 
-	filter := map[string]interface{}{`id`: loginInfo[daoPlatform.Admin.PrimaryKey()]}
+	filter := map[string]interface{}{`id`: loginInfo[`loginId`]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.PlatformAdmin().Update(ctx, filter, data)

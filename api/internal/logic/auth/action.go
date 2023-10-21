@@ -68,22 +68,18 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]inte
 func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[`loginId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，无权限限制
+		isAuth = true
+		return
+	}
 
 	filter := map[string]interface{}{
 		`actionCode`: actionCode,
 		`selfAction`: map[string]interface{}{
 			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-			`loginId`:   loginInfo[`adminId`],
+			`loginId`:   loginInfo[`loginId`],
 		},
-	}
-	switch sceneInfo[daoAuth.Scene.Columns().SceneCode].String() {
-	case `platform`:
-		if loginInfo[`adminId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，无权限限制
-			isAuth = true
-			return
-		}
-		//filter[`selfAction`].(map[string]interface{})[`loginId`] = loginInfo[`adminId`]
 	}
 
 	count, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).GetModel().Count()
