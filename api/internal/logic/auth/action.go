@@ -68,17 +68,16 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]inte
 func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[`sceneCode`].String()
+
 	filter := map[string]interface{}{
 		`actionCode`: actionCode,
+		`selfAction`: map[string]interface{}{
+			`sceneCode`: sceneInfo[`sceneCode`],
+			`sceneId`:   sceneInfo[`sceneId`],
+			`loginId`:   loginInfo[`adminId`],
+		},
 	}
-	filter[`selfAction`] = map[string]interface{}{
-		`sceneCode`: sceneCode,
-		`sceneId`:   sceneInfo[`sceneId`].Int(),
-		`loginId`:   loginInfo[`adminId`].Int(),
-	}
-
-	switch sceneCode {
+	switch sceneInfo[`sceneCode`].String() {
 	case `platform`:
 		if loginInfo[`adminId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，无权限限制
 			isAuth = true
@@ -86,6 +85,7 @@ func (logicAction *sAuthAction) CheckAuth(ctx context.Context, actionCode string
 		}
 		//filter[`selfAction`].(map[string]interface{})[`loginId`] = loginInfo[`adminId`]
 	}
+
 	count, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).GetModel().Count()
 	if count == 0 {
 		err = utils.NewErrorCode(ctx, 39999996, ``)

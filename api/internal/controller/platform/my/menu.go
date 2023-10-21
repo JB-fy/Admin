@@ -21,16 +21,18 @@ func NewMenu() *Menu {
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneColumns := daoAuth.Scene.Columns()
-	filter := map[string]interface{}{}
-	filter[`selfMenu`] = map[string]interface{}{
-		`sceneCode`: sceneInfo[sceneColumns.SceneCode],
-		`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-		`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
-	}
-	field := []string{`id`, `label`, `tree`, `showMenu`}
 
-	list, err := dao.NewDaoHandler(ctx, &daoAuth.Menu).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
+	field := []string{`id`, `label`, `tree`, `showMenu`}
+	sceneColumns := daoAuth.Scene.Columns()
+	filter := map[string]interface{}{
+		`selfMenu`: map[string]interface{}{
+			`sceneCode`: sceneInfo[sceneColumns.SceneCode],
+			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+			`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
+		},
+	}
+
+	list, err := dao.NewDaoHandler(ctx, &daoAuth.Menu).Field(field).Filter(filter).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

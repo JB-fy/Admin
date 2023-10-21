@@ -19,17 +19,19 @@ func NewAction() *Action {
 func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq) (res *apiMy.ActionListRes, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneColumns := daoAuth.Scene.Columns()
-	filter := map[string]interface{}{}
-	filter[`selfAction`] = map[string]interface{}{
-		`sceneCode`: sceneInfo[sceneColumns.SceneCode],
-		`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-		`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
-	}
+
 	actionColumns := daoAuth.Action.Columns()
 	field := []string{`id`, `label`, actionColumns.ActionId, actionColumns.ActionName}
+	sceneColumns := daoAuth.Scene.Columns()
+	filter := map[string]interface{}{
+		`selfAction`: map[string]interface{}{
+			`sceneCode`: sceneInfo[sceneColumns.SceneCode],
+			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+			`loginId`:   loginInfo[daoPlatform.Admin.PrimaryKey()],
+		},
+	}
 
-	list, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
+	list, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Field(field).Filter(filter).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}
