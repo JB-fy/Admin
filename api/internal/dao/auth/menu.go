@@ -416,37 +416,36 @@ func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
+		/* case Xxxx.Table():
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			*joinTableArr = append(*joinTableArr, joinCode)
+			m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		} */
 		case Scene.Table():
-			relTable := Scene.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
 			}
 		case `p_` + daoThis.Table():
-			relTable := `p_` + daoThis.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(daoThis.Table()+` AS `+relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().Pid)
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(daoThis.Table()+` AS `+joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().Pid)
 			}
 		case RoleRelToMenu.Table():
-			relTable := RoleRelToMenu.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode+` AS `+joinCode, joinCode+`.`+RoleRelToMenu.Columns().MenuId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 			}
 		case Role.Table():
-			relTable := Role.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-				*joinTableArr = append(*joinTableArr, relTable)
-				roleRelToMenuTable := RoleRelToMenu.Table()
-				m = m.LeftJoin(relTable, relTable+`.`+Role.PrimaryKey()+` = `+roleRelToMenuTable+`.`+Role.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToMenu.Table()+`.`+RoleRelToMenu.Columns().RoleId)
 			}
 		case RoleRelOfPlatformAdmin.Table():
-			roleRelOfPlatformAdminTable := RoleRelOfPlatformAdmin.Table()
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(roleRelOfPlatformAdminTable) {
-				*joinTableArr = append(*joinTableArr, roleRelOfPlatformAdminTable)
-				roleRelToMenuTable := RoleRelToMenu.Table()
-				m = m.LeftJoin(roleRelOfPlatformAdminTable, roleRelOfPlatformAdminTable+`.`+Role.PrimaryKey()+` = `+roleRelToMenuTable+`.`+Role.PrimaryKey())
+			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+				*joinTableArr = append(*joinTableArr, joinCode)
+				m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToMenu.Table()+`.`+RoleRelToMenu.Columns().RoleId)
 			}
 		}
 		return m

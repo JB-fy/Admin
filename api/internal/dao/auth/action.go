@@ -371,10 +371,10 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 	return func(m *gdb.Model) *gdb.Model {
 		switch joinCode {
 		/* case Xxxx.Table():
-		relTable := Xxxx.Table()
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(relTable) {
-			*joinTableArr = append(*joinTableArr, relTable)
-			m = m.LeftJoin(relTable, relTable+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			*joinTableArr = append(*joinTableArr, joinCode)
+			m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+			// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		} */
 		case ActionRelToScene.Table():
 			relTable := ActionRelToScene.Table()
