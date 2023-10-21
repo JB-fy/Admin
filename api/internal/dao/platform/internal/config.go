@@ -82,8 +82,9 @@ func (dao *ConfigDao) Table() string {
 }
 
 // Columns returns all column names of current dao.
-func (dao *ConfigDao) Columns() ConfigColumns {
-	return dao.columns
+// 使用较为频繁。为优化内存考虑，改成返回指针更为合适，但切忌使用过程中不可修改，否则会污染全局
+func (dao *ConfigDao) Columns() *ConfigColumns {
+	return &dao.columns
 }
 
 // Group returns the configuration group name of database of current dao.
