@@ -226,7 +226,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
+			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -234,7 +234,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 			case `pMenuName`:
 				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-				m = daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr))
 			case `tree`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().Pid)
@@ -249,7 +249,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				*afterField = append(*afterField, v)
 			case Scene.Columns().SceneName:
 				m = m.Fields(Scene.Table() + `.` + v)
-				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(Scene.Table(), joinTableArr))
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(daoThis.Table() + `.` + v)
@@ -342,11 +342,11 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 						continue
 					}
 					m = m.Where(Role.Table()+`.`+Role.Columns().IsStop, 0)
-					m = daoThis.ParseJoin(RoleRelToMenu.Table(), joinTableArr)(m)
-					m = daoThis.ParseJoin(Role.Table(), joinTableArr)(m)
+					m = m.Handler(daoThis.ParseJoin(RoleRelToMenu.Table(), joinTableArr))
+					m = m.Handler(daoThis.ParseJoin(Role.Table(), joinTableArr))
 
 					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
-					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
+					m = m.Handler(daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr))
 				default:
 					m = m.Where(`1 = 0`)
 				}

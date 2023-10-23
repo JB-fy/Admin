@@ -212,7 +212,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
+			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -220,7 +220,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().RoleName + ` AS ` + v)
 			case Scene.Columns().SceneName:
 				m = m.Fields(Scene.Table() + `.` + v)
-				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(Scene.Table(), joinTableArr))
 			case `menuIdArr`, `actionIdArr`:
 				//需要id字段
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
@@ -228,7 +228,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 			case `tableName`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().TableId)
 				m = m.Fields(Scene.Table() + `.` + Scene.Columns().SceneCode)
-				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(Scene.Table(), joinTableArr))
 				*afterField = append(*afterField, v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
@@ -322,7 +322,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case Scene.Columns().SceneCode:
 				m = m.Where(Scene.Table()+`.`+k, v)
-				m = daoThis.ParseJoin(Scene.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(Scene.Table(), joinTableArr))
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Where(daoThis.Table()+`.`+k, v)

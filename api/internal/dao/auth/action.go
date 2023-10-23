@@ -204,7 +204,7 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]i
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
+			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -294,23 +294,23 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
 			case `sceneId`:
 				m = m.Where(ActionRelToScene.Table()+`.`+k, v)
-				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr))
 			case `selfAction`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`=>场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
 				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
 				m = m.Where(ActionRelToScene.Table()+`.`+ActionRelToScene.Columns().SceneId, val[`sceneId`])
-				m = daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr))
 				switch gconv.String(val[`sceneCode`]) {
 				case `platform`:
 					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
 						continue
 					}
 					m = m.Where(Role.Table()+`.`+Role.Columns().IsStop, 0)
-					m = daoThis.ParseJoin(RoleRelToAction.Table(), joinTableArr)(m)
-					m = daoThis.ParseJoin(Role.Table(), joinTableArr)(m)
+					m = m.Handler(daoThis.ParseJoin(RoleRelToAction.Table(), joinTableArr))
+					m = m.Handler(daoThis.ParseJoin(Role.Table(), joinTableArr))
 
 					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
-					m = daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
+					m = m.Handler(daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr))
 				default:
 					m = m.Where(`1 = 0`)
 				}

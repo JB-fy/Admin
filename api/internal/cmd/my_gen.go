@@ -786,7 +786,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					daoParseFieldTmp := `
 			case ` + "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `:
 				m = m.Fields(` + "`p_`" + ` + daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)
-				m = daoThis.ParseJoin(` + "`p_`" + `+daoThis.Table(), joinTableArr)(m)`
+				m = m.Handler(daoThis.ParseJoin(` + "`p_`" + `+daoThis.Table(), joinTableArr))`
 					if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 						daoParseField += daoParseFieldTmp
 					}
@@ -849,7 +849,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 						daoParseFieldTmp := `
 			case ` + "`" + relTable.RelNameField + "`" + `:
 				m = m.Fields(` + daoPath + `.Table() + ` + "`.`" + ` + v)
-				m = daoThis.ParseJoin(` + daoPath + `.Table(), joinTableArr)(m)`
+				m = m.Handler(daoThis.ParseJoin(` + daoPath + `.Table(), joinTableArr))`
 						if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 							daoParseField += daoParseFieldTmp
 						}

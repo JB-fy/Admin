@@ -185,7 +185,7 @@ func (daoThis *sceneDao) ParseField(field []string, fieldWithParam map[string]in
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
+			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)

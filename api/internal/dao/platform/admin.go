@@ -242,7 +242,7 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]in
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = daoThis.ParseJoin(Xxxx.Table(), joinTableArr)(m)
+			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -336,7 +336,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 				}
 			case `roleId`:
 				m = m.Where(daoAuth.RoleRelOfPlatformAdmin.Table()+`.`+k, v)
-				m = daoThis.ParseJoin(daoAuth.RoleRelOfPlatformAdmin.Table(), joinTableArr)(m)
+				m = m.Handler(daoThis.ParseJoin(daoAuth.RoleRelOfPlatformAdmin.Table(), joinTableArr))
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					m = m.Where(daoThis.Table()+`.`+k, v)
