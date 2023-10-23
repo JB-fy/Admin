@@ -61,7 +61,18 @@ class AppExceptionHandler extends ExceptionHandler
                 ];
                 $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
                 return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
-            }
+            } else {
+                $responseData = [
+                    'code' => '29999999',
+                    'msg' => $throwable->getMessage(),
+                    'data' => [],
+                ];
+                if (!isDev()) {
+                    $responseData['msg']=trans('code.29999999');
+                }
+                $responseBody = json_encode($responseData, JSON_UNESCAPED_UNICODE);
+                return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withBody(new SwooleStream($responseBody));
+			}
         } elseif ($throwable instanceof \Hyperf\HttpMessage\Exception\HttpException) {
             $this->stopPropagation();   //阻止异常冒泡
             $this->logger->debug($this->formatter->format($throwable));

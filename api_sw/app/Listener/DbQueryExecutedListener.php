@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace App\Listener;
 
 use Hyperf\Database\Events\QueryExecuted;
@@ -46,7 +47,7 @@ class DbQueryExecutedListener implements ListenerInterface
     {
         if ($event instanceof QueryExecuted) {
             $sql = $event->sql;
-            if (! Arr::isAssoc($event->bindings)) {
+            if (!Arr::isAssoc($event->bindings)) {
                 $position = 0;
                 foreach ($event->bindings as $value) {
                     $position = strpos($sql, '?', $position);
@@ -60,7 +61,9 @@ class DbQueryExecutedListener implements ListenerInterface
             }
 
             $this->logger->info(sprintf('[%s] %s', $event->time, $sql));
-            //getContainer()->get(\Hyperf\Framework\Logger\StdoutLogger::class)->info(sprintf('[%s] %s', $event->time, $sql));
+            if (isDev()) {
+                getContainer()->get(\Hyperf\Framework\Logger\StdoutLogger::class)->info(sprintf('[%s] %s', $event->time, $sql));
+            }
         }
     }
 }
