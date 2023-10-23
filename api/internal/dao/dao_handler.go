@@ -9,7 +9,7 @@ import (
 
 // 定义接口
 type DaoInterface interface {
-	ParseDbGroup(ctx context.Context, dbGroupSeldata ...map[string]interface{}) string
+	ParseDbGroup(ctx context.Context, dbGroupSelData ...map[string]interface{}) string
 	ParseDbTable(ctx context.Context, dbTableSelData ...map[string]interface{}) string
 	ParseDbCtx(ctx context.Context, dbSelDataList ...map[string]interface{}) *gdb.Model
 	ParseInsert(insert map[string]interface{}) gdb.ModelHandler
