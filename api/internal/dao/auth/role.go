@@ -378,12 +378,16 @@ func (daoThis *roleDao) ParseOrder(order []string, joinTableArr *[]string) gdb.M
 // 解析join
 func (daoThis *roleDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		if garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			return m
+		}
+		*joinTableArr = append(*joinTableArr, joinCode)
 		switch joinCode {
+		/* case Xxxx.Table():
+		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey()) */
 		case Scene.Table():
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-				*joinTableArr = append(*joinTableArr, joinCode)
-				m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
-			}
+			m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
 		}
 		return m
 	}

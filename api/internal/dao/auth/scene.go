@@ -10,6 +10,7 @@ import (
 	"database/sql"
 	"sync"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -321,13 +322,14 @@ func (daoThis *sceneDao) ParseOrder(order []string, joinTableArr *[]string) gdb.
 // 解析join
 func (daoThis *sceneDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		if garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			return m
+		}
+		*joinTableArr = append(*joinTableArr, joinCode)
 		switch joinCode {
 		/* case Xxxx.Table():
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-			*joinTableArr = append(*joinTableArr, joinCode)
-			m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-			// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		} */
+		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey()) */
 		}
 		return m
 	}

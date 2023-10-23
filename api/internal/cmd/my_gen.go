@@ -813,10 +813,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 				daoParseJoinTmp := `
 		case ` + "`p_`" + ` + daoThis.Table():
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-				*joinTableArr = append(*joinTableArr, joinCode)
-				m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
-			}`
+			m = m.LeftJoin(daoThis.Table()+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
 				if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
 					daoParseJoin += daoParseJoinTmp
 				}
@@ -859,10 +856,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					daoParseJoinTmp := `
 		case ` + daoPath + `.Table():
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-				*joinTableArr = append(*joinTableArr, joinCode)
-				m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)
-			}`
+			m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
 					if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
 						daoParseJoin += daoParseJoinTmp
 					}
@@ -1065,11 +1059,8 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	if daoParseJoin != `` {
 		daoParseJoinPoint := `
 		/* case Xxxx.Table():
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-			*joinTableArr = append(*joinTableArr, joinCode)
-			m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
-			// m = m.LeftJoin(Xxxx.Table()+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
-		} */`
+		m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.Table()+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoThis.Table()+` + "`.`" + `+daoThis.PrimaryKey()) */`
 		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoinPoint+daoParseJoin, 1)
 	}
 	if daoFunc != `` {

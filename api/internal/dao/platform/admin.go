@@ -392,18 +392,16 @@ func (daoThis *adminDao) ParseOrder(order []string, joinTableArr *[]string) gdb.
 // 解析join
 func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		if garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
+			return m
+		}
+		*joinTableArr = append(*joinTableArr, joinCode)
 		switch joinCode {
 		/* case Xxxx.Table():
-		if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-			*joinTableArr = append(*joinTableArr, joinCode)
-			m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-			// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		} */
+		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey()) */
 		case daoAuth.RoleRelOfPlatformAdmin.Table():
-			if !garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
-				*joinTableArr = append(*joinTableArr, joinCode)
-				m = m.LeftJoin(joinCode, joinCode+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-			}
+			m = m.LeftJoin(joinCode, joinCode+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
 		}
 		return m
 	}
