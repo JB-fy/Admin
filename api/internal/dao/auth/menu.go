@@ -238,7 +238,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 			case `tree`:
 				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().Pid)
-				m = daoThis.ParseOrder([]string{`tree`}, joinTableArr)(m)
+				m = m.Handler(daoThis.ParseOrder([]string{`tree`}, joinTableArr))
 			case `showMenu`: //前端显示菜单需要以下字段，且title需要转换
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName)
 				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuIcon)

@@ -795,7 +795,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			case ` + "`tree`" + `:
 				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.PrimaryKey())
 				m = m.Fields(daoThis.Table() + ` + "`.`" + ` + daoThis.Columns().` + fieldCaseCamel + `)
-				m = daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr)(m)`
+				m = m.Handler(daoThis.ParseOrder([]string{` + "`tree`" + `}, joinTableArr))`
 				if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 					daoParseField += daoParseFieldTmp
 				}
