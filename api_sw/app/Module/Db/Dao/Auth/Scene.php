@@ -20,15 +20,15 @@ class Scene extends AbstractDao
     protected array $jsonField = ['sceneConfig']; //json类型字段。这些字段创建|更新时，需要特殊处理
 
     /**
-     * 解析filter（独有的）
+     * 解析filter（单个）
      *
      * @param string $key
      * @param string|null $operator
      * @param [type] $value
      * @param string|null $boolean
-     * @return boolean
+     * @return void
      */
-    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOne(string $key, string $operator = null, $value, string $boolean = null): void
     {
         switch ($key) {
             case 'sceneName':
@@ -37,8 +37,9 @@ class Scene extends AbstractDao
                 } else {
                     $this->builder->where($this->getTable() . '.' . $key, $operator, $value, $boolean ?? 'and');
                 }
-                return true;
+                break;
+            default:
+                parent::parseFilterOne($key, $operator, $value, $boolean);
         }
-        return false;
     }
 }
