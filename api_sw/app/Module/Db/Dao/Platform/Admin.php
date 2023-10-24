@@ -32,15 +32,15 @@ class Admin extends AbstractDao
     {
         switch ($key) {
             case 'phone':
-                $this->insert[$index][$key] = $value;
+                $this->insertData[$index][$key] = $value;
                 if ($value === '') {
-                    $this->insert[$index][$key] = null;
+                    $this->insertData[$index][$key] = null;
                 }
                 break;
             case 'account':
-                $this->insert[$index][$key] = $value;
+                $this->insertData[$index][$key] = $value;
                 if ($value === '') {
-                    $this->insert[$index][$key] = null;
+                    $this->insertData[$index][$key] = null;
                 }
                 break;
             default:
@@ -59,15 +59,15 @@ class Admin extends AbstractDao
     {
         switch ($key) {
             case 'phone':
-                $this->update[$key] = $value;
+                $this->updateData[$key] = $value;
                 if ($value === '') {
-                    $this->update[$key] = null;
+                    $this->updateData[$key] = null;
                 }
                 break;
             case 'account':
-                $this->update[$key] = $value;
+                $this->updateData[$key] = $value;
                 if ($value === '') {
-                    $this->update[$key] = null;
+                    $this->updateData[$key] = null;
                 }
                 break;
             default:

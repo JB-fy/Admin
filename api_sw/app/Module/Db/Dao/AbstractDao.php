@@ -18,8 +18,8 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     protected ?string $connection/*  = 'default' */;  //分库情况下，解析后所确定的连接
     protected ?string $table;   //分表情况下，解析后所确定的表
 
-    protected array $insert = [];   //解析后的insert。格式：[['字段' => '值',...],...]。无顺序要求
-    protected array $update = [];   //解析后的update。格式：['字段' => '值',...]。无顺序要求
+    protected array $insertData = [];   //解析后的insert。格式：[['字段' => '值',...],...]。无顺序要求
+    protected array $updateData = [];   //解析后的update。格式：['字段' => '值',...]。无顺序要求
 
     protected array $joinCode = [];    //已联表标识。格式：['joinCode',...]
 
@@ -280,7 +280,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-                $this->insert[$index][$this->getKey()] = $value;
+                $this->insertData[$index][$this->getKey()] = $value;
                 break;
             case 'password':
                 if (in_array('salt', $this->getAllColumn())) {
@@ -288,10 +288,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     if (strlen($value) != 32) {
                         $value = md5($value);
                     }
-                    $this->insert[$index]['salt'] = $salt;
-                    $this->insert[$index][$key] = md5($value . $salt);
+                    $this->insertData[$index]['salt'] = $salt;
+                    $this->insertData[$index][$key] = md5($value . $salt);
                 } else {
-                    $this->insert[$index][$key] = $value;
+                    $this->insertData[$index][$key] = $value;
                 }
                 break;
             case 'salt':    //password字段处理过程自动生成
@@ -301,12 +301,12 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 if (in_array($key, $this->getAllColumn())) {
                     if (in_array($key, $this->jsonField)) {
                         if ($value === '' || $value === null) {
-                            $this->insert[$index][$key] =  null;
+                            $this->insertData[$index][$key] =  null;
                         } else {
-                            $this->insert[$index][$key] =  is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+                            $this->insertData[$index][$key] =  is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
                         }
                     } else {
-                        $this->insert[$index][$key] = $value;
+                        $this->insertData[$index][$key] = $value;
                     }
                 }
         }
@@ -323,7 +323,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         switch ($key) {
             case 'id':
-                $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
+                $this->updateData[$this->getTable() . '.' . $this->getKey()] = $value;
                 break;
             case 'password':
                 if (in_array('salt', $this->getAllColumn())) {
@@ -331,10 +331,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     if (strlen($value) != 32) {
                         $value = md5($value);
                     }
-                    $this->update[$this->getTable() . '.salt'] = $salt;
-                    $this->update[$this->getTable() . '.' . $key] = md5($value . $salt);
+                    $this->updateData[$this->getTable() . '.salt'] = $salt;
+                    $this->updateData[$this->getTable() . '.' . $key] = md5($value . $salt);
                 } else {
-                    $this->update[$this->getTable() . '.' . $key] = $value;
+                    $this->updateData[$this->getTable() . '.' . $key] = $value;
                 }
                 break;
             case 'salt':    //password字段处理过程自动生成
@@ -351,12 +351,12 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 if (in_array($key, $this->getAllColumn())) {
                     if (in_array($key, $this->jsonField)) {
                         if ($value === '' || $value === null) {
-                            $this->update[$this->getTable() . '.' . $key] = null;
+                            $this->updateData[$this->getTable() . '.' . $key] = null;
                         } else {
-                            $this->update[$this->getTable() . '.' . $key] = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+                            $this->updateData[$this->getTable() . '.' . $key] = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
                         }
                     } else {
-                        $this->update[$this->getTable() . '.' . $key] = $value;
+                        $this->updateData[$this->getTable() . '.' . $key] = $value;
                     }
                 }
         }
@@ -514,7 +514,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      * @param [type] $value
      * @return void
      */
-    protected function parseOrderOne(string $key, $value): void
+    protected function parseOrderOne(string $key, $value = null): void
     {
         switch ($key) {
             case 'id':
@@ -573,10 +573,10 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     final public function insert(bool $isGetId = true): bool|int
     {
         $this->getBuilder();
-        if (count($this->insert) > 1 || !$isGetId) {
-            return $this->builder->insert($this->insert);
+        if (count($this->insertData) > 1 || !$isGetId) {
+            return $this->builder->insert($this->insertData);
         }
-        return $this->builder->insertGetId($this->insert[0]);
+        return $this->builder->insertGetId($this->insertData[0]);
     }
 
     /**
@@ -590,7 +590,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         $this->getBuilder();
         $this->handleLimit($offset, $limit);
-        return $this->builder->update($this->update);
+        return $this->builder->update($this->updateData);
     }
 
     /**

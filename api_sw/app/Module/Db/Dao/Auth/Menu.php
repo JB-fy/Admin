@@ -37,10 +37,10 @@ class Menu extends AbstractDao
     {
         switch ($key) {
             case 'idPathOfChild':  //更新所有子孙级的idPath。参数：['newVal'=>父级新idPath, 'oldVal'=>父级旧idPath]
-                $this->update[$this->getTable() . '.idPath'] = Db::raw('REPLACE(' . $this->getTable() . '.idPath, \'' . $value['oldVal'] . '\', \'' . $value['newVal'] . '\')');
+                $this->updateData[$this->getTable() . '.idPath'] = Db::raw('REPLACE(' . $this->getTable() . '.idPath, \'' . $value['oldVal'] . '\', \'' . $value['newVal'] . '\')');
                 break;
             case 'levelOfChild':    //更新所有子孙级的level。参数：['newVal'=>父级新level, 'oldVal'=>父级旧level]
-                $this->update[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level + ' . ($value['newVal'] - $value['oldVal']));
+                $this->updateData[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level + ' . ($value['newVal'] - $value['oldVal']));
                 break;
             default:
                 parent::parseUpdateOne($key, $value);
@@ -60,7 +60,7 @@ class Menu extends AbstractDao
             case 'tree':    //树状需要以下字段和排序方式
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
                 $this->builder->addSelect($this->getTable() . '.' . 'pid');
-                $this->parseOrderOne('tree', null);    //排序方式
+                $this->parseOrderOne('tree');    //排序方式
                 break;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
                 $this->builder->addSelect($this->getTable() . '.' . 'menuName');
@@ -144,7 +144,7 @@ class Menu extends AbstractDao
      * @param [type] $value
      * @return void
      */
-    protected function parseOrderOne(string $key, $value): void
+    protected function parseOrderOne(string $key, $value = null): void
     {
         switch ($key) {
             case 'tree':
