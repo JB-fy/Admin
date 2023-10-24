@@ -18,103 +18,102 @@ use App\Module\Db\Dao\AbstractDao;
 class Role extends AbstractDao
 {
     /**
-     * 解析field（独有的）
+     * 解析field（单个）
      *
      * @param string $key
-     * @return boolean
+     * @param [type] $value
+     * @return void
      */
-    protected function parseFieldOfAlone(string $key): bool
+    protected function parseFieldOne(string $key, $value = null): void
     {
         switch ($key) {
             case 'sceneName':
                 $this->builder->addSelect(getDao(Scene::class)->getTable() . '.' . $key);
-                $this->parseJoinOfAlone('scene');
-                return true;
+                $this->parseJoin(getDao(Scene::class)->getTable());
+                break;
             case 'menuIdArr':
             case 'actionIdArr':
                 //需要id字段
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
                 $this->afterField[] = $key;
-                return true;
+                break;
             case 'tableName':
                 $this->builder->addSelect($this->getTable() . '.tableId');
                 $this->builder->addSelect(getDao(Scene::class)->getTable() . '.sceneCode');
-                $this->parseJoinOfAlone('scene');
+                $this->parseJoin(getDao(Scene::class)->getTable());
                 $this->afterField[] = $key;
-                return true;
+                break;
+            default:
+                parent::parseFieldOne($key, $value);
         }
-        return false;
     }
 
     /**
-     * 解析filter（独有的）
-     *
-     * @param string $key
-     * @param string|null $operator
-     * @param [type] $value
-     * @param string|null $boolean
-     * @return boolean
-     */
-    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
-    {
-        switch ($key) {
-            case 'sceneCode':
-                $this->builder->where(getDao(Scene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
-                $this->parseJoinOfAlone('scene');
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * 解析join（独有的）
-     *
-     * @param string $key   键，用于确定关联表
-     * @param [type] $value 值，用于确定关联表
-     * @return boolean
-     */
-    protected function parseJoinOfAlone(string $key, $value = null): bool
-    {
-        switch ($key) {
-            case 'scene':
-                $sceneDao = getDao(Scene::class);
-                $sceneDaoTable = $sceneDao->getTable();
-                if (!in_array($sceneDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $sceneDaoTable;
-                    $this->builder->leftJoin($sceneDaoTable, $sceneDaoTable . '.sceneId', '=', $this->getTable() . '.sceneId');
-                }
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * 获取数据后，再处理的字段（独有的）
+     * 获取数据后，再处理的字段（单个）
      *
      * @param string $key
      * @param object $info
-     * @return boolean
+     * @return void
      */
-    protected function afterFieldOfAlone(string $key, object &$info): bool
+    protected function parseAfterField(string $key, object &$info): void
     {
         switch ($key) {
             case 'menuIdArr':
                 $info->{$key} = getDao(RoleRelToMenu::class)->parseFilter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('menuId')->toArray();
-                return true;
+                break;
             case 'actionIdArr':
                 $info->{$key} = getDao(RoleRelToAction::class)->parseFilter(['roleId' => $info->{$this->getKey()}])->getBuilder()->pluck('actionId')->toArray();
-                return true;
+                break;
             case 'tableName':
                 if ($info->tableId == 0) {
                     $info->{$key} = '平台';
-                    return true;
+                    break;
                 }
                 switch ($info->sceneCode) {
                     case 'platform':
                         break;
                 }
-                return true;
+                break;
+            default:
+                parent::parseAfterField($key, $info);
         }
-        return false;
+    }
+
+    /**
+     * 解析filter（单个）
+     *
+     * @param string $key
+     * @param string|null $operator
+     * @param [type] $value
+     * @param string|null $boolean
+     * @return void
+     */
+    protected function parseFilterOne(string $key, string $operator = null, $value, string $boolean = null): void
+    {
+        switch ($key) {
+            case 'sceneCode':
+                $this->builder->where(getDao(Scene::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
+                $this->parseJoin(getDao(Scene::class)->getTable());
+                break;
+            default:
+                parent::parseFilterOne($key, $operator, $value, $boolean);
+        }
+    }
+
+    /**
+     * 解析join（单个）
+     *
+     * @param string $joinCode
+     * @return void
+     */
+    protected function parseJoinOne(string $joinAlias): void
+    {
+        switch ($joinAlias) {
+            case getDao(Scene::class)->getTable():
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.sceneId', '=', $this->getTable() . '.sceneId');
+                break;
+            default:
+                parent::parseJoinOne($joinAlias);
+        }
     }
 }

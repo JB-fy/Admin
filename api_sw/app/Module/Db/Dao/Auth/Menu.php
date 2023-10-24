@@ -27,73 +27,90 @@ class Menu extends AbstractDao
     protected array $jsonField = ['extraData']; //json类型字段。这些字段创建|更新时，需要特殊处理
 
     /**
-     * 解析update（独有的）
+     * 解析update（单个）
      *
      * @param string $key
      * @param [type] $value
-     * @return boolean
+     * @return void
      */
-    protected function parseUpdateOfAlone(string $key, $value = null): bool
+    protected function parseUpdateOne(string $key, $value): void
     {
         switch ($key) {
             case 'idPathOfChild':  //更新所有子孙级的idPath。参数：['newVal'=>父级新idPath, 'oldVal'=>父级旧idPath]
                 $this->update[$this->getTable() . '.idPath'] = Db::raw('REPLACE(' . $this->getTable() . '.idPath, \'' . $value['oldVal'] . '\', \'' . $value['newVal'] . '\')');
-                return true;
+                break;
             case 'levelOfChild':    //更新所有子孙级的level。参数：['newVal'=>父级新level, 'oldVal'=>父级旧level]
                 $this->update[$this->getTable() . '.level'] = Db::raw($this->getTable() . '.level + ' . ($value['newVal'] - $value['oldVal']));
-                return true;
+                break;
+            default:
+                parent::parseUpdateOne($key, $value);
         }
-        return false;
     }
 
     /**
-     * 解析field（独有的）
+     * 解析field（单个）
      *
      * @param string $key
-     * @return boolean
+     * @param [type] $value
+     * @return void
      */
-    protected function parseFieldOfAlone(string $key): bool
+    protected function parseFieldOne(string $key, $value = null): void
     {
         switch ($key) {
             case 'tree':    //树状需要以下字段和排序方式
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
                 $this->builder->addSelect($this->getTable() . '.' . 'pid');
-
-                $this->parseOrderOfAlone('tree');    //排序方式
-                return true;
+                $this->parseOrderOne('tree', null);    //排序方式
+                break;
             case 'showMenu':    //前端显示菜单需要以下字段，且title需要转换
                 $this->builder->addSelect($this->getTable() . '.' . 'menuName');
                 $this->builder->addSelect($this->getTable() . '.' . 'menuIcon');
                 $this->builder->addSelect($this->getTable() . '.' . 'menuUrl');
-
                 $this->builder->addSelect($this->getTable() . '.' . 'extraData->i18n AS i18n');
                 //$this->builder->addSelect(Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.i18n")) AS i18n')); //mysql不能直接转成对象返回
                 $this->afterField[] = 'showMenu';
-                return true;
+                break;
             case 'sceneName':
                 $this->builder->addSelect(getDao(Scene::class)->getTable() . '.' . $key);
-
-                $this->parseJoinOfAlone('scene');
-                return true;
+                $this->parseJoin(getDao(Scene::class)->getTable());
+                break;
             case 'pMenuName':
                 $this->builder->addSelect('p_' . $this->getTable() . '.menuName AS pMenuName');
-
-                $this->parseJoinOfAlone('pMenu');
-                return true;
+                $this->parseJoin('p_' . $this->getTable());
+                break;
+            default:
+                parent::parseFieldOne($key, $value);
         }
-        return false;
     }
 
     /**
-     * 解析filter（独有的）
+     * 获取数据后，再处理的字段（单个）
+     *
+     * @param string $key
+     * @param object $info
+     * @return void
+     */
+    protected function parseAfterField(string $key, object &$info): void
+    {
+        switch ($key) {
+            case 'showMenu':
+                $info->i18n = $info->i18n ? json_decode($info->i18n, true) : ['title' => ['zh-cn' => $info->menuName]];
+                break;
+            default:
+                parent::parseAfterField($key, $info);
+        }
+    }
+
+    /**
+     * 解析filter（单个）
      *
      * @param string $key
      * @param string|null $operator
      * @param [type] $value
      * @param string|null $boolean
-     * @return boolean
+     * @return void
      */
-    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOne(string $key, string $operator = null, $value, string $boolean = null): void
     {
         switch ($key) {
             case 'selfMenu': //获取当前登录身份可用的菜单。参数：['sceneCode'=>场景标识, 'sceneId'=>场景id, 'loginId'=>登录身份id]
@@ -102,115 +119,70 @@ class Menu extends AbstractDao
                 switch ($value['sceneCode']) {
                     case 'platform':
                         if ($value['loginId'] === getConfig('app.superPlatformAdminId')) { //平台超级管理员，不再需要其它条件
-                            return true;
+                            break;
                         }
                         $this->builder->where(getDao(Role::class)->getTable() . '.isStop', '=', 0, 'and');
-                        $this->parseJoinOfAlone('roleRelToMenu');
-                        $this->parseJoinOfAlone('role');
+                        $this->parseJoin(getDao(RoleRelToMenu::class)->getTable());
+                        $this->parseJoin(getDao(Role::class)->getTable());
 
                         $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.adminId', '=', $value['loginId'], 'and');
-                        $this->parseJoinOfAlone('roleRelOfPlatformAdmin');
+                        $this->parseJoin(getDao(RoleRelOfPlatformAdmin::class)->getTable());
+
+                        $this->parseGroup(['id']);
                         break;
                 }
-
-                $this->parseGroup(['id']);
-                return true;
+                break;
+            default:
+                parent::parseFilterOne($key, $operator, $value, $boolean);
         }
-        return false;
     }
 
     /**
-     * 解析order（独有的）
+     * 解析order（单个）
      *
      * @param string $key
      * @param [type] $value
-     * @return boolean
+     * @return void
      */
-    protected function parseOrderOfAlone(string $key, $value = null): bool
+    protected function parseOrderOne(string $key, $value): void
     {
         switch ($key) {
             case 'tree':
                 $this->builder->orderBy($this->getTable() . '.' . 'pid', 'ASC');
                 $this->builder->orderBy($this->getTable() . '.' . 'sort', 'ASC');
                 $this->builder->orderBy($this->getTable() . '.' . 'menuId', 'ASC');
-                return true;
+                break;
+            default:
+                parent::parseOrderOne($key, $value);
         }
-        return false;
     }
 
     /**
-     * 解析join（独有的）
+     * 解析join（单个）
      *
-     * @param string $key   键，用于确定关联表
-     * @param [type] $value 值，用于确定关联表
-     * @return boolean
+     * @param string $joinCode
+     * @return void
      */
-    protected function parseJoinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOne(string $joinAlias): void
     {
-        switch ($key) {
-            case 'scene':
-                $sceneDao = getDao(Scene::class);
-                $sceneDaoTable = $sceneDao->getTable();
-                if (!in_array($sceneDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $sceneDaoTable;
-                    $this->builder->leftJoin($sceneDaoTable, $sceneDaoTable . '.sceneId', '=', $this->getTable() . '.sceneId');
-                }
-                return true;
-            case 'pMenu':
-                $pMenuDaoTable = 'p_' . $this->getTable();
-                if (!in_array($pMenuDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $pMenuDaoTable;
-                    $this->builder->leftJoin($this->getTable() . ' AS ' . $pMenuDaoTable, $pMenuDaoTable . '.menuId', '=', $this->getTable() . '.pid');
-                }
-                return true;
-            case 'roleRelToMenu':
-                $roleRelToMenuDao = getDao(RoleRelToMenu::class);
-                $roleRelToMenuDaoTable = $roleRelToMenuDao->getTable();
-                if (!in_array($roleRelToMenuDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $roleRelToMenuDaoTable;
-                    $this->builder->leftJoin($roleRelToMenuDaoTable, $roleRelToMenuDaoTable . '.menuId', '=', $this->getTable() . '.menuId');
-                }
-                return true;
-            case 'role':
-                $roleRelToMenuDao = getDao(RoleRelToMenu::class);
-                $roleRelToMenuDaoTable = $roleRelToMenuDao->getTable();
-
-                $roleDao = getDao(Role::class);
-                $roleDaoTable = $roleDao->getTable();
-                if (!in_array($roleDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $roleDaoTable;
-                    $this->builder->leftJoin($roleDaoTable, $roleDaoTable . '.roleId', '=', $roleRelToMenuDaoTable . '.roleId');
-                }
-                return true;
-            case 'roleRelOfPlatformAdmin':
-                $roleRelToMenuDao = getDao(RoleRelToMenu::class);
-                $roleRelToMenuDaoTable = $roleRelToMenuDao->getTable();
-
-                $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
-                $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
-                if (!in_array($roleRelOfPlatformAdminDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $roleRelOfPlatformAdminDaoTable;
-                    $this->builder->leftJoin($roleRelOfPlatformAdminDaoTable, $roleRelOfPlatformAdminDaoTable . '.roleId', '=', $roleRelToMenuDaoTable . '.roleId');
-                }
-                return true;
+        switch ($joinAlias) {
+            case getDao(Scene::class)->getTable():
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.sceneId', '=', $this->getTable() . '.sceneId');
+                break;
+            case 'p_' . $this->getTable():
+                $this->builder->leftJoin($this->getTable() . ' AS ' . $joinAlias, $joinAlias . '.menuId', '=', $this->getTable() . '.pid');
+                break;
+            case getDao(RoleRelToMenu::class)->getTable():
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.menuId', '=', $this->getTable() . '.menuId');
+                break;
+            case getDao(Role::class)->getTable():
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.roleId', '=', getDao(RoleRelToMenu::class)->getTable() . '.roleId');
+                break;
+            case getDao(RoleRelOfPlatformAdmin::class)->getTable():
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.roleId', '=', getDao(RoleRelToMenu::class)->getTable() . '.roleId');
+                break;
+            default:
+                parent::parseJoinOne($joinAlias);
         }
-        return false;
-    }
-
-    /**
-     * 获取数据后，再处理的字段（独有的）
-     *
-     * @param string $key
-     * @param object $info
-     * @return boolean
-     */
-    protected function afterFieldOfAlone(string $key, object &$info): bool
-    {
-        switch ($key) {
-            case 'showMenu':
-                $info->i18n = $info->i18n ? json_decode($info->i18n, true) : ['title' => ['zh-cn' => $info->menuName]];
-                return true;
-        }
-        return false;
     }
 }

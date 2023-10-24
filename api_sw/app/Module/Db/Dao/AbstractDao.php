@@ -130,8 +130,11 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
      *
      * @return \Hyperf\Database\Query\Builder
      */
-    final public function getBuilder(): \Hyperf\Database\Query\Builder
+    final public function getBuilder(bool $isClone = false): \Hyperf\Database\Query\Builder
     {
+        if ($isClone) {
+            return $this->builder->clone();
+        }
         return $this->builder;
     }
 
@@ -146,16 +149,12 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
         if (isset($insert[0]) && is_array($insert[0])) {
             foreach ($insert as $k => $v) {
                 foreach ($v as $k1 => $v1) {
-                    if (!$this->parseInsertOfAlone($k1, $v1, $k)) {
-                        $this->parseInsertOfCommon($k1, $v1, $k);
-                    }
+                    $this->parseInsertOne($k1, $v1, $k);
                 }
             }
         } else {
             foreach ($insert as $k => $v) {
-                if (!$this->parseInsertOfAlone($k, $v)) {
-                    $this->parseInsertOfCommon($k, $v);
-                }
+                $this->parseInsertOne($k, $v);
             }
         }
         return $this;
@@ -170,9 +169,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     final public function parseUpdate(array $update): self
     {
         foreach ($update as $k => $v) {
-            if (!$this->parseUpdateOfAlone($k, $v)) {
-                $this->parseUpdateOfCommon($k, $v);
-            }
+            $this->parseUpdateOne($k, $v);
         }
         return $this;
     }
@@ -180,17 +177,33 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     /**
      * 解析field（入口）
      *
-     * @param array $field  格式：['字段',...]
+     * @param array $field  格式：['字段', '字段' => '值',...]
      * @return self
      */
     final public function parseField(array $field): self
     {
-        foreach ($field as $v) {
-            if (!$this->parseFieldOfAlone($v)) {
-                $this->parseFieldOfCommon($v);
+        foreach ($field as $k => $v) {
+            if (is_numeric($k)) {
+                $this->parseFieldOne($v);
+            } else {
+                $this->parseFieldOne($k, $v);
             }
         }
         return $this;
+    }
+
+    /**
+     * 获取数据库数据后，再处理的字段（入口）
+     *
+     * @param object $info
+     * @return void
+     */
+    final protected function afterField(object &$info)
+    {
+        //isset($info->{$this->getKey()}) ? $info->id = $info->{$this->getKey()} : null;  //设置id字段
+        foreach ($this->afterField as $field) {
+            $this->parseAfterField($field, $info);
+        }
     }
 
     /**
@@ -203,13 +216,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     {
         foreach ($filter as $k => $v) {
             if (is_numeric($k) && is_array($v)) {
-                if (!$this->parseFilterOfAlone(...$v)) {
-                    $this->parseFilterOfCommon(...$v);
-                }
+                $this->parseFilterOne(...$v);
             } else {
-                if (!$this->parseFilterOfAlone($k, null, $v)) {
-                    $this->parseFilterOfCommon($k, null, $v);
-                }
+                $this->parseFilterOne($k, null, $v);
             }
         }
         return $this;
@@ -224,9 +233,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     final public function parseGroup(array $group): self
     {
         foreach ($group as $v) {
-            if (!$this->parseGroupOfAlone($v)) {
-                $this->parseGroupOfCommon($v);
-            }
+            $this->parseGroupOne($v);
         }
         return $this;
     }
@@ -240,27 +247,41 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
     final public function parseOrder(array $order): self
     {
         foreach ($order as $k => $v) {
-            if (!$this->parseOrderOfAlone($k, $v)) {
-                $this->parseOrderOfCommon($k, $v);
-            }
+            $this->parseOrderOne($k, $v);
         }
         return $this;
     }
 
     /**
-     * 解析insert（公共的）
+     * 解析join（入口）
+     *
+     * @param string $joinAlias
+     * @return self
+     */
+    final public function parseJoin(string $joinAlias): self
+    {
+        if (in_array($joinAlias, $this->joinCode)) {
+            return $this;
+        }
+        $this->joinCode[] = $joinAlias;
+        $this->parseJoinOne($joinAlias);
+        return $this;
+    }
+
+    /**
+     * 解析insert（单个）
      *
      * @param string $key
      * @param [type] $value
      * @param integer $index
-     * @return boolean
+     * @return void
      */
-    final protected function parseInsertOfCommon(string $key, $value, int $index = 0): bool
+    protected function parseInsertOne(string $key, $value, int $index = 0): void
     {
         switch ($key) {
             case 'id':
                 $this->insert[$index][$this->getKey()] = $value;
-                return true;
+                break;
             case 'password':
                 if (in_array('salt', $this->getAllColumn())) {
                     $salt = randStr(8);
@@ -272,9 +293,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 } else {
                     $this->insert[$index][$key] = $value;
                 }
-                return true;
+                break;
             case 'salt':    //password字段处理过程自动生成
-                return true;
+                break;
             default:
                 //数据库不存在的字段过滤掉
                 if (in_array($key, $this->getAllColumn())) {
@@ -287,25 +308,23 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     } else {
                         $this->insert[$index][$key] = $value;
                     }
-                    return true;
                 }
         }
-        return false;
     }
 
     /**
-     * 解析update（公共的）
+     * 解析update（单个）
      *
      * @param string $key
      * @param [type] $value
-     * @return boolean
+     * @return void
      */
-    final protected function parseUpdateOfCommon(string $key, $value): bool
+    protected function parseUpdateOne(string $key, $value): void
     {
         switch ($key) {
             case 'id':
                 $this->update[$this->getTable() . '.' . $this->getKey()] = $value;
-                return true;
+                break;
             case 'password':
                 if (in_array('salt', $this->getAllColumn())) {
                     $salt = randStr(8);
@@ -317,9 +336,9 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 } else {
                     $this->update[$this->getTable() . '.' . $key] = $value;
                 }
-                return true;
+                break;
             case 'salt':    //password字段处理过程自动生成
-                return true;
+                break;
             default:
                 /* //暂时不考虑其它复杂字段。复杂字段建议直接写入parseUpdateOfAlone方法
                 list($realKey) = explode('->', $key);   //json情况
@@ -339,54 +358,70 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                     } else {
                         $this->update[$this->getTable() . '.' . $key] = $value;
                     }
-                    return true;
                 }
         }
-        return false;
     }
 
     /**
-     * 解析field（公共的）
+     * 解析field（单个）
      *
      * @param string $key
-     * @return boolean
+     * @param [type] $value
+     * @return void
      */
-    final protected function parseFieldOfCommon(string $key): bool
+    protected function parseFieldOne(string $key, $value = null): void
     {
         switch ($key) {
-            case '*':
+                /* case '*':
                 $this->builder->addSelect($key);
-                return true;
+                break; */
             case 'id':
                 $this->builder->addSelect($this->getTable() . '.' . $this->getKey() . ' AS ' . $key);
-                return true;
+                break;
             case 'label':
                 $nameField = str_replace('Id', 'Name', $this->getKey());
                 if (in_array($nameField, $this->getAllColumn())) {
                     $this->builder->addSelect($this->getTable() . '.' . $nameField . ' AS ' . $key);
                 }
-                return true;
+                break;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     $this->builder->addSelect($this->getTable() . '.' . $key);
                 } else {
                     $this->builder->addSelect($key);
                 }
-                return true;
+                break;
         }
-        return false;
     }
 
     /**
-     * 解析filter（公共的）
+     * 获取数据后，再处理的字段（单个）
+     *
+     * @param string $key
+     * @param object $info
+     * @return void
+     */
+    protected function parseAfterField(string $key, object &$info): void
+    {
+        switch ($key) {
+            case 'id':
+                $info->{$key} = $info->{$this->getKey()};
+                break;
+            default:
+                getLogger('daoAfterField')->warning('未处理字段：' . $key);
+        }
+    }
+
+    /**
+     * 解析filter（单个）
      *
      * @param string $key
      * @param string|null $operator
      * @param [type] $value
      * @param string|null $boolean
-     * @return boolean
+     * @return void
      */
-    final protected function parseFilterOfCommon(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOne(string $key, string $operator = null, $value, string $boolean = null): void
     {
         switch ($key) {
             case 'id':
@@ -400,7 +435,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 } else {
                     $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '=', $value, $boolean ?? 'and');
                 }
-                return true;
+                break;
             case 'excId':
             case 'excIdArr':
                 if (is_array($value)) {
@@ -412,19 +447,19 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 } else {
                     $this->builder->where($this->getTable() . '.' . $this->getKey(), $operator ?? '<>', $value, $boolean ?? 'and');
                 }
-                return true;
+                break;
             case 'timeRangeStart':
                 $this->builder->where($this->getTable() . '.createdAt', $operator ?? '>=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
-                return true;
+                break;
             case 'timeRangeEnd':
                 $this->builder->where($this->getTable() . '.createdAt', $operator ?? '<=', date('Y-m-d H:i:s', strtotime($value)), $boolean ?? 'and');
-                return true;
+                break;
             case 'label':
                 $nameField = str_replace('Id', 'Name', $this->getKey());
                 if (in_array($nameField, $this->getAllColumn())) {
                     $this->builder->where($this->getTable() . '.' . $nameField, $operator ?? 'Like', '%' . $value . '%', $boolean ?? 'and');
                 }
-                return true;
+                break;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     //id类型字段和部分字段，可通过传递数组做查询
@@ -438,7 +473,7 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                         } else {
                             $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                         }
-                    } else if (strtolower(substr($key, -4)) === 'label') {
+                    } else if (strtolower(substr($key, -4)) === 'name') {
                         $this->builder->where($this->getTable() . '.' . $key, $operator ?? 'like', '%' . $value . '%', $boolean ?? 'and');
                     } else {
                         $this->builder->where($this->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
@@ -446,180 +481,75 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
                 } else {
                     $this->builder->where($key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
-                return true;
+                break;
         }
-        return false;
     }
 
     /**
-     * 解析group（公共的）
+     * 解析group（单个）
      *
      * @param string $key
-     * @return boolean
+     * @return void
      */
-    final protected function parseGroupOfCommon(string $key): bool
+    protected function parseGroupOne(string $key): void
     {
         switch ($key) {
             case 'id':
                 $this->builder->groupBy($this->getTable() . '.' . $this->getKey());
-                return true;
+                break;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     $this->builder->groupBy($this->getTable() . '.' . $key);
                 } else {
                     $this->builder->groupBy($key);
                 }
-                return true;
+                break;
         }
-        return false;
     }
 
     /**
-     * 解析order（公共的）
+     * 解析order（单个）
      *
      * @param string $key
      * @param [type] $value
-     * @return boolean
+     * @return void
      */
-    final protected function parseOrderOfCommon(string $key, $value): bool
+    protected function parseOrderOne(string $key, $value): void
     {
         switch ($key) {
             case 'id':
                 $this->builder->orderBy($this->getTable() . '.' . $this->getKey(), $value);
-                return true;
+                break;
             case 'sort':
                 $this->builder->orderBy($this->getTable() . '.' . $key, $value);
                 $this->builder->orderBy($this->getTable() . '.' . $this->getKey(), 'desc');
-                return true;
+                break;
             default:
                 if (in_array($key, $this->getAllColumn())) {
                     $this->builder->orderBy($this->getTable() . '.' . $key, $value);
                 } else {
                     $this->builder->orderBy($key, $value);
                 }
-                return true;
+                break;
         }
-        return false;
     }
 
     /**
-     * 解析insert（独有的）
+     * 解析join（单个）
      *
-     * @param string $key
-     * @param [type] $value
-     * @param integer $index
-     * @return boolean
+     * @param string $joinAlias
+     * @return void
      */
-    protected function parseInsertOfAlone(string $key, $value, int $index = 0): bool
+    protected function parseJoinOne(string $joinAlias): void
     {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->insert[$index][$key] = $value;
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析update（独有的）
-     *
-     * @param string $key
-     * @param [type] $value
-     * @return boolean
-     */
-    protected function parseUpdateOfAlone(string $key, $value = null): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->update[$key] = $value;
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析field（独有的）
-     *
-     * @param string $key
-     * @return self
-     */
-    protected function parseFieldOfAlone(string $key): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->builder->addSelect($key);
-                //$this->builder->addSelect(Db::raw('JSON_UNQUOTE(JSON_EXTRACT(extraData, "$.' . $key . '")) AS ' . $key));   //不能防sql注入
-                //$this->builder->selectRaw('IFNULL(字段名, \'\') AS ?', [$key]); //能防sql注入
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析filter（独有的）
-     *
-     * @param string $key
-     * @param string|null $operator
-     * @param [type] $value
-     * @param string|null $boolean
-     * @return boolean
-     */
-    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->builder->where($key, $operator ?? '=', $value, $boolean ?? 'and');
-                //$this->builder->whereRaw(':key > :value', ['key' => $key, 'value' => $value], $boolean ?? 'and');
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析group（独有的）
-     *
-     * @param string $key
-     * @return boolean
-     */
-    protected function parseGroupOfAlone(string $key): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->builder->groupBy($key);
-                //$this->builder->groupByRaw(':key', ['key' => $key]);
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析order（独有的）
-     *
-     * @param string $key
-     * @param [type] $value
-     * @return boolean
-     */
-    protected function parseOrderOfAlone(string $key, $value = null): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $this->builder->orderBy($key, $value);
-                //$this->builder->orderByRaw(':key ' . $value, ['key' => $key]);
-                return true;
-        } */
-        return false;
-    }
-
-    /**
-     * 解析join（独有的）
-     *
-     * @param string $key   键，用于确定关联表
-     * @param [type] $value 值，用于确定关联表
-     * @return boolean
-     */
-    protected function parseJoinOfAlone(string $key, $value = null): bool
-    {
-        return false;
+        switch ($joinAlias) {
+                /* case 'xxxxTable':
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.xxxxId', '=', $this->getTable() . '.' . $this->getKey());
+                // $this->builder->leftJoin(getDao(Xxxx::class)->getTable() . ' AS ' . $joinAlias, $joinAlias . '.xxxxId', '=', $this->getTable() . '.' . $this->getKey());
+                break; */
+            default:
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.' . $this->getKey(), '=', $this->getTable() . '.' . $this->getKey());
+        }
     }
 
     /**
@@ -739,58 +669,6 @@ abstract class AbstractDao/*  extends \Hyperf\DbConnection\Model\Model */
             $this->builder->offset($offset)->limit(99999999);
         }
         return $this;
-    }
-
-    /**
-     * 获取数据库数据后，再处理的字段（入口）
-     *
-     * @param object $info
-     * @return void
-     */
-    final protected function afterField(object &$info)
-    {
-        //isset($info->{$this->getKey()}) ? $info->id = $info->{$this->getKey()} : null;  //设置id字段
-        foreach ($this->afterField as $field) {
-            if (!$this->afterFieldOfAlone($field, $info)) {
-                $this->afterFieldOfCommon($field, $info);
-            }
-        }
-    }
-
-    /**
-     * 获取数据后，再处理的字段（公共的）
-     *
-     * @param string $key
-     * @param object $info
-     * @return boolean
-     */
-    final protected function afterFieldOfCommon(string $key, object &$info): bool
-    {
-        /* switch ($key) {
-            case 'id':
-                $info->{$key} = $info->{$this->getKey()};
-                return true;
-            default:
-                getLogger('daoAfterField')->warning('未处理字段：' . $key);
-        } */
-        return false;
-    }
-
-    /**
-     * 获取数据后，再处理的字段（独有的）
-     *
-     * @param string $key
-     * @param object $info
-     * @return boolean
-     */
-    protected function afterFieldOfAlone(string $key, object &$info): bool
-    {
-        /* switch ($key) {
-            case 'xxxx':
-                $info->xxxx = 'xxxx';
-                return true;
-        } */
-        return false;
     }
     /*----------------封装部分方法方便使用 结束----------------*/
 }

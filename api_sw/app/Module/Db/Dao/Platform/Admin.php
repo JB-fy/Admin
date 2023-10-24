@@ -21,14 +21,14 @@ use App\Module\Db\Dao\Auth\RoleRelOfPlatformAdmin;
 class Admin extends AbstractDao
 {
     /**
-     * 解析insert（独有的）
+     * 解析insert（单个）
      *
      * @param string $key
      * @param [type] $value
      * @param integer $index
-     * @return boolean
+     * @return void
      */
-    protected function parseInsertOfAlone(string $key, $value, int $index = 0): bool
+    protected function parseInsertOne(string $key, $value, int $index = 0): void
     {
         switch ($key) {
             case 'phone':
@@ -36,25 +36,26 @@ class Admin extends AbstractDao
                 if ($value === '') {
                     $this->insert[$index][$key] = null;
                 }
-                return true;
+                break;
             case 'account':
                 $this->insert[$index][$key] = $value;
                 if ($value === '') {
                     $this->insert[$index][$key] = null;
                 }
-                return true;
+                break;
+            default:
+                parent::parseInsertOne($key, $value, $index);
         }
-        return false;
     }
 
     /**
-     * 解析update（独有的）
+     * 解析update（单个）
      *
      * @param string $key
      * @param [type] $value
-     * @return boolean
+     * @return void
      */
-    protected function parseUpdateOfAlone(string $key, $value = null): bool
+    protected function parseUpdateOne(string $key, $value): void
     {
         switch ($key) {
             case 'phone':
@@ -62,46 +63,65 @@ class Admin extends AbstractDao
                 if ($value === '') {
                     $this->update[$key] = null;
                 }
-                return true;
+                break;
             case 'account':
                 $this->update[$key] = $value;
                 if ($value === '') {
                     $this->update[$key] = null;
                 }
-                return true;
+                break;
+            default:
+                parent::parseUpdateOne($key, $value);
         }
-        return false;
     }
 
     /**
-     * 解析field（独有的）
+     * 解析field（单个）
      *
      * @param string $key
-     * @return boolean
+     * @param [type] $value
+     * @return void
      */
-    protected function parseFieldOfAlone(string $key): bool
+    protected function parseFieldOne(string $key, $value = null): void
     {
         switch ($key) {
             case 'roleIdArr':
-                //需要id字段
-                $this->builder->addSelect($this->getTable() . '.' . $this->getKey());
-
+                $this->builder->addSelect($this->getTable() . '.' . $this->getKey()); //需要id字段
                 $this->afterField[] = $key;
-                return true;
+                break;
+            default:
+                parent::parseFieldOne($key, $value);
         }
-        return false;
     }
 
     /**
-     * 解析filter（独有的）
+     * 获取数据后，再处理的字段（单个）
+     *
+     * @param string $key
+     * @param object $info
+     * @return void
+     */
+    protected function parseAfterField(string $key, object &$info): void
+    {
+        switch ($key) {
+            case 'roleIdArr':
+                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->parseFilter(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
+                break;
+            default:
+                parent::parseAfterField($key, $info);
+        }
+    }
+
+    /**
+     * 解析filter（单个）
      *
      * @param string $key
      * @param string|null $operator
      * @param [type] $value
      * @param string|null $boolean
-     * @return boolean
+     * @return void
      */
-    protected function parseFilterOfAlone(string $key, string $operator = null, $value, string $boolean = null): bool
+    protected function parseFilterOne(string $key, string $operator = null, $value, string $boolean = null): void
     {
         switch ($key) {
             case 'loginName':
@@ -110,60 +130,39 @@ class Admin extends AbstractDao
                 } else {
                     $this->builder->where($this->getTable() . '.' . 'account', $operator ?? '=', $value, $boolean ?? 'and');
                 }
-                return true;
+                break;
             case 'roleId':
+                $joinAlias = getDao(RoleRelOfPlatformAdmin::class)->getTable();
                 if (is_array($value)) {
                     if (count($value) === 1) {
-                        $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and');
+                        $this->builder->where($joinAlias . '.' . $key, $operator ?? '=', array_shift($value), $boolean ?? 'and');
                     } else {
-                        $this->builder->whereIn(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $value, $boolean ?? 'and');
+                        $this->builder->whereIn($joinAlias . '.' . $key, $value, $boolean ?? 'and');
                     }
                 } else {
-                    $this->builder->where(getDao(RoleRelOfPlatformAdmin::class)->getTable() . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
+                    $this->builder->where($joinAlias . '.' . $key, $operator ?? '=', $value, $boolean ?? 'and');
                 }
-
-                $this->parseJoinOfAlone('roleRelOfPlatformAdmin');
-                return true;
+                $this->parseJoin($joinAlias);
+                break;
+            default:
+                parent::parseFilterOne($key, $operator, $value, $boolean);
         }
-        return false;
     }
 
     /**
-     * 解析join（独有的）
+     * 解析join（单个）
      *
-     * @param string $key   键，用于确定关联表
-     * @param [type] $value 值，用于确定关联表
-     * @return boolean
+     * @param string $joinCode
+     * @return void
      */
-    protected function parseJoinOfAlone(string $key, $value = null): bool
+    protected function parseJoinOne(string $joinAlias): void
     {
-        switch ($key) {
-            case 'roleRelOfPlatformAdmin':
-                $roleRelOfPlatformAdminDao = getDao(RoleRelOfPlatformAdmin::class);
-                $roleRelOfPlatformAdminDaoTable = $roleRelOfPlatformAdminDao->getTable();
-                if (!in_array($roleRelOfPlatformAdminDaoTable, $this->joinCode)) {
-                    $this->joinCode[] = $roleRelOfPlatformAdminDaoTable;
-                    $this->builder->leftJoin($roleRelOfPlatformAdminDaoTable, $roleRelOfPlatformAdminDaoTable . '.adminId', '=', $this->getTable() . '.' . $this->getKey());
-                }
-                return true;
+        switch ($joinAlias) {
+            case getDao(RoleRelOfPlatformAdmin::class)->getTable():
+                $this->builder->leftJoin($joinAlias, $joinAlias . '.adminId', '=', $this->getTable() . '.' . $this->getKey());
+                break;
+            default:
+                parent::parseJoinOne($joinAlias);
         }
-        return false;
-    }
-
-    /**
-     * 获取数据后，再处理的字段（独有的）
-     *
-     * @param string $key
-     * @param object $info
-     * @return boolean
-     */
-    protected function afterFieldOfAlone(string $key, object &$info): bool
-    {
-        switch ($key) {
-            case 'roleIdArr':
-                $info->{$key} = getDao(RoleRelOfPlatformAdmin::class)->parseFilter(['adminId' => $info->{$this->getKey()}])->getBuilder()->pluck('roleId')->toArray();
-                return true;
-        }
-        return false;
     }
 }
