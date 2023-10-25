@@ -29,7 +29,7 @@ type ProfileUpdateReq struct {
 	Phone           *string `json:"phone,omitempty" v:"phone" dc:"手机"`
 	Account         *string `json:"account,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Nickname        *string `json:"nickname,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
-	Avatar          *string `json:"avatar,omitempty" v:"url|length:1,120" dc:"头像"`
+	Avatar          *string `json:"avatar,omitempty" v:"url|length:1,200" dc:"头像"`
 	Password        *string `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
 	PasswordToCheck *string `json:"passwordToCheck,omitempty" v:"required-with:Account,Phone,Password|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号，手机，密码时必填"`
 }

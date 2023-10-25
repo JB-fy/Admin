@@ -29,7 +29,7 @@ const saveForm = reactive({
 		],
 		avatar: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
+			{ type: 'string', min: 1, max: 200, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 200 }) },
 		],
 		isStop: [
 			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },

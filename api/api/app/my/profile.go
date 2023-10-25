@@ -35,7 +35,7 @@ type ProfileUpdateReq struct {
 	Phone                *string     `json:"phone,omitempty" v:"length:1,30|phone" dc:"手机"`
 	Account              *string     `json:"account,omitempty" v:"length:1,30|passport" dc:"账号"`
 	Nickname             *string     `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
-	Avatar               *string     `json:"avatar,omitempty" v:"length:1,120|url" dc:"头像"`
+	Avatar               *string     `json:"avatar,omitempty" v:"length:1,200|url" dc:"头像"`
 	Gender               *uint       `json:"gender,omitempty" v:"integer|in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday             *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	Address              *string     `json:"address,omitempty" v:"length:1,60" dc:"详细地址"`

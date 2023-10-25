@@ -14,7 +14,7 @@ class Admin extends AbstractValidation
         'phone' => 'sometimes|required|string|between:1,30|regex:/^1[3-9]\d{9}$/',
         'password' => 'sometimes|required|alpha_dash|size:32',
         'nickname' => 'alpha_dash|between:1,30',
-        'avatar' => 'url|between:1,120',
+        'avatar' => 'url|between:1,200',
         'roleIdArr' => 'sometimes|required_if_null|array|min:1',
         'roleIdArr.*' => 'sometimes|required|integer|min:1|distinct',
         'isStop' => 'sometimes|required|integer|in:0,1',

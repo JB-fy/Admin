@@ -31,7 +31,7 @@ const saveForm = reactive({
         ],
         avatar: [
             { type: 'url', trigger: 'change', message: t('validation.upload') },
-            { type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
+            { type: 'string', min: 1, max: 200, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 200 }) },
         ],
         password: [
             { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },

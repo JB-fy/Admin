@@ -84,7 +84,7 @@ type AdminCreateReq struct {
 	Account   *string `json:"account,omitempty" v:"required-without:Phone|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	Nickname  *string `json:"nickname,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"昵称"`
-	Avatar    *string `json:"avatar,omitempty" v:"length:1,120|url" dc:"头像"`
+	Avatar    *string `json:"avatar,omitempty" v:"length:1,200|url" dc:"头像"`
 	IsStop    *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 	RoleIdArr *[]uint `json:"roleIdArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
 }
@@ -99,7 +99,7 @@ type AdminUpdateReq struct {
 	Account   *string `json:"account,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	Nickname  *string `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
-	Avatar    *string `json:"avatar,omitempty" v:"length:1,120|url" dc:"头像"`
+	Avatar    *string `json:"avatar,omitempty" v:"length:1,200|url" dc:"头像"`
 	IsStop    *uint   `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
 	RoleIdArr *[]uint `json:"roleIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
 }
