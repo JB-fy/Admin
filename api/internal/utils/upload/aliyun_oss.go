@@ -153,6 +153,8 @@ func (uploadThis *AliyunOss) Notify() (notifyInfo map[string]interface{}, err er
 	}
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	filename := r.Get(`filename`).String()
+	size := r.Get(`size`).String()
+	// mimeType := r.Get(`mimeType`).String()
 	width := r.Get(`width`).String()
 	height := r.Get(`height`).String()
 
@@ -235,7 +237,7 @@ func (uploadThis *AliyunOss) Notify() (notifyInfo map[string]interface{}, err er
 	}
 
 	notifyInfo = map[string]interface{}{}
-	notifyInfo[`url`] = uploadThis.GetBucketHost() + `/` + filename + `?w=` + width + `&h=` + height //需要记录宽高，ios显示瀑布流必须知道宽高。直接存在query内
+	notifyInfo[`url`] = uploadThis.GetBucketHost() + `/` + filename + `?w=` + width + `&h=` + height + `&s=` + size /* + `&m=` + mimeType */
 	return
 }
 

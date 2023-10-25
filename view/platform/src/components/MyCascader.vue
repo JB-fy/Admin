@@ -83,8 +83,8 @@ const cascader = reactive({
             return props.modelValue
         },
         set: (val) => {
-            emits('change')
             emits('update:modelValue', val)
+            emits('change')
         }
     }),
     options: [...props.defaultOptions] as any,

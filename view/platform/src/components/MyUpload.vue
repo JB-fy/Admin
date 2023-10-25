@@ -41,7 +41,7 @@ const props = defineProps({
     limit: {
         type: Number
     },
-    accept: {   //文件选择弹出框过滤用，但可被人工跳过。示例：'image/*'、'video/*'、'audio/*'、'.git,.png'等
+    accept: {   //文件选择弹出框过滤用，但可被人工跳过。示例：image/*; video/*; audio/*; text/*; application/*; .png,.xls,.pdf,.apk,.ipa等
         type: String,
         default: ''
     },
@@ -165,8 +165,8 @@ const upload = reactive({
         } else {
             upload.value = ''
         }
-        emits('change')
         emits('update:modelValue', upload.value)
+        emits('change')
     },
     onSuccess: (res: any, file: any, fileList: any) => {
         if (upload.signInfo?.isRes) {    //如有回调服务器且有报错，则默认失败
@@ -183,8 +183,8 @@ const upload = reactive({
             upload.value = file.raw.saveInfo.url
             upload.fileList = [file]
         }
-        emits('change')
         emits('update:modelValue', upload.value)
+        emits('change')
     },
     beforeUpload: async (rawFile: any) => {
         if (props.acceptType.length > 0 && props.acceptType.indexOf(rawFile.type) === -1) {

@@ -41,8 +41,8 @@ const myEditor = reactive({
             return props.modelValue
         },
         set: (val) => {
-            emits('change')
             emits('update:modelValue', val)
+            emits('change')
         }
     }),
     init: {
