@@ -5,7 +5,6 @@ import (
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 // 定义接口
@@ -40,10 +39,10 @@ type DaoInterface interface {
 }
 
 type DaoHandler struct {
-	ctx                 context.Context
-	dao                 DaoInterface
-	group               string //分库情况下，解析后所确定的连接
-	table               string //分表情况下，解析后所确定的表
+	ctx context.Context
+	dao DaoInterface
+	// group               string //分库情况下，解析后所确定的连接
+	// table               string //分表情况下，解析后所确定的表
 	model               *gdb.Model
 	afterField          *[]string
 	afterFieldWithParam map[string]interface{}
@@ -58,10 +57,10 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbSelDataList ...map[s
 		afterFieldWithParam: map[string]interface{}{},
 		joinTableArr:        &[]string{},
 	}
-	daoHandlerThisObj.group = daoHandlerThisObj.dao.ParseDbGroup(ctx, dbSelDataList[0])
-	daoHandlerThisObj.table = daoHandlerThisObj.dao.ParseDbTable(ctx, dbSelDataList[1])
-	daoHandlerThisObj.model = g.DB(daoHandlerThisObj.group).Model(daoHandlerThisObj.table).Ctx(ctx)
-	// daoHandlerThisObj.model = daoHandlerThisObj.dao.ParseDbCtx(daoHandlerThisObj.ctx, dbSelDataList...)
+	// daoHandlerThisObj.group = daoHandlerThisObj.dao.ParseDbGroup(ctx, dbSelDataList[0])
+	// daoHandlerThisObj.table = daoHandlerThisObj.dao.ParseDbTable(ctx, dbSelDataList[1])
+	// daoHandlerThisObj.model = g.DB(daoHandlerThisObj.group).Model(daoHandlerThisObj.table).Ctx(ctx)
+	daoHandlerThisObj.model = daoHandlerThisObj.dao.ParseDbCtx(daoHandlerThisObj.ctx, dbSelDataList...)
 	return &daoHandlerThisObj
 }
 
