@@ -3,7 +3,6 @@ package upload
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -25,14 +24,17 @@ type Upload interface {
 }
 
 func CreateUploadOption(uploadType string) (option UploadOption) {
-	switch uploadType {
-	default:
-		option.Dir = fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
-		option.Expire = gtime.Now().Unix() + 15*60
-		option.ExpireTime = 15 * 60
-		option.MinSize = 0
-		option.MaxSize = 100 * 1024 * 1024
+	option = UploadOption{
+		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
+		Expire:     gtime.Now().Unix() + 15*60,
+		ExpireTime: 15 * 60,
+		MinSize:    0,
+		MaxSize:    100 * 1024 * 1024,
 	}
+	/* switch uploadType {
+	case `image`:
+		option.Dir = `image/` + gtime.Now().Format(`Ymd`) + `/`
+	} */
 	return
 }
 
