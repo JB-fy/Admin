@@ -3,8 +3,6 @@ package upload
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/os/gtime"
 )
 
 type UploadOption struct {
@@ -21,21 +19,6 @@ type Upload interface {
 	Config(option UploadOption) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用，后期也可用在其它地方）
 	Sts(option UploadOption) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
 	Notify() (notifyInfo map[string]interface{}, err error)                // 回调
-}
-
-func CreateUploadOption(uploadType string) (option UploadOption) {
-	option = UploadOption{
-		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
-		Expire:     gtime.Now().Unix() + 15*60,
-		ExpireTime: 15 * 60,
-		MinSize:    0,
-		MaxSize:    100 * 1024 * 1024,
-	}
-	/* switch uploadType {
-	case `image`:
-		option.Dir = `image/` + gtime.Now().Format(`Ymd`) + `/`
-	} */
-	return
 }
 
 func NewUpload(ctx context.Context) Upload {
