@@ -26,7 +26,6 @@ import (
 	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
@@ -50,16 +49,9 @@ func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss
 	return &aliyunOssObj
 }
 
-type AliyunOssSignOption struct {
-	Dir     string //上传的文件目录
-	Expire  int64  //有效时间戳。单位：秒
-	MinSize int64  //限制上传的文件大小。单位：字节
-	MaxSize int64  //限制上传的文件大小。单位：字节
-}
-
 type AliyunOssStsOption struct {
 	SessionName string //可自定义
-	ExpireTime  int    //签名有效时间。单位：秒
+	ExpireTime  int64  //签名有效时间。单位：秒
 	Policy      string //写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}。读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 }
 
@@ -75,14 +67,8 @@ func (uploadThis *AliyunOss) Upload() (uploadInfo map[string]interface{}, err er
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *AliyunOss) Sign(uploadFileType string) (signInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Sign(option UploadOption) (signInfo map[string]interface{}, err error) {
 	bucketHost := uploadThis.GetBucketHost()
-	option := AliyunOssSignOption{
-		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
-		Expire:  time.Now().Unix() + 15*60,
-		MinSize: 0,
-		MaxSize: 100 * 1024 * 1024,
-	}
 
 	signInfo = map[string]interface{}{
 		`uploadUrl`: bucketHost,
@@ -116,13 +102,11 @@ func (uploadThis *AliyunOss) Sign(uploadFileType string) (signInfo map[string]in
 }
 
 // 获取配置信息（APP直传前调用，后期也可用在其它地方）
-func (uploadThis *AliyunOss) Config(uploadFileType string) (config map[string]interface{}, err error) {
-	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
-
+func (uploadThis *AliyunOss) Config(option UploadOption) (config map[string]interface{}, err error) {
 	config = map[string]interface{}{
 		`endpoint`: uploadThis.Host,
 		`bucket`:   uploadThis.Bucket,
-		`dir`:      dir,
+		`dir`:      option.Dir,
 	}
 	//是否回调
 	if uploadThis.CallbackUrl != `` {
@@ -134,23 +118,17 @@ func (uploadThis *AliyunOss) Config(uploadFileType string) (config map[string]in
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *AliyunOss) Sts(uploadFileType string) (stsInfo map[string]interface{}, err error) {
-	dir := fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`))
-	option := AliyunOssStsOption{
+func (uploadThis *AliyunOss) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
+	stsInfo, _ = uploadThis.GetStsToken(AliyunOssStsOption{
 		SessionName: `oss_app_sts_token`,
-		ExpireTime:  15 * 60,
-		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + dir + `*"]}],"Version": "1"}`,
-	}
-	stsInfo, _ = uploadThis.GetStsToken(option)
+		ExpireTime:  option.ExpireTime,
+		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + option.Dir + `*"]}],"Version": "1"}`,
+	})
 	return
 }
 
 // 回调
 func (uploadThis *AliyunOss) Notify() (notifyInfo map[string]interface{}, err error) {
-	if uploadThis.CallbackUrl == `` {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `请先设置回调地址`)
-		return
-	}
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	filename := r.Get(`filename`).String()
 	size := r.Get(`size`).String()
@@ -196,7 +174,7 @@ func (uploadThis *AliyunOss) Notify() (notifyInfo map[string]interface{}, err er
 	}
 	strCallbackBody := string(bodyContent)
 
-	//以设置的回调地址uploadThis.CallbackUrl为准。原因：r.URL.Path可能实际对外的回调地址，如upload/notify在nginx可能被增加了api/前缀，变成api/upload/notify
+	//以设置的回调地址uploadThis.CallbackUrl为准。原因：r.URL.Path可能不是实际对外的回调地址，如upload/notify在nginx可能被增加了api/前缀，变成api/upload/notify
 	parsedURL, _ := url.Parse(uploadThis.CallbackUrl)
 	// strURLPathDecode, err := uploadThis.unescapePath(r.URL.Path, encodePathSegment)
 	strURLPathDecode, err := uploadThis.unescapePath(parsedURL.Path, encodePathSegment)
@@ -251,7 +229,7 @@ func (uploadThis *AliyunOss) CreateSign(policyBase64 string) (sign string) {
 }
 
 // 生成PolicyBase64（web前端直传用）
-func (uploadThis *AliyunOss) CreatePolicyBase64(option AliyunOssSignOption) (policyBase64 string) {
+func (uploadThis *AliyunOss) CreatePolicyBase64(option UploadOption) (policyBase64 string) {
 	policyMap := map[string]interface{}{
 		`expiration`: uploadThis.GetGmtIso8601(option.Expire),
 		`conditions`: [][]interface{}{

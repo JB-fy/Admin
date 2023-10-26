@@ -3,14 +3,12 @@ package upload
 import (
 	"api/internal/utils"
 	"context"
-	"fmt"
 	"sort"
 	"time"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
@@ -87,20 +85,7 @@ func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error)
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *Local) Sign(uploadFileType string) (signInfo map[string]interface{}, err error) {
-	type Option struct {
-		Dir     string //上传的文件目录
-		Expire  int64  //签名有效时间戳。单位：秒
-		MinSize int64  //限制上传的文件大小。单位：字节
-		MaxSize int64  //限制上传的文件大小。单位：字节。需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
-	}
-	option := Option{
-		Dir:     fmt.Sprintf(`common/%s/`, gtime.Now().Format(`Ymd`)),
-		Expire:  time.Now().Unix() + 15*60,
-		MinSize: 0,
-		MaxSize: 100 * 1024 * 1024,
-	}
-
+func (uploadThis *Local) Sign(option UploadOption) (signInfo map[string]interface{}, err error) {
 	signInfo = map[string]interface{}{
 		`uploadUrl`: uploadThis.Url,
 		// `uploadData`:  map[string]interface{}{},
@@ -124,12 +109,12 @@ func (uploadThis *Local) Sign(uploadFileType string) (signInfo map[string]interf
 }
 
 // 获取配置信息（APP直传前调用，后期也可用在其它地方）
-func (uploadThis *Local) Config(uploadFileType string) (config map[string]interface{}, err error) {
+func (uploadThis *Local) Config(option UploadOption) (config map[string]interface{}, err error) {
 	return
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *Local) Sts(uploadFileType string) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
 	return
 }
 

@@ -24,8 +24,8 @@ type UploadUploadRes struct {
 
 /*--------获取签名（H5直传用） 开始--------*/
 type UploadSignReq struct {
-	g.Meta `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
-	Type   string `json:"type" v:"" dc:"类型"`
+	g.Meta     `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
+	UploadType string `json:"uploadType" v:"" dc:"上传类型"`
 }
 
 type UploadSignRes struct {
@@ -41,8 +41,8 @@ type UploadSignRes struct {
 
 /*--------获取配置信息（APP直传前调用，后期也可用在其它地方） 开始--------*/
 type UploadConfigReq struct {
-	g.Meta `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用，后期也可用在其它地方）"`
-	Type   string `json:"type" v:"" dc:"类型"`
+	g.Meta     `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用，后期也可用在其它地方）"`
+	UploadType string `json:"uploadType" v:"" dc:"上传类型"`
 }
 
 type UploadConfigRes struct {
@@ -59,8 +59,8 @@ type UploadConfigRes struct {
 /*--------获取Sts Token（APP直传用） 开始--------*/
 //阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
 type UploadStsReq struct {
-	g.Meta `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
-	Type   string `json:"type" v:"" dc:"类型"`
+	g.Meta     `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
+	UploadType string `json:"uploadType" v:"" dc:"上传类型"`
 }
 
 type UploadStsRes struct {

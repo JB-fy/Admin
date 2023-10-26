@@ -27,7 +27,7 @@ func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadR
 
 // 获取签名（H5直传用）
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	signInfo, err := upload.NewUpload(ctx).Sign(req.Type)
+	signInfo, err := upload.NewUpload(ctx).Sign(upload.CreateUploadOption(req.UploadType))
 	if err != nil {
 		return
 	}
@@ -37,7 +37,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 
 // 获取配置信息（APP直传前调用，后期也可用在其它地方）
 func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigReq) (res *api.UploadConfigRes, err error) {
-	config, err := upload.NewUpload(ctx).Config(req.Type)
+	config, err := upload.NewUpload(ctx).Config(upload.CreateUploadOption(req.UploadType))
 	if err != nil {
 		return
 	}
@@ -47,7 +47,7 @@ func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigR
 
 // 获取Sts Token（APP直传用）
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	stsInfo, err := upload.NewUpload(ctx).Sts(req.Type)
+	stsInfo, err := upload.NewUpload(ctx).Sts(upload.CreateUploadOption(req.UploadType))
 	if err != nil {
 		return
 	}

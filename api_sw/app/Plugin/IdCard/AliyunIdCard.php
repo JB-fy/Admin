@@ -37,6 +37,20 @@ class AliyunIdCard extends AbstractIdCard
         if (!(isset($resData['resp']['code']) && $resData['resp']['code'] == 0)) {
             throwFailJson(79999999, $resData['resp']['desc'] ?? '');
         }
-        return $resData['data'];
+
+        $idCardInfo = [
+            'gender' => 0,
+            'address' => $resData['data']['address'],
+            'birthday' => $resData['data']['birthday'],
+        ];
+        switch ($resData['data']['sex']) {
+            case '男':
+                $idCardInfo['gender'] = 1;
+                break;
+            case '女':
+                $idCardInfo['gender'] = 2;
+                break;
+        }
+        return $idCardInfo;
     }
 }
