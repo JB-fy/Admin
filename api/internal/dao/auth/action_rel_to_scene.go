@@ -104,14 +104,16 @@ func (daoThis *actionRelToSceneDao) HookInsert(data map[string]interface{}) gdb.
 // 解析update
 func (daoThis *actionRelToSceneDao) ParseUpdate(update map[string]interface{}) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case `id`:
-				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+				updateData[tableThis+`.`+daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[tableThis+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 				}
 			}
 		}
@@ -178,16 +180,18 @@ func (daoThis *actionRelToSceneDao) HookDelete(idArr ...int) gdb.HookHandler {
 // 解析field
 func (daoThis *actionRelToSceneDao) ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(ctx), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Fields(daoThis.Table() + `.` + v)
+					m = m.Fields(tableThis + `.` + v)
 				} else {
 					m = m.Fields(v)
 				}

@@ -128,25 +128,27 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 // 解析update
 func (daoThis *menuDao) ParseUpdate(update map[string]interface{}) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case `id`:
-				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+				updateData[tableThis+`.`+daoThis.PrimaryKey()] = v
 			case daoThis.Columns().Pid:
-				updateData[daoThis.Table()+`.`+k] = v
+				updateData[tableThis+`.`+k] = v
 				pIdPath := `0`
 				pLevel := 0
 				if gconv.Int(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
+					pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Int()
 				}
-				updateData[daoThis.Table()+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
-				updateData[daoThis.Table()+`.`+daoThis.Columns().Level] = pLevel + 1
+				updateData[tableThis+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
+				updateData[tableThis+`.`+daoThis.Columns().Level] = pLevel + 1
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[tableThis+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 				}
 			}
 		}
@@ -223,36 +225,39 @@ func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
 // 解析field
 func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(ctx), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
+				m = m.Fields(tableThis + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 			case `pMenuName`:
-				m = m.Fields(`p_` + daoThis.Table() + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-				m = m.Handler(daoThis.ParseJoin(`p_`+daoThis.Table(), joinTableArr))
+				m = m.Fields(`p_` + tableThis + `.` + daoThis.Columns().MenuName + ` AS ` + v)
+				m = m.Handler(daoThis.ParseJoin(`p_`+tableThis, joinTableArr))
 			case `tree`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().Pid)
+				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey())
+				m = m.Fields(tableThis + `.` + daoThis.Columns().Pid)
 				m = m.Handler(daoThis.ParseOrder([]string{`tree`}, joinTableArr))
 			case `showMenu`: //前端显示菜单需要以下字段，且title需要转换
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuName)
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuIcon)
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().MenuUrl)
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData)
-				// m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
+				m = m.Fields(tableThis + `.` + daoThis.Columns().MenuName)
+				m = m.Fields(tableThis + `.` + daoThis.Columns().MenuIcon)
+				m = m.Fields(tableThis + `.` + daoThis.Columns().MenuUrl)
+				m = m.Fields(tableThis + `.` + daoThis.Columns().ExtraData)
+				// m = m.Fields(tableThis + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))	//mysql不能直接转成对象返回
 				*afterField = append(*afterField, v)
 			case Scene.Columns().SceneName:
-				m = m.Fields(Scene.Table() + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(Scene.Table(), joinTableArr))
+				tableScene := Scene.ParseDbTable(ctx)
+				m = m.Fields(tableScene + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tableScene, joinTableArr))
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Fields(daoThis.Table() + `.` + v)
+					m = m.Fields(tableThis + `.` + v)
 				} else {
 					m = m.Fields(v)
 				}
@@ -310,49 +315,54 @@ func (daoThis *menuDao) HookSelect(afterField *[]string, afterFieldWithParam map
 // 解析filter
 func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
 				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
-					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
-					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), val[0])
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
 				default:
-					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(tableThis+`.`+daoThis.PrimaryKey(), v)
 				}
 			case `id`, `idArr`:
-				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+				m = m.Where(tableThis+`.`+daoThis.PrimaryKey(), v)
 			case `label`:
-				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(tableThis+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().MenuName:
-				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(tableThis+`.`+k, `%`+gconv.String(v)+`%`)
 			case `timeRangeStart`:
-				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+				m = m.WhereGTE(tableThis+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
-				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+				m = m.WhereLTE(tableThis+`.`+daoThis.Columns().CreatedAt, v)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
-				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().SceneId, val[`sceneId`])
-				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
+				m = m.Where(tableThis+`.`+daoThis.Columns().SceneId, val[`sceneId`])
+				m = m.Where(tableThis+`.`+daoThis.Columns().IsStop, 0)
 				switch gconv.String(val[`sceneCode`]) {
 				case `platform`:
-					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
+					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
 						continue
 					}
-					m = m.Where(Role.Table()+`.`+Role.Columns().IsStop, 0)
-					m = m.Handler(daoThis.ParseJoin(RoleRelToMenu.Table(), joinTableArr))
-					m = m.Handler(daoThis.ParseJoin(Role.Table(), joinTableArr))
+					tableRole := Role.ParseDbTable(ctx)
+					tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(ctx)
+					m = m.Where(tableRole+`.`+Role.Columns().IsStop, 0)
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, joinTableArr))
+					m = m.Handler(daoThis.ParseJoin(tableRole, joinTableArr))
 
-					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
-					m = m.Handler(daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr))
+					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(ctx)
+					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, joinTableArr))
 				default:
 					m = m.Where(`1 = 0`)
 				}
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Where(daoThis.Table()+`.`+k, v)
+					m = m.Where(tableThis+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
 				}
@@ -365,13 +375,15 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 // 解析group
 func (daoThis *menuDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.Group(tableThis + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Group(daoThis.Table() + `.` + v)
+					m = m.Group(tableThis + `.` + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -384,25 +396,27 @@ func (daoThis *menuDao) ParseGroup(group []string, joinTableArr *[]string) gdb.M
 // 解析order
 func (daoThis *menuDao) ParseOrder(order []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range order {
 			v = gstr.Trim(v)
 			k := gstr.Split(v, ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+				m = m.Order(tableThis + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			case `tree`:
-				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Pid)
-				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.Columns().Sort)
-				m = m.OrderAsc(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.OrderAsc(tableThis + `.` + daoThis.Columns().Pid)
+				m = m.OrderAsc(tableThis + `.` + daoThis.Columns().Sort)
+				m = m.OrderAsc(tableThis + `.` + daoThis.PrimaryKey())
 			case daoThis.Columns().Level:
-				m = m.Order(daoThis.Table() + `.` + v)
-				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.Order(tableThis + `.` + v)
+				m = m.OrderDesc(tableThis + `.` + daoThis.PrimaryKey())
 			case daoThis.Columns().Sort:
-				m = m.Order(daoThis.Table() + `.` + v)
-				m = m.OrderDesc(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.Order(tableThis + `.` + v)
+				m = m.OrderDesc(tableThis + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Order(daoThis.Table() + `.` + v)
+					m = m.Order(tableThis + `.` + v)
 				} else {
 					m = m.Order(v)
 				}
@@ -418,21 +432,25 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 		if garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
 			return m
 		}
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		*joinTableArr = append(*joinTableArr, joinCode)
 		switch joinCode {
-		/* case Xxxx.Table():
-		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey()) */
-		case Scene.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().SceneId)
-		case `p_` + daoThis.Table():
-			m = m.LeftJoin(daoThis.Table()+` AS `+joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+daoThis.Table()+`.`+daoThis.Columns().Pid)
-		case RoleRelToMenu.Table():
-			m = m.LeftJoin(joinCode+` AS `+joinCode, joinCode+`.`+RoleRelToMenu.Columns().MenuId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		case Role.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToMenu.Table()+`.`+RoleRelToMenu.Columns().RoleId)
-		case RoleRelOfPlatformAdmin.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToMenu.Table()+`.`+RoleRelToMenu.Columns().RoleId)
+		/* case Xxxx.ParseDbTable(ctx):
+		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+tableThis+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.ParseDbTable(ctx)+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
+		case Scene.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+tableThis+`.`+daoThis.Columns().SceneId)
+		case `p_` + tableThis:
+			m = m.LeftJoin(tableThis+` AS `+joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+tableThis+`.`+daoThis.Columns().Pid)
+		/* case RoleRelToMenu.ParseDbTable(ctx):
+		m = m.LeftJoin(joinCode+` AS `+joinCode, joinCode+`.`+RoleRelToMenu.Columns().MenuId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
+		case Role.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToMenu.ParseDbTable(ctx)+`.`+RoleRelToMenu.Columns().RoleId)
+		case RoleRelOfPlatformAdmin.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToMenu.ParseDbTable(ctx)+`.`+RoleRelToMenu.Columns().RoleId)
+		default:
+			m = m.LeftJoin(joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+tableThis+`.`+daoThis.PrimaryKey())
 		}
 		return m
 	}
