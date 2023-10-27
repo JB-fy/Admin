@@ -9,6 +9,7 @@ import (
 	"os/exec"
 
 	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -578,11 +579,11 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			break
 		}
 	}
-	/* if tpl.LabelField == `phone` || tpl.LabelField == `account` {
+	if tpl.LabelField == `phone` || tpl.LabelField == `account` {
 		if gset.NewStrSetFrom([]string{`Phone`, `Account`}).Intersect(gset.NewStrSetFrom(fieldCaseCamelArr)).Size() == 2 {
 			tpl.LabelField = `PhoneAndAccount`
 		}
-	} */
+	}
 
 	for k, v := range tpl.RelTableMap {
 		if garray.NewStrArrayFrom(fieldArr).Contains(v.RelNameField) {
@@ -705,14 +706,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		daoParseFilterTmp := `
 			case ` + "`label`" + `:
 				m = m.WhereLike(tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-		/* if tpl.LabelField == `PhoneAndAccount` {
+		if tpl.LabelField == `PhoneAndAccount` {
 			daoParseFieldTmp = `
 			case ` + "`label`" + `:
 				m = m.Fields(` + "`IFNULL(` + tableThis + `.` + daoThis.Columns().Account + `, ` + tableThis + `.` + daoThis.Columns().Phone + `) AS ` + v)"
 			daoParseFilterTmp = `
 			case ` + "`label`" + `:
 				m = m.Where(` + "m.Builder().WhereLike(tableThis+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(tableThis+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))"
-		} */
+		}
 		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 			daoParseField += daoParseFieldTmp
 		}
@@ -1650,11 +1651,12 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.LabelField) + "`, "
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
-		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
-		/* if tpl.LabelField != `PhoneAndAccount` {
-			// controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
+		// controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
+		if tpl.LabelField == `PhoneAndAccount` {
+			controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
+		} else {
 			controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
-		} */
+		}
 	}
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {

@@ -133,7 +133,7 @@ func (daoHandlerThis *DaoHandler) IsJoin() bool {
 // 联表则GroupBy主键
 func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
 	if daoHandlerThis.IsJoin() {
-		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.dao.Table() + `.` + daoHandlerThis.dao.PrimaryKey())
+		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.dao.ParseDbTable(daoHandlerThis.ctx) + `.` + daoHandlerThis.dao.PrimaryKey())
 	}
 	return daoHandlerThis
 }
@@ -141,7 +141,8 @@ func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
 // 总数（有联表默认group主键）
 func (daoHandlerThis *DaoHandler) Count() (count int, err error) {
 	if daoHandlerThis.IsJoin() {
-		count, err = daoHandlerThis.GetModel(true).Group(daoHandlerThis.dao.Table() + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.dao.Table() + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
+		tableThis := daoHandlerThis.dao.ParseDbTable(daoHandlerThis.ctx)
+		count, err = daoHandlerThis.GetModel(true).Group(tableThis + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(tableThis + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
 		return
 	}
 	count, err = daoHandlerThis.model.Count()
