@@ -1651,8 +1651,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
 		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
-		/* if tpl.LabelField == `PhoneAndAccount` {
-			controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
+		/* if tpl.LabelField != `PhoneAndAccount` {
+			// controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
+			controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
 		} */
 	}
 	controllerAlloweFieldDiff := ``
