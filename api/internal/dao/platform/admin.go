@@ -329,7 +329,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 			case `id`, `idArr`:
 				m = m.Where(tableThis+`.`+daoThis.PrimaryKey(), v)
 			case `label`:
-				m = m.WhereLike(tableThis+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`)
+				m = m.Where(m.Builder().WhereLike(tableThis+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(tableThis+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))
 			case `timeRangeStart`:
 				m = m.WhereGTE(tableThis+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
