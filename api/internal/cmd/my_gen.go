@@ -578,6 +578,11 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			break
 		}
 	}
+	/* if tpl.LabelField == `phone` || tpl.LabelField == `account` {
+		if gset.NewStrSetFrom([]string{`Phone`, `Account`}).Intersect(gset.NewStrSetFrom(fieldCaseCamelArr)).Size() == 2 {
+			tpl.LabelField = `PhoneAndAccount`
+		}
+	} */
 
 	for k, v := range tpl.RelTableMap {
 		if garray.NewStrArrayFrom(fieldArr).Contains(v.RelNameField) {
@@ -697,12 +702,20 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		daoParseFieldTmp := `
 			case ` + "`label`" + `:
 				m = m.Fields(tableThis + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)`
-		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-			daoParseField += daoParseFieldTmp
-		}
 		daoParseFilterTmp := `
 			case ` + "`label`" + `:
 				m = m.WhereLike(tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+		/* if tpl.LabelField == `PhoneAndAccount` {
+			daoParseFieldTmp = `
+			case ` + "`label`" + `:
+				m = m.Fields(` + "`IFNULL(` + tableThis + `.` + daoThis.Columns().Account + `, ` + tableThis + `.` + daoThis.Columns().Phone + `) AS ` + v)"
+			daoParseFilterTmp = `
+			case ` + "`label`" + `:
+				m = m.Where(` + "m.Builder().WhereLike(tableThis+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(tableThis+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))"
+		} */
+		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+			daoParseField += daoParseFieldTmp
+		}
 		if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 			daoParseFilter += daoParseFilterTmp
 		}
@@ -1638,6 +1651,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
 		controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
+		/* if tpl.LabelField == `PhoneAndAccount` {
+			controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
+		} */
 	}
 	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {

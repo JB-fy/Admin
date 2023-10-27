@@ -8,11 +8,11 @@ gfcli:
     dao:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         group: "default"
-        removePrefix: "auth_"
-        daoPath: "dao/auth"
-        doPath: "model/do/auth"
-        entityPath: "model/entity/auth"
-        tables: "auth_test"
+        removePrefix: ""
+        daoPath: "dao/user"
+        doPath: "model/do/user"
+        entityPath: "model/entity/user"
+        tables: "user"
         tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
         tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
         overwriteDao: true
