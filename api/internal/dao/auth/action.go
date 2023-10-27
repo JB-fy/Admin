@@ -114,14 +114,16 @@ func (daoThis *actionDao) HookInsert(data map[string]interface{}) gdb.HookHandle
 // 解析update
 func (daoThis *actionDao) ParseUpdate(update map[string]interface{}) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case `id`:
-				updateData[daoThis.Table()+`.`+daoThis.PrimaryKey()] = v
+				updateData[tableThis+`.`+daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					updateData[daoThis.Table()+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[tableThis+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 				}
 			}
 		}
@@ -201,21 +203,23 @@ func (daoThis *actionDao) HookDelete(idArr ...int) gdb.HookHandler {
 // 解析field
 func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.Table(), joinTableArr))
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(ctx), joinTableArr))
 			*afterField = append(*afterField, v) */
 			case `id`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.Columns().ActionName + ` AS ` + v)
+				m = m.Fields(tableThis + `.` + daoThis.Columns().ActionName + ` AS ` + v)
 			case `sceneIdArr`:
-				m = m.Fields(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey())
 				*afterField = append(*afterField, v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Fields(daoThis.Table() + `.` + v)
+					m = m.Fields(tableThis + `.` + v)
 				} else {
 					m = m.Fields(v)
 				}
@@ -270,53 +274,60 @@ func (daoThis *actionDao) HookSelect(afterField *[]string, afterFieldWithParam m
 // 解析filter
 func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
 				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
-					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
-					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), val[0])
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
 				default:
-					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(tableThis+`.`+daoThis.PrimaryKey(), v)
 				}
 			case `id`, `idArr`:
-				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+				m = m.Where(tableThis+`.`+daoThis.PrimaryKey(), v)
 			case `label`:
-				m = m.WhereLike(daoThis.Table()+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(tableThis+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().ActionName:
-				m = m.WhereLike(daoThis.Table()+`.`+k, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(tableThis+`.`+k, `%`+gconv.String(v)+`%`)
 			case `timeRangeStart`:
-				m = m.WhereGTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+				m = m.WhereGTE(tableThis+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
-				m = m.WhereLTE(daoThis.Table()+`.`+daoThis.Columns().CreatedAt, v)
+				m = m.WhereLTE(tableThis+`.`+daoThis.Columns().CreatedAt, v)
 			case `sceneId`:
-				m = m.Where(ActionRelToScene.Table()+`.`+k, v)
-				m = m.Handler(daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr))
+				tableActionRelToScene := ActionRelToScene.ParseDbTable(ctx)
+				m = m.Where(tableActionRelToScene+`.`+k, v)
+				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, joinTableArr))
 			case `selfAction`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`=>场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
-				m = m.Where(daoThis.Table()+`.`+daoThis.Columns().IsStop, 0)
-				m = m.Where(ActionRelToScene.Table()+`.`+ActionRelToScene.Columns().SceneId, val[`sceneId`])
-				m = m.Handler(daoThis.ParseJoin(ActionRelToScene.Table(), joinTableArr))
+				m = m.Where(tableThis+`.`+daoThis.Columns().IsStop, 0)
+				tableActionRelToScene := ActionRelToScene.ParseDbTable(ctx)
+				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`sceneId`])
+				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, joinTableArr))
 				switch gconv.String(val[`sceneCode`]) {
 				case `platform`:
-					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
+					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
 						continue
 					}
-					m = m.Where(Role.Table()+`.`+Role.Columns().IsStop, 0)
-					m = m.Handler(daoThis.ParseJoin(RoleRelToAction.Table(), joinTableArr))
-					m = m.Handler(daoThis.ParseJoin(Role.Table(), joinTableArr))
+					tableRole := Role.ParseDbTable(ctx)
+					m = m.Where(tableRole+`.`+Role.Columns().IsStop, 0)
+					tableRoleRelToAction := RoleRelToAction.ParseDbTable(ctx)
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, joinTableArr))
+					m = m.Handler(daoThis.ParseJoin(tableRole, joinTableArr))
 
-					m = m.Where(RoleRelOfPlatformAdmin.Table()+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
-					m = m.Handler(daoThis.ParseJoin(RoleRelOfPlatformAdmin.Table(), joinTableArr))
+					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(ctx)
+					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, joinTableArr))
 				default:
 					m = m.Where(`1 = 0`)
 				}
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Where(daoThis.Table()+`.`+k, v)
+					m = m.Where(tableThis+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
 				}
@@ -329,13 +340,15 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 // 解析group
 func (daoThis *actionDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.Group(tableThis + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Group(daoThis.Table() + `.` + v)
+					m = m.Group(tableThis + `.` + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -348,15 +361,17 @@ func (daoThis *actionDao) ParseGroup(group []string, joinTableArr *[]string) gdb
 // 解析order
 func (daoThis *actionDao) ParseOrder(order []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range order {
 			v = gstr.Trim(v)
 			k := gstr.Split(v, ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+				m = m.Order(tableThis + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Order(daoThis.Table() + `.` + v)
+					m = m.Order(tableThis + `.` + v)
 				} else {
 					m = m.Order(v)
 				}
@@ -372,19 +387,23 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 		if garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
 			return m
 		}
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		*joinTableArr = append(*joinTableArr, joinCode)
 		switch joinCode {
-		/* case Xxxx.Table():
-		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey()) */
-		case ActionRelToScene.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+ActionRelToScene.Columns().ActionId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		case RoleRelToAction.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelToAction.Columns().ActionId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		case Role.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.Table()+`.`+RoleRelToAction.Columns().RoleId)
-		case RoleRelOfPlatformAdmin.Table():
-			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToAction.Table()+`.`+RoleRelToAction.Columns().RoleId)
+		/* case Xxxx.ParseDbTable(ctx):
+		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+tableThis+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.ParseDbTable(ctx)+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
+		case Role.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.ParseDbTable(ctx)+`.`+RoleRelToAction.Columns().RoleId)
+		case RoleRelOfPlatformAdmin.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToAction.ParseDbTable(ctx)+`.`+RoleRelToAction.Columns().RoleId)
+		/* case ActionRelToScene.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+ActionRelToScene.Columns().ActionId+` = `+tableThis+`.`+daoThis.PrimaryKey())
+		case RoleRelToAction.ParseDbTable(ctx):
+			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelToAction.Columns().ActionId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
+		default:
+			m = m.LeftJoin(joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+tableThis+`.`+daoThis.PrimaryKey())
 		}
 		return m
 	}

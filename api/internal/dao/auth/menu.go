@@ -236,6 +236,10 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(tableThis + `.` + daoThis.Columns().MenuName + ` AS ` + v)
+			case Scene.Columns().SceneName:
+				tableScene := Scene.ParseDbTable(ctx)
+				m = m.Fields(tableScene + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tableScene, joinTableArr))
 			case `pMenuName`:
 				m = m.Fields(`p_` + tableThis + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 				m = m.Handler(daoThis.ParseJoin(`p_`+tableThis, joinTableArr))
@@ -251,10 +255,6 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				// m = m.Fields(tableThis + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))	//mysql不能直接转成对象返回
 				*afterField = append(*afterField, v)
-			case Scene.Columns().SceneName:
-				tableScene := Scene.ParseDbTable(ctx)
-				m = m.Fields(tableScene + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableScene, joinTableArr))
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
 					m = m.Fields(tableThis + `.` + v)
@@ -443,12 +443,12 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 			m = m.LeftJoin(joinCode, joinCode+`.`+Scene.PrimaryKey()+` = `+tableThis+`.`+daoThis.Columns().SceneId)
 		case `p_` + tableThis:
 			m = m.LeftJoin(tableThis+` AS `+joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+tableThis+`.`+daoThis.Columns().Pid)
-		/* case RoleRelToMenu.ParseDbTable(ctx):
-		m = m.LeftJoin(joinCode+` AS `+joinCode, joinCode+`.`+RoleRelToMenu.Columns().MenuId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
 		case Role.ParseDbTable(ctx):
 			m = m.LeftJoin(joinCode, joinCode+`.`+Role.PrimaryKey()+` = `+RoleRelToMenu.ParseDbTable(ctx)+`.`+RoleRelToMenu.Columns().RoleId)
 		case RoleRelOfPlatformAdmin.ParseDbTable(ctx):
 			m = m.LeftJoin(joinCode, joinCode+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToMenu.ParseDbTable(ctx)+`.`+RoleRelToMenu.Columns().RoleId)
+		/* case RoleRelToMenu.ParseDbTable(ctx):
+		m = m.LeftJoin(joinCode+` AS `+joinCode, joinCode+`.`+RoleRelToMenu.Columns().MenuId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
 		default:
 			m = m.LeftJoin(joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+tableThis+`.`+daoThis.PrimaryKey())
 		}
