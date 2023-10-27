@@ -308,7 +308,7 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 			case `timeRangeEnd`:
 				m = m.WhereLTE(tableThis+`.`+daoThis.Columns().CreatedAt, v)
 			case `loginName`:
-				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
+				if g.Validator().Rules(`required|phone`).Data(v).Run(ctx) == nil {
 					m = m.Where(tableThis+`.`+daoThis.Columns().Phone, v)
 				} else {
 					m = m.Where(tableThis+`.`+daoThis.Columns().Account, v)
