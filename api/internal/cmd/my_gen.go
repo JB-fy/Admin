@@ -90,9 +90,12 @@ type MyGenTpl struct {
 	DeletedField                   string     //表删除时间字段
 	UpdatedField                   string     //表更新时间字段
 	CreatedField                   string     //表创建时间字段
-	LabelField                     string     //dao层label对应的字段(常用于前端组件)
 	// 以下字段用于对某些表字段做特殊处理
-	RelTableMap    map[string]RelTableItem //当id后缀字段，且关联表能确定时，会自动生成联表查询代码
+	LabelHandle struct { //dao层label对应的字段(常用于前端组件)
+		LabelField string //是否同时存在
+		IsCoexist  bool   //当LabelField=phone或account时，是否同时存在phone和account两个字段
+	}
+	RelTableMap    map[string]RelTableItem //id后缀字段，能确定关联表时，会自动生成联表查询代码
 	PasswordHandle struct {                //password|passwd,salt同时存在时，需特殊处理
 		IsCoexist     bool   //是否同时存在
 		PasswordField string //密码字段
@@ -575,13 +578,13 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	for _, v := range nameFieldList {
 		index := fieldCaseCamelArrG.Search(v)
 		if index != -1 {
-			tpl.LabelField = fieldArr[index]
+			tpl.LabelHandle.LabelField = fieldArr[index]
 			break
 		}
 	}
-	if tpl.LabelField == `phone` || tpl.LabelField == `account` {
+	if tpl.LabelHandle.LabelField == `phone` || tpl.LabelHandle.LabelField == `account` {
 		if gset.NewStrSetFrom([]string{`Phone`, `Account`}).Intersect(gset.NewStrSetFrom(fieldCaseCamelArr)).Size() == 2 {
-			tpl.LabelField = `PhoneAndAccount`
+			tpl.LabelHandle.IsCoexist = true
 		}
 	}
 
@@ -699,14 +702,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	daoFunc := ``
 	daoImportOtherDao := ``
 
-	if tpl.LabelField != `` {
+	if tpl.LabelHandle.LabelField != `` {
 		daoParseFieldTmp := `
 			case ` + "`label`" + `:
-				m = m.Fields(tableThis + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)`
+				m = m.Fields(tableThis + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` + ` + "` AS `" + ` + v)`
 		daoParseFilterTmp := `
 			case ` + "`label`" + `:
-				m = m.WhereLike(tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-		if tpl.LabelField == `PhoneAndAccount` {
+				m = m.WhereLike(tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+		if tpl.LabelHandle.IsCoexist {
 			daoParseFieldTmp = `
 			case ` + "`label`" + `:
 				m = m.Fields(` + "`IFNULL(` + tableThis + `.` + daoThis.Columns().Account + `, ` + tableThis + `.` + daoThis.Columns().Phone + `) AS ` + v)"
@@ -796,10 +799,10 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
 			if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) { //pid
-				if tpl.LabelField != `` {
+				if tpl.LabelHandle.LabelField != `` {
 					daoParseFieldTmp := `
-			case ` + "`p" + gstr.CaseCamel(tpl.LabelField) + "`" + `:
-				m = m.Fields(` + "`p_`" + ` + tableThis + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelField) + ` + ` + "` AS `" + ` + v)
+			case ` + "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`" + `:
+				m = m.Fields(` + "`p_`" + ` + tableThis + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` + ` + "` AS `" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(` + "`p_`" + `+tableThis, joinTableArr))`
 					if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 						daoParseField += daoParseFieldTmp
@@ -1239,7 +1242,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	apiReqUpdateColumn := ``
 	apiResColumn := ``
 	apiResColumnAlloweFieldList := ``
-	if tpl.LabelField != `` {
+	if tpl.LabelHandle.LabelField != `` {
 		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
 		apiResColumn += `Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`\n"
 	}
@@ -1378,8 +1381,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 
 			if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) { //pid
-				if tpl.LabelField != `` {
-					apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelField) + `,omitempty" dc:"父级"` + "`\n"
+				if tpl.LabelHandle.LabelField != `` {
+					apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `,omitempty" dc:"父级"` + "`\n"
 				}
 			} else if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
 				typeReqCreate = ``
@@ -1642,20 +1645,19 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	controllerAlloweFieldInfo := "`id`, "
 	controllerAlloweFieldTree := "`id`, "
 	controllerAlloweFieldNoAuth := "`id`, "
-	if tpl.LabelField != `` {
+	if tpl.LabelHandle.LabelField != `` {
 		controllerAlloweFieldList += "`label`, "
 		controllerAlloweFieldInfo += "`label`, "
 		controllerAlloweFieldTree += "`label`, "
 		if tpl.PidHandle.PidField != `` {
-			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.LabelField) + "`, "
-			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.LabelField) + "`, "
+			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`, "
+			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`, "
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
-		// controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
-		if tpl.LabelField == `PhoneAndAccount` {
+		if tpl.LabelHandle.IsCoexist {
 			controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
 		} else {
-			controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelField) + `, `
+			controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
 		}
 	}
 	controllerAlloweFieldDiff := ``
@@ -2247,7 +2249,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
 			if garray.NewStrArrayFrom([]string{`pid`}).Contains(field) { //pid
-				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.LabelField) + `',`
+				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `',`
 			} else if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
 				widthOfColumn = `width: 100,`
 				sortableOfColumn = `sortable: true,`
