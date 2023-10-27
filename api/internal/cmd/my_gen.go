@@ -847,7 +847,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
 						daoParseFieldTmp := `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + "`" + `:
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `:
 				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx)
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, joinTableArr))`
