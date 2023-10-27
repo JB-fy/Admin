@@ -243,23 +243,25 @@ func (daoThis *actionRelToSceneDao) HookSelect(afterField *[]string, afterFieldW
 // 解析filter
 func (daoThis *actionRelToSceneDao) ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
 				val := gconv.SliceInt(v)
 				switch len(val) {
 				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
-					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
-					m = m.WhereNot(daoThis.Table()+`.`+daoThis.PrimaryKey(), val[0])
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
 				default:
-					m = m.WhereNotIn(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(tableThis+`.`+daoThis.PrimaryKey(), v)
 				}
 			case `id`, `idArr`:
-				m = m.Where(daoThis.Table()+`.`+daoThis.PrimaryKey(), v)
+				m = m.Where(tableThis+`.`+daoThis.PrimaryKey(), v)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Where(daoThis.Table()+`.`+k, v)
+					m = m.Where(tableThis+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
 				}
@@ -272,13 +274,15 @@ func (daoThis *actionRelToSceneDao) ParseFilter(filter map[string]interface{}, j
 // 解析group
 func (daoThis *actionRelToSceneDao) ParseGroup(group []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoThis.Table() + `.` + daoThis.PrimaryKey())
+				m = m.Group(tableThis + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Group(daoThis.Table() + `.` + v)
+					m = m.Group(tableThis + `.` + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -291,15 +295,17 @@ func (daoThis *actionRelToSceneDao) ParseGroup(group []string, joinTableArr *[]s
 // 解析order
 func (daoThis *actionRelToSceneDao) ParseOrder(order []string, joinTableArr *[]string) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		for _, v := range order {
 			v = gstr.Trim(v)
 			k := gstr.Split(v, ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoThis.Table() + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+				m = m.Order(tableThis + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Order(daoThis.Table() + `.` + v)
+					m = m.Order(tableThis + `.` + v)
 				} else {
 					m = m.Order(v)
 				}
@@ -315,11 +321,15 @@ func (daoThis *actionRelToSceneDao) ParseJoin(joinCode string, joinTableArr *[]s
 		if garray.NewStrArrayFrom(*joinTableArr).Contains(joinCode) {
 			return m
 		}
+		ctx := m.GetCtx()
+		tableThis := daoThis.ParseDbTable(ctx)
 		*joinTableArr = append(*joinTableArr, joinCode)
 		switch joinCode {
-		/* case Xxxx.Table():
-		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.Table()+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+daoThis.Table()+`.`+daoThis.PrimaryKey()) */
+		/* case Xxxx.ParseDbTable(ctx):
+		m = m.LeftJoin(joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+tableThis+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.ParseDbTable(ctx)+` AS `+joinCode, joinCode+`.`+Xxxx.Columns().XxxxId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
+		default:
+			m = m.LeftJoin(joinCode, joinCode+`.`+daoThis.PrimaryKey()+` = `+tableThis+`.`+daoThis.PrimaryKey())
 		}
 		return m
 	}

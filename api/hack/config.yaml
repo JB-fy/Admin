@@ -12,10 +12,10 @@ gfcli:
         daoPath: "dao/auth"
         doPath: "model/do/auth"
         entityPath: "model/entity/auth"
-        tables: "auth_test"
+        tables: "auth_action_rel_to_scene,auth_action,auth_menu,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu,auth_role,auth_scene"
         tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
         tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-        overwriteDao: false
+        overwriteDao: true
     pbentity:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         tables: "auth_test"
