@@ -864,7 +864,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
 						daoParseFieldTmp := `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `:
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `:	//不存在时改成` + "`" + relTable.RelNameField + "`" + `，前端已用该字段名显示。下面Fields方法也需改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)。控制器中也需修改
 				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx)
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, joinTableArr))`
@@ -1645,6 +1645,8 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	controllerAlloweFieldInfo := "`id`, "
 	controllerAlloweFieldTree := "`id`, "
 	controllerAlloweFieldNoAuth := "`id`, "
+	controllerAlloweFieldDiff := ``
+	daoImportOtherDao := ``
 	if tpl.LabelHandle.LabelField != `` {
 		controllerAlloweFieldList += "`label`, "
 		controllerAlloweFieldInfo += "`label`, "
@@ -1660,7 +1662,6 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 			controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
 		}
 	}
-	controllerAlloweFieldDiff := ``
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
@@ -1677,7 +1678,14 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
-					controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
+					// controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
+					daoPath := relTable.RelTableNameCaseCamel
+					if !relTable.IsSameDir {
+						daoPath = `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
+						daoImportOtherDao += `
+	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
+					}
+					controllerAlloweFieldList += daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + ", "
 				}
 			}
 		}
@@ -1694,7 +1702,7 @@ import (
 	"api/api"
 	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `"
 	"api/internal/dao"
-	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"
+	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseCamelLower + `"` + daoImportOtherDao + `
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
