@@ -51,7 +51,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	return
 }
 
-// 获取配置信息（APP直传前调用，后期也可用在其它地方）
+// 获取配置信息（APP直传前调用）
 func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigReq) (res *api.UploadConfigRes, err error) {
 	config, err := upload.NewUpload(ctx).Config(createUploadOption(req.UploadType))
 	if err != nil {

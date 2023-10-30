@@ -16,7 +16,7 @@ type UploadOption struct {
 type Upload interface {
 	Upload() (uploadInfo map[string]interface{}, err error)                // 本地上传
 	Sign(option UploadOption) (signInfo map[string]interface{}, err error) // 获取签名（H5直传用）
-	Config(option UploadOption) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用，后期也可用在其它地方）
+	Config(option UploadOption) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用）
 	Sts(option UploadOption) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
 	Notify() (notifyInfo map[string]interface{}, err error)                // 回调
 }

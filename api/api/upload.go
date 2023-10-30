@@ -39,9 +39,9 @@ type UploadSignRes struct {
 
 /*--------获取签名（H5直传用） 结束--------*/
 
-/*--------获取配置信息（APP直传前调用，后期也可用在其它地方） 开始--------*/
+/*--------获取配置信息（APP直传前调用） 开始--------*/
 type UploadConfigReq struct {
-	g.Meta     `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用，后期也可用在其它地方）"`
+	g.Meta     `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用）"`
 	UploadType string `json:"uploadType" v:"" dc:"上传类型"`
 }
 
@@ -54,7 +54,7 @@ type UploadConfigRes struct {
 	CallbackBodyType string `json:"callbackBodyType,omitempty" dc:"回调方式"`
 }
 
-/*--------获取Sts 获取配置信息（APP直传前调用，后期也可用在其它地方） 结束--------*/
+/*--------获取Sts 获取配置信息（APP直传前调用） 结束--------*/
 
 /*--------获取Sts Token（APP直传用） 开始--------*/
 //阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET

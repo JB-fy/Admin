@@ -101,7 +101,7 @@ func (uploadThis *AliyunOss) Sign(option UploadOption) (signInfo map[string]inte
 	return
 }
 
-// 获取配置信息（APP直传前调用，后期也可用在其它地方）
+// 获取配置信息（APP直传前调用）
 func (uploadThis *AliyunOss) Config(option UploadOption) (config map[string]interface{}, err error) {
 	config = map[string]interface{}{
 		`endpoint`: uploadThis.Host,
