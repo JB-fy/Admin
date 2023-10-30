@@ -1321,6 +1321,10 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
+			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
+				ruleReqCreate = `max-length:` + resultStr[1]
+				ruleReqUpdate = `max-length:` + resultStr[1]
+			}
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			typeReqFilter = `string`
 			typeReqCreate = `*string`
