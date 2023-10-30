@@ -864,7 +864,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
 						daoParseFieldTmp := `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `:	//不存在时改成` + "`" + relTable.RelNameField + "`" + `，前端已用该字段名显示。下面Fields方法也需改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)。控制器中也需修改
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `: //不存在时改成` + "`" + relTable.RelNameField + "`" + `，前端已用该字段名显示。下面Fields方法也需改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)。控制器中也需修改
 				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx)
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, joinTableArr))`
