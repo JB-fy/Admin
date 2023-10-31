@@ -2802,17 +2802,17 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
 		</ElFormItem>`
 			} else { //默认处理（int等类型）
-				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-					viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
-		</ElFormItem>`
-				} else {
-					viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" />
-		</ElFormItem>`
-				}
+				/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+							viewQueryField += `
+				<ElFormItem prop="` + field + `">
+					<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
+				</ElFormItem>`
+						} else {
+							viewQueryField += `
+				<ElFormItem prop="` + field + `">
+					<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" />
+				</ElFormItem>`
+						} */
 			}
 		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
