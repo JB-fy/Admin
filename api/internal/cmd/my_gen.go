@@ -1683,12 +1683,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					// controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
-					daoPath := relTable.RelTableNameCaseCamel
-					if !relTable.IsSameDir {
-						daoPath = `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
-						daoImportOtherDao += `
+					daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
+					daoImportOtherDao += `
 	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
-					}
 					controllerAlloweFieldList += daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + ", "
 				}
 			}
