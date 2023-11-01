@@ -42,6 +42,8 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 				return
 			}
 		}
+	} else {
+		data[daoThis.Columns().Pid] = 0
 	}
 
 	id, err = dao.NewDaoHandler(ctx, &daoThis).Insert(data).GetModel().InsertAndGetId()
@@ -72,11 +74,11 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		}
 		updateChildIdPathAndLevelList := []map[string]interface{}{}
 		for _, id := range idArr {
-			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
-			if pid == oldInfo[daoThis.PrimaryKey()].Int() { //父级不能是自身
+			if pid == id.Int() { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ``)
 				return
 			}
+			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			if pid != oldInfo[daoThis.Columns().Pid].Int() {
 				pIdPath := `0`
 				pLevel := 0
@@ -105,7 +107,6 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 				})
 			}
 		}
-
 		if len(updateChildIdPathAndLevelList) > 0 {
 			hookData[`updateChildIdPathAndLevelList`] = updateChildIdPathAndLevelList
 		}
