@@ -979,7 +979,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			daoHookInsert += daoHookInsertTmp
 		}
 		daoParseUpdateTmp := `
-			case daoThis.Columns().Pid:
+			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				updateData[tableThis+` + "`.`" + `+k] = v
 				pIdPath := ` + "`0`" + `
 				pLevel := 0
@@ -1150,7 +1150,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 	}`
 		if tpl.PidHandle.IsCoexist {
 			tplLogic += ` else {
-		data[daoThis.Columns().Pid] = 0
+		data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `] = 0
 	}`
 		}
 		tplLogic += `
