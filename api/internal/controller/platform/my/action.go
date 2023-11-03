@@ -32,7 +32,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	if err != nil {
 		return
 	}
-	res = &apiMy.ActionListRes{}
+	res = &apiMy.ActionListRes{List: []apiMy.ActionListItem{}}
 	list.Structs(&res.List)
 	return
 }

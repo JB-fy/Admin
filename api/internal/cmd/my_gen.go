@@ -1826,10 +1826,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{`
 		if option.IsCount {
 			tplController += `
-		Count: count,
-	`
+		Count: count,`
 		}
-		tplController += `}
+		tplController += `
+		List:  []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListItem{},
+	}
 	list.Structs(&res.List)
 	return
 }

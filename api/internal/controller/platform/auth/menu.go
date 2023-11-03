@@ -62,6 +62,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 
 	res = &apiAuth.MenuListRes{
 		Count: count,
+		List:  []apiAuth.MenuListItem{},
 	}
 	list.Structs(&res.List)
 	return

@@ -65,6 +65,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 
 	res = &apiPlatform.AdminListRes{
 		Count: count,
+		List:  []apiPlatform.AdminListItem{},
 	}
 	list.Structs(&res.List)
 	return
