@@ -60,10 +60,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 		return
 	}
 
-	res = &apiAuth.SceneListRes{
-		Count: count,
-		List:  []apiAuth.SceneListItem{},
-	}
+	res = &apiAuth.SceneListRes{Count: count, List: []apiAuth.SceneListItem{}}
 	list.Structs(&res.List)
 	return
 }

@@ -60,10 +60,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 		return
 	}
 
-	res = &apiAuth.MenuListRes{
-		Count: count,
-		List:  []apiAuth.MenuListItem{},
-	}
+	res = &apiAuth.MenuListRes{Count: count, List: []apiAuth.MenuListItem{}}
 	list.Structs(&res.List)
 	return
 }

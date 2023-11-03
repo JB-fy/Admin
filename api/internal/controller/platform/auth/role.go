@@ -60,10 +60,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 		return
 	}
 
-	res = &apiAuth.RoleListRes{
-		Count: count,
-		List:  []apiAuth.RoleListItem{},
-	}
+	res = &apiAuth.RoleListRes{Count: count, List: []apiAuth.RoleListItem{}}
 	list.Structs(&res.List)
 	return
 }

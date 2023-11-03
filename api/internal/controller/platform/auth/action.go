@@ -60,10 +60,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 		return
 	}
 
-	res = &apiAuth.ActionListRes{
-		Count: count,
-		List:  []apiAuth.ActionListItem{},
-	}
+	res = &apiAuth.ActionListRes{Count: count, List: []apiAuth.ActionListItem{}}
 	list.Structs(&res.List)
 	return
 }

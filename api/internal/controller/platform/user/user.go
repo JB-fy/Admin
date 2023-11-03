@@ -61,10 +61,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 		return
 	}
 
-	res = &apiUser.UserListRes{
-		Count: count,
-		List:  []apiUser.UserListItem{},
-	}
+	res = &apiUser.UserListRes{Count: count, List: []apiUser.UserListItem{}}
 	list.Structs(&res.List)
 	return
 }
