@@ -22,7 +22,7 @@ func createUploadOption(uploadType string) (option upload.UploadOption) {
 		Expire:     gtime.Now().Unix() + 15*60,
 		ExpireTime: 15 * 60,
 		MinSize:    0,
-		MaxSize:    100 * 1024 * 1024,
+		MaxSize:    1024 * 1024 * 1024,
 	}
 	/* switch uploadType {
 	case `image`:
