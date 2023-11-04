@@ -1092,8 +1092,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/util/grand"
-	"github.com/gogf/gf/v2/container/garray"
-	`, 1)
+	"github.com/gogf/gf/v2/container/garray"`, 1)
 
 	gfile.PutContents(saveFile, tplDao)
 	utils.GoFileFmt(saveFile)
