@@ -4,8 +4,8 @@ export default {
 		sceneId: '场景',
 		tableId: '关联表',
 		isStop: '停用',
-		menuIdArr: '菜单',
-		actionIdArr: '操作',
+		menuId: '菜单',
+		actionId: '操作',
 	},
 	status: {
 	},

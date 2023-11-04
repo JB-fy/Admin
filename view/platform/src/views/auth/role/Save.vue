@@ -91,10 +91,10 @@ const saveDrawer = reactive({
 				<ElFormItem :label="t('auth.role.name.sceneId')" prop="sceneId">
 					<MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => { saveForm.data.menuIdArr = []; saveForm.data.actionIdArr = [] }" />
 				</ElFormItem>
-				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuIdArr')" prop="menuIdArr">
+				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuId')" prop="menuIdArr">
 					<MyCascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
 				</ElFormItem>
-				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionIdArr')" prop="actionIdArr">
+				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionId')" prop="actionIdArr">
 					<MyTransfer v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.role.name.isStop')" prop="isStop">

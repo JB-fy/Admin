@@ -48,7 +48,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, columnsThis.Phone, columnsThis.AdminId}
+		field = []string{`id`, `label`, columnsThis.Phone, columnsThis.Account, columnsThis.AdminId}
 	}
 	/**--------权限验证 结束--------**/
 
