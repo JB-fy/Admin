@@ -1,0 +1,63 @@
+package upload
+
+import (
+	"context"
+
+	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	sts20150401 "github.com/alibabacloud-go/sts-20150401/v2/client"
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/gogf/gf/v2/util/gconv"
+)
+
+type AliyunVod struct {
+	Ctx             context.Context
+	Host            string `json:"aliyunVodHost"`
+	Bucket          string `json:"aliyunVodBucket"`
+	AccessKeyId     string `json:"aliyunVodAccessKeyId"`
+	AccessKeySecret string `json:"aliyunVodAccessKeySecret"`
+	RoleArn         string `json:"aliyunVodRoleArn"`
+	Endpoint        string `json:"aliyunVodEndpoint"` //请参考https://api.aliyun.com/product/Sts
+}
+
+func NewAliyunVod(ctx context.Context, config map[string]interface{}) *AliyunVod {
+	aliyunVodObj := AliyunVod{
+		Ctx: ctx,
+	}
+	gconv.Struct(config, &aliyunVodObj)
+	return &aliyunVodObj
+}
+
+// 获取配置信息（APP直传前调用）
+func (uploadThis *AliyunVod) Config(option UploadOption) (config map[string]interface{}, err error) {
+	config = map[string]interface{}{
+		`endpoint`: uploadThis.Host,
+		`bucket`:   uploadThis.Bucket,
+		`dir`:      option.Dir,
+	}
+	/* //是否回调
+	if uploadThis.CallbackUrl != `` {
+		config[`callbackUrl`] = uploadThis.CallbackUrl
+		config[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+		config[`callbackBodyType`] = `application/x-www-form-urlencoded`
+	} */
+	return
+}
+
+// 获取Sts Token
+func (uploadThis *AliyunVod) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
+	config := &openapi.Config{
+		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
+		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
+		Endpoint:        tea.String(uploadThis.Endpoint),
+	}
+	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
+		DurationSeconds: tea.Int64(option.ExpireTime),
+		//写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
+		//读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
+		Policy:          tea.String(`{"Statement": [{"Action": ["vod:*"],"Effect": "Allow","Resource": "*"}],"Version": "1"}`),
+		RoleArn:         tea.String(uploadThis.RoleArn),
+		RoleSessionName: tea.String(`sts_token_to_vod`),
+	}
+	stsInfo, _ = CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	return
+}

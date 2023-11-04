@@ -8,7 +8,6 @@ import (
 	"crypto/md5"
 	"crypto/rsa"
 	"crypto/sha1"
-	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
@@ -18,17 +17,17 @@ import (
 	"hash"
 	"io"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
 
+	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	sts20150401 "github.com/alibabacloud-go/sts-20150401/v2/client"
+	"github.com/alibabacloud-go/tea/tea"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/grand"
 )
 
 type AliyunOss struct {
@@ -37,8 +36,9 @@ type AliyunOss struct {
 	Bucket          string `json:"aliyunOssBucket"`
 	AccessKeyId     string `json:"aliyunOssAccessKeyId"`
 	AccessKeySecret string `json:"aliyunOssAccessKeySecret"`
-	RoleArn         string `json:"aliyunOssRoleArn"`
 	CallbackUrl     string `json:"aliyunOssCallbackUrl"`
+	RoleArn         string `json:"aliyunOssRoleArn"`
+	Endpoint        string `json:"aliyunOssEndpoint"`
 }
 
 func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss {
@@ -47,12 +47,6 @@ func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss
 	}
 	gconv.Struct(config, &aliyunOssObj)
 	return &aliyunOssObj
-}
-
-type AliyunOssStsOption struct {
-	SessionName string //可自定义
-	ExpireTime  int64  //签名有效时间。单位：秒
-	Policy      string //写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}。读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 }
 
 type AliyunOssCallback struct {
@@ -73,10 +67,12 @@ func (uploadThis *AliyunOss) Sign(option UploadOption) (signInfo map[string]inte
 	signInfo = map[string]interface{}{
 		`uploadUrl`: bucketHost,
 		// `uploadData`:  map[string]interface{}{},
-		`host`:   bucketHost,
-		`dir`:    option.Dir,
-		`expire`: option.Expire,
-		`isRes`:  0,
+		`host`:     bucketHost,
+		`dir`:      option.Dir,
+		`expire`:   option.Expire,
+		`isRes`:    0,
+		`endpoint`: uploadThis.Host,
+		`bucket`:   uploadThis.Bucket,
 	}
 
 	policyBase64 := uploadThis.CreatePolicyBase64(option)
@@ -95,6 +91,9 @@ func (uploadThis *AliyunOss) Sign(option UploadOption) (signInfo map[string]inte
 		}
 		uploadData[`callback`] = uploadThis.CreateCallbackStr(callback)
 		signInfo[`isRes`] = 1
+		signInfo[`callbackUrl`] = uploadThis.CallbackUrl
+		signInfo[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+		signInfo[`callbackBodyType`] = `application/x-www-form-urlencoded`
 	}
 
 	signInfo[`uploadData`] = uploadData
@@ -119,11 +118,18 @@ func (uploadThis *AliyunOss) Config(option UploadOption) (config map[string]inte
 
 // 获取Sts Token（APP直传用）
 func (uploadThis *AliyunOss) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
-	stsInfo, _ = uploadThis.GetStsToken(AliyunOssStsOption{
-		SessionName: `oss_app_sts_token`,
-		ExpireTime:  option.ExpireTime,
-		Policy:      `{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + option.Dir + `*"]}],"Version": "1"}`,
-	})
+	config := &openapi.Config{
+		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
+		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
+		Endpoint:        tea.String(uploadThis.Endpoint),
+	}
+	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
+		DurationSeconds: tea.Int64(option.ExpireTime),
+		Policy:          tea.String(`{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + option.Dir + `*"]}],"Version": "1"}`),
+		RoleArn:         tea.String(uploadThis.RoleArn),
+		RoleSessionName: tea.String(`sts_token_to_oss`),
+	}
+	stsInfo, _ = CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
 	return
 }
 
@@ -253,55 +259,6 @@ func (uploadThis *AliyunOss) CreateCallbackStr(callback AliyunOssCallback) strin
 	callbackStr, _ := json.Marshal(callbackParam)
 	callbackBase64 := base64.StdEncoding.EncodeToString(callbackStr)
 	return string(callbackBase64)
-}
-
-// 生成sts Token（App前端直传用）
-func (uploadThis *AliyunOss) GetStsToken(option AliyunOssStsOption) (stsInfo map[string]interface{}, err error) {
-	url, err := uploadThis.GenerateSignedURL(option)
-	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, err.Error())
-		return
-	}
-
-	body, status, err := uploadThis.SendRequest(url)
-	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, err.Error())
-		return
-	}
-	if status != http.StatusOK {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, ``)
-		return
-	}
-
-	type Credentials struct {
-		AccessKeyId     string `json:"AccessKeyId"`
-		AccessKeySecret string `json:"AccessKeySecret"`
-		Expiration      string `json:"Expiration"`
-		SecurityToken   string `json:"SecurityToken"`
-	}
-	type AssumedRoleUser struct {
-		Arn           string `json:"Arn"`
-		AssumedRoleId string `json:"AssumedRoleId"`
-	}
-	type StsResponse struct {
-		Credentials     Credentials     `json:"Credentials"`
-		AssumedRoleUser AssumedRoleUser `json:"AssumedRoleUser"`
-		RequestId       string          `json:"RequestId"`
-	}
-	resp := StsResponse{}
-	err = json.Unmarshal(body, &resp)
-	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, ``)
-		return
-	}
-	stsInfo = map[string]interface{}{
-		`StatusCode`:      http.StatusOK,
-		`AccessKeyId`:     resp.Credentials.AccessKeyId,
-		`AccessKeySecret`: resp.Credentials.AccessKeySecret,
-		`SecurityToken`:   resp.Credentials.SecurityToken,
-		`Expiration`:      resp.Credentials.Expiration,
-	}
-	return
 }
 
 // 获取bucketHost
@@ -498,52 +455,4 @@ func (uploadThis *AliyunOss) unhex(c byte) byte {
 		return c - 'A' + 10
 	}
 	return 0
-}
-
-func (uploadThis *AliyunOss) GenerateSignedURL(option AliyunOssStsOption) (string, error) {
-	rand.Seed(time.Now().UnixNano())
-	queryStr := "SignatureVersion=1.0"
-	queryStr += "&Format=JSON"
-	queryStr += "&Timestamp=" + url.QueryEscape(time.Now().UTC().Format(`2006-01-02T15:04:05Z`))
-	queryStr += "&RoleArn=" + url.QueryEscape(uploadThis.RoleArn)
-	queryStr += "&RoleSessionName=" + option.SessionName
-	queryStr += "&AccessKeyId=" + uploadThis.AccessKeyId
-	queryStr += "&SignatureMethod=HMAC-SHA1"
-	queryStr += "&Version=2015-04-01"
-	queryStr += "&Action=AssumeRole"
-	queryStr += "&SignatureNonce=" + grand.Str(`ABCDEFGHIJKLMNOPQRSTUVWXYZ`, 10)
-	queryStr += "&DurationSeconds=" + gconv.String(option.ExpireTime)
-	if option.Policy != "" {
-		queryStr += "&Policy=" + url.QueryEscape(option.Policy)
-	}
-
-	queryParams, err := url.ParseQuery(queryStr)
-	if err != nil {
-		return "", err
-	}
-	sortUrl := strings.Replace(queryParams.Encode(), "+", "%20", -1)
-	strToSign := `GET&` + "%2F" + "&" + url.QueryEscape(sortUrl)
-
-	hashSign := hmac.New(sha1.New, []byte(uploadThis.AccessKeySecret+"&"))
-	hashSign.Write([]byte(strToSign))
-	signature := base64.StdEncoding.EncodeToString(hashSign.Sum(nil))
-
-	assumeURL := `https://sts.aliyuncs.com/?` + queryStr + "&Signature=" + url.QueryEscape(signature)
-	return assumeURL, nil
-}
-
-func (uploadThis *AliyunOss) SendRequest(url string) ([]byte, int, error) {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	client := &http.Client{Transport: tr}
-
-	resp, err := client.Get(url)
-	if err != nil {
-		return nil, -1, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	return body, resp.StatusCode, err
 }

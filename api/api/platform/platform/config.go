@@ -27,8 +27,9 @@ type Config struct {
 	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" dc:"阿里云OSS-Bucket"`
 	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" dc:"阿里云OSS-AccessKeyId"`
 	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" dc:"阿里云OSS-AccessKeySecret"`
-	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
 	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" dc:"阿里云OSS-回调地址"`
+	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
+	AliyunOssEndpoint        *string `json:"aliyunOssEndpoint,omitempty" dc:"阿里云OSS-Endpoint"`
 
 	SmsType                  *string `json:"smsType,omitempty" dc:"短信方式"`
 	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
@@ -61,8 +62,9 @@ type ConfigSaveReq struct {
 	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" v:"" dc:"阿里云OSS-Bucket"`
 	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeyId"`
 	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeySecret"`
-	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
 	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" v:"url" dc:"阿里云OSS-回调地址"`
+	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
+	AliyunOssEndpoint        *string `json:"aliyunOssEndpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
 
 	SmsType                  *string `json:"smsType,omitempty" v:"in:aliyunSms" dc:"短信方式"`
 	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`

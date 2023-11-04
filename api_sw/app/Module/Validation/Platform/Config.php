@@ -24,8 +24,9 @@ class Config extends AbstractValidation
         'aliyunOssBucket' => 'string',
         'aliyunOssAccessKeyId' => 'alpha_dash',
         'aliyunOssAccessKeySecret' => 'alpha_dash',
-        'aliyunOssRoleArn' => 'string',
         'aliyunOssCallbackUrl' => 'string',
+        'aliyunOssRoleArn' => 'string',
+        'aliyunOssEndpoint' => 'string',
 
         'smsType' => 'string|in:aliyunSms',
         'aliyunSmsAccessKeyId' => 'alpha_dash',
@@ -61,8 +62,9 @@ class Config extends AbstractValidation
                 'aliyunOssBucket',
                 'aliyunOssAccessKeyId',
                 'aliyunOssAccessKeySecret',
-                'aliyunOssRoleArn',
                 'aliyunOssCallbackUrl',
+                'aliyunOssRoleArn',
+                'aliyunOssEndpoint',
 
                 'smsType',
                 'aliyunSmsAccessKeyId',

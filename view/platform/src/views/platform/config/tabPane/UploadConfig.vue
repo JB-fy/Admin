@@ -14,8 +14,9 @@ const saveForm = reactive({
         aliyunOssBucket: '',
         aliyunOssAccessKeyId: '',
         aliyunOssAccessKeySecret: '',
-        aliyunOssRoleArn: '',
         aliyunOssCallbackUrl: '',
+        aliyunOssRoleArn: '',
+        aliyunOssEndpoint: '',
     } as { [propName: string]: any },
     rules: {
         uploadType: [
@@ -25,10 +26,10 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         localUploadSignKey: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: '' },
         ],
         localUploadFileSaveDir: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: '' },
         ],
         localUploadFileUrlPrefix: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
@@ -37,7 +38,7 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         aliyunOssBucket: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: '' },
         ],
         aliyunOssAccessKeyId: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
@@ -45,11 +46,14 @@ const saveForm = reactive({
         aliyunOssAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
-        aliyunOssRoleArn: [
-            { type: 'string', trigger: 'blur' },
-        ],
         aliyunOssCallbackUrl: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
+        ],
+        aliyunOssRoleArn: [
+            { type: 'string', trigger: 'blur', message: '' },
+        ],
+        aliyunOssEndpoint: [
+            { type: 'string', trigger: 'blur', message: '' },
         ],
     } as any,
     initData: async () => {
@@ -146,6 +150,15 @@ saveForm.initData()
                 <ElInput v-model="saveForm.data.aliyunOssAccessKeySecret"
                     :placeholder="t('platform.config.name.aliyunOssAccessKeySecret')" :clearable="true" />
             </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssCallbackUrl')" prop="aliyunOssCallbackUrl">
+                <ElInput v-model="saveForm.data.aliyunOssCallbackUrl"
+                    :placeholder="t('platform.config.name.aliyunOssCallbackUrl')" :clearable="true"
+                    style="max-width: 500px;" />
+                <label>
+                    <ElAlert :title="t('platform.config.tip.aliyunOssCallbackUrl')" type="info" :show-icon="true"
+                        :closable="false" />
+                </label>
+            </ElFormItem>
             <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
                 <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
                     :clearable="true" style="max-width: 500px;" />
@@ -154,12 +167,11 @@ saveForm.initData()
                         :closable="false" />
                 </label>
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunOssCallbackUrl')" prop="aliyunOssCallbackUrl">
-                <ElInput v-model="saveForm.data.aliyunOssCallbackUrl"
-                    :placeholder="t('platform.config.name.aliyunOssCallbackUrl')" :clearable="true"
-                    style="max-width: 500px;" />
+            <ElFormItem :label="t('platform.config.name.aliyunOssEndpoint')" prop="aliyunOssEndpoint">
+                <ElInput v-model="saveForm.data.aliyunOssEndpoint" :placeholder="t('platform.config.name.aliyunOssEndpoint')"
+                    :clearable="true" style="max-width: 500px;" />
                 <label>
-                    <ElAlert :title="t('platform.config.tip.aliyunOssCallbackUrl')" type="info" :show-icon="true"
+                    <ElAlert :title="t('platform.config.tip.aliyunOssEndpoint')" type="info" :show-icon="true"
                         :closable="false" />
                 </label>
             </ElFormItem>
