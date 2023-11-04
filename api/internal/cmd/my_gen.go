@@ -1322,7 +1322,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			typeReqFilter = `*uint`
 			typeRes = `*uint`
-			ruleReqFilter = `integer|min:1`
+			ruleReqFilter = `min:1`
 		} else if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` { //password|passwd
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
@@ -1383,7 +1383,14 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				typeReqFilter = ``
 				typeReqCreate = ``
 				typeReqUpdate = ``
-			} else if gstr.SubStr(fieldCaseCamel, -4) == `Name` || gstr.SubStr(fieldCaseCamel, -4) == `Code` { //name后缀 //code后缀
+			} else if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
+					isRequired = true
+				}
+				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
+				ruleReqCreate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
+				ruleReqUpdate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
+			} else if gstr.SubStr(fieldCaseCamel, -4) == `Code` { //code后缀
 				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
 				ruleReqCreate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
 				ruleReqUpdate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
@@ -1416,9 +1423,9 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeReqCreate = `*int`
 			typeReqUpdate = `*int`
 			typeRes = `*int`
-			ruleReqFilter = `integer`
-			ruleReqCreate = `integer`
-			ruleReqUpdate = `integer`
+			ruleReqFilter = ``
+			ruleReqCreate = ``
+			ruleReqUpdate = ``
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 				typeReqFilter = `*uint`
 				typeReqCreate = `*uint`
@@ -1433,18 +1440,19 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
 				typeReqCreate = ``
 				typeReqUpdate = ``
+				ruleReqFilter += `min:1`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) { //sort //weight
 				typeReqFilter = ``
-				ruleReqCreate += `|between:0,100`
-				ruleReqUpdate += `|between:0,100`
+				ruleReqCreate += `between:0,100`
+				ruleReqUpdate += `between:0,100`
 			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelNameField) + ` *string ` + "`" + `json:"` + relTable.RelNameField + `,omitempty" dc:"` + relTable.RelNameFieldName + `"` + "`\n"
 				}
-				ruleReqFilter += `|min:1`
-				ruleReqCreate += `|min:1`
-				ruleReqUpdate += `|min:1`
+				ruleReqFilter += `min:1`
+				ruleReqCreate += `min:1`
+				ruleReqUpdate += `min:1`
 			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
 				statusList := MyGenStatusList(comment)
 				statusArr := make([]string, len(statusList))
@@ -1452,13 +1460,13 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					statusArr[index] = status[0]
 				}
 				statusStr := gstr.Join(statusArr, `,`)
-				ruleReqFilter += `|in:` + statusStr
-				ruleReqCreate += `|in:` + statusStr
-				ruleReqUpdate += `|in:` + statusStr
+				ruleReqFilter += `in:` + statusStr
+				ruleReqCreate += `in:` + statusStr
+				ruleReqUpdate += `in:` + statusStr
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
-				ruleReqFilter += `|in:0,1`
-				ruleReqCreate += `|in:0,1`
-				ruleReqUpdate += `|in:0,1`
+				ruleReqFilter += `in:0,1`
+				ruleReqCreate += `in:0,1`
+				ruleReqUpdate += `in:0,1`
 			} else { //默认处理（int等类型）
 				typeReqFilter = ``
 			}
@@ -1467,13 +1475,13 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeReqCreate = `*float64`
 			typeReqUpdate = `*float64`
 			typeRes = `*float64`
-			ruleReqFilter = `float`
-			ruleReqCreate = `float`
-			ruleReqUpdate = `float`
+			ruleReqFilter = ``
+			ruleReqCreate = ``
+			ruleReqUpdate = ``
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-				ruleReqFilter += `|min:0`
-				ruleReqCreate += `|min:0`
-				ruleReqUpdate += `|min:0`
+				ruleReqFilter += `min:0`
+				ruleReqCreate += `min:0`
+				ruleReqUpdate += `min:0`
 			}
 
 			//默认处理（float类型）
@@ -1565,15 +1573,15 @@ type ` + tpl.TableNameCaseCamel + `ListReq struct {
 	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
-	Page   int             ` + "`" + `json:"page" v:"integer|min:1" default:"1" dc:"页码"` + "`" + `
-	Limit  int             ` + "`" + `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
+	Page   int             ` + "`" + `json:"page" v:"min:1" default:"1" dc:"页码"` + "`" + `
+	Limit  int             ` + "`" + `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
 }
 
 type ` + tpl.TableNameCaseCamel + `ListFilter struct {
-	Id             *uint       ` + "`" + `json:"id,omitempty" v:"integer|min:1" dc:"ID"` + "`" + `
-	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
-	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"` + "`" + `
-	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"` + "`" + `
+	Id             *uint       ` + "`" + `json:"id,omitempty" v:"min:1" dc:"ID"` + "`" + `
+	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
+	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
+	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + `
 	` + apiReqFilterColumn + `
 }
 
@@ -1600,7 +1608,7 @@ type ` + tpl.TableNameCaseCamel + `ListItem struct {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableNameCaseCamel + `InfoReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
-	Id     uint     ` + "`" + `json:"id" v:"required|integer|min:1" dc:"ID"` + "`" + `
+	Id     uint     ` + "`" + `json:"id" v:"required|min:1" dc:"ID"` + "`" + `
 	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 }
 
@@ -1633,7 +1641,7 @@ type ` + tpl.TableNameCaseCamel + `CreateReq struct {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"更新"` + "`" + `
-	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
+	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	` + apiReqUpdateColumn + `
 }
 
@@ -1646,7 +1654,7 @@ type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
-	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"` + "`" + `
+	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 
 /*--------删除 结束--------*/
@@ -2817,6 +2825,11 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
 		</ElFormItem>`
+			} else if garray.NewStrArrayFrom([]string{`level`}).Contains(field) && tpl.PidHandle.IsCoexist { //level
+				viewQueryField += `
+		<ElFormItem prop="` + field + `">
+			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="1" :controls="false" />
+		</ElFormItem>`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(field) { //sort //weight
 			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
@@ -3121,6 +3134,9 @@ const ` + field + `Handle = reactive({
 			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist {
 				continue
 			} else if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
+					requiredStr = ` required: true,`
+				}
 				ruleStr += `
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
 			} else if gstr.SubStr(fieldCaseCamel, -4) == `Code` { //code后缀

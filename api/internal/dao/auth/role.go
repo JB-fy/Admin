@@ -222,7 +222,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(tableThis + `.` + daoThis.Columns().RoleName + ` AS ` + v)
-			case Scene.Columns().SceneName:
+			case Scene.Columns().SceneName: //不存在时改成`sceneName`，前端已用该字段名显示。下面Fields方法也需改成m = m.Fields(tableUser + `.` + Scene.Columns().Xxxx + ` AS ` + v)。控制器中也需修改
 				tableScene := Scene.ParseDbTable(ctx)
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, joinTableArr))
