@@ -11,12 +11,10 @@ import (
 
 type AliyunVod struct {
 	Ctx             context.Context
-	Host            string `json:"aliyunVodHost"`
-	Bucket          string `json:"aliyunVodBucket"`
 	AccessKeyId     string `json:"aliyunVodAccessKeyId"`
 	AccessKeySecret string `json:"aliyunVodAccessKeySecret"`
 	RoleArn         string `json:"aliyunVodRoleArn"`
-	Endpoint        string `json:"aliyunVodEndpoint"` //请参考https://api.aliyun.com/product/Sts
+	Endpoint        string `json:"aliyunVodEndpoint"`
 }
 
 func NewAliyunVod(ctx context.Context, config map[string]interface{}) *AliyunVod {
@@ -25,22 +23,6 @@ func NewAliyunVod(ctx context.Context, config map[string]interface{}) *AliyunVod
 	}
 	gconv.Struct(config, &aliyunVodObj)
 	return &aliyunVodObj
-}
-
-// 获取配置信息（APP直传前调用）
-func (uploadThis *AliyunVod) Config(option UploadOption) (config map[string]interface{}, err error) {
-	config = map[string]interface{}{
-		`endpoint`: uploadThis.Host,
-		`bucket`:   uploadThis.Bucket,
-		`dir`:      option.Dir,
-	}
-	/* //是否回调
-	if uploadThis.CallbackUrl != `` {
-		config[`callbackUrl`] = uploadThis.CallbackUrl
-		config[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-		config[`callbackBodyType`] = `application/x-www-form-urlencoded`
-	} */
-	return
 }
 
 // 获取Sts Token
