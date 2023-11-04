@@ -65,6 +65,7 @@ type UploadStsReq struct {
 
 type UploadStsRes struct {
 	StatusCode      int    `json:"StatusCode,omitempty" dc:"状态码"`
+	RequestId       string `json:"RequestId,omitempty" dc:"请求ID"`
 	AccessKeyId     string `json:"AccessKeyId,omitempty" dc:"阿里云OSS-AccessKeyId"`
 	AccessKeySecret string `json:"AccessKeySecret,omitempty" dc:"阿里云OSS-AccessKeySecret"`
 	SecurityToken   string `json:"SecurityToken,omitempty" dc:"阿里云OSS-SecurityToken"`
