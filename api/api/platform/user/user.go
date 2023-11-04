@@ -11,24 +11,25 @@ type UserListReq struct {
 	Filter UserListFilter `json:"filter" dc:"查询条件"`
 	Field  []string       `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 	Sort   string         `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int            `json:"page" v:"integer|min:1" default:"1" dc:"页码"`
-	Limit  int            `json:"limit" v:"integer|min:0" default:"10" dc:"每页数量。可传0取全部"`
+	Page   int            `json:"page" v:"min:1" default:"1" dc:"页码"`
+	Limit  int            `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type UserListFilter struct {
-	Id             *uint       `json:"id,omitempty" v:"integer|min:1" dc:"ID"`
-	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `json:"excId,omitempty" v:"integer|min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|integer|foreach|min:1" dc:"排除ID数组"`
+	Id             *uint       `json:"id,omitempty" v:"min:1" dc:"ID"`
+	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
+	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
-	UserId         *uint       `json:"userId,omitempty" v:"integer|min:1" dc:"用户ID"`
+	UserId         *uint       `json:"userId,omitempty" v:"min:1" dc:"用户ID"`
 	Phone          string      `json:"phone,omitempty" v:"length:1,30|phone" dc:"手机"`
 	Account        string      `json:"account,omitempty" v:"length:1,30" dc:"账号"`
-	Gender         *uint       `json:"gender,omitempty" v:"integer|in:0,1,2" dc:"性别：0未设置 1男 2女"`
+	Nickname       string      `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
+	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	IdCardName     string      `json:"idCardName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
 	IdCardNo       string      `json:"idCardNo,omitempty" v:"length:1,30" dc:"身份证号码"`
-	IsStop         *uint       `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 }
@@ -61,7 +62,7 @@ type UserListItem struct {
 /*--------详情 开始--------*/
 type UserInfoReq struct {
 	g.Meta `path:"/user/info" method:"post" tags:"平台后台/用户管理/用户" sm:"详情"`
-	Id     uint     `json:"id" v:"required|integer|min:1" dc:"ID"`
+	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 }
 
@@ -92,8 +93,8 @@ type UserInfo struct {
 /*--------修改 开始--------*/
 type UserUpdateReq struct {
 	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"更新"`
-	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"ID数组"`
-	IsStop *uint  `json:"isStop,omitempty" v:"integer|in:0,1" dc:"停用：0否 1是"`
+	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IsStop *uint  `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

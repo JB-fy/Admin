@@ -46,7 +46,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `userLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, columnsThis.Phone, columnsThis.UserId}
+		field = []string{`id`, `label`, columnsThis.Phone, columnsThis.Account, columnsThis.UserId}
 	}
 	/**--------权限验证 结束--------**/
 

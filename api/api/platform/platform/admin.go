@@ -28,7 +28,7 @@ type AdminListFilter struct {
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	RoleId         *uint       `json:"roleId,omitempty" v:"integer|min:1" dc:"角色ID"`
+	RoleId         *uint       `json:"roleId,omitempty" v:"min:1" dc:"角色ID"`
 }
 
 type AdminListRes struct {
@@ -87,7 +87,7 @@ type AdminCreateReq struct {
 	Nickname  *string `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"length:1,200|url" dc:"头像"`
 	IsStop    *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	RoleIdArr *[]uint `json:"roleIdArr,omitempty" v:"required|distinct|foreach|integer|foreach|min:1" dc:"角色ID列表"`
+	RoleIdArr *[]uint `json:"roleIdArr,omitempty" v:"required|distinct|foreach|min:1" dc:"角色ID列表"`
 }
 
 /*--------新增 结束--------*/

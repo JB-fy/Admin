@@ -54,6 +54,9 @@ const queryForm = reactive({
 		<ElFormItem prop="account">
 			<ElInput v-model="queryCommon.data.account" :placeholder="t('user.user.name.account')" minlength="1" maxlength="30" :clearable="true" />
 		</ElFormItem>
+		<ElFormItem prop="nickname">
+			<ElInput v-model="queryCommon.data.nickname" :placeholder="t('user.user.name.nickname')" minlength="1" maxlength="30" :clearable="true" />
+		</ElFormItem>
 		<ElFormItem prop="gender" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.gender" :options="tm('user.user.status.gender')" :placeholder="t('user.user.name.gender')" :clearable="true" />
 		</ElFormItem>
