@@ -1060,9 +1060,9 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	}
 	if daoHookSelect != `` {
 		daoHookSelectPoint := `
-						/* case ` + "`xxxx`" + `:
-						record[v] = gvar.New(` + "``" + `) */`
-		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelectPoint+daoHookSelect, 1)
+					default:
+						record[v] = gvar.New(nil)`
+		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect+daoHookSelectPoint, 1)
 	}
 	if daoParseFilter != `` {
 		daoParseFilterPoint := `case ` + "`id`, `idArr`" + `:

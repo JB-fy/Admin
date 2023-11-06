@@ -9,7 +9,6 @@ import (
 	"api/internal/dao/platform/internal"
 	"context"
 	"database/sql"
-	"sync"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
@@ -281,29 +280,23 @@ func (daoThis *adminDao) HookSelect(afterField *[]string, afterFieldWithParam ma
 			if err != nil {
 				return
 			}
-			var wg sync.WaitGroup
 			for _, record := range result {
-				wg.Add(1)
-				go func(record gdb.Record) {
-					defer wg.Done()
-					for _, v := range *afterField {
-						switch v {
-						/* case `xxxx`:
-						record[v] = gvar.New(``) */
-						case `roleIdArr`:
-							idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
-							record[v] = gvar.New(idArr)
-						}
+				for _, v := range *afterField {
+					switch v {
+					case `roleIdArr`:
+						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
+						record[v] = gvar.New(idArr)
+					default:
+						record[v] = gvar.New(nil)
 					}
-					/* for k, v := range afterFieldWithParam {
-						switch k {
-						case `xxxx`:
-							record[k] = gvar.New(v)
-						}
-					} */
-				}(record)
+				}
+				/* for k, v := range afterFieldWithParam {
+					switch k {
+					case `xxxx`:
+						record[k] = gvar.New(v)
+					}
+				} */
 			}
-			wg.Wait()
 			return
 		},
 	}

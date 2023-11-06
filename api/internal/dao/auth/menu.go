@@ -8,7 +8,6 @@ import (
 	"api/internal/dao/auth/internal"
 	"context"
 	"database/sql"
-	"sync"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -281,32 +280,26 @@ func (daoThis *menuDao) HookSelect(afterField *[]string, afterFieldWithParam map
 			if err != nil {
 				return
 			}
-			var wg sync.WaitGroup
 			for _, record := range result {
-				wg.Add(1)
-				go func(record gdb.Record) {
-					defer wg.Done()
-					for _, v := range *afterField {
-						switch v {
-						/* case `xxxx`:
-						record[v] = gvar.New(``) */
-						case `showMenu`:
-							extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
-							record[`i18n`] = extraDataJson.Get(`i18n`)
-							if record[`i18n`] == nil {
-								record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
-							}
+				for _, v := range *afterField {
+					switch v {
+					case `showMenu`:
+						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
+						record[`i18n`] = extraDataJson.Get(`i18n`)
+						if record[`i18n`] == nil {
+							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
 						}
+					default:
+						record[v] = gvar.New(nil)
 					}
-					/* for k, v := range afterFieldWithParam {
-						switch k {
-						case `xxxx`:
-							record[k] = gvar.New(v)
-						}
-					} */
-				}(record)
+				}
+				/* for k, v := range afterFieldWithParam {
+					switch k {
+					case `xxxx`:
+						record[k] = gvar.New(v)
+					}
+				} */
 			}
-			wg.Wait()
 			return
 		},
 	}
