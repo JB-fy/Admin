@@ -2870,7 +2870,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			</ElFormItem>`
 				} */
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			typeDatePicker := `datetime`
+			typeDatePicker := ``
 			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
 			defaultTimeDatePicker := ``
 			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
@@ -2878,16 +2878,24 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				formatDatePicker = `YYYY-MM-DD`
 			}
 
-			if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //start_前缀
-				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-			} else if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //end_前缀
-				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+			if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` { //start_前缀
+				typeDatePicker = `datetime`
+				if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
+					defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
+				}
+			} else if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` { //end_前缀
+				typeDatePicker = `datetime`
+				if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
+					defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+				}
 			}
 
-			viewQueryField += `
+			if typeDatePicker != `` {
+				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElDatePicker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
 		</ElFormItem>`
+			}
 		} else if column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
 		} else { //默认处理
 			viewQueryField += `
