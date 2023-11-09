@@ -2864,17 +2864,17 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 						} */
 			}
 		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
-			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
-		</ElFormItem>`
-			} else {
-				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
-		</ElFormItem>`
-			}
+			/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					viewQueryField += `
+			<ElFormItem prop="` + field + `">
+				<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
+			</ElFormItem>`
+				} else {
+					viewQueryField += `
+			<ElFormItem prop="` + field + `">
+				<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
+			</ElFormItem>`
+				} */
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			typeDatePicker := `datetime`
 			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
