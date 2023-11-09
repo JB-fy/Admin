@@ -1356,9 +1356,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqCreate = `distinct`
 			ruleReqUpdate = `distinct`
 		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
-			if column[`Null`].String() == `NO` && column[`Type`].String() == `text` {
-				isRequired = true
-			}
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
@@ -1517,9 +1514,6 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqCreate = `json`
 			ruleReqUpdate = `json`
 		} else if gstr.Pos(column[`Type`].String(), `text`) != -1 { //text类型
-			if column[`Null`].String() == `NO` {
-				isRequired = true
-			}
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
@@ -3094,13 +3088,9 @@ const ` + field + `Handle = reactive({
 })`
 		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
 			if column[`Type`].String() == `text` {
-				requiredStr := ``
-				if column[`Null`].String() == `NO` {
-					requiredStr = ` required: true,`
-				}
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'string',` + requiredStr + ` trigger: 'blur', message: t('validation.input') },
+			{ type: 'string', trigger: 'blur', message: t('validation.input') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
