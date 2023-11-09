@@ -2884,9 +2884,9 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 				formatDatePicker = `YYYY-MM-DD`
 			}
 
-			if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` { //start_前缀
+			if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //start_前缀
 				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-			} else if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` { //end_前缀
+			} else if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //end_前缀
 				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
 			}
 
@@ -3305,9 +3305,9 @@ const ` + field + `Handle = reactive({
 				requiredStr = ` required: true,`
 			}
 
-			if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` { //start_前缀
+			if gstr.SubStr(fieldCaseSnake, 0, 6) == `start_` && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //start_前缀
 				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-			} else if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` { //end_前缀
+			} else if gstr.SubStr(fieldCaseSnake, 0, 4) == `end_` && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //end_前缀
 				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
 			}
 
