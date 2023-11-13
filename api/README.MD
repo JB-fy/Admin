@@ -22,8 +22,8 @@ gf gen service
 表内尽量根据表名设置xxxxId主键和xxxxName名称两个字段（作用1：常用于前端部分组件，如MySelect.vue组件；作用2：当其它表存在与该表主键同名的关联字段时，会自动生成联表查询代码）
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 	部分常用字段：
-		密码 		命名：password|passwd；类型：char(32)；注意：password|passwd,salt同时存在时，有特殊处理
-		加密盐 		命名：salt；类型：char(8)；注意：password|passwd,salt同时存在时，(才)有特殊处理
+		密码 		命名：password；类型：char(32)；注意：password,salt同时存在时，有特殊处理
+		加密盐 		命名：salt；类型：char(8)；注意：password,salt同时存在时，(才)有特殊处理
 		父级		命名：pid；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，有特殊处理
 		层级		命名：level；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
 		层级路径	命名：idPath|id_path；类型：varchar；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
@@ -35,6 +35,7 @@ gf gen service
 		名称		命名：name后缀；类型：varchar；
 		标识		命名：code后缀；类型：varchar；
 		手机		命名：mobile,phone后缀；类型：varchar；
+		密码		命名：password后缀；类型：char(32)；
 		链接		命名：url,link后缀；类型：varchar；
 		IP			命名：IP后缀；类型：varchar；
 		关联ID		命名：id后缀；类型：int等类型；
