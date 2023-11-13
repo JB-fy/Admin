@@ -18,25 +18,25 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         account: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
         ],
         phone: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
         ],
         nickname: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
         ],
         avatar: [
             { type: 'url', trigger: 'change', message: t('validation.upload') },
-            { type: 'string', min: 1, max: 200, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 200 }) },
+            { type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) },
         ],
         password: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
         ],
         repeatPassword: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
             {
                 required: computed((): boolean => { return saveForm.data.password ? true : false; }),
                 validator: (rule: any, value: any, callback: any) => {
@@ -48,7 +48,7 @@ const saveForm = reactive({
             },
         ],
         passwordToCheck: [
-            { type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+            { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
             {
                 required: computed((): boolean => { return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false; }), trigger: 'blur', message: t('profile.tip.passwordToCheck')
             },

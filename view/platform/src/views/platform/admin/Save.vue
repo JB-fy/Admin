@@ -14,22 +14,22 @@ const saveForm = reactive({
 	} as { [propName: string]: any },
 	rules: {
 		phone: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.account ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.account ? false : true; }), max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
 			{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
 		],
 		account: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.phone ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.phone ? false : true; }), max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
 			{ pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
 		],
 		password: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
 		],
 		nickname: [
-			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
 		],
 		avatar: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: 200, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 200 }) },
+			{ type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) },
 		],
 		isStop: [
 			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },

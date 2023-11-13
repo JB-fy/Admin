@@ -20,13 +20,13 @@ type MenuListFilter struct {
 	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
 	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
-	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	MenuId         *uint       `json:"menuId,omitempty" v:"min:1" dc:"菜单ID"`
-	MenuName       string      `json:"menuName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	MenuName       string      `json:"menuName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 	Pid            *uint       `json:"pid,omitempty" v:"" dc:"父ID"`
 	Level          *uint       `json:"level,omitempty" v:"min:1" dc:"层级"`
-	MenuUrl        string      `json:"menuUrl,omitempty" v:"length:1,120" dc:"链接"`
+	MenuUrl        string      `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
@@ -93,11 +93,11 @@ type MenuInfo struct {
 /*--------新增 开始--------*/
 type MenuCreateReq struct {
 	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"创建"`
-	MenuName  *string `json:"menuName,omitempty" v:"required|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	MenuName  *string `json:"menuName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
-	MenuIcon  *string `json:"menuIcon,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"图标"`
-	MenuUrl   *string `json:"menuUrl,omitempty" v:"length:1,120" dc:"链接"`
+	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"图标"`
+	MenuUrl   *string `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extraData,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" v:"between:0,100" dc:"排序值。从小到大排序，默认50，范围0-100"`
 	IsStop    *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -109,11 +109,11 @@ type MenuCreateReq struct {
 type MenuUpdateReq struct {
 	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"更新"`
 	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	MenuName  *string `json:"menuName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	MenuName  *string `json:"menuName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
-	MenuIcon  *string `json:"menuIcon,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"图标"`
-	MenuUrl   *string `json:"menuUrl,omitempty" v:"length:1,120" dc:"链接"`
+	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"图标"`
+	MenuUrl   *string `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extraData,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" v:"between:0,100" dc:"排序值。从小到大排序，默认50，范围0-100"`
 	IsStop    *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`

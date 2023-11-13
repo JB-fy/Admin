@@ -11,7 +11,7 @@ const loginForm = reactive({
     },
     rules: {
         loginName: [
-            { type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) }
+            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }
         ],
         password: [
             { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }

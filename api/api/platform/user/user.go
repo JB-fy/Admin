@@ -20,15 +20,15 @@ type UserListFilter struct {
 	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
 	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
-	Label          string      `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	UserId         *uint       `json:"userId,omitempty" v:"min:1" dc:"用户ID"`
-	Phone          string      `json:"phone,omitempty" v:"length:1,30|phone" dc:"手机"`
-	Account        string      `json:"account,omitempty" v:"length:1,30" dc:"账号"`
-	Nickname       string      `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
+	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Account        string      `json:"account,omitempty" v:"max-length:30" dc:"账号"`
+	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	IdCardName     string      `json:"idCardName,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
-	IdCardNo       string      `json:"idCardNo,omitempty" v:"length:1,30" dc:"身份证号码"`
+	IdCardName     string      `json:"idCardName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
+	IdCardNo       string      `json:"idCardNo,omitempty" v:"max-length:30" dc:"身份证号码"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`

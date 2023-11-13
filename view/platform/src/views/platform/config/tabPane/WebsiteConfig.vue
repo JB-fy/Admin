@@ -10,11 +10,10 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         userAgreement: [
-            //{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         privacyAgreement: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
     initData: async () => {

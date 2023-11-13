@@ -1284,7 +1284,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	apiResColumn := ``
 	apiResColumnAlloweFieldList := ``
 	if tpl.LabelHandle.LabelField != `` {
-		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
+		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
 		apiResColumn += `Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`\n"
 	}
 	for _, column := range tpl.TableColumnList {
@@ -1334,8 +1334,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				typeReqCreate = `*string`
 				typeReqUpdate = `*string`
 				typeRes = `*string`
-				ruleReqCreate = `length:1,` + resultStr[1] + `|url`
-				ruleReqUpdate = `length:1,` + resultStr[1] + `|url`
+				ruleReqCreate = `max-length:` + resultStr[1] + `|url`
+				ruleReqUpdate = `max-length:` + resultStr[1] + `|url`
 			} else {
 				if column[`Null`].String() == `NO` {
 					isRequired = true
@@ -1368,9 +1368,9 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
-			ruleReqFilter = `length:1,` + resultStr[1]
-			ruleReqCreate = `length:1,` + resultStr[1]
-			ruleReqUpdate = `length:1,` + resultStr[1]
+			ruleReqFilter = `max-length:` + resultStr[1]
+			ruleReqCreate = `max-length:` + resultStr[1]
+			ruleReqUpdate = `max-length:` + resultStr[1]
 			if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
 				isRequired = true
 			}
@@ -1408,7 +1408,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
-			ruleReqFilter = `length:1,` + resultStr[1]
+			ruleReqFilter = `max-length:` + resultStr[1]
 			ruleReqCreate = `size:` + resultStr[1]
 			ruleReqUpdate = `size:` + resultStr[1]
 			if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
@@ -2986,7 +2986,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		} else if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(field) && column[`Type`].String() == `char(32)` { //password|passwd
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3002,7 +3002,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
+			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
 		],`
 			} else {
 				multipleStr = ` :multiple="true"`
@@ -3027,7 +3027,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-			{ type: 'string', min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },
+			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
 		],`
 			} else {
 				multipleStr = ` :multiple="true"`
@@ -3038,8 +3038,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-			// { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
-			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) },
+			// { type: 'array', min: 1, max: 10, trigger: 'change', message: t('validation.between.upload', { min: 1, max: 10 }) },
 		],`
 			}
 			viewSaveField += `
@@ -3056,8 +3055,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewSaveRule += `
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required')/* , defaultField: { type: 'string', message: t('validation.input') } */ },
-			// { type: 'array', min: 1, trigger: 'change', message: '' },
-			// { type: 'array', max: 10, trigger: 'change', message: '' },
+			// { type: 'array', min: 1, max: 10, trigger: 'change', message: '' },
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3148,7 +3146,7 @@ const ` + field + `Handle = reactive({
 			}
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'string',` + requiredStr + ` min: 1, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: 1, max: ` + resultStr[1] + ` }) },` + ruleStr + `
+			{ type: 'string',` + requiredStr + ` max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },` + ruleStr + `
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3169,7 +3167,7 @@ const ` + field + `Handle = reactive({
 			}
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'string',` + requiredStr + ` min: ` + resultStr[1] + `, max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.between.string', { min: ` + resultStr[1] + `, max: ` + resultStr[1] + ` }) },` + ruleStr + `
+			{ type: 'string',` + requiredStr + ` len: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.size.string', { size: ` + resultStr[1] + ` }) },` + ruleStr + `
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3241,6 +3239,8 @@ const ` + field + `Handle = reactive({
 				viewSaveField += `
 				</ElFormItem>`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
+				viewSaveDataInit += `
+		` + field + `: ` + column[`Default`].String() + `,`
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },

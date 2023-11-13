@@ -32,15 +32,15 @@ type ProfileInfo struct {
 /*--------修改个人信息 开始--------*/
 type ProfileUpdateReq struct {
 	g.Meta               `path:"/profile/update" method:"post" tags:"APP/我的" sm:"修改个人信息"`
-	Phone                *string     `json:"phone,omitempty" v:"length:1,30|phone" dc:"手机"`
-	Account              *string     `json:"account,omitempty" v:"length:1,30|passport" dc:"账号"`
-	Nickname             *string     `json:"nickname,omitempty" v:"length:1,30" dc:"昵称"`
-	Avatar               *string     `json:"avatar,omitempty" v:"length:1,200|url" dc:"头像"`
+	Phone                *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Account              *string     `json:"account,omitempty" v:"max-length:30|passport" dc:"账号"`
+	Nickname             *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar               *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Gender               *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday             *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	Address              *string     `json:"address,omitempty" v:"length:1,60" dc:"详细地址"`
-	IdCardName           *string     `json:"idCardName,omitempty" v:"required-with:IdCardNo|length:1,30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
-	IdCardNo             *string     `json:"idCardNo,omitempty" v:"required-with:IdCardName|length:1,30" dc:"身份证号码"`
+	Address              *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
+	IdCardName           *string     `json:"idCardName,omitempty" v:"required-with:IdCardNo|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
+	IdCardNo             *string     `json:"idCardNo,omitempty" v:"required-with:IdCardName|max-length:30" dc:"身份证号码"`
 	Password             *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
 	PasswordToCheck      *string     `json:"passwordToCheck,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号|密码用，passwordToCheck和smsCodeToPassword传一个即可"`
 	SmsCodeToPassword    *string     `json:"smsCodeToPassword,omitempty" v:"size:4" dc:"短信验证码。修改密码用，passwordToCheck和smsCodeToPassword传一个即可"`

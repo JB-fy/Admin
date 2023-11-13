@@ -14,7 +14,7 @@ const saveForm = reactive({
 	} as { [propName: string]: any },
 	rules: {
 		menuName: [
-			{ type: 'string', required: true, min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		sceneId: [
@@ -24,11 +24,11 @@ const saveForm = reactive({
 			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
 		],
 		menuIcon: [
-			{ type: 'string', min: 1, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 30 }) },
+			{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		menuUrl: [
-			{ type: 'string', min: 1, max: 120, trigger: 'blur', message: t('validation.between.string', { min: 1, max: 120 }) },
+			{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) },
 		],
 		extraData: [
 			{
