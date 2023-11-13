@@ -58,4 +58,4 @@ gf gen service
 
 # 常见错误处理
 
-1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./internal/dao/auth/allow/allow.go)解决
+1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./internal/dao/user/allow/allow.go)解决

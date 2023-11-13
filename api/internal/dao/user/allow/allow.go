@@ -25,7 +25,7 @@ import (
 type (
 	DaoUser interface {
 		dao.DaoInterface
-		Columns() internal.UserColumns
+		Columns() *internal.UserColumns
 	}
 )
 
