@@ -23,13 +23,13 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         aliyunSmsEndpoint: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         aliyunSmsSignName: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         aliyunSmsTemplateCode: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
     initData: async () => {

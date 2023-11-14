@@ -142,7 +142,7 @@ const table = reactive({
 						'max': 100,
 						'step': 1,
 						'step-strictly': true,
-						'controls': false,  //控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
+						'controls': false,	//控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
 						'controls-position': 'right',
 						onChange: (val: number) => {
 							currentVal = val
@@ -161,10 +161,10 @@ const table = reactive({
 						},
 						onKeydown: (event: any) => {
 							switch (event.keyCode) {
-								//case 27:    //Esc键：Escape
-								//case 32:    //空格键：" "
-								case 13:    //Enter键：Enter
-									//props.rowData.editSort = false  //也会触发onBlur事件
+								// case 27:	//Esc键：Escape
+								// case 32:	//空格键：" "
+								case 13:	//Enter键：Enter
+									// props.rowData.editSort = false	//也会触发onBlur事件
 									currentRef?.blur()
 									break;
 							}
@@ -194,6 +194,7 @@ const table = reactive({
 			return [
 				h(ElSwitch as any, {
 					'model-value': props.rowData.isStop,
+					// 'disabled': true,
 					'active-value': 1,
 					'inactive-value': 0,
 					'inline-prompt': true,
@@ -207,7 +208,7 @@ const table = reactive({
 						}).then((res) => {
 							props.rowData.isStop = val
 						}).catch((error) => { })
-					}
+					},
 				})
 			]
 		},

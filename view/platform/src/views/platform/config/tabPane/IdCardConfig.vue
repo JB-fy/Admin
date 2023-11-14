@@ -18,10 +18,10 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         aliyunIdCardPath: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         aliyunIdCardAppcode: [
-            { type: 'string', trigger: 'blur' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
     initData: async () => {

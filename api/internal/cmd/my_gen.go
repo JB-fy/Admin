@@ -1025,6 +1025,27 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 					daoParseFilter += daoParseFilterTmp
 				}
 			}
+		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
+			if column[`Null`].String() == `YES` {
+				daoParseInsertTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				insertData[k] = v
+				if gconv.String(v) == ` + "``" + ` {
+					insertData[k] = nil
+				}`
+				if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
+					daoParseInsert += daoParseInsertTmp
+				}
+				daoParseUpdateTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				updateData[tableThis+` + "`.`" + `+k] = v
+				if gconv.String(v) == ` + "``" + ` {
+					updateData[tableThis+` + "`.`" + `+k] = nil
+				}`
+				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
+					daoParseUpdate += daoParseUpdateTmp
+				}
+			}
 		}
 	}
 
@@ -2209,7 +2230,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					default: () => {
 						const content = imageList.map((item) => {
 							return h(ElImage as any, {
-								'style': 'width: 45px;',    //不想显示滚动条，需设置table属性row-height增加行高
+								'style': 'width: 45px;',	//不想显示滚动条，需设置table属性row-height增加行高
 								'src': item,
 								'lazy': true,
 								'hide-on-click-modal': true,
@@ -2251,7 +2272,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					default: () => {
 						const content = videoList.map((item) => {
 							return h('video', {
-								'style': 'width: 120px; height: 80px;',    //不想显示滚动条，需设置table属性row-height增加行高
+								'style': 'width: 120px; height: 80px;',	//不想显示滚动条，需设置table属性row-height增加行高
 								'preload': 'none',
 								'controls': true,
 								'src': item
@@ -2329,7 +2350,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 						'max': 100,
 						'step': 1,
 						'step-strictly': true,
-						'controls': false,  //控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
+						'controls': false,	//控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
 						'controls-position': 'right',
 						onChange: (val: number) => {
 							currentVal = val
@@ -2348,10 +2369,10 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 						},
 						onKeydown: (event: any) => {
 							switch (event.keyCode) {
-								//case 27:    //Esc键：Escape
-								//case 32:    //空格键：" "
-								case 13:    //Enter键：Enter
-									//props.rowData.edit` + gstr.CaseCamel(field) + ` = false  //也会触发onBlur事件
+								// case 27:	//Esc键：Escape
+								// case 32:	//空格键：" "
+								case 13:	//Enter键：Enter
+									// props.rowData.edit` + gstr.CaseCamel(field) + ` = false	//也会触发onBlur事件
 									currentRef?.blur()
 									break;
 							}
@@ -2401,6 +2422,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			return [
 				h(ElSwitch as any, {
 					'model-value': props.rowData.` + field + `,
+					// 'disabled': true,
 					'active-value': 1,
 					'inactive-value': 0,
 					'inline-prompt': true,
@@ -2416,7 +2438,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 						}).then((res) => {
 							props.rowData.` + field + ` = val
 						}).catch((error) => { })
-					}`
+					},`
 				}
 				cellRendererOfColumn += `
 				})
@@ -3019,8 +3041,8 @@ import md5 from 'js-md5'`
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'url', trigger: 'change', message: t('validation.upload') },
 			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
+			{ type: 'url', trigger: 'change', message: t('validation.upload') },
 		],`
 			} else {
 				multipleStr = ` :multiple="true"`
@@ -3031,8 +3053,7 @@ import md5 from 'js-md5'`
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-			// { type: 'array', min: 1, trigger: 'change', message: t('validation.min.upload', { min: 1 }) },
-			// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }) },
+			// { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
 		],`
 			}
 			viewSaveField += `
@@ -3044,8 +3065,8 @@ import md5 from 'js-md5'`
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
-			{ type: 'url', trigger: 'change', message: t('validation.upload') },
 			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
+			{ type: 'url', trigger: 'change', message: t('validation.upload') },
 		],`
 			} else {
 				multipleStr = ` :multiple="true"`
@@ -3056,7 +3077,7 @@ import md5 from 'js-md5'`
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-			// { type: 'array', min: 1, max: 10, trigger: 'change', message: t('validation.between.upload', { min: 1, max: 10 }) },
+			// { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
 		],`
 			}
 			viewSaveField += `
@@ -3072,8 +3093,8 @@ import md5 from 'js-md5'`
 			}
 			viewSaveRule += `
 		` + field + `: [
-			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required')/* , defaultField: { type: 'string', message: t('validation.input') } */ },
-			// { type: 'array', min: 1, max: 10, trigger: 'change', message: '' },
+			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required') },
+			// { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
@@ -3336,12 +3357,18 @@ const ` + field + `Handle = reactive({
 					<ElDatePicker v-model="saveForm.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
 				</ElFormItem>`
 		} else if column[`Type`].String() == `json` { //json类型
+			requiredStr := ``
+			if column[`Null`].String() == `NO` {
+				requiredStr = `
+				required: true,`
+			}
 			viewSaveRule += `
 		` + field + `: [
 			{
-				type: 'object',
+				type: 'object',` + requiredStr + `
 				/* fields: {
-					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) },
+					xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
+					xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
 				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
@@ -3433,7 +3460,7 @@ const saveDrawer = reactive({
 	},
 	buttonClose: () => {
 		//saveCommon.visible = false
-		saveDrawer.ref.handleClose()    //会触发beforeClose
+		saveDrawer.ref.handleClose()	//会触发beforeClose
 	}
 })` + viewFieldHandle + `
 </script>

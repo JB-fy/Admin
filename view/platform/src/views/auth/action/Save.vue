@@ -8,6 +8,7 @@ const saveForm = reactive({
 	ref: null as any,
 	loading: false,
 	data: {
+		isStop: 0,
 		...saveCommon.data
 	} as { [propName: string]: any },
 	rules: {
@@ -25,9 +26,9 @@ const saveForm = reactive({
 		isStop: [
 			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
-        sceneIdArr: [
-            { type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }
-        ],
+		sceneIdArr: [
+			{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }
+		],
 	} as any,
 	submit: () => {
 		saveForm.ref.validate(async (valid: boolean) => {
@@ -69,7 +70,7 @@ const saveDrawer = reactive({
 	},
 	buttonClose: () => {
 		//saveCommon.visible = false
-		saveDrawer.ref.handleClose()    //会触发beforeClose
+		saveDrawer.ref.handleClose()	//会触发beforeClose
 	}
 })
 </script>
@@ -87,9 +88,9 @@ const saveDrawer = reactive({
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>
-                <ElFormItem :label="t('auth.action.name.sceneId')" prop="sceneIdArr">
-                    <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
-                </ElFormItem>
+				<ElFormItem :label="t('auth.action.name.sceneId')" prop="sceneIdArr">
+					<MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+				</ElFormItem>
 				<ElFormItem :label="t('auth.action.name.remark')" prop="remark">
 					<ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" />
 				</ElFormItem>

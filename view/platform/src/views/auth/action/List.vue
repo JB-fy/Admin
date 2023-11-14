@@ -84,6 +84,7 @@ const table = reactive({
 			return [
 				h(ElSwitch as any, {
 					'model-value': props.rowData.isStop,
+					// 'disabled': true,
 					'active-value': 1,
 					'inactive-value': 0,
 					'inline-prompt': true,
@@ -97,7 +98,7 @@ const table = reactive({
 						}).then((res) => {
 							props.rowData.isStop = val
 						}).catch((error) => { })
-					}
+					},
 				})
 			]
 		},

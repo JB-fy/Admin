@@ -83,6 +83,11 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}) gdb.ModelHand
 					hookData[`pIdPath`] = `0`
 					hookData[`pLevel`] = 0
 				}
+			case daoThis.Columns().ExtraData:
+				insertData[k] = v
+				if gconv.String(v) == `` {
+					insertData[k] = nil
+				}
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					insertData[k] = v
@@ -145,6 +150,11 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}) gdb.ModelHand
 				}
 				updateData[tableThis+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[tableThis+`.`+daoThis.Columns().Level] = pLevel + 1
+			case daoThis.Columns().ExtraData:
+				updateData[tableThis+`.`+k] = v
+				if gconv.String(v) == `` {
+					updateData[tableThis+`.`+k] = nil
+				}
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[tableThis+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式

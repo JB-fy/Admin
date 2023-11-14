@@ -26,10 +26,10 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         localUploadSignKey: [
-            { type: 'string', trigger: 'blur', message: '' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         localUploadFileSaveDir: [
-            { type: 'string', trigger: 'blur', message: '' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         localUploadFileUrlPrefix: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
@@ -38,7 +38,7 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         aliyunOssBucket: [
-            { type: 'string', trigger: 'blur', message: '' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         aliyunOssAccessKeyId: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
@@ -50,10 +50,10 @@ const saveForm = reactive({
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         aliyunOssRoleArn: [
-            { type: 'string', trigger: 'blur', message: '' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         aliyunOssEndpoint: [
-            { type: 'string', trigger: 'blur', message: '' },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
     initData: async () => {

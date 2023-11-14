@@ -8,6 +8,7 @@ const saveForm = reactive({
 	ref: null as any,
 	loading: false,
 	data: {
+		isStop: 0,
 		...saveCommon.data
 	} as { [propName: string]: any },
 	rules: {
@@ -76,7 +77,7 @@ const saveDrawer = reactive({
 	},
 	buttonClose: () => {
 		//saveCommon.visible = false
-		saveDrawer.ref.handleClose()    //会触发beforeClose
+		saveDrawer.ref.handleClose()	//会触发beforeClose
 	}
 })
 </script>

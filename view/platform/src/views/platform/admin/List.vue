@@ -92,7 +92,7 @@ const table = reactive({
 					default: () => {
 						const content = imageList.map((item) => {
 							return h(ElImage as any, {
-								'style': 'width: 45px;',    //不想显示滚动条，需设置table属性row-height增加行高
+								'style': 'width: 45px;',	//不想显示滚动条，需设置table属性row-height增加行高
 								'src': item,
 								'lazy': true,
 								'hide-on-click-modal': true,
@@ -116,6 +116,7 @@ const table = reactive({
 			return [
 				h(ElSwitch as any, {
 					'model-value': props.rowData.isStop,
+					// 'disabled': true,
 					'active-value': 1,
 					'inactive-value': 0,
 					'inline-prompt': true,
@@ -129,7 +130,7 @@ const table = reactive({
 						}).then((res) => {
 							props.rowData.isStop = val
 						}).catch((error) => { })
-					}
+					},
 				})
 			]
 		},

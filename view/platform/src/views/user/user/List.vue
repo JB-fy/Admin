@@ -92,7 +92,7 @@ const table = reactive({
 					default: () => {
 						const content = imageList.map((item) => {
 							return h(ElImage as any, {
-								'style': 'width: 45px;',    //不想显示滚动条，需设置table属性row-height增加行高
+								'style': 'width: 45px;',	//不想显示滚动条，需设置table属性row-height增加行高
 								'src': item,
 								'lazy': true,
 								'hide-on-click-modal': true,
@@ -153,7 +153,6 @@ const table = reactive({
 		key: 'idCardNo',
 		align: 'center',
 		width: 150,
-		hidden: true,
 	},
 	{
 		dataKey: 'isStop',
@@ -165,6 +164,7 @@ const table = reactive({
 			return [
 				h(ElSwitch as any, {
 					'model-value': props.rowData.isStop,
+					// 'disabled': true,
 					'active-value': 1,
 					'inactive-value': 0,
 					'inline-prompt': true,
@@ -178,7 +178,7 @@ const table = reactive({
 						}).then((res) => {
 							props.rowData.isStop = val
 						}).catch((error) => { })
-					}
+					},
 				})
 			]
 		},
@@ -198,7 +198,25 @@ const table = reactive({
 		align: 'center',
 		width: 150,
 		sortable: true,
-	}] as any,
+	},
+	/* {
+		title: t('common.name.action'),
+		key: 'action',
+		align: 'center',
+		width: 250,
+		fixed: 'right',
+		cellRenderer: (props: any): any => {
+			return [
+				h(ElButton, {
+					type: 'primary',
+					size: 'small',
+					onClick: () => handleEditCopy(props.rowData.id)
+				}, {
+					default: () => [h(AutoiconEpEdit), t('common.edit')]
+				}),
+			]
+		},
+	} */] as any,
 	data: [],
 	loading: false,
 	sort: { key: 'id', order: 'desc' } as any,
@@ -209,6 +227,25 @@ const table = reactive({
 	},
 })
 
+const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
+//编辑|复制
+const handleEditCopy = (id: number, type: string = 'edit') => {
+	request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/info', { id: id }).then((res) => {
+		saveCommon.data = { ...res.data.info }
+		switch (type) {
+			case 'edit':
+				saveCommon.data.idArr = [saveCommon.data.id]
+				delete saveCommon.data.id
+				saveCommon.title = t('common.edit')
+				break;
+			case 'copy':
+				delete saveCommon.data.id
+				saveCommon.title = t('common.copy')
+				break;
+		}
+		saveCommon.visible = true
+	}).catch(() => { })
+}
 //更新
 const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
 	await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/update', param, true)

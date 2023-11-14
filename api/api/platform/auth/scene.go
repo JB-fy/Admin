@@ -78,7 +78,7 @@ type SceneCreateReq struct {
 	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"创建"`
 	SceneName   *string `json:"sceneName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
-	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	SceneConfig *string `json:"sceneConfig,omitempty" v:"required|json" dc:"配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 

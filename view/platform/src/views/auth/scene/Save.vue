@@ -8,6 +8,7 @@ const saveForm = reactive({
 	ref: null as any,
 	loading: false,
 	data: {
+		isStop: 0,
 		...saveCommon.data
 	} as { [propName: string]: any },
 	rules: {
@@ -22,11 +23,12 @@ const saveForm = reactive({
 		sceneConfig: [
 			{
 				type: 'object',
+				required: true,
 				fields: {
-                    signKey: { type: 'string', min: 1, message: 'signKey' + t('validation.min.string', { min: 1 }) },
-                    signType: { type: 'string', min: 1, message: 'signType' + t('validation.min.string', { min: 1 }) },
-                    expireTime: { type: 'integer', min: 1, message: 'expireTime' + t('validation.min.number', { min: 1 }) },
-                },
+					signType: { type: 'string', required: true, message: 'signType' + t('validation.required') },
+					signKey: { type: 'string', required: true, message: 'signKey' + t('validation.required') },
+					expireTime: { type: 'integer', required: true, min: 1, message: 'expireTime' + t('validation.min.number', { min: 1 }) },
+				},
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
 						return undefined
@@ -85,7 +87,7 @@ const saveDrawer = reactive({
 	},
 	buttonClose: () => {
 		//saveCommon.visible = false
-		saveDrawer.ref.handleClose()    //会触发beforeClose
+		saveDrawer.ref.handleClose()	//会触发beforeClose
 	}
 })
 </script>

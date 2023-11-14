@@ -85,13 +85,14 @@ func (daoThis *userDao) ParseInsert(insert map[string]interface{}) gdb.ModelHand
 					insertData[k] = nil
 				}
 			case daoThis.Columns().Password:
-				salt := grand.S(8)
 				password := gconv.String(v)
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}
+				salt := grand.S(8)
 				insertData[daoThis.Columns().Salt] = salt
-				insertData[k] = gmd5.MustEncrypt(password + salt)
+				password = gmd5.MustEncrypt(password + salt)
+				insertData[k] = password
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					insertData[k] = v
@@ -141,13 +142,14 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}) gdb.ModelHand
 					updateData[tableThis+`.`+k] = nil
 				}
 			case daoThis.Columns().Password:
-				salt := grand.S(8)
 				password := gconv.String(v)
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}
+				salt := grand.S(8)
 				updateData[tableThis+`.`+daoThis.Columns().Salt] = salt
-				updateData[tableThis+`.`+k] = gmd5.MustEncrypt(password + salt)
+				password = gmd5.MustEncrypt(password + salt)
+				updateData[tableThis+`.`+k] = password
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[tableThis+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式

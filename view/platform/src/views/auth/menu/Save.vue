@@ -10,6 +10,7 @@ const saveForm = reactive({
 	data: {
 		pid: 0,
 		sort: 50,
+		isStop: 0,
 		...saveCommon.data
 	} as { [propName: string]: any },
 	rules: {
@@ -34,7 +35,8 @@ const saveForm = reactive({
 			{
 				type: 'object',
 				/* fields: {
-					xxxx: { type: 'string', min: 1, message: 'xxxx' + t('validation.min.string', { min: 1 }) },
+					xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
+					xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
 				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
@@ -97,7 +99,7 @@ const saveDrawer = reactive({
 	},
 	buttonClose: () => {
 		//saveCommon.visible = false
-		saveDrawer.ref.handleClose()    //会触发beforeClose
+		saveDrawer.ref.handleClose()	//会触发beforeClose
 	}
 })
 </script>
