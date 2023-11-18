@@ -151,7 +151,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}) gdb.ModelHand
 				updateData[tableThis+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[tableThis+`.`+daoThis.Columns().Level] = pLevel + 1
 			case daoThis.Columns().ExtraData:
-				updateData[tableThis+`.`+k] = v
+				updateData[tableThis+`.`+k] = gvar.New(v)
 				if gconv.String(v) == `` {
 					updateData[tableThis+`.`+k] = nil
 				}
