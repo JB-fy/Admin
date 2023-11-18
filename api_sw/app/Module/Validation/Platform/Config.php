@@ -12,6 +12,8 @@ class Config extends AbstractValidation
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
         'configKeyArr.*' => 'sometimes|required|string|between:1,30|distinct',
 
+        'hotSearch' => 'array',
+        'hotSearch.*' => 'sometimes|required|string|min:1|distinct',
         'userAgreement' => 'string',
         'privacyAgreement' => 'string',
 

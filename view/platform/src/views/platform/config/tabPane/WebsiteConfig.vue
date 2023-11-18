@@ -5,10 +5,15 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
+        hotSearch: [],
         userAgreement: '',
         privacyAgreement: '',
     } as { [propName: string]: any },
     rules: {
+        hotSearch: [
+			// { type: 'array', trigger: 'change', message: t('validation.required') },
+			{ type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
+        ],
         userAgreement: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
@@ -45,12 +50,46 @@ const saveForm = reactive({
     }
 })
 
+const hotSearchHandle = reactive({
+    ref: null as any,
+    visible: false,
+    value: undefined,
+    typeArr: ['', 'success', 'danger', 'info', 'warning'] as any,
+    visibleChange: () => {
+        hotSearchHandle.visible = true
+        nextTick(() => {
+            hotSearchHandle.ref?.focus()
+        })
+    },
+    addValue: () => {
+        if (hotSearchHandle.value) {
+            saveForm.data.hotSearch.push(hotSearchHandle.value)
+        }
+        hotSearchHandle.visible = false
+        hotSearchHandle.value = undefined
+    },
+    delValue: (item: any) => {
+        saveForm.data.hotSearch.splice(saveForm.data.hotSearch.indexOf(item), 1)
+    },
+})
+
 saveForm.initData()
 </script>
 
 <template>
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
+        <ElFormItem :label="t('platform.config.name.hotSearch')" prop="hotSearch">
+            <ElTag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.typeArr[index % 5]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+                {{ item }}
+            </ElTag>
+            <template v-if="saveForm.data.hotSearch.length < 10">
+                <ElInput v-if="hotSearchHandle.visible" :ref="(el: any) => { hotSearchHandle.ref = el }" v-model="hotSearchHandle.value" :placeholder="t('platform.config.name.hotSearch')" @keyup.enter="hotSearchHandle.addValue" @blur="hotSearchHandle.addValue" size="small" style="width: 100px;" />
+                <ElButton v-else type="primary" size="small" @click="hotSearchHandle.visibleChange">
+                    <AutoiconEpPlus />{{ t('common.add') }}
+                </ElButton>
+            </template>
+        </ElFormItem>
         <ElFormItem :label="t('platform.config.name.userAgreement')" prop="userAgreement">
             <MyEditor v-model="saveForm.data.userAgreement" />
         </ElFormItem>

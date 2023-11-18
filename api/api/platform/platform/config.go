@@ -15,8 +15,9 @@ type ConfigGetRes struct {
 }
 
 type Config struct {
-	UserAgreement    *string `json:"userAgreement,omitempty" dc:"用户协议"`
-	PrivacyAgreement *string `json:"privacyAgreement,omitempty" dc:"隐私协议"`
+	HotSearch        *[]string `json:"hotSearch,omitempty" dc:"热门搜索"`
+	UserAgreement    *string   `json:"userAgreement,omitempty" dc:"用户协议"`
+	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" dc:"隐私协议"`
 
 	UploadType               *string `json:"uploadType,omitempty" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" dc:"本地-上传地址"`
@@ -50,8 +51,9 @@ type Config struct {
 type ConfigSaveReq struct {
 	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置中心/平台配置" sm:"保存"`
 
-	UserAgreement    *string `json:"userAgreement,omitempty" v:"" dc:"用户协议"`
-	PrivacyAgreement *string `json:"privacyAgreement,omitempty" v:"" dc:"隐私协议"`
+	HotSearch        *[]string `json:"hotSearch,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
+	UserAgreement    *string   `json:"userAgreement,omitempty" v:"" dc:"用户协议"`
+	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" v:"" dc:"隐私协议"`
 
 	UploadType               *string `json:"uploadType,omitempty" v:"in:local,aliyunOss" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" v:"url" dc:"本地-上传地址"`

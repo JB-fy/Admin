@@ -6,6 +6,7 @@ export default {
 		idCardConfig: '实名认证',
 	},
 	name: {
+		hotSearch: '热门搜索',
 		userAgreement: '用户协议',
 		privacyAgreement: '隐私协议',
 
