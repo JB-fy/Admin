@@ -29,15 +29,15 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 
 	_, okPid := data[daoThis.Columns().Pid]
 	if okPid {
-		pid := gconv.Int(data[daoThis.Columns().Pid])
+		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
 			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(daoThis.Columns().SceneId, daoThis.Columns().IdPath, daoThis.Columns().Level).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			sceneId := gconv.Int(data[daoThis.Columns().SceneId])
-			if pInfo[daoThis.Columns().SceneId].Int() != sceneId {
+			sceneId := gconv.Uint(data[daoThis.Columns().SceneId])
+			if pInfo[daoThis.Columns().SceneId].Uint() != sceneId {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -64,7 +64,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 	_, okPid := data[daoThis.Columns().Pid]
 	if okPid {
 		pInfo := gdb.Record{}
-		pid := gconv.Int(data[daoThis.Columns().Pid])
+		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
 			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -74,21 +74,21 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		}
 		updateChildIdPathAndLevelList := []map[string]interface{}{}
 		for _, id := range idArr {
-			if pid == id.Int() { //父级不能是自身
+			if pid == id.Uint() { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ``)
 				return
 			}
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
-			if pid != oldInfo[daoThis.Columns().Pid].Int() {
+			if pid != oldInfo[daoThis.Columns().Pid].Uint() {
 				pIdPath := `0`
-				pLevel := 0
+				var pLevel uint = 0
 				if pid > 0 {
-					sceneId := oldInfo[daoThis.Columns().SceneId].Int()
+					sceneId := oldInfo[daoThis.Columns().SceneId].Uint()
 					_, okSceneId := data[daoThis.Columns().SceneId]
 					if okSceneId {
-						sceneId = gconv.Int(data[daoThis.Columns().SceneId])
+						sceneId = gconv.Uint(data[daoThis.Columns().SceneId])
 					}
-					if pInfo[daoThis.Columns().SceneId].Int() != sceneId {
+					if pInfo[daoThis.Columns().SceneId].Uint() != sceneId {
 						err = utils.NewErrorCode(ctx, 89999998, ``)
 						return
 					}
@@ -97,7 +97,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 						return
 					}
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
-					pLevel = pInfo[daoThis.Columns().Level].Int()
+					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}
 				updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
 					`newIdPath`: pIdPath + `-` + id.String(),
@@ -112,7 +112,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		}
 	}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
@@ -132,7 +132,7 @@ func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

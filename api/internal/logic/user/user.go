@@ -38,7 +38,7 @@ func (logicThis *sUser) Update(ctx context.Context, filter map[string]interface{
 	}
 	hookData := map[string]interface{}{}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
@@ -52,7 +52,7 @@ func (logicThis *sUser) Delete(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

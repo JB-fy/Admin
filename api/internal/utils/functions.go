@@ -206,11 +206,11 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 }
 
 // 列表转树状
-func Tree(list g.List, id int, priKey string, pidKey string) (tree g.List) {
+func Tree(list g.List, id uint, priKey string, pidKey string) (tree g.List) {
 	tree = g.List{}
 	for k, v := range list {
-		if gconv.Int(v[pidKey]) == id {
-			v[`children`] = Tree(list[(k+1):], gconv.Int(v[priKey]), priKey, pidKey)
+		if gconv.Uint(v[pidKey]) == id {
+			v[`children`] = Tree(list[(k+1):], gconv.Uint(v[priKey]), priKey, pidKey)
 			tree = append(tree, v)
 		}
 	}

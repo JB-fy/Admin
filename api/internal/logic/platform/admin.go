@@ -28,7 +28,7 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 
 	_, okRoleIdArr := data[`roleIdArr`]
 	if okRoleIdArr {
-		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
+		roleIdArr := gconv.SliceUint(data[`roleIdArr`])
 		sceneId, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.PrimaryKey())
 		filterTmp := g.Map{daoAuth.Role.PrimaryKey(): roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}
 		count, _ := daoAuth.Role.ParseDbCtx(ctx).Where(filterTmp).Count()
@@ -55,7 +55,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 
 	_, okRoleIdArr := data[`roleIdArr`]
 	if okRoleIdArr {
-		roleIdArr := gconv.SliceInt(data[`roleIdArr`])
+		roleIdArr := gconv.SliceUint(data[`roleIdArr`])
 		sceneId, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.PrimaryKey())
 		count, _ := daoAuth.Role.ParseDbCtx(ctx).Where(g.Map{daoAuth.Role.PrimaryKey(): roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}).Count()
 		if len(roleIdArr) != count {
@@ -66,7 +66,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 		delete(data, `roleIdArr`)
 	}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
@@ -80,7 +80,7 @@ func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]i
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

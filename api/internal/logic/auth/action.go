@@ -45,7 +45,7 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]inte
 		delete(data, `sceneIdArr`)
 	}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
@@ -59,7 +59,7 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]inte
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }
@@ -69,7 +69,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	//平台超级管理员，无权限限制
-	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[`loginId`].Int() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() {
+	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[`loginId`].Uint() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() {
 		isAuth = true
 		return
 	}

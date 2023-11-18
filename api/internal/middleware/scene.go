@@ -20,7 +20,7 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	if sceneInfo[daoAuth.Scene.Columns().IsStop].Int() == 1 {
+	if sceneInfo[daoAuth.Scene.Columns().IsStop].Uint() == 1 {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999997, ``))
 		return
 	}

@@ -137,7 +137,7 @@ func (daoThis *roleRelToActionDao) ParseUpdate(update map[string]interface{}) gd
 }
 
 // hook update
-func (daoThis *roleRelToActionDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+func (daoThis *roleRelToActionDao) HookUpdate(data map[string]interface{}, idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			/* //不能这样拿idArr，联表时会有bug
@@ -160,7 +160,7 @@ func (daoThis *roleRelToActionDao) HookUpdate(data map[string]interface{}, idArr
 }
 
 // hook delete
-func (daoThis *roleRelToActionDao) HookDelete(idArr ...int) gdb.HookHandler {
+func (daoThis *roleRelToActionDao) HookDelete(idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -241,9 +241,9 @@ func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]interface{}, jo
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
-				val := gconv.SliceInt(v)
+				val := gconv.SliceUint(v)
 				switch len(val) {
-				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
+				case 0: //gconv.SliceUint会把0转换成[]uint{}，故不能用转换后的val。必须用原始数据v
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])

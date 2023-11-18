@@ -79,7 +79,7 @@ type MyGenOption struct {
 type MyGenTpl struct {
 	TableColumnList                gdb.Result //表字段详情
 	SceneName                      string     //场景名称
-	SceneId                        int        //场景ID
+	SceneId                        uint       //场景ID
 	TableNameCaseCamel             string     //去除前缀表名（大驼峰）
 	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
 	TableNameCaseSnake             string     //去除前缀表名（蛇形）
@@ -433,7 +433,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	tpl = &MyGenTpl{
 		TableColumnList:         tableColumnList,
 		SceneName:               sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
-		SceneId:                 sceneInfo[daoAuth.Scene.Columns().SceneId].Int(),
+		SceneId:                 sceneInfo[daoAuth.Scene.Columns().SceneId].Uint(),
 		TableNameCaseCamel:      gstr.CaseCamel(tableName),
 		TableNameCaseCamelLower: gstr.CaseCamelLower(tableName),
 		TableNameCaseSnake:      gstr.CaseSnakeFirstUpper(tableName),
@@ -609,7 +609,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 }
 
 // 自动生成操作
-func MyGenAction(ctx context.Context, sceneId int, actionCode string, actionName string) {
+func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionName string) {
 	daoThis := daoAuth.Action
 	columnsThis := daoAuth.Action.Columns()
 	actionName = gstr.Replace(actionName, `/`, `-`)
@@ -631,7 +631,7 @@ func MyGenAction(ctx context.Context, sceneId int, actionCode string, actionName
 }
 
 // 自动生成菜单
-func MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string, menuNameOfEn string) {
+func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
 	daoThis := daoAuth.Menu
 	columnsThis := daoAuth.Menu.Columns()
 	menuNameArr := gstr.Split(menuName, `/`)
@@ -639,7 +639,7 @@ func MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string
 	var pid int64 = 0
 	for _, v := range menuNameArr[:len(menuNameArr)-1] {
 		pidVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.SceneId, sceneId).Where(columnsThis.MenuName, v).Value(daoThis.PrimaryKey())
-		if pidVar.Int() == 0 {
+		if pidVar.Uint() == 0 {
 			pid, _ = service.AuthMenu().Create(ctx, g.Map{
 				columnsThis.SceneId:   sceneId,
 				columnsThis.Pid:       pid,
@@ -655,7 +655,7 @@ func MyGenMenu(ctx context.Context, sceneId int, menuUrl string, menuName string
 
 	menuName = menuNameArr[len(menuNameArr)-1]
 	idVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.SceneId, sceneId).Where(columnsThis.MenuUrl, menuUrl).Value(daoThis.PrimaryKey())
-	id := idVar.Int()
+	id := idVar.Uint()
 	if id == 0 {
 		service.AuthMenu().Create(ctx, g.Map{
 			columnsThis.SceneId:   sceneId,
@@ -874,10 +874,10 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					daoParseInsertTmp := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
-				if gconv.Int(v) > 0 {
+				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
 					hookData[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
-					hookData[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Int()
+					hookData[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				} else {
 					hookData[` + "`pIdPath`" + `] = ` + "`0`" + `
 					hookData[` + "`pLevel`" + `] = 0
@@ -893,7 +893,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				case ` + "`pIdPath`" + `:
 					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gconv.String(v) + ` + "`-`" + ` + gconv.String(id)
 				case ` + "`pLevel`" + `:
-					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gconv.Int(v) + 1
+					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gconv.Uint(v) + 1
 				}
 			}
 			if len(updateSelfData) > 0 {
@@ -906,11 +906,11 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				updateData[tableThis+` + "`.`" + `+k] = v
 				pIdPath := ` + "`0`" + `
-				pLevel := 0
-				if gconv.Int(v) > 0 {
+				var pLevel uint = 0
+				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
 					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
-					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Int()
+					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
 				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gdb.Raw(` + "`CONCAT('`" + ` + pIdPath + ` + "`-', `" + ` + daoThis.PrimaryKey() + ` + "`)`" + `)
 				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1`
@@ -924,7 +924,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				case ` + "`updateChildIdPathAndLevelList`" + `: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{newIdPath: 父级新idPath, oldIdPath: 父级旧idPath, newLevel: 父级新level, oldLevel: 父级旧level}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[` + "`newIdPath`" + `]), gconv.String(v1[` + "`oldIdPath`" + `]), gconv.Int(v1[` + "`newLevel`" + `]), gconv.Int(v1[` + "`oldLevel`" + `]))
+						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[` + "`newIdPath`" + `]), gconv.String(v1[` + "`oldIdPath`" + `]), gconv.Uint(v1[` + "`newLevel`" + `]), gconv.Uint(v1[` + "`oldLevel`" + `]))
 					}
 				}
 			}`
@@ -933,7 +933,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					daoFuncTmp := `
 // 修改pid时，更新所有子孙级的idPath和level
-func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
+func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel uint, oldLevel uint) {
 	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(g.Map{
 		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `: gdb.Raw(` + "`REPLACE(`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + ` + ` + "`, '`" + ` + oldIdPath + ` + "`', '`" + ` + newIdPath + ` + "`')`" + `),
 		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `:  gdb.Raw(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + "` + `" + ` + gconv.String(newLevel-oldLevel)),
@@ -1167,7 +1167,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 
 	_, okPid := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]
 	if okPid {
-		pid := gconv.Int(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
 			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -1207,7 +1207,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 		if tpl.PidHandle.IsCoexist {
 			tplLogic += `
 		pInfo := gdb.Record{}
-		pid := gconv.Int(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
 			pInfo, _ = daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -1217,21 +1217,21 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 		}
 		updateChildIdPathAndLevelList := []map[string]interface{}{}
 		for _, id := range idArr {
-			if pid == id.Int() { //父级不能是自身
+			if pid == id.Uint() { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 				return
 			}
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
-			if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Int() {
+			if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
 				pIdPath := ` + "`0`" + `
-				pLevel := 0
+				var pLevel uint = 0
 				if pid > 0 {
 					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
 						err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
 						return
 					}
 					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
-					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Int()
+					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
 				updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
 					` + "`" + `newIdPath` + "`" + `: pIdPath + ` + "`-`" + ` + id.String(),
@@ -1246,7 +1246,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 		}`
 		} else {
 			tplLogic += `
-		pid := gconv.Int(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
 			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -1255,7 +1255,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 			}
 		}
 		for _, id := range idArr {
-			if pid == id.Int() { //父级不能是自身
+			if pid == id.Uint() { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 				return
 			}
@@ -1266,7 +1266,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
@@ -1290,7 +1290,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

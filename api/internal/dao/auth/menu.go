@@ -75,10 +75,10 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}) gdb.ModelHand
 				insertData[daoThis.PrimaryKey()] = v
 			case daoThis.Columns().Pid:
 				insertData[k] = v
-				if gconv.Int(v) > 0 {
+				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
 					hookData[`pIdPath`] = pInfo[daoThis.Columns().IdPath].String()
-					hookData[`pLevel`] = pInfo[daoThis.Columns().Level].Int()
+					hookData[`pLevel`] = pInfo[daoThis.Columns().Level].Uint()
 				} else {
 					hookData[`pIdPath`] = `0`
 					hookData[`pLevel`] = 0
@@ -118,7 +118,7 @@ func (daoThis *menuDao) HookInsert(data map[string]interface{}) gdb.HookHandler 
 				case `pIdPath`:
 					updateSelfData[daoThis.Columns().IdPath] = gconv.String(v) + `-` + gconv.String(id)
 				case `pLevel`:
-					updateSelfData[daoThis.Columns().Level] = gconv.Int(v) + 1
+					updateSelfData[daoThis.Columns().Level] = gconv.Uint(v) + 1
 				}
 			}
 			if len(updateSelfData) > 0 {
@@ -142,11 +142,11 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}) gdb.ModelHand
 			case daoThis.Columns().Pid:
 				updateData[tableThis+`.`+k] = v
 				pIdPath := `0`
-				pLevel := 0
-				if gconv.Int(v) > 0 {
+				var pLevel uint = 0
+				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
-					pLevel = pInfo[daoThis.Columns().Level].Int()
+					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}
 				updateData[tableThis+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[tableThis+`.`+daoThis.Columns().Level] = pLevel + 1
@@ -182,7 +182,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}) gdb.ModelHand
 }
 
 // hook update
-func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			/* //不能这样拿idArr，联表时会有bug
@@ -205,7 +205,7 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{newIdPath: 父级新idPath, oldIdPath: 父级旧idPath, newLevel: 父级新level, oldLevel: 父级旧level}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[`newIdPath`]), gconv.String(v1[`oldIdPath`]), gconv.Int(v1[`newLevel`]), gconv.Int(v1[`oldLevel`]))
+						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[`newIdPath`]), gconv.String(v1[`oldIdPath`]), gconv.Uint(v1[`newLevel`]), gconv.Uint(v1[`oldLevel`]))
 					}
 				}
 			}
@@ -215,7 +215,7 @@ func (daoThis *menuDao) HookUpdate(data map[string]interface{}, idArr ...int) gd
 }
 
 // hook delete
-func (daoThis *menuDao) HookDelete(idArr ...int) gdb.HookHandler {
+func (daoThis *menuDao) HookDelete(idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -323,9 +323,9 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
-				val := gconv.SliceInt(v)
+				val := gconv.SliceUint(v)
 				switch len(val) {
-				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
+				case 0: //gconv.SliceUint会把0转换成[]uint{}，故不能用转换后的val。必须用原始数据v
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
@@ -348,7 +348,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, joinTableArr 
 				m = m.Where(tableThis+`.`+daoThis.Columns().IsStop, 0)
 				switch gconv.String(val[`sceneCode`]) {
 				case `platform`:
-					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
+					if gconv.Uint(val[`loginId`]) == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
 						continue
 					}
 					tableRole := Role.ParseDbTable(ctx)
@@ -462,7 +462,7 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 // Fill with you ideas below.
 
 // 修改pid时，更新所有子孙级的idPath和level
-func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel int, oldLevel int) {
+func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel uint, oldLevel uint) {
 	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().IdPath, oldIdPath+`-%`).Data(g.Map{
 		daoThis.Columns().IdPath: gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + oldIdPath + `', '` + newIdPath + `')`),
 		daoThis.Columns().Level:  gdb.Raw(daoThis.Columns().Level + ` + ` + gconv.String(newLevel-oldLevel)),

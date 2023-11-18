@@ -15,8 +15,8 @@ type DaoInterface interface {
 	ParseInsert(insert map[string]interface{}) gdb.ModelHandler
 	HookInsert(data map[string]interface{}) gdb.HookHandler
 	ParseUpdate(update map[string]interface{}) gdb.ModelHandler
-	HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler
-	HookDelete(idArr ...int) gdb.HookHandler
+	HookUpdate(data map[string]interface{}, idArr ...uint) gdb.HookHandler
+	HookDelete(idArr ...uint) gdb.HookHandler
 	ParseField(field []string, fieldWithParam map[string]interface{}, afterField *[]string, afterFieldWithParam map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler
 	HookSelect(afterField *[]string, afterFieldWithParam map[string]interface{}) gdb.HookHandler
 	ParseFilter(filter map[string]interface{}, joinTableArr *[]string) gdb.ModelHandler
@@ -74,14 +74,14 @@ func (daoHandlerThis *DaoHandler) Update(data map[string]interface{}) *DaoHandle
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) HookUpdate(hookData map[string]interface{}, idArr ...int) *DaoHandler {
+func (daoHandlerThis *DaoHandler) HookUpdate(hookData map[string]interface{}, idArr ...uint) *DaoHandler {
 	if len(hookData) > 0 {
 		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookUpdate(hookData, idArr...))
 	}
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) HookDelete(idArr ...int) *DaoHandler {
+func (daoHandlerThis *DaoHandler) HookDelete(idArr ...uint) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookDelete(idArr...))
 	return daoHandlerThis
 }

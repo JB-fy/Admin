@@ -124,7 +124,7 @@ func (daoThis *adminDao) HookInsert(data map[string]interface{}) gdb.HookHandler
 			for k, v := range data {
 				switch k {
 				case `roleIdArr`:
-					daoThis.SaveRelRole(ctx, gconv.SliceInt(v), int(id))
+					daoThis.SaveRelRole(ctx, gconv.SliceUint(v), uint(id))
 				}
 			}
 			return
@@ -188,7 +188,7 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}) gdb.ModelHan
 }
 
 // hook update
-func (daoThis *adminDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+func (daoThis *adminDao) HookUpdate(data map[string]interface{}, idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			/* //不能这样拿idArr，联表时会有bug
@@ -204,7 +204,7 @@ func (daoThis *adminDao) HookUpdate(data map[string]interface{}, idArr ...int) g
 			for k, v := range data {
 				switch k {
 				case `roleIdArr`:
-					relIdArr := gconv.SliceInt(v)
+					relIdArr := gconv.SliceUint(v)
 					for _, id := range idArr {
 						daoThis.SaveRelRole(ctx, relIdArr, id)
 					}
@@ -221,7 +221,7 @@ func (daoThis *adminDao) HookUpdate(data map[string]interface{}, idArr ...int) g
 }
 
 // hook delete
-func (daoThis *adminDao) HookDelete(idArr ...int) gdb.HookHandler {
+func (daoThis *adminDao) HookDelete(idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -312,9 +312,9 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, joinTableArr
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
-				val := gconv.SliceInt(v)
+				val := gconv.SliceUint(v)
 				switch len(val) {
-				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
+				case 0: //gconv.SliceUint会把0转换成[]uint{}，故不能用转换后的val。必须用原始数据v
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
@@ -420,15 +420,15 @@ func (daoThis *adminDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.
 // Fill with you ideas below.
 
 // 保存关联角色
-func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int) {
+func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []uint, id uint) {
 	relDao := daoAuth.RoleRelOfPlatformAdmin
 	priKey := relDao.Columns().AdminId
 	relKey := relDao.Columns().RoleId
 	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
-	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
+	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
-	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
+	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
 	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
 		for _, v := range insertRelIdArr {
@@ -442,7 +442,7 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []int, id int
 	/**----新增关联 结束----**/
 
 	/**----删除关联 开始----**/
-	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
+	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
 		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}

@@ -56,7 +56,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// fmt.Println(genv.Set(`X_X`, `xx`))              //key必须由大写和_组成
 	// fmt.Println(g.Cfg().MustGetWithEnv(ctx, `X_X`)) //X_X或x_x或x.x方法都可以读取到
 
-	// fmt.Println(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int())	//获取配置参数
+	// fmt.Println(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint())	//获取配置参数
 
 	// fmt.Println(g.DB(`default`).Model(`tab_user_unsubscribe`).Safe().Ctx(ctx))	//数据库连接
 

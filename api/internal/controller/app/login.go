@@ -34,7 +34,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[userColumns.IsStop].Int() == 1 {
+	if info[userColumns.IsStop].Uint() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
@@ -61,7 +61,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[userColumns.IsStop].Int() == 1 {
+	if info[userColumns.IsStop].Uint() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}

@@ -102,7 +102,7 @@ func (daoThis *actionDao) HookInsert(data map[string]interface{}) gdb.HookHandle
 			for k, v := range data {
 				switch k {
 				case `sceneIdArr`:
-					daoThis.SaveRelScene(ctx, gconv.SliceInt(v), int(id))
+					daoThis.SaveRelScene(ctx, gconv.SliceUint(v), uint(id))
 				}
 			}
 			return
@@ -147,7 +147,7 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}) gdb.ModelHa
 }
 
 // hook update
-func (daoThis *actionDao) HookUpdate(data map[string]interface{}, idArr ...int) gdb.HookHandler {
+func (daoThis *actionDao) HookUpdate(data map[string]interface{}, idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			/* //不能这样拿idArr，联表时会有bug
@@ -163,7 +163,7 @@ func (daoThis *actionDao) HookUpdate(data map[string]interface{}, idArr ...int) 
 			for k, v := range data {
 				switch k {
 				case `sceneIdArr`:
-					relIdArr := gconv.SliceInt(v)
+					relIdArr := gconv.SliceUint(v)
 					for _, id := range idArr {
 						daoThis.SaveRelScene(ctx, relIdArr, id)
 					}
@@ -180,7 +180,7 @@ func (daoThis *actionDao) HookUpdate(data map[string]interface{}, idArr ...int) 
 }
 
 // hook delete
-func (daoThis *actionDao) HookDelete(idArr ...int) gdb.HookHandler {
+func (daoThis *actionDao) HookDelete(idArr ...uint) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -272,9 +272,9 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
-				val := gconv.SliceInt(v)
+				val := gconv.SliceUint(v)
 				switch len(val) {
-				case 0: //gconv.SliceInt会把0转换成[]int{}，故不能用转换后的val。必须用原始数据v
+				case 0: //gconv.SliceUint会把0转换成[]uint{}，故不能用转换后的val。必须用原始数据v
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				case 1:
 					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
@@ -303,7 +303,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, joinTableAr
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, joinTableArr))
 				switch gconv.String(val[`sceneCode`]) {
 				case `platform`:
-					if gconv.Int(val[`loginId`]) == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int() { //平台超级管理员，不再需要其它条件
+					if gconv.Uint(val[`loginId`]) == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
 						continue
 					}
 					tableRole := Role.ParseDbTable(ctx)
@@ -405,15 +405,15 @@ func (daoThis *actionDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb
 // Fill with you ideas below.
 
 // 保存关联场景
-func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id int) {
+func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id uint) {
 	relDao := ActionRelToScene
 	priKey := relDao.Columns().ActionId
 	relKey := relDao.Columns().SceneId
 	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
-	relIdArrOfOld := gconv.SliceInt(relIdArrOfOldTmp)
+	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
-	insertRelIdArr := gset.NewIntSetFrom(relIdArr).Diff(gset.NewIntSetFrom(relIdArrOfOld)).Slice()
+	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
 	if len(insertRelIdArr) > 0 {
 		insertList := []map[string]interface{}{}
 		for _, v := range insertRelIdArr {
@@ -427,7 +427,7 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []int, id i
 	/**----新增关联 结束----**/
 
 	/**----删除关联 开始----**/
-	deleteRelIdArr := gset.NewIntSetFrom(relIdArrOfOld).Diff(gset.NewIntSetFrom(relIdArr)).Slice()
+	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
 		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
 	}

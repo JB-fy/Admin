@@ -31,7 +31,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[userColumns.IsStop].Int() == 1 {
+		if info[userColumns.IsStop].Uint() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}

@@ -26,7 +26,7 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 	daoThis := daoAuth.Role
 	_, okMenuIdArr := data[`menuIdArr`]
 	if okMenuIdArr {
-		menuIdArr := gconv.SliceInt(data[`menuIdArr`])
+		menuIdArr := gconv.SliceUint(data[`menuIdArr`])
 		filterTmp := g.Map{daoAuth.Menu.PrimaryKey(): menuIdArr, daoAuth.Menu.Columns().SceneId: data[`sceneId`]}
 		count, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(filterTmp).Count()
 		if len(menuIdArr) != count {
@@ -36,7 +36,7 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 	}
 	_, okActionIdArr := data[`actionIdArr`]
 	if okActionIdArr {
-		actionIdArr := gconv.SliceInt(data[`actionIdArr`])
+		actionIdArr := gconv.SliceUint(data[`actionIdArr`])
 		filterTmp := g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: data[`sceneId`]}
 		count, _ := daoAuth.ActionRelToScene.ParseDbCtx(ctx).Where(filterTmp).Count()
 		if len(actionIdArr) != count {
@@ -62,7 +62,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 
 	_, okMenuIdArr := data[`menuIdArr`]
 	if okMenuIdArr {
-		menuIdArr := gconv.SliceInt(data[`menuIdArr`])
+		menuIdArr := gconv.SliceUint(data[`menuIdArr`])
 		for _, id := range idArr {
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			filterTmp := g.Map{daoAuth.Menu.PrimaryKey(): menuIdArr, daoAuth.Menu.Columns().SceneId: oldInfo[`sceneId`]}
@@ -81,7 +81,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 	}
 	_, okActionIdArr := data[`actionIdArr`]
 	if okActionIdArr {
-		actionIdArr := gconv.SliceInt(data[`actionIdArr`])
+		actionIdArr := gconv.SliceUint(data[`actionIdArr`])
 		for _, id := range idArr {
 			oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 			filterTmp := g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: oldInfo[`sceneId`]}
@@ -99,7 +99,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 		delete(data, `actionIdArr`)
 	}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceInt(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
 	return
 }
 
@@ -113,7 +113,7 @@ func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceInt(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

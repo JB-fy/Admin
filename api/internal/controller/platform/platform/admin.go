@@ -136,15 +136,14 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-	filter := map[string]interface{}{`id`: req.IdArr}
-	/**--------参数处理 结束--------**/
 
-	/**--------不能修改平台超级管理员 开始--------**/
-	if garray.NewIntArrayFrom(gconv.SliceInt(filter[`id`])).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int()) {
+	if garray.NewFrom(gconv.SliceAny(req.IdArr)).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint()) { //不能修改平台超级管理员
 		err = utils.NewErrorCode(ctx, 30000000, ``)
 		return
 	}
-	/**--------不能修改平台超级管理员 结束--------**/
+
+	filter := map[string]interface{}{`id`: req.IdArr}
+	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminUpdate`)
@@ -160,15 +159,13 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 // 删除
 func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := map[string]interface{}{`id`: req.IdArr}
-	/**--------参数处理 结束--------**/
-
-	/**--------不能删除平台超级管理员 开始--------**/
-	if garray.NewIntArrayFrom(gconv.SliceInt(filter[`id`])).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Int()) {
+	if garray.NewFrom(gconv.SliceAny(req.IdArr)).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint()) { //不能删除平台超级管理员
 		err = utils.NewErrorCode(ctx, 30000001, ``)
 		return
 	}
-	/**--------不能删除平台超级管理员 结束--------**/
+
+	filter := map[string]interface{}{`id`: req.IdArr}
+	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminDelete`)
