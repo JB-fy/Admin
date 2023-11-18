@@ -52,6 +52,7 @@ class Config extends AbstractValidation
         ],
         'save' => [
             'only' => [
+                'hotSearch',
                 'userAgreement',
                 'privacyAgreement',
 
