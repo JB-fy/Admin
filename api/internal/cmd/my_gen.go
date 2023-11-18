@@ -483,7 +483,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //idPath|id_path
 			tpl.PidHandle.IdPathField = field
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				tpl.PidHandle.PidField = field
 			} else if field == `level` { //level
@@ -830,7 +830,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					daoParseUpdate += daoParseUpdateTmp
 				}
 			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				if tpl.LabelHandle.LabelField != `` {
 					daoParseFieldTmp := `
@@ -1443,7 +1443,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
 				isRequired = true
 			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			typeReqFilter = `*int`
 			typeReqCreate = `*int`
 			typeReqUpdate = `*int`
@@ -1750,7 +1750,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
@@ -2326,7 +2326,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //url,link后缀
 				widthOfColumn = `width: 200,`
 			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `',`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
@@ -2840,7 +2840,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
@@ -3208,7 +3208,7 @@ const ` + field + `Handle = reactive({
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
 				</ElFormItem>`
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewSaveDataInit += `
 		` + field + `: 0,`
@@ -3523,7 +3523,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 			continue
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
+		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				fieldName = `父级`
 			} else if field == `sort` || field == `weight` { //sort //weight
