@@ -6,6 +6,7 @@ import (
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/app"
 	controllerMy "api/internal/controller/app/my"
+	controllerPlatform "api/internal/controller/app/platform"
 	"api/internal/middleware"
 )
 
@@ -26,6 +27,10 @@ func InitRouterApp(s *ghttp.Server) {
 
 			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerCurrent.NewSms())
+			})
+
+			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerPlatform.NewConfig())
 			})
 		})
 
