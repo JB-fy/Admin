@@ -26,7 +26,7 @@ gf gen service
 		加密盐 		命名：salt；类型：char(8)；注意：password,salt同时存在时，(才)有特殊处理
 		父级		命名：pid；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，有特殊处理
 		层级		命名：level；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-		层级路径	命名：idPath|id_path；类型：varchar；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		层级路径	命名：idPath|id_path；类型：varchar或text；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
 		排序		命名：sort；类型：int等类型；
 		权重		命名：weight；类型：int等类型；
 		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）

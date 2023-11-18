@@ -34,7 +34,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		加密盐 		命名：salt；类型：char(8)；注意：password,salt同时存在时，(才)有特殊处理
 		父级		命名：pid；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，有特殊处理
 		层级		命名：level；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-		层级路径	命名：idPath|id_path；类型：varchar；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		层级路径	命名：idPath|id_path；类型：varchar或text；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
 		排序		命名：sort；类型：int等类型；
 		权重		命名：weight；类型：int等类型；
 		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
@@ -480,10 +480,9 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			}
 		} else if field == `salt` && column[`Type`].String() == `char(8)` { //salt
 			tpl.PasswordHandle.SaltField = field
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //idPath|id_path
+			tpl.PidHandle.IdPathField = field
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if fieldCaseCamel == `IdPath` { //idPath|id_path
-				tpl.PidHandle.IdPathField = field
-			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
 			if field == `pid` { //pid
 				tpl.PidHandle.PidField = field
@@ -779,10 +778,9 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				daoParseUpdate += daoParseUpdateTmp
 			}
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist { //idPath|id_path
-				continue
-			} else if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+			if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
 				daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.WhereLike(tableThis+` + "`.`" + `+k, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
@@ -1362,7 +1360,9 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqUpdate = `size:` + resultStr[1]
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 			continue
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+			typeRes = `*string`
+		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				typeReqCreate = `*string`
 				typeReqUpdate = `*string`
@@ -1379,7 +1379,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				ruleReqCreate = `distinct|foreach|url|foreach|min-length:1`
 				ruleReqUpdate = `distinct|foreach|url|foreach|min-length:1`
 			}
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			if column[`Null`].String() == `NO` {
 				isRequired = true
 			}
@@ -1388,7 +1388,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeRes = `[]interface{}`
 			ruleReqCreate = `distinct`
 			ruleReqUpdate = `distinct`
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
@@ -1408,11 +1408,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				isRequired = true
 			}
 
-			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist { //idPath|id_path
-				typeReqFilter = ``
-				typeReqCreate = ``
-				typeReqUpdate = ``
-			} else if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+			if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
 				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
 					isRequired = true
 				}
@@ -2207,7 +2203,9 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 			continue
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+			hiddenOfColumn = `hidden: true,`
+		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
@@ -2247,7 +2245,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				})
 			]
 		},`
-		} else if (gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
 			if tableRowHeight < 100 {
 				tableRowHeight = 100
 			}
@@ -2287,7 +2285,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				})
 			]
 		},`
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
@@ -2322,12 +2320,10 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				})
 			]
 		},`
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			hiddenOfColumn = `hidden: true,`
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist { //idPath|id_path
-				hiddenOfColumn = `hidden: true,`
-			} else if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //url,link后缀
+			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //url,link后缀
 				widthOfColumn = `width: 200,`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 { //int等类型
@@ -2830,17 +2826,15 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //list,arr等后缀
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist { //idPath|id_path
-			} else { //默认处理（varchar类型）
-				viewQueryField += `
+			viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="1" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
-			}
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
@@ -3040,7 +3034,8 @@ import md5 from 'js-md5'`
 					</label>
 				</ElFormItem>`
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			multipleStr := ``
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
@@ -3064,7 +3059,7 @@ import md5 from 'js-md5'`
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*"` + multipleStr + ` />
 				</ElFormItem>`
-		} else if (gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
 			multipleStr := ``
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
@@ -3088,7 +3083,7 @@ import md5 from 'js-md5'`
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
 				</ElFormItem>`
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || column[`Type`].String() == `text`) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (column[`Type`].String() == `json` || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			viewSaveDataInit += `
 		` + field + `: [],`
 			requiredStr := ``
@@ -3135,8 +3130,8 @@ const ` + field + `Handle = reactive({
 		saveForm.data.` + field + `.splice(saveForm.data.` + field + `.indexOf(item), 1)
 	},
 })`
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || column[`Type`].String() == `text`) { //remark,desc,msg,message,intro,content后缀
-			if column[`Type`].String() == `text` {
+		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
+			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'string', trigger: 'blur', message: t('validation.input') },
@@ -3168,10 +3163,7 @@ const ` + field + `Handle = reactive({
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>`
 			}
-			//idPath|id_path
-			if fieldCaseCamel == `IdPath` && tpl.PidHandle.IsCoexist {
-				continue
-			} else if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+			if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
 				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
 					requiredStr = ` required: true,`
 				}
