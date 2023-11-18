@@ -463,8 +463,12 @@ func (daoThis *menuDao) ParseJoin(joinCode string, joinTableArr *[]string) gdb.M
 
 // 修改pid时，更新所有子孙级的idPath和level
 func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel uint, oldLevel uint) {
-	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().IdPath, oldIdPath+`-%`).Data(g.Map{
+	data := g.Map{
 		daoThis.Columns().IdPath: gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + oldIdPath + `', '` + newIdPath + `')`),
 		daoThis.Columns().Level:  gdb.Raw(daoThis.Columns().Level + ` + ` + gconv.String(newLevel-oldLevel)),
-	}).Update()
+	}
+	if newLevel < oldLevel {
+		data[daoThis.Columns().Level] = gdb.Raw(daoThis.Columns().Level + ` - ` + gconv.String(oldLevel-newLevel))
+	}
+	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().IdPath, oldIdPath+`-%`).Data(data).Update()
 }

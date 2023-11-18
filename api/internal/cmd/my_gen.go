@@ -934,10 +934,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					daoFuncTmp := `
 // 修改pid时，更新所有子孙级的idPath和level
 func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel uint, oldLevel uint) {
-	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(g.Map{
+	data := g.Map{
 		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `: gdb.Raw(` + "`REPLACE(`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + ` + ` + "`, '`" + ` + oldIdPath + ` + "`', '`" + ` + newIdPath + ` + "`')`" + `),
 		daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `:  gdb.Raw(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + "` + `" + ` + gconv.String(newLevel-oldLevel)),
-	}).Update()
+	}
+	if newLevel < oldLevel {
+		data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gdb.Raw(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + "` - `" + ` + gconv.String(oldLevel-newLevel))
+	}
+	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, oldIdPath+` + "`-%`" + `).Data(data).Update()
 }`
 					if gstr.Pos(tplDao, daoFuncTmp) == -1 {
 						daoFunc += daoFuncTmp
@@ -1038,7 +1042,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 				}
 				daoParseUpdateTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
-				updateData[tableThis+` + "`.`" + `+k] = v
+				updateData[tableThis+` + "`.`" + `+k] = gvar.New(v)
 				if gconv.String(v) == ` + "``" + ` {
 					updateData[tableThis+` + "`.`" + `+k] = nil
 				}`
