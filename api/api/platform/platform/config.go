@@ -26,14 +26,15 @@ type Config struct {
 	VersionNumberOfAndroid *uint   `json:"versionNumberOfAndroid,omitempty" dc:"版本号(安卓)"`
 	VersionNameOfAndroid   *string `json:"versionNameOfAndroid,omitempty" dc:"版本名称(安卓)"`
 	VersionIntroOfAndroid  *string `json:"versionIntroOfAndroid,omitempty" dc:"版本介绍(安卓)"`
-	PackageUrlOfIos        *string `json:"packageUrlOfIos,omitempty" dc:"安装包(苹果)"`
-	PackageSizeOfIos       *uint   `json:"packageSizeOfIos,omitempty" dc:"包大小(苹果)"`
-	PackageNameOfIos       *string `json:"packageNameOfIos,omitempty" dc:"包名(苹果)"`
-	IsForceUpdateOfIos     *uint   `json:"isForceUpdateOfIos,omitempty" dc:"强制更新(苹果)"`
-	VersionNumberOfIos     *uint   `json:"versionNumberOfIos,omitempty" dc:"版本号(苹果)"`
-	VersionNameOfIos       *string `json:"versionNameOfIos,omitempty" dc:"版本名称(苹果)"`
-	VersionIntroOfIos      *string `json:"versionIntroOfIos,omitempty" dc:"版本介绍(苹果)"`
-	PlistUrlOfIos          *string `json:"plistUrlOfIos,omitempty" dc:"plist文件(苹果)"`
+
+	PackageUrlOfIos    *string `json:"packageUrlOfIos,omitempty" dc:"安装包(苹果)"`
+	PackageSizeOfIos   *uint   `json:"packageSizeOfIos,omitempty" dc:"包大小(苹果)"`
+	PackageNameOfIos   *string `json:"packageNameOfIos,omitempty" dc:"包名(苹果)"`
+	IsForceUpdateOfIos *uint   `json:"isForceUpdateOfIos,omitempty" dc:"强制更新(苹果)"`
+	VersionNumberOfIos *uint   `json:"versionNumberOfIos,omitempty" dc:"版本号(苹果)"`
+	VersionNameOfIos   *string `json:"versionNameOfIos,omitempty" dc:"版本名称(苹果)"`
+	VersionIntroOfIos  *string `json:"versionIntroOfIos,omitempty" dc:"版本介绍(苹果)"`
+	PlistUrlOfIos      *string `json:"plistUrlOfIos,omitempty" dc:"plist文件(苹果)"`
 
 	UploadType               *string `json:"uploadType,omitempty" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" dc:"本地-上传地址"`

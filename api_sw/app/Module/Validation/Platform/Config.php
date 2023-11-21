@@ -89,6 +89,7 @@ class Config extends AbstractValidation
                 'versionNumberOfAndroid',
                 'versionNameOfAndroid',
                 'versionIntroOfAndroid',
+
                 'packageUrlOfIos',
                 'packageSizeOfIos',
                 'packageNameOfIos',
