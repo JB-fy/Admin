@@ -41,6 +41,15 @@ class Config extends AbstractValidation
         'aliyunIdCardHost' => 'url',
         'aliyunIdCardPath' => 'string',
         'aliyunIdCardAppcode' => 'string',
+
+        'pushType' => 'string|in:txTpns',
+        'txTpnsHost' => 'url',
+        'txTpnsAccessIDOfAndroid' => 'string',
+        'txTpnsSecretKeyOfAndroid' => 'string',
+        'txTpnsAccessIDOfIos' => 'string',
+        'txTpnsSecretKeyOfIos' => 'string',
+        'txTpnsAccessIDOfMacOS' => 'string',
+        'txTpnsSecretKeyOfMacOS' => 'string',
     ];
 
     protected array $scene = [
@@ -80,6 +89,15 @@ class Config extends AbstractValidation
                 'aliyunIdCardHost',
                 'aliyunIdCardPath',
                 'aliyunIdCardAppcode',
+
+                'pushType',
+                'txTpnsHost',
+                'txTpnsAccessIDOfAndroid',
+                'txTpnsSecretKeyOfAndroid',
+                'txTpnsAccessIDOfIos',
+                'txTpnsSecretKeyOfIos',
+                'txTpnsAccessIDOfMacOS',
+                'txTpnsSecretKeyOfMacOS',
             ]
         ]
     ];

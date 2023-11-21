@@ -96,13 +96,22 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/admin' }
             },
             {
-                path: '/platform/config',
+                path: '/platform/config/platform',
                 component: async () => {
-                    const component = await import('@/views/platform/config/Index.vue')
-                    component.default.name = '/platform/config'
+                    const component = await import('@/views/platform/config/Platform.vue')
+                    component.default.name = '/platform/config/platform'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config' }
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/platform' }
+            },
+            {
+                path: '/platform/config/plugin',
+                component: async () => {
+                    const component = await import('@/views/platform/config/Plugin.vue')
+                    component.default.name = '/platform/config/plugin'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/plugin' }
             },
             {
                 path: '/user/user',

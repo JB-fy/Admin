@@ -3,6 +3,7 @@ module api
 go 1.15
 
 require (
+	git.code.tencent.com/tpns/tpns-server-sdk/gosdk v1.0.10 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.4
 	github.com/alibabacloud-go/dysmsapi-20170525/v3 v3.0.6

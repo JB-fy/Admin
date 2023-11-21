@@ -43,6 +43,15 @@ type Config struct {
 	AliyunIdCardHost    *string `json:"aliyunIdCardHost,omitempty" dc:"阿里云IdCard-域名"`
 	AliyunIdCardPath    *string `json:"aliyunIdCardPath,omitempty" dc:"阿里云IdCard-请求路径"`
 	AliyunIdCardAppcode *string `json:"aliyunIdCardAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
+
+	PushType                 *string `json:"pushType,omitempty" dc:"推送方式"`
+	TxTpnsHost               *string `json:"txTpnsHost,omitempty" dc:"腾讯移动推送-域名"`
+	TxTpnsAccessIDOfAndroid  *string `json:"txTpnsAccessIDOfAndroid,omitempty" dc:"腾讯移动推送-AccessID(安卓)"`
+	TxTpnsSecretKeyOfAndroid *string `json:"txTpnsSecretKeyOfAndroid,omitempty" dc:"腾讯移动推送-SecretKey(安卓)"`
+	TxTpnsAccessIDOfIos      *string `json:"txTpnsAccessIDOfIos,omitempty" dc:"腾讯移动推送-AccessID(苹果)"`
+	TxTpnsSecretKeyOfIos     *string `json:"txTpnsSecretKeyOfIos,omitempty" dc:"腾讯移动推送-SecretKey(苹果)"`
+	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
+	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 }
 
 /*--------获取 结束--------*/
@@ -79,6 +88,15 @@ type ConfigSaveReq struct {
 	AliyunIdCardHost    *string `json:"aliyunIdCardHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`
 	AliyunIdCardPath    *string `json:"aliyunIdCardPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
 	AliyunIdCardAppcode *string `json:"aliyunIdCardAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
+
+	PushType                 *string `json:"pushType,omitempty" v:"in:txTpns" dc:"推送方式"`
+	TxTpnsHost               *string `json:"txTpnsHost,omitempty" v:"url" dc:"腾讯移动推送-域名"`
+	TxTpnsAccessIDOfAndroid  *string `json:"txTpnsAccessIDOfAndroid,omitempty" v:"" dc:"腾讯移动推送-AccessID(安卓)"`
+	TxTpnsSecretKeyOfAndroid *string `json:"txTpnsSecretKeyOfAndroid,omitempty" v:"" dc:"腾讯移动推送-SecretKey(安卓)"`
+	TxTpnsAccessIDOfIos      *string `json:"txTpnsAccessIDOfIos,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果)"`
+	TxTpnsSecretKeyOfIos     *string `json:"txTpnsSecretKeyOfIos,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果)"`
+	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
+	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 }
 
 /*--------保存 结束--------*/

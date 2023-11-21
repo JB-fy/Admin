@@ -4,6 +4,7 @@ export default {
 		uploadConfig: '上传',
 		smsConfig: '短信',
 		idCardConfig: '实名认证',
+		pushConfig: '推送',
 	},
 	name: {
 		hotSearch: '热门搜索',
@@ -34,6 +35,15 @@ export default {
 		aliyunIdCardHost: '阿里云IdCard-域名',
 		aliyunIdCardPath: '阿里云IdCard-请求路径',
 		aliyunIdCardAppcode: '阿里云IdCard-Appcode',
+
+		pushType: '推送方式',
+		txTpnsHost: '腾讯移动推送-域名',
+		txTpnsAccessIDOfAndroid: '腾讯移动推送-AccessID(安卓)',
+		txTpnsSecretKeyOfAndroid: '腾讯移动推送-SecretKey(安卓)',
+		txTpnsAccessIDOfIos: '腾讯移动推送-AccessID(苹果)',
+		txTpnsSecretKeyOfIos: '腾讯移动推送-SecretKey(苹果)',
+		txTpnsAccessIDOfMacOS: '腾讯移动推送-AccessID(苹果电脑)',
+		txTpnsSecretKeyOfMacOS: '腾讯移动推送-SecretKey(苹果电脑)',
 	},
 	status: {
 		uploadType: [
@@ -46,6 +56,9 @@ export default {
 		idCardType: [
 			{ value: `aliyunIdCard`, label: '阿里云' },
 		],
+		pushType: [
+			{ value: `txTpns`, label: '腾讯移动推送' },
+		],
 	},
 	tip: {
 		localUploadFileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
@@ -56,5 +69,7 @@ export default {
 		aliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
 
 		aliyunIdCardHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
+
+		txTpnsHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
 	},
 }

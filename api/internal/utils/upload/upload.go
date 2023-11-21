@@ -28,9 +28,7 @@ func NewUpload(ctx context.Context) Upload {
 	case `aliyunOss`:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssCallbackUrl`, `aliyunOssRoleArn`, `aliyunOssEndpoint`})
 		return NewAliyunOss(ctx, config)
-	case `local`:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
-		return NewLocal(ctx, config)
+	// case `local`:
 	default:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
 		return NewLocal(ctx, config)
