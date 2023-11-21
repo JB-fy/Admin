@@ -19,6 +19,22 @@ type Config struct {
 	UserAgreement    *string   `json:"userAgreement,omitempty" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" dc:"隐私协议"`
 
+	PackageUrlOfAndroid    *string `json:"packageUrlOfAndroid,omitempty" dc:"安装包(安卓)"`
+	PackageSizeOfAndroid   *uint   `json:"packageSizeOfAndroid,omitempty" dc:"包大小(安卓)"`
+	PackageNameOfAndroid   *string `json:"packageNameOfAndroid,omitempty" dc:"包名(安卓)"`
+	IsForceUpdateOfAndroid *uint   `json:"isForceUpdateOfAndroid,omitempty" dc:"强制更新(安卓)"`
+	VersionNumberOfAndroid *uint   `json:"versionNumberOfAndroid,omitempty" dc:"版本号(安卓)"`
+	VersionNameOfAndroid   *string `json:"versionNameOfAndroid,omitempty" dc:"版本名称(安卓)"`
+	VersionIntroOfAndroid  *string `json:"versionIntroOfAndroid,omitempty" dc:"版本介绍(安卓)"`
+	PackageUrlOfIos        *string `json:"packageUrlOfIos,omitempty" dc:"安装包(苹果)"`
+	PackageSizeOfIos       *uint   `json:"packageSizeOfIos,omitempty" dc:"包大小(苹果)"`
+	PackageNameOfIos       *string `json:"packageNameOfIos,omitempty" dc:"包名(苹果)"`
+	IsForceUpdateOfIos     *uint   `json:"isForceUpdateOfIos,omitempty" dc:"强制更新(苹果)"`
+	VersionNumberOfIos     *uint   `json:"versionNumberOfIos,omitempty" dc:"版本号(苹果)"`
+	VersionNameOfIos       *string `json:"versionNameOfIos,omitempty" dc:"版本名称(苹果)"`
+	VersionIntroOfIos      *string `json:"versionIntroOfIos,omitempty" dc:"版本介绍(苹果)"`
+	PlistUrlOfIos          *string `json:"plistUrlOfIos,omitempty" dc:"plist文件(苹果)"`
+
 	UploadType               *string `json:"uploadType,omitempty" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" dc:"本地-上传地址"`
 	LocalUploadSignKey       *string `json:"localUploadSignKey,omitempty" dc:"本地-密钥"`
@@ -63,6 +79,23 @@ type ConfigSaveReq struct {
 	HotSearch        *[]string `json:"hotSearch,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
 	UserAgreement    *string   `json:"userAgreement,omitempty" v:"" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" v:"" dc:"隐私协议"`
+
+	PackageUrlOfAndroid    *string `json:"packageUrlOfAndroid,omitempty" v:"url" dc:"安装包(安卓)"`
+	PackageSizeOfAndroid   *uint   `json:"packageSizeOfAndroid,omitempty" v:"" dc:"包大小(安卓)"`
+	PackageNameOfAndroid   *string `json:"packageNameOfAndroid,omitempty" v:"" dc:"包名(安卓)"`
+	IsForceUpdateOfAndroid *uint   `json:"isForceUpdateOfAndroid,omitempty" v:"integer|in:0,1" dc:"强制更新(安卓)"`
+	VersionNumberOfAndroid *uint   `json:"versionNumberOfAndroid,omitempty" v:"" dc:"版本号(安卓)"`
+	VersionNameOfAndroid   *string `json:"versionNameOfAndroid,omitempty" v:"" dc:"版本名称(安卓)"`
+	VersionIntroOfAndroid  *string `json:"versionIntroOfAndroid,omitempty" v:"" dc:"版本介绍(安卓)"`
+
+	PackageUrlOfIos    *string `json:"packageUrlOfIos,omitempty" v:"url" dc:"安装包(苹果)"`
+	PackageSizeOfIos   *uint   `json:"packageSizeOfIos,omitempty" v:"" dc:"包大小(苹果)"`
+	PackageNameOfIos   *string `json:"packageNameOfIos,omitempty" v:"" dc:"包名(苹果)"`
+	IsForceUpdateOfIos *uint   `json:"isForceUpdateOfIos,omitempty" v:"integer|in:0,1" dc:"强制更新(苹果)"`
+	VersionNumberOfIos *uint   `json:"versionNumberOfIos,omitempty" v:"" dc:"版本号(苹果)"`
+	VersionNameOfIos   *string `json:"versionNameOfIos,omitempty" v:"" dc:"版本名称(苹果)"`
+	VersionIntroOfIos  *string `json:"versionIntroOfIos,omitempty" v:"" dc:"版本介绍(苹果)"`
+	PlistUrlOfIos      *string `json:"plistUrlOfIos,omitempty" v:"url" dc:"plist文件(苹果)"`
 
 	UploadType               *string `json:"uploadType,omitempty" v:"in:local,aliyunOss" dc:"上传方式"`
 	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" v:"url" dc:"本地-上传地址"`

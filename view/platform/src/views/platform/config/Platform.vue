@@ -10,6 +10,7 @@ export default {
 //import WebsiteConfig from './tabPane/WebsiteConfig.vue'
 //下面方式引入好处：组件会被打包成单独一个文件
 const WebsiteConfig = defineAsyncComponent(() => import('./tabPane/WebsiteConfig.vue'))
+const AppConfig = defineAsyncComponent(() => import('./tabPane/AppConfig.vue'))
 
 const { t } = useI18n()
 </script>
@@ -20,6 +21,9 @@ const { t } = useI18n()
             <ElTabs type="border-card" tab-position="top">
                 <ElTabPane :label="t('platform.config.label.websiteConfig')" :lazy="true">
                     <WebsiteConfig />
+                </ElTabPane>
+                <ElTabPane :label="t('platform.config.label.appConfig')" :lazy="true">
+                    <AppConfig />
                 </ElTabPane>
             </ElTabs>
         </ElMain>
