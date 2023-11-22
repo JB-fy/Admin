@@ -53,5 +53,4 @@ func NewPush(ctx context.Context, deviceType uint) Push {
 		}
 		return NewTxTpns(ctx, config)
 	}
-
 }
