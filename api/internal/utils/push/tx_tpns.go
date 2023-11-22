@@ -36,30 +36,19 @@ func (pushThis *TxTpns) Push(param PushParam) (err error) {
 		`title`:   param.Title,
 		`content`: param.Content,
 	}
+
 	reqData[`environment`] = `product`
 	if param.IsDev {
 		reqData[`environment`] = `dev`
 	}
+
 	switch param.MessageType {
 	case 0:
 		reqData[`message_type`] = `notify`
 	case 1:
 		reqData[`message_type`] = `message`
 	}
-	switch param.DeviceType {
-	case 0: //安卓
-		reqData[`android`] = g.Map{
-			`custom_content`: gjson.MustEncodeString(param.CustomContent),
-		}
-	case 1, 2: //IOS //MacOS
-		reqData[`ios`] = g.Map{
-			`aps`: g.Map{
-				`alert`:           `大派对`, //map or string
-				"mutable-content": 1,
-			},
-			`custom_content`: gjson.MustEncodeString(param.CustomContent),
-		}
-	}
+
 	switch param.Audience {
 	case 0:
 		reqData[`audience_type`] = `all`
@@ -73,6 +62,24 @@ func (pushThis *TxTpns) Push(param PushParam) (err error) {
 		}
 		reqData[`audience_type`] = `token_list`
 		reqData[`token_list`] = param.TokenList
+	case 3:
+		reqData[`audience_type`] = `tag`
+		reqData[`tag_rules`] = param.TagRules
+	}
+
+	switch param.DeviceType {
+	case 0: //安卓
+		reqData[`android`] = g.Map{
+			`custom_content`: gjson.MustEncodeString(param.CustomContent),
+		}
+	case 1, 2: //IOS //MacOS
+		reqData[`ios`] = g.Map{
+			`aps`: g.Map{
+				`alert`:           `大派对`, //map or string
+				"mutable-content": 1,
+			},
+			`custom_content`: gjson.MustEncodeString(param.CustomContent),
+		}
 	}
 
 	reqDataJson := gjson.MustEncodeString(reqData)
