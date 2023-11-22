@@ -71,11 +71,11 @@ func (pushThis *TxTpns) Send(option PushOption) (err error) {
 	case 1:
 		req.MessageType = tpns.Message
 	}
-
-	// client := tpns.NewClient(tpns.GuangzhouHost, pushThis.AccessID, pushThis.SecretKey)
 	client := tpns.NewClient(pushThis.Host, pushThis.AccessID, pushThis.SecretKey)
-	_, err = client.Do(req)
-	/* resp, err := client.Do(req)
-	fmt.Printf("resp: %+v, err: %v\n", resp, err) */
+	resp, err := client.Do(req)
+	if resp.RetCode != 0 {
+		err = errors.New(resp.ErrMsg)
+		return
+	}
 	return
 }

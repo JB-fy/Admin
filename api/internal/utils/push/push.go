@@ -9,17 +9,19 @@ import (
 
 // 这里定义统一的参数格式！各插件内部再单独处理
 type PushOption struct {
-	DeviceType    uint     //设备类型：0-安卓 1-苹果 2-苹果电脑
-	Audience      uint     //推送目标：0全部 1单设备(token) 2多设备(token)
-	TokenList     []string //token列表
-	MessageType   uint     //消息类型：0通知消息 1透传消息
-	Title         string   //消息标题
-	Content       string   //消息内容
-	CustomContent struct {
-		Type string                 //类型
-		Data map[string]interface{} //数据
-	} //自定义数据
-	IsDev bool //是否开发环境：false否 true是
+	IsDev         bool          //是否开发环境：false否 true是
+	DeviceType    uint          //设备类型：0-安卓 1-苹果 2-苹果电脑
+	Audience      uint          //推送目标：0全部 1单设备(token) 2多设备(token)
+	TokenList     []string      //token列表
+	MessageType   uint          //消息类型：0通知消息 1透传消息
+	Title         string        //消息标题
+	Content       string        //消息内容
+	CustomContent CustomContent //自定义数据
+}
+
+type CustomContent struct {
+	Type string                 //类型
+	Data map[string]interface{} //数据
 }
 
 type Push interface {
