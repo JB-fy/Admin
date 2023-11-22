@@ -11,13 +11,6 @@ import (
 	"golang.org/x/net/context"
 )
 
-type AliyunStsOption struct {
-	RoleArn     string //角色
-	SessionName string //可自定义
-	ExpireTime  int64  //签名有效时间。单位：秒
-	Policy      string //权限
-}
-
 // 生成Sts Token
 func CreateStsToken(ctx context.Context, config *openapi.Config, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]interface{}, err error) {
 	/* config := &openapi.Config{
