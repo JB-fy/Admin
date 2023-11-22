@@ -34,15 +34,14 @@ func (pushThis *TxTpns) Send(option PushOption) (err error) {
 	case 0: //安卓
 		tpns.WithAndroidMessage(&tpns.AndroidMessage{
 			CustomContent: gjson.MustEncodeString(option.CustomContent),
-		})
-	case 1: //IOS
+		})(req)
+	case 1, 2: //IOS //MacOS
 		var aps = tpns.DefaultIOSAps()
 		aps.Alert = `大派对`
 		tpns.WithIOSMessage(&tpns.IOSMessage{
 			Aps:    aps,
 			Custom: gjson.MustEncodeString(option.CustomContent),
-		})
-	case 2: //MacOS
+		})(req)
 	}
 
 	req.Environment = tpns.Product
