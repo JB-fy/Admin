@@ -29,7 +29,7 @@ TagRules: []map[string]interface{}{
 type PushParam struct {
 	IsDev      bool     //是否开发环境：false否 true是
 	DeviceType uint     //设备类型：0-安卓 1-苹果 2-苹果电脑
-	Audience   uint     //推送目标：0全部 1单设备(token) 2多设备(token) 3标签(tag)
+	Audience   uint     //推送目标：0-全部 1-token方式 2-tag方式
 	TokenList  []string //token列表
 	// TagList    []string //tag列表
 	TagRules      interface{}   //标签推送规则。这参数较为复杂，不同插件差别极大，格式参考上面示例
