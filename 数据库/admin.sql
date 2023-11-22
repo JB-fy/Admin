@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 18/11/2023 14:56:04
+ Date: 22/11/2023 09:52:31
 */
 
 SET NAMES utf8mb4;
@@ -124,7 +124,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menuId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -138,9 +138,10 @@ INSERT INTO `auth_menu` VALUES (6, '角色', 1, 2, 2, '0-2-6', 'AutoiconEpView',
 INSERT INTO `auth_menu` VALUES (7, '平台管理员', 1, 2, 2, '0-2-7', 'Vant-manager-o', '/platform/admin', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-10-14 16:18:16', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (8, '系统管理', 1, 0, 1, '0-8', 'AutoiconEpPlatform', '', '{\"i18n\": {\"title\": {\"en\": \"System Manage\", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-09-20 23:02:14', '2023-06-09 12:03:30');
 INSERT INTO `auth_menu` VALUES (9, '配置中心', 1, 8, 2, '0-8-9', 'AutoiconEpSetting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (10, '平台配置', 1, 9, 3, '0-8-9-10', '', '/platform/config', '{\"i18n\": {\"title\": {\"en\": \"Platform Config\", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-09-20 23:02:18', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (11, '用户管理', 1, 0, 1, '0-11', 'Vant-friends', '', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 50, 0, '2023-10-14 16:14:56', '2023-10-14 15:32:37');
-INSERT INTO `auth_menu` VALUES (12, '用户', 1, 11, 2, '0-11-12', 'Vant-user-o', '/user/user', '{\"i18n\": {\"title\": {\"en\": \"User\", \"zh-cn\": \"用户\"}}}', 50, 0, '2023-10-14 16:17:28', '2023-10-14 15:32:37');
+INSERT INTO `auth_menu` VALUES (10, '平台配置', 1, 9, 3, '0-8-9-10', '', '/platform/config/platform', '{\"i18n\": {\"title\": {\"en\": \"Platform Config\", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-11-22 09:31:42', '2023-06-09 12:03:30');
+INSERT INTO `auth_menu` VALUES (11, '插件配置', 1, 9, 3, '0-8-9-11', '', '/platform/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 50, 0, '2023-11-22 09:31:45', '2023-11-21 11:08:28');
+INSERT INTO `auth_menu` VALUES (12, '用户管理', 1, 0, 1, '0-12', 'Vant-friends', '', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 50, 0, '2023-11-21 11:10:29', '2023-10-14 15:32:37');
+INSERT INTO `auth_menu` VALUES (13, '用户', 1, 12, 2, '0-12-13', 'Vant-user-o', '/user/user', '{\"i18n\": {\"title\": {\"en\": \"User\", \"zh-cn\": \"用户\"}}}', 50, 0, '2023-11-21 11:10:24', '2023-10-14 15:32:37');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -313,32 +314,33 @@ CREATE TABLE `platform_config`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'uploadType', 'local', '2023-10-21 17:10:45', '2023-09-20 22:59:42');
-INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://192.168.0.200:20080/upload/upload', '2023-10-21 17:08:18', '2023-09-20 22:59:47');
-INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-10-21 17:08:18', '2023-09-20 22:59:56');
-INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-10-21 17:08:18', '2023-09-20 23:00:05');
-INSERT INTO `platform_config` VALUES (5, 'localUploadFileUrlPrefix', 'http://www.admin.com', '2023-10-21 17:08:18', '2023-09-20 23:00:14');
-INSERT INTO `platform_config` VALUES (6, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-10-21 17:08:18', '2023-10-21 16:55:43');
-INSERT INTO `platform_config` VALUES (7, 'aliyunOssBucket', 'bucket', '2023-10-21 17:08:18', '2023-10-21 16:55:43');
-INSERT INTO `platform_config` VALUES (8, 'aliyunOssAccessKeyId', 'accessKeyId', '2023-10-21 17:08:18', '2023-10-21 16:55:43');
-INSERT INTO `platform_config` VALUES (9, 'aliyunOssAccessKeySecret', 'accessKeySecret', '2023-10-21 17:08:18', '2023-10-21 16:55:43');
-INSERT INTO `platform_config` VALUES (10, 'aliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-10-21 17:08:18', '2023-10-21 16:55:43');
-INSERT INTO `platform_config` VALUES (11, 'aliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-10-21 17:08:18', '2023-10-21 16:55:43');
-INSERT INTO `platform_config` VALUES (12, 'smsType', 'aliyunSms', '2023-10-21 17:08:48', '2023-10-21 16:55:44');
-INSERT INTO `platform_config` VALUES (13, 'aliyunSmsAccessKeyId', 'accessKeyId', '2023-10-21 17:08:48', '2023-10-21 16:55:44');
-INSERT INTO `platform_config` VALUES (14, 'aliyunSmsAccessKeySecret', 'accessKeySecret', '2023-10-21 17:08:48', '2023-10-21 16:55:44');
-INSERT INTO `platform_config` VALUES (15, 'aliyunSmsEndpoint', 'dysmsapi.aliyuncs.com', '2023-10-21 17:08:48', '2023-10-21 16:55:44');
-INSERT INTO `platform_config` VALUES (16, 'aliyunSmsSignName', 'JB Admin', '2023-10-21 17:08:48', '2023-10-21 16:55:44');
-INSERT INTO `platform_config` VALUES (17, 'aliyunSmsTemplateCode', 'SMS_xxxxxxxx', '2023-10-21 17:08:48', '2023-10-21 16:55:44');
-INSERT INTO `platform_config` VALUES (18, 'idCardType', 'aliyunIdCard', '2023-10-21 17:09:24', '2023-10-21 16:55:46');
-INSERT INTO `platform_config` VALUES (19, 'aliyunIdCardHost', 'http://idcard.market.alicloudapi.com', '2023-10-21 17:09:24', '2023-10-21 16:55:46');
-INSERT INTO `platform_config` VALUES (20, 'aliyunIdCardPath', '/lianzhuo/idcard', '2023-10-21 17:09:24', '2023-10-21 16:55:46');
-INSERT INTO `platform_config` VALUES (21, 'aliyunIdCardAppcode', 'appcode', '2023-10-21 17:09:24', '2023-10-21 16:55:46');
+INSERT INTO `platform_config` VALUES (1, 'uploadType', 'aliyunOss', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://192.168.0.200:20080/upload/upload', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (5, 'localUploadFileUrlPrefix', 'http://www.admin.com', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (6, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-11-22 09:47:11', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (7, 'aliyunOssBucket', 'bucket', '2023-11-22 09:47:54', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (8, 'aliyunOssAccessKeyId', 'accessKeyId', '2023-11-22 09:48:19', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (9, 'aliyunOssAccessKeySecret', 'accessKeySecret', '2023-11-22 09:48:23', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (10, 'aliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-11-22 09:48:30', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (11, 'aliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-11-22 09:49:01', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (12, 'aliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-11-22 09:48:58', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (13, 'smsType', 'aliyunSms', '2023-11-22 09:49:39', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (14, 'aliyunSmsAccessKeyId', 'accessKeyId', '2023-11-22 09:49:41', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (15, 'aliyunSmsAccessKeySecret', 'accessKeySecret', '2023-11-22 09:49:43', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (16, 'aliyunSmsEndpoint', 'dysmsapi.aliyuncs.com', '2023-11-22 09:49:53', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (17, 'aliyunSmsSignName', 'JB Admin', '2023-11-22 09:50:09', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (18, 'aliyunSmsTemplateCode', 'SMS_xxxxxxxx', '2023-11-22 09:50:07', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (19, 'idCardType', 'aliyunIdCard', '2023-11-22 09:50:29', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (20, 'aliyunIdCardHost', 'http://idcard.market.alicloudapi.com', '2023-11-22 09:50:33', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (21, 'aliyunIdCardPath', '/lianzhuo/idcard', '2023-11-22 09:50:35', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (22, 'aliyunIdCardAppcode', 'appcode', '2023-11-22 09:50:37', '2023-11-22 09:50:23');
 
 -- ----------------------------
 -- Table structure for platform_server
