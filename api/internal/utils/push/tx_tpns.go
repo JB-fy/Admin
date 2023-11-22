@@ -53,12 +53,13 @@ func (pushThis *TxTpns) Push(param PushParam) (err error) {
 	case 0:
 		reqData[`audience_type`] = `all`
 	case 1:
-		if len(param.TokenList) > 1000 {
+		lenOfTokenList := len(param.TokenList)
+		if lenOfTokenList > 1000 {
 			err = errors.New(`token不能超过1000个`)
 			return
 		}
 		reqData[`audience_type`] = `token_list`
-		if len(param.TokenList) == 1 {
+		if lenOfTokenList == 1 {
 			reqData[`audience_type`] = `token`
 		}
 		reqData[`token_list`] = param.TokenList
