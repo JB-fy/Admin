@@ -319,7 +319,7 @@ CREATE TABLE `platform_config`  (
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'uploadType', 'aliyunOss', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (1, 'uploadType', 'local', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://192.168.0.200:20080/upload/upload', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
