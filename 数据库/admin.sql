@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 22/11/2023 09:52:31
+ Date: 23/11/2023 17:27:20
 */
 
 SET NAMES utf8mb4;
@@ -314,23 +314,23 @@ CREATE TABLE `platform_config`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`configId`) USING BTREE,
   UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'uploadType', 'local', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://192.168.0.200:20080/upload/upload', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (5, 'localUploadFileUrlPrefix', 'http://www.admin.com', '2023-11-22 09:46:41', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (6, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-11-22 09:47:11', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (7, 'aliyunOssBucket', 'bucket', '2023-11-22 09:47:54', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (8, 'aliyunOssAccessKeyId', 'accessKeyId', '2023-11-22 09:48:19', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (9, 'aliyunOssAccessKeySecret', 'accessKeySecret', '2023-11-22 09:48:23', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (10, 'aliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-11-22 09:48:30', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (11, 'aliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-11-22 09:49:01', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (12, 'aliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-11-22 09:48:58', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (1, 'uploadType', 'local', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://www.admin.com/upload/upload', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (5, 'localUploadFileUrlPrefix', 'http://www.admin.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (6, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (7, 'aliyunOssBucket', 'bucket', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (8, 'aliyunOssAccessKeyId', 'accessKeyId', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (9, 'aliyunOssAccessKeySecret', 'accessKeySecret', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (10, 'aliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (11, 'aliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (12, 'aliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (13, 'smsType', 'aliyunSms', '2023-11-22 09:49:39', '2023-11-22 09:49:18');
 INSERT INTO `platform_config` VALUES (14, 'aliyunSmsAccessKeyId', 'accessKeyId', '2023-11-22 09:49:41', '2023-11-22 09:49:18');
 INSERT INTO `platform_config` VALUES (15, 'aliyunSmsAccessKeySecret', 'accessKeySecret', '2023-11-22 09:49:43', '2023-11-22 09:49:18');
@@ -341,6 +341,19 @@ INSERT INTO `platform_config` VALUES (19, 'idCardType', 'aliyunIdCard', '2023-11
 INSERT INTO `platform_config` VALUES (20, 'aliyunIdCardHost', 'http://idcard.market.alicloudapi.com', '2023-11-22 09:50:33', '2023-11-22 09:50:23');
 INSERT INTO `platform_config` VALUES (21, 'aliyunIdCardPath', '/lianzhuo/idcard', '2023-11-22 09:50:35', '2023-11-22 09:50:23');
 INSERT INTO `platform_config` VALUES (22, 'aliyunIdCardAppcode', 'appcode', '2023-11-22 09:50:37', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (23, 'pushType', 'txTpns', '2023-11-23 17:26:12', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (24, 'txTpnsHost', 'https://api.tpns.tencent.com', '2023-11-23 17:26:14', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (25, 'txTpnsAccessIDOfAndroid', '150xxxx000', '2023-11-23 17:26:16', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (26, 'txTpnsSecretKeyOfAndroid', '80e5xxxxxxxxxxxxxxxxxxxxxxxx0000', '2023-11-23 17:26:17', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (27, 'txTpnsAccessIDOfIos', '150xxxx001', '2023-11-23 17:26:19', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (28, 'txTpnsSecretKeyOfIos', '80e5xxxxxxxxxxxxxxxxxxxxxxxx0001', '2023-11-23 17:26:22', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (29, 'txTpnsAccessIDOfMacOS', '150xxxx002', '2023-11-23 17:26:24', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (30, 'txTpnsSecretKeyOfMacOS', '80e5xxxxxxxxxxxxxxxxxxxxxxxx0002', '2023-11-23 17:26:26', '2023-11-23 17:23:50');
+INSERT INTO `platform_config` VALUES (31, 'vodType', 'aliyunVod', '2023-11-23 17:26:29', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (32, 'aliyunVodAccessKeyId', 'accessKeyId', '2023-11-23 17:26:33', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (33, 'aliyunVodAccessKeySecret', 'accessKeySecret', '2023-11-23 17:26:35', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (34, 'aliyunVodEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2023-11-23 17:26:37', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (35, 'aliyunVodRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunvodtokengeneratorrole', '2023-11-23 17:26:40', '2023-11-23 17:25:36');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -354,7 +367,7 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
@@ -383,7 +396,7 @@ CREATE TABLE `user`  (
   PRIMARY KEY (`userId`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `account`(`account` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
