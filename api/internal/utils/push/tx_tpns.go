@@ -32,11 +32,7 @@ func NewTxTpns(ctx context.Context, config map[string]interface{}) *TxTpns {
 }
 
 func (pushThis *TxTpns) Push(param PushParam) (err error) {
-	reqData := g.Map{
-		`title`:   param.Title,
-		`content`: param.Content,
-	}
-
+	reqData := g.Map{}
 	reqData[`environment`] = `product`
 	if param.IsDev {
 		reqData[`environment`] = `dev`
@@ -68,20 +64,25 @@ func (pushThis *TxTpns) Push(param PushParam) (err error) {
 		reqData[`tag_rules`] = param.TagRules
 	}
 
+	message := g.Map{
+		`title`:   param.Title,
+		`content`: param.Content,
+	}
 	switch param.DeviceType {
 	case 0: //安卓
-		reqData[`android`] = g.Map{
+		message[`android`] = g.Map{
 			`custom_content`: gjson.MustEncodeString(param.CustomContent),
 		}
 	case 1, 2: //IOS //MacOS
-		reqData[`ios`] = g.Map{
+		message[`ios`] = g.Map{
 			`aps`: g.Map{
 				`alert`:           `大派对`, //map or string
-				"mutable-content": 1,
+				`mutable-content`: 1,
 			},
 			`custom_content`: gjson.MustEncodeString(param.CustomContent),
 		}
 	}
+	reqData[`message`] = message
 
 	reqDataJson := gjson.MustEncodeString(reqData)
 	res, err := pushThis.NewHttpClient(reqDataJson).Post(pushThis.Ctx, pushThis.Host+`/v3/push/app`, reqDataJson)
