@@ -2,6 +2,7 @@ package upload
 
 import (
 	"api/internal/utils"
+	"api/internal/utils/common"
 	"context"
 	"crypto"
 	"crypto/hmac"
@@ -61,21 +62,21 @@ func (uploadThis *AliyunOss) Upload() (uploadInfo map[string]interface{}, err er
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *AliyunOss) Sign(option UploadOption) (signInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Sign(param UploadParam) (signInfo map[string]interface{}, err error) {
 	bucketHost := uploadThis.GetBucketHost()
 
 	signInfo = map[string]interface{}{
 		`uploadUrl`: bucketHost,
 		// `uploadData`:  map[string]interface{}{},
 		`host`:     bucketHost,
-		`dir`:      option.Dir,
-		`expire`:   option.Expire,
+		`dir`:      param.Dir,
+		`expire`:   param.Expire,
 		`isRes`:    0,
 		`endpoint`: uploadThis.Host,
 		`bucket`:   uploadThis.Bucket,
 	}
 
-	policyBase64 := uploadThis.CreatePolicyBase64(option)
+	policyBase64 := uploadThis.CreatePolicyBase64(param)
 	uploadData := map[string]interface{}{
 		`OSSAccessKeyId`:        uploadThis.AccessKeyId,
 		`policy`:                string(policyBase64),
@@ -101,11 +102,11 @@ func (uploadThis *AliyunOss) Sign(option UploadOption) (signInfo map[string]inte
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *AliyunOss) Config(option UploadOption) (config map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Config(param UploadParam) (config map[string]interface{}, err error) {
 	config = map[string]interface{}{
 		`endpoint`: uploadThis.Host,
 		`bucket`:   uploadThis.Bucket,
-		`dir`:      option.Dir,
+		`dir`:      param.Dir,
 	}
 	//是否回调
 	if uploadThis.CallbackUrl != `` {
@@ -117,19 +118,19 @@ func (uploadThis *AliyunOss) Config(option UploadOption) (config map[string]inte
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *AliyunOss) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunOss) Sts(param UploadParam) (stsInfo map[string]interface{}, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
 		Endpoint:        tea.String(uploadThis.Endpoint),
 	}
 	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
-		DurationSeconds: tea.Int64(option.ExpireTime),
-		Policy:          tea.String(`{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + option.Dir + `*"]}],"Version": "1"}`),
+		DurationSeconds: tea.Int64(param.ExpireTime),
+		Policy:          tea.String(`{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + param.Dir + `*"]}],"Version": "1"}`),
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_oss`),
 	}
-	stsInfo, _ = CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	stsInfo, _ = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
 	return
 }
 
@@ -235,12 +236,12 @@ func (uploadThis *AliyunOss) CreateSign(policyBase64 string) (sign string) {
 }
 
 // 生成PolicyBase64（web前端直传用）
-func (uploadThis *AliyunOss) CreatePolicyBase64(option UploadOption) (policyBase64 string) {
+func (uploadThis *AliyunOss) CreatePolicyBase64(param UploadParam) (policyBase64 string) {
 	policyMap := map[string]interface{}{
-		`expiration`: uploadThis.GetGmtIso8601(option.Expire),
+		`expiration`: uploadThis.GetGmtIso8601(param.Expire),
 		`conditions`: [][]interface{}{
-			{`content-length-range`, option.MinSize, option.MaxSize},
-			{`starts-with`, `$key`, option.Dir},
+			{`content-length-range`, param.MinSize, param.MaxSize},
+			{`starts-with`, `$key`, param.Dir},
 		},
 	}
 	policyStr, _ := json.Marshal(policyMap)

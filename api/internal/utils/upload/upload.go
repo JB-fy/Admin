@@ -3,9 +3,11 @@ package upload
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
+
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
-type UploadOption struct {
+type UploadParam struct {
 	Dir        string //上传的文件目录
 	Expire     int64  //签名有效时间戳。单位：秒
 	ExpireTime int64  //签名有效时间。单位：秒
@@ -14,11 +16,22 @@ type UploadOption struct {
 }
 
 type Upload interface {
-	Upload() (uploadInfo map[string]interface{}, err error)                // 本地上传
-	Sign(option UploadOption) (signInfo map[string]interface{}, err error) // 获取签名（H5直传用）
-	Config(option UploadOption) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用）
-	Sts(option UploadOption) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
-	Notify() (notifyInfo map[string]interface{}, err error)                // 回调
+	Upload() (uploadInfo map[string]interface{}, err error)              // 本地上传
+	Sign(param UploadParam) (signInfo map[string]interface{}, err error) // 获取签名（H5直传用）
+	Config(param UploadParam) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用）
+	Sts(param UploadParam) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
+	Notify() (notifyInfo map[string]interface{}, err error)              // 回调
+}
+
+func CreateUploadParam(uploadType string) (param UploadParam) {
+	param = UploadParam{
+		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
+		Expire:     gtime.Now().Unix() + 15*60,
+		ExpireTime: 15 * 60,
+		MinSize:    0,
+		MaxSize:    1024 * 1024 * 1024,
+	}
+	return
 }
 
 func NewUpload(ctx context.Context) Upload {

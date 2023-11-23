@@ -1,6 +1,7 @@
-package upload
+package vod
 
 import (
+	"api/internal/utils/common"
 	"context"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -26,20 +27,20 @@ func NewAliyunVod(ctx context.Context, config map[string]interface{}) *AliyunVod
 }
 
 // 获取Sts Token
-func (uploadThis *AliyunVod) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *AliyunVod) Sts(param VodParam) (stsInfo map[string]interface{}, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
 		Endpoint:        tea.String(uploadThis.Endpoint),
 	}
 	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
-		DurationSeconds: tea.Int64(option.ExpireTime),
+		DurationSeconds: tea.Int64(param.ExpireTime),
 		//写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 		//读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 		Policy:          tea.String(`{"Statement": [{"Action": ["vod:*"],"Effect": "Allow","Resource": "*"}],"Version": "1"}`),
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_vod`),
 	}
-	stsInfo, _ = CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	stsInfo, _ = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
 	return
 }

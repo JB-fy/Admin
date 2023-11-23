@@ -85,21 +85,21 @@ func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error)
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *Local) Sign(option UploadOption) (signInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Sign(param UploadParam) (signInfo map[string]interface{}, err error) {
 	signInfo = map[string]interface{}{
 		`uploadUrl`: uploadThis.Url,
 		// `uploadData`:  map[string]interface{}{},
 		`host`:   uploadThis.FileUrlPrefix,
-		`dir`:    option.Dir,
-		`expire`: option.Expire,
+		`dir`:    param.Dir,
+		`expire`: param.Expire,
 		`isRes`:  1,
 	}
 
 	uploadData := map[string]interface{}{
-		`dir`:     option.Dir,
-		`expire`:  option.Expire,
-		`minSize`: option.MinSize,
-		`maxSize`: option.MaxSize,
+		`dir`:     param.Dir,
+		`expire`:  param.Expire,
+		`minSize`: param.MinSize,
+		`maxSize`: param.MaxSize,
 		`rand`:    grand.S(8),
 	}
 	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
@@ -109,12 +109,12 @@ func (uploadThis *Local) Sign(option UploadOption) (signInfo map[string]interfac
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *Local) Config(option UploadOption) (config map[string]interface{}, err error) {
+func (uploadThis *Local) Config(param UploadParam) (config map[string]interface{}, err error) {
 	return
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *Local) Sts(option UploadOption) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *Local) Sts(param UploadParam) (stsInfo map[string]interface{}, err error) {
 	return
 }
 

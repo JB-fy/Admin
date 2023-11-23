@@ -7,28 +7,12 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
 )
 
 type Upload struct{}
 
 func NewUpload() *Upload {
 	return &Upload{}
-}
-
-func createUploadOption(uploadType string) (option upload.UploadOption) {
-	option = upload.UploadOption{
-		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
-		Expire:     gtime.Now().Unix() + 15*60,
-		ExpireTime: 15 * 60,
-		MinSize:    0,
-		MaxSize:    1024 * 1024 * 1024,
-	}
-	/* switch uploadType {
-	case `image`:
-		option.Dir = `image/` + gtime.Now().Format(`Ymd`) + `/`
-	} */
-	return
 }
 
 // 本地上传
@@ -43,7 +27,7 @@ func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadR
 
 // 获取签名（H5直传用）
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	signInfo, err := upload.NewUpload(ctx).Sign(createUploadOption(req.UploadType))
+	signInfo, err := upload.NewUpload(ctx).Sign(upload.CreateUploadParam(req.UploadType))
 	if err != nil {
 		return
 	}
@@ -53,7 +37,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 
 // 获取配置信息（APP直传前调用）
 func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigReq) (res *api.UploadConfigRes, err error) {
-	config, err := upload.NewUpload(ctx).Config(createUploadOption(req.UploadType))
+	config, err := upload.NewUpload(ctx).Config(upload.CreateUploadParam(req.UploadType))
 	if err != nil {
 		return
 	}
@@ -63,7 +47,7 @@ func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigR
 
 // 获取Sts Token（APP直传用）
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	stsInfo, err := upload.NewUpload(ctx).Sts(createUploadOption(req.UploadType))
+	stsInfo, err := upload.NewUpload(ctx).Sts(upload.CreateUploadParam(req.UploadType))
 	if err != nil {
 		return
 	}
