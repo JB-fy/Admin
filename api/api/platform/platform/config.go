@@ -69,6 +69,12 @@ type Config struct {
 	TxTpnsSecretKeyOfIos     *string `json:"txTpnsSecretKeyOfIos,omitempty" dc:"腾讯移动推送-SecretKey(苹果)"`
 	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
 	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
+
+	VodType                  *string `json:"vodType,omitempty" dc:"视频点播方式"`
+	AliyunVodAccessKeyId     *string `json:"aliyunVodAccessKeyId,omitempty" dc:"阿里云VOD-AccessKeyId"`
+	AliyunVodAccessKeySecret *string `json:"aliyunVodAccessKeySecret,omitempty" dc:"阿里云VOD-AccessKeySecret"`
+	AliyunVodEndpoint        *string `json:"aliyunVodEndpoint,omitempty" dc:"阿里云VOD-Endpoint"`
+	AliyunVodRoleArn         *string `json:"aliyunVodRoleArn,omitempty" dc:"阿里云VOD-RoleArn"`
 }
 
 /*--------获取 结束--------*/
@@ -131,6 +137,12 @@ type ConfigSaveReq struct {
 	TxTpnsSecretKeyOfIos     *string `json:"txTpnsSecretKeyOfIos,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果)"`
 	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
 	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
+
+	VodType                  *string `json:"vodType,omitempty" v:"in:aliyunVod" dc:"视频点播方式"`
+	AliyunVodAccessKeyId     *string `json:"aliyunVodAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
+	AliyunVodAccessKeySecret *string `json:"aliyunVodAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
+	AliyunVodEndpoint        *string `json:"aliyunVodEndpoint,omitempty" v:"" dc:"阿里云VOD-Endpoint"`
+	AliyunVodRoleArn         *string `json:"aliyunVodRoleArn,omitempty" v:"" dc:"阿里云VOD-RoleArn"`
 }
 
 /*--------保存 结束--------*/

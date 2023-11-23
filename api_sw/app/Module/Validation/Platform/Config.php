@@ -67,6 +67,13 @@ class Config extends AbstractValidation
         'txTpnsSecretKeyOfIos' => 'string',
         'txTpnsAccessIDOfMacOS' => 'string',
         'txTpnsSecretKeyOfMacOS' => 'string',
+
+        'vodType' => 'string|in:aliyunVod',
+        'aliyunVodBucket' => 'string',
+        'aliyunVodAccessKeyId' => 'alpha_dash',
+        'aliyunVodAccessKeySecret' => 'alpha_dash',
+        'aliyunVodEndpoint' => 'string',
+        'aliyunVodRoleArn' => 'string',
     ];
 
     protected array $scene = [
@@ -132,6 +139,13 @@ class Config extends AbstractValidation
                 'txTpnsSecretKeyOfIos',
                 'txTpnsAccessIDOfMacOS',
                 'txTpnsSecretKeyOfMacOS',
+
+                'vodType',
+                'aliyunVodBucket',
+                'aliyunVodAccessKeyId',
+                'aliyunVodAccessKeySecret',
+                'aliyunVodEndpoint',
+                'aliyunVodRoleArn',
             ]
         ]
     ];

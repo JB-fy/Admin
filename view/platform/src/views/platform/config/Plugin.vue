@@ -3,6 +3,7 @@ const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.v
 const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))
 const IdCardConfig = defineAsyncComponent(() => import('./tabPane/IdCardConfig.vue'))
 const PushConfig = defineAsyncComponent(() => import('./tabPane/PushConfig.vue'))
+const VodConfig = defineAsyncComponent(() => import('./tabPane/VodConfig.vue'))
 
 const { t } = useI18n()
 </script>
@@ -22,6 +23,9 @@ const { t } = useI18n()
                 </ElTabPane>
                 <ElTabPane :label="t('platform.config.label.pushConfig')" :lazy="true">
                     <PushConfig />
+                </ElTabPane>
+                <ElTabPane :label="t('platform.config.label.vodConfig')" :lazy="true">
+                    <VodConfig />
                 </ElTabPane>
             </ElTabs>
         </ElMain>

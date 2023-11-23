@@ -6,6 +6,7 @@ export default {
 		smsConfig: '短信',
 		idCardConfig: '实名认证',
 		pushConfig: '推送',
+		vodConfig: '视频点播',
 
 		android: '安卓',
 		ios: '苹果',
@@ -65,6 +66,12 @@ export default {
 		txTpnsSecretKeyOfIos: '腾讯移动推送-SecretKey(苹果)',
 		txTpnsAccessIDOfMacOS: '腾讯移动推送-AccessID(苹果电脑)',
 		txTpnsSecretKeyOfMacOS: '腾讯移动推送-SecretKey(苹果电脑)',
+
+		vodType: '视频点播方式',
+		aliyunVodAccessKeyId: '阿里云VOD-AccessKeyId',
+		aliyunVodAccessKeySecret: '阿里云VOD-AccessKeySecret',
+		aliyunVodEndpoint: '阿里云VOD-Endpoint',
+		aliyunVodRoleArn: '阿里云VOD-RoleArn',
 	},
 	status: {
 		uploadType: [
@@ -80,6 +87,9 @@ export default {
 		pushType: [
 			{ value: `txTpns`, label: '腾讯移动推送' },
 		],
+		vodType: [
+			{ value: `aliyunVod`, label: '阿里云' },
+		],
 	},
 	tip: {
 		localUploadFileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
@@ -92,5 +102,8 @@ export default {
 		aliyunIdCardHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 
 		txTpnsHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
+
+		aliyunVodEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
+		aliyunVodRoleArn: 'APP直传需设置，用于生成STS凭证',
 	},
 }

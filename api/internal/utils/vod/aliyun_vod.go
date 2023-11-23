@@ -14,8 +14,8 @@ type AliyunVod struct {
 	Ctx             context.Context
 	AccessKeyId     string `json:"aliyunVodAccessKeyId"`
 	AccessKeySecret string `json:"aliyunVodAccessKeySecret"`
-	RoleArn         string `json:"aliyunVodRoleArn"`
 	Endpoint        string `json:"aliyunVodEndpoint"`
+	RoleArn         string `json:"aliyunVodRoleArn"`
 }
 
 func NewAliyunVod(ctx context.Context, config map[string]interface{}) *AliyunVod {
