@@ -160,8 +160,9 @@ saveForm.initData()
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.aliyunOssEndpoint')" prop="aliyunOssEndpoint">
-                <ElInput v-model="saveForm.data.aliyunOssEndpoint" :placeholder="t('platform.config.name.aliyunOssEndpoint')"
-                    :clearable="true" style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.aliyunOssEndpoint"
+                    :placeholder="t('platform.config.name.aliyunOssEndpoint')" :clearable="true"
+                    style="max-width: 500px;" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>

@@ -11,8 +11,8 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         hotSearch: [
-			// { type: 'array', trigger: 'change', message: t('validation.required') },
-			{ type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
+            // { type: 'array', trigger: 'change', message: t('validation.required') },
+            { type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
         ],
         userAgreement: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
@@ -80,11 +80,15 @@ saveForm.initData()
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.hotSearch')" prop="hotSearch">
-            <ElTag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.typeArr[index % 5]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+            <ElTag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.typeArr[index % 5]"
+                @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                 {{ item }}
             </ElTag>
             <template v-if="saveForm.data.hotSearch.length < 10">
-                <ElInput v-if="hotSearchHandle.visible" :ref="(el: any) => { hotSearchHandle.ref = el }" v-model="hotSearchHandle.value" :placeholder="t('platform.config.name.hotSearch')" @keyup.enter="hotSearchHandle.addValue" @blur="hotSearchHandle.addValue" size="small" style="width: 100px;" />
+                <ElInput v-if="hotSearchHandle.visible" :ref="(el: any) => { hotSearchHandle.ref = el }"
+                    v-model="hotSearchHandle.value" :placeholder="t('platform.config.name.hotSearch')"
+                    @keyup.enter="hotSearchHandle.addValue" @blur="hotSearchHandle.addValue" size="small"
+                    style="width: 100px;" />
                 <ElButton v-else type="primary" size="small" @click="hotSearchHandle.visibleChange">
                     <AutoiconEpPlus />{{ t('common.add') }}
                 </ElButton>
@@ -103,6 +107,5 @@ saveForm.initData()
             <ElButton type="info" @click="saveForm.reset">
                 <AutoiconEpCircleClose />{{ t('common.reset') }}
             </ElButton>
-        </ElFormItem>
-    </ElForm>
-</template>
+    </ElFormItem>
+</ElForm></template>

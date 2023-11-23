@@ -97,25 +97,28 @@ saveForm.initData()
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.txTpnsAccessIDOfAndroid')" prop="txTpnsAccessIDOfAndroid">
-                <ElInput v-model="saveForm.data.txTpnsAccessIDOfAndroid" :placeholder="t('platform.config.name.txTpnsAccessIDOfAndroid')"
-                    :clearable="true" />
+                <ElInput v-model="saveForm.data.txTpnsAccessIDOfAndroid"
+                    :placeholder="t('platform.config.name.txTpnsAccessIDOfAndroid')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.txTpnsSecretKeyOfAndroid')" prop="txTpnsSecretKeyOfAndroid">
-                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfAndroid" :placeholder="t('platform.config.name.txTpnsSecretKeyOfAndroid')" :clearable="true" />
+                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfAndroid"
+                    :placeholder="t('platform.config.name.txTpnsSecretKeyOfAndroid')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.txTpnsAccessIDOfIos')" prop="txTpnsAccessIDOfIos">
-                <ElInput v-model="saveForm.data.txTpnsAccessIDOfIos" :placeholder="t('platform.config.name.txTpnsAccessIDOfIos')"
-                    :clearable="true" />
+                <ElInput v-model="saveForm.data.txTpnsAccessIDOfIos"
+                    :placeholder="t('platform.config.name.txTpnsAccessIDOfIos')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.txTpnsSecretKeyOfIos')" prop="txTpnsSecretKeyOfIos">
-                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfIos" :placeholder="t('platform.config.name.txTpnsSecretKeyOfIos')" :clearable="true" />
+                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfIos"
+                    :placeholder="t('platform.config.name.txTpnsSecretKeyOfIos')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.txTpnsAccessIDOfMacOS')" prop="txTpnsAccessIDOfMacOS">
-                <ElInput v-model="saveForm.data.txTpnsAccessIDOfMacOS" :placeholder="t('platform.config.name.txTpnsAccessIDOfMacOS')"
-                    :clearable="true" />
+                <ElInput v-model="saveForm.data.txTpnsAccessIDOfMacOS"
+                    :placeholder="t('platform.config.name.txTpnsAccessIDOfMacOS')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.txTpnsSecretKeyOfMacOS')" prop="txTpnsSecretKeyOfMacOS">
-                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfMacOS" :placeholder="t('platform.config.name.txTpnsSecretKeyOfMacOS')" :clearable="true" />
+                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfMacOS"
+                    :placeholder="t('platform.config.name.txTpnsSecretKeyOfMacOS')" :clearable="true" />
             </ElFormItem>
         </template>
 
@@ -127,5 +130,4 @@ saveForm.initData()
                 <AutoiconEpCircleClose />{{ t('common.reset') }}
             </ElButton>
         </ElFormItem>
-    </ElForm>
-</template>
+</ElForm></template>

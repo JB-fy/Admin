@@ -82,8 +82,9 @@ saveForm.initData()
                     :placeholder="t('platform.config.name.aliyunVodAccessKeySecret')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.aliyunVodEndpoint')" prop="aliyunVodEndpoint">
-                <ElInput v-model="saveForm.data.aliyunVodEndpoint" :placeholder="t('platform.config.name.aliyunVodEndpoint')"
-                    :clearable="true" style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.aliyunVodEndpoint"
+                    :placeholder="t('platform.config.name.aliyunVodEndpoint')" :clearable="true"
+                    style="max-width: 500px;" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>

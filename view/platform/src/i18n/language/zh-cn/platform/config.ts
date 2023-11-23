@@ -103,7 +103,7 @@ export default {
 
 		txTpnsHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
 
-		aliyunVodEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-		aliyunVodRoleArn: 'APP直传需设置，用于生成STS凭证',
+		aliyunVodEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
+		aliyunVodRoleArn: '用于生成STS凭证',
 	},
 }
