@@ -42,8 +42,8 @@ export default {
 		aliyunOssAccessKeyId: '阿里云OSS-AccessKeyId',
 		aliyunOssAccessKeySecret: '阿里云OSS-AccessKeySecret',
 		aliyunOssCallbackUrl: '阿里云OSS-回调地址',
-		aliyunOssRoleArn: '阿里云OSS-RoleArn',
 		aliyunOssEndpoint: '阿里云OSS-Endpoint',
+		aliyunOssRoleArn: '阿里云OSS-RoleArn',
 
 		smsType: '短信方式',
 		aliyunSmsAccessKeyId: '阿里云SMS-AccessKeyId',
@@ -86,8 +86,8 @@ export default {
 		localUploadFileUrlPrefix: '根据部署的线上环境设置。与文件保存路径拼接形成文件访问地址',
 		aliyunOssHost: '不含Bucket部分',
 		aliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
-		aliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 		aliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
+		aliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
 		aliyunIdCardHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 

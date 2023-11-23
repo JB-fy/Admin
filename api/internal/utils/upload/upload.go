@@ -39,7 +39,7 @@ func NewUpload(ctx context.Context) Upload {
 	uploadType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `uploadType`).Value(platformConfigColumns.ConfigValue)
 	switch uploadType.String() {
 	case `aliyunOss`:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssCallbackUrl`, `aliyunOssRoleArn`, `aliyunOssEndpoint`})
+		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssCallbackUrl`, `aliyunOssEndpoint`, `aliyunOssRoleArn`})
 		return NewAliyunOss(ctx, config)
 	// case `local`:
 	default:

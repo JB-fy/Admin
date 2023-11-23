@@ -15,8 +15,8 @@ const saveForm = reactive({
         aliyunOssAccessKeyId: '',
         aliyunOssAccessKeySecret: '',
         aliyunOssCallbackUrl: '',
-        aliyunOssRoleArn: '',
         aliyunOssEndpoint: '',
+        aliyunOssRoleArn: '',
     } as { [propName: string]: any },
     rules: {
         uploadType: [
@@ -49,10 +49,10 @@ const saveForm = reactive({
         aliyunOssCallbackUrl: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        aliyunOssRoleArn: [
+        aliyunOssEndpoint: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliyunOssEndpoint: [
+        aliyunOssRoleArn: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -159,14 +159,6 @@ saveForm.initData()
                         :closable="false" />
                 </label>
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
-                <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
-                    :clearable="true" style="max-width: 500px;" />
-                <label>
-                    <ElAlert :title="t('platform.config.tip.aliyunOssRoleArn')" type="info" :show-icon="true"
-                        :closable="false" />
-                </label>
-            </ElFormItem>
             <ElFormItem :label="t('platform.config.name.aliyunOssEndpoint')" prop="aliyunOssEndpoint">
                 <ElInput v-model="saveForm.data.aliyunOssEndpoint" :placeholder="t('platform.config.name.aliyunOssEndpoint')"
                     :clearable="true" style="max-width: 500px;" />
@@ -176,6 +168,14 @@ saveForm.initData()
                             <span v-html="t('platform.config.tip.aliyunOssEndpoint')"></span>
                         </template>
                     </ElAlert>
+                </label>
+            </ElFormItem>
+            <ElFormItem :label="t('platform.config.name.aliyunOssRoleArn')" prop="aliyunOssRoleArn">
+                <ElInput v-model="saveForm.data.aliyunOssRoleArn" :placeholder="t('platform.config.name.aliyunOssRoleArn')"
+                    :clearable="true" style="max-width: 500px;" />
+                <label>
+                    <ElAlert :title="t('platform.config.tip.aliyunOssRoleArn')" type="info" :show-icon="true"
+                        :closable="false" />
                 </label>
             </ElFormItem>
         </template>

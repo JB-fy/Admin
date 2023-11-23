@@ -38,8 +38,8 @@ type AliyunOss struct {
 	AccessKeyId     string `json:"aliyunOssAccessKeyId"`
 	AccessKeySecret string `json:"aliyunOssAccessKeySecret"`
 	CallbackUrl     string `json:"aliyunOssCallbackUrl"`
-	RoleArn         string `json:"aliyunOssRoleArn"`
 	Endpoint        string `json:"aliyunOssEndpoint"`
+	RoleArn         string `json:"aliyunOssRoleArn"`
 }
 
 func NewAliyunOss(ctx context.Context, config map[string]interface{}) *AliyunOss {

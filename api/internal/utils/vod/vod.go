@@ -26,13 +26,7 @@ func NewVod(ctx context.Context) Vod {
 	switch vodType.String() {
 	// case `aliyunVod`:
 	default:
-		// config, _ := daoPlatform.Config.Get(ctx, []string{`localVodUrl`, `localVodSignKey`, `localVodFileSaveDir`, `localVodFileUrlPrefix`})
-		config := map[string]interface{}{
-			`aliyunVodAccessKeyId`:     `LTAI5tFVtUyYRbetup1hxjjX`,
-			`aliyunVodAccessKeySecret`: `pcSsoLLkZPfnTWRAtx0inYhJcpwNRC`,
-			`aliyunVodRoleArn`:         `acs:ram::1359390739767110:role/aliyunvodtokengeneratorrole`,
-			`aliyunVodEndpoint`:        `sts.cn-shanghai.aliyuncs.com`,
-		}
+		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunVodAccessKeyId`, `aliyunVodAccessKeySecret`, `aliyunVodEndpoint`, `aliyunVodRoleArn`})
 		return NewAliyunVod(ctx, config)
 	}
 }
