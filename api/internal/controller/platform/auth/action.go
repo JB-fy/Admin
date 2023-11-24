@@ -30,7 +30,6 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	page := req.Page
 	limit := req.Limit
 
-	columnsThis := daoAuth.Action.Columns()
 	allowField := daoAuth.Action.ColumnArr()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
@@ -45,7 +44,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authActionLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, columnsThis.ActionName, columnsThis.ActionId}
+		field = []string{`id`, `label`, daoAuth.Action.Columns().ActionName, daoAuth.Action.Columns().ActionId}
 	}
 	/**--------权限验证 结束--------**/
 
