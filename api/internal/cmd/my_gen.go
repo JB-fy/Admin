@@ -609,19 +609,17 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 
 // 自动生成操作
 func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionName string) {
-	daoThis := daoAuth.Action
-	columnsThis := daoAuth.Action.Columns()
 	actionName = gstr.Replace(actionName, `/`, `-`)
 
-	idVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.ActionCode, actionCode).Value(daoThis.PrimaryKey())
+	idVar, _ := daoAuth.Action.ParseDbCtx(ctx).Where(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
 	id := idVar.Int64()
 	if id == 0 {
-		id, _ = daoThis.ParseDbCtx(ctx).Data(map[string]interface{}{
-			columnsThis.ActionCode: actionCode,
-			columnsThis.ActionName: actionName,
+		id, _ = daoAuth.Action.ParseDbCtx(ctx).Data(map[string]interface{}{
+			daoAuth.Action.Columns().ActionCode: actionCode,
+			daoAuth.Action.Columns().ActionName: actionName,
 		}).InsertAndGetId()
 	} else {
-		daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(columnsThis.ActionName, actionName).Update()
+		daoAuth.Action.ParseDbCtx(ctx).Where(daoAuth.Action.PrimaryKey(), id).Data(daoAuth.Action.Columns().ActionName, actionName).Update()
 	}
 	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
 		daoAuth.ActionRelToScene.Columns().ActionId: id,
@@ -631,21 +629,19 @@ func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionNam
 
 // 自动生成菜单
 func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
-	daoThis := daoAuth.Menu
-	columnsThis := daoAuth.Menu.Columns()
 	menuNameArr := gstr.Split(menuName, `/`)
 
 	var pid int64 = 0
 	for _, v := range menuNameArr[:len(menuNameArr)-1] {
-		pidVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.SceneId, sceneId).Where(columnsThis.MenuName, v).Value(daoThis.PrimaryKey())
+		pidVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuName, v).Value(daoAuth.Menu.PrimaryKey())
 		if pidVar.Uint() == 0 {
 			pid, _ = service.AuthMenu().Create(ctx, g.Map{
-				columnsThis.SceneId:   sceneId,
-				columnsThis.Pid:       pid,
-				columnsThis.MenuName:  v,
-				columnsThis.MenuIcon:  `AutoiconEpLink`,
-				columnsThis.MenuUrl:   ``,
-				columnsThis.ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
+				daoAuth.Menu.Columns().SceneId:   sceneId,
+				daoAuth.Menu.Columns().Pid:       pid,
+				daoAuth.Menu.Columns().MenuName:  v,
+				daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
+				daoAuth.Menu.Columns().MenuUrl:   ``,
+				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
 			})
 		} else {
 			pid = pidVar.Int64()
@@ -653,22 +649,22 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 	}
 
 	menuName = menuNameArr[len(menuNameArr)-1]
-	idVar, _ := daoThis.ParseDbCtx(ctx).Where(columnsThis.SceneId, sceneId).Where(columnsThis.MenuUrl, menuUrl).Value(daoThis.PrimaryKey())
+	idVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuUrl, menuUrl).Value(daoAuth.Menu.PrimaryKey())
 	id := idVar.Uint()
 	if id == 0 {
 		service.AuthMenu().Create(ctx, g.Map{
-			columnsThis.SceneId:   sceneId,
-			columnsThis.Pid:       pid,
-			columnsThis.MenuName:  menuName,
-			columnsThis.MenuIcon:  `AutoiconEpLink`,
-			columnsThis.MenuUrl:   menuUrl,
-			columnsThis.ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+			daoAuth.Menu.Columns().SceneId:   sceneId,
+			daoAuth.Menu.Columns().Pid:       pid,
+			daoAuth.Menu.Columns().MenuName:  menuName,
+			daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
+			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
+			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		})
 	} else {
-		service.AuthMenu().Update(ctx, g.Map{daoThis.PrimaryKey(): id}, g.Map{
-			columnsThis.MenuName:  menuName,
-			columnsThis.Pid:       pid,
-			columnsThis.ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		service.AuthMenu().Update(ctx, g.Map{daoAuth.Menu.PrimaryKey(): id}, g.Map{
+			daoAuth.Menu.Columns().MenuName:  menuName,
+			daoAuth.Menu.Columns().Pid:       pid,
+			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		})
 	}
 }
@@ -1721,7 +1717,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	controllerAlloweFieldInfo := "`id`, "
 	controllerAlloweFieldTree := "`id`, "
 	controllerAlloweFieldNoAuth := "`id`, "
-	controllerAlloweFieldDiff := ``
+	// controllerAlloweFieldDiff := `` // 可以不要。数据返回时，会根据API文件中的结构体做过滤
 	daoImportOtherDao := ``
 	if tpl.LabelHandle.LabelField != `` {
 		controllerAlloweFieldList += "`label`, "
@@ -1733,9 +1729,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
 		if tpl.LabelHandle.IsCoexist {
-			controllerAlloweFieldNoAuth += `columnsThis.Phone, columnsThis.Account, `
+			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().Phone, ` + `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().Account, `
 		} else {
-			controllerAlloweFieldNoAuth += `columnsThis.` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
+			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
 		}
 	}
 	for _, column := range tpl.TableColumnList {
@@ -1744,12 +1740,12 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		//主键
 		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 			if field != `id` {
-				controllerAlloweFieldNoAuth += `columnsThis.` + fieldCaseCamel + `, `
+				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
+			// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
-			controllerAlloweFieldDiff += `columnsThis.` + fieldCaseCamel + `, `
+			// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
@@ -1767,7 +1763,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	controllerAlloweFieldInfo = gstr.SubStr(controllerAlloweFieldInfo, 0, -len(`, `))
 	controllerAlloweFieldTree = gstr.SubStr(controllerAlloweFieldTree, 0, -len(`, `))
 	controllerAlloweFieldNoAuth = gstr.SubStr(controllerAlloweFieldNoAuth, 0, -len(`, `))
-	controllerAlloweFieldDiff = gstr.SubStr(controllerAlloweFieldDiff, 0, -len(`, `))
+	// controllerAlloweFieldDiff = gstr.SubStr(controllerAlloweFieldDiff, 0, -len(`, `))
 
 	tplController := `package controller
 
@@ -1803,17 +1799,13 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	page := req.Page
 	limit := req.Limit
 `
-		if controllerAlloweFieldDiff != `` || (option.IsAuthAction && controllerAlloweFieldNoAuth != ``) {
-			tplController += `
-	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()`
-		}
 		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
 	allowField = append(allowField, ` + controllerAlloweFieldList + `)`
-		if controllerAlloweFieldDiff != `` {
-			tplController += `
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
-		}
+		/* if controllerAlloweFieldDiff != `` {
+				tplController += `
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
+			} */
 		tplController += `
 	field := allowField
 	if len(req.Field) > 0 {
@@ -1870,11 +1862,10 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	/**--------参数处理 开始--------**/
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
 	allowField = append(allowField, ` + controllerAlloweFieldInfo + `)`
-		if controllerAlloweFieldDiff != `` {
-			tplController += `
-	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
-		}
+		/* if controllerAlloweFieldDiff != `` {
+				tplController += `
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
+			} */
 		tplController += `
 	field := allowField
 	if len(req.Field) > 0 {
@@ -2019,13 +2010,12 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		filter = map[string]interface{}{}
 	}
 
-	columnsThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns()
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
 	allowField = append(allowField, ` + controllerAlloweFieldTree + `)`
-		if controllerAlloweFieldDiff != `` {
-			tplController += `
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
-		}
+		/* if controllerAlloweFieldDiff != `` {
+				tplController += `
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
+			} */
 		tplController += `
 	field := allowField
 	if len(req.Field) > 0 {
@@ -2056,7 +2046,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list.List(), 0, columnsThis.` + gstr.CaseCamel(tpl.PrimaryKey) + `, columnsThis.` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PrimaryKey) + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes{}
 	gconv.Structs(tree, &res.Tree)
