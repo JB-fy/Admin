@@ -30,7 +30,6 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	page := req.Page
 	limit := req.Limit
 
-	columnsThis := daoAuth.Role.Columns()
 	allowField := daoAuth.Role.ColumnArr()
 	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `tableName`)
 	field := allowField
@@ -45,7 +44,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authRoleLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, columnsThis.RoleName, columnsThis.RoleId}
+		field = []string{`id`, `label`, daoAuth.Role.Columns().RoleName, daoAuth.Role.Columns().RoleId}
 	}
 	/**--------权限验证 结束--------**/
 

@@ -30,10 +30,8 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	page := req.Page
 	limit := req.Limit
 
-	columnsThis := daoUser.User.Columns()
 	allowField := daoUser.User.ColumnArr()
 	allowField = append(allowField, `id`, `label`)
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password, columnsThis.Salt})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -46,7 +44,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `userLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, columnsThis.Phone, columnsThis.Account, columnsThis.UserId}
+		field = []string{`id`, `label`, daoUser.User.Columns().Phone, daoUser.User.Columns().Account, daoUser.User.Columns().UserId}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -71,8 +69,6 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	/**--------参数处理 开始--------**/
 	allowField := daoUser.User.ColumnArr()
 	allowField = append(allowField, `id`, `label`)
-	columnsThis := daoUser.User.Columns()
-	allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{columnsThis.Password, columnsThis.Salt})).Slice() //移除敏感字段
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
