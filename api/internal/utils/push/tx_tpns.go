@@ -76,7 +76,7 @@ func (pushThis *TxTpns) Push(param PushParam) (err error) {
 	case 1, 2: //IOS //MacOS
 		message[`ios`] = g.Map{
 			`aps`: g.Map{
-				`alert`:           g.Map{},
+				`alert`:           `大派对`, //map or string
 				`mutable-content`: 1,
 			},
 			`custom_content`: gjson.MustEncodeString(param.CustomContent),
