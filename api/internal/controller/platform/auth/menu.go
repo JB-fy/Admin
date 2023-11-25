@@ -30,6 +30,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	page := req.Page
 	limit := req.Limit
 
+	columnsThis := daoAuth.Menu.Columns()
 	allowField := daoAuth.Menu.ColumnArr()
 	allowField = append(allowField, `id`, `label`, `pMenuName`, daoAuth.Scene.Columns().SceneName)
 	field := allowField
@@ -44,7 +45,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuName, daoAuth.Menu.Columns().MenuId}
+		field = []string{`id`, `label`, columnsThis.MenuName, columnsThis.MenuId}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -169,6 +170,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 		filter = map[string]interface{}{}
 	}
 
+	columnsThis := daoAuth.Menu.Columns()
 	allowField := daoAuth.Menu.ColumnArr()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
@@ -183,7 +185,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuName, daoAuth.Menu.Columns().MenuId}
+		field = []string{`id`, `label`, columnsThis.MenuName, columnsThis.MenuId}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -193,7 +195,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list.List(), 0, daoAuth.Menu.Columns().MenuId, daoAuth.Menu.Columns().Pid)
+	tree := utils.Tree(list.List(), 0, columnsThis.MenuId, columnsThis.Pid)
 
 	res = &apiAuth.MenuTreeRes{}
 	gconv.Structs(tree, &res.Tree)
