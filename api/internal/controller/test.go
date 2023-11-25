@@ -39,7 +39,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// fmt.Println(grand.Letters(8)) //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 	// fmt.Println(grand.Symbols(8)) //!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~
 
-	// g.Log().Info(ctx, `日志打印`)
+	// g.Log().Info(ctx, `日志打印`, "\r\n", reqData)
 	// fmt.Println(g.I18n().T(ctx, `code.99999999`))
 
 	/* //合并Map
