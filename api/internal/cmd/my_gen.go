@@ -970,12 +970,13 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 						}
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
-						daoParseFieldTmp := `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `: //不存在时改成` + "`" + relTable.RelNameField + "`" + `，前端已用该字段名显示。下面Fields方法也需改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)。控制器中也需修改
+						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelNameField + "`" + `（控制器也要改）。下面Fields方法也要改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
+						if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+							daoParseFieldTmp = `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `: ` + daoParseFieldTmp + `
 				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx)
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, joinTableArr))`
-						if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 							daoParseField += daoParseFieldTmp
 						}
 					}
