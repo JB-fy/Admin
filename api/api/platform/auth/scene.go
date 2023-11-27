@@ -77,7 +77,7 @@ type SceneInfo struct {
 
 /*--------新增 开始--------*/
 type SceneCreateReq struct {
-	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"创建"`
+	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"新增"`
 	SceneName   *string `json:"sceneName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
 	SceneConfig *string `json:"sceneConfig,omitempty" v:"required|json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
@@ -89,7 +89,7 @@ type SceneCreateReq struct {
 
 /*--------修改 开始--------*/
 type SceneUpdateReq struct {
-	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"更新"`
+	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"修改"`
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	SceneName   *string `json:"sceneName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`

@@ -77,7 +77,7 @@ type ActionInfo struct {
 
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
-	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"创建"`
+	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"新增"`
 	ActionName *string `json:"actionName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	ActionCode *string `json:"actionCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
@@ -89,7 +89,7 @@ type ActionCreateReq struct {
 
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
-	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"更新"`
+	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
 	IdArr      []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	ActionName *string `json:"actionName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	ActionCode *string `json:"actionCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`

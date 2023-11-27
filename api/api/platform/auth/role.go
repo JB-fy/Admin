@@ -82,7 +82,7 @@ type RoleInfo struct {
 
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
-	g.Meta      `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"创建"`
+	g.Meta      `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
 	RoleName    *string `json:"roleName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId     *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -94,7 +94,7 @@ type RoleCreateReq struct {
 
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
-	g.Meta      `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"更新"`
+	g.Meta      `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	RoleName    *string `json:"roleName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId     *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`

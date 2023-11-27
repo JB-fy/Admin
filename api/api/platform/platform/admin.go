@@ -80,7 +80,7 @@ type AdminInfo struct {
 
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
-	g.Meta    `path:"/admin/create" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"创建"`
+	g.Meta    `path:"/admin/create" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"新增"`
 	Phone     *string `json:"phone,omitempty" v:"required-without:Account|max-length:30|phone" dc:"手机"`
 	Account   *string `json:"account,omitempty" v:"required-without:Phone|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
@@ -94,7 +94,7 @@ type AdminCreateReq struct {
 
 /*--------修改 开始--------*/
 type AdminUpdateReq struct {
-	g.Meta    `path:"/admin/update" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"更新"`
+	g.Meta    `path:"/admin/update" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"修改"`
 	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	Phone     *string `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account   *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`

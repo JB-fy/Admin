@@ -92,7 +92,7 @@ type MenuInfo struct {
 
 /*--------新增 开始--------*/
 type MenuCreateReq struct {
-	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"创建"`
+	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"新增"`
 	MenuName  *string `json:"menuName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
@@ -107,7 +107,7 @@ type MenuCreateReq struct {
 
 /*--------修改 开始--------*/
 type MenuUpdateReq struct {
-	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"更新"`
+	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"修改"`
 	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	MenuName  *string `json:"menuName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`

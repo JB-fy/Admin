@@ -93,7 +93,7 @@ type UserInfo struct {
 
 /*--------修改 开始--------*/
 type UserUpdateReq struct {
-	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"更新"`
+	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"修改"`
 	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	/* Phone      *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account    *string     `json:"account,omitempty" v:"max-length:30" dc:"账号"`
