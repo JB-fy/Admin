@@ -1,8 +1,6 @@
 package router
 
 import (
-	"github.com/gogf/gf/v2/net/ghttp"
-
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/platform"
 	controllerAuth "api/internal/controller/platform/auth"
@@ -10,6 +8,8 @@ import (
 	controllerPlatform "api/internal/controller/platform/platform"
 	controllerUser "api/internal/controller/platform/user"
 	"api/internal/middleware"
+
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 func InitRouterPlatform(s *ghttp.Server) {
