@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 23/11/2023 17:27:20
+ Date: 27/11/2023 14:12:45
 */
 
 SET NAMES utf8mb4;
@@ -263,7 +263,8 @@ CREATE TABLE `auth_scene`  (
   `sceneId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '场景ID',
   `sceneName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `sceneCode` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '标识',
-  `sceneConfig` json NOT NULL COMMENT '配置。JSON格式：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}',
+  `sceneConfig` json NOT NULL COMMENT '配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}',
+  `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
   `isStop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -274,8 +275,8 @@ CREATE TABLE `auth_scene`  (
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES (1, '平台后台', 'platform', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', 0, '2023-06-14 21:52:16', '2023-06-09 12:03:30');
-INSERT INTO `auth_scene` VALUES (2, 'APP', 'app', '{\"signKey\": \"www.admin.com_app\", \"signType\": \"HS256\", \"expireTime\": 604800}', 0, '2023-10-21 17:21:15', '2023-10-21 17:21:15');
+INSERT INTO `auth_scene` VALUES (1, '平台后台', 'platform', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', '', 0, '2023-06-14 21:52:16', '2023-06-09 12:03:30');
+INSERT INTO `auth_scene` VALUES (2, 'APP', 'app', '{\"signKey\": \"www.admin.com_app\", \"signType\": \"HS256\", \"expireTime\": 604800}', '', 0, '2023-10-21 17:21:15', '2023-10-21 17:21:15');
 
 -- ----------------------------
 -- Table structure for platform_admin
@@ -367,7 +368,7 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
@@ -396,7 +397,7 @@ CREATE TABLE `user`  (
   PRIMARY KEY (`userId`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `account`(`account` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
