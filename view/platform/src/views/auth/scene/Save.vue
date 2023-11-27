@@ -24,11 +24,10 @@ const saveForm = reactive({
 			{
 				type: 'object',
 				required: true,
-				fields: {
-					signType: { type: 'string', required: true, message: 'signType' + t('validation.required') },
-					signKey: { type: 'string', required: true, message: 'signKey' + t('validation.required') },
-					expireTime: { type: 'integer', required: true, min: 1, message: 'expireTime' + t('validation.min.number', { min: 1 }) },
-				},
+				/* fields: {
+					xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
+					xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
+				}, */
 				transform(value: any) {
 					if (value === '' || value === null || value === undefined) {
 						return undefined
@@ -42,6 +41,9 @@ const saveForm = reactive({
 				trigger: 'blur',
 				message: t('validation.json'),
 			},
+		],
+		remark: [
+			{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) },
 		],
 		isStop: [
 			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
@@ -97,10 +99,10 @@ const saveDrawer = reactive({
 		<ElScrollbar>
 			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
 				<ElFormItem :label="t('auth.scene.name.sceneName')" prop="sceneName">
-					<ElInput v-model="saveForm.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.scene.name.sceneCode')" prop="sceneCode">
-					<ElInput v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+					<ElInput v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>
@@ -108,6 +110,9 @@ const saveDrawer = reactive({
 				<ElFormItem :label="t('auth.scene.name.sceneConfig')" prop="sceneConfig">
 					<ElAlert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true" :closable="false" />
 					<ElInput v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
+				</ElFormItem>
+				<ElFormItem :label="t('auth.scene.name.remark')" prop="remark">
+					<ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.scene.name.isStop')" prop="isStop">
 					<ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />

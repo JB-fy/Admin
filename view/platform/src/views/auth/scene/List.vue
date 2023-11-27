@@ -75,6 +75,14 @@ const table = reactive({
 		hidden: true,
 	},
 	{
+		dataKey: 'remark',
+		title: t('auth.scene.name.remark'),
+		key: 'remark',
+		align: 'center',
+		width: 150,
+		hidden: true,
+	},
+	{
 		dataKey: 'isStop',
 		title: t('auth.scene.name.isStop'),
 		key: 'isStop',

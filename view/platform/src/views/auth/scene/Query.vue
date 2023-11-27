@@ -49,10 +49,10 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>
 		<ElFormItem prop="sceneName">
-			<ElInput v-model="queryCommon.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="sceneCode">
-			<ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="isStop" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.isStop')" :clearable="true" />

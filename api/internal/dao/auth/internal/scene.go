@@ -28,7 +28,8 @@ type SceneColumns struct {
 	SceneId     string // 场景ID
 	SceneName   string // 名称
 	SceneCode   string // 标识
-	SceneConfig string // 配置。JSON格式：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
+	SceneConfig string // 配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
+	Remark      string // 备注
 	IsStop      string // 停用：0否 1是
 	UpdatedAt   string // 更新时间
 	CreatedAt   string // 创建时间
@@ -40,6 +41,7 @@ var sceneColumns = SceneColumns{
 	SceneName:   "sceneName",
 	SceneCode:   "sceneCode",
 	SceneConfig: "sceneConfig",
+	Remark:      "remark",
 	IsStop:      "isStop",
 	UpdatedAt:   "updatedAt",
 	CreatedAt:   "createdAt",
