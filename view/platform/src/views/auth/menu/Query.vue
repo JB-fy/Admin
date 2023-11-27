@@ -49,7 +49,7 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>
 		<ElFormItem prop="menuName">
-			<ElInput v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="sceneId">
 			<MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.menu.name.sceneId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
@@ -61,7 +61,7 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.level" :placeholder="t('auth.menu.name.level')" :min="1" :controls="false" />
 		</ElFormItem>
 		<ElFormItem prop="menuUrl">
-			<ElInput v-model="queryCommon.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" minlength="1" maxlength="120" :clearable="true" />
+			<ElInput v-model="queryCommon.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="isStop" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.isStop')" :clearable="true" />

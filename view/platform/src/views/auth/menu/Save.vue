@@ -109,7 +109,7 @@ const saveDrawer = reactive({
 		<ElScrollbar>
 			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
 				<ElFormItem :label="t('auth.menu.name.menuName')" prop="menuName">
-					<ElInput v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.sceneId')" prop="sceneId">
 					<MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => { saveForm.data.pid = 0 }" />
@@ -118,13 +118,13 @@ const saveDrawer = reactive({
 					<MyCascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
-					<ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+					<ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
-					<ElInput v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" minlength="1" maxlength="120" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.extraData')" prop="extraData">
 					<ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />

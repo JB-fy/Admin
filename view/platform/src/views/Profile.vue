@@ -33,10 +33,10 @@ const saveForm = reactive({
             { type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) },
         ],
         password: [
-            { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
+            { type: 'string', min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
         repeatPassword: [
-            { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
+            { type: 'string', min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 required: computed((): boolean => { return saveForm.data.password ? true : false; }),
                 validator: (rule: any, value: any, callback: any) => {
@@ -95,8 +95,8 @@ const saveForm = reactive({
             <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules"
                 label-width="auto" :status-icon="true" :scroll-to-error="false">
                 <ElFormItem :label="t('profile.name.account')" prop="account">
-                    <ElInput v-model="saveForm.data.account" :placeholder="t('profile.name.account')" minlength="1"
-                        maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+                    <ElInput v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="30"
+                        :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert
                             :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })"
@@ -104,8 +104,8 @@ const saveForm = reactive({
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.phone')" prop="phone">
-                    <ElInput v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" minlength="1"
-                        maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+                    <ElInput v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" maxlength="30"
+                        :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
                     <label>
                         <ElAlert
                             :title="t('profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })"
@@ -113,15 +113,15 @@ const saveForm = reactive({
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.nickname')" prop="nickname">
-                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('profile.name.nickname')" minlength="1"
-                        maxlength="30" :show-word-limit="true" :clearable="true" />
+                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('profile.name.nickname')" maxlength="30"
+                        :show-word-limit="true" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.avatar')" prop="avatar">
                     <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.password')" prop="password">
-                    <ElInput v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="1"
-                        maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="6"
+                        maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
@@ -129,7 +129,7 @@ const saveForm = reactive({
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.repeatPassword')" prop="repeatPassword">
                     <ElInput v-model="saveForm.data.repeatPassword" :placeholder="t('profile.name.repeatPassword')"
-                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                        minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
@@ -137,7 +137,7 @@ const saveForm = reactive({
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.passwordToCheck')" prop="passwordToCheck">
                     <ElInput v-model="saveForm.data.passwordToCheck" :placeholder="t('profile.name.passwordToCheck')"
-                        minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" :show-password="true"
+                        minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true"
                         style="max-width: 250px;" />
                     <label>
                         <ElAlert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true"

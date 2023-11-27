@@ -80,10 +80,10 @@ const saveDrawer = reactive({
 		<ElScrollbar>
 			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
 				<ElFormItem :label="t('auth.action.name.actionName')" prop="actionName">
-					<ElInput v-model="saveForm.data.actionName" :placeholder="t('auth.action.name.actionName')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.actionName" :placeholder="t('auth.action.name.actionName')" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.action.name.actionCode')" prop="actionCode">
-					<ElInput v-model="saveForm.data.actionCode" :placeholder="t('auth.action.name.actionCode')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+					<ElInput v-model="saveForm.data.actionCode" :placeholder="t('auth.action.name.actionCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>
@@ -92,7 +92,7 @@ const saveDrawer = reactive({
 					<MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.action.name.remark')" prop="remark">
-					<ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" />
+					<ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.action.name.isStop')" prop="isStop">
 					<ElSwitch v-model="saveForm.data.isStop" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />

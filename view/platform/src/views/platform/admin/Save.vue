@@ -22,7 +22,7 @@ const saveForm = reactive({
 			{ pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
 		],
 		password: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
 		],
 		nickname: [
 			{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
@@ -89,25 +89,25 @@ const saveDrawer = reactive({
 		<ElScrollbar>
 			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
 				<ElFormItem :label="t('platform.admin.name.phone')" prop="phone">
-					<ElInput v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+					<ElInput v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>
 				<ElFormItem :label="t('platform.admin.name.account')" prop="account">
-					<ElInput v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
+					<ElInput v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>
 				<ElFormItem :label="t('platform.admin.name.password')" prop="password">
-					<ElInput v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="1" maxlength="32" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
+					<ElInput v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
 					<label v-if="saveForm.data.idArr?.length">
 						<ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>
 				<ElFormItem :label="t('platform.admin.name.nickname')" prop="nickname">
-					<ElInput v-model="saveForm.data.nickname" :placeholder="t('platform.admin.name.nickname')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.nickname" :placeholder="t('platform.admin.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('platform.admin.name.avatar')" prop="avatar">
 					<MyUpload v-model="saveForm.data.avatar" accept="image/*" />

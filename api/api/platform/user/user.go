@@ -27,6 +27,7 @@ type UserListFilter struct {
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
+	Address        string      `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
 	IdCardName     string      `json:"idCardName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
 	IdCardNo       string      `json:"idCardNo,omitempty" v:"max-length:30" dc:"身份证号码"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -94,7 +95,17 @@ type UserInfo struct {
 type UserUpdateReq struct {
 	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"更新"`
 	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	IsStop *uint  `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	/* Phone      *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Account    *string     `json:"account,omitempty" v:"max-length:30" dc:"账号"`
+	Password   *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
+	Nickname   *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar     *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
+	Gender     *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
+	Birthday   *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
+	Address    *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
+	IdCardName *string     `json:"idCardName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"身份证姓名"`
+	IdCardNo   *string     `json:"idCardNo,omitempty" v:"max-length:30" dc:"身份证号码"` */
+	IsStop *uint `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

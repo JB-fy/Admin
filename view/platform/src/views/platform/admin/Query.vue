@@ -49,13 +49,13 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>
 		<ElFormItem prop="phone">
-			<ElInput v-model="queryCommon.data.phone" :placeholder="t('platform.admin.name.phone')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="account">
-			<ElInput v-model="queryCommon.data.account" :placeholder="t('platform.admin.name.account')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.account" :placeholder="t('platform.admin.name.account')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="nickname">
-			<ElInput v-model="queryCommon.data.nickname" :placeholder="t('platform.admin.name.nickname')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.nickname" :placeholder="t('platform.admin.name.nickname')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="roleId">
 			<MySelect v-model="queryCommon.data.roleId" :placeholder="t('platform.admin.name.roleId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" />

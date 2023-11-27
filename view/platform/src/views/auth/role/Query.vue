@@ -49,11 +49,14 @@ const queryForm = reactive({
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>
 		<ElFormItem prop="roleName">
-			<ElInput v-model="queryCommon.data.roleName" :placeholder="t('auth.role.name.roleName')" minlength="1" maxlength="30" :clearable="true" />
+			<ElInput v-model="queryCommon.data.roleName" :placeholder="t('auth.role.name.roleName')" maxlength="30" :clearable="true" />
 		</ElFormItem>
 		<ElFormItem prop="sceneId">
 			<MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 		</ElFormItem>
+		<!-- <ElFormItem prop="tableId">
+			<MySelect v-model="queryCommon.data.tableId" :placeholder="t('auth.role.name.tableId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
+		</ElFormItem> -->
 		<ElFormItem prop="isStop" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.role.name.isStop')" :clearable="true" />
 		</ElFormItem>

@@ -17,8 +17,11 @@ const saveForm = reactive({
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		sceneId: [
-			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') },
+			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
 		],
+		/* tableId: [
+			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+		], */
 		isStop: [
 			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
 		],
@@ -87,11 +90,14 @@ const saveDrawer = reactive({
 		<ElScrollbar>
 			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
 				<ElFormItem :label="t('auth.role.name.roleName')" prop="roleName">
-					<ElInput v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')" minlength="1" maxlength="30" :show-word-limit="true" :clearable="true" />
+					<ElInput v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')" maxlength="30" :show-word-limit="true" :clearable="true" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.role.name.sceneId')" prop="sceneId">
 					<MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => { saveForm.data.menuIdArr = []; saveForm.data.actionIdArr = [] }" />
 				</ElFormItem>
+				<!-- <ElFormItem :label="t('auth.role.name.tableId')" prop="tableId">
+					<MySelect v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
+				</ElFormItem> -->
 				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuId')" prop="menuIdArr">
 					<MyCascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
 				</ElFormItem>
