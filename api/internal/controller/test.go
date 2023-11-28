@@ -28,8 +28,8 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// fmt.Println(gset.NewIntSetFrom([]int{1, 2, 3}).Union(gset.NewIntSetFrom([]int{1, 3})).Slice())     //并集
 	// fmt.Println(gset.NewIntSetFrom([]int{1, 2, 3}).Merge(gset.NewIntSetFrom([]int{1, 3})).Slice())     //合并，也是并集
 
-	// fmt.Println(g.DB(`default`).Model(`tab_user_unsubscribe`).Safe().Ctx(ctx))	//数据库连接
-
+	// fmt.Println(g.DB(`default`).Model(`auth_test`).Safe().Ctx(ctx))	//数据库连接
+	// list, err := dao.NewDaoHandler(ctx, &daoAuth.Test).Filter(g.Map{daoAuth.Test.Columns().Xxxx: `xxxx`}).Field(append(daoAuth.Test.ColumnArr(), `aaaa`)).JoinGroupByPrimaryKey().GetModel().All() // dao常用查询
 	/* //数据库事务
 	err = daoAuth.Test.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		_, err = tx.Model(daoAuth.Test.ParseDbTable(ctx)).Data(g.Map{`Xxxx`: `xxxx`}).Update()
