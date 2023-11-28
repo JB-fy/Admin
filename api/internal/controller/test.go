@@ -30,6 +30,12 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	// fmt.Println(g.DB(`default`).Model(`tab_user_unsubscribe`).Safe().Ctx(ctx))	//数据库连接
 
+	/* //数据库事务
+	err = daoAuth.Test.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
+		_, err = tx.Model(daoAuth.Test.ParseDbTable(ctx)).Data(g.Map{`Xxxx`: `xxxx`}).Update()
+		return
+	}) */
+
 	// g.Validator().Rules(`required|integer`).Data(`aaaa`).Run(ctx) //单独验证
 
 	// fmt.Println(genv.Set(`X_X`, `xx`))              //key必须由大写和_组成
