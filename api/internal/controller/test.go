@@ -31,8 +31,9 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// fmt.Println(g.DB(`default`).Model(`xxxx_txxx`).Safe().Ctx(ctx))	//数据库连接
 	// list, err := dao.NewDaoHandler(ctx, &daoXxxx.Txxx).Filter(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Field(append(&daoXxxx.Txxx.ColumnArr(), `aaaa`)).JoinGroupByPrimaryKey().GetModel().All() // dao常用查询
 	/* //数据库事务
-	err = &daoXxxx.Txxx.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		_, err = tx.Model(&daoXxxx.Txxx.ParseDbTable(ctx)).Data(g.Map{`Xxxx`: `xxxx`}).Update()
+	err = daoXxxx.Txxx.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
+		// _, err = tx.Model(daoXxxx.Txxx.ParseDbTable(ctx)).Data(g.Map{`Xxxx`: `xxxx`}).Update()
+		// id, err = tx.Model(daoXxxx.Txxx.ParseDbTable(ctx)).Handler(daoXxxx.Txxx.ParseInsert(data)).InsertAndGetId()
 		return
 	}) */
 
