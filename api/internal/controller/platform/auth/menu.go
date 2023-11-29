@@ -48,8 +48,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Menu)
-	daoHandlerThis.Filter(filter)
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Menu).Filter(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return

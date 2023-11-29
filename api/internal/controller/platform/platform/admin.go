@@ -50,8 +50,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoPlatform.Admin)
-	daoHandlerThis.Filter(filter)
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoPlatform.Admin).Filter(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return

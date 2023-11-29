@@ -48,8 +48,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoUser.User)
-	daoHandlerThis.Filter(filter)
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoUser.User).Filter(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return

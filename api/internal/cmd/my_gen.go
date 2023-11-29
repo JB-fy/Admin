@@ -1831,8 +1831,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 `
 		}
 		tplController += `
-	daoHandlerThis := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `)
-	daoHandlerThis.Filter(filter)`
+	daoHandlerThis := dao.NewDaoHandler(ctx, &dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `).Filter(filter)`
 		if option.IsCount {
 			tplController += `
 	count, err := daoHandlerThis.Count()

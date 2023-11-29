@@ -48,8 +48,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Action)
-	daoHandlerThis.Filter(filter)
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Action).Filter(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return

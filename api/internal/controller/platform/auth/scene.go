@@ -48,8 +48,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Scene)
-	daoHandlerThis.Filter(filter)
+	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Scene).Filter(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
