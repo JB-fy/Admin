@@ -67,10 +67,10 @@ const exportButton = reactive({
                                 return item1.value == item[key]
                             }).label
                         } else {
-                            // let statusList = tm(props.i18nPrefix + '.status.' + key) as { value: number | string, label: string }[]
-                            let statusList = tm(props.i18nPrefix + '.status.' + key)
-                            if (statusList.length) {
-                                item[key] = (statusList as any).find((item1: any) => {
+                            // let statusArr = tm(props.i18nPrefix + '.status.' + key) as { value: number | string, label: string }[]
+                            let statusArr = tm(props.i18nPrefix + '.status.' + key)
+                            if (statusArr.length) {
+                                item[key] = (statusArr as any).find((item1: any) => {
                                     return item1.value == item[key]
                                 }).label
                             }
