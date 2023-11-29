@@ -86,8 +86,8 @@ type RoleCreateReq struct {
 	RoleName    *string `json:"roleName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
 	SceneId     *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"required|distinct|foreach|min:1" dc:"菜单ID列表"`
-	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"required|distinct|foreach|min:1" dc:"操作ID列表"`
+	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
+	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
 }
 
 /*--------新增 结束--------*/

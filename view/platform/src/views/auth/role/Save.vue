@@ -17,7 +17,7 @@ const saveForm = reactive({
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
 		],
 		sceneId: [
-			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+			{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') },
 		],
 		/* tableId: [
 			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
@@ -39,10 +39,18 @@ const saveForm = reactive({
 			}
 			saveForm.loading = true
 			const param = removeEmptyOfObj(saveForm.data, false)
+			if (param.sceneId === null || param.sceneId === undefined) {
+				param.sceneId = 0
+			}
+			/* if (param.tableId === null || param.tableId === undefined) {
+				param.tableId = 0
+			} */
 			let menuIdArr: any = []
-			param.menuIdArr.forEach((item: any) => {
-				menuIdArr = menuIdArr.concat(item)
-			})
+			if (!(param.menuIdArr === null || param.menuIdArr === undefined)) {
+				param.menuIdArr.forEach((item: any) => {
+					menuIdArr = menuIdArr.concat(item)
+				})
+			}
 			//param.menuIdArr = [...new Set(menuIdArr)]
 			param.menuIdArr = menuIdArr.filter((item: any, index: any) => {
 				return menuIdArr.indexOf(item) === index

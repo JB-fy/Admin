@@ -8,7 +8,6 @@ const saveForm = reactive({
 	ref: null as any,
 	loading: false,
 	data: {
-		pid: 0,
 		sort: 50,
 		isStop: 0,
 		...saveCommon.data
@@ -66,6 +65,12 @@ const saveForm = reactive({
 			}
 			saveForm.loading = true
 			const param = removeEmptyOfObj(saveForm.data, false)
+			if (param.sceneId === null || param.sceneId === undefined) {
+				param.sceneId = 0
+			}
+			if (param.pid === null || param.pid === undefined) {
+				param.pid = 0
+			}
 			try {
 				if (param?.idArr?.length > 0) {
 					await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/update', param, true)
@@ -115,7 +120,7 @@ const saveDrawer = reactive({
 					<MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => { saveForm.data.pid = 0 }" />
 				</ElFormItem>
 				<ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
-					<MyCascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
+					<MyCascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
 				</ElFormItem>
 				<ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
 					<ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px;" />

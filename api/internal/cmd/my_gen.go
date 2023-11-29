@@ -970,7 +970,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 						}
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
-						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelNameField + "`" + `（控制器也要改）。下面Fields方法也要改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
+						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelNameField + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
 						if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 							daoParseFieldTmp = `
 			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `: ` + daoParseFieldTmp + `
@@ -3200,15 +3200,17 @@ const ` + field + `Handle = reactive({
 				</ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
-				viewSaveDataInit += `
-		` + field + `: 0,`
+				viewSaveParamHandle += `
+			if (param.` + field + ` === null || param.` + field + ` === undefined) {
+				param.` + field + ` = 0
+			}`
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
 		],`
 				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :defaultOptions="[{ id: 0, label: t('common.name.without') }]" :clearable="false" :props="{ checkStrictly: true, emitPath: false }" />
+					<MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
 				</ElFormItem>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 			} else if field == `sort` || field == `weight` { //sort //weight
@@ -3232,8 +3234,8 @@ const ` + field + `Handle = reactive({
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
 				viewSaveParamHandle += `
-			if (saveForm.data.` + field + ` === null || saveForm.data.` + field + ` === undefined) {
-				saveForm.data.` + field + ` = 0
+			if (param.` + field + ` === null || param.` + field + ` === undefined) {
+				param.` + field + ` = 0
 			}`
 				viewSaveRule += `
 		` + field + `: [
