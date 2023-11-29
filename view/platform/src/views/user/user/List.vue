@@ -304,7 +304,7 @@ defineExpose({
 		</ElCol>
 		<ElCol :span="8" style="text-align: right;">
 			<ElSpace :size="10" style="height: 100%;">
-				<MyExportButton :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+				<MyExportButton i18nPrefix="user.user" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 				<ElDropdown max-height="300" :hide-on-click="false">
 					<ElButton type="info" :circle="true">
 						<AutoiconEpHide />

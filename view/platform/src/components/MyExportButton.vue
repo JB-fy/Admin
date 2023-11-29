@@ -1,9 +1,9 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyExportButton :headerList="table.columns"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+<!-- <MyExportButton i18nPrefix="auth.test" :headerList="table.columns"
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/test/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 
-<MyExportButton fileName="文件名.xlsx" :headerList="table.columns"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/log/http/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
+<MyExportButton fileName="文件名.xlsx" i18nPrefix="auth.test" :headerList="table.columns"
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/test/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="ts">
 const { t, tm } = useI18n()
@@ -11,6 +11,10 @@ const { t, tm } = useI18n()
 const props = defineProps({
     fileName: {
         type: String
+    },
+    i18nPrefix: {   //i18n包t, tm两个方法参数的前缀。示例：'auth.test'，则对应t('auth.test.name.xxxx')或tm('auth.test.status.xxxx')
+        type: String,
+        required: true
     },
     headerList: {   //表头。格式：{ [propName: string]: string }。也可直接传table.columns，即各个页面table组件的列定义
         type: [Object, Array],
@@ -58,12 +62,18 @@ const exportButton = reactive({
             return props.api.transform ? props.api.transform : (res: any) => {
                 return res.data.list.map((item: any) => {
                     for (const key in item) {
-                        switch (key) {
-                            case 'isStop':
-                                item[key] = (tm('common.status.whether') as any).find((item1: any) => {
+                        if (key.replace(/([A-Z])/g, '_$1').toLowerCase().startsWith('is_')) {
+                            item[key] = (tm('common.status.whether') as any).find((item1: any) => {
+                                return item1.value == item[key]
+                            }).label
+                        } else {
+                            // let statusList = tm(props.i18nPrefix + '.status.' + key) as { value: number | string, label: string }[]
+                            let statusList = tm(props.i18nPrefix + '.status.' + key)
+                            if (statusList.length) {
+                                item[key] = (statusList as any).find((item1: any) => {
                                     return item1.value == item[key]
                                 }).label
-                                break;
+                            }
                         }
                     }
                     return item
@@ -99,14 +109,11 @@ const exportButton = reactive({
             while (true) {
                 try {
                     let data = await exportButton.api.getData()
-                    console.log(data)
-                    console.log(exportButton.headerList)
                     const length = data.length
                     if (data.length == 0) {
                         break
                     }
                     data = exportButton.dataHandle(data, exportButton.headerList)
-                    console.log(data)
                     exportExcel([{ data: data }], exportButton.fileName)
                     if (exportButton.api.param.limit === 0 || length < exportButton.api.param.limit) {
                         break
