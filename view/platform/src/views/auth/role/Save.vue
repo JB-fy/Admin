@@ -45,16 +45,18 @@ const saveForm = reactive({
 			/* if (param.tableId === null || param.tableId === undefined) {
 				param.tableId = 0
 			} */
-			let menuIdArr: any = []
-			if (!(param.menuIdArr === null || param.menuIdArr === undefined)) {
+			if (param.menuIdArr === null || param.menuIdArr === undefined) {
+				param.menuIdArr = []
+			} else {
+				let menuIdArr: any = []
 				param.menuIdArr.forEach((item: any) => {
 					menuIdArr = menuIdArr.concat(item)
 				})
+				//param.menuIdArr = [...new Set(menuIdArr)]
+				param.menuIdArr = menuIdArr.filter((item: any, index: any) => {
+					return menuIdArr.indexOf(item) === index
+				})
 			}
-			//param.menuIdArr = [...new Set(menuIdArr)]
-			param.menuIdArr = menuIdArr.filter((item: any, index: any) => {
-				return menuIdArr.indexOf(item) === index
-			})
 			try {
 				if (param?.idArr?.length > 0) {
 					await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/role/update', param, true)
