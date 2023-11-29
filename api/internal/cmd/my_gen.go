@@ -3231,6 +3231,10 @@ const ` + field + `Handle = reactive({
 					relTable := tpl.RelTableMap[field]
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
+				viewSaveParamHandle += `
+			if (saveForm.data.` + field + ` === null || saveForm.data.` + field + ` === undefined) {
+				saveForm.data.` + field + ` = 0
+			}`
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
