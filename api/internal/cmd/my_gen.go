@@ -3201,7 +3201,7 @@ const ` + field + `Handle = reactive({
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewSaveParamHandle += `
-			if (param.` + field + ` === null || param.` + field + ` === undefined) {
+			if (param.` + field + ` === undefined) {
 				param.` + field + ` = 0
 			}`
 				viewSaveRule += `
@@ -3234,7 +3234,7 @@ const ` + field + `Handle = reactive({
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
 				viewSaveParamHandle += `
-			if (param.` + field + ` === null || param.` + field + ` === undefined) {
+			if (param.` + field + ` === undefined) {
 				param.` + field + ` = 0
 			}`
 				viewSaveRule += `
@@ -3247,6 +3247,8 @@ const ` + field + `Handle = reactive({
 				</ElFormItem>`
 			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
 				statusList := MyGenStatusList(comment)
+				viewSaveDataInit += `
+		` + field + `: ` + statusList[0][0] + `,`
 				viewSaveRule += `
 		` + field + `: [
 			{ type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
@@ -3256,10 +3258,8 @@ const ` + field + `Handle = reactive({
 				//超过5个状态用select组件，小于5个用radio组件
 				if len(statusList) > 5 {
 					viewSaveField += `
-					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />`
+					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="false" />`
 				} else {
-					viewSaveDataInit += `
-		` + field + `: ` + statusList[0][0] + `,`
 					viewSaveField += `
 					<ElRadioGroup v-model="saveForm.data.` + field + `">
 						<ElRadio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">

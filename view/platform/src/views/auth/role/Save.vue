@@ -39,13 +39,13 @@ const saveForm = reactive({
 			}
 			saveForm.loading = true
 			const param = removeEmptyOfObj(saveForm.data, false)
-			if (param.sceneId === null || param.sceneId === undefined) {
+			if (param.sceneId === undefined) {
 				param.sceneId = 0
 			}
-			/* if (param.tableId === null || param.tableId === undefined) {
+			/* if (param.tableId === undefined) {
 				param.tableId = 0
 			} */
-			if (param.menuIdArr === null || param.menuIdArr === undefined) {
+			if (param.menuIdArr === undefined) {
 				param.menuIdArr = []
 			} else {
 				let menuIdArr: any = []
