@@ -83,12 +83,13 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// grand.Symbols(8)                  // !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~
 	/*--------函数结果示例 结束--------*/
 
-	/*--------数据库常用方法 开始--------*/
+	/*--------MYSQL数据库常用方法 开始--------*/
 	// CASE 字段 WHEN 匹配 THEN 值 ELSE 默认值 END                                    // 当字段匹配时返回对应值，否则返回默认值
 	// IF(条件, 值1, 值2)                                                             // 当条件为真，返回值1,否则返回值2
 	// IFNULL(值1, 值2)                                                               // 当值1为null时，返回值2
 	// NULLIF(值1, 值2)                                                               // 当值1等于值2，返回null，否则返回值1
 
+	// AVG([DISTINCT] 字段)                                                           // 平均值
 	// ROUND(值, 2)                                                                   // 保留两位小数
 	// CONCAT(字符串,...)                                                             // 拼接字符串
 	// CONCAT_WS(分隔符, 字符串,...)                                                  // 拼接字符串。可指定分隔符
@@ -123,7 +124,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// ST_X(POINT(118.585519, 24.914168))                                             // 经度，Mysql5中使用X()
 	// ST_Y(POINT(118.585519, 24.914168))                                             // 纬度，Mysql5中使用Y()
 	// ST_DISTANCE_SPHERE(POINT(118.585519, 24.914168), POINT(118.585519, 24.914168)) // 计算经纬度距离
-	/*--------数据库常用方法 结束--------*/
+	/*--------MYSQL数据库常用方法 结束--------*/
 
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	// err = utils.NewErrorCode(ctx, 99999999, ``)
