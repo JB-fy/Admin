@@ -42,7 +42,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// CHAR_LENGTH(字符串)                                                            // 字符串长度。中英文都算1个字符
 
 	// UNIX_TIMESTAMP() 或 UNIX_TIMESTAMP('2006-01-02 15:04:05')                      // 时间戳。示例：1136185445
-	// FROM_UNIXTIME(1701326237, '%Y-%m-%d %H:%i:%s')                                 // 时间戳转换成指定格式
+	// FROM_UNIXTIME(1136185445, '%Y-%m-%d %H:%i:%s')                                 // 时间戳转换成指定格式
 	// DATE_FORMAT('2006-01-02 15:04:05', '%Y-%m-%d')                                 // 日期格式转换成指定格式
 	// STR_TO_DATE('January 02 2016', '%M %d %Y')                                     // 根据指定格式将字符串转变成日期格式。示例：2006-01-02或2006-01-02 15:04:05
 	// NOW() 或 UTC_TIMESTAMP()                                                       // 当前日期和时间。示例：2006-01-02 15:04:05
