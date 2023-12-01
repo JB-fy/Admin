@@ -20,10 +20,10 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// ghttp.RestartAllServer(ctx) // 重启服务
 
 	/* //生成登录token（测试用）
-	claims := utils.CustomClaims{LoginId: 2}
-	sceneConfig, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, `sceneCode`).Value(daoAuth.Scene.Columns().SceneConfig)
+	claims := utils.CustomClaims{LoginId: 1}
+	sceneConfig, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneConfig)
 	jwt := utils.NewJWT(ctx, sceneConfig.Map())
-	fmt.Println(jwt.CreateToken(claims)
+	token, err := jwt.CreateToken(claims)
 	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/
