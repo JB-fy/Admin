@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"api/api"
 	// daoAuth "api/internal/dao/auth"
+	"api/api"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
