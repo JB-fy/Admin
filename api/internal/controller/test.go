@@ -2,6 +2,7 @@ package controller
 
 import (
 	"api/api"
+	// daoAuth "api/internal/dao/auth"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -17,6 +18,13 @@ func NewTest() *Test {
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx) // 重启服务
+
+	/* //生成登录token（测试用）
+	claims := utils.CustomClaims{LoginId: 2}
+	sceneConfig, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, `user`).Value(daoAuth.Scene.Columns().SceneConfig)
+	jwt := utils.NewJWT(ctx, sceneConfig.Map())
+	fmt.Println(jwt.CreateToken(claims)
+	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/
 	// g.DB(`default`).Model(`xxxx_txxx`).Safe().Ctx(ctx) // 数据库连接
