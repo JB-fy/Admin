@@ -17,7 +17,7 @@ func NewTest() *Test {
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
 	// time.Sleep(10 * time.Second) // 睡眠几秒
-	// ghttp.RestartAllServer(ctx) // 重启服务
+	// ghttp.RestartAllServer(ctx)  // 重启服务
 
 	/* //生成登录token（测试用）
 	claims := utils.CustomClaims{LoginId: 1}
@@ -27,9 +27,11 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/
-	// g.DB(`default`).Model(`xxxx_txxx`).Safe().Ctx(ctx) // 数据库连接
-	// m = m.Where(m.Builder().Where().WhereOr())         // 复杂条件
-	// list, err := dao.NewDaoHandler(ctx, &daoXxxx.Txxx).Filter(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Field(append(&daoXxxx.Txxx.ColumnArr(), `aaaa`)).JoinGroupByPrimaryKey().GetModel().All() // dao常用方式
+	// g.DB(`default`).Model(`xxxx_txxx`).Safe().Ctx(ctx)     // 数据库连接
+	// gregex.IsMatchString(`1062.*Duplicate.*`, err.Error()) //判断错误是不是唯一索引已存在
+	// m = m.Where(m.Builder().Where(`xxxx`).WhereOr(`xxxx`)) // 复杂条件
+	// dao常用示例
+	// list, err := dao.NewDaoHandler(ctx, &daoXxxx.Txxx).Filter(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Field(append(&daoXxxx.Txxx.ColumnArr(), `aaaa`)).JoinGroupByPrimaryKey().GetModel().All()
 	/* // 数据库事务
 	err = daoXxxx.Txxx.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		// _, err = tx.Model(daoXxxx.Txxx.ParseDbTable(ctx)).Data(g.Map{`Xxxx`: `xxxx`}).Update()
