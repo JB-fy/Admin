@@ -26,7 +26,6 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-	order := []string{req.Sort}
 
 	allowField := daoUser.User.ColumnArr()
 	allowField = append(allowField, `id`, `label`)
@@ -51,7 +50,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
+	list, err := daoHandlerThis.Field(field).Order([]string{req.Sort}).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
 	if err != nil {
 		return
 	}

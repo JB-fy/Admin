@@ -26,7 +26,6 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
-	order := []string{req.Sort}
 
 	allowField := daoAuth.Menu.ColumnArr()
 	allowField = append(allowField, `id`, `label`, `pMenuName`, daoAuth.Scene.Columns().SceneName)
@@ -51,7 +50,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
+	list, err := daoHandlerThis.Field(field).Order([]string{req.Sort}).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
 	if err != nil {
 		return
 	}
