@@ -29,8 +29,6 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 		filter = map[string]interface{}{}
 	}
 	order := []string{req.Sort}
-	page := req.Page
-	limit := req.Limit
 
 	allowField := daoPlatform.Admin.ColumnArr()
 	allowField = append(allowField, `id`, `label`)
@@ -55,7 +53,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(page, limit).All()
+	list, err := daoHandlerThis.Field(field).Order(order).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
 	if err != nil {
 		return
 	}
