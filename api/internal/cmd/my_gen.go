@@ -1589,7 +1589,7 @@ import (
 /*--------列表 开始--------*/
 type ` + tpl.TableNameCaseCamel + `ListReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
-	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
+	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
 	Page   int             ` + "`" + `json:"page" v:"min:1" default:"1" dc:"页码"` + "`" + `
@@ -1686,7 +1686,7 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 type ` + tpl.TableNameCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
-	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"查询条件"` + "`" + `
+	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 
 type ` + tpl.TableNameCaseCamel + `TreeRes struct {

@@ -8,7 +8,7 @@ import (
 /*--------列表 开始--------*/
 type ActionListReq struct {
 	g.Meta `path:"/action/list" method:"post" tags:"平台后台/权限管理/操作" sm:"列表"`
-	Filter ActionListFilter `json:"filter" dc:"查询条件"`
+	Filter ActionListFilter `json:"filter" dc:"过滤条件"`
 	Field  []string         `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
 	Sort   string           `json:"sort" default:"id DESC" dc:"排序"`
 	Page   int              `json:"page" v:"min:1" default:"1" dc:"页码"`
