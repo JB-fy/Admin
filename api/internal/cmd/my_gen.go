@@ -24,36 +24,34 @@ import (
 APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefix= -moduleDir=xxxx/user -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
 
 强烈建议搭配Git使用
-表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
 主键必须在第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
 表内尽量根据表名设置xxxxId主键和xxxxName名称两个字段（作用1：常用于前端部分组件，如MySelect.vue组件；作用2：当其它表存在与该表主键同名的关联字段时，会自动生成联表查询代码）
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
+表字段按以下规则命名时，会做特殊处理，其它情况根据字段类型做默认处理
 
 	部分常用字段：
-		密码 		命名：password；类型：char(32)；注意：password,salt同时存在时，有特殊处理
-		加密盐 		命名：salt；类型：char(8)；注意：password,salt同时存在时，(才)有特殊处理
-		父级		命名：pid；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，有特殊处理
-		层级		命名：level；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-		层级路径	命名：idPath|id_path；类型：varchar或text；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-		排序		命名：sort；类型：int等类型；
-		权重		命名：weight；类型：int等类型；
-		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
-		头像		命名：avatar；类型：varchar；
-	其它类型字段：
-		名称		命名：name后缀；类型：varchar；
-		标识		命名：code后缀；类型：varchar；
-		手机		命名：mobile,phone后缀；类型：varchar；
-		密码		命名：password后缀；类型：char(32)；
-		链接		命名：url,link后缀；类型：varchar；
-		IP			命名：IP后缀；类型：varchar；
-		关联ID		命名：id后缀；类型：int等类型；
-		状态		命名：status后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
-		类型		命名：type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（类型：0安卓 1苹果）
-		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
-		开始时间	命名：start_前缀；类型：timestamp或datetime或date；
-		结束时间	命名：end_前缀；类型：timestamp或datetime或date；
+		密码 		命名：password； 		类型：char(32)；		注意：password,salt同时存在时，有特殊处理
+		加密盐 		命名：salt；     		类型：char；			注意：password,salt同时存在时，(才)有特殊处理
+		父级		命名：pid；      		类型：int等类型；		注意：pid,level,idPath|id_path同时存在时，有特殊处理
+		层级		命名：level；          	类型：int等类型；		注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		层级路径	命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		排序		命名：sort；			类型：int等类型；		注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
+
+	其它类型字段(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
+		密码		命名：password后缀；			类型：char(32)；
+		名称		命名：name后缀；				类型：varchar；
+		标识		命名：code后缀；				类型：varchar；
+		手机		命名：mobile,phone后缀；		类型：varchar；
+		链接		命名：url,link后缀；			类型：varchar；
+		IP			命名：IP后缀；					类型：varchar；
+		关联ID		命名：id后缀；					类型：int等类型；
+		排序|权重	命名：sort,weight等后缀；		类型：int等类型；
+		状态|类型	命名：status,type,gender等后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
+		是否		命名：is_前缀；					类型：int等类型；注释：示例（停用：0否 1是）
+		开始时间	命名：start_前缀；				类型：timestamp或datetime或date；
+		结束时间	命名：end_前缀；				类型：timestamp或datetime或date；
 		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端生成表单组件：textarea文本输入框或tinymce富文本编辑器
-		图片		命名：icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
+		图片		命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
 		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
 		数组		命名：list,arr等后缀；类型：json或text；
 */
@@ -98,9 +96,11 @@ type MyGenTpl struct {
 	}
 	RelTableMap    map[string]RelTableItem //id后缀字段，能确定关联表时，会自动生成联表查询代码
 	PasswordHandle struct {                //password,salt同时存在时，需特殊处理
-		IsCoexist     bool   //是否同时存在
-		PasswordField string //密码字段
-		SaltField     string //加密盐字段
+		IsCoexist      bool   //是否同时存在
+		PasswordField  string //密码字段
+		PasswordLength string //密码字段长度
+		SaltField      string //加密盐字段
+		SaltLength     string //加密盐字段长度
 	}
 	PidHandle struct { //pid,level,idPath|id_path同时存在时，需特殊处理
 		IsCoexist   bool   //是否同时存在
@@ -460,7 +460,10 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	for index, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseCamelLower := gstr.CaseCamelLower(field)
+		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
+		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 		tmp, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, column[`Comment`].String())
 		fieldName := gstr.Trim(tmp[0])
 		fieldArr[index] = field
@@ -474,24 +477,30 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			tpl.CreatedField = field
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			tpl.PrimaryKey = field
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			if field == `password` {
-				tpl.PasswordHandle.PasswordField = field
-			}
-		} else if field == `salt` && column[`Type`].String() == `char(8)` { //salt
-			tpl.PasswordHandle.SaltField = field
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //idPath|id_path
 			tpl.PidHandle.IdPathField = field
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
+		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+				if field == `password` { //password
+					tpl.PasswordHandle.PasswordField = field
+					tpl.PasswordHandle.PasswordLength = resultStr[1]
+				}
+			} else if field == `salt` { //salt
+				tpl.PasswordHandle.SaltField = field
+				tpl.PasswordHandle.SaltLength = resultStr[1]
+			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				tpl.PidHandle.PidField = field
 			} else if field == `level` { //level
 				tpl.PidHandle.LevelField = field
-			} else if field == `sort` { //sort
-				tpl.PidHandle.SortField = field
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
-				relTableNameCaseCamel := gstr.SubStr(fieldCaseCamel, 0, -2)
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
+				if field == `sort` { //sort
+					tpl.PidHandle.SortField = field
+				}
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
+				relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
 				relTableItem := RelTableItem{
 					IsExistRelTableDao:         false,
 					RelDaoDir:                  ``,
@@ -506,7 +515,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					RelNameFieldName:           fieldName,
 				}
 				//判断字段是小驼峰还是蛇形
-				if fieldCaseCamelLower == field {
+				if gstr.CaseCamelLower(field) == field {
 					relTableItem.RelNameField = relTableItem.RelTableNameCaseCamelLower + `Name`
 				} else {
 					relTableItem.RelNameField = relTableItem.RelTableNameCaseSnake + `_name`
@@ -672,6 +681,10 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 // status字段注释解析
 func MyGenStatusList(comment string) (statusList [][2]string) {
 	tmp, _ := gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；)）]+)`, comment)
+	if len(tmp) == 0 { //
+		statusList = [][2]string{{`0`, `请设置表字段注释后，再生成代码`}}
+		return
+	}
 	statusList = make([][2]string, len(tmp))
 	for k, v := range tmp {
 		statusList[k] = [2]string{v[1], v[2]}
@@ -727,6 +740,8 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 
 		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
@@ -740,43 +755,9 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				daoParseFilter += daoParseFilterTmp
 			}
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			daoParseInsertTmp := `
-			case daoThis.Columns().` + fieldCaseCamel + `:
-				password := gconv.String(v)
-				if len(password) != 32 {
-					password = gmd5.MustEncrypt(password)
-				}`
-			daoParseUpdateTmp := `
-			case daoThis.Columns().` + fieldCaseCamel + `:
-				password := gconv.String(v)
-				if len(password) != 32 {
-					password = gmd5.MustEncrypt(password)
-				}`
-			if field == `password` && tpl.PasswordHandle.IsCoexist {
-				daoParseInsertTmp += `
-				salt := grand.S(8)
-				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
-				password = gmd5.MustEncrypt(password + salt)`
-				daoParseUpdateTmp += `
-				salt := grand.S(8)
-				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
-				password = gmd5.MustEncrypt(password + salt)`
-			}
-			daoParseInsertTmp += `
-				insertData[k] = password`
-			daoParseUpdateTmp += `
-				updateData[tableThis+` + "`.`" + `+k] = password`
-			if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
-				daoParseInsert += daoParseInsertTmp
-			}
-			if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
-				daoParseUpdate += daoParseUpdateTmp
-			}
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+			if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Name` { //name后缀
 				daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.WhereLike(tableThis+` + "`.`" + `+k, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
@@ -806,24 +787,60 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if column[`Key`].String() == `UNI` && column[`Null`].String() == `YES` {
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
 				daoParseInsertTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				password := gconv.String(v)
+				if len(password) != 32 {
+					password = gmd5.MustEncrypt(password)
+				}`
+				daoParseUpdateTmp := `
+			case daoThis.Columns().` + fieldCaseCamel + `:
+				password := gconv.String(v)
+				if len(password) != 32 {
+					password = gmd5.MustEncrypt(password)
+				}`
+				if field == `password` && tpl.PasswordHandle.IsCoexist { //password
+					daoParseInsertTmp += `
+				salt := grand.S(` + tpl.PasswordHandle.SaltLength + `)
+				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
+				password = gmd5.MustEncrypt(password + salt)`
+					daoParseUpdateTmp += ` 
+				salt := grand.S(` + tpl.PasswordHandle.SaltLength + `)
+				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandle.SaltField) + `] = salt
+				password = gmd5.MustEncrypt(password + salt)`
+				}
+				daoParseInsertTmp += `
+				insertData[k] = password`
+				daoParseUpdateTmp += `
+				updateData[tableThis+` + "`.`" + `+k] = password`
+				if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
+					daoParseInsert += daoParseInsertTmp
+				}
+				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
+					daoParseUpdate += daoParseUpdateTmp
+				}
+			} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
+			} else {
+				if column[`Key`].String() == `UNI` && column[`Null`].String() == `YES` {
+					daoParseInsertTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				insertData[k] = v
 				if gconv.String(v) == ` + "``" + ` {
 					insertData[k] = nil
 				}`
-				if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
-					daoParseInsert += daoParseInsertTmp
-				}
-				daoParseUpdateTmp := `
+					if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
+						daoParseInsert += daoParseInsertTmp
+					}
+					daoParseUpdateTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				updateData[tableThis+` + "`.`" + `+k] = v
 				if gconv.String(v) == ` + "``" + ` {
 					updateData[tableThis+` + "`.`" + `+k] = nil
 				}`
-				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
-					daoParseUpdate += daoParseUpdateTmp
+					if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
+						daoParseUpdate += daoParseUpdateTmp
+					}
 				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -949,7 +966,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 				if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 					daoParseOrder += daoParseOrderTmp
 				}
-			} else if field == `sort` || field == `weight` { //sort //weight
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.Order(tableThis + ` + "`.`" + ` + v)
@@ -957,7 +974,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 				if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
 					daoParseOrder += daoParseOrderTmp
 				}
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao {
 					relTable := tpl.RelTableMap[field]
 					daoPath := relTable.RelTableNameCaseCamel
@@ -1319,6 +1336,8 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
@@ -1350,16 +1369,9 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeReqFilter = `*uint`
 			typeRes = `*uint`
 			ruleReqFilter = `min:1`
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			ruleReqCreate = `size:` + resultStr[1]
-			ruleReqUpdate = `size:` + resultStr[1]
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
-			continue
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 			typeRes = `*string`
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Icon` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Cover` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Avatar` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Img` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Image` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				typeReqCreate = `*string`
 				typeReqUpdate = `*string`
@@ -1376,7 +1388,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				ruleReqCreate = `distinct|foreach|url|foreach|min-length:1`
 				ruleReqUpdate = `distinct|foreach|url|foreach|min-length:1`
 			}
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			if column[`Null`].String() == `NO` {
 				isRequired = true
 			}
@@ -1385,7 +1397,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			typeRes = `[]interface{}`
 			ruleReqCreate = `distinct`
 			ruleReqUpdate = `distinct`
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
 			typeRes = `*string`
@@ -1405,26 +1417,26 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				isRequired = true
 			}
 
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+			if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Name` { //name后缀
 				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
 					isRequired = true
 				}
 				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
 				ruleReqCreate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
 				ruleReqUpdate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-			} else if gstr.SubStr(fieldCaseCamel, -4) == `Code` { //code后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Code` { //code后缀
 				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
 				ruleReqCreate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
 				ruleReqUpdate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-			} else if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` { //mobile,phone后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Phone` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Mobile` { //mobile,phone后缀
 				ruleReqFilter += `|phone`
 				ruleReqCreate += `|phone`
 				ruleReqUpdate += `|phone`
-			} else if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` { //url,link后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Url` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Link` { //url,link后缀
 				ruleReqFilter += `|url`
 				ruleReqCreate += `|url`
 				ruleReqUpdate += `|url`
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Ip` { //IP后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Ip` { //IP后缀
 				ruleReqFilter += `|ip`
 				ruleReqCreate += `|ip`
 				ruleReqUpdate += `|ip`
@@ -1437,8 +1449,17 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqFilter = `max-length:` + resultStr[1]
 			ruleReqCreate = `size:` + resultStr[1]
 			ruleReqUpdate = `size:` + resultStr[1]
-			if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+				typeReqFilter = ``
+				typeRes = ``
+				ruleReqFilter = ``
 				isRequired = true
+			} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
+				continue
+			} else {
+				if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
+					isRequired = true
+				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			typeReqFilter = `*int`
@@ -1463,11 +1484,11 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				typeReqCreate = ``
 				typeReqUpdate = ``
 				ruleReqFilter += `min:1`
-			} else if field == `sort` || field == `weight` { //sort //weight
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				typeReqFilter = ``
 				ruleReqCreate += `between:0,100`
 				ruleReqUpdate += `between:0,100`
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelNameField) + ` *string ` + "`" + `json:"` + relTable.RelNameField + `,omitempty" dc:"` + relTable.RelNameFieldName + `"` + "`\n"
@@ -1475,7 +1496,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				ruleReqFilter += `min:1`
 				ruleReqCreate += `min:1`
 				ruleReqUpdate += `min:1`
-			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
 				statusArr := make([]string, len(statusList))
 				for index, status := range statusList {
@@ -1738,17 +1759,22 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
+		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		//主键
 		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
 			if field != `id` {
 				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
-			// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
+		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
+			} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
+				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
+			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					// controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
@@ -2161,6 +2187,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
@@ -2186,13 +2214,9 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			sortableOfColumn = `sortable: true,`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			continue
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
-			continue
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 			hiddenOfColumn = `hidden: true,`
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Icon` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Cover` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Avatar` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Img` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Image` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
@@ -2232,7 +2256,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				})
 			]
 		},`
-		} else if (gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
 			if tableRowHeight < 100 {
 				tableRowHeight = 100
 			}
@@ -2272,7 +2296,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				})
 			]
 		},`
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			if (!props.rowData.` + field + `) {
@@ -2307,11 +2331,17 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				})
 			]
 		},`
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			hiddenOfColumn = `hidden: true,`
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if (gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link`) && gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //url,link后缀
+			if gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Url` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Link` { //url,link后缀
 				widthOfColumn = `width: 200,`
+			}
+		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+				continue
+			} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
+				continue
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
@@ -2319,7 +2349,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 				widthOfColumn = `width: 100,`
 				sortableOfColumn = `sortable: true,`
-			} else if field == `sort` || field == `weight` { //sort //weight
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				widthOfColumn = `width: 100,`
 				sortableOfColumn = `sortable: true,`
 				if option.IsUpdate {
@@ -2379,11 +2409,11 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			]
 		},`
 				}
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					dataKeyOfColumn = `dataKey: '` + tpl.RelTableMap[field].RelNameField + `',`
 				}
-			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
 				tagTypeStr := ``
 				tagTypeArr := []string{``, `success`, `danger`, `info`, `warning`}
@@ -2777,6 +2807,8 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
 		/* resultFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, column[`Type`].String())
 		if len(resultFloat) < 3 {
@@ -2811,22 +2843,24 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
 		</ElFormItem>`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Icon` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Cover` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Avatar` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Img` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Image` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			viewQueryField += `
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+			} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
+			} else {
+				viewQueryField += `
 		<ElFormItem prop="` + field + `">
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
+			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewQueryField += `
@@ -2838,8 +2872,8 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="1" :controls="false" />
 		</ElFormItem>`
-			} else if field == `sort` || field == `weight` { //sort //weight
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
 				if tpl.RelTableMap[field].IsExistRelTableDao {
 					relTable := tpl.RelTableMap[field]
@@ -2849,7 +2883,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		<ElFormItem prop="` + field + `">
 			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
 		</ElFormItem>`
-			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				viewQueryField += `
 		<ElFormItem prop="` + field + `" style="width: 120px;">
 			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
@@ -2985,6 +3019,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
 			"\n", ` `,
 			"\r", ` `,
@@ -3000,29 +3036,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if gstr.SubStr(fieldCaseCamel, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			viewSaveImportTmp := `
-import md5 from 'js-md5'`
-			if gstr.Pos(viewSaveImport, viewSaveImportTmp) == -1 {
-				viewSaveImport += viewSaveImportTmp
-			}
-			viewSaveParamHandle += `
-			param.` + field + ` ? param.` + field + ` = md5(param.` + field + `) : delete param.` + field
-
-			viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
-		],`
-			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
-					<label v-if="saveForm.data.idArr?.length">
-						<ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-					</label>
-				</ElFormItem>`
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
-		} else if (field == `avatar` && gstr.Pos(column[`Type`].String(), `varchar`) != -1) || ((gstr.SubStr(fieldCaseCamel, -4) == `Icon` || gstr.SubStr(fieldCaseCamel, -5) == `Cover` || gstr.SubStr(fieldCaseCamel, -3) == `Img` || gstr.SubStr(fieldCaseCamel, -7) == `ImgList` || gstr.SubStr(fieldCaseCamel, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamel, -5) == `Image` || gstr.SubStr(fieldCaseCamel, -9) == `ImageList` || gstr.SubStr(fieldCaseCamel, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1)) { //avatar //icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Icon` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Cover` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Avatar` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Img` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Image` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			multipleStr := ``
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
@@ -3046,7 +3061,7 @@ import md5 from 'js-md5'`
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*"` + multipleStr + ` />
 				</ElFormItem>`
-		} else if (gstr.SubStr(fieldCaseCamel, -5) == `Video` || gstr.SubStr(fieldCaseCamel, -9) == `VideoList` || gstr.SubStr(fieldCaseCamel, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
 			multipleStr := ``
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
@@ -3070,7 +3085,7 @@ import md5 from 'js-md5'`
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
 				</ElFormItem>`
-		} else if (gstr.SubStr(fieldCaseCamel, -4) == `List` || gstr.SubStr(fieldCaseCamel, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			viewSaveDataInit += `
 		` + field + `: [],`
 			requiredStr := ``
@@ -3117,7 +3132,7 @@ const ` + field + `Handle = reactive({
 		saveForm.data.` + field + `.splice(saveForm.data.` + field + `.indexOf(item), 1)
 	},
 })`
-		} else if (gstr.SubStr(fieldCaseCamel, -6) == `Remark` || gstr.SubStr(fieldCaseCamel, -4) == `Desc` || gstr.SubStr(fieldCaseCamel, -3) == `Msg` || gstr.SubStr(fieldCaseCamel, -7) == `Message` || gstr.SubStr(fieldCaseCamel, -5) == `Intro` || gstr.SubStr(fieldCaseCamel, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
 				viewSaveRule += `
 		` + field + `: [
@@ -3150,19 +3165,19 @@ const ` + field + `Handle = reactive({
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>`
 			}
-			if gstr.SubStr(fieldCaseCamel, -4) == `Name` { //name后缀
+			if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Name` { //name后缀
 				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
 					requiredStr = ` required: true,`
 				}
 				ruleStr += `
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
-			} else if gstr.SubStr(fieldCaseCamel, -4) == `Code` { //code后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Code` { //code后缀
 				ruleStr += `
 			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
-			} else if gstr.SubStr(fieldCaseCamel, -5) == `Phone` || gstr.SubStr(fieldCaseCamel, -6) == `Mobile` { //mobile,phone后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Phone` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Mobile` { //mobile,phone后缀
 				ruleStr += `
 			{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`
-			} else if gstr.SubStr(fieldCaseCamel, -3) == `Url` || gstr.SubStr(fieldCaseCamel, -4) == `Link` { //url,link后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Url` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Link` { //url,link后缀
 				ruleStr += `
 			{ type: 'url', trigger: 'change', message: t('validation.url') },`
 			}
@@ -3175,26 +3190,49 @@ const ` + field + `Handle = reactive({
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
 				</ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			ruleStr := ``
-			requiredStr := ``
-			viewSaveFieldTip := ` />`
-			if column[`Key`].String() == `UNI` {
-				if column[`Null`].String() == `NO` {
-					requiredStr = ` required: true,`
+			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+				viewSaveImportTmp := `
+import md5 from 'js-md5'`
+				if gstr.Pos(viewSaveImport, viewSaveImportTmp) == -1 {
+					viewSaveImport += viewSaveImportTmp
 				}
-				viewSaveFieldTip = ` style="max-width: 250px;" />
+				viewSaveParamHandle += `
+			param.` + field + ` ? param.` + field + ` = md5(param.` + field + `) : delete param.` + field
+
+				viewSaveRule += `
+		` + field + `: [
+			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
+		],`
+				viewSaveField += `
+				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
+					<label v-if="saveForm.data.idArr?.length">
+						<ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+					</label>
+				</ElFormItem>`
+			} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
+			} else {
+				ruleStr := ``
+				requiredStr := ``
+				viewSaveFieldTip := ` />`
+				if column[`Key`].String() == `UNI` {
+					if column[`Null`].String() == `NO` {
+						requiredStr = ` required: true,`
+					}
+					viewSaveFieldTip = ` style="max-width: 250px;" />
 					<label>
 						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
 					</label>`
-			}
-			viewSaveRule += `
+				}
+				viewSaveRule += `
 		` + field + `: [
 			{ type: 'string',` + requiredStr + ` len: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.size.string', { size: ` + resultStr[1] + ` }) },` + ruleStr + `
 		],`
-			viewSaveField += `
+				viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
 				</ElFormItem>`
+			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewSaveParamHandle += `
@@ -3210,7 +3248,7 @@ const ` + field + `Handle = reactive({
 					<MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
 				</ElFormItem>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
-			} else if field == `sort` || field == `weight` { //sort //weight
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				viewSaveDataInit += `
 		` + field + `: ` + column[`Default`].String() + `,`
 				viewSaveRule += `
@@ -3224,7 +3262,7 @@ const ` + field + `Handle = reactive({
 						<ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>`
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
 				if tpl.RelTableMap[field].IsExistRelTableDao {
 					relTable := tpl.RelTableMap[field]
@@ -3242,7 +3280,7 @@ const ` + field + `Handle = reactive({
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
 					<MySelect v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
 				</ElFormItem>`
-			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
 				viewSaveDataInit += `
 		` + field + `: ` + statusList[0][0] + `,`
@@ -3485,6 +3523,9 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
+		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		tmp, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, column[`Comment`].String())
 		fieldName := gstr.Trim(tmp[0])
 		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
@@ -3514,19 +3555,19 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
-		} else if field == `salt` && column[`Type`].String() == `char(8)` && tpl.PasswordHandle.IsCoexist { //salt
+		} else if field == `salt` && tpl.PasswordHandle.IsCoexist { //salt
 			continue
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				fieldName = `父级`
-			} else if field == `sort` || field == `weight` { //sort //weight
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				viewI18nTip += `
 		` + field + `: '` + tip + `',`
-			} else if gstr.SubStr(fieldCaseCamel, -2) == `Id` { //id后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					fieldName = tpl.RelTableMap[field].RelNameFieldName
 				}
-			} else if field == `gender` || gstr.SubStr(fieldCaseCamel, -6) == `Status` || gstr.SubStr(fieldCaseCamel, -4) == `Type` { //gender //status后缀 //type后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
 				viewI18nStatus += `
 		` + field + `: [`
