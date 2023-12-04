@@ -4,11 +4,9 @@ import (
 	// daoAuth "api/internal/dao/auth"
 	"api/api"
 	"context"
-	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Test struct{}
@@ -18,8 +16,6 @@ func NewTest() *Test {
 }
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
-	fmt.Println(req)
-	fmt.Println(gconv.MapDeep(req))
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
 
