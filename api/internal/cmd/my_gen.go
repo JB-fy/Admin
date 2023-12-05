@@ -651,91 +651,6 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	return
 }
 
-// 自动生成操作
-func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionName string) {
-	actionName = gstr.Replace(actionName, `/`, `-`)
-
-	idVar, _ := daoAuth.Action.ParseDbCtx(ctx).Where(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
-	id := idVar.Int64()
-	if id == 0 {
-		id, _ = daoAuth.Action.ParseDbCtx(ctx).Data(map[string]interface{}{
-			daoAuth.Action.Columns().ActionCode: actionCode,
-			daoAuth.Action.Columns().ActionName: actionName,
-		}).InsertAndGetId()
-	} else {
-		daoAuth.Action.ParseDbCtx(ctx).Where(daoAuth.Action.PrimaryKey(), id).Data(daoAuth.Action.Columns().ActionName, actionName).Update()
-	}
-	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
-		daoAuth.ActionRelToScene.Columns().ActionId: id,
-		daoAuth.ActionRelToScene.Columns().SceneId:  sceneId,
-	}).Save()
-}
-
-// 自动生成菜单
-func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
-	menuNameArr := gstr.Split(menuName, `/`)
-
-	var pid int64 = 0
-	for _, v := range menuNameArr[:len(menuNameArr)-1] {
-		pidVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuName, v).Value(daoAuth.Menu.PrimaryKey())
-		if pidVar.Uint() == 0 {
-			pid, _ = service.AuthMenu().Create(ctx, g.Map{
-				daoAuth.Menu.Columns().SceneId:   sceneId,
-				daoAuth.Menu.Columns().Pid:       pid,
-				daoAuth.Menu.Columns().MenuName:  v,
-				daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
-				daoAuth.Menu.Columns().MenuUrl:   ``,
-				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
-			})
-		} else {
-			pid = pidVar.Int64()
-		}
-	}
-
-	menuName = menuNameArr[len(menuNameArr)-1]
-	idVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuUrl, menuUrl).Value(daoAuth.Menu.PrimaryKey())
-	id := idVar.Uint()
-	if id == 0 {
-		service.AuthMenu().Create(ctx, g.Map{
-			daoAuth.Menu.Columns().SceneId:   sceneId,
-			daoAuth.Menu.Columns().Pid:       pid,
-			daoAuth.Menu.Columns().MenuName:  menuName,
-			daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
-			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
-			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		})
-	} else {
-		service.AuthMenu().Update(ctx, g.Map{daoAuth.Menu.PrimaryKey(): id}, g.Map{
-			daoAuth.Menu.Columns().MenuName:  menuName,
-			daoAuth.Menu.Columns().Pid:       pid,
-			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		})
-	}
-}
-
-// status字段注释解析
-func MyGenStatusList(comment string) (statusList [][2]string) {
-	tmp, _ := gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；)）]+)`, comment)
-	if len(tmp) == 0 { //
-		statusList = [][2]string{{`0`, `请设置表字段注释后，再生成代码`}}
-		return
-	}
-	statusList = make([][2]string, len(tmp))
-	for k, v := range tmp {
-		statusList[k] = [2]string{v[1], v[2]}
-	}
-	return
-}
-
-// 获取关联密码字段
-func MyGenGetRelPasswordField(saltField string) (relPasswordField string) {
-	relPasswordField = gstr.CaseCamelLower(gstr.Replace(gstr.CaseCamel(saltField), `Salt`, `Password`)) //默认：小驼峰
-	if gstr.CaseCamelLower(saltField) != saltField {                                                    //判断字段是不是蛇形
-		relPasswordField = gstr.CaseSnake(relPasswordField)
-	}
-	return
-}
-
 // dao层存在时，增加或修改部分字段的解析代码
 func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
@@ -3688,4 +3603,89 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	gfile.PutContents(saveFile, tplViewRouter)
 
 	MyGenMenu(ctx, tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
+}
+
+// 自动生成操作
+func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionName string) {
+	actionName = gstr.Replace(actionName, `/`, `-`)
+
+	idVar, _ := daoAuth.Action.ParseDbCtx(ctx).Where(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
+	id := idVar.Int64()
+	if id == 0 {
+		id, _ = daoAuth.Action.ParseDbCtx(ctx).Data(map[string]interface{}{
+			daoAuth.Action.Columns().ActionCode: actionCode,
+			daoAuth.Action.Columns().ActionName: actionName,
+		}).InsertAndGetId()
+	} else {
+		daoAuth.Action.ParseDbCtx(ctx).Where(daoAuth.Action.PrimaryKey(), id).Data(daoAuth.Action.Columns().ActionName, actionName).Update()
+	}
+	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
+		daoAuth.ActionRelToScene.Columns().ActionId: id,
+		daoAuth.ActionRelToScene.Columns().SceneId:  sceneId,
+	}).Save()
+}
+
+// 自动生成菜单
+func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
+	menuNameArr := gstr.Split(menuName, `/`)
+
+	var pid int64 = 0
+	for _, v := range menuNameArr[:len(menuNameArr)-1] {
+		pidVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuName, v).Value(daoAuth.Menu.PrimaryKey())
+		if pidVar.Uint() == 0 {
+			pid, _ = service.AuthMenu().Create(ctx, g.Map{
+				daoAuth.Menu.Columns().SceneId:   sceneId,
+				daoAuth.Menu.Columns().Pid:       pid,
+				daoAuth.Menu.Columns().MenuName:  v,
+				daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
+				daoAuth.Menu.Columns().MenuUrl:   ``,
+				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
+			})
+		} else {
+			pid = pidVar.Int64()
+		}
+	}
+
+	menuName = menuNameArr[len(menuNameArr)-1]
+	idVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuUrl, menuUrl).Value(daoAuth.Menu.PrimaryKey())
+	id := idVar.Uint()
+	if id == 0 {
+		service.AuthMenu().Create(ctx, g.Map{
+			daoAuth.Menu.Columns().SceneId:   sceneId,
+			daoAuth.Menu.Columns().Pid:       pid,
+			daoAuth.Menu.Columns().MenuName:  menuName,
+			daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
+			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
+			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		})
+	} else {
+		service.AuthMenu().Update(ctx, g.Map{daoAuth.Menu.PrimaryKey(): id}, g.Map{
+			daoAuth.Menu.Columns().MenuName:  menuName,
+			daoAuth.Menu.Columns().Pid:       pid,
+			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		})
+	}
+}
+
+// status字段注释解析
+func MyGenStatusList(comment string) (statusList [][2]string) {
+	tmp, _ := gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；)）]+)`, comment)
+	if len(tmp) == 0 { //
+		statusList = [][2]string{{`0`, `请设置表字段注释后，再生成代码`}}
+		return
+	}
+	statusList = make([][2]string, len(tmp))
+	for k, v := range tmp {
+		statusList[k] = [2]string{v[1], v[2]}
+	}
+	return
+}
+
+// 获取关联密码字段
+func MyGenGetRelPasswordField(saltField string) (relPasswordField string) {
+	relPasswordField = gstr.CaseCamelLower(gstr.Replace(gstr.CaseCamel(saltField), `Salt`, `Password`)) //默认：小驼峰
+	if gstr.CaseCamelLower(saltField) != saltField {                                                    //判断字段是不是蛇形
+		relPasswordField = gstr.CaseSnake(relPasswordField)
+	}
+	return
 }
