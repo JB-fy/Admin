@@ -29,13 +29,13 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 表字段按以下规则命名时，会做特殊处理，其它情况根据字段类型做默认处理
 
-	部分常用字段：
+	固定命名：
 		父级		命名：pid；      		类型：int等类型；		注意：pid,level,idPath|id_path同时存在时，有特殊处理
 		层级		命名：level；          	类型：int等类型；		注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
 		层级路径	命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
 		排序		命名：sort；			类型：int等类型；		注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
 
-	其它类型字段(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
+	常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
 		密码		命名：password后缀；			类型：char(32)；
 		加密盐 		命名：salt后缀；     			类型：char；	注意：password,salt同时存在时，有特殊处理
 		名称		命名：name后缀；				类型：varchar；
