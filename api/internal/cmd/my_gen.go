@@ -865,8 +865,9 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				if tpl.LabelHandle.LabelField != `` {
 					daoParseFieldTmp := `
 			case ` + "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`" + `:
-				m = m.Fields(` + "`p_`" + ` + tableThis + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` + ` + "` AS `" + ` + v)
-				m = m.Handler(daoThis.ParseJoin(` + "`p_`" + `+tableThis, joinTableArr))`
+				tableP := ` + "`p_`" + ` + tableThis
+				m = m.Fields(tableP + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` + ` + "` AS `" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(tableP, joinTableArr))`
 					if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 						daoParseField += daoParseFieldTmp
 					}
