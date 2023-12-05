@@ -120,9 +120,12 @@ type RelTableItem struct {
 	RelTableNameCaseCamel      string //关联表名（大驼峰）
 	RelTableNameCaseCamelLower string //关联表名（小驼峰）
 	RelTableNameCaseSnake      string //关联表名（蛇形）
-	IsRedundRelNameField       bool   //当前表是否冗余过关联表名称字段
-	RelNameField               string //关联表名称字段
-	RelNameFieldName           string //关联表名称字段名称
+	RelTableField              string //关联表字段
+	RelTableFieldName          string //关联表字段名称
+	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
+	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -510,18 +513,32 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					RelTableNameCaseCamel:      relTableNameCaseCamel,
 					RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel),
 					RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameCaseCamel),
+					RelTableField:              ``,
+					RelTableFieldName:          fieldName,
 					IsRedundRelNameField:       false,
-					RelNameField:               ``,
-					RelNameFieldName:           fieldName,
+					RelSuffix:                  ``,
+					RelSuffixCaseCamel:         ``,
+					RelSuffixCaseSnake:         ``,
 				}
 				//判断字段是小驼峰还是蛇形
+				fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
 				if gstr.CaseCamelLower(field) == field {
-					relTableItem.RelNameField = relTableItem.RelTableNameCaseCamelLower + `Name`
+					relTableItem.RelTableField = relTableItem.RelTableNameCaseCamelLower + `Name`
+					if len(fieldCaseSnakeArr) > 1 {
+						relTableItem.RelSuffixCaseSnake = `_of_` + gstr.Join(fieldCaseSnakeArr[1:], `_of_`)
+						relTableItem.RelSuffixCaseCamel = gstr.CaseCamel(relTableItem.RelSuffixCaseSnake)
+						relTableItem.RelSuffix = relTableItem.RelSuffixCaseCamel
+					}
 				} else {
-					relTableItem.RelNameField = relTableItem.RelTableNameCaseSnake + `_name`
+					relTableItem.RelTableField = relTableItem.RelTableNameCaseSnake + `_name`
+					if len(fieldCaseSnakeArr) > 1 {
+						relTableItem.RelSuffixCaseSnake = `_of_` + gstr.Join(fieldCaseSnakeArr[1:], `_of_`)
+						relTableItem.RelSuffixCaseCamel = gstr.CaseCamel(relTableItem.RelSuffixCaseSnake)
+						relTableItem.RelSuffix = relTableItem.RelSuffixCaseSnake
+					}
 				}
-				if gstr.ToUpper(gstr.SubStr(relTableItem.RelNameFieldName, -2)) == `ID` {
-					relTableItem.RelNameFieldName = gstr.SubStr(relTableItem.RelNameFieldName, 0, -2)
+				if gstr.ToUpper(gstr.SubStr(relTableItem.RelTableFieldName, -2)) == `ID` {
+					relTableItem.RelTableFieldName = gstr.SubStr(relTableItem.RelTableFieldName, 0, -2)
 				}
 
 				selfDir := gfile.SelfDir()
@@ -600,7 +617,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	}
 
 	for k, v := range tpl.RelTableMap {
-		if garray.NewStrArrayFrom(fieldArr).Contains(v.RelNameField) {
+		if garray.NewStrArrayFrom(fieldArr).Contains(v.RelTableField + v.RelSuffix) {
 			v.IsRedundRelNameField = true
 			tpl.RelTableMap[k] = v
 		}
@@ -987,19 +1004,32 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 						}
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
-						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelNameField + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(tableUser + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
+						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelTableField + relTable.RelSuffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
 						if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-							daoParseFieldTmp = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + `: ` + daoParseFieldTmp + `
+							if relTable.RelSuffix != `` {
+								daoParseFieldTmp = `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + " + `" + relTable.RelSuffix + "`: " + daoParseFieldTmp + `
+				table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
+				m = m.Fields(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + ` + ` + "` AS `" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + `, joinTableArr))`
+							} else {
+								daoParseFieldTmp = `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + `: ` + daoParseFieldTmp + `
 				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx)
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, joinTableArr))`
+							}
 							daoParseField += daoParseFieldTmp
 						}
 					}
 					daoParseJoinTmp := `
 		case ` + daoPath + `.ParseDbTable(ctx):
 			m = m.LeftJoin(joinCode, joinCode+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+tableThis+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
+					if relTable.RelSuffix != `` {
+						daoParseJoinTmp = `
+		case ` + daoPath + `.ParseDbTable(ctx) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `:
+			m = m.LeftJoin(` + daoPath + `.ParseDbTable(ctx)+` + "` AS `" + `+joinCode, joinCode+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+tableThis+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
+					}
 					if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
 						daoParseJoin += daoParseJoinTmp
 					}
@@ -1491,7 +1521,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
-					apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelNameField) + ` *string ` + "`" + `json:"` + relTable.RelNameField + `,omitempty" dc:"` + relTable.RelNameFieldName + `"` + "`\n"
+					apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelTableField) + relTable.RelSuffixCaseCamel + ` *string ` + "`" + `json:"` + relTable.RelTableField + relTable.RelSuffix + `,omitempty" dc:"` + relTable.RelTableFieldName + `"` + "`\n"
 				}
 				ruleReqFilter += `min:1`
 				ruleReqCreate += `min:1`
@@ -1781,7 +1811,11 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 					daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
 					daoImportOtherDao += `
 	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
-					controllerAlloweFieldList += daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelNameField) + ", "
+					controllerAlloweFieldList += daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField)
+					if relTable.RelSuffix != `` {
+						controllerAlloweFieldList += "+`" + relTable.RelSuffix + "`"
+					}
+					controllerAlloweFieldList += ", "
 				}
 			}
 		}
@@ -2411,7 +2445,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
-					dataKeyOfColumn = `dataKey: '` + tpl.RelTableMap[field].RelNameField + `',`
+					dataKeyOfColumn = `dataKey: '` + tpl.RelTableMap[field].RelTableField + tpl.RelTableMap[field].RelSuffix + `',`
 				}
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
@@ -3565,7 +3599,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		` + field + `: '` + tip + `',`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
-					fieldName = tpl.RelTableMap[field].RelNameFieldName
+					fieldName = tpl.RelTableMap[field].RelTableFieldName
 				}
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
