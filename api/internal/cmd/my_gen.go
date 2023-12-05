@@ -3683,10 +3683,12 @@ func MyGenStatusList(comment string) (statusList [][2]string) {
 	return
 }
 
-// 获取PasswordHandleMap的Key
+// 获取PasswordHandleMap的Key（以Password为主）
 func MyGenPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey string) {
-	passwordHandleMapKey = gstr.CaseCamelLower(gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`)) //默认：小驼峰
-	if gstr.CaseCamelLower(passwordOrsalt) != passwordOrsalt {                                                   //判断字段是不是蛇形
+	passwordOrsalt = gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`, 1) //替换salt
+	passwordOrsalt = gstr.Replace(passwordOrsalt, `Passwd`, `Password`, 1)               //替换passwd
+	passwordHandleMapKey = gstr.CaseCamelLower(passwordOrsalt)                           //默认：小驼峰
+	if gstr.CaseCamelLower(passwordOrsalt) != passwordOrsalt {                           //判断字段是不是蛇形
 		passwordHandleMapKey = gstr.CaseSnake(passwordHandleMapKey)
 	}
 	return
