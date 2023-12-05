@@ -36,7 +36,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		排序		命名：sort；			类型：int等类型；		注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
 
 	常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
-		密码		命名：password后缀；			类型：char(32)；
+		密码		命名：password,passwd后缀；		类型：char(32)；
 		加密盐 		命名：salt后缀；     			类型：char；	注意：password,salt同时存在时，有特殊处理
 		名称		命名：name后缀；				类型：varchar；
 		标识		命名：code后缀；				类型：varchar；
@@ -94,7 +94,7 @@ type MyGenTpl struct {
 		IsCoexist  bool   //当LabelField=phone或account时，是否同时存在phone和account两个字段
 	}
 	RelTableMap       map[string]RelTableItem       //id后缀字段，能确定关联表时，会自动生成联表查询代码
-	PasswordHandleMap map[string]PasswordHandleItem //password,salt同时存在时，需特殊处理
+	PasswordHandleMap map[string]PasswordHandleItem //password|passwd,salt同时存在时，需特殊处理
 	PidHandle         struct {                      //pid,level,idPath|id_path同时存在时，需特殊处理
 		IsCoexist   bool   //是否同时存在
 		PidField    string //父级字段
@@ -486,8 +486,9 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 			tpl.PidHandle.IdPathField = field
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-				passwordHandleItem, ok := tpl.PasswordHandleMap[field]
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
+				passwordHandleMapKey := MyGenPasswordHandleMapKey(field)
+				passwordHandleItem, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
 				if ok {
 					passwordHandleItem.PasswordField = field
 					passwordHandleItem.PasswordLength = resultStr[1]
@@ -497,10 +498,10 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 						PasswordLength: resultStr[1],
 					}
 				}
-				tpl.PasswordHandleMap[field] = passwordHandleItem
+				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItem
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` { //salt后缀
-				relPasswordField := MyGenGetRelPasswordField(field)
-				passwordHandleItem, ok := tpl.PasswordHandleMap[relPasswordField]
+				passwordHandleMapKey := MyGenPasswordHandleMapKey(field)
+				passwordHandleItem, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
 				if ok {
 					passwordHandleItem.SaltField = field
 					passwordHandleItem.SaltLength = resultStr[1]
@@ -510,7 +511,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 						SaltLength: resultStr[1],
 					}
 				}
-				tpl.PasswordHandleMap[relPasswordField] = passwordHandleItem
+				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItem
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
@@ -746,7 +747,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				daoParseInsertTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				password := gconv.String(v)
@@ -759,14 +760,15 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}`
-				if tpl.PasswordHandleMap[field].IsCoexist {
+				passwordHandleMapKey := MyGenPasswordHandleMapKey(field)
+				if tpl.PasswordHandleMap[passwordHandleMapKey].IsCoexist {
 					daoParseInsertTmp += `
-				salt := grand.S(` + tpl.PasswordHandleMap[field].SaltLength + `)
-				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[field].SaltField) + `] = salt
+				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
+				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[passwordHandleMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
 					daoParseUpdateTmp += ` 
-				salt := grand.S(` + tpl.PasswordHandleMap[field].SaltLength + `)
-				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[field].SaltField) + `] = salt
+				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
+				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[passwordHandleMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
 				}
 				daoParseInsertTmp += `
@@ -779,7 +781,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
 					daoParseUpdate += daoParseUpdateTmp
 				}
-			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				if column[`Key`].String() == `UNI` && column[`Null`].String() == `YES` {
 					daoParseInsertTmp := `
@@ -1422,12 +1424,12 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqFilter = `max-length:` + resultStr[1]
 			ruleReqCreate = `size:` + resultStr[1]
 			ruleReqUpdate = `size:` + resultStr[1]
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				typeReqFilter = ``
 				typeRes = ``
 				ruleReqFilter = ``
 				isRequired = true
-			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				continue
 			} else {
 				if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
@@ -1741,9 +1743,9 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -2315,9 +2317,9 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				widthOfColumn = `width: 200,`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				continue
-			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				continue
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -2830,8 +2832,8 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
 		</ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
-			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				viewQueryField += `
 		<ElFormItem prop="` + field + `">
@@ -3167,7 +3169,7 @@ const ` + field + `Handle = reactive({
 					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
 				</ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` && column[`Type`].String() == `char(32)` { //password后缀
+			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				viewSaveImportTmp := `
 import md5 from 'js-md5'`
 				if gstr.Pos(viewSaveImport, viewSaveImportTmp) == -1 {
@@ -3187,7 +3189,7 @@ import md5 from 'js-md5'`
 						<ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
 					</label>
 				</ElFormItem>`
-			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				ruleStr := ``
 				requiredStr := ``
@@ -3532,7 +3534,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
-		} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenGetRelPasswordField(field)].IsCoexist { //salt后缀
+		} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			continue
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
@@ -3681,11 +3683,11 @@ func MyGenStatusList(comment string) (statusList [][2]string) {
 	return
 }
 
-// 获取关联密码字段
-func MyGenGetRelPasswordField(saltField string) (relPasswordField string) {
-	relPasswordField = gstr.CaseCamelLower(gstr.Replace(gstr.CaseCamel(saltField), `Salt`, `Password`)) //默认：小驼峰
-	if gstr.CaseCamelLower(saltField) != saltField {                                                    //判断字段是不是蛇形
-		relPasswordField = gstr.CaseSnake(relPasswordField)
+// 获取PasswordHandleMap的Key
+func MyGenPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey string) {
+	passwordHandleMapKey = gstr.CaseCamelLower(gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`)) //默认：小驼峰
+	if gstr.CaseCamelLower(passwordOrsalt) != passwordOrsalt {                                                   //判断字段是不是蛇形
+		passwordHandleMapKey = gstr.CaseSnake(passwordHandleMapKey)
 	}
 	return
 }
