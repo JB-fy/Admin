@@ -499,10 +499,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				}
 				tpl.PasswordHandleMap[field] = passwordHandleItem
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` { //salt后缀
-				relPasswordField := gstr.CaseCamelLower(gstr.Replace(gstr.CaseCamel(field), `Salt`, `Password`)) //默认：小驼峰
-				if gstr.CaseCamelLower(field) != field {                                                         //判断字段是不是蛇形
-					relPasswordField = gstr.CaseSnake(relPasswordField)
-				}
+				relPasswordField := MyGenGetRelPasswordField(field)
 				passwordHandleItem, ok := tpl.PasswordHandleMap[relPasswordField]
 				if ok {
 					passwordHandleItem.SaltField = field
