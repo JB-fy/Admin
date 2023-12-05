@@ -766,7 +766,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
 				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[passwordHandleMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
-					daoParseUpdateTmp += ` 
+					daoParseUpdateTmp += `
 				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
 				updateData[tableThis+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[passwordHandleMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
