@@ -17,35 +17,31 @@ gf gen service
 
 1.新建数据库表。如：auth_test
 ```
-表字段命名需要遵守以下规则，否则只会根据字段类型做默认处理
 主键必须在第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
 表内尽量根据表名设置xxxxId主键和xxxxName名称两个字段（作用1：常用于前端部分组件，如MySelect.vue组件；作用2：当其它表存在与该表主键同名的关联字段时，会自动生成联表查询代码）
 每个字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
-	部分常用字段：
-		密码 		命名：password；类型：char(32)；注意：password,salt同时存在时，有特殊处理
-		加密盐 		命名：salt；类型：char(8)；注意：password,salt同时存在时，(才)有特殊处理
-		父级		命名：pid；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，有特殊处理
-		层级		命名：level；类型：int等类型；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-		层级路径	命名：idPath|id_path；类型：varchar或text；注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-		排序		命名：sort；类型：int等类型；
-		权重		命名：weight；类型：int等类型；
-		性别		命名：gender；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（性别：0未设置 1男 2女）
-		头像		命名：avatar；类型：varchar；
-	其它类型字段：
-		名称		命名：name后缀；类型：varchar；
-		标识		命名：code后缀；类型：varchar；
-		手机		命名：mobile,phone后缀；类型：varchar；
-		密码		命名：password后缀；类型：char(32)；
-		链接		命名：url,link后缀；类型：varchar；
-		IP			命名：IP后缀；类型：varchar；
-		关联ID		命名：id后缀；类型：int等类型；
-		状态		命名：status后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
-		类型		命名：type后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（类型：0安卓 1苹果）
-		是否		命名：is_前缀；类型：int等类型；注释：示例（停用：0否 1是）
-		开始时间	命名：start_前缀；类型：timestamp或datetime或date；
-		结束时间	命名：end_前缀；类型：timestamp或datetime或date；
+表字段按以下规则命名时，会做特殊处理，其它情况根据字段类型做默认处理
+	固定命名：
+		父级		命名：pid；      		类型：int等类型；		注意：pid,level,idPath|id_path同时存在时，有特殊处理
+		层级		命名：level；          	类型：int等类型；		注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		层级路径	命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+		排序		命名：sort；			类型：int等类型；		注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
+	常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
+		密码		命名：password后缀；			类型：char(32)；
+		加密盐 		命名：salt后缀；     			类型：char；	注意：password,salt同时存在时，有特殊处理
+		名称		命名：name后缀；				类型：varchar；
+		标识		命名：code后缀；				类型：varchar；
+		手机		命名：mobile,phone后缀；		类型：varchar；
+		链接		命名：url,link后缀；			类型：varchar；
+		IP			命名：IP后缀；					类型：varchar；
+		关联ID		命名：id后缀；					类型：int等类型；
+		排序|权重	命名：sort,weight等后缀；		类型：int等类型；
+		状态|类型	命名：status,type,gender等后缀；类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回）
+		是否		命名：is_前缀；					类型：int等类型；注释：示例（停用：0否 1是）
+		开始时间	命名：start_前缀；				类型：timestamp或datetime或date；
+		结束时间	命名：end_前缀；				类型：timestamp或datetime或date；
 		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端生成表单组件：textarea文本输入框或tinymce富文本编辑器
-		图片		命名：icon,cover,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
+		图片		命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；类型：单图片varchar，多图片json或text
 		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
 		数组		命名：list,arr等后缀；类型：json或text；
 ```
