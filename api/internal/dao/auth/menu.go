@@ -245,13 +245,14 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(tableThis + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-			case Scene.Columns().SceneName: //因前端页面已用该字段名显示，故不存在时改成`sceneName`（控制器也要改）。同时下面Fields方法改成m = m.Fields(tableUser + `.` + Scene.Columns().Xxxx + ` AS ` + v)
+			case Scene.Columns().SceneName: //因前端页面已用该字段名显示，故不存在时改成`sceneName`（控制器也要改）。同时下面Fields方法改成m = m.Fields(tableScene + `.` + Scene.Columns().Xxxx + ` AS ` + v)
 				tableScene := Scene.ParseDbTable(ctx)
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, joinTableArr))
 			case `pMenuName`:
-				m = m.Fields(`p_` + tableThis + `.` + daoThis.Columns().MenuName + ` AS ` + v)
-				m = m.Handler(daoThis.ParseJoin(`p_`+tableThis, joinTableArr))
+				tableP := `p_` + tableThis
+				m = m.Fields(tableP + `.` + daoThis.Columns().MenuName + ` AS ` + v)
+				m = m.Handler(daoThis.ParseJoin(tableP, joinTableArr))
 			case `tree`:
 				m = m.Fields(tableThis + `.` + daoThis.PrimaryKey())
 				m = m.Fields(tableThis + `.` + daoThis.Columns().Pid)
