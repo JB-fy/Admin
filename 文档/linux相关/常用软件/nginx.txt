@@ -37,7 +37,7 @@ http {
     sendfile        on; #指定是否使用sendfile系统调用来传输文件
     #tcp_nopush     on; #在开启了sendfile的情况下，合并请求后统一发送给客户端
     #tcp_nodelay    off;    #开启了keepalived模式下的连接受此影响，当为off时，延迟0.2s发送，默认为on，不延迟发送，立即发送用户相应报文
-    keepalive_timeout   65; #设置会话保持时间，单位是秒
+    #keepalive_timeout   65; #设置会话保持时间，单位是秒
     gzip    on;         #开启文件压缩
     client_max_body_size 1024m; #最大上传文件大小，php也得设置，以双方最小值为准  
     include /server/tool/nginx-1.24.0/conf/web/*.conf;   #导入其它路径的配置文件
