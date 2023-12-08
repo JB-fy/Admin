@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 27/11/2023 14:12:45
+ Date: 08/12/2023 18:32:59
 */
 
 SET NAMES utf8mb4;
@@ -158,12 +158,11 @@ CREATE TABLE `auth_role`  (
   PRIMARY KEY (`roleId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `tableId`(`tableId` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role
 -- ----------------------------
-INSERT INTO `auth_role` VALUES (1, '超级管理员', 1, 0, 0, '2023-10-14 16:22:51', '2023-06-09 12:03:30');
 
 -- ----------------------------
 -- Table structure for auth_role_rel_of_platform_admin
@@ -200,30 +199,6 @@ CREATE TABLE `auth_role_rel_to_action`  (
 -- ----------------------------
 -- Records of auth_role_rel_to_action
 -- ----------------------------
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 1, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 2, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 3, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 4, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 5, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 6, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 7, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 8, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 9, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 10, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 11, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 12, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 13, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 14, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 15, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 16, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 17, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 18, '2023-06-11 23:44:22', '2023-06-11 23:44:22');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 19, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 20, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 21, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 22, '2023-06-11 14:52:39', '2023-06-11 14:52:39');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 23, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
-INSERT INTO `auth_role_rel_to_action` VALUES (1, 24, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
 
 -- ----------------------------
 -- Table structure for auth_role_rel_to_menu
@@ -242,18 +217,6 @@ CREATE TABLE `auth_role_rel_to_menu`  (
 -- ----------------------------
 -- Records of auth_role_rel_to_menu
 -- ----------------------------
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 2, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 3, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 4, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 5, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 6, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 7, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 8, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 9, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 10, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 11, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
-INSERT INTO `auth_role_rel_to_menu` VALUES (1, 12, '2023-10-14 16:22:51', '2023-10-14 16:22:51');
 
 -- ----------------------------
 -- Table structure for auth_scene
