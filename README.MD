@@ -31,8 +31,8 @@
 
 #### GO服务端（推荐。代码目录：[api](./api)）
 ```bash
-# 服务启动
-gf run main.go -a "http"
+# 服务启动（--gf.gcfg.file用于指定配置文件，默认config.yaml）
+gf run main.go -a "http --gf.gcfg.file=config.prod.yaml"
 
 # dao层生成
 gf gen dao
