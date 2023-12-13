@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gcron"
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
@@ -16,8 +15,8 @@ func initOfCron(ctx context.Context) {
 		}
 	}
 
-	myCronThis := myCron{}
-	gcron.AddSingleton(ctx, `*/5 * * * * *`, myCronThis.Test, `Test`)
+	// myCronThis := myCron{}
+	// gcron.AddSingleton(ctx, `*/5 * * * * *`, myCronThis.Test, `Test`)
 }
 
 type myCron struct{}
