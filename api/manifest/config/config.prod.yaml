@@ -1,6 +1,6 @@
 dev: false # 是否开发环境
 
-cronServerNetworkIp: "121.207.45.36" # 服务器外网IP，对应IP的服务器将开启定时任务（线上必须设置。多服务器时，一般只需其中一台服务器做定时任务即可）
+cronServerNetworkIp: "xx.xx.xx.xx" # 服务器外网IP，对应IP的服务器将开启定时任务（线上必须设置。多服务器时，一般只需其中一台服务器做定时任务即可）
 
 superPlatformAdminId: 1 # 指定平台超级管理员ID
 
