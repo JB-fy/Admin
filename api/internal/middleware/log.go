@@ -21,5 +21,5 @@ func Log(r *ghttp.Request) {
 		`resStatus`: r.Response.Status,
 		`runTime`:   runTime,
 	}
-	g.Log("loggerHttp").Info(r.GetCtx(), data)
+	g.Log(`loggerHttp`).Info(r.GetCtx(), data)
 }
