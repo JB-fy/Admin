@@ -17,11 +17,6 @@ import (
 	"golang.org/x/tools/imports"
 )
 
-// 是否开发环境
-func IsDev(ctx context.Context) bool {
-	return g.Cfg().MustGet(ctx, `dev`).Bool()
-}
-
 // 生成错误码
 func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]interface{}) error {
 	detail := map[string]interface{}{}

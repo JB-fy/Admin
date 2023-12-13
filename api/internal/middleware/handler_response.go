@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"api/internal/utils"
 	"net/http"
 
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -34,7 +33,7 @@ func HandlerResponse(r *ghttp.Request) {
 				msg = g.I18n().Tf(r.GetCtx(), `code.29991062`, match[1])
 			} else {
 				code = gcode.New(29999999, ``, nil)
-				if !utils.IsDev(r.GetCtx()) {
+				if !g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() {
 					msg = g.I18n().T(r.GetCtx(), `code.29999999`)
 				}
 			}
