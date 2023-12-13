@@ -1,18 +1,23 @@
 package initialize
 
-// 定时器设置
 import (
 	"context"
 	"fmt"
 
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcron"
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-func init() {
-	// ctx := gctx.New()
-	// myCronThis := myCron{}
+func initOfCron(ctx context.Context) {
+	if !g.Cfg().MustGet(ctx, `dev`).Bool() {
+		if g.Cfg().MustGet(ctx, `cronServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, `SERVER_NETWORK_IP`).String() {
+			return
+		}
+	}
 
-	// gcron.AddSingleton(ctx, `*/5 * * * * *`, myCronThis.Test, `Test`)
+	myCronThis := myCron{}
+	gcron.AddSingleton(ctx, `*/5 * * * * *`, myCronThis.Test, `Test`)
 }
 
 type myCron struct{}

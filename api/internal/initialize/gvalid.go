@@ -1,6 +1,5 @@
 package initialize
 
-// 自定义校验规则注册
 import (
 	"context"
 
@@ -9,7 +8,7 @@ import (
 	"github.com/gogf/gf/v2/util/gvalid"
 )
 
-func init() {
+func initOfGvalid(ctx context.Context) {
 	myRuleThis := myRule{}
 
 	gvalid.RegisterRule(`distinct`, myRuleThis.Distinct)

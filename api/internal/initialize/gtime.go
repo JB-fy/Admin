@@ -1,8 +1,11 @@
 package initialize
 
-//时区设置
-import "github.com/gogf/gf/v2/os/gtime"
+import (
+	"context"
 
-func init() {
+	"github.com/gogf/gf/v2/os/gtime"
+)
+
+func initOfGtime(ctx context.Context) {
 	gtime.SetTimeZone(`Asia/Shanghai`)
 }
