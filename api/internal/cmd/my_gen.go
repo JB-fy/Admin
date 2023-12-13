@@ -1737,8 +1737,8 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		//主键
-		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` {
+
+		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			if field != `id` {
 				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
