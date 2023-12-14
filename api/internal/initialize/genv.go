@@ -10,7 +10,7 @@ import (
 	"github.com/gogf/gf/v2/os/genv"
 )
 
-func initOfGenv(ctx context.Context) {
+func initGenv(ctx context.Context) {
 	/**--------记录当前服务器IP 开始--------**/
 	serverNetworkIp := utils.GetServerNetworkIp()
 	serverLocalIp := utils.GetServerLocalIp()

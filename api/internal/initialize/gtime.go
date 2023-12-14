@@ -6,6 +6,6 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-func initOfGtime(ctx context.Context) {
+func initGtime(ctx context.Context) {
 	gtime.SetTimeZone(`Asia/Shanghai`)
 }

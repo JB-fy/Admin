@@ -8,7 +8,7 @@ import (
 	"github.com/gogf/gf/v2/util/gvalid"
 )
 
-func initOfGvalid(ctx context.Context) {
+func initGvalid(ctx context.Context) {
 	myRuleThis := myRule{}
 
 	gvalid.RegisterRule(`distinct`, myRuleThis.Distinct)

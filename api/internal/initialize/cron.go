@@ -8,7 +8,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-func initOfCron(ctx context.Context) {
+func initCron(ctx context.Context) {
 	if !g.Cfg().MustGet(ctx, `dev`).Bool() {
 		if g.Cfg().MustGet(ctx, `cronServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, `SERVER_NETWORK_IP`).String() {
 			return

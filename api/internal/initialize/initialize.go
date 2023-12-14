@@ -8,9 +8,9 @@ import (
 func init() {
 	ctx := gctx.New()
 
-	initOfGenv(ctx)   // 环境变量设置
-	initOfCron(ctx)   // 定时器设置
-	initOfGtime(ctx)  // 时区设置
-	initOfGvalid(ctx) // 自定义校验规则注册
-	initOfI18n(ctx)   // 多语言设置
+	initGenv(ctx)   // 环境变量设置
+	initI18n(ctx)   // 多语言设置
+	initGtime(ctx)  // 时区设置
+	initGvalid(ctx) // 自定义校验规则注册
+	initCron(ctx)   // 定时器设置
 }
