@@ -3,6 +3,7 @@ export default {
 		websiteConfig: '网站',
 		appConfig: 'APP',
 		uploadConfig: '上传',
+		payConfig: '支付',
 		smsConfig: '短信',
 		idCardConfig: '实名认证',
 		pushConfig: '推送',
@@ -10,6 +11,9 @@ export default {
 
 		android: '安卓',
 		ios: '苹果',
+
+		aliPay: '支付宝',
+		wxPay: '微信',
 	},
 	name: {
 		hotSearch: '热门搜索',
@@ -46,6 +50,17 @@ export default {
 		aliyunOssEndpoint: '阿里云OSS-Endpoint',
 		aliyunOssRoleArn: '阿里云OSS-RoleArn',
 
+		aliPayAppId: 'AppID',
+		aliPaySignType: '签名方式',
+		aliPayPrivateKey: '私钥',
+		aliPayPublicKey: '公钥',
+
+		wxPayAppId: 'AppID',
+		wxPayMchid: '商户ID',
+		wxPaySerialNo: '证书序列号',
+		wxPayApiV3Key: 'APIV3密钥',
+		wxPayPrivateKey: '私钥',
+
 		smsType: '短信方式',
 		aliyunSmsAccessKeyId: '阿里云SMS-AccessKeyId',
 		aliyunSmsAccessKeySecret: '阿里云SMS-AccessKeySecret',
@@ -77,6 +92,10 @@ export default {
 		uploadType: [
 			{ value: `local`, label: '本地' },
 			{ value: `aliyunOss`, label: '阿里云' },
+		],
+		aliPaySignType: [
+			{ value: `RSA2`, label: 'RSA2' },
+			{ value: `RSA`, label: 'RSA' },
 		],
 		smsType: [
 			{ value: `aliyunSms`, label: '阿里云' },

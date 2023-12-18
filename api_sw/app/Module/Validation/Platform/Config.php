@@ -47,6 +47,17 @@ class Config extends AbstractValidation
         'aliyunOssEndpoint' => 'string',
         'aliyunOssRoleArn' => 'string',
 
+        'aliPayAppId' => 'string',
+        'aliPaySignType' => 'in:RSA2,RSA',
+        'aliPayPrivateKey' => 'string',
+        'aliPayPublicKey' => 'string',
+
+        'wxPayAppId' => 'string',
+        'wxPayMchid' => 'string',
+        'wxPaySerialNo' => 'string',
+        'wxPayApiV3Key' => 'string',
+        'wxPayPrivateKey' => 'string',
+
         'smsType' => 'string|in:aliyunSms',
         'aliyunSmsAccessKeyId' => 'alpha_dash',
         'aliyunSmsAccessKeySecret' => 'alpha_dash',
@@ -118,6 +129,17 @@ class Config extends AbstractValidation
                 'aliyunOssCallbackUrl',
                 'aliyunOssRoleArn',
                 'aliyunOssEndpoint',
+
+                'aliPayAppId',
+                'aliPaySignType',
+                'aliPayPrivateKey',
+                'aliPayPublicKey',
+
+                'wxPayAppId',
+                'wxPayMchid',
+                'wxPaySerialNo',
+                'wxPayApiV3Key',
+                'wxPayPrivateKey',
 
                 'smsType',
                 'aliyunSmsAccessKeyId',

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.vue'))
+const PayConfig = defineAsyncComponent(() => import('./tabPane/PayConfig.vue'))
 const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))
 const IdCardConfig = defineAsyncComponent(() => import('./tabPane/IdCardConfig.vue'))
 const PushConfig = defineAsyncComponent(() => import('./tabPane/PushConfig.vue'))
@@ -14,6 +15,9 @@ const { t } = useI18n()
             <ElTabs type="border-card" tab-position="top">
                 <ElTabPane :label="t('platform.config.label.uploadConfig')" :lazy="true">
                     <UploadConfig />
+                </ElTabPane>
+                <ElTabPane :label="t('platform.config.label.payConfig')" :lazy="true">
+                    <PayConfig />
                 </ElTabPane>
                 <ElTabPane :label="t('platform.config.label.smsConfig')" :lazy="true">
                     <SmsConfig />
