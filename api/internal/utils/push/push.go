@@ -56,10 +56,10 @@ type Push interface {
 }
 
 // 设备类型：0-安卓 1-苹果 2-苹果电脑
-func NewPush(ctx context.Context, deviceType uint, pushTypeTmp ...string) Push {
+func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	pushType := ``
-	if len(pushTypeTmp) > 0 {
-		pushType = pushTypeTmp[0]
+	if len(pushTypeOpt) > 0 {
+		pushType = pushTypeOpt[0]
 	} else {
 		pushTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `pushType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		pushType = pushTypeVar.String()

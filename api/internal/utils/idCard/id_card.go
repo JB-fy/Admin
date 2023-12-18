@@ -16,10 +16,10 @@ type IdCard interface {
 	Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error)
 }
 
-func NewIdCard(ctx context.Context, idCardTypeTmp ...string) IdCard {
+func NewIdCard(ctx context.Context, idCardTypeOpt ...string) IdCard {
 	idCardType := ``
-	if len(idCardTypeTmp) > 0 {
-		idCardType = idCardTypeTmp[0]
+	if len(idCardTypeOpt) > 0 {
+		idCardType = idCardTypeOpt[0]
 	} else {
 		idCardTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `idCardType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		idCardType = idCardTypeVar.String()

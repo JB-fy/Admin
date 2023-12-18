@@ -34,10 +34,10 @@ func CreateUploadParam(uploadType string) (param UploadParam) {
 	return
 }
 
-func NewUpload(ctx context.Context, uploadTypeTmp ...string) Upload {
+func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 	uploadType := ``
-	if len(uploadTypeTmp) > 0 {
-		uploadType = uploadTypeTmp[0]
+	if len(uploadTypeOpt) > 0 {
+		uploadType = uploadTypeOpt[0]
 	} else {
 		uploadTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `uploadType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		uploadType = uploadTypeVar.String()

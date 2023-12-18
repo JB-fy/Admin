@@ -10,10 +10,10 @@ type Sms interface {
 	SendSms(phoneArr []string, templateParam string) (err error)
 }
 
-func NewSms(ctx context.Context, smsTypeTmp ...string) Sms {
+func NewSms(ctx context.Context, smsTypeOpt ...string) Sms {
 	smsType := ``
-	if len(smsTypeTmp) > 0 {
-		smsType = smsTypeTmp[0]
+	if len(smsTypeOpt) > 0 {
+		smsType = smsTypeOpt[0]
 	} else {
 		smsTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `smsType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		smsType = smsTypeVar.String()

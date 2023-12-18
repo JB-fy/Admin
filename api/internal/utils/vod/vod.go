@@ -20,10 +20,10 @@ func CreateVodParam() (param VodParam) {
 	return
 }
 
-func NewVod(ctx context.Context, vodTypeTmp ...string) Vod {
+func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
 	vodType := ``
-	if len(vodTypeTmp) > 0 {
-		vodType = vodTypeTmp[0]
+	if len(vodTypeOpt) > 0 {
+		vodType = vodTypeOpt[0]
 	} else {
 		vodTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `vodType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		vodType = vodTypeVar.String()

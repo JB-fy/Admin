@@ -16,10 +16,10 @@ type Pay interface {
 	Create(orderData map[string]interface{}) (orderInfo map[string]interface{}, err error)
 }
 
-func NewPay(ctx context.Context, payTypeTmp ...string) Pay {
+func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
 	payType := ``
-	if len(payTypeTmp) > 0 {
-		payType = payTypeTmp[0]
+	if len(payTypeOpt) > 0 {
+		payType = payTypeOpt[0]
 	}
 
 	switch payType {
