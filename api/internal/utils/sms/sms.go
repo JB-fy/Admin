@@ -10,10 +10,16 @@ type Sms interface {
 	SendSms(phoneArr []string, templateParam string) (err error)
 }
 
-func NewSms(ctx context.Context) Sms {
-	platformConfigColumns := daoPlatform.Config.Columns()
-	smsType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `smsType`).Value(platformConfigColumns.ConfigValue)
-	switch smsType.String() {
+func NewSms(ctx context.Context, smsTypeTmp ...string) Sms {
+	smsType := ``
+	if len(smsTypeTmp) > 0 {
+		smsType = smsTypeTmp[0]
+	} else {
+		smsTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `smsType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		smsType = smsTypeVar.String()
+	}
+
+	switch smsType {
 	// case `aliyunSms`:
 	default:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunSmsAccessKeyId`, `aliyunSmsAccessKeySecret`, `aliyunSmsEndpoint`, `aliyunSmsSignName`, `aliyunSmsTemplateCode`})

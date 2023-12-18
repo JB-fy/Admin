@@ -16,10 +16,16 @@ type IdCard interface {
 	Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error)
 }
 
-func NewIdCard(ctx context.Context) IdCard {
-	platformConfigColumns := daoPlatform.Config.Columns()
-	idCardType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `idCardType`).Value(platformConfigColumns.ConfigValue)
-	switch idCardType.String() {
+func NewIdCard(ctx context.Context, idCardTypeTmp ...string) IdCard {
+	idCardType := ``
+	if len(idCardTypeTmp) > 0 {
+		idCardType = idCardTypeTmp[0]
+	} else {
+		idCardTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `idCardType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		idCardType = idCardTypeVar.String()
+	}
+
+	switch idCardType {
 	// case `aliyunIdCard`:
 	default:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunIdCardHost`, `aliyunIdCardPath`, `aliyunIdCardAppcode`})

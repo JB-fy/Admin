@@ -20,10 +20,16 @@ func CreateVodParam() (param VodParam) {
 	return
 }
 
-func NewVod(ctx context.Context) Vod {
-	platformConfigColumns := daoPlatform.Config.Columns()
-	vodType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `vodType`).Value(platformConfigColumns.ConfigValue)
-	switch vodType.String() {
+func NewVod(ctx context.Context, vodTypeTmp ...string) Vod {
+	vodType := ``
+	if len(vodTypeTmp) > 0 {
+		vodType = vodTypeTmp[0]
+	} else {
+		vodTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `vodType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		vodType = vodTypeVar.String()
+	}
+
+	switch vodType {
 	// case `aliyunVod`:
 	default:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunVodAccessKeyId`, `aliyunVodAccessKeySecret`, `aliyunVodEndpoint`, `aliyunVodRoleArn`})

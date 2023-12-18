@@ -34,10 +34,16 @@ func CreateUploadParam(uploadType string) (param UploadParam) {
 	return
 }
 
-func NewUpload(ctx context.Context) Upload {
-	platformConfigColumns := daoPlatform.Config.Columns()
-	uploadType, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(platformConfigColumns.ConfigKey, `uploadType`).Value(platformConfigColumns.ConfigValue)
-	switch uploadType.String() {
+func NewUpload(ctx context.Context, uploadTypeTmp ...string) Upload {
+	uploadType := ``
+	if len(uploadTypeTmp) > 0 {
+		uploadType = uploadTypeTmp[0]
+	} else {
+		uploadTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `uploadType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		uploadType = uploadTypeVar.String()
+	}
+
+	switch uploadType {
 	case `aliyunOss`:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssCallbackUrl`, `aliyunOssEndpoint`, `aliyunOssRoleArn`})
 		return NewAliyunOss(ctx, config)
