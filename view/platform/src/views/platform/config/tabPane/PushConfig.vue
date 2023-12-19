@@ -5,38 +5,38 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
-        pushType: 'txTpns',
-        txTpnsHost: '',
-        txTpnsAccessIDOfAndroid: '',
-        txTpnsSecretKeyOfAndroid: '',
-        txTpnsAccessIDOfIos: '',
-        txTpnsSecretKeyOfIos: '',
-        txTpnsAccessIDOfMacOS: '',
-        txTpnsSecretKeyOfMacOS: '',
+        pushType: 'pushOfTx',
+        pushOfTxHost: '',
+        pushOfTxAndroidAccessID: '',
+        pushOfTxAndroidSecretKey: '',
+        pushOfTxIosAccessID: '',
+        pushOfTxIosSecretKey: '',
+        pushOfTxMacOSAccessID: '',
+        pushOfTxMacOSSecretKey: '',
     } as { [propName: string]: any },
     rules: {
         pushType: [
-            { type: 'enum', enum: [`txTpns`], trigger: 'change', message: t('validation.select') },
+            { type: 'enum', enum: [`pushOfTx`], trigger: 'change', message: t('validation.select') },
         ],
-        txTpnsHost: [
+        pushOfTxHost: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        txTpnsAccessIDOfAndroid: [
+        pushOfTxAndroidAccessID: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        txTpnsSecretKeyOfAndroid: [
+        pushOfTxAndroidSecretKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        txTpnsAccessIDOfIos: [
+        pushOfTxIosAccessID: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        txTpnsSecretKeyOfIos: [
+        pushOfTxIosSecretKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        txTpnsAccessIDOfMacOS: [
+        pushOfTxMacOSAccessID: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        txTpnsSecretKeyOfMacOS: [
+        pushOfTxMacOSSecretKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -84,41 +84,41 @@ saveForm.initData()
             </ElRadioGroup>
         </ElFormItem>
 
-        <template v-if="saveForm.data.pushType == 'txTpns'">
-            <ElFormItem :label="t('platform.config.name.txTpnsHost')" prop="txTpnsHost">
-                <ElInput v-model="saveForm.data.txTpnsHost" :placeholder="t('platform.config.name.txTpnsHost')"
+        <template v-if="saveForm.data.pushType == 'pushOfTx'">
+            <ElFormItem :label="t('platform.config.name.pushOfTxHost')" prop="pushOfTxHost">
+                <ElInput v-model="saveForm.data.pushOfTxHost" :placeholder="t('platform.config.name.pushOfTxHost')"
                     :clearable="true" style="max-width: 500px;" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.tip.txTpnsHost')"></span>
+                            <span v-html="t('platform.config.tip.pushOfTxHost')"></span>
                         </template>
                     </ElAlert>
                 </label>
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.txTpnsAccessIDOfAndroid')" prop="txTpnsAccessIDOfAndroid">
-                <ElInput v-model="saveForm.data.txTpnsAccessIDOfAndroid"
-                    :placeholder="t('platform.config.name.txTpnsAccessIDOfAndroid')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.pushOfTxAndroidAccessID')" prop="pushOfTxAndroidAccessID">
+                <ElInput v-model="saveForm.data.pushOfTxAndroidAccessID"
+                    :placeholder="t('platform.config.name.pushOfTxAndroidAccessID')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.txTpnsSecretKeyOfAndroid')" prop="txTpnsSecretKeyOfAndroid">
-                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfAndroid"
-                    :placeholder="t('platform.config.name.txTpnsSecretKeyOfAndroid')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.pushOfTxAndroidSecretKey')" prop="pushOfTxAndroidSecretKey">
+                <ElInput v-model="saveForm.data.pushOfTxAndroidSecretKey"
+                    :placeholder="t('platform.config.name.pushOfTxAndroidSecretKey')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.txTpnsAccessIDOfIos')" prop="txTpnsAccessIDOfIos">
-                <ElInput v-model="saveForm.data.txTpnsAccessIDOfIos"
-                    :placeholder="t('platform.config.name.txTpnsAccessIDOfIos')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.pushOfTxIosAccessID')" prop="pushOfTxIosAccessID">
+                <ElInput v-model="saveForm.data.pushOfTxIosAccessID"
+                    :placeholder="t('platform.config.name.pushOfTxIosAccessID')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.txTpnsSecretKeyOfIos')" prop="txTpnsSecretKeyOfIos">
-                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfIos"
-                    :placeholder="t('platform.config.name.txTpnsSecretKeyOfIos')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.pushOfTxIosSecretKey')" prop="pushOfTxIosSecretKey">
+                <ElInput v-model="saveForm.data.pushOfTxIosSecretKey"
+                    :placeholder="t('platform.config.name.pushOfTxIosSecretKey')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.txTpnsAccessIDOfMacOS')" prop="txTpnsAccessIDOfMacOS">
-                <ElInput v-model="saveForm.data.txTpnsAccessIDOfMacOS"
-                    :placeholder="t('platform.config.name.txTpnsAccessIDOfMacOS')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.pushOfTxMacOSAccessID')" prop="pushOfTxMacOSAccessID">
+                <ElInput v-model="saveForm.data.pushOfTxMacOSAccessID"
+                    :placeholder="t('platform.config.name.pushOfTxMacOSAccessID')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.txTpnsSecretKeyOfMacOS')" prop="txTpnsSecretKeyOfMacOS">
-                <ElInput v-model="saveForm.data.txTpnsSecretKeyOfMacOS"
-                    :placeholder="t('platform.config.name.txTpnsSecretKeyOfMacOS')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.pushOfTxMacOSSecretKey')" prop="pushOfTxMacOSSecretKey">
+                <ElInput v-model="saveForm.data.pushOfTxMacOSSecretKey"
+                    :placeholder="t('platform.config.name.pushOfTxMacOSSecretKey')" :clearable="true" />
             </ElFormItem>
         </template>
 

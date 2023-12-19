@@ -74,13 +74,13 @@ export default {
 		idCardOfAliyunAppcode: '阿里云IdCard-Appcode',
 
 		pushType: '推送方式',
-		txTpnsHost: '腾讯移动推送-域名',
-		txTpnsAccessIDOfAndroid: '腾讯移动推送-AccessID(安卓)',
-		txTpnsSecretKeyOfAndroid: '腾讯移动推送-SecretKey(安卓)',
-		txTpnsAccessIDOfIos: '腾讯移动推送-AccessID(苹果)',
-		txTpnsSecretKeyOfIos: '腾讯移动推送-SecretKey(苹果)',
-		txTpnsAccessIDOfMacOS: '腾讯移动推送-AccessID(苹果电脑)',
-		txTpnsSecretKeyOfMacOS: '腾讯移动推送-SecretKey(苹果电脑)',
+		pushOfTxHost: '腾讯移动推送-域名',
+		pushOfTxAndroidAccessID: '腾讯移动推送-AccessID(安卓)',
+		pushOfTxAndroidSecretKey: '腾讯移动推送-SecretKey(安卓)',
+		pushOfTxIosAccessID: '腾讯移动推送-AccessID(苹果)',
+		pushOfTxIosSecretKey: '腾讯移动推送-SecretKey(苹果)',
+		pushOfTxMacOSAccessID: '腾讯移动推送-AccessID(苹果电脑)',
+		pushOfTxMacOSSecretKey: '腾讯移动推送-SecretKey(苹果电脑)',
 
 		vodType: '视频点播方式',
 		vodOfAliyunAccessKeyId: '阿里云VOD-AccessKeyId',
@@ -104,7 +104,7 @@ export default {
 			{ value: `idCardOfAliyun`, label: '阿里云' },
 		],
 		pushType: [
-			{ value: `txTpns`, label: '腾讯移动推送' },
+			{ value: `pushOfTx`, label: '腾讯移动推送' },
 		],
 		vodType: [
 			{ value: `vodOfAliyun`, label: '阿里云' },
@@ -120,7 +120,7 @@ export default {
 
 		idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 
-		txTpnsHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
+		pushOfTxHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
 
 		vodOfAliyunEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
 		vodOfAliyunRoleArn: '用于生成STS凭证',

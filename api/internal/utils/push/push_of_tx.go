@@ -16,22 +16,22 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type TxTpns struct {
+type PushOfTx struct {
 	Ctx       context.Context
-	Host      string `json:"txTpnsHost"`
-	AccessID  uint32 `json:"txTpnsAccessID"`
-	SecretKey string `json:"txTpnsSecretKey"`
+	Host      string `json:"pushOfTxHost"`
+	AccessID  uint32 `json:"pushOfTxAccessID"`
+	SecretKey string `json:"pushOfTxSecretKey"`
 }
 
-func NewTxTpns(ctx context.Context, config map[string]interface{}) *TxTpns {
-	txTpnsObj := TxTpns{
+func NewPushOfTx(ctx context.Context, config map[string]interface{}) *PushOfTx {
+	pushOfTxObj := PushOfTx{
 		Ctx: ctx,
 	}
-	gconv.Struct(config, &txTpnsObj)
-	return &txTpnsObj
+	gconv.Struct(config, &pushOfTxObj)
+	return &pushOfTxObj
 }
 
-func (pushThis *TxTpns) Push(param PushParam) (err error) {
+func (pushThis *PushOfTx) Push(param PushParam) (err error) {
 	reqData := g.Map{}
 	reqData[`environment`] = `product`
 	if param.IsDev {
@@ -98,7 +98,7 @@ func (pushThis *TxTpns) Push(param PushParam) (err error) {
 	return
 }
 
-func (pushThis *TxTpns) TagHandle(param TagParam) (err error) {
+func (pushThis *PushOfTx) TagHandle(param TagParam) (err error) {
 	lenOfTagList := len(param.TagList)
 	lenOfTokenList := len(param.TokenList)
 	if lenOfTagList > 1 && lenOfTokenList > 1 {
@@ -144,7 +144,7 @@ func (pushThis *TxTpns) TagHandle(param TagParam) (err error) {
 	return
 }
 
-func (pushThis *TxTpns) NewHttpClient(reqDataJson string) (client *gclient.Client) {
+func (pushThis *PushOfTx) NewHttpClient(reqDataJson string) (client *gclient.Client) {
 	/* // Basic Auth 认证
 	client = g.Client().SetHeaderMap(g.MapStrStr{
 		`Content-Type`:  `application/json`,
@@ -162,7 +162,7 @@ func (pushThis *TxTpns) NewHttpClient(reqDataJson string) (client *gclient.Clien
 	return
 }
 
-func (pushThis *TxTpns) CreateSign(timeStamp int64, reqDataJson string) (sign string) {
+func (pushThis *PushOfTx) CreateSign(timeStamp int64, reqDataJson string) (sign string) {
 	h := hmac.New(sha256.New, []byte(pushThis.SecretKey))
 	h.Write([]byte(fmt.Sprintf(`%d%d%s`, timeStamp, pushThis.AccessID, reqDataJson)))
 	sha := hex.EncodeToString(h.Sum(nil))

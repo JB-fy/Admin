@@ -66,27 +66,27 @@ func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	}
 
 	switch pushType {
-	// case `txTpns`:	//腾讯移动推送
+	// case `pushOfTx`:	//腾讯移动推送
 	default:
 		config := g.Map{}
 		switch deviceType {
 		case 1: //IOS
-			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`txTpnsHost`, `txTpnsAccessIDOfIos`, `txTpnsSecretKeyOfIos`})
-			config[`txTpnsHost`] = configTmp[`txTpnsHost`]
-			config[`txTpnsAccessID`] = configTmp[`txTpnsAccessIDOfIos`]
-			config[`txTpnsSecretKey`] = configTmp[`txTpnsSecretKeyOfIos`]
+			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxIosAccessID`, `pushOfTxIosSecretKey`})
+			config[`pushOfTxHost`] = configTmp[`pushOfTxHost`]
+			config[`pushOfTxAccessID`] = configTmp[`pushOfTxIosAccessID`]
+			config[`pushOfTxSecretKey`] = configTmp[`pushOfTxIosSecretKey`]
 		case 2: //MacOS（暂时不做）
-			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`txTpnsHost`, `txTpnsAccessIDOfMacOS`, `txTpnsSecretKeyOfMacOS`})
-			config[`txTpnsHost`] = configTmp[`txTpnsHost`]
-			config[`txTpnsAccessID`] = configTmp[`txTpnsAccessIDOfMacOS`]
-			config[`txTpnsSecretKey`] = configTmp[`txTpnsSecretKeyOfMacOS`]
+			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxMacOSAccessID`, `pushOfTxMacOSSecretKey`})
+			config[`pushOfTxHost`] = configTmp[`pushOfTxHost`]
+			config[`pushOfTxAccessID`] = configTmp[`pushOfTxMacOSAccessID`]
+			config[`pushOfTxSecretKey`] = configTmp[`pushOfTxMacOSSecretKey`]
 		// case 0: //安卓
 		default:
-			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`txTpnsHost`, `txTpnsAccessIDOfAndroid`, `txTpnsSecretKeyOfAndroid`})
-			config[`txTpnsHost`] = configTmp[`txTpnsHost`]
-			config[`txTpnsAccessID`] = configTmp[`txTpnsAccessIDOfAndroid`]
-			config[`txTpnsSecretKey`] = configTmp[`txTpnsSecretKeyOfAndroid`]
+			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxAndroidAccessID`, `pushOfTxAndroidSecretKey`})
+			config[`pushOfTxHost`] = configTmp[`pushOfTxHost`]
+			config[`pushOfTxAccessID`] = configTmp[`pushOfTxAndroidAccessID`]
+			config[`pushOfTxSecretKey`] = configTmp[`pushOfTxAndroidSecretKey`]
 		}
-		return NewTxTpns(ctx, config)
+		return NewPushOfTx(ctx, config)
 	}
 }

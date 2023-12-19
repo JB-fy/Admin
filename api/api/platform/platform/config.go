@@ -73,13 +73,13 @@ type Config struct {
 	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
 
 	PushType                 *string `json:"pushType,omitempty" dc:"推送方式"`
-	TxTpnsHost               *string `json:"txTpnsHost,omitempty" dc:"腾讯移动推送-域名"`
-	TxTpnsAccessIDOfAndroid  *string `json:"txTpnsAccessIDOfAndroid,omitempty" dc:"腾讯移动推送-AccessID(安卓)"`
-	TxTpnsSecretKeyOfAndroid *string `json:"txTpnsSecretKeyOfAndroid,omitempty" dc:"腾讯移动推送-SecretKey(安卓)"`
-	TxTpnsAccessIDOfIos      *string `json:"txTpnsAccessIDOfIos,omitempty" dc:"腾讯移动推送-AccessID(苹果)"`
-	TxTpnsSecretKeyOfIos     *string `json:"txTpnsSecretKeyOfIos,omitempty" dc:"腾讯移动推送-SecretKey(苹果)"`
-	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
-	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
+	PushOfTxHost             *string `json:"pushOfTxHost,omitempty" dc:"腾讯移动推送-域名"`
+	PushOfTxAndroidAccessID  *string `json:"pushOfTxAndroidAccessID,omitempty" dc:"腾讯移动推送-AccessID(安卓)"`
+	PushOfTxAndroidSecretKey *string `json:"pushOfTxAndroidSecretKey,omitempty" dc:"腾讯移动推送-SecretKey(安卓)"`
+	PushOfTxIosAccessID      *string `json:"pushOfTxIosAccessID,omitempty" dc:"腾讯移动推送-AccessID(苹果)"`
+	PushOfTxIosSecretKey     *string `json:"pushOfTxIosSecretKey,omitempty" dc:"腾讯移动推送-SecretKey(苹果)"`
+	PushOfTxMacOSAccessID    *string `json:"pushOfTxMacOSAccessID,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
+	PushOfTxMacOSSecretKey   *string `json:"pushOfTxMacOSSecretKey,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 
 	VodType                    *string `json:"vodType,omitempty" dc:"视频点播方式"`
 	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" dc:"阿里云VOD-AccessKeyId"`
@@ -151,14 +151,14 @@ type ConfigSaveReq struct {
 	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
 	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
 
-	PushType                 *string `json:"pushType,omitempty" v:"in:txTpns" dc:"推送方式"`
-	TxTpnsHost               *string `json:"txTpnsHost,omitempty" v:"url" dc:"腾讯移动推送-域名"`
-	TxTpnsAccessIDOfAndroid  *string `json:"txTpnsAccessIDOfAndroid,omitempty" v:"" dc:"腾讯移动推送-AccessID(安卓)"`
-	TxTpnsSecretKeyOfAndroid *string `json:"txTpnsSecretKeyOfAndroid,omitempty" v:"" dc:"腾讯移动推送-SecretKey(安卓)"`
-	TxTpnsAccessIDOfIos      *string `json:"txTpnsAccessIDOfIos,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果)"`
-	TxTpnsSecretKeyOfIos     *string `json:"txTpnsSecretKeyOfIos,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果)"`
-	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
-	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
+	PushType                 *string `json:"pushType,omitempty" v:"in:pushOfTx" dc:"推送方式"`
+	PushOfTxHost             *string `json:"pushOfTxHost,omitempty" v:"url" dc:"腾讯移动推送-域名"`
+	PushOfTxAndroidAccessID  *string `json:"pushOfTxAndroidAccessID,omitempty" v:"" dc:"腾讯移动推送-AccessID(安卓)"`
+	PushOfTxAndroidSecretKey *string `json:"pushOfTxAndroidSecretKey,omitempty" v:"" dc:"腾讯移动推送-SecretKey(安卓)"`
+	PushOfTxIosAccessID      *string `json:"pushOfTxIosAccessID,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果)"`
+	PushOfTxIosSecretKey     *string `json:"pushOfTxIosSecretKey,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果)"`
+	PushOfTxMacOSAccessID    *string `json:"pushOfTxMacOSAccessID,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
+	PushOfTxMacOSSecretKey   *string `json:"pushOfTxMacOSSecretKey,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 
 	VodType                    *string `json:"vodType,omitempty" v:"in:vodOfAliyun" dc:"视频点播方式"`
 	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
