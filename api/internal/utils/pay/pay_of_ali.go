@@ -3,6 +3,7 @@ package pay
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -27,4 +28,16 @@ func NewPayOfAli(ctx context.Context, config map[string]interface{}) *PayOfAli {
 
 func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 	return
+}
+
+func (payThis *PayOfAli) Notify() (notifyInfo NotifyInfo, err error) {
+	return
+}
+
+func (payThis *PayOfAli) NotifyRes(failMsg string) {
+	resData := `success` //success:	成功；fail：失败
+	if failMsg != `` {
+		resData = `fail`
+	}
+	g.RequestFromCtx(payThis.Ctx).Response.Write(resData)
 }

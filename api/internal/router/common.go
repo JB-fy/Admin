@@ -22,6 +22,10 @@ func InitRouterCommon(s *ghttp.Server) {
 			controllerThis.Notify,
 		)
 	})
+	//支付回调
+	s.Group(`/pay`, func(group *ghttp.RouterGroup) {
+		group.Bind(controller.NewPay())
+	})
 	//测试
 	s.Group(``, func(group *ghttp.RouterGroup) {
 		group.Bind(controller.NewTest())
