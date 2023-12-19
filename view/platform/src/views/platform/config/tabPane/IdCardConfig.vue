@@ -70,8 +70,9 @@ saveForm.initData()
 
         <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
             <ElFormItem :label="t('platform.config.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
-                <ElInput v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.name.idCardOfAliyunHost')"
-                    :clearable="true" style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.idCardOfAliyunHost"
+                    :placeholder="t('platform.config.name.idCardOfAliyunHost')" :clearable="true"
+                    style="max-width: 500px;" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>
@@ -81,8 +82,8 @@ saveForm.initData()
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
-                <ElInput v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.name.idCardOfAliyunPath')"
-                    :clearable="true" />
+                <ElInput v-model="saveForm.data.idCardOfAliyunPath"
+                    :placeholder="t('platform.config.name.idCardOfAliyunPath')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.idCardOfAliyunAppcode')" prop="idCardOfAliyunAppcode">
                 <ElInput v-model="saveForm.data.idCardOfAliyunAppcode"

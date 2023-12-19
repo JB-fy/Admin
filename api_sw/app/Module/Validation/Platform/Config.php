@@ -56,7 +56,7 @@ class Config extends AbstractValidation
         'payOfWxMchid' => 'string',
         'payOfWxSerialNo' => 'string',
         'payOfWxApiV3Key' => 'string',
-        'payOfWxPrivateKey' => 'string',
+        'payOfWxCertPath' => 'string',
 
         'smsType' => 'string|in:smsOfAliyun',
         'smsOfAliyunAccessKeyId' => 'alpha_dash',
@@ -139,7 +139,7 @@ class Config extends AbstractValidation
                 'payOfWxMchid',
                 'payOfWxSerialNo',
                 'payOfWxApiV3Key',
-                'payOfWxPrivateKey',
+                'payOfWxCertPath',
 
                 'smsType',
                 'smsOfAliyunAccessKeyId',

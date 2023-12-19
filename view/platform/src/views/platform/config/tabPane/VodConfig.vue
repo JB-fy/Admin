@@ -94,8 +94,9 @@ saveForm.initData()
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
-                <ElInput v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.name.vodOfAliyunRoleArn')"
-                    :clearable="true" style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.vodOfAliyunRoleArn"
+                    :placeholder="t('platform.config.name.vodOfAliyunRoleArn')" :clearable="true"
+                    style="max-width: 500px;" />
                 <label>
                     <ElAlert :title="t('platform.config.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true"
                         :closable="false" />

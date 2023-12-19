@@ -25,6 +25,6 @@ func NewPayOfAli(ctx context.Context, config map[string]interface{}) *PayOfAli {
 	return &payOfAliObj
 }
 
-func (payThis *PayOfAli) Create(orderData map[string]interface{}) (orderInfo map[string]interface{}, err error) {
+func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }

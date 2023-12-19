@@ -131,22 +131,24 @@ saveForm.initData()
 
         <template v-if="saveForm.data.uploadType == 'uploadOfAliyunOss'">
             <ElFormItem :label="t('platform.config.name.uploadOfAliyunOssHost')" prop="uploadOfAliyunOssHost">
-                <ElInput v-model="saveForm.data.uploadOfAliyunOssHost" :placeholder="t('platform.config.name.uploadOfAliyunOssHost')"
-                    :clearable="true" style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.uploadOfAliyunOssHost"
+                    :placeholder="t('platform.config.name.uploadOfAliyunOssHost')" :clearable="true"
+                    style="max-width: 500px;" />
                 <label>
                     <ElAlert :title="t('platform.config.tip.uploadOfAliyunOssHost')" type="info" :show-icon="true"
                         :closable="false" />
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.uploadOfAliyunOssBucket')" prop="uploadOfAliyunOssBucket">
-                <ElInput v-model="saveForm.data.uploadOfAliyunOssBucket" :placeholder="t('platform.config.name.uploadOfAliyunOssBucket')"
-                    :clearable="true" />
+                <ElInput v-model="saveForm.data.uploadOfAliyunOssBucket"
+                    :placeholder="t('platform.config.name.uploadOfAliyunOssBucket')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.uploadOfAliyunOssAccessKeyId')" prop="uploadOfAliyunOssAccessKeyId">
                 <ElInput v-model="saveForm.data.uploadOfAliyunOssAccessKeyId"
                     :placeholder="t('platform.config.name.uploadOfAliyunOssAccessKeyId')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.uploadOfAliyunOssAccessKeySecret')" prop="uploadOfAliyunOssAccessKeySecret">
+            <ElFormItem :label="t('platform.config.name.uploadOfAliyunOssAccessKeySecret')"
+                prop="uploadOfAliyunOssAccessKeySecret">
                 <ElInput v-model="saveForm.data.uploadOfAliyunOssAccessKeySecret"
                     :placeholder="t('platform.config.name.uploadOfAliyunOssAccessKeySecret')" :clearable="true" />
             </ElFormItem>
@@ -172,8 +174,9 @@ saveForm.initData()
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.uploadOfAliyunOssRoleArn')" prop="uploadOfAliyunOssRoleArn">
-                <ElInput v-model="saveForm.data.uploadOfAliyunOssRoleArn" :placeholder="t('platform.config.name.uploadOfAliyunOssRoleArn')"
-                    :clearable="true" style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.uploadOfAliyunOssRoleArn"
+                    :placeholder="t('platform.config.name.uploadOfAliyunOssRoleArn')" :clearable="true"
+                    style="max-width: 500px;" />
                 <label>
                     <ElAlert :title="t('platform.config.tip.uploadOfAliyunOssRoleArn')" type="info" :show-icon="true"
                         :closable="false" />

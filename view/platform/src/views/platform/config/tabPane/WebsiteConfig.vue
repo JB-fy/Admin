@@ -107,5 +107,6 @@ saveForm.initData()
             <ElButton type="info" @click="saveForm.reset">
                 <AutoiconEpCircleClose />{{ t('common.reset') }}
             </ElButton>
-    </ElFormItem>
-</ElForm></template>
+        </ElFormItem>
+    </ElForm>
+</template>

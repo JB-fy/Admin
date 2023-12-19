@@ -18,6 +18,7 @@ require (
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/redis/go-redis/v9 v9.3.0 // indirect
+	github.com/wechatpay-apiv3/wechatpay-go v0.2.18 // indirect
 	go.opentelemetry.io/otel/sdk v1.20.0 // indirect
 	golang.org/x/net v0.18.0
 	golang.org/x/tools v0.6.0

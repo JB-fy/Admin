@@ -14,7 +14,7 @@ const saveForm = reactive({
         payOfWxMchid: '',
         payOfWxSerialNo: '',
         payOfWxApiV3Key: '',
-        payOfWxPrivateKey: '',
+        payOfWxCertPath: '',
     } as { [propName: string]: any },
     rules: {
         payOfAliAppId: [
@@ -42,7 +42,7 @@ const saveForm = reactive({
         payOfWxApiV3Key: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        payOfWxPrivateKey: [
+        payOfWxCertPath: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -89,8 +89,8 @@ saveForm.initData()
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfAliSignType')" prop="payOfAliSignType">
                     <ElRadioGroup v-model="saveForm.data.payOfAliSignType">
-                        <ElRadio v-for="(item, index) in (tm('platform.config.status.payOfAliSignType') as any)" :key="index"
-                            :label="item.value">
+                        <ElRadio v-for="(item, index) in (tm('platform.config.status.payOfAliSignType') as any)"
+                            :key="index" :label="item.value">
                             {{ item.label }}
                         </ElRadio>
                     </ElRadioGroup>
@@ -115,16 +115,16 @@ saveForm.initData()
                         :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfWxSerialNo')" prop="payOfWxSerialNo">
-                    <ElInput v-model="saveForm.data.payOfWxSerialNo" :placeholder="t('platform.config.name.payOfWxSerialNo')"
-                        :clearable="true" />
+                    <ElInput v-model="saveForm.data.payOfWxSerialNo"
+                        :placeholder="t('platform.config.name.payOfWxSerialNo')" :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfWxApiV3Key')" prop="payOfWxApiV3Key">
-                    <ElInput v-model="saveForm.data.payOfWxApiV3Key" :placeholder="t('platform.config.name.payOfWxApiV3Key')"
-                        :clearable="true" />
+                    <ElInput v-model="saveForm.data.payOfWxApiV3Key"
+                        :placeholder="t('platform.config.name.payOfWxApiV3Key')" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfWxPrivateKey')" prop="payOfWxPrivateKey">
-                    <ElInput v-model="saveForm.data.payOfWxPrivateKey"
-                        :placeholder="t('platform.config.name.payOfWxPrivateKey')" :clearable="true" />
+                <ElFormItem :label="t('platform.config.name.payOfWxCertPath')" prop="payOfWxCertPath">
+                    <ElInput v-model="saveForm.data.payOfWxCertPath"
+                        :placeholder="t('platform.config.name.payOfWxCertPath')" :clearable="true" />
                 </ElFormItem>
             </ElTabPane>
         </ElTabs>
