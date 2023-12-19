@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Plugin\Upload;
 
-class Local extends AbstractUpload
+class UploadOfLocal extends AbstractUpload
 {
     /**
      * 上传

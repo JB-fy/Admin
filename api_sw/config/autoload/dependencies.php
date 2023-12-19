@@ -22,24 +22,24 @@ return [
     'upload' => function (ContainerInterface $container) {
         $uploadType = getConfig('inDb.platformConfig.uploadType');
         switch ($uploadType) {
-            case 'aliyunOss':
+            case 'uploadOfAliyunOss':
                 $config = [
-                    'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunOssAccessKeyId'),
-                    'accessKeySecret' => getConfig('inDb.platformConfig.aliyunOssAccessKeySecret'),
-                    'host' => getConfig('inDb.platformConfig.aliyunOssHost'),
-                    'bucket' => getConfig('inDb.platformConfig.aliyunOssBucket'),
-                    'callbackUrl' => getConfig('inDb.platformConfig.aliyunOssCallbackUrl'),
+                    'accessKeyId' =>  getConfig('inDb.platformConfig.uploadOfAliyunOssAccessKeyId'),
+                    'accessKeySecret' => getConfig('inDb.platformConfig.uploadOfAliyunOssAccessKeySecret'),
+                    'host' => getConfig('inDb.platformConfig.uploadOfAliyunOssHost'),
+                    'bucket' => getConfig('inDb.platformConfig.uploadOfAliyunOssBucket'),
+                    'callbackUrl' => getConfig('inDb.platformConfig.uploadOfAliyunOssCallbackUrl'),
                 ];
-                return make(\App\Plugin\Upload\AliyunOss::class, ['config' => $config]);
-            case 'local':
+                return make(\App\Plugin\Upload\UploadOfAliyunOss::class, ['config' => $config]);
+            case 'uploadOfLocal':
             default:
                 $config = [
-                    'url' =>  getConfig('inDb.platformConfig.localUploadUrl'),
-                    'signKey' => getConfig('inDb.platformConfig.localUploadSignKey'),
-                    'fileSaveDir' => getConfig('inDb.platformConfig.localUploadFileSaveDir'),
-                    'fileUrlPrefix' => getConfig('inDb.platformConfig.localUploadFileUrlPrefix'),
+                    'url' =>  getConfig('inDb.platformConfig.uploadOfLocalUrl'),
+                    'signKey' => getConfig('inDb.platformConfig.uploadOfLocalSignKey'),
+                    'fileSaveDir' => getConfig('inDb.platformConfig.uploadOfLocalFileSaveDir'),
+                    'fileUrlPrefix' => getConfig('inDb.platformConfig.uploadOfLocalFileUrlPrefix'),
                 ];
-                return make(\App\Plugin\Upload\Local::class, ['config' => $config]);
+                return make(\App\Plugin\Upload\UploadOfLocal::class, ['config' => $config]);
         }
     },
     //短信组件

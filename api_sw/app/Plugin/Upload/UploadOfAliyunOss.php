@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Plugin\Upload;
 
-class AliyunOss extends AbstractUpload
+class UploadOfAliyunOss extends AbstractUpload
 {
     /**
      * 上传

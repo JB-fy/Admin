@@ -36,18 +36,18 @@ type Config struct {
 	VersionIntroOfIos  *string `json:"versionIntroOfIos,omitempty" dc:"版本介绍(苹果)"`
 	PlistUrlOfIos      *string `json:"plistUrlOfIos,omitempty" dc:"plist文件(苹果)"`
 
-	UploadType               *string `json:"uploadType,omitempty" dc:"上传方式"`
-	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" dc:"本地-上传地址"`
-	LocalUploadSignKey       *string `json:"localUploadSignKey,omitempty" dc:"本地-密钥"`
-	LocalUploadFileSaveDir   *string `json:"localUploadFileSaveDir,omitempty" dc:"本地-文件保存目录"`
-	LocalUploadFileUrlPrefix *string `json:"localUploadFileUrlPrefix,omitempty" dc:"本地-文件地址前缀"`
-	AliyunOssHost            *string `json:"aliyunOssHost,omitempty" dc:"阿里云OSS-域名"`
-	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" dc:"阿里云OSS-Bucket"`
-	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" dc:"阿里云OSS-AccessKeyId"`
-	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" dc:"阿里云OSS-AccessKeySecret"`
-	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" dc:"阿里云OSS-回调地址"`
-	AliyunOssEndpoint        *string `json:"aliyunOssEndpoint,omitempty" dc:"阿里云OSS-Endpoint"`
-	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
+	UploadType                       *string `json:"uploadType,omitempty" dc:"上传方式"`
+	UploadOfLocalUrl                 *string `json:"uploadOfLocalUrl,omitempty" dc:"本地-上传地址"`
+	UploadOfLocalSignKey             *string `json:"uploadOfLocalSignKey,omitempty" dc:"本地-密钥"`
+	UploadOfLocalFileSaveDir         *string `json:"uploadOfLocalFileSaveDir,omitempty" dc:"本地-文件保存目录"`
+	UploadOfLocalFileUrlPrefix       *string `json:"uploadOfLocalFileUrlPrefix,omitempty" dc:"本地-文件地址前缀"`
+	UploadOfAliyunOssHost            *string `json:"uploadOfAliyunOssHost,omitempty" dc:"阿里云OSS-域名"`
+	UploadOfAliyunOssBucket          *string `json:"uploadOfAliyunOssBucket,omitempty" dc:"阿里云OSS-Bucket"`
+	UploadOfAliyunOssAccessKeyId     *string `json:"uploadOfAliyunOssAccessKeyId,omitempty" dc:"阿里云OSS-AccessKeyId"`
+	UploadOfAliyunOssAccessKeySecret *string `json:"uploadOfAliyunOssAccessKeySecret,omitempty" dc:"阿里云OSS-AccessKeySecret"`
+	UploadOfAliyunOssCallbackUrl     *string `json:"uploadOfAliyunOssCallbackUrl,omitempty" dc:"阿里云OSS-回调地址"`
+	UploadOfAliyunOssEndpoint        *string `json:"uploadOfAliyunOssEndpoint,omitempty" dc:"阿里云OSS-Endpoint"`
+	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
 
 	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" dc:"AppId"`
 	PayOfAliSignType   *string `json:"payOfAliSignType,omitempty" dc:"签名方式"`
@@ -115,18 +115,18 @@ type ConfigSaveReq struct {
 	VersionIntroOfIos  *string `json:"versionIntroOfIos,omitempty" v:"" dc:"版本介绍(苹果)"`
 	PlistUrlOfIos      *string `json:"plistUrlOfIos,omitempty" v:"url" dc:"plist文件(苹果)"`
 
-	UploadType               *string `json:"uploadType,omitempty" v:"in:local,aliyunOss" dc:"上传方式"`
-	LocalUploadUrl           *string `json:"localUploadUrl,omitempty" v:"url" dc:"本地-上传地址"`
-	LocalUploadSignKey       *string `json:"localUploadSignKey,omitempty" v:"" dc:"本地-密钥"`
-	LocalUploadFileSaveDir   *string `json:"localUploadFileSaveDir,omitempty" v:"" dc:"本地-文件保存目录"`
-	LocalUploadFileUrlPrefix *string `json:"localUploadFileUrlPrefix,omitempty" v:"url" dc:"本地-文件地址前缀"`
-	AliyunOssHost            *string `json:"aliyunOssHost,omitempty" v:"url" dc:"阿里云OSS-域名"`
-	AliyunOssBucket          *string `json:"aliyunOssBucket,omitempty" v:"" dc:"阿里云OSS-Bucket"`
-	AliyunOssAccessKeyId     *string `json:"aliyunOssAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeyId"`
-	AliyunOssAccessKeySecret *string `json:"aliyunOssAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeySecret"`
-	AliyunOssCallbackUrl     *string `json:"aliyunOssCallbackUrl,omitempty" v:"url" dc:"阿里云OSS-回调地址"`
-	AliyunOssEndpoint        *string `json:"aliyunOssEndpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
-	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
+	UploadType                       *string `json:"uploadType,omitempty" v:"in:uploadOfLocal,uploadOfAliyunOss" dc:"上传方式"`
+	UploadOfLocalUrl                 *string `json:"uploadOfLocalUrl,omitempty" v:"url" dc:"本地-上传地址"`
+	UploadOfLocalSignKey             *string `json:"uploadOfLocalSignKey,omitempty" v:"" dc:"本地-密钥"`
+	UploadOfLocalFileSaveDir         *string `json:"uploadOfLocalFileSaveDir,omitempty" v:"" dc:"本地-文件保存目录"`
+	UploadOfLocalFileUrlPrefix       *string `json:"uploadOfLocalFileUrlPrefix,omitempty" v:"url" dc:"本地-文件地址前缀"`
+	UploadOfAliyunOssHost            *string `json:"uploadOfAliyunOssHost,omitempty" v:"url" dc:"阿里云OSS-域名"`
+	UploadOfAliyunOssBucket          *string `json:"uploadOfAliyunOssBucket,omitempty" v:"" dc:"阿里云OSS-Bucket"`
+	UploadOfAliyunOssAccessKeyId     *string `json:"uploadOfAliyunOssAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeyId"`
+	UploadOfAliyunOssAccessKeySecret *string `json:"uploadOfAliyunOssAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeySecret"`
+	UploadOfAliyunOssCallbackUrl     *string `json:"uploadOfAliyunOssCallbackUrl,omitempty" v:"url" dc:"阿里云OSS-回调地址"`
+	UploadOfAliyunOssEndpoint        *string `json:"uploadOfAliyunOssEndpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
+	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
 
 	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" v:"" dc:"AppId"`
 	PayOfAliSignType   *string `json:"payOfAliSignType,omitempty" v:"in:RSA2,RSA" dc:"签名方式"`

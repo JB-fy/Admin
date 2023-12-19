@@ -12,7 +12,7 @@ type UploadParam struct {
 	Expire     int64  //签名有效时间戳。单位：秒
 	ExpireTime int64  //签名有效时间。单位：秒
 	MinSize    int    //限制上传的文件大小。单位：字节
-	MaxSize    int    //限制上传的文件大小。单位：字节。本地上传（local.go）需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
+	MaxSize    int    //限制上传的文件大小。单位：字节。本地上传（uploadOfLocal.go）需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
 }
 
 type Upload interface {
@@ -44,12 +44,12 @@ func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 	}
 
 	switch uploadType {
-	case `aliyunOss`:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunOssHost`, `aliyunOssBucket`, `aliyunOssAccessKeyId`, `aliyunOssAccessKeySecret`, `aliyunOssCallbackUrl`, `aliyunOssEndpoint`, `aliyunOssRoleArn`})
-		return NewAliyunOss(ctx, config)
-	// case `local`:
+	case `uploadOfAliyunOss`:
+		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`})
+		return NewUploadOfAliyunOss(ctx, config)
+	// case `uploadOfLocal`:
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`localUploadUrl`, `localUploadSignKey`, `localUploadFileSaveDir`, `localUploadFileUrlPrefix`})
-		return NewLocal(ctx, config)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`})
+		return NewUploadOfLocal(ctx, config)
 	}
 }

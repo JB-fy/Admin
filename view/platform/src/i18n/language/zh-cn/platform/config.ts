@@ -38,17 +38,17 @@ export default {
 		plistUrlOfIos: 'plist文件(苹果)',
 
 		uploadType: '上传方式',
-		localUploadUrl: '本地-上传地址',
-		localUploadSignKey: '本地-密钥',
-		localUploadFileSaveDir: '本地-文件保存目录',
-		localUploadFileUrlPrefix: '本地-文件地址前缀',
-		aliyunOssHost: '阿里云OSS-域名',
-		aliyunOssBucket: '阿里云OSS-Bucket',
-		aliyunOssAccessKeyId: '阿里云OSS-AccessKeyId',
-		aliyunOssAccessKeySecret: '阿里云OSS-AccessKeySecret',
-		aliyunOssCallbackUrl: '阿里云OSS-回调地址',
-		aliyunOssEndpoint: '阿里云OSS-Endpoint',
-		aliyunOssRoleArn: '阿里云OSS-RoleArn',
+		uploadOfLocalUrl: '本地-上传地址',
+		uploadOfLocalSignKey: '本地-密钥',
+		uploadOfLocalFileSaveDir: '本地-文件保存目录',
+		uploadOfLocalFileUrlPrefix: '本地-文件地址前缀',
+		uploadOfAliyunOssHost: '阿里云OSS-域名',
+		uploadOfAliyunOssBucket: '阿里云OSS-Bucket',
+		uploadOfAliyunOssAccessKeyId: '阿里云OSS-AccessKeyId',
+		uploadOfAliyunOssAccessKeySecret: '阿里云OSS-AccessKeySecret',
+		uploadOfAliyunOssCallbackUrl: '阿里云OSS-回调地址',
+		uploadOfAliyunOssEndpoint: '阿里云OSS-Endpoint',
+		uploadOfAliyunOssRoleArn: '阿里云OSS-RoleArn',
 
 		payOfAliAppId: 'AppID',
 		payOfAliSignType: '签名方式',
@@ -90,8 +90,8 @@ export default {
 	},
 	status: {
 		uploadType: [
-			{ value: `local`, label: '本地' },
-			{ value: `aliyunOss`, label: '阿里云' },
+			{ value: `uploadOfLocal`, label: '本地' },
+			{ value: `uploadOfAliyunOss`, label: '阿里云' },
 		],
 		payOfAliSignType: [
 			{ value: `RSA2`, label: 'RSA2' },
@@ -111,12 +111,12 @@ export default {
 		],
 	},
 	tip: {
-		localUploadFileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
-		localUploadFileUrlPrefix: '根据部署的线上环境设置。与文件保存路径拼接形成文件访问地址',
-		aliyunOssHost: '不含Bucket部分',
-		aliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
-		aliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-		aliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
+		uploadOfLocalFileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
+		uploadOfLocalFileUrlPrefix: '根据部署的线上环境设置。与文件保存路径拼接形成文件访问地址',
+		uploadOfAliyunOssHost: '不含Bucket部分',
+		uploadOfAliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
+		uploadOfAliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
+		uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
 		idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 

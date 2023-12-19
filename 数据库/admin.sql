@@ -283,18 +283,18 @@ CREATE TABLE `platform_config`  (
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'uploadType', 'local', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (2, 'localUploadUrl', 'http://www.admin.com/upload/upload', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (3, 'localUploadSignKey', '123456', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (4, 'localUploadFileSaveDir', '../public/', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (5, 'localUploadFileUrlPrefix', 'http://www.admin.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (6, 'aliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (7, 'aliyunOssBucket', 'bucket', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (8, 'aliyunOssAccessKeyId', 'accessKeyId', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (9, 'aliyunOssAccessKeySecret', 'accessKeySecret', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (10, 'aliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (11, 'aliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (12, 'aliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (1, 'uploadType', 'uploadOfLocal', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (2, 'uploadOfLocalUrl', 'http://www.admin.com/upload/upload', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (3, 'uploadOfLocalSignKey', '123456', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (4, 'uploadOfLocalFileSaveDir', '../public/', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (5, 'uploadOfLocalFileUrlPrefix', 'http://www.admin.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (6, 'uploadOfAliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (7, 'uploadOfAliyunOssBucket', 'bucket', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (8, 'uploadOfAliyunOssAccessKeyId', 'accessKeyId', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (9, 'uploadOfAliyunOssAccessKeySecret', 'accessKeySecret', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (10, 'uploadOfAliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (11, 'uploadOfAliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
+INSERT INTO `platform_config` VALUES (12, 'uploadOfAliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (13, 'smsType', 'smsOfAliyun', '2023-11-22 09:49:39', '2023-11-22 09:49:18');
 INSERT INTO `platform_config` VALUES (14, 'smsOfAliyunAccessKeyId', 'accessKeyId', '2023-11-22 09:49:41', '2023-11-22 09:49:18');
 INSERT INTO `platform_config` VALUES (15, 'smsOfAliyunAccessKeySecret', 'accessKeySecret', '2023-11-22 09:49:43', '2023-11-22 09:49:18');

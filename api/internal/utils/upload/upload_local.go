@@ -14,24 +14,24 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-type Local struct {
+type UploadOfLocal struct {
 	Ctx           context.Context
-	Url           string `json:"localUploadUrl"`
-	SignKey       string `json:"localUploadSignKey"`
-	FileSaveDir   string `json:"localUploadFileSaveDir"`
-	FileUrlPrefix string `json:"localUploadFileUrlPrefix"`
+	Url           string `json:"uploadOfLocalUrl"`
+	SignKey       string `json:"uploadOfLocalSignKey"`
+	FileSaveDir   string `json:"uploadOfLocalFileSaveDir"`
+	FileUrlPrefix string `json:"uploadOfLocalFileUrlPrefix"`
 }
 
-func NewLocal(ctx context.Context, config map[string]interface{}) *Local {
-	localObj := Local{
+func NewUploadOfLocal(ctx context.Context, config map[string]interface{}) *UploadOfLocal {
+	uploadOfLocalObj := UploadOfLocal{
 		Ctx: ctx,
 	}
-	gconv.Struct(config, &localObj)
-	return &localObj
+	gconv.Struct(config, &uploadOfLocalObj)
+	return &uploadOfLocalObj
 }
 
 // 本地上传
-func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Upload() (uploadInfo map[string]interface{}, err error) {
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
@@ -85,7 +85,7 @@ func (uploadThis *Local) Upload() (uploadInfo map[string]interface{}, err error)
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *Local) Sign(param UploadParam) (signInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo map[string]interface{}, err error) {
 	signInfo = map[string]interface{}{
 		`uploadUrl`: uploadThis.Url,
 		// `uploadData`:  map[string]interface{}{},
@@ -109,22 +109,22 @@ func (uploadThis *Local) Sign(param UploadParam) (signInfo map[string]interface{
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *Local) Config(param UploadParam) (config map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Config(param UploadParam) (config map[string]interface{}, err error) {
 	return
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *Local) Sts(param UploadParam) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Sts(param UploadParam) (stsInfo map[string]interface{}, err error) {
 	return
 }
 
 // 回调
-func (uploadThis *Local) Notify() (notifyInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Notify() (notifyInfo map[string]interface{}, err error) {
 	return
 }
 
 // 生成签名
-func (uploadThis *Local) CreateSign(signData map[string]interface{}) (sign string) {
+func (uploadThis *UploadOfLocal) CreateSign(signData map[string]interface{}) (sign string) {
 	keyArr := []string{}
 	for k := range signData {
 		keyArr = append(keyArr, k)
