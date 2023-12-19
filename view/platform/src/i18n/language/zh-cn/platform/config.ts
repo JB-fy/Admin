@@ -62,16 +62,16 @@ export default {
 		payOfWxPrivateKey: '私钥',
 
 		smsType: '短信方式',
-		aliyunSmsAccessKeyId: '阿里云SMS-AccessKeyId',
-		aliyunSmsAccessKeySecret: '阿里云SMS-AccessKeySecret',
-		aliyunSmsEndpoint: '阿里云SMS-Endpoint',
-		aliyunSmsSignName: '阿里云SMS-签名',
-		aliyunSmsTemplateCode: '阿里云SMS-模板标识',
+		smsOfAliyunAccessKeyId: '阿里云SMS-AccessKeyId',
+		smsOfAliyunAccessKeySecret: '阿里云SMS-AccessKeySecret',
+		smsOfAliyunEndpoint: '阿里云SMS-Endpoint',
+		smsOfAliyunSignName: '阿里云SMS-签名',
+		smsOfAliyunTemplateCode: '阿里云SMS-模板标识',
 
 		idCardType: '实名认证方式',
-		aliyunIdCardHost: '阿里云IdCard-域名',
-		aliyunIdCardPath: '阿里云IdCard-请求路径',
-		aliyunIdCardAppcode: '阿里云IdCard-Appcode',
+		idCardOfAliyunHost: '阿里云IdCard-域名',
+		idCardOfAliyunPath: '阿里云IdCard-请求路径',
+		idCardOfAliyunAppcode: '阿里云IdCard-Appcode',
 
 		pushType: '推送方式',
 		txTpnsHost: '腾讯移动推送-域名',
@@ -83,10 +83,10 @@ export default {
 		txTpnsSecretKeyOfMacOS: '腾讯移动推送-SecretKey(苹果电脑)',
 
 		vodType: '视频点播方式',
-		aliyunVodAccessKeyId: '阿里云VOD-AccessKeyId',
-		aliyunVodAccessKeySecret: '阿里云VOD-AccessKeySecret',
-		aliyunVodEndpoint: '阿里云VOD-Endpoint',
-		aliyunVodRoleArn: '阿里云VOD-RoleArn',
+		vodOfAliyunAccessKeyId: '阿里云VOD-AccessKeyId',
+		vodOfAliyunAccessKeySecret: '阿里云VOD-AccessKeySecret',
+		vodOfAliyunEndpoint: '阿里云VOD-Endpoint',
+		vodOfAliyunRoleArn: '阿里云VOD-RoleArn',
 	},
 	status: {
 		uploadType: [
@@ -98,16 +98,16 @@ export default {
 			{ value: `RSA`, label: 'RSA' },
 		],
 		smsType: [
-			{ value: `aliyunSms`, label: '阿里云' },
+			{ value: `smsOfAliyun`, label: '阿里云' },
 		],
 		idCardType: [
-			{ value: `aliyunIdCard`, label: '阿里云' },
+			{ value: `idCardOfAliyun`, label: '阿里云' },
 		],
 		pushType: [
 			{ value: `txTpns`, label: '腾讯移动推送' },
 		],
 		vodType: [
-			{ value: `aliyunVod`, label: '阿里云' },
+			{ value: `vodOfAliyun`, label: '阿里云' },
 		],
 	},
 	tip: {
@@ -118,11 +118,11 @@ export default {
 		aliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
 		aliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
-		aliyunIdCardHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
+		idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 
 		txTpnsHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
 
-		aliyunVodEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-		aliyunVodRoleArn: '用于生成STS凭证',
+		vodOfAliyunEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
+		vodOfAliyunRoleArn: '用于生成STS凭证',
 	},
 }

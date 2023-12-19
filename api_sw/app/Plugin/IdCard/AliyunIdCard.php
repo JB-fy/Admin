@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Plugin\IdCard;
 
 
-class AliyunIdCard extends AbstractIdCard
+class IdCardOfAliyun extends AbstractIdCard
 {
     protected $config = [];
 

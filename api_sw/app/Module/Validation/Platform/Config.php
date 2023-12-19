@@ -58,17 +58,17 @@ class Config extends AbstractValidation
         'payOfWxApiV3Key' => 'string',
         'payOfWxPrivateKey' => 'string',
 
-        'smsType' => 'string|in:aliyunSms',
-        'aliyunSmsAccessKeyId' => 'alpha_dash',
-        'aliyunSmsAccessKeySecret' => 'alpha_dash',
-        'aliyunSmsEndpoint' => 'string',
-        'aliyunSmsSignName' => 'string',
-        'aliyunSmsTemplateCode' => 'string',
+        'smsType' => 'string|in:smsOfAliyun',
+        'smsOfAliyunAccessKeyId' => 'alpha_dash',
+        'smsOfAliyunAccessKeySecret' => 'alpha_dash',
+        'smsOfAliyunEndpoint' => 'string',
+        'smsOfAliyunSignName' => 'string',
+        'smsOfAliyunTemplateCode' => 'string',
 
-        'idCardType' => 'string|in:aliyunIdCard',
-        'aliyunIdCardHost' => 'url',
-        'aliyunIdCardPath' => 'string',
-        'aliyunIdCardAppcode' => 'string',
+        'idCardType' => 'string|in:idCardOfAliyun',
+        'idCardOfAliyunHost' => 'url',
+        'idCardOfAliyunPath' => 'string',
+        'idCardOfAliyunAppcode' => 'string',
 
         'pushType' => 'string|in:txTpns',
         'txTpnsHost' => 'url',
@@ -79,12 +79,12 @@ class Config extends AbstractValidation
         'txTpnsAccessIDOfMacOS' => 'string',
         'txTpnsSecretKeyOfMacOS' => 'string',
 
-        'vodType' => 'string|in:aliyunVod',
-        'aliyunVodBucket' => 'string',
-        'aliyunVodAccessKeyId' => 'alpha_dash',
-        'aliyunVodAccessKeySecret' => 'alpha_dash',
-        'aliyunVodEndpoint' => 'string',
-        'aliyunVodRoleArn' => 'string',
+        'vodType' => 'string|in:vodOfAliyun',
+        'vodOfAliyunBucket' => 'string',
+        'vodOfAliyunAccessKeyId' => 'alpha_dash',
+        'vodOfAliyunAccessKeySecret' => 'alpha_dash',
+        'vodOfAliyunEndpoint' => 'string',
+        'vodOfAliyunRoleArn' => 'string',
     ];
 
     protected array $scene = [
@@ -142,16 +142,16 @@ class Config extends AbstractValidation
                 'payOfWxPrivateKey',
 
                 'smsType',
-                'aliyunSmsAccessKeyId',
-                'aliyunSmsAccessKeySecret',
-                'aliyunSmsEndpoint',
-                'aliyunSmsSignName',
-                'aliyunSmsTemplateCode',
+                'smsOfAliyunAccessKeyId',
+                'smsOfAliyunAccessKeySecret',
+                'smsOfAliyunEndpoint',
+                'smsOfAliyunSignName',
+                'smsOfAliyunTemplateCode',
 
                 'idCardType',
-                'aliyunIdCardHost',
-                'aliyunIdCardPath',
-                'aliyunIdCardAppcode',
+                'idCardOfAliyunHost',
+                'idCardOfAliyunPath',
+                'idCardOfAliyunAppcode',
 
                 'pushType',
                 'txTpnsHost',
@@ -163,11 +163,11 @@ class Config extends AbstractValidation
                 'txTpnsSecretKeyOfMacOS',
 
                 'vodType',
-                'aliyunVodBucket',
-                'aliyunVodAccessKeyId',
-                'aliyunVodAccessKeySecret',
-                'aliyunVodEndpoint',
-                'aliyunVodRoleArn',
+                'vodOfAliyunBucket',
+                'vodOfAliyunAccessKeyId',
+                'vodOfAliyunAccessKeySecret',
+                'vodOfAliyunEndpoint',
+                'vodOfAliyunRoleArn',
             ]
         ]
     ];

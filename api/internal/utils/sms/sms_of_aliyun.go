@@ -12,29 +12,29 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type AliyunSms struct {
+type SmsOfAliyun struct {
 	Ctx             context.Context
-	AccessKeyId     string `json:"aliyunSmsAccessKeyId"`
-	AccessKeySecret string `json:"aliyunSmsAccessKeySecret"`
-	Endpoint        string `json:"aliyunSmsEndpoint"`
-	SignName        string `json:"aliyunSmsSignName"`
-	TemplateCode    string `json:"aliyunSmsTemplateCode"`
+	AccessKeyId     string `json:"smsOfAliyunAccessKeyId"`
+	AccessKeySecret string `json:"smsOfAliyunAccessKeySecret"`
+	Endpoint        string `json:"smsOfAliyunEndpoint"`
+	SignName        string `json:"smsOfAliyunSignName"`
+	TemplateCode    string `json:"smsOfAliyunTemplateCode"`
 }
 
-func NewAliyunSms(ctx context.Context, config map[string]interface{}) *AliyunSms {
-	aliyunSmsObj := AliyunSms{
+func NewSmsOfAliyun(ctx context.Context, config map[string]interface{}) *SmsOfAliyun {
+	smsOfAliyunObj := SmsOfAliyun{
 		Ctx: ctx,
 	}
-	gconv.Struct(config, &aliyunSmsObj)
-	return &aliyunSmsObj
+	gconv.Struct(config, &smsOfAliyunObj)
+	return &smsOfAliyunObj
 }
 
-func (smsThis *AliyunSms) Send(phone string, code string) (err error) {
+func (smsThis *SmsOfAliyun) Send(phone string, code string) (err error) {
 	err = smsThis.SendSms([]string{phone}, `{"code": "`+code+`"}`)
 	return
 }
 
-func (smsThis *AliyunSms) SendSms(phoneArr []string, templateParam string) (err error) {
+func (smsThis *SmsOfAliyun) SendSms(phoneArr []string, templateParam string) (err error) {
 	client, err := smsThis.CreateClient()
 	if err != nil {
 		return
@@ -84,7 +84,7 @@ func (smsThis *AliyunSms) SendSms(phoneArr []string, templateParam string) (err 
 	return
 }
 
-func (smsThis *AliyunSms) CreateClient() (client *dysmsapi20170525.Client, err error) {
+func (smsThis *SmsOfAliyun) CreateClient() (client *dysmsapi20170525.Client, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(smsThis.AccessKeyId),
 		AccessKeySecret: tea.String(smsThis.AccessKeySecret),

@@ -10,24 +10,24 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type AliyunVod struct {
+type VodOfAliyun struct {
 	Ctx             context.Context
-	AccessKeyId     string `json:"aliyunVodAccessKeyId"`
-	AccessKeySecret string `json:"aliyunVodAccessKeySecret"`
-	Endpoint        string `json:"aliyunVodEndpoint"`
-	RoleArn         string `json:"aliyunVodRoleArn"`
+	AccessKeyId     string `json:"vodOfAliyunAccessKeyId"`
+	AccessKeySecret string `json:"vodOfAliyunAccessKeySecret"`
+	Endpoint        string `json:"vodOfAliyunEndpoint"`
+	RoleArn         string `json:"vodOfAliyunRoleArn"`
 }
 
-func NewAliyunVod(ctx context.Context, config map[string]interface{}) *AliyunVod {
-	aliyunVodObj := AliyunVod{
+func NewVodOfAliyun(ctx context.Context, config map[string]interface{}) *VodOfAliyun {
+	vodOfAliyunObj := VodOfAliyun{
 		Ctx: ctx,
 	}
-	gconv.Struct(config, &aliyunVodObj)
-	return &aliyunVodObj
+	gconv.Struct(config, &vodOfAliyunObj)
+	return &vodOfAliyunObj
 }
 
 // 获取Sts Token
-func (uploadThis *AliyunVod) Sts(param VodParam) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]interface{}, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),

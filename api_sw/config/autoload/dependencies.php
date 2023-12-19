@@ -46,30 +46,30 @@ return [
     'sms' => function (ContainerInterface $container) {
         $smsType = getConfig('inDb.platformConfig.smsType');
         switch ($smsType) {
-            case 'aliyunSms':
+            case 'smsOfAliyun':
             default:
                 $config = [
-                    'accessKeyId' =>  getConfig('inDb.platformConfig.aliyunSmsAccessKeyId'),
-                    'accessKeySecret' => getConfig('inDb.platformConfig.aliyunSmsAccessKeySecret'),
-                    'endpoint' => getConfig('inDb.platformConfig.aliyunSmsEndpoint'),
-                    'signName' => getConfig('inDb.platformConfig.aliyunSmsSignName'),
-                    'templateCode' => getConfig('inDb.platformConfig.aliyunSmsTemplateCode'),
+                    'accessKeyId' =>  getConfig('inDb.platformConfig.smsOfAliyunAccessKeyId'),
+                    'accessKeySecret' => getConfig('inDb.platformConfig.smsOfAliyunAccessKeySecret'),
+                    'endpoint' => getConfig('inDb.platformConfig.smsOfAliyunEndpoint'),
+                    'signName' => getConfig('inDb.platformConfig.smsOfAliyunSignName'),
+                    'templateCode' => getConfig('inDb.platformConfig.smsOfAliyunTemplateCode'),
                 ];
-                return make(\App\Plugin\Sms\AliyunSms::class, ['config' => $config]);
+                return make(\App\Plugin\Sms\SmsOfAliyun::class, ['config' => $config]);
         }
     },
     //实名认证组件
     'idCard' => function (ContainerInterface $container) {
         $idCardType = getConfig('inDb.platformConfig.idCardType');
         switch ($idCardType) {
-            case 'aliyunIdCard':
+            case 'idCardOfAliyun':
             default:
                 $config = [
-                    'host' =>  getConfig('inDb.platformConfig.aliyunIdCardHost'),
-                    'path' => getConfig('inDb.platformConfig.aliyunIdCardPath'),
-                    'appcode' => getConfig('inDb.platformConfig.aliyunIdCardAppcode'),
+                    'host' =>  getConfig('inDb.platformConfig.idCardOfAliyunHost'),
+                    'path' => getConfig('inDb.platformConfig.idCardOfAliyunPath'),
+                    'appcode' => getConfig('inDb.platformConfig.idCardOfAliyunAppcode'),
                 ];
-                return make(\App\Plugin\IdCard\AliyunIdCard::class, ['config' => $config]);
+                return make(\App\Plugin\IdCard\IdCardOfAliyun::class, ['config' => $config]);
         }
     },
 ];

@@ -12,7 +12,7 @@ use Darabonba\OpenApi\Models\Config;
 use AlibabaCloud\SDK\Dysmsapi\V20170525\Models\SendSmsRequest;
 use AlibabaCloud\Tea\Utils\Utils\RuntimeOptions;
 
-class AliyunSms extends AbstractSms
+class SmsOfAliyun extends AbstractSms
 {
     protected $config = [];
 

@@ -5,30 +5,30 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
-        smsType: 'aliyunSms',
-        aliyunSmsAccessKeyId: '',
-        aliyunSmsAccessKeySecret: '',
-        aliyunSmsEndpoint: '',
-        aliyunSmsSignName: '',
-        aliyunSmsTemplateCode: '',
+        smsType: 'smsOfAliyun',
+        smsOfAliyunAccessKeyId: '',
+        smsOfAliyunAccessKeySecret: '',
+        smsOfAliyunEndpoint: '',
+        smsOfAliyunSignName: '',
+        smsOfAliyunTemplateCode: '',
     } as { [propName: string]: any },
     rules: {
         smsType: [
-            { type: 'enum', enum: [`aliyunSms`], trigger: 'change', message: t('validation.select') },
+            { type: 'enum', enum: [`smsOfAliyun`], trigger: 'change', message: t('validation.select') },
         ],
-        aliyunSmsAccessKeyId: [
+        smsOfAliyunAccessKeyId: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
-        aliyunSmsAccessKeySecret: [
+        smsOfAliyunAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
-        aliyunSmsEndpoint: [
+        smsOfAliyunEndpoint: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliyunSmsSignName: [
+        smsOfAliyunSignName: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliyunSmsTemplateCode: [
+        smsOfAliyunTemplateCode: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -76,26 +76,26 @@ saveForm.initData()
             </ElRadioGroup>
         </ElFormItem>
 
-        <template v-if="saveForm.data.smsType == 'aliyunSms'">
-            <ElFormItem :label="t('platform.config.name.aliyunSmsAccessKeyId')" prop="aliyunSmsAccessKeyId">
-                <ElInput v-model="saveForm.data.aliyunSmsAccessKeyId"
-                    :placeholder="t('platform.config.name.aliyunSmsAccessKeyId')" :clearable="true" />
+        <template v-if="saveForm.data.smsType == 'smsOfAliyun'">
+            <ElFormItem :label="t('platform.config.name.smsOfAliyunAccessKeyId')" prop="smsOfAliyunAccessKeyId">
+                <ElInput v-model="saveForm.data.smsOfAliyunAccessKeyId"
+                    :placeholder="t('platform.config.name.smsOfAliyunAccessKeyId')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunSmsAccessKeySecret')" prop="aliyunSmsAccessKeySecret">
-                <ElInput v-model="saveForm.data.aliyunSmsAccessKeySecret"
-                    :placeholder="t('platform.config.name.aliyunSmsAccessKeySecret')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.smsOfAliyunAccessKeySecret')" prop="smsOfAliyunAccessKeySecret">
+                <ElInput v-model="saveForm.data.smsOfAliyunAccessKeySecret"
+                    :placeholder="t('platform.config.name.smsOfAliyunAccessKeySecret')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunSmsEndpoint')" prop="aliyunSmsEndpoint">
-                <ElInput v-model="saveForm.data.aliyunSmsEndpoint"
-                    :placeholder="t('platform.config.name.aliyunSmsEndpoint')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.smsOfAliyunEndpoint')" prop="smsOfAliyunEndpoint">
+                <ElInput v-model="saveForm.data.smsOfAliyunEndpoint"
+                    :placeholder="t('platform.config.name.smsOfAliyunEndpoint')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunSmsSignName')" prop="aliyunSmsSignName">
-                <ElInput v-model="saveForm.data.aliyunSmsSignName"
-                    :placeholder="t('platform.config.name.aliyunSmsSignName')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.smsOfAliyunSignName')" prop="smsOfAliyunSignName">
+                <ElInput v-model="saveForm.data.smsOfAliyunSignName"
+                    :placeholder="t('platform.config.name.smsOfAliyunSignName')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunSmsTemplateCode')" prop="aliyunSmsTemplateCode">
-                <ElInput v-model="saveForm.data.aliyunSmsTemplateCode"
-                    :placeholder="t('platform.config.name.aliyunSmsTemplateCode')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.smsOfAliyunTemplateCode')" prop="smsOfAliyunTemplateCode">
+                <ElInput v-model="saveForm.data.smsOfAliyunTemplateCode"
+                    :placeholder="t('platform.config.name.smsOfAliyunTemplateCode')" :clearable="true" />
             </ElFormItem>
         </template>
 

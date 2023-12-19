@@ -10,22 +10,22 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type AliyunIdCard struct {
+type IdCardOfAliyun struct {
 	Ctx     context.Context
-	Host    string `json:"aliyunIdCardHost"`
-	Path    string `json:"aliyunIdCardPath"`
-	Appcode string `json:"aliyunIdCardAppcode"`
+	Host    string `json:"idCardOfAliyunHost"`
+	Path    string `json:"idCardOfAliyunPath"`
+	Appcode string `json:"idCardOfAliyunAppcode"`
 }
 
-func NewAliyunIdCard(ctx context.Context, config map[string]interface{}) *AliyunIdCard {
-	aliyunIdCardObj := AliyunIdCard{
+func NewIdCardOfAliyun(ctx context.Context, config map[string]interface{}) *IdCardOfAliyun {
+	idCardOfAliyunObj := IdCardOfAliyun{
 		Ctx: ctx,
 	}
-	gconv.Struct(config, &aliyunIdCardObj)
-	return &aliyunIdCardObj
+	gconv.Struct(config, &idCardOfAliyunObj)
+	return &idCardOfAliyunObj
 }
 
-func (idCardThis *AliyunIdCard) Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
+func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
 	res, err := idCardThis.CreateClient().Get(idCardThis.Ctx, idCardThis.Host+idCardThis.Path, g.Map{
 		`cardno`: idCardNo,
 		`name`:   idCardName,
@@ -58,7 +58,7 @@ func (idCardThis *AliyunIdCard) Auth(idCardName string, idCardNo string) (idCard
 	return
 }
 
-func (idCardThis *AliyunIdCard) CreateClient() (client *gclient.Client) {
+func (idCardThis *IdCardOfAliyun) CreateClient() (client *gclient.Client) {
 	client = g.Client().SetHeaderMap(g.MapStrStr{`Authorization`: `APPCODE ` + idCardThis.Appcode})
 	return
 }

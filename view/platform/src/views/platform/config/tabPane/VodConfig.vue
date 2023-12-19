@@ -5,26 +5,26 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
-        vodType: 'aliyunVod',
-        aliyunVodAccessKeyId: '',
-        aliyunVodAccessKeySecret: '',
-        aliyunVodEndpoint: '',
-        aliyunVodRoleArn: '',
+        vodType: 'vodOfAliyun',
+        vodOfAliyunAccessKeyId: '',
+        vodOfAliyunAccessKeySecret: '',
+        vodOfAliyunEndpoint: '',
+        vodOfAliyunRoleArn: '',
     } as { [propName: string]: any },
     rules: {
         vodType: [
-            { type: 'enum', enum: [`aliyunVod`], trigger: 'change', message: t('validation.select') },
+            { type: 'enum', enum: [`vodOfAliyun`], trigger: 'change', message: t('validation.select') },
         ],
-        aliyunVodAccessKeyId: [
+        vodOfAliyunAccessKeyId: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
-        aliyunVodAccessKeySecret: [
+        vodOfAliyunAccessKeySecret: [
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
-        aliyunVodEndpoint: [
+        vodOfAliyunEndpoint: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliyunVodRoleArn: [
+        vodOfAliyunRoleArn: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -72,32 +72,32 @@ saveForm.initData()
             </ElRadioGroup>
         </ElFormItem>
 
-        <template v-if="saveForm.data.vodType == 'aliyunVod'">
-            <ElFormItem :label="t('platform.config.name.aliyunVodAccessKeyId')" prop="aliyunVodAccessKeyId">
-                <ElInput v-model="saveForm.data.aliyunVodAccessKeyId"
-                    :placeholder="t('platform.config.name.aliyunVodAccessKeyId')" :clearable="true" />
+        <template v-if="saveForm.data.vodType == 'vodOfAliyun'">
+            <ElFormItem :label="t('platform.config.name.vodOfAliyunAccessKeyId')" prop="vodOfAliyunAccessKeyId">
+                <ElInput v-model="saveForm.data.vodOfAliyunAccessKeyId"
+                    :placeholder="t('platform.config.name.vodOfAliyunAccessKeyId')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunVodAccessKeySecret')" prop="aliyunVodAccessKeySecret">
-                <ElInput v-model="saveForm.data.aliyunVodAccessKeySecret"
-                    :placeholder="t('platform.config.name.aliyunVodAccessKeySecret')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.vodOfAliyunAccessKeySecret')" prop="vodOfAliyunAccessKeySecret">
+                <ElInput v-model="saveForm.data.vodOfAliyunAccessKeySecret"
+                    :placeholder="t('platform.config.name.vodOfAliyunAccessKeySecret')" :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunVodEndpoint')" prop="aliyunVodEndpoint">
-                <ElInput v-model="saveForm.data.aliyunVodEndpoint"
-                    :placeholder="t('platform.config.name.aliyunVodEndpoint')" :clearable="true"
+            <ElFormItem :label="t('platform.config.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
+                <ElInput v-model="saveForm.data.vodOfAliyunEndpoint"
+                    :placeholder="t('platform.config.name.vodOfAliyunEndpoint')" :clearable="true"
                     style="max-width: 500px;" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.tip.aliyunVodEndpoint')"></span>
+                            <span v-html="t('platform.config.tip.vodOfAliyunEndpoint')"></span>
                         </template>
                     </ElAlert>
                 </label>
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunVodRoleArn')" prop="aliyunVodRoleArn">
-                <ElInput v-model="saveForm.data.aliyunVodRoleArn" :placeholder="t('platform.config.name.aliyunVodRoleArn')"
+            <ElFormItem :label="t('platform.config.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
+                <ElInput v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.name.vodOfAliyunRoleArn')"
                     :clearable="true" style="max-width: 500px;" />
                 <label>
-                    <ElAlert :title="t('platform.config.tip.aliyunVodRoleArn')" type="info" :show-icon="true"
+                    <ElAlert :title="t('platform.config.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true"
                         :closable="false" />
                 </label>
             </ElFormItem>

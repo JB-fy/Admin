@@ -20,9 +20,9 @@ func NewSms(ctx context.Context, smsTypeOpt ...string) Sms {
 	}
 
 	switch smsType {
-	// case `aliyunSms`:
+	// case `smsOfAliyun`:
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`aliyunSmsAccessKeyId`, `aliyunSmsAccessKeySecret`, `aliyunSmsEndpoint`, `aliyunSmsSignName`, `aliyunSmsTemplateCode`})
-		return NewAliyunSms(ctx, config)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`})
+		return NewSmsOfAliyun(ctx, config)
 	}
 }

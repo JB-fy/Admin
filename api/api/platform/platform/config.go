@@ -60,17 +60,17 @@ type Config struct {
 	PayOfWxApiV3Key   *string `json:"payOfWxApiV3Key,omitempty" dc:"APIV3密钥"`
 	PayOfWxPrivateKey *string `json:"payOfWxPrivateKey,omitempty" dc:"私钥"`
 
-	SmsType                  *string `json:"smsType,omitempty" dc:"短信方式"`
-	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
-	AliyunSmsAccessKeySecret *string `json:"aliyunSmsAccessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
-	AliyunSmsEndpoint        *string `json:"aliyunSmsEndpoint,omitempty" dc:"阿里云SMS-Endpoint"`
-	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" dc:"阿里云SMS-签名"`
-	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" dc:"阿里云SMS-模板标识"`
+	SmsType                    *string `json:"smsType,omitempty" dc:"短信方式"`
+	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
+	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
+	SmsOfAliyunEndpoint        *string `json:"smsOfAliyunEndpoint,omitempty" dc:"阿里云SMS-Endpoint"`
+	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" dc:"阿里云SMS-签名"`
+	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" dc:"阿里云SMS-模板标识"`
 
-	IdCardType          *string `json:"idCardType,omitempty" dc:"实名认证方式"`
-	AliyunIdCardHost    *string `json:"aliyunIdCardHost,omitempty" dc:"阿里云IdCard-域名"`
-	AliyunIdCardPath    *string `json:"aliyunIdCardPath,omitempty" dc:"阿里云IdCard-请求路径"`
-	AliyunIdCardAppcode *string `json:"aliyunIdCardAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
+	IdCardType            *string `json:"idCardType,omitempty" dc:"实名认证方式"`
+	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" dc:"阿里云IdCard-域名"`
+	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" dc:"阿里云IdCard-请求路径"`
+	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
 
 	PushType                 *string `json:"pushType,omitempty" dc:"推送方式"`
 	TxTpnsHost               *string `json:"txTpnsHost,omitempty" dc:"腾讯移动推送-域名"`
@@ -81,11 +81,11 @@ type Config struct {
 	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
 	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 
-	VodType                  *string `json:"vodType,omitempty" dc:"视频点播方式"`
-	AliyunVodAccessKeyId     *string `json:"aliyunVodAccessKeyId,omitempty" dc:"阿里云VOD-AccessKeyId"`
-	AliyunVodAccessKeySecret *string `json:"aliyunVodAccessKeySecret,omitempty" dc:"阿里云VOD-AccessKeySecret"`
-	AliyunVodEndpoint        *string `json:"aliyunVodEndpoint,omitempty" dc:"阿里云VOD-Endpoint"`
-	AliyunVodRoleArn         *string `json:"aliyunVodRoleArn,omitempty" dc:"阿里云VOD-RoleArn"`
+	VodType                    *string `json:"vodType,omitempty" dc:"视频点播方式"`
+	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" dc:"阿里云VOD-AccessKeyId"`
+	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" dc:"阿里云VOD-AccessKeySecret"`
+	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" dc:"阿里云VOD-Endpoint"`
+	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" dc:"阿里云VOD-RoleArn"`
 }
 
 /*--------获取 结束--------*/
@@ -139,17 +139,17 @@ type ConfigSaveReq struct {
 	PayOfWxApiV3Key   *string `json:"payOfWxApiV3Key,omitempty" v:"" dc:"APIV3密钥"`
 	PayOfWxPrivateKey *string `json:"payOfWxPrivateKey,omitempty" v:"" dc:"私钥"`
 
-	SmsType                  *string `json:"smsType,omitempty" v:"in:aliyunSms" dc:"短信方式"`
-	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
-	AliyunSmsAccessKeySecret *string `json:"aliyunSmsAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeySecret"`
-	AliyunSmsEndpoint        *string `json:"aliyunSmsEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
-	AliyunSmsSignName        *string `json:"aliyunSmsSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
-	AliyunSmsTemplateCode    *string `json:"aliyunSmsTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
+	SmsType                    *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
+	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
+	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeySecret"`
+	SmsOfAliyunEndpoint        *string `json:"smsOfAliyunEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
+	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
+	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
 
-	IdCardType          *string `json:"idCardType,omitempty" v:"in:aliyunIdCard" dc:"实名认证方式"`
-	AliyunIdCardHost    *string `json:"aliyunIdCardHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`
-	AliyunIdCardPath    *string `json:"aliyunIdCardPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
-	AliyunIdCardAppcode *string `json:"aliyunIdCardAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
+	IdCardType            *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
+	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`
+	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
+	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
 
 	PushType                 *string `json:"pushType,omitempty" v:"in:txTpns" dc:"推送方式"`
 	TxTpnsHost               *string `json:"txTpnsHost,omitempty" v:"url" dc:"腾讯移动推送-域名"`
@@ -160,11 +160,11 @@ type ConfigSaveReq struct {
 	TxTpnsAccessIDOfMacOS    *string `json:"txTpnsAccessIDOfMacOS,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
 	TxTpnsSecretKeyOfMacOS   *string `json:"txTpnsSecretKeyOfMacOS,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 
-	VodType                  *string `json:"vodType,omitempty" v:"in:aliyunVod" dc:"视频点播方式"`
-	AliyunVodAccessKeyId     *string `json:"aliyunVodAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
-	AliyunVodAccessKeySecret *string `json:"aliyunVodAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
-	AliyunVodEndpoint        *string `json:"aliyunVodEndpoint,omitempty" v:"" dc:"阿里云VOD-Endpoint"`
-	AliyunVodRoleArn         *string `json:"aliyunVodRoleArn,omitempty" v:"" dc:"阿里云VOD-RoleArn"`
+	VodType                    *string `json:"vodType,omitempty" v:"in:vodOfAliyun" dc:"视频点播方式"`
+	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
+	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
+	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" v:"" dc:"阿里云VOD-Endpoint"`
+	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" v:"" dc:"阿里云VOD-RoleArn"`
 }
 
 /*--------保存 结束--------*/

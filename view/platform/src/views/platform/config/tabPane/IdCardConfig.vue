@@ -5,22 +5,22 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
-        idCardType: 'aliyunIdCard',
-        aliyunIdCardHost: '',
-        aliyunIdCardPath: '',
-        aliyunIdCardAppcode: '',
+        idCardType: 'idCardOfAliyun',
+        idCardOfAliyunHost: '',
+        idCardOfAliyunPath: '',
+        idCardOfAliyunAppcode: '',
     } as { [propName: string]: any },
     rules: {
         idCardType: [
-            { type: 'enum', enum: [`aliyunIdCard`], trigger: 'change', message: t('validation.select') },
+            { type: 'enum', enum: [`idCardOfAliyun`], trigger: 'change', message: t('validation.select') },
         ],
-        aliyunIdCardHost: [
+        idCardOfAliyunHost: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        aliyunIdCardPath: [
+        idCardOfAliyunPath: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliyunIdCardAppcode: [
+        idCardOfAliyunAppcode: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -68,25 +68,25 @@ saveForm.initData()
             </ElRadioGroup>
         </ElFormItem>
 
-        <template v-if="saveForm.data.idCardType == 'aliyunIdCard'">
-            <ElFormItem :label="t('platform.config.name.aliyunIdCardHost')" prop="aliyunIdCardHost">
-                <ElInput v-model="saveForm.data.aliyunIdCardHost" :placeholder="t('platform.config.name.aliyunIdCardHost')"
+        <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
+            <ElFormItem :label="t('platform.config.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
+                <ElInput v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.name.idCardOfAliyunHost')"
                     :clearable="true" style="max-width: 500px;" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.tip.aliyunIdCardHost')"></span>
+                            <span v-html="t('platform.config.tip.idCardOfAliyunHost')"></span>
                         </template>
                     </ElAlert>
                 </label>
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunIdCardPath')" prop="aliyunIdCardPath">
-                <ElInput v-model="saveForm.data.aliyunIdCardPath" :placeholder="t('platform.config.name.aliyunIdCardPath')"
+            <ElFormItem :label="t('platform.config.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
+                <ElInput v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.name.idCardOfAliyunPath')"
                     :clearable="true" />
             </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.aliyunIdCardAppcode')" prop="aliyunIdCardAppcode">
-                <ElInput v-model="saveForm.data.aliyunIdCardAppcode"
-                    :placeholder="t('platform.config.name.aliyunIdCardAppcode')" :clearable="true" />
+            <ElFormItem :label="t('platform.config.name.idCardOfAliyunAppcode')" prop="idCardOfAliyunAppcode">
+                <ElInput v-model="saveForm.data.idCardOfAliyunAppcode"
+                    :placeholder="t('platform.config.name.idCardOfAliyunAppcode')" :clearable="true" />
             </ElFormItem>
         </template>
 

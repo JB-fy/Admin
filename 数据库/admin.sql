@@ -295,16 +295,16 @@ INSERT INTO `platform_config` VALUES (9, 'aliyunOssAccessKeySecret', 'accessKeyS
 INSERT INTO `platform_config` VALUES (10, 'aliyunOssCallbackUrl', 'https://www.xxxx.com/upload/notify', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (11, 'aliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
 INSERT INTO `platform_config` VALUES (12, 'aliyunOssRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunosstokengeneratorrole', '2023-11-23 17:20:44', '2023-11-22 09:45:17');
-INSERT INTO `platform_config` VALUES (13, 'smsType', 'aliyunSms', '2023-11-22 09:49:39', '2023-11-22 09:49:18');
-INSERT INTO `platform_config` VALUES (14, 'aliyunSmsAccessKeyId', 'accessKeyId', '2023-11-22 09:49:41', '2023-11-22 09:49:18');
-INSERT INTO `platform_config` VALUES (15, 'aliyunSmsAccessKeySecret', 'accessKeySecret', '2023-11-22 09:49:43', '2023-11-22 09:49:18');
-INSERT INTO `platform_config` VALUES (16, 'aliyunSmsEndpoint', 'dysmsapi.aliyuncs.com', '2023-11-22 09:49:53', '2023-11-22 09:49:18');
-INSERT INTO `platform_config` VALUES (17, 'aliyunSmsSignName', 'JB Admin', '2023-11-22 09:50:09', '2023-11-22 09:49:18');
-INSERT INTO `platform_config` VALUES (18, 'aliyunSmsTemplateCode', 'SMS_xxxxxxxx', '2023-11-22 09:50:07', '2023-11-22 09:49:18');
-INSERT INTO `platform_config` VALUES (19, 'idCardType', 'aliyunIdCard', '2023-11-22 09:50:29', '2023-11-22 09:50:23');
-INSERT INTO `platform_config` VALUES (20, 'aliyunIdCardHost', 'http://idcard.market.alicloudapi.com', '2023-11-22 09:50:33', '2023-11-22 09:50:23');
-INSERT INTO `platform_config` VALUES (21, 'aliyunIdCardPath', '/lianzhuo/idcard', '2023-11-22 09:50:35', '2023-11-22 09:50:23');
-INSERT INTO `platform_config` VALUES (22, 'aliyunIdCardAppcode', 'appcode', '2023-11-22 09:50:37', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (13, 'smsType', 'smsOfAliyun', '2023-11-22 09:49:39', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (14, 'smsOfAliyunAccessKeyId', 'accessKeyId', '2023-11-22 09:49:41', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (15, 'smsOfAliyunAccessKeySecret', 'accessKeySecret', '2023-11-22 09:49:43', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (16, 'smsOfAliyunEndpoint', 'dysmsapi.aliyuncs.com', '2023-11-22 09:49:53', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (17, 'smsOfAliyunSignName', 'JB Admin', '2023-11-22 09:50:09', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (18, 'smsOfAliyunTemplateCode', 'SMS_xxxxxxxx', '2023-11-22 09:50:07', '2023-11-22 09:49:18');
+INSERT INTO `platform_config` VALUES (19, 'idCardType', 'idCardOfAliyun', '2023-11-22 09:50:29', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (20, 'idCardOfAliyunHost', 'http://idcard.market.alicloudapi.com', '2023-11-22 09:50:33', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (21, 'idCardOfAliyunPath', '/lianzhuo/idcard', '2023-11-22 09:50:35', '2023-11-22 09:50:23');
+INSERT INTO `platform_config` VALUES (22, 'idCardOfAliyunAppcode', 'appcode', '2023-11-22 09:50:37', '2023-11-22 09:50:23');
 INSERT INTO `platform_config` VALUES (23, 'pushType', 'txTpns', '2023-11-23 17:26:12', '2023-11-23 17:23:50');
 INSERT INTO `platform_config` VALUES (24, 'txTpnsHost', 'https://api.tpns.tencent.com', '2023-11-23 17:26:14', '2023-11-23 17:23:50');
 INSERT INTO `platform_config` VALUES (25, 'txTpnsAccessIDOfAndroid', '150xxxx000', '2023-11-23 17:26:16', '2023-11-23 17:23:50');
@@ -313,11 +313,11 @@ INSERT INTO `platform_config` VALUES (27, 'txTpnsAccessIDOfIos', '150xxxx001', '
 INSERT INTO `platform_config` VALUES (28, 'txTpnsSecretKeyOfIos', '80e5xxxxxxxxxxxxxxxxxxxxxxxx0001', '2023-11-23 17:26:22', '2023-11-23 17:23:50');
 INSERT INTO `platform_config` VALUES (29, 'txTpnsAccessIDOfMacOS', '150xxxx002', '2023-11-23 17:26:24', '2023-11-23 17:23:50');
 INSERT INTO `platform_config` VALUES (30, 'txTpnsSecretKeyOfMacOS', '80e5xxxxxxxxxxxxxxxxxxxxxxxx0002', '2023-11-23 17:26:26', '2023-11-23 17:23:50');
-INSERT INTO `platform_config` VALUES (31, 'vodType', 'aliyunVod', '2023-11-23 17:26:29', '2023-11-23 17:25:36');
-INSERT INTO `platform_config` VALUES (32, 'aliyunVodAccessKeyId', 'accessKeyId', '2023-11-23 17:26:33', '2023-11-23 17:25:36');
-INSERT INTO `platform_config` VALUES (33, 'aliyunVodAccessKeySecret', 'accessKeySecret', '2023-11-23 17:26:35', '2023-11-23 17:25:36');
-INSERT INTO `platform_config` VALUES (34, 'aliyunVodEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2023-11-23 17:26:37', '2023-11-23 17:25:36');
-INSERT INTO `platform_config` VALUES (35, 'aliyunVodRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunvodtokengeneratorrole', '2023-11-23 17:26:40', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (31, 'vodType', 'vodOfAliyun', '2023-11-23 17:26:29', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (32, 'vodOfAliyunAccessKeyId', 'accessKeyId', '2023-11-23 17:26:33', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (33, 'vodOfAliyunAccessKeySecret', 'accessKeySecret', '2023-11-23 17:26:35', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (34, 'vodOfAliyunEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2023-11-23 17:26:37', '2023-11-23 17:25:36');
+INSERT INTO `platform_config` VALUES (35, 'vodOfAliyunRoleArn', 'acs:ram::xxxxxxxxxxxxxxxx:role/aliyunvodtokengeneratorrole', '2023-11-23 17:26:40', '2023-11-23 17:25:36');
 
 -- ----------------------------
 -- Table structure for platform_server
