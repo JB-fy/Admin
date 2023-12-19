@@ -23,12 +23,12 @@ func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
 	}
 
 	switch payType {
-	case `wxPay`: //微信
-		config, _ := daoPlatform.Config.Get(ctx, []string{`wxPayAppId`, `wxPayMchid`, `wxPaySerialNo`, `wxPayApiV3Key`, `wxPayPrivateKey`})
-		return NewWxPay(ctx, config)
-	// case `aliPay`: //支付宝
+	case `payOfWx`: //微信
+		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfWxAppId`, `payOfWxMchid`, `payOfWxSerialNo`, `payOfWxApiV3Key`, `payOfWxPrivateKey`})
+		return NewPayOfWx(ctx, config)
+	// case `payOfAli`: //支付宝
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`aliPayAppId`, `aliPaySignType`, `aliPayPrivateKey`, `aliPayPublicKey`})
-		return NewAliPay(ctx, config)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliSignType`, `payOfAliPrivateKey`, `payOfAliPublicKey`})
+		return NewPayOfAli(ctx, config)
 	}
 }

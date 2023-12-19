@@ -5,44 +5,44 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
-        aliPayAppId: '',
-        aliPaySignType: 'RSA2',
-        aliPayPrivateKey: '',
-        aliPayPublicKey: '',
+        payOfAliAppId: '',
+        payOfAliSignType: 'RSA2',
+        payOfAliPrivateKey: '',
+        payOfAliPublicKey: '',
 
-        wxPayAppId: '',
-        wxPayMchid: '',
-        wxPaySerialNo: '',
-        wxPayApiV3Key: '',
-        wxPayPrivateKey: '',
+        payOfWxAppId: '',
+        payOfWxMchid: '',
+        payOfWxSerialNo: '',
+        payOfWxApiV3Key: '',
+        payOfWxPrivateKey: '',
     } as { [propName: string]: any },
     rules: {
-        aliPayAppId: [
+        payOfAliAppId: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliPaySignType: [
-            { type: 'enum', enum: (tm('platform.config.status.aliPaySignType') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
+        payOfAliSignType: [
+            { type: 'enum', enum: (tm('platform.config.status.payOfAliSignType') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
         ],
-        aliPayPrivateKey: [
+        payOfAliPrivateKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        aliPayPublicKey: [
+        payOfAliPublicKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
 
-        wxPayAppId: [
+        payOfWxAppId: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        wxPayMchid: [
+        payOfWxMchid: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        wxPaySerialNo: [
+        payOfWxSerialNo: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        wxPayApiV3Key: [
+        payOfWxApiV3Key: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        wxPayPrivateKey: [
+        payOfWxPrivateKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
     } as any,
@@ -82,49 +82,49 @@ saveForm.initData()
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
         <ElTabs tab-position="left">
-            <ElTabPane :label="t('platform.config.label.aliPay')" :lazy="true">
-                <ElFormItem :label="t('platform.config.name.aliPayAppId')" prop="aliPayAppId">
-                    <ElInput v-model="saveForm.data.aliPayAppId" :placeholder="t('platform.config.name.aliPayAppId')"
+            <ElTabPane :label="t('platform.config.label.payOfAli')" :lazy="true">
+                <ElFormItem :label="t('platform.config.name.payOfAliAppId')" prop="payOfAliAppId">
+                    <ElInput v-model="saveForm.data.payOfAliAppId" :placeholder="t('platform.config.name.payOfAliAppId')"
                         :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.aliPaySignType')" prop="aliPaySignType">
-                    <ElRadioGroup v-model="saveForm.data.aliPaySignType">
-                        <ElRadio v-for="(item, index) in (tm('platform.config.status.aliPaySignType') as any)" :key="index"
+                <ElFormItem :label="t('platform.config.name.payOfAliSignType')" prop="payOfAliSignType">
+                    <ElRadioGroup v-model="saveForm.data.payOfAliSignType">
+                        <ElRadio v-for="(item, index) in (tm('platform.config.status.payOfAliSignType') as any)" :key="index"
                             :label="item.value">
                             {{ item.label }}
                         </ElRadio>
                     </ElRadioGroup>
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.aliPayPrivateKey')" prop="aliPayPrivateKey">
-                    <ElInput v-model="saveForm.data.aliPayPrivateKey"
-                        :placeholder="t('platform.config.name.aliPayPrivateKey')" :clearable="true" />
+                <ElFormItem :label="t('platform.config.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
+                    <ElInput v-model="saveForm.data.payOfAliPrivateKey"
+                        :placeholder="t('platform.config.name.payOfAliPrivateKey')" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.aliPayPublicKey')" prop="aliPayPublicKey">
-                    <ElInput v-model="saveForm.data.aliPayPublicKey"
-                        :placeholder="t('platform.config.name.aliPayPublicKey')" :clearable="true" />
+                <ElFormItem :label="t('platform.config.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
+                    <ElInput v-model="saveForm.data.payOfAliPublicKey"
+                        :placeholder="t('platform.config.name.payOfAliPublicKey')" :clearable="true" />
                 </ElFormItem>
             </ElTabPane>
 
-            <ElTabPane :label="t('platform.config.label.wxPay')" :lazy="true">
-                <ElFormItem :label="t('platform.config.name.wxPayAppId')" prop="wxPayAppId">
-                    <ElInput v-model="saveForm.data.wxPayAppId" :placeholder="t('platform.config.name.wxPayAppId')"
+            <ElTabPane :label="t('platform.config.label.payOfWx')" :lazy="true">
+                <ElFormItem :label="t('platform.config.name.payOfWxAppId')" prop="payOfWxAppId">
+                    <ElInput v-model="saveForm.data.payOfWxAppId" :placeholder="t('platform.config.name.payOfWxAppId')"
                         :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.wxPayMchid')" prop="wxPayMchid">
-                    <ElInput v-model="saveForm.data.wxPayMchid" :placeholder="t('platform.config.name.wxPayMchid')"
+                <ElFormItem :label="t('platform.config.name.payOfWxMchid')" prop="payOfWxMchid">
+                    <ElInput v-model="saveForm.data.payOfWxMchid" :placeholder="t('platform.config.name.payOfWxMchid')"
                         :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.wxPaySerialNo')" prop="wxPaySerialNo">
-                    <ElInput v-model="saveForm.data.wxPaySerialNo" :placeholder="t('platform.config.name.wxPaySerialNo')"
+                <ElFormItem :label="t('platform.config.name.payOfWxSerialNo')" prop="payOfWxSerialNo">
+                    <ElInput v-model="saveForm.data.payOfWxSerialNo" :placeholder="t('platform.config.name.payOfWxSerialNo')"
                         :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.wxPayApiV3Key')" prop="wxPayApiV3Key">
-                    <ElInput v-model="saveForm.data.wxPayApiV3Key" :placeholder="t('platform.config.name.wxPayApiV3Key')"
+                <ElFormItem :label="t('platform.config.name.payOfWxApiV3Key')" prop="payOfWxApiV3Key">
+                    <ElInput v-model="saveForm.data.payOfWxApiV3Key" :placeholder="t('platform.config.name.payOfWxApiV3Key')"
                         :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.wxPayPrivateKey')" prop="wxPayPrivateKey">
-                    <ElInput v-model="saveForm.data.wxPayPrivateKey"
-                        :placeholder="t('platform.config.name.wxPayPrivateKey')" :clearable="true" />
+                <ElFormItem :label="t('platform.config.name.payOfWxPrivateKey')" prop="payOfWxPrivateKey">
+                    <ElInput v-model="saveForm.data.payOfWxPrivateKey"
+                        :placeholder="t('platform.config.name.payOfWxPrivateKey')" :clearable="true" />
                 </ElFormItem>
             </ElTabPane>
         </ElTabs>

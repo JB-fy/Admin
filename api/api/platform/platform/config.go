@@ -49,16 +49,16 @@ type Config struct {
 	AliyunOssEndpoint        *string `json:"aliyunOssEndpoint,omitempty" dc:"阿里云OSS-Endpoint"`
 	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
 
-	AliPayAppId      *string `json:"aliPayAppId,omitempty" dc:"AppId"`
-	AliPaySignType   *string `json:"aliPaySignType,omitempty" dc:"签名方式"`
-	AliPayPrivateKey *string `json:"aliPayPrivateKey,omitempty" dc:"私钥"`
-	AliPayPublicKey  *string `json:"aliPayPublicKey,omitempty" dc:"公钥"`
+	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" dc:"AppId"`
+	PayOfAliSignType   *string `json:"payOfAliSignType,omitempty" dc:"签名方式"`
+	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" dc:"私钥"`
+	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" dc:"公钥"`
 
-	WxPayAppId      *string `json:"wxPayAppId,omitempty" dc:"AppId"`
-	WxPayMchid      *string `json:"wxPayMchid,omitempty" dc:"商户ID"`
-	WxPaySerialNo   *string `json:"wxPaySerialNo,omitempty" dc:"证书序列号"`
-	WxPayApiV3Key   *string `json:"wxPayApiV3Key,omitempty" dc:"APIV3密钥"`
-	WxPayPrivateKey *string `json:"wxPayPrivateKey,omitempty" dc:"私钥"`
+	PayOfWxAppId      *string `json:"payOfWxAppId,omitempty" dc:"AppId"`
+	PayOfWxMchid      *string `json:"payOfWxMchid,omitempty" dc:"商户ID"`
+	PayOfWxSerialNo   *string `json:"payOfWxSerialNo,omitempty" dc:"证书序列号"`
+	PayOfWxApiV3Key   *string `json:"payOfWxApiV3Key,omitempty" dc:"APIV3密钥"`
+	PayOfWxPrivateKey *string `json:"payOfWxPrivateKey,omitempty" dc:"私钥"`
 
 	SmsType                  *string `json:"smsType,omitempty" dc:"短信方式"`
 	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
@@ -128,16 +128,16 @@ type ConfigSaveReq struct {
 	AliyunOssEndpoint        *string `json:"aliyunOssEndpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
 	AliyunOssRoleArn         *string `json:"aliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
 
-	AliPayAppId      *string `json:"aliPayAppId,omitempty" v:"" dc:"AppId"`
-	AliPaySignType   *string `json:"aliPaySignType,omitempty" v:"in:RSA2,RSA" dc:"签名方式"`
-	AliPayPrivateKey *string `json:"aliPayPrivateKey,omitempty" v:"" dc:"私钥"`
-	AliPayPublicKey  *string `json:"aliPayPublicKey,omitempty" v:"" dc:"公钥"`
+	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" v:"" dc:"AppId"`
+	PayOfAliSignType   *string `json:"payOfAliSignType,omitempty" v:"in:RSA2,RSA" dc:"签名方式"`
+	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" v:"" dc:"私钥"`
+	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" v:"" dc:"公钥"`
 
-	WxPayAppId      *string `json:"wxPayAppId,omitempty" v:"" dc:"AppId"`
-	WxPayMchid      *string `json:"wxPayMchid,omitempty" v:"" dc:"商户ID"`
-	WxPaySerialNo   *string `json:"wxPaySerialNo,omitempty" v:"" dc:"证书序列号"`
-	WxPayApiV3Key   *string `json:"wxPayApiV3Key,omitempty" v:"" dc:"APIV3密钥"`
-	WxPayPrivateKey *string `json:"wxPayPrivateKey,omitempty" v:"" dc:"私钥"`
+	PayOfWxAppId      *string `json:"payOfWxAppId,omitempty" v:"" dc:"AppId"`
+	PayOfWxMchid      *string `json:"payOfWxMchid,omitempty" v:"" dc:"商户ID"`
+	PayOfWxSerialNo   *string `json:"payOfWxSerialNo,omitempty" v:"" dc:"证书序列号"`
+	PayOfWxApiV3Key   *string `json:"payOfWxApiV3Key,omitempty" v:"" dc:"APIV3密钥"`
+	PayOfWxPrivateKey *string `json:"payOfWxPrivateKey,omitempty" v:"" dc:"私钥"`
 
 	SmsType                  *string `json:"smsType,omitempty" v:"in:aliyunSms" dc:"短信方式"`
 	AliyunSmsAccessKeyId     *string `json:"aliyunSmsAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
