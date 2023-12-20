@@ -89,12 +89,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 		}
 		uploadData[`callback`] = uploadThis.CreateCallbackStr(callback)
 		signInfo.IsRes = 1
-		/* signInfo[`callbackUrl`] = uploadThis.CallbackUrl
-		signInfo[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-		signInfo[`callbackBodyType`] = `application/x-www-form-urlencoded` */
 	}
-	/* signInfo[`endpoint`] = uploadThis.Host
-	signInfo[`bucket`] = uploadThis.Bucket */
 
 	signInfo.UploadData = uploadData
 	return
