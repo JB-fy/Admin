@@ -16,14 +16,6 @@ type UploadUploadReq struct {
 	File   *ghttp.UploadFile `json:"file" v:"required" dc:"上传文件"`
 }
 
-type UploadUploadRes struct {
-	Url      string `json:"url" dc:"地址"`
-	Width    uint   `json:"width" dc:"宽度"`
-	Height   uint   `json:"height" dc:"高度"`
-	Size     uint   `json:"size" dc:"大小。单位：比特"`
-	MimeType string `json:"mimeType" dc:"文件类型"`
-}
-
 /*--------上传本地 结束--------*/
 
 /*--------获取签名（H5直传用） 开始--------*/
@@ -35,7 +27,7 @@ type UploadSignReq struct {
 type UploadSignRes struct {
 	UploadUrl  string                 `json:"uploadUrl,omitempty" dc:"上传地址"`
 	UploadData map[string]interface{} `json:"uploadData,omitempty" dc:"上传数据"`
-	Host       string                 `json:"host,omitempty" dc:"站点域名（当上传无响应信息，前端组件用于与文件保存路径拼接形成文件访问地址）"`
+	Host       string                 `json:"host,omitempty" dc:"站点域名（当上传无响应信息，前端组件用于与上传目录拼接形成文件访问地址）"`
 	Dir        string                 `json:"dir,omitempty" dc:"上传目录"`
 	Expire     uint                   `json:"expire,omitempty" dc:"过期时间"`
 	IsRes      uint                   `json:"isRes,omitempty" dc:"是否有响应信息。0否 1是"`
