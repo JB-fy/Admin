@@ -38,7 +38,6 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 	// 使用 utils 提供的函数从本地文件中加载商户私钥，商户私钥会用来生成请求的签名
 	privateKey, err := utils.LoadPrivateKeyWithPath(payThis.CertPath)
 	if err != nil {
-		// log.Fatal(`load merchant private key error`)
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
@@ -47,7 +46,6 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 	}
 	client, err := core.NewClient(payThis.Ctx, opts...)
 	if err != nil {
-		// log.Fatalf(`new wechat pay client err:%s`, err)
 		return
 	}
 
@@ -96,8 +94,8 @@ func (payThis *PayOfWx) Notify() (notifyInfo NotifyInfo, err error) {
 	handler := notify.NewNotifyHandler(payThis.APIv3Key, verifiers.NewSHA256WithRSAVerifier(certificateVisitor))
 
 	transaction := new(payments.Transaction)
-	request := g.RequestFromCtx(payThis.Ctx).Request
-	_ /* notifyReq */, err = handler.ParseNotifyRequest(payThis.Ctx, request, transaction)
+	r := g.RequestFromCtx(payThis.Ctx)
+	_ /* notifyReq */, err = handler.ParseNotifyRequest(payThis.Ctx, r.Request, transaction)
 	// 如果验签未通过，或者解密失败
 	if err != nil {
 		return

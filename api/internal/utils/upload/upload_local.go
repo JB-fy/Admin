@@ -3,6 +3,11 @@ package upload
 import (
 	"api/internal/utils"
 	"context"
+	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+	"os"
 	"sort"
 	"time"
 
@@ -79,8 +84,21 @@ func (uploadThis *UploadOfLocal) Upload() (uploadInfo map[string]interface{}, er
 		return
 	}
 
+	//获取图片宽高
+	width := ``
+	height := ``
+	fileTmp, err := os.Open(uploadThis.FileSaveDir + dir + filename)
+	if err == nil {
+		defer fileTmp.Close()
+		img, _, err := image.Decode(fileTmp)
+		if err == nil {
+			width = gconv.String(img.Bounds().Dx())
+			height = gconv.String(img.Bounds().Dy())
+		}
+	}
+
 	uploadInfo = map[string]interface{}{}
-	uploadInfo[`url`] = uploadThis.FileUrlPrefix + `/` + dir + filename
+	uploadInfo[`url`] = uploadThis.FileUrlPrefix + `/` + dir + filename + `?w=` + width + `&h=` + height + `&s=` + gconv.String(file.Size) /* + `&m=` + mimeType */
 	return
 }
 

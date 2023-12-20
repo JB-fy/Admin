@@ -25,7 +25,7 @@ type NotifyInfo struct {
 type Pay interface {
 	App(payData PayData) (orderInfo PayInfo, err error) //App支付
 	Notify() (notifyInfo NotifyInfo, err error)         // 回调
-	NotifyRes(failMsg string)                           // 回调响应信息
+	NotifyRes(failMsg string)                           // 回调响应处理
 }
 
 func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
