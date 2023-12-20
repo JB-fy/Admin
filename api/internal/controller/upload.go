@@ -37,7 +37,14 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 	if err != nil {
 		return
 	}
-	utils.HttpWriteJson(ctx, signInfo, 0, ``)
+	res = &api.UploadSignRes{
+		UploadUrl:  signInfo.UploadUrl,
+		UploadData: signInfo.UploadData,
+		Host:       signInfo.Host,
+		Dir:        signInfo.Dir,
+		Expire:     signInfo.Expire,
+		IsRes:      signInfo.IsRes,
+	}
 	return
 }
 

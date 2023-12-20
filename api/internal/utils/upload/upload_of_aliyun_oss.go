@@ -62,18 +62,15 @@ func (uploadThis *UploadOfAliyunOss) Upload() (notifyInfo NotifyInfo, err error)
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo, err error) {
 	bucketHost := uploadThis.GetBucketHost()
 
-	signInfo = map[string]interface{}{
-		`uploadUrl`: bucketHost,
-		// `uploadData`:  map[string]interface{}{},
-		`host`:     bucketHost,
-		`dir`:      param.Dir,
-		`expire`:   param.Expire,
-		`isRes`:    0,
-		`endpoint`: uploadThis.Host,
-		`bucket`:   uploadThis.Bucket,
+	signInfo = SignInfo{
+		UploadUrl: bucketHost,
+		Host:      bucketHost,
+		Dir:       param.Dir,
+		Expire:    gconv.Uint(param.Expire),
+		IsRes:     0,
 	}
 
 	policyBase64 := uploadThis.CreatePolicyBase64(param)
@@ -91,13 +88,15 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo map[strin
 			BodyType: `application/x-www-form-urlencoded`,
 		}
 		uploadData[`callback`] = uploadThis.CreateCallbackStr(callback)
-		signInfo[`isRes`] = 1
-		signInfo[`callbackUrl`] = uploadThis.CallbackUrl
+		signInfo.IsRes = 1
+		/* signInfo[`callbackUrl`] = uploadThis.CallbackUrl
 		signInfo[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-		signInfo[`callbackBodyType`] = `application/x-www-form-urlencoded`
+		signInfo[`callbackBodyType`] = `application/x-www-form-urlencoded` */
 	}
+	/* signInfo[`endpoint`] = uploadThis.Host
+	signInfo[`bucket`] = uploadThis.Bucket */
 
-	signInfo[`uploadData`] = uploadData
+	signInfo.UploadData = uploadData
 	return
 }
 

@@ -118,14 +118,13 @@ func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo map[string]interface{}, err error) {
-	signInfo = map[string]interface{}{
-		`uploadUrl`: uploadThis.Url,
-		// `uploadData`:  map[string]interface{}{},
-		`host`:   uploadThis.FileUrlPrefix,
-		`dir`:    param.Dir,
-		`expire`: param.Expire,
-		`isRes`:  1,
+func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err error) {
+	signInfo = SignInfo{
+		UploadUrl: uploadThis.Url,
+		Host:      uploadThis.FileUrlPrefix,
+		Dir:       param.Dir,
+		Expire:    gconv.Uint(param.Expire),
+		IsRes:     1,
 	}
 
 	uploadData := map[string]interface{}{
@@ -137,7 +136,7 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo map[string]in
 	}
 	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
 
-	signInfo[`uploadData`] = uploadData
+	signInfo.UploadData = uploadData
 	return
 }
 
