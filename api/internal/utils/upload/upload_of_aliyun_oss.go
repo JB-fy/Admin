@@ -57,7 +57,7 @@ type UploadOfAliyunOssCallback struct {
 }
 
 // 本地上传
-func (uploadThis *UploadOfAliyunOss) Upload() (uploadInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfAliyunOss) Upload() (notifyInfo NotifyInfo, err error) {
 	return
 }
 
@@ -135,13 +135,13 @@ func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]
 }
 
 // 回调
-func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error) {
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	filename := r.Get(`filename`).String()
-	size := r.Get(`size`).String()
-	// mimeType := r.Get(`mimeType`).String()
-	width := r.Get(`width`).String()
-	height := r.Get(`height`).String()
+	notifyInfo.Width = r.Get(`width`).Uint()
+	notifyInfo.Height = r.Get(`height`).Uint()
+	notifyInfo.Size = r.Get(`size`).Uint()
+	notifyInfo.MimeType = r.Get(`mimeType`).String()
 
 	// 1.获取OSS的签名header和公钥url header
 	strAuthorizationBase64 := r.Header.Get(`authorization`)
@@ -221,8 +221,24 @@ func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo map[string]interface{}
 		return
 	}
 
-	notifyInfo = map[string]interface{}{}
-	notifyInfo[`url`] = uploadThis.GetBucketHost() + `/` + filename + `?w=` + width + `&h=` + height + `&s=` + size /* + `&m=` + mimeType */
+	notifyInfo.Url = uploadThis.GetBucketHost() + `/` + filename
+	//有时文件信息放地址后面，一起保存在数据库中会更好。比如：苹果手机做瀑布流时需要知道图片宽高，这时就能直接从地址中解析获取
+	urlQueryArr := []string{}
+	if notifyInfo.Width > 0 {
+		urlQueryArr = append(urlQueryArr, `w=`+gconv.String(notifyInfo.Width))
+	}
+	if notifyInfo.Height > 0 {
+		urlQueryArr = append(urlQueryArr, `h=`+gconv.String(notifyInfo.Height))
+	}
+	if notifyInfo.Size > 0 {
+		urlQueryArr = append(urlQueryArr, `s=`+gconv.String(notifyInfo.Size))
+	}
+	/* if notifyInfo.MimeType != `` {
+		urlQueryArr = append(urlQueryArr, `m=`+notifyInfo.MimeType)
+	} */
+	if len(urlQueryArr) > 0 {
+		notifyInfo.Url += `?` + gstr.Join(urlQueryArr, `&`)
+	}
 	return
 }
 

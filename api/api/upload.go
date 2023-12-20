@@ -17,7 +17,11 @@ type UploadUploadReq struct {
 }
 
 type UploadUploadRes struct {
-	Url string `json:"url" dc:"地址"`
+	Url      string `json:"url" dc:"地址"`
+	Width    uint   `json:"width" dc:"宽度"`
+	Height   uint   `json:"height" dc:"高度"`
+	Size     uint   `json:"size" dc:"大小。单位：比特"`
+	MimeType string `json:"mimeType" dc:"文件类型"`
 }
 
 /*--------上传本地 结束--------*/
@@ -80,7 +84,11 @@ type UploadNotifyReq struct {
 }
 
 type UploadNotifyRes struct {
-	Url string `json:"url" dc:"地址"`
+	Url      string `json:"url" dc:"地址"`
+	Width    uint   `json:"width" dc:"宽度"`
+	Height   uint   `json:"height" dc:"高度"`
+	Size     uint   `json:"size" dc:"大小。单位：比特"`
+	MimeType string `json:"mimeType" dc:"文件类型"`
 }
 
 /*--------回调 结束--------*/

@@ -16,12 +16,18 @@ func NewUpload() *Upload {
 }
 
 // 本地上传
-func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadUploadRes, err error) {
+func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
 	notifyInfo, err := upload.NewUpload(ctx).Upload()
 	if err != nil {
 		return
 	}
-	utils.HttpWriteJson(ctx, notifyInfo, 0, ``)
+	res = &api.UploadNotifyRes{
+		Url:      notifyInfo.Url,
+		Width:    notifyInfo.Width,
+		Height:   notifyInfo.Height,
+		Size:     notifyInfo.Size,
+		MimeType: notifyInfo.MimeType,
+	}
 	return
 }
 
@@ -61,6 +67,12 @@ func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyR
 	if err != nil {
 		return
 	}
-	utils.HttpWriteJson(ctx, notifyInfo, 0, ``)
+	res = &api.UploadNotifyRes{
+		Url:      notifyInfo.Url,
+		Width:    notifyInfo.Width,
+		Height:   notifyInfo.Height,
+		Size:     notifyInfo.Size,
+		MimeType: notifyInfo.MimeType,
+	}
 	return
 }

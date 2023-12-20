@@ -36,7 +36,7 @@ func NewUploadOfLocal(ctx context.Context, config map[string]interface{}) *Uploa
 }
 
 // 本地上传
-func (uploadThis *UploadOfLocal) Upload() (uploadInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
@@ -85,20 +85,35 @@ func (uploadThis *UploadOfLocal) Upload() (uploadInfo map[string]interface{}, er
 	}
 
 	//获取图片宽高
-	width := ``
-	height := ``
 	fileTmp, err := os.Open(uploadThis.FileSaveDir + dir + filename)
 	if err == nil {
 		defer fileTmp.Close()
 		img, _, err := image.Decode(fileTmp)
 		if err == nil {
-			width = gconv.String(img.Bounds().Dx())
-			height = gconv.String(img.Bounds().Dy())
+			notifyInfo.Width = gconv.Uint(img.Bounds().Dx())
+			notifyInfo.Height = gconv.Uint(img.Bounds().Dy())
 		}
 	}
+	notifyInfo.Size = gconv.Uint(file.Size)
 
-	uploadInfo = map[string]interface{}{}
-	uploadInfo[`url`] = uploadThis.FileUrlPrefix + `/` + dir + filename + `?w=` + width + `&h=` + height + `&s=` + gconv.String(file.Size) /* + `&m=` + mimeType */
+	notifyInfo.Url = uploadThis.FileUrlPrefix + `/` + dir + filename
+	//有时文件信息放地址后面，一起保存在数据库中会更好。比如：苹果手机做瀑布流时需要知道图片宽高，这时就能直接从地址中解析获取
+	urlQueryArr := []string{}
+	if notifyInfo.Width > 0 {
+		urlQueryArr = append(urlQueryArr, `w=`+gconv.String(notifyInfo.Width))
+	}
+	if notifyInfo.Height > 0 {
+		urlQueryArr = append(urlQueryArr, `h=`+gconv.String(notifyInfo.Height))
+	}
+	if notifyInfo.Size > 0 {
+		urlQueryArr = append(urlQueryArr, `s=`+gconv.String(notifyInfo.Size))
+	}
+	/* if notifyInfo.MimeType != `` {
+		urlQueryArr = append(urlQueryArr, `m=`+notifyInfo.MimeType)
+	} */
+	if len(urlQueryArr) > 0 {
+		notifyInfo.Url += `?` + gstr.Join(urlQueryArr, `&`)
+	}
 	return
 }
 
@@ -137,7 +152,7 @@ func (uploadThis *UploadOfLocal) Sts(param UploadParam) (stsInfo map[string]inte
 }
 
 // 回调
-func (uploadThis *UploadOfLocal) Notify() (notifyInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Notify() (notifyInfo NotifyInfo, err error) {
 	return
 }
 

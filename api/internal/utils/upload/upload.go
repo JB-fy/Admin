@@ -15,12 +15,20 @@ type UploadParam struct {
 	MaxSize    int    //限制上传的文件大小。单位：字节。本地上传（uploadOfLocal.go）需要同时设置配置文件api/manifest/config/config.yaml中的server.clientMaxBodySize字段
 }
 
+type NotifyInfo struct {
+	Url      string //地址
+	Width    uint   //宽度
+	Height   uint   //高度
+	Size     uint   //大小。单位：比特
+	MimeType string //文件类型
+}
+
 type Upload interface {
-	Upload() (uploadInfo map[string]interface{}, err error)              // 本地上传
+	Upload() (notifyInfo NotifyInfo, err error)                          // 本地上传
 	Sign(param UploadParam) (signInfo map[string]interface{}, err error) // 获取签名（H5直传用）
 	Config(param UploadParam) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用）
 	Sts(param UploadParam) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
-	Notify() (notifyInfo map[string]interface{}, err error)              // 回调
+	Notify() (notifyInfo NotifyInfo, err error)                          // 回调
 }
 
 func CreateUploadParam(uploadType string) (param UploadParam) {

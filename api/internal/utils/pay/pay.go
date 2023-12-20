@@ -13,7 +13,7 @@ type PayData struct {
 }
 
 type PayInfo struct {
-	PayStr string
+	PayStr string //支付字符串
 }
 
 type NotifyInfo struct {
