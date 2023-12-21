@@ -73,7 +73,7 @@ type UploadStsRes struct {
 /*--------回调 开始--------*/
 type UploadNotifyReq struct {
 	g.Meta     `path:"/notify/:uploadType" method:"get,post" tags:"上传" sm:"回调"`
-	UploadType string `json:"uploadType" v:"required|in:uploadOfLocal,uploadOfAliyunOss" in:"path" dc:"上传类型"`
+	UploadType string `json:"uploadType" v:"required|in:uploadOfLocal,uploadOfAliyunOss" in:"path" dc:"上传方式"`
 }
 
 type UploadNotifyRes struct {
