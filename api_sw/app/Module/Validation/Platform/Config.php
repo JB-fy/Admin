@@ -52,6 +52,7 @@ class Config extends AbstractValidation
         'payOfAliPrivateKey' => 'string',
         'payOfAliPublicKey' => 'string',
         'payOfAliNotifyUrl' => 'url',
+        'payOfAliReturnUrl' => 'url',
 
         'payOfWxAppId' => 'string',
         'payOfWxMchid' => 'string',
@@ -137,6 +138,7 @@ class Config extends AbstractValidation
                 'payOfAliPrivateKey',
                 'payOfAliPublicKey',
                 'payOfAliNotifyUrl',
+                'payOfAliReturnUrl',
 
                 'payOfWxAppId',
                 'payOfWxMchid',

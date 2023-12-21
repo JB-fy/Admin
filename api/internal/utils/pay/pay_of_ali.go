@@ -27,6 +27,7 @@ type PayOfAli struct {
 	PrivateKey string `json:"payOfAliPrivateKey"`
 	PublicKey  string `json:"payOfAliPublicKey"`
 	NotifyUrl  string `json:"payOfAliNotifyUrl"`
+	ReturnUrl  string `json:"payOfAliReturnUrl"`
 }
 
 func NewPayOfAli(ctx context.Context, config map[string]interface{}) *PayOfAli {

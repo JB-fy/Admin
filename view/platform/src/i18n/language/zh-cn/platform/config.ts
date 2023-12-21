@@ -55,6 +55,7 @@ export default {
 		payOfAliPrivateKey: '私钥',
 		payOfAliPublicKey: '公钥',
 		payOfAliNotifyUrl: '异步回调地址',
+		payOfAliReturnUrl: '同步回调地址',
 
 		payOfWxAppId: 'AppID',
 		payOfWxMchid: '商户ID',

@@ -54,6 +54,7 @@ type Config struct {
 	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" dc:"私钥"`
 	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" dc:"公钥"`
 	PayOfAliNotifyUrl  *string `json:"payOfAliNotifyUrl,omitempty" dc:"异步回调地址"`
+	PayOfAliReturnUrl  *string `json:"payOfAliReturnUrl,omitempty" dc:"同步回调地址"`
 
 	PayOfWxAppId     *string `json:"payOfWxAppId,omitempty" dc:"AppId"`
 	PayOfWxMchid     *string `json:"payOfWxMchid,omitempty" dc:"商户ID"`
@@ -135,6 +136,7 @@ type ConfigSaveReq struct {
 	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" v:"" dc:"私钥"`
 	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" v:"" dc:"公钥"`
 	PayOfAliNotifyUrl  *string `json:"payOfAliNotifyUrl,omitempty" v:"url" dc:"异步回调地址"`
+	PayOfAliReturnUrl  *string `json:"payOfAliReturnUrl,omitempty" v:"url" dc:"同步回调地址"`
 
 	PayOfWxAppId     *string `json:"payOfWxAppId,omitempty" v:"" dc:"AppId"`
 	PayOfWxMchid     *string `json:"payOfWxMchid,omitempty" v:"" dc:"商户ID"`

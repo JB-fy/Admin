@@ -10,6 +10,7 @@ const saveForm = reactive({
         payOfAliPrivateKey: '',
         payOfAliPublicKey: '',
         payOfAliNotifyUrl: '',
+        payOfAliReturnUrl: '',
 
         payOfWxAppId: '',
         payOfWxMchid: '',
@@ -32,6 +33,9 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         payOfAliNotifyUrl: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
+        ],
+        payOfAliReturnUrl: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
 
@@ -114,6 +118,10 @@ saveForm.initData()
                 <ElFormItem :label="t('platform.config.name.payOfAliNotifyUrl')" prop="payOfAliNotifyUrl">
                     <ElInput v-model="saveForm.data.payOfAliNotifyUrl"
                         :placeholder="t('platform.config.name.payOfAliNotifyUrl')" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('platform.config.name.payOfAliReturnUrl')" prop="payOfAliReturnUrl">
+                    <ElInput v-model="saveForm.data.payOfAliReturnUrl"
+                        :placeholder="t('platform.config.name.payOfAliReturnUrl')" :clearable="true" />
                 </ElFormItem>
             </ElTabPane>
 

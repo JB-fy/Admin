@@ -39,7 +39,7 @@ func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
 		return NewPayOfWx(ctx, config)
 	// case `payOfAli`: //支付宝
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliSignType`, `payOfAliPrivateKey`, `payOfAliPublicKey`, `payOfAliNotifyUrl`})
+		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliSignType`, `payOfAliPrivateKey`, `payOfAliPublicKey`, `payOfAliNotifyUrl`, `payOfAliReturnUrl`})
 		return NewPayOfAli(ctx, config)
 	}
 }
