@@ -54,12 +54,14 @@ export default {
 		payOfAliSignType: '签名方式',
 		payOfAliPrivateKey: '私钥',
 		payOfAliPublicKey: '公钥',
+		payOfAliNotifyUrl: '异步回调地址',
 
 		payOfWxAppId: 'AppID',
 		payOfWxMchid: '商户ID',
 		payOfWxSerialNo: '证书序列号',
 		payOfWxApiV3Key: 'APIV3密钥',
 		payOfWxCertPath: '证书路径',
+		payOfWxNotifyUrl: '异步回调地址',
 
 		smsType: '短信方式',
 		smsOfAliyunAccessKeyId: '阿里云SMS-AccessKeyId',

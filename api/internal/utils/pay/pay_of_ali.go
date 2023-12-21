@@ -26,6 +26,7 @@ type PayOfAli struct {
 	SignType   string `json:"payOfAliSignType"`
 	PrivateKey string `json:"payOfAliPrivateKey"`
 	PublicKey  string `json:"payOfAliPublicKey"`
+	NotifyUrl  string `json:"payOfAliNotifyUrl"`
 }
 
 func NewPayOfAli(ctx context.Context, config map[string]interface{}) *PayOfAli {
@@ -46,7 +47,7 @@ func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 		`sign_type`:  payThis.SignType,
 		`timestamp`:  gtime.Now().Format(`Y-m-d H:i:s`),
 		`version`:    `1.0`,
-		`notify_url`: payData.NotifyUrl,
+		`notify_url`: payThis.NotifyUrl,
 		// `app_auth_token`:     ``,
 	}
 	bizContent := map[string]interface{}{

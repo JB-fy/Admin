@@ -6,10 +6,9 @@ import (
 )
 
 type PayData struct {
-	OrderNo   string  //单号
-	Amount    float64 //金额。单位：元
-	NotifyUrl string  //异步回调地址
-	Desc      string  //描述
+	OrderNo string  //单号
+	Amount  float64 //金额。单位：元
+	Desc    string  //描述
 }
 
 type PayInfo struct {
@@ -36,11 +35,11 @@ func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
 
 	switch payType {
 	case `payOfWx`: //微信
-		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfWxAppId`, `payOfWxMchid`, `payOfWxSerialNo`, `payOfWxApiV3Key`, `payOfWxCertPath`})
+		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfWxAppId`, `payOfWxMchid`, `payOfWxSerialNo`, `payOfWxApiV3Key`, `payOfWxCertPath`, `payOfWxNotifyUrl`})
 		return NewPayOfWx(ctx, config)
 	// case `payOfAli`: //支付宝
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliSignType`, `payOfAliPrivateKey`, `payOfAliPublicKey`})
+		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliSignType`, `payOfAliPrivateKey`, `payOfAliPublicKey`, `payOfAliNotifyUrl`})
 		return NewPayOfAli(ctx, config)
 	}
 }

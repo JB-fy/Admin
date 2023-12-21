@@ -9,12 +9,14 @@ const saveForm = reactive({
         payOfAliSignType: 'RSA2',
         payOfAliPrivateKey: '',
         payOfAliPublicKey: '',
+        payOfAliNotifyUrl: '',
 
         payOfWxAppId: '',
         payOfWxMchid: '',
         payOfWxSerialNo: '',
         payOfWxApiV3Key: '',
         payOfWxCertPath: '',
+        payOfWxNotifyUrl: '',
     } as { [propName: string]: any },
     rules: {
         payOfAliAppId: [
@@ -28,6 +30,9 @@ const saveForm = reactive({
         ],
         payOfAliPublicKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        payOfAliNotifyUrl: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
 
         payOfWxAppId: [
@@ -44,6 +49,9 @@ const saveForm = reactive({
         ],
         payOfWxCertPath: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        payOfWxNotifyUrl: [
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
     } as any,
     initData: async () => {
@@ -103,6 +111,10 @@ saveForm.initData()
                     <ElInput v-model="saveForm.data.payOfAliPublicKey"
                         :placeholder="t('platform.config.name.payOfAliPublicKey')" :clearable="true" />
                 </ElFormItem>
+                <ElFormItem :label="t('platform.config.name.payOfAliNotifyUrl')" prop="payOfAliNotifyUrl">
+                    <ElInput v-model="saveForm.data.payOfAliNotifyUrl"
+                        :placeholder="t('platform.config.name.payOfAliNotifyUrl')" :clearable="true" />
+                </ElFormItem>
             </ElTabPane>
 
             <ElTabPane :label="t('platform.config.label.payOfWx')" :lazy="true">
@@ -125,6 +137,10 @@ saveForm.initData()
                 <ElFormItem :label="t('platform.config.name.payOfWxCertPath')" prop="payOfWxCertPath">
                     <ElInput v-model="saveForm.data.payOfWxCertPath"
                         :placeholder="t('platform.config.name.payOfWxCertPath')" :clearable="true" />
+                </ElFormItem>
+                <ElFormItem :label="t('platform.config.name.payOfWxNotifyUrl')" prop="payOfWxNotifyUrl">
+                    <ElInput v-model="saveForm.data.payOfWxNotifyUrl"
+                        :placeholder="t('platform.config.name.payOfWxNotifyUrl')" :clearable="true" />
                 </ElFormItem>
             </ElTabPane>
         </ElTabs>

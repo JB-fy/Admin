@@ -18,12 +18,13 @@ import (
 )
 
 type PayOfWx struct {
-	Ctx      context.Context
-	AppId    string `json:"payOfWxAppId"`
-	Mchid    string `json:"payOfWxMchid"`
-	SerialNo string `json:"payOfWxSerialNo"`
-	APIv3Key string `json:"payOfWxApiV3Key"`
-	CertPath string `json:"payOfWxCertPath"`
+	Ctx       context.Context
+	AppId     string `json:"payOfWxAppId"`
+	Mchid     string `json:"payOfWxMchid"`
+	SerialNo  string `json:"payOfWxSerialNo"`
+	APIv3Key  string `json:"payOfWxApiV3Key"`
+	CertPath  string `json:"payOfWxCertPath"`
+	NotifyUrl string `json:"payOfWxNotifyUrl"`
 }
 
 func NewPayOfWx(ctx context.Context, config map[string]interface{}) *PayOfWx {
@@ -57,7 +58,7 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 			Mchid:       core.String(payThis.Mchid),
 			Description: core.String(payData.Desc),
 			OutTradeNo:  core.String(payData.OrderNo),
-			NotifyUrl:   core.String(payData.NotifyUrl),
+			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &app.Amount{
 				// Total: core.Int64(gconv.Int64(math.Ceil(payData.Amount * 100))),
 				Total: core.Int64(gconv.Int64(payData.Amount * 100)),

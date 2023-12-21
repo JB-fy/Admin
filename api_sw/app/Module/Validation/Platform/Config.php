@@ -51,12 +51,14 @@ class Config extends AbstractValidation
         'payOfAliSignType' => 'in:RSA2,RSA',
         'payOfAliPrivateKey' => 'string',
         'payOfAliPublicKey' => 'string',
+        'payOfAliNotifyUrl' => 'url',
 
         'payOfWxAppId' => 'string',
         'payOfWxMchid' => 'string',
         'payOfWxSerialNo' => 'string',
         'payOfWxApiV3Key' => 'string',
         'payOfWxCertPath' => 'string',
+        'payOfWxNotifyUrl' => 'url',
 
         'smsType' => 'string|in:smsOfAliyun',
         'smsOfAliyunAccessKeyId' => 'alpha_dash',
@@ -134,12 +136,14 @@ class Config extends AbstractValidation
                 'payOfAliSignType',
                 'payOfAliPrivateKey',
                 'payOfAliPublicKey',
+                'payOfAliNotifyUrl',
 
                 'payOfWxAppId',
                 'payOfWxMchid',
                 'payOfWxSerialNo',
                 'payOfWxApiV3Key',
                 'payOfWxCertPath',
+                'payOfWxNotifyUrl',
 
                 'smsType',
                 'smsOfAliyunAccessKeyId',
