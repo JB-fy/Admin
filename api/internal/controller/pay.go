@@ -16,7 +16,7 @@ func NewPay() *Pay {
 
 // 回调
 func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (res *api.CommonNoDataRes, err error) {
-	payObj := pay.NewPay(ctx)
+	payObj := pay.NewPay(ctx, req.PayType)
 	notifyInfo, err := payObj.Notify()
 	if err != nil {
 		payObj.NotifyRes(err.Error())

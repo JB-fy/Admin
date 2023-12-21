@@ -40,7 +40,7 @@ type Upload interface {
 	Notify() (notifyInfo NotifyInfo, err error)                          // 回调
 }
 
-func CreateUploadParam(uploadType string) (param UploadParam) {
+func CreateUploadParam(fileType string) (param UploadParam) {
 	param = UploadParam{
 		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
 		Expire:     gtime.Now().Unix() + 15*60,
