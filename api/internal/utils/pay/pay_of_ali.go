@@ -204,11 +204,7 @@ func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (pass b
 
 // 解析私钥
 func (payThis *PayOfAli) parsePrivateKey() (privateKey *rsa.PrivateKey, err error) {
-	privateKeyByte, err := base64.StdEncoding.DecodeString(payThis.PrivateKey)
-	if err != nil {
-		return
-	}
-	block, _ := pem.Decode(privateKeyByte)
+	block, _ := pem.Decode([]byte(payThis.PrivateKey))
 	if block == nil {
 		err = errors.New(`解码公钥失败`)
 		return
@@ -219,11 +215,7 @@ func (payThis *PayOfAli) parsePrivateKey() (privateKey *rsa.PrivateKey, err erro
 
 // 解析公钥
 func (payThis *PayOfAli) parsePublicKey() (publicKey *rsa.PublicKey, err error) {
-	publicKeyByte, err := base64.StdEncoding.DecodeString(payThis.PublicKey)
-	if err != nil {
-		return
-	}
-	block, _ := pem.Decode(publicKeyByte)
+	block, _ := pem.Decode([]byte(payThis.PublicKey))
 	if block == nil {
 		err = errors.New(`解码公钥失败`)
 		return

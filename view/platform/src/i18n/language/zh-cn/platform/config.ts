@@ -61,7 +61,7 @@ export default {
 		payOfWxMchid: '商户ID',
 		payOfWxSerialNo: '证书序列号',
 		payOfWxApiV3Key: 'APIV3密钥',
-		payOfWxCertPath: '证书路径',
+		payOfWxPrivateKey: '私钥',
 		payOfWxNotifyUrl: '异步回调地址',
 
 		smsType: '短信方式',

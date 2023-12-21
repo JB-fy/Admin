@@ -18,13 +18,13 @@ import (
 )
 
 type PayOfWx struct {
-	Ctx       context.Context
-	AppId     string `json:"payOfWxAppId"`
-	Mchid     string `json:"payOfWxMchid"`
-	SerialNo  string `json:"payOfWxSerialNo"`
-	APIv3Key  string `json:"payOfWxApiV3Key"`
-	CertPath  string `json:"payOfWxCertPath"`
-	NotifyUrl string `json:"payOfWxNotifyUrl"`
+	Ctx        context.Context
+	AppId      string `json:"payOfWxAppId"`
+	Mchid      string `json:"payOfWxMchid"`
+	SerialNo   string `json:"payOfWxSerialNo"`
+	APIv3Key   string `json:"payOfWxApiV3Key"`
+	PrivateKey string `json:"payOfWxPrivateKey"`
+	NotifyUrl  string `json:"payOfWxNotifyUrl"`
 }
 
 func NewPayOfWx(ctx context.Context, config map[string]interface{}) *PayOfWx {
@@ -36,8 +36,7 @@ func NewPayOfWx(ctx context.Context, config map[string]interface{}) *PayOfWx {
 }
 
 func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
-	// 使用 utils 提供的函数从本地文件中加载商户私钥，商户私钥会用来生成请求的签名
-	privateKey, err := utils.LoadPrivateKeyWithPath(payThis.CertPath)
+	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
@@ -77,10 +76,8 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 }
 
 func (payThis *PayOfWx) Notify() (notifyInfo NotifyInfo, err error) {
-	// 使用 utils 提供的函数从本地文件中加载商户私钥，商户私钥会用来生成请求的签名
-	privateKey, err := utils.LoadPrivateKeyWithPath(payThis.CertPath)
+	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
-		// log.Fatal(`load merchant private key error`)
 		return
 	}
 
