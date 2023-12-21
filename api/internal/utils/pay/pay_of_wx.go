@@ -94,7 +94,6 @@ func (payThis *PayOfWx) Notify() (notifyInfo NotifyInfo, err error) {
 	transaction := new(payments.Transaction)
 	r := g.RequestFromCtx(payThis.Ctx)
 	_ /* notifyReq */, err = handler.ParseNotifyRequest(payThis.Ctx, r.Request, transaction)
-	// 如果验签未通过，或者解密失败
 	if err != nil {
 		return
 	}
