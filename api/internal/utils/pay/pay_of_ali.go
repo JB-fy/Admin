@@ -15,6 +15,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -130,13 +131,14 @@ func (payThis *PayOfAli) GetDataStr(data map[string]string) (dataStr string) {
 		keyArr = append(keyArr, key)
 	}
 	sort.Strings(keyArr)
+	dataStrArr := []string{}
 	for _, key := range keyArr {
 		value := strings.TrimSpace(data[key])
 		if len(value) > 0 { //过滤空值字段
-			dataStr += key + `=` + gconv.String(data[key]) + `&`
+			dataStrArr = append(dataStrArr, key+`=`+gconv.String(data[key]))
 		}
 	}
-	dataStr = dataStr[:len(dataStr)-1]
+	dataStr = gstr.Join(dataStrArr, `&`)
 	return
 }
 
@@ -204,6 +206,19 @@ func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (pass b
 
 // 解析私钥
 func (payThis *PayOfAli) parsePrivateKey() (privateKey *rsa.PrivateKey, err error) {
+	/* privateKeyF := payThis.PrivateKey
+	if gstr.Pos(privateKeyF, `-----`) != 0 {
+		// privateKeyF = "-----BEGIN RSA PRIVATE KEY-----\n" + privateKeyF + "\n-----END RSA PRIVATE KEY-----"
+		privateKeyF = "-----BEGIN RSA PRIVATE KEY-----\n"
+		for i := 0; i < len(payThis.PrivateKey); i += 64 {
+			end := i + 64
+			if end > len(payThis.PrivateKey) {
+				end = len(payThis.PrivateKey)
+			}
+			privateKeyF += payThis.PrivateKey[i:end] + "\n"
+		}
+		privateKeyF += "-----END RSA PRIVATE KEY-----"
+	} */
 	block, _ := pem.Decode([]byte(payThis.PrivateKey))
 	if block == nil {
 		err = errors.New(`解析私钥失败`)
@@ -215,6 +230,10 @@ func (payThis *PayOfAli) parsePrivateKey() (privateKey *rsa.PrivateKey, err erro
 
 // 解析公钥
 func (payThis *PayOfAli) parsePublicKey() (publicKey *rsa.PublicKey, err error) {
+	/* publicKeyF := payThis.PublicKey
+	if gstr.Pos(publicKeyF, `-----`) != 0 {
+		publicKeyF = "-----BEGIN PUBLIC KEY-----\n" + publicKeyF + "\n-----END PUBLIC KEY-----"
+	} */
 	block, _ := pem.Decode([]byte(payThis.PublicKey))
 	if block == nil {
 		err = errors.New(`解析公钥失败`)
