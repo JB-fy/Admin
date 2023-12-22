@@ -88,7 +88,7 @@ func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 func (payThis *PayOfAli) Notify() (notifyInfo NotifyInfo, err error) {
 	r := g.RequestFromCtx(payThis.Ctx)
 	sign := r.Get(`sign`).String()
-	data := r.GetMapStrStr()
+	data := r.GetFormMapStrStr()
 	/* dataTmp := r.Request.Form
 	sign := dataTmp.Get(`sign`)
 	data := map[string]string{}

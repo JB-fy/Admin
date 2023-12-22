@@ -2,8 +2,8 @@
 # https://goframe.org/pages/viewpage.action?pageId=3673173
 gfcli:
   build:
-    packSrc: "resource/i18n,manifest" # 需要打包资源目录。打包前manifest目录下的配置文件需改成正式环境
-    # output: "../main"
+    packSrc: "manifest,resource" # 需要打包资源目录
+    output: "../main"
   gen:
     dao:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
