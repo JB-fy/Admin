@@ -1,13 +1,12 @@
 package pay
 
 import (
+	"api/internal/utils/common"
 	"context"
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/base64"
-	"encoding/pem"
 	"errors"
 	"sort"
 	"strings"
@@ -144,7 +143,7 @@ func (payThis *PayOfAli) GetDataStr(data map[string]string) (dataStr string) {
 
 // 生成签名
 func (payThis *PayOfAli) CreateSign(data map[string]string) (sign string, err error) {
-	privateKey, err := payThis.parsePrivateKey()
+	privateKey, err := common.ParsePrivateKeyOfRSA(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
@@ -173,7 +172,7 @@ func (payThis *PayOfAli) CreateSign(data map[string]string) (sign string, err er
 
 // 验证签名
 func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (pass bool, err error) {
-	publicKey, err := payThis.parsePublicKey()
+	publicKey, err := common.ParsePublicKeyOfRSA(payThis.PublicKey)
 	if err != nil {
 		return
 	}
@@ -201,53 +200,5 @@ func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (pass b
 		return
 	}
 	pass = true
-	return
-}
-
-// 解析私钥
-func (payThis *PayOfAli) parsePrivateKey() (privateKey *rsa.PrivateKey, err error) {
-	/* privateKeyF := payThis.PrivateKey
-	if gstr.Pos(privateKeyF, `-----`) != 0 {
-		// privateKeyF = "-----BEGIN RSA PRIVATE KEY-----\n" + privateKeyF + "\n-----END RSA PRIVATE KEY-----"
-		privateKeyF = "-----BEGIN RSA PRIVATE KEY-----\n"
-		for i := 0; i < len(payThis.PrivateKey); i += 64 {
-			end := i + 64
-			if end > len(payThis.PrivateKey) {
-				end = len(payThis.PrivateKey)
-			}
-			privateKeyF += payThis.PrivateKey[i:end] + "\n"
-		}
-		privateKeyF += "-----END RSA PRIVATE KEY-----"
-	} */
-	block, _ := pem.Decode([]byte(payThis.PrivateKey))
-	if block == nil {
-		err = errors.New(`解析私钥失败`)
-		return
-	}
-	privateKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
-	return
-}
-
-// 解析公钥
-func (payThis *PayOfAli) parsePublicKey() (publicKey *rsa.PublicKey, err error) {
-	/* publicKeyF := payThis.PublicKey
-	if gstr.Pos(publicKeyF, `-----`) != 0 {
-		publicKeyF = "-----BEGIN PUBLIC KEY-----\n" + publicKeyF + "\n-----END PUBLIC KEY-----"
-	} */
-	block, _ := pem.Decode([]byte(payThis.PublicKey))
-	if block == nil {
-		err = errors.New(`解析公钥失败`)
-		return
-	}
-	publicKey, err = x509.ParsePKCS1PublicKey(block.Bytes)
-	/* pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-	if err != nil {
-		return
-	}
-	publicKey, ok := pubKey.(*rsa.PublicKey)
-	if !ok {
-		err = errors.New(`非 RSA 公钥`)
-		return
-	} */
 	return
 }
