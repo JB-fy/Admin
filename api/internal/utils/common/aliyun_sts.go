@@ -1,7 +1,6 @@
 package common
 
 import (
-	"api/internal/utils"
 	"errors"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -41,7 +40,7 @@ func CreateStsToken(ctx context.Context, config *openapi.Config, assumeRoleReque
 			return errTmp
 		}
 		if *result.StatusCode != 200 {
-			err = utils.NewErrorCode(ctx, 79999999, ``)
+			err = errors.New(`Sts Token响应错误`)
 			return err
 		}
 		stsInfo = map[string]interface{}{

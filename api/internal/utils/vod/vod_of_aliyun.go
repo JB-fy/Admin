@@ -41,6 +41,6 @@ func (uploadThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]interface
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_vod`),
 	}
-	stsInfo, _ = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	stsInfo, err = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
 	return
 }

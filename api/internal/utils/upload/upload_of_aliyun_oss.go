@@ -1,7 +1,6 @@
 package upload
 
 import (
-	"api/internal/utils"
 	"api/internal/utils/common"
 	"context"
 	"crypto"
@@ -9,10 +8,8 @@ import (
 	"crypto/md5"
 	"crypto/rsa"
 	"crypto/sha1"
-	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
 	"hash"
@@ -124,7 +121,7 @@ func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_oss`),
 	}
-	stsInfo, _ = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	stsInfo, err = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
 	return
 }
 
@@ -137,52 +134,55 @@ func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error)
 	notifyInfo.Size = r.Get(`size`).Uint()
 	notifyInfo.MimeType = r.Get(`mimeType`).String()
 
-	// 1.获取OSS的签名header和公钥url header
+	// 获取OSS的签名
 	strAuthorizationBase64 := r.Header.Get(`authorization`)
 	if strAuthorizationBase64 == `` {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990000, err.Error())
+		err = errors.New(`签名不能为空`)
 		return
 	}
+	byteAuthorization, err := base64.StdEncoding.DecodeString(strAuthorizationBase64)
+	if err != nil {
+		return
+	}
+
+	// 获取OSS的公钥
 	publicKeyURLBase64 := r.Header.Get(`x-oss-pub-key-url`)
 	if publicKeyURLBase64 == `` {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990001, ``)
+		err = errors.New(`公钥URL不能为空`)
 		return
 	}
-
-	// 2.获取OSS的签名
-	byteAuthorization, _ := base64.StdEncoding.DecodeString(strAuthorizationBase64)
-
-	// 3.获取公钥
 	publicKeyURL, _ := base64.StdEncoding.DecodeString(publicKeyURLBase64)
 	responsePublicKeyURL, err := http.Get(string(publicKeyURL))
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990002, err.Error())
 		return
 	}
-	bytePublicKey, err := ioutil.ReadAll(responsePublicKeyURL.Body)
+	publicKeyByte, err := ioutil.ReadAll(responsePublicKeyURL.Body)
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990002, err.Error())
 		return
 	}
 	defer responsePublicKeyURL.Body.Close()
+	publicKey, err := common.ParsePublicKeyOfRSA(string(publicKeyByte))
+	if err != nil {
+		return
+	}
 
-	// 4.获取回调body
+	//以设置的回调地址uploadThis.CallbackUrl为准。原因：r.URL.Path可能不是实际对外的回调地址，如/upload/notify/xx在nginx可能被增加了/api前缀，变成/api/upload/notify/xx
+	// parsedURL := r.URL
+	parsedURL, err := url.Parse(uploadThis.CallbackUrl)
+	if err != nil {
+		return
+	}
+	strURLPathDecode, err := uploadThis.unescapePath(parsedURL.Path, encodePathSegment)
+	if err != nil {
+		return
+	}
+
 	bodyContent, err := ioutil.ReadAll(r.Body)
 	r.Body.Close()
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990003, err.Error())
 		return
 	}
 	strCallbackBody := string(bodyContent)
-
-	//以设置的回调地址uploadThis.CallbackUrl为准。原因：r.URL.Path可能不是实际对外的回调地址，如upload/notify在nginx可能被增加了api/前缀，变成api/upload/notify
-	parsedURL, _ := url.Parse(uploadThis.CallbackUrl)
-	// strURLPathDecode, err := uploadThis.unescapePath(r.URL.Path, encodePathSegment)
-	strURLPathDecode, err := uploadThis.unescapePath(parsedURL.Path, encodePathSegment)
-	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990003, err.Error())
-		return
-	}
 
 	strAuth := ``
 	if r.URL.RawQuery == `` {
@@ -190,28 +190,13 @@ func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error)
 	} else {
 		strAuth = fmt.Sprintf("%s?%s\n%s", strURLPathDecode, r.URL.RawQuery, strCallbackBody)
 	}
-
 	md5Ctx := md5.New()
 	md5Ctx.Write([]byte(strAuth))
 	byteMD5 := md5Ctx.Sum(nil)
 
-	// 5.拼接待签名字符串
-	pubBlock, _ := pem.Decode(bytePublicKey)
-	if pubBlock == nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990003, ``)
-		return
-	}
-	pubInterface, err := x509.ParsePKIXPublicKey(pubBlock.Bytes)
-	if (pubInterface == nil) || (err != nil) {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990003, err.Error())
-		return
-	}
-	pub := pubInterface.(*rsa.PublicKey)
-
-	// 6.验证签名
-	err = rsa.VerifyPKCS1v15(pub, crypto.MD5, byteMD5, byteAuthorization)
+	// 验证签名
+	err = rsa.VerifyPKCS1v15(publicKey, crypto.MD5, byteMD5, byteAuthorization)
 	if err != nil {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79990003, err.Error())
 		return
 	}
 

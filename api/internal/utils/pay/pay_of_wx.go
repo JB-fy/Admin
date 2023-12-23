@@ -68,7 +68,7 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 		return
 	}
 	if result.Response.StatusCode != 200 {
-		err = errors.New(`支付宝APP支付接口错误`)
+		err = errors.New(`响应错误`)
 		return
 	}
 	orderInfo.PayStr = *resp.PrepayId

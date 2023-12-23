@@ -1,8 +1,8 @@
 package upload
 
 import (
-	"api/internal/utils"
 	"context"
+	"errors"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -47,7 +47,7 @@ func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 	sign := r.Get(`sign`).String()
 
 	if time.Now().Unix() > expire {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `签名过期`)
+		err = errors.New(`签名过期`)
 		return
 	}
 	signData := map[string]interface{}{
@@ -58,17 +58,17 @@ func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 		`rand`:    rand,
 	}
 	if sign != uploadThis.CreateSign(signData) {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `签名错误`)
+		err = errors.New(`签名错误`)
 		return
 	}
 
 	file := r.GetUploadFile(`file`)
 	if minSize > 0 && minSize > file.Size {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `文件不能小于`+gconv.String(minSize/(1024*1024))+`MB`)
+		err = errors.New(`文件不能小于` + gconv.String(minSize/(1024*1024)) + `MB`)
 		return
 	}
 	if maxSize > 0 && maxSize < file.Size {
-		err = utils.NewErrorCode(uploadThis.Ctx, 79999999, `文件不能大于`+gconv.String(maxSize/(1024*1024))+`MB`)
+		err = errors.New(`文件不能大于` + gconv.String(maxSize/(1024*1024)) + `MB`)
 		return
 	}
 
