@@ -7,6 +7,7 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"net/http"
 	"os"
 	"sort"
 	"time"
@@ -84,14 +85,20 @@ func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 		return
 	}
 
-	//获取图片宽高
 	fileTmp, err := os.Open(uploadThis.FileSaveDir + dir + filename)
 	if err == nil {
 		defer fileTmp.Close()
-		img, _, err := image.Decode(fileTmp)
-		if err == nil {
+		//获取图片宽高
+		img, _, errTmp := image.Decode(fileTmp)
+		if errTmp == nil {
 			notifyInfo.Width = gconv.Uint(img.Bounds().Dx())
 			notifyInfo.Height = gconv.Uint(img.Bounds().Dy())
+		}
+		//获取文件的MIME类型
+		buffer := make([]byte, 512)
+		_, errTmp = fileTmp.ReadAt(buffer, 0)
+		if errTmp == nil {
+			notifyInfo.MimeType = http.DetectContentType(buffer)
 		}
 	}
 	notifyInfo.Size = gconv.Uint(file.Size)
