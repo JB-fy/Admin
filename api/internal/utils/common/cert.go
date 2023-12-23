@@ -9,22 +9,9 @@ import (
 
 // 解析RSA私钥
 func ParsePrivateKeyOfRSA(privateKeyStr string) (privateKey *rsa.PrivateKey, err error) {
-	/* if gstr.Pos(privateKeyStr, `-----`) != 0 {
-		// privateKeyStr = "-----BEGIN RSA PRIVATE KEY-----\n" + privateKeyStr + "\n-----END RSA PRIVATE KEY-----"
-		privateKeyStrTmp := privateKeyStr
-		privateKeyStr = "-----BEGIN RSA PRIVATE KEY-----\n"
-		for i := 0; i < len(privateKeyStrTmp); i += 64 {
-			end := i + 64
-			if end > len(privateKeyStrTmp) {
-				end = len(privateKeyStrTmp)
-			}
-			privateKeyStr += privateKeyStrTmp[i:end] + "\n"
-		}
-		privateKeyStr += "-----END RSA PRIVATE KEY-----"
-	} */
 	block, _ := pem.Decode([]byte(privateKeyStr))
 	if block == nil {
-		err = errors.New(`解析私钥错误`)
+		err = errors.New(`私钥解码错误`)
 		return
 	}
 
@@ -38,30 +25,27 @@ func ParsePrivateKeyOfRSA(privateKeyStr string) (privateKey *rsa.PrivateKey, err
 	case `PRIVATE KEY`:
 		priKey, errTmp := x509.ParsePKCS8PrivateKey(block.Bytes)
 		if errTmp != nil {
-			err = errTmp
+			err = errors.New(`私钥解析错误：` + errTmp.Error())
 			return
 		}
 		privateKeyTmp, ok := priKey.(*rsa.PrivateKey)
 		if !ok {
-			err = errors.New(`非RSA私钥`)
+			err = errors.New(`不是RSA私钥`)
 			return
 		}
 		privateKey = privateKeyTmp
 		return
 	default:
-		err = errors.New(`不是RSA私钥`)
+		err = errors.New(`PEM类型错误`)
 		return
 	}
 }
 
 // 解析RSA公钥
 func ParsePublicKeyOfRSA(publicKeyStr string) (publicKey *rsa.PublicKey, err error) {
-	/* if gstr.Pos(publicKeyF, `-----`) != 0 {
-		publicKeyStr = "-----BEGIN PUBLIC KEY-----\n" + publicKeyStr + "\n-----END PUBLIC KEY-----"
-	} */
 	block, _ := pem.Decode([]byte(publicKeyStr))
 	if block == nil {
-		err = errors.New(`解析公钥错误`)
+		err = errors.New(`公钥解码错误`)
 		return
 	}
 
@@ -72,18 +56,18 @@ func ParsePublicKeyOfRSA(publicKeyStr string) (publicKey *rsa.PublicKey, err err
 	case `PUBLIC KEY`:
 		pubKey, errTmp := x509.ParsePKIXPublicKey(block.Bytes)
 		if errTmp != nil {
-			err = errTmp
+			err = errors.New(`公钥解析错误：` + errTmp.Error())
 			return
 		}
 		publicKeyTmp, ok := pubKey.(*rsa.PublicKey)
 		if !ok {
-			err = errors.New(`非RSA公钥`)
+			err = errors.New(`不是RSA公钥`)
 			return
 		}
 		publicKey = publicKeyTmp
 		return
 	default:
-		err = errors.New(`不是RSA公钥`)
+		err = errors.New(`PEM类型错误`)
 		return
 	}
 }
