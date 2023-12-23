@@ -25,7 +25,7 @@ func ParsePrivateKeyOfRSA(privateKeyStr string) (privateKey *rsa.PrivateKey, err
 	case `PRIVATE KEY`:
 		priKey, errTmp := x509.ParsePKCS8PrivateKey(block.Bytes)
 		if errTmp != nil {
-			err = errors.New(`私钥解析错误：` + errTmp.Error())
+			err = errTmp
 			return
 		}
 		privateKeyTmp, ok := priKey.(*rsa.PrivateKey)
@@ -56,7 +56,7 @@ func ParsePublicKeyOfRSA(publicKeyStr string) (publicKey *rsa.PublicKey, err err
 	case `PUBLIC KEY`:
 		pubKey, errTmp := x509.ParsePKIXPublicKey(block.Bytes)
 		if errTmp != nil {
-			err = errors.New(`公钥解析错误：` + errTmp.Error())
+			err = errTmp
 			return
 		}
 		publicKeyTmp, ok := pubKey.(*rsa.PublicKey)
