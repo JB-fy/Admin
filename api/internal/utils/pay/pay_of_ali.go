@@ -95,7 +95,7 @@ func (payThis *PayOfAli) Notify() (notifyInfo NotifyInfo, err error) {
 	for key := range dataTmp {
 		data[key] = dataTmp.Get(key)
 	} */
-	_, err = payThis.VerifySign(data, sign)
+	err = payThis.VerifySign(data, sign)
 	if err != nil {
 		return
 	}
@@ -171,7 +171,7 @@ func (payThis *PayOfAli) CreateSign(data map[string]string) (sign string, err er
 }
 
 // 验证签名
-func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (pass bool, err error) {
+func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (err error) {
 	publicKey, err := common.ParsePublicKeyOfRSA(payThis.PublicKey)
 	if err != nil {
 		return
@@ -196,9 +196,5 @@ func (payThis *PayOfAli) VerifySign(data map[string]string, sign string) (pass b
 	}
 
 	err = rsa.VerifyPKCS1v15(publicKey, hashT, hashedData, signature)
-	if err != nil {
-		return
-	}
-	pass = true
 	return
 }
