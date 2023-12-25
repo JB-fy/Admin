@@ -71,7 +71,7 @@ func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 	defer res.Close()
 	resData := gjson.New(res.ReadAllString())
 	/* //验证签名（一般不用再验证了）
-	_, err = payThis.VerifySign(resData.Var().MapStrStr(), resData.Get(`sign`).String())
+	err = payThis.VerifySign(resData.Var().MapStrStr(), resData.Get(`sign`).String())
 	if err != nil {
 		return
 	} */
