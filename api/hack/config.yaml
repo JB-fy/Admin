@@ -3,7 +3,7 @@
 gfcli:
   build:
     packSrc: "manifest,resource" # 需要打包资源目录
-    # output: "../public/" #默认文件名main，也可写成../public/xxxx指定文件名
+    # output: "../" #默认文件名main，也可写成../xxxx指定文件名
   gen:
     dao:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
