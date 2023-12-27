@@ -48,11 +48,10 @@ class Config extends AbstractValidation
         'uploadOfAliyunOssRoleArn' => 'string',
 
         'payOfAliAppId' => 'string',
-        'payOfAliSignType' => 'in:RSA2,RSA',
         'payOfAliPrivateKey' => 'string',
         'payOfAliPublicKey' => 'string',
         'payOfAliNotifyUrl' => 'url',
-        'payOfAliReturnUrl' => 'url',
+        'payOfAliOpAppId' => 'string',
 
         'payOfWxAppId' => 'string',
         'payOfWxMchid' => 'string',
@@ -134,11 +133,10 @@ class Config extends AbstractValidation
                 'uploadOfAliyunOssEndpoint',
 
                 'payOfAliAppId',
-                'payOfAliSignType',
                 'payOfAliPrivateKey',
                 'payOfAliPublicKey',
                 'payOfAliNotifyUrl',
-                'payOfAliReturnUrl',
+                'payOfAliOpAppId',
 
                 'payOfWxAppId',
                 'payOfWxMchid',

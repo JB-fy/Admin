@@ -6,11 +6,10 @@ const saveForm = reactive({
     loading: false,
     data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         payOfAliAppId: '',
-        payOfAliSignType: 'RSA2',
         payOfAliPrivateKey: '',
         payOfAliPublicKey: '',
         payOfAliNotifyUrl: '',
-        payOfAliReturnUrl: '',
+        payOfAliOpAppId: '',
 
         payOfWxAppId: '',
         payOfWxMchid: '',
@@ -23,9 +22,6 @@ const saveForm = reactive({
         payOfAliAppId: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        payOfAliSignType: [
-            { type: 'enum', enum: (tm('platform.config.status.payOfAliSignType') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
-        ],
         payOfAliPrivateKey: [
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
@@ -35,8 +31,8 @@ const saveForm = reactive({
         payOfAliNotifyUrl: [
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        payOfAliReturnUrl: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') },
+        payOfAliOpAppId: [
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
 
         payOfWxAppId: [
@@ -99,16 +95,9 @@ saveForm.initData()
                     <ElInput v-model="saveForm.data.payOfAliAppId" :placeholder="t('platform.config.name.payOfAliAppId')"
                         :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfAliSignType')" prop="payOfAliSignType">
-                    <ElRadioGroup v-model="saveForm.data.payOfAliSignType">
-                        <ElRadio v-for="(item, index) in (tm('platform.config.status.payOfAliSignType') as any)"
-                            :key="index" :label="item.value">
-                            {{ item.label }}
-                        </ElRadio>
-                    </ElRadioGroup>
-                </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
-					<ElAlert :title="t('platform.config.tip.payOfAliPrivateKey')" type="info" :show-icon="true" :closable="false" />
+                    <ElAlert :title="t('platform.config.tip.payOfAliPrivateKey')" type="info" :show-icon="true"
+                        :closable="false" />
                     <ElInput v-model="saveForm.data.payOfAliPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
@@ -118,9 +107,14 @@ saveForm.initData()
                     <ElInput v-model="saveForm.data.payOfAliNotifyUrl"
                         :placeholder="t('platform.config.name.payOfAliNotifyUrl')" :clearable="true" />
                 </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfAliReturnUrl')" prop="payOfAliReturnUrl">
-                    <ElInput v-model="saveForm.data.payOfAliReturnUrl"
-                        :placeholder="t('platform.config.name.payOfAliReturnUrl')" :clearable="true" />
+                <ElFormItem :label="t('platform.config.name.payOfAliOpAppId')" prop="payOfAliOpAppId">
+                    <ElInput v-model="saveForm.data.payOfAliOpAppId"
+                        :placeholder="t('platform.config.name.payOfAliOpAppId')" :clearable="true"
+                        style="max-width: 500px;" />
+                    <label>
+                        <ElAlert :title="t('platform.config.tip.payOfAliOpAppId')" type="info"
+                            :show-icon="true" :closable="false" />
+                    </label>
                 </ElFormItem>
             </ElTabPane>
 

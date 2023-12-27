@@ -51,11 +51,10 @@ export default {
 		uploadOfAliyunOssRoleArn: '阿里云OSS-RoleArn',
 
 		payOfAliAppId: 'AppID',
-		payOfAliSignType: '签名方式',
 		payOfAliPrivateKey: '私钥',
 		payOfAliPublicKey: '公钥',
 		payOfAliNotifyUrl: '异步回调地址',
-		payOfAliReturnUrl: '同步回调地址',
+		payOfAliOpAppId: '小程序AppID',
 
 		payOfWxAppId: 'AppID',
 		payOfWxMchid: '商户ID',
@@ -96,10 +95,6 @@ export default {
 			{ value: `uploadOfLocal`, label: '本地' },
 			{ value: `uploadOfAliyunOss`, label: '阿里云' },
 		],
-		payOfAliSignType: [
-			{ value: `RSA2`, label: 'RSA2' },
-			{ value: `RSA`, label: 'RSA' },
-		],
 		smsType: [
 			{ value: `smsOfAliyun`, label: '阿里云' },
 		],
@@ -122,6 +117,7 @@ export default {
 		uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
 		payOfAliPrivateKey: 'Golang需根据私钥格式设置头尾。PKCS1：-----BEGIN RSA PRIVATE KEY-----；PKCS8：-----BEGIN PRIVATE KEY-----。支付宝密钥工具生成的私钥格式默认为PKCS8',
+		payOfAliOpAppId: '小程序支付需设置',
 
 		idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 

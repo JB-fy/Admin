@@ -50,11 +50,10 @@ type Config struct {
 	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
 
 	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" dc:"AppId"`
-	PayOfAliSignType   *string `json:"payOfAliSignType,omitempty" dc:"签名方式"`
 	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" dc:"私钥"`
 	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" dc:"公钥"`
 	PayOfAliNotifyUrl  *string `json:"payOfAliNotifyUrl,omitempty" dc:"异步回调地址"`
-	PayOfAliReturnUrl  *string `json:"payOfAliReturnUrl,omitempty" dc:"同步回调地址"`
+	PayOfAliOpAppId    *string `json:"payOfAliOpAppId,omitempty" dc:"小程序AppId"`
 
 	PayOfWxAppId      *string `json:"payOfWxAppId,omitempty" dc:"AppId"`
 	PayOfWxMchid      *string `json:"payOfWxMchid,omitempty" dc:"商户ID"`
@@ -132,11 +131,10 @@ type ConfigSaveReq struct {
 	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
 
 	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" v:"" dc:"AppId"`
-	PayOfAliSignType   *string `json:"payOfAliSignType,omitempty" v:"in:RSA2,RSA" dc:"签名方式"`
 	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" v:"" dc:"私钥"`
 	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" v:"" dc:"公钥"`
 	PayOfAliNotifyUrl  *string `json:"payOfAliNotifyUrl,omitempty" v:"url" dc:"异步回调地址"`
-	PayOfAliReturnUrl  *string `json:"payOfAliReturnUrl,omitempty" v:"url" dc:"同步回调地址"`
+	PayOfAliOpAppId    *string `json:"payOfAliOpAppId,omitempty" v:"" dc:"小程序AppId"`
 
 	PayOfWxAppId      *string `json:"payOfWxAppId,omitempty" v:"" dc:"AppId"`
 	PayOfWxMchid      *string `json:"payOfWxMchid,omitempty" v:"" dc:"商户ID"`
