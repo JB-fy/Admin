@@ -116,7 +116,6 @@ export default {
 		uploadOfAliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
 		uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
-		payOfAliPrivateKey: 'Golang需根据私钥格式设置头尾。PKCS1：-----BEGIN RSA PRIVATE KEY-----；PKCS8：-----BEGIN PRIVATE KEY-----。支付宝密钥工具生成的私钥格式默认为PKCS8',
 		payOfAliOpAppId: '小程序支付需设置',
 
 		idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',

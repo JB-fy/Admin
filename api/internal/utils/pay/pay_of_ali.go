@@ -6,7 +6,7 @@ import (
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
-	alipay "github.com/smartwalle/alipay/v3"
+	"github.com/smartwalle/alipay/v3"
 )
 
 type PayOfAli struct {

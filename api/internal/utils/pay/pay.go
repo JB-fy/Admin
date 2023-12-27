@@ -17,9 +17,9 @@ type PayData struct {
 	OrderNo   string  //单号
 	Amount    float64 //金额。单位：元
 	Desc      string  //描述
-	ReturnUrl string  //同步回调地址。某些支付方式需要时传
-	OpenId    string  //用户openId。小程序支付必传
+	ReturnUrl string  //同步回调地址。需要时传
 	ClientIp  string  //客户端IP。需要时传
+	OpenId    string  //用户openId。小程序支付必传
 	// Device    Device  //设备类型。需要时传。 unknown未知 android安卓 ios苹果
 }
 

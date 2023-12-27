@@ -96,8 +96,6 @@ saveForm.initData()
                         :clearable="true" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
-                    <ElAlert :title="t('platform.config.tip.payOfAliPrivateKey')" type="info" :show-icon="true"
-                        :closable="false" />
                     <ElInput v-model="saveForm.data.payOfAliPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
