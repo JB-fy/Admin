@@ -25,7 +25,6 @@ type ConfigDao struct {
 
 // ConfigColumns defines and stores column names for table platform_config.
 type ConfigColumns struct {
-	ConfigId    string // 配置ID
 	ConfigKey   string // 配置Key
 	ConfigValue string // 配置值
 	UpdatedAt   string // 更新时间
@@ -34,7 +33,6 @@ type ConfigColumns struct {
 
 // configColumns holds the columns for table platform_config.
 var configColumns = ConfigColumns{
-	ConfigId:    "configId",
 	ConfigKey:   "configKey",
 	ConfigValue: "configValue",
 	UpdatedAt:   "updatedAt",

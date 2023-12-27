@@ -10,7 +10,6 @@ import (
 
 // Config is the golang structure for table config.
 type Config struct {
-	ConfigId    uint        `json:"configId"    ` // 配置ID
 	ConfigKey   string      `json:"configKey"   ` // 配置Key
 	ConfigValue string      `json:"configValue" ` // 配置值
 	UpdatedAt   *gtime.Time `json:"updatedAt"   ` // 更新时间
