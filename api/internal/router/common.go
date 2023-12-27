@@ -23,7 +23,7 @@ func InitRouterCommon(s *ghttp.Server) {
 			controllerThis.Notify,
 		)
 	})
-	//支付回调
+	//支付
 	s.Group(`/pay`, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewPay()
 		group.Bind(
