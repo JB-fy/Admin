@@ -17,7 +17,7 @@ func InitRouterCommon(s *ghttp.Server) {
 		controllerThis := controller.NewUpload()
 		group.Bind(
 			controllerThis.Upload,
-			// controllerThis.Sign, //建议在场景内验证登录token后才可调用
+			// controllerThis.Sign,   //建议在场景内验证登录token后才可调用
 			// controllerThis.Config, //建议在场景内验证登录token后才可调用
 			controllerThis.Sts,
 			controllerThis.Notify,
@@ -25,7 +25,11 @@ func InitRouterCommon(s *ghttp.Server) {
 	})
 	//支付回调
 	s.Group(`/pay`, func(group *ghttp.RouterGroup) {
-		group.Bind(controller.NewPay())
+		controllerThis := controller.NewPay()
+		group.Bind(
+			// controllerThis.Pay, //建议在场景内验证登录token后才可调用
+			controllerThis.Notify,
+		)
 	})
 	//测试
 	s.Group(``, func(group *ghttp.RouterGroup) {

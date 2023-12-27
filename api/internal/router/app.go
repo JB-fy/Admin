@@ -43,6 +43,13 @@ func InitRouterApp(s *ghttp.Server) {
 				group.Bind(controllerThis.Config)
 			})
 
+			group.Group(`/pay`, func(group *ghttp.RouterGroup) {
+				controllerThis := controller.NewPay()
+				group.Bind(
+					controllerThis.Pay,
+				)
+			})
+
 			group.Group(`/my`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerMy.NewProfile())
 			})
