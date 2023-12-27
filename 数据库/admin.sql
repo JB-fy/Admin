@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 23/12/2023 15:47:29
+ Date: 27/12/2023 16:18:22
 */
 
 SET NAMES utf8mb4;
@@ -271,65 +271,62 @@ INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a
 -- ----------------------------
 DROP TABLE IF EXISTS `platform_config`;
 CREATE TABLE `platform_config`  (
-  `configId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '配置ID',
   `configKey` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '配置Key',
   `configValue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '配置值',
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`configId`) USING BTREE,
-  UNIQUE INDEX `configKey`(`configKey` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
+  PRIMARY KEY (`configKey`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES (1, 'uploadType', 'uploadOfLocal', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (2, 'uploadOfLocalUrl', 'http://JB.Admin.com/upload/upload', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (3, 'uploadOfLocalSignKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (4, 'uploadOfLocalFileSaveDir', '../public/', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (5, 'uploadOfLocalFileUrlPrefix', 'http://JB.Admin.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (6, 'uploadOfAliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (7, 'uploadOfAliyunOssBucket', 'bucket', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (8, 'uploadOfAliyunOssAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (9, 'uploadOfAliyunOssAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (10, 'uploadOfAliyunOssCallbackUrl', 'http://JB.Admin.com/upload/notify/uploadOfAliyunOss', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (11, 'uploadOfAliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (12, 'uploadOfAliyunOssRoleArn', 'acs:ram::********:role/********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (13, 'payOfAliAppId', 'appId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (14, 'payOfAliSignType', 'RSA2', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (15, 'payOfAliPrivateKey', '-----BEGIN RSA PRIVATE KEY-----\n****************************************************************\n-----END RSA PRIVATE KEY-----', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (16, 'payOfAliPublicKey', '-----BEGIN PUBLIC KEY-----\n****************************************************************\n-----END PUBLIC KEY-----', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (17, 'payOfAliNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfAli', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (18, 'payOfAliReturnUrl', '', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (19, 'payOfWxAppId', 'appId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (20, 'payOfWxMchid', 'mchId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (21, 'payOfWxSerialNo', '********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (22, 'payOfWxApiV3Key', '********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (23, 'payOfWxPrivateKey', '-----BEGIN RSA PRIVATE KEY-----\n****************************************************************\n-----END RSA PRIVATE KEY-----', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (24, 'payOfWxNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfWx', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (25, 'smsType', 'smsOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (26, 'smsOfAliyunAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (27, 'smsOfAliyunAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (28, 'smsOfAliyunEndpoint', 'dysmsapi.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (29, 'smsOfAliyunSignName', 'JB Admin', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (30, 'smsOfAliyunTemplateCode', 'SMS_********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (31, 'idCardType', 'idCardOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (32, 'idCardOfAliyunHost', 'http://idcard.market.alicloudapi.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (33, 'idCardOfAliyunPath', '/lianzhuo/idcard', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (34, 'idCardOfAliyunAppcode', 'appcode', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (35, 'pushType', 'pushOfTx', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (36, 'pushOfTxHost', 'https://api.tpns.tencent.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (37, 'pushOfTxAndroidAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (38, 'pushOfTxAndroidSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (39, 'pushOfTxIosAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (40, 'pushOfTxIosSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (41, 'pushOfTxMacOSAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (42, 'pushOfTxMacOSSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (43, 'vodType', 'vodOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (44, 'vodOfAliyunAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (45, 'vodOfAliyunAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (46, 'vodOfAliyunEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES (47, 'vodOfAliyunRoleArn', 'acs:ram::********:role/********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('idCardOfAliyunAppcode', 'appcode', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('idCardOfAliyunHost', 'http://idcard.market.alicloudapi.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('idCardOfAliyunPath', '/lianzhuo/idcard', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('idCardType', 'idCardOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfAliAppId', 'appId', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfAliNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfAli', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfAliOpAppId', 'opAppId', '2023-12-27 16:02:36', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfAliPrivateKey', '****************', '2023-12-27 16:16:58', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfAliPublicKey', '****************', '2023-12-27 16:17:00', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfWxApiV3Key', '********', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfWxAppId', 'appId', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfWxMchid', 'mchId', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfWxNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfWx', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfWxPrivateKey', '-----BEGIN RSA PRIVATE KEY-----\n****************************************************************\n-----END RSA PRIVATE KEY-----', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('payOfWxSerialNo', '********', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxAndroidAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxAndroidSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxHost', 'https://api.tpns.tencent.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxIosAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxIosSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxMacOSAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushOfTxMacOSSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('pushType', 'pushOfTx', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunEndpoint', 'dysmsapi.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunSignName', 'JB Admin', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunTemplateCode', 'SMS_********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('smsType', 'smsOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssBucket', 'bucket', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssCallbackUrl', 'http://JB.Admin.com/upload/notify/uploadOfAliyunOss', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssRoleArn', 'acs:ram::********:role/********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalFileSaveDir', '../public/', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalFileUrlPrefix', 'http://JB.Admin.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalSignKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalUrl', 'http://JB.Admin.com/upload/upload', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('uploadType', 'uploadOfLocal', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunRoleArn', 'acs:ram::********:role/********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('vodType', 'vodOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
 
 -- ----------------------------
 -- Table structure for platform_server
