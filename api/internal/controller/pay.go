@@ -26,7 +26,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	}
 	var orderInfo gdb.Record
 	//订单查询
-	/* orderInfo, _ := dao.NewDaoHandler(ctx, &daoXxxx.Order).Filter(g.Map{
+	/* orderInfo, _ = dao.NewDaoHandler(ctx, &daoXxxx.Order).Filter(g.Map{
 		daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
 		daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
 		daoXxxx.Order.Columns().PayStatus: 0,
@@ -101,7 +101,11 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 
 		// 支付成功后处理逻辑
 		return
-	}) */
+	})
+	if err != nil {
+		payObj.NotifyRes(err.Error())
+		return
+	} */
 
 	payObj.NotifyRes(``)
 	return
