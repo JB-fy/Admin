@@ -19,7 +19,7 @@ type PayData struct {
 	Desc      string  //描述
 	ReturnUrl string  //同步回调地址。需要时传
 	ClientIp  string  //客户端IP。需要时传
-	OpenId    string  //用户openId。小程序支付必传
+	OpenId    string  //用户openId。JSAPI支付必传
 	// Device    Device  //设备类型。需要时传。 unknown未知 android安卓 ios苹果
 }
 
@@ -36,7 +36,7 @@ type NotifyInfo struct {
 type Pay interface {
 	App(payData PayData) (orderInfo PayInfo, err error)   // App支付
 	H5(payData PayData) (orderInfo PayInfo, err error)    // H5支付
-	Jsapi(payData PayData) (orderInfo PayInfo, err error) // 小程序支付
+	Jsapi(payData PayData) (orderInfo PayInfo, err error) // JSAPI支付
 	Notify() (notifyInfo NotifyInfo, err error)           // 回调
 	NotifyRes(failMsg string)                             // 回调响应处理
 }

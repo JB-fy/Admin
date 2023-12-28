@@ -42,12 +42,12 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		Desc:    `订单描述`,
 	}
 	var payInfo pay.PayInfo
-	switch *req.PayType {
+	switch req.PayMethod {
 	case 0: //APP支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).App(payData)
 	case 1: //H5支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).H5(payData)
-	case 2: //小程序支付(支付宝)
+	case 2: //JSAPI支付(支付宝)
 		/* payData.OpenId = ``
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).Jsapi(payData) */
 		err = utils.NewErrorCode(ctx, 99999999, `暂不支持，无法获取用户openId`)
@@ -56,7 +56,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	case 11: //H5支付(微信)
 		payData.ClientIp = g.RequestFromCtx(ctx).GetClientIp()
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).H5(payData)
-	case 12: //小程序支付(微信)
+	case 12: //JSAPI支付(微信)
 		/* payData.OpenId = ``
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).Jsapi(payData) */
 		err = utils.NewErrorCode(ctx, 99999999, `暂不支持，无法获取用户openId`)

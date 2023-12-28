@@ -23,7 +23,8 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 			return
 		}
 
-		jwt := utils.NewJWT(r.GetCtx(), utils.GetCtxSceneInfo(r.GetCtx())[daoAuth.Scene.Columns().SceneConfig].Map())
+		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
+		jwt := utils.NewJWT(r.GetCtx(), sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 		claims, err := jwt.ParseToken(token)
 		if err != nil {
 			if isForce {
@@ -36,7 +37,8 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------限制多地登录，多设备登录等情况下用（前置条件：登录时做过token缓存） 开始--------**/
-		/* checkToken, _ := cache.NewToken(r.GetCtx(), claims.LoginId).Get()
+		/* sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+		checkToken, _ := cache.NewToken(r.GetCtx(), sceneCode, claims.LoginId).Get()
 		if checkToken != token {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994002, ``))

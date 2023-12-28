@@ -116,7 +116,7 @@ export default {
 		uploadOfAliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
 		uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
-		payOfAliOpAppId: '小程序支付需设置',
+		payOfAliOpAppId: 'JSAPI支付需设置',
 
 		idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 

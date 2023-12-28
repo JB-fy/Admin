@@ -4,6 +4,7 @@ import (
 	"api/api"
 	apiMy "api/api/app/my"
 	"api/internal/cache"
+	daoAuth "api/internal/dao/auth"
 	daoUser "api/internal/dao/user"
 	"api/internal/service"
 	"api/internal/utils"
@@ -40,6 +41,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 
 	userColumns := daoUser.User.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	for k, v := range data {
 		switch k {
 		/* case `account`: //前端太懒，可能把个人信息全部传回来，导致account有值，故不能用required-with:Account直接验证
@@ -65,7 +68,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			smsCode, _ := cache.NewSms(ctx, phone, 3).Get() //使用场景：3密码修改
+			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 3).Get() //使用场景：3密码修改
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
@@ -78,7 +81,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 
 			phone := gconv.String(data[`phone`])
-			smsCode, _ := cache.NewSms(ctx, phone, 4).Get() //使用场景：4绑定手机
+			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 4).Get() //使用场景：4绑定手机
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
@@ -91,7 +94,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			smsCode, _ := cache.NewSms(ctx, phone, 5).Get() //使用场景：5解绑手机
+			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 5).Get() //使用场景：5解绑手机
 			if smsCode == `` || smsCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return

@@ -62,15 +62,6 @@ func GetCtxSceneInfo(ctx context.Context) gdb.Record {
 	return tmp.(gdb.Record)
 }
 
-// 获取场景标识
-// sceneCode 场景标识。作用：在同一权限场景下，使用sceneCode存在冲突时，须自定义sceneCode规避。例如：缓存模块中使用就可能存在互相覆盖BUG
-func GetSceneCode(ctx context.Context, sceneCode ...string) string {
-	if len(sceneCode) > 0 && sceneCode[0] != `` {
-		return sceneCode[0]
-	}
-	return GetCtxSceneInfo(ctx)[`sceneCode`].String()
-}
-
 // 设置登录身份信息
 func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
 	r.SetCtxVar(consts.ConstCtxLoginInfoName, info)

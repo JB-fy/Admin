@@ -39,8 +39,10 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	saltDynamic := grand.S(8)
-	err = cache.NewSalt(ctx, req.LoginName).Set(saltDynamic, 5)
+	err = cache.NewSalt(ctx, sceneCode, req.LoginName).Set(saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -66,8 +68,10 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	if req.Password != `` { //密码
-		salt, _ := cache.NewSalt(ctx, req.LoginName).Get()
+		salt, _ := cache.NewSalt(ctx, sceneCode, req.LoginName).Get()
 		if salt == `` || gmd5.MustEncrypt(info[userColumns.Password].String()+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
@@ -79,7 +83,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			return
 		}
 
-		smsCode, _ := cache.NewSms(ctx, phone, 0).Get() //使用场景：0登录
+		smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 0).Get() //使用场景：0登录
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
@@ -87,12 +91,12 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	claims := utils.CustomClaims{LoginId: info[daoUser.User.PrimaryKey()].Uint()}
-	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneConfig].Map())
+	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
 	}
-	// cache.NewToken(ctx, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
+	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
 
 	res = &api.CommonTokenRes{Token: token}
 	return
@@ -114,8 +118,10 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	if req.Password != `` {
 		data[userColumns.Password] = req.Password
 	}
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	if req.Phone != `` {
-		smsCode, _ := cache.NewSms(ctx, req.Phone, 1).Get() //使用场景：1注册
+		smsCode, _ := cache.NewSms(ctx, sceneCode, req.Phone, 1).Get() //使用场景：1注册
 		if smsCode == `` || smsCode != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39990008, ``)
 			return
@@ -141,7 +147,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	if err != nil {
 		return
 	}
-	// cache.NewToken(ctx, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
+	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
 
 	res = &api.CommonTokenRes{Token: token}
 	return
@@ -149,14 +155,15 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 
 // 密码找回
 func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
-	userColumns := daoUser.User.Columns()
-	smsCode, _ := cache.NewSms(ctx, req.Phone, 2).Get() //使用场景：2密码找回
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	smsCode, _ := cache.NewSms(ctx, sceneCode, req.Phone, 2).Get() //使用场景：2密码找回
 	if smsCode == `` || smsCode != req.SmsCode {
 		err = utils.NewErrorCode(ctx, 39990008, ``)
 		return
 	}
 
-	row, err := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{userColumns.Phone: req.Phone}).Update(g.Map{userColumns.Password: req.Password}).GetModel().UpdateAndGetAffected()
+	row, err := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{daoUser.User.Columns().Phone: req.Phone}).Update(g.Map{daoUser.User.Columns().Password: req.Password}).GetModel().UpdateAndGetAffected()
 	if err != nil {
 		return
 	}

@@ -2,7 +2,6 @@ package cache
 
 import (
 	"api/internal/consts"
-	"api/internal/utils"
 	"context"
 	"fmt"
 
@@ -16,15 +15,15 @@ type Salt struct {
 	Key   string
 }
 
-// loginName 账号/手机
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-func NewSalt(ctx context.Context, loginName string, sceneCode ...string) *Salt {
+// loginName 账号/手机
+func NewSalt(ctx context.Context, sceneCode string, loginName string) *Salt {
 	//可以做分库逻辑
 	redis := g.Redis()
 	return &Salt{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheSaltFormat, utils.GetSceneCode(ctx, sceneCode...), loginName),
+		Key:   fmt.Sprintf(consts.CacheSaltFormat, sceneCode, loginName),
 	}
 }
 

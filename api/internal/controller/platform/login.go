@@ -34,8 +34,10 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	saltDynamic := grand.S(8)
-	err = cache.NewSalt(ctx, req.LoginName).Set(saltDynamic, 5)
+	err = cache.NewSalt(ctx, sceneCode, req.LoginName).Set(saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -56,19 +58,21 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	salt, _ := cache.NewSalt(ctx, req.LoginName).Get()
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	salt, _ := cache.NewSalt(ctx, sceneCode, req.LoginName).Get()
 	if salt == `` || gmd5.MustEncrypt(info[adminColumns.Password].String()+salt) != req.Password {
 		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return
 	}
 
 	claims := utils.CustomClaims{LoginId: info[daoPlatform.Admin.PrimaryKey()].Uint()}
-	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneConfig].Map())
+	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
 	}
-	// cache.NewToken(ctx, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
+	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
 
 	res = &api.CommonTokenRes{Token: token}
 	return

@@ -2,7 +2,6 @@ package cache
 
 import (
 	"api/internal/consts"
-	"api/internal/utils"
 	"context"
 	"fmt"
 
@@ -16,15 +15,15 @@ type Token struct {
 	Key   string
 }
 
-// loginId 登录用户ID
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-func NewToken(ctx context.Context, loginId uint, sceneCode ...string) *Token {
+// loginId 登录用户ID
+func NewToken(ctx context.Context, sceneCode string, loginId uint) *Token {
 	//可以做分库逻辑
 	redis := g.Redis()
 	return &Token{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheTokenFormat, utils.GetSceneCode(ctx, sceneCode...), loginId),
+		Key:   fmt.Sprintf(consts.CacheTokenFormat, sceneCode, loginId),
 	}
 }
 

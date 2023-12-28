@@ -5,6 +5,7 @@ import (
 	apiCurrent "api/api/app"
 	"api/internal/cache"
 	"api/internal/dao"
+	daoAuth "api/internal/dao/auth"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
 	"api/internal/utils/sms"
@@ -80,11 +81,13 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 		}
 	}
 
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	smsCode := grand.Digits(4)
 	err = sms.NewSms(ctx).Send(phone, smsCode)
 	if err != nil {
 		return
 	}
-	err = cache.NewSms(ctx, phone, req.UseScene).Set(smsCode, 5*60)
+	err = cache.NewSms(ctx, sceneCode, phone, req.UseScene).Set(smsCode, 5*60)
 	return
 }
