@@ -142,7 +142,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	}
 
 	claims := utils.CustomClaims{LoginId: uint(userId)}
-	jwt := utils.NewJWT(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneConfig].Map())
+	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
 		return
