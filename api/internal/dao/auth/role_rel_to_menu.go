@@ -241,14 +241,10 @@ func (daoThis *roleRelToMenuDao) ParseFilter(filter map[string]interface{}, join
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
-				val := gconv.SliceUint(v)
-				switch len(val) {
-				case 0: //gconv.SliceUint会把0转换成[]uint{}，故不能用转换后的val。必须用原始数据v
-					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
-				case 1:
-					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), val[0])
-				default:
+				if gvar.New(v).IsSlice() {
 					m = m.WhereNotIn(tableThis+`.`+daoThis.PrimaryKey(), v)
+				} else {
+					m = m.WhereNot(tableThis+`.`+daoThis.PrimaryKey(), v)
 				}
 			case `id`, `idArr`:
 				m = m.Where(tableThis+`.`+daoThis.PrimaryKey(), v)
