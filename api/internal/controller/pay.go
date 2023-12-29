@@ -59,7 +59,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	switch sceneCode {
 	case `app`:
-		res.List = append(res.List, payList[0], payList[2])
+		res.List = append(res.List, payList[0], payList[3])
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
 		return
