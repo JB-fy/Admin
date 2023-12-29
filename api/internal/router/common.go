@@ -27,6 +27,7 @@ func InitRouterCommon(s *ghttp.Server) {
 	s.Group(`/pay`, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewPay()
 		group.Bind(
+			// controllerThis.List, //建议在场景内验证登录token后才可调用
 			// controllerThis.Pay, //建议在场景内验证登录token后才可调用
 			controllerThis.Notify,
 		)

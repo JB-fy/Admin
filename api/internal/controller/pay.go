@@ -2,11 +2,11 @@ package controller
 
 import (
 	"api/api"
+	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"api/internal/utils/pay"
 	"context"
 
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gutil"
 )
@@ -17,49 +17,106 @@ func NewPay() *Pay {
 	return &Pay{}
 }
 
+var (
+	payList = []api.PayListItem{
+		{
+			PayMethod: 0,
+			PayName:   `支付宝APP支付`,
+			PayIcon:   `http://JB.Admin.com/xxxx.png`,
+		},
+		{
+			PayMethod: 1,
+			PayName:   `支付宝H5支付`,
+			PayIcon:   `http://JB.Admin.com/xxxx.png`,
+		},
+		{
+			PayMethod: 2,
+			PayName:   `支付宝JSAPI支付`,
+			PayIcon:   `http://JB.Admin.com/xxxx.png`,
+		},
+		{
+			PayMethod: 10,
+			PayName:   `微信APP支付`,
+			PayIcon:   `http://JB.Admin.com/xxxx.png`,
+		},
+		{
+			PayMethod: 11,
+			PayName:   `微信H5支付`,
+			PayIcon:   `http://JB.Admin.com/xxxx.png`,
+		},
+		{
+			PayMethod: 12,
+			PayName:   `微信JSAPI支付`,
+			PayIcon:   `http://JB.Admin.com/xxxx.png`,
+		},
+	}
+)
+
+// 列表
+func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *api.PayListRes, err error) {
+	res = &api.PayListRes{List: []api.PayListItem{}}
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	switch sceneCode {
+	case `app`:
+		res.List = append(res.List, payList[0], payList[2])
+	default:
+		err = utils.NewErrorCode(ctx, 39999998, ``)
+		return
+	}
+	return
+}
+
 // 支付
 func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *api.PayPayRes, err error) {
-	loginInfo := utils.GetCtxLoginInfo(ctx)
-	if loginInfo.IsEmpty() {
-		err = utils.NewErrorCode(ctx, 39994000, ``)
-		return
-	}
-	var orderInfo gdb.Record
-	//订单查询
-	/* orderInfo, _ = dao.NewDaoHandler(ctx, &daoXxxx.Order).Filter(g.Map{
-		daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
-		daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
-		daoXxxx.Order.Columns().PayStatus: 0,
-	}).GetModel().One()
-	if orderInfo.IsEmpty() {
-		err = utils.NewErrorCode(ctx, 99999999, `订单不存在`)
-		return
-	} */
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	var payData pay.PayData
+	switch sceneCode {
+	case `app`:
+		loginInfo := utils.GetCtxLoginInfo(ctx)
+		if loginInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39994000, ``)
+			return
+		}
+		//订单查询
+		/* orderInfo, _ := dao.NewDaoHandler(ctx, &daoXxxx.Order).Filter(g.Map{
+			daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
+			daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
+			daoXxxx.Order.Columns().PayStatus: 0,
+		}).GetModel().One()
+		if orderInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 29999998, ``)
+			return
+		}
 
-	payData := pay.PayData{
-		OrderNo: orderInfo[`orderNo`].String(),
-		Amount:  orderInfo[`amount`].Float64(),
-		Desc:    `订单描述`,
+		payData.OrderNo = orderInfo[daoXxxx.Order.Columns().OrderNo].String()
+		payData.Amount = orderInfo[daoXxxx.Order.Columns().Price].Float64()
+		payData.Desc = `订单描述` */
+	default:
+		err = utils.NewErrorCode(ctx, 39999998, ``)
+		return
 	}
+
 	var payInfo pay.PayInfo
 	switch req.PayMethod {
 	case 0: //APP支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).App(payData)
 	case 1: //H5支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).H5(payData)
-	case 2: //JSAPI支付(支付宝)
-		/* payData.OpenId = ``
-		payInfo, err = pay.NewPay(ctx, `payOfAli`).Jsapi(payData) */
-		err = utils.NewErrorCode(ctx, 99999999, `暂不支持，无法获取用户openId`)
+	/* case 2: //JSAPI支付(支付宝)
+	payData.OpenId = ``
+	payInfo, err = pay.NewPay(ctx, `payOfAli`).Jsapi(payData) */
 	case 10: //APP支付(微信)
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).App(payData)
 	case 11: //H5支付(微信)
 		payData.ClientIp = g.RequestFromCtx(ctx).GetClientIp()
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).H5(payData)
-	case 12: //JSAPI支付(微信)
-		/* payData.OpenId = ``
-		payInfo, err = pay.NewPay(ctx, `payOfWx`).Jsapi(payData) */
-		err = utils.NewErrorCode(ctx, 99999999, `暂不支持，无法获取用户openId`)
+	/* case 12: //JSAPI支付(微信)
+	payData.OpenId = ``
+	payInfo, err = pay.NewPay(ctx, `payOfWx`).Jsapi(payData) */
+	default:
+		err = utils.NewErrorCode(ctx, 30010000, ``)
 	}
 	if err != nil {
 		return
@@ -95,7 +152,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 			return
 		}
 		if row == 0 {
-			err = utils.NewErrorCode(ctx, 99999999, `请勿重复通知`)
+			err = utils.NewErrorCode(ctx, 30010001, ``)
 			return
 		}
 

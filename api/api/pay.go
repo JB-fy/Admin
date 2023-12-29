@@ -4,6 +4,24 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
+/*--------列表 开始--------*/
+type PayListReq struct {
+	g.Meta `path:"/list" method:"post" tags:"支付" sm:"列表"`
+	// UseScene uint `json:"useScene" v:"required|in:0" dc:"使用场景：0手机APP 1手机浏览器 2电脑浏览器"`
+}
+
+type PayListRes struct {
+	List []PayListItem `json:"list" dc:"列表"`
+}
+
+type PayListItem struct {
+	PayMethod uint   `json:"payMethod" dc:"支付方式：0APP支付(支付宝) 1H5支付(支付宝) 2JSAPI支付(支付宝) 10APP支付(微信) 11H5支付(微信) 12JSAPI支付(微信)"`
+	PayName   string `json:"payName" dc:"名称"`
+	PayIcon   string `json:"payIcon" dc:"图标"`
+}
+
+/*--------列表 结束--------*/
+
 /*--------支付 开始--------*/
 type PayPayReq struct {
 	g.Meta    `path:"/pay" method:"post" tags:"支付" sm:"支付"`
