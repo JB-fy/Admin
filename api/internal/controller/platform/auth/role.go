@@ -22,7 +22,7 @@ func NewRole() *Role {
 // 列表
 func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) (res *apiAuth.RoleListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -99,7 +99,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 // 新增
 func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -120,7 +120,7 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 // 修改
 func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)

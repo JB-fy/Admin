@@ -22,7 +22,7 @@ func NewMenu() *Menu {
 // 列表
 func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) (res *apiAuth.MenuListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -99,7 +99,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 // 新增
 func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -120,7 +120,7 @@ func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateR
 // 修改
 func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
@@ -160,7 +160,7 @@ func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteR
 // 列表（树状）
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) (res *apiAuth.MenuTreeRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

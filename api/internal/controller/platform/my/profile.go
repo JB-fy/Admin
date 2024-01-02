@@ -29,7 +29,7 @@ func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoR
 // 修改个人信息
 func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

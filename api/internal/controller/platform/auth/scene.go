@@ -22,7 +22,7 @@ func NewScene() *Scene {
 // 列表
 func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq) (res *apiAuth.SceneListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -99,7 +99,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 // 新增
 func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -120,7 +120,7 @@ func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreat
 // 修改
 func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)

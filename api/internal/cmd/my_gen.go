@@ -1797,7 +1797,7 @@ func New` + tpl.TableNameCaseCamel + `() *` + tpl.TableNameCaseCamel + ` {
 // 列表
 func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -1913,7 +1913,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 // 新增
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -1945,7 +1945,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 // 修改
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, ` + "`idArr`" + `)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
@@ -2007,7 +2007,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 // 列表（树状）
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}

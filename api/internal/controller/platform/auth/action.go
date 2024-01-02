@@ -22,7 +22,7 @@ func NewAction() *Action {
 // 列表
 func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListReq) (res *apiAuth.ActionListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -99,7 +99,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 // 新增
 func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -120,7 +120,7 @@ func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCre
 // 修改
 func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)

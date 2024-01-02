@@ -22,7 +22,7 @@ func NewUser() *User {
 // 列表
 func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) (res *apiUser.UserListRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.MapDeep(req.Filter)
+	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
@@ -99,7 +99,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 // 修改
 func (controllerThis *User) Update(ctx context.Context, req *apiUser.UserUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.MapDeep(req)
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, `idArr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
