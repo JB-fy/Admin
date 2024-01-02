@@ -177,18 +177,12 @@ func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error)
 		return
 	}
 
-	bodyContent, err := ioutil.ReadAll(r.Body)
-	r.Body.Close()
-	if err != nil {
-		return
-	}
-	strCallbackBody := string(bodyContent)
-
+	callbackBodyStr := r.GetBodyString()
 	strAuth := ``
 	if r.URL.RawQuery == `` {
-		strAuth = fmt.Sprintf("%s\n%s", strURLPathDecode, strCallbackBody)
+		strAuth = fmt.Sprintf("%s\n%s", strURLPathDecode, callbackBodyStr)
 	} else {
-		strAuth = fmt.Sprintf("%s?%s\n%s", strURLPathDecode, r.URL.RawQuery, strCallbackBody)
+		strAuth = fmt.Sprintf("%s?%s\n%s", strURLPathDecode, r.URL.RawQuery, callbackBodyStr)
 	}
 	md5Ctx := md5.New()
 	md5Ctx.Write([]byte(strAuth))
