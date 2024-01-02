@@ -7,12 +7,12 @@
 </div>
 <div align=center>
 <img src="https://img.shields.io/badge/Golang-1.20-blue"/>
-<img src="https://img.shields.io/badge/GoFrame-2.5-lightBlue"/>
+<img src="https://img.shields.io/badge/GoFrame-2.6-lightBlue"/>
 <img src="https://img.shields.io/badge/PHP-8.2-blue"/>
 <img src="https://img.shields.io/badge/Hyperf-3.0-lightBlue"/>
 <img src="https://img.shields.io/badge/Node-18.16.0-blue"/>
 <img src="https://img.shields.io/badge/Vue-3.2.38-brightgreen"/>
-<img src="https://img.shields.io/badge/Element Plus-2.3.8-green"/>
+<img src="https://img.shields.io/badge/Element Plus-2.4.4-green"/>
 </div>
 
 # 重要提示
