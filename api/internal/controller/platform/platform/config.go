@@ -39,7 +39,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 // 保存
 func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigSaveReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	config := gconv.Map(req)
+	config := gconv.MapDeep(req)
 	if len(config) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
