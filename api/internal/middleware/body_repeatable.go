@@ -4,7 +4,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-// 2.6版本进入控制器后，r.GetBody()和r.GetBodyString()读取不到数据，r.Body也一样
+// GoFrame2.6版本POST表单请求(application/x-www-form-urlencoded 或 multipart/form-data)进入控制器后，r.GetBody()，r.GetBodyString()和r.Body都读取不到数据
 /* body, err := io.ReadAll(r.Body)
 r.Body.Close()
 if err != nil {
@@ -12,9 +12,8 @@ if err != nil {
 }
 bodyStr := string(body) */
 
-// repeatableRead
-// fasle时	r.GetBody()和r.GetBodyString()能读取到数据
-// true时	r.GetBody()和r.GetBodyString()能读取到数据，r.Body也能
+// 启用该中间件r.GetBody()和r.GetBodyString()一定能读取到数据
+// 设置repeatableRead为true，r.Body才能读取到数据
 func BodyRepeatable(repeatableRead bool) func(r *ghttp.Request) {
 	return func(r *ghttp.Request) {
 		r.MakeBodyRepeatableRead(repeatableRead)
