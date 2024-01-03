@@ -1,8 +1,8 @@
 package controller
 
 import (
-	// daoAuth "api/internal/dao/auth"
 	"api/api"
+	// daoAuth "api/internal/dao/auth"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -16,6 +16,26 @@ func NewTest() *Test {
 }
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
+	/* daoAuth.Action.Ctx(ctx).Hook(gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			var wg sync.WaitGroup
+			for _, record := range result {
+				wg.Add(1)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					fmt.Println(daoAuth.Action.Ctx(ctx).Where(`actionId`, record[`actionId`]).Value(`actionId`))
+					fmt.Println(daoAuth.Action.Ctx(ctx).Where(`actionId`, record[`actionId`]).Value(`actionName`))
+				}(record)
+			}
+			wg.Wait()
+			return
+		},
+	}).Limit(5).All() */
+
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
 
