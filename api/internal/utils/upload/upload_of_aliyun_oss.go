@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -156,7 +155,7 @@ func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error)
 	if err != nil {
 		return
 	}
-	publicKeyByte, err := ioutil.ReadAll(responsePublicKeyURL.Body)
+	publicKeyByte, err := io.ReadAll(responsePublicKeyURL.Body)
 	if err != nil {
 		return
 	}
