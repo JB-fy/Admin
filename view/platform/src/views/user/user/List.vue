@@ -113,12 +113,14 @@ const table = reactive({
 		align: 'center',
 		width: 100,
 		cellRenderer: (props: any): any => {
-			let typeObj: any = { '0': '', '1': 'success', '2': 'danger' }
+			let tagType: string[] = tm('common.component.tagType')
+			let obj = tm('user.user.status.gender') as { value: any, label: string }[]
+			let index = obj.findIndex((item) => { return item.value == props.rowData.gender })
 			return [
 				h(ElTag as any, {
-					type: typeObj[props.rowData.gender]
+					type: tagType[index % tagType.length]
 				}, {
-					default: () => (tm('user.user.status.gender') as any).find((item: any) => { return item.value == props.rowData.gender })?.label
+					default: () => obj[index]?.label
 				})
 			]
 		},
