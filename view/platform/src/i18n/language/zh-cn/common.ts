@@ -26,7 +26,6 @@ export default {
     closeAll: '关闭全部',
     upTop: '置顶',
     batchDelete: '批量删除',
-
     name: {
         id: 'ID',
         action: '操作',
@@ -40,7 +39,12 @@ export default {
         timeRangeStart: '开始时间',
         timeRangeEnd: '结束时间',
     },
-
+    status: {
+        whether: [
+            { value: 0, label: '否' },
+            { value: 1, label: '是' },
+        ],
+    },
     tip: {
         notSet: '未设置',
         notFullScreen: '您的浏览器不支持全屏',
@@ -57,11 +61,7 @@ export default {
         notDuplicate: '不能与现有记录重复',
         notRequired: '不填则不修改',
     },
-
-    status: {
-        whether: [
-            { value: 0, label: '否' },
-            { value: 1, label: '是' },
-        ],
-    },
+    component: {
+        tagType: ['', 'success', 'danger', 'info', 'warning'],
+    }
 }

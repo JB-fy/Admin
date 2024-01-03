@@ -2168,11 +2168,6 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", ` `,
-			"\r", ` `,
-			`"`, `\"`,
-		}))
 
 		dataKeyOfColumn := `dataKey: '` + field + `',`
 		titleOfColumn := `title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),`
@@ -2288,7 +2283,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else {
 				arrList = JSON.parse(props.rowData.` + field + `)
 			}
-			let typeArr: string[] = ['', 'success', 'danger', 'info', 'warning']
+			let tagType: string[] = tm('common.component.tagType')
 			return [
 				h(ElScrollbar, {
 					'wrap-style': 'display: flex; align-items: center;',
@@ -2298,7 +2293,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 						const content = arrList.map((item, index) => {
 							return h(ElTag as any, {
 								'style': 'margin: auto 5px 5px auto;',
-								'type': typeArr[index % 5]
+								'type': tagType[index % tagType.length]
 							}, {
 								default: () => {
 									return item
@@ -2393,22 +2388,16 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					dataKeyOfColumn = `dataKey: '` + tpl.RelTableMap[field].RelTableField + tpl.RelTableMap[field].RelSuffix + `',`
 				}
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
-				statusList := MyGenStatusList(comment)
-				tagTypeStr := ``
-				tagTypeArr := []string{``, `success`, `danger`, `info`, `warning`}
-				tagTypeLen := len(tagTypeArr)
-				for index, status := range statusList {
-					tagTypeStr += `'` + status[0] + `': '` + tagTypeArr[index%tagTypeLen] + `', `
-				}
-				tagTypeStr = gstr.SubStr(tagTypeStr, 0, -len(`, `))
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			let typeObj: any = { ` + tagTypeStr + ` }
+			let tagType: string[] = tm('common.component.tagType')
+			let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
+			let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
 			return [
 				h(ElTag as any, {
-					type: typeObj[props.rowData.` + field + `]
+					type: tagType[index % tagType.length]
 				}, {
-					default: () => (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).find((item: any) => { return item.value == props.rowData.` + field + ` })?.label
+					default: () => obj[index]?.label
 				})
 			]
 		},`
