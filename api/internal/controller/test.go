@@ -16,7 +16,8 @@ func NewTest() *Test {
 }
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
-	/* daoAuth.Action.Ctx(ctx).Hook(gdb.HookHandler{
+	/* // HookSelect方法内启用协程且进行多次Value()方法调用或内部调用过Value()方法的Sum()等方法，有概率数据返回为空（当Limit越多时出现概率越高）
+	daoAuth.Action.Ctx(ctx).Hook(gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
 			if err != nil {
