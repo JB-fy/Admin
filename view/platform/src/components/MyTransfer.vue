@@ -7,11 +7,12 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: Array
-    },
-    defaultOptions: {   //选项初始默认值。格式：[{ [transfer.props.key]: string | number, [transfer.props.label]: string },...]
         type: Array,
-        default: []
+    },
+    defaultOptions: {
+        //选项初始默认值。格式：[{ [transfer.props.key]: string | number, [transfer.props.label]: string },...]
+        type: Array,
+        default: [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
@@ -24,15 +25,15 @@ const props = defineProps({
         required: true,
     },
     placeholder: {
-        type: String
+        type: String,
     },
     filterable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     props: {
         type: Object,
-        default: {}
+        default: {},
     },
 })
 
@@ -46,7 +47,7 @@ const transfer = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        }
+        },
     }),
     options: [...props.defaultOptions] as any,
     props: {
@@ -63,20 +64,22 @@ const transfer = reactive({
     },
     api: {
         loading: false,
-        param: computed((): { filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number } => {
+        param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
             return {
                 filter: {} as { [propName: string]: any },
                 field: ['id', 'label'],
                 sort: 'id desc',
                 page: 1,
                 limit: 0,
-                ...(props.api?.param ?? {})
+                ...(props.api?.param ?? {}),
             }
         }),
         transform: computed(() => {
-            return props.api.transform ? props.api.transform : (res: any) => {
-                return res.data.list
-            }
+            return props.api.transform
+                ? props.api.transform
+                : (res: any) => {
+                      return res.data.list
+                  }
         }),
         getOptions: async () => {
             if (transfer.api.loading) {
@@ -87,16 +90,19 @@ const transfer = reactive({
             try {
                 const res = await request(props.api.code, transfer.api.param)
                 options = transfer.api.transform(res)
-            } catch (error) { }
+            } catch (error) {}
             transfer.api.loading = false
             return options
         },
         addOptions: () => {
-            transfer.api.getOptions().then((options) => {
-                if (options?.length) {
-                    transfer.options = transfer.options.concat(options ?? [])
-                }
-            }).catch((error) => { })
+            transfer.api
+                .getOptions()
+                .then((options) => {
+                    if (options?.length) {
+                        transfer.options = transfer.options.concat(options ?? [])
+                    }
+                })
+                .catch((error) => {})
         },
     },
 })
@@ -104,17 +110,19 @@ const transfer = reactive({
 transfer.initOptions()
 
 //当外部环境filter变化时，重置options
-watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
-    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        transfer.resetOptions()
-        transfer.api.addOptions()
-    }
-})
+watch(
+    () => props.api?.param?.filter,
+    (newVal: any, oldVal: any) => {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+            transfer.resetOptions()
+            transfer.api.addOptions()
+        }
+    },
+)
 </script>
 
 <template>
-    <ElTransfer :ref="(el: any) => ( transfer.ref = el )" v-model="transfer.value" :data="transfer.options"
-        :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
+    <ElTransfer :ref="(el: any) => (transfer.ref = el)" v-model="transfer.value" :data="transfer.options" :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
 </template>
 
 <style scoped>

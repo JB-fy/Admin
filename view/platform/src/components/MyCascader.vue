@@ -21,11 +21,12 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array]
+        type: [String, Number, Array],
     },
-    defaultOptions: {   //选项初始默认值。格式：[{ [cascader.props.value]: string | number, [cascader.props.label]: string },...]
+    defaultOptions: {
+        //选项初始默认值。格式：[{ [cascader.props.value]: string | number, [cascader.props.label]: string },...]
         type: Array,
-        default: []
+        default: [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
@@ -38,40 +39,41 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    isPanel: {  //是否为面板
+    isPanel: {
+        //是否为面板
         type: Boolean,
-        default: false
+        default: false,
     },
     placeholder: {
-        type: String
+        type: String,
     },
     clearable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     filterable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     disabled: {
         type: Boolean,
-        default: false
+        default: false,
     },
     collapseTags: {
         type: Boolean,
-        default: true
+        default: true,
     },
     collapseTagsTooltip: {
         type: Boolean,
-        default: true
+        default: true,
     },
     separator: {
         type: String,
-        default: '/'
+        default: '/',
     },
     props: {
         type: Object,
-        default: {}
+        default: {},
     },
 })
 
@@ -85,25 +87,28 @@ const cascader = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        }
+        },
     }),
     options: [...props.defaultOptions] as any,
     props: {
         expandTrigger: 'hover' as any, //子级展开方式。click或hover
         checkStrictly: false,
-        lazy: false,    //不建议使用动态加载模式，使用体验很差
+        lazy: false, //不建议使用动态加载模式，使用体验很差
         lazyLoad: (node: any, resolve: any) => {
             if (node.level == 0) {
                 cascader.api.param.filter[cascader.api.pidField] = 0
             } else {
                 cascader.api.param.filter[cascader.api.pidField] = node.data.id
             }
-            cascader.api.getOptions().then((options) => {
-                if (options?.length === 0) {
-                    node.data.leaf = true
-                }
-                resolve(options)
-            }).catch((error) => { })
+            cascader.api
+                .getOptions()
+                .then((options) => {
+                    if (options?.length === 0) {
+                        node.data.leaf = true
+                    }
+                    resolve(options)
+                })
+                .catch((error) => {})
             delete cascader.api.param.filter[cascader.api.pidField]
         },
         value: props.api?.param?.field?.[0] ?? 'id',
@@ -119,23 +124,25 @@ const cascader = reactive({
     },
     api: {
         loading: false,
-        param: computed((): { filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number } => {
+        param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
             return {
                 filter: {} as { [propName: string]: any },
                 field: ['id', 'label'],
                 sort: 'id desc',
                 page: 1,
                 limit: 0,
-                ...(props.api?.param ?? {})
+                ...(props.api?.param ?? {}),
             }
         }),
         transform: computed(() => {
-            return props.api.transform ? props.api.transform : (res: any) => {
-                if (cascader.props.lazy) {
-                    if (!cascader.props.checkStrictly) {
-                        //这种情况暂时可以用非动态全部加载解决。等确实需要使用时在考虑修改。
-                        //动态加载，且当checkStrictly为false时，leaf字段必须有，否则选中后值为null
-                        /* const options: any = []
+            return props.api.transform
+                ? props.api.transform
+                : (res: any) => {
+                      if (cascader.props.lazy) {
+                          if (!cascader.props.checkStrictly) {
+                              //这种情况暂时可以用非动态全部加载解决。等确实需要使用时在考虑修改。
+                              //动态加载，且当checkStrictly为false时，leaf字段必须有，否则选中后值为null
+                              /* const options: any = []
                         res.data.list.forEach((item: any) => {
                             options.push({
                                 [cascader.props.value]: item[cascader.api.param.field[0]],
@@ -144,11 +151,11 @@ const cascader = reactive({
                             })
                         })
                         return options */
-                    }
-                    return res.data.list
-                }
-                return res.data.tree
-            }
+                          }
+                          return res.data.list
+                      }
+                      return res.data.tree
+                  }
         }),
         pidField: computed((): string => {
             return props.api.pidField ?? 'pid'
@@ -162,20 +169,24 @@ const cascader = reactive({
             try {
                 const res = await request(props.api.code, cascader.api.param)
                 options = cascader.api.transform(res)
-            } catch (error) { }
+            } catch (error) {}
             cascader.api.loading = false
             return options
         },
         addOptions: () => {
-            cascader.api.getOptions().then((options) => {
-                if (options?.length) {
-                    cascader.options = cascader.options.concat(options ?? [])
-                }
-            }).catch((error) => { })
+            cascader.api
+                .getOptions()
+                .then((options) => {
+                    if (options?.length) {
+                        cascader.options = cascader.options.concat(options ?? [])
+                    }
+                })
+                .catch((error) => {})
         },
     },
     visibleChange: (val: boolean) => {
-        if (val) {  //每次打开都重新加载
+        if (val) {
+            //每次打开都重新加载
             if (cascader.props.lazy) {
                 //重新触发下动态加载事件。
                 /* cascader.props.lazy = false
@@ -185,7 +196,7 @@ const cascader = reactive({
                 cascader.api.addOptions()
             }
         }
-    }
+    },
 })
 //组件创建时，如有初始值，需初始化options
 if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue))) {
@@ -193,23 +204,45 @@ if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) 
 }
 
 //当外部环境filter变化时，重置options
-watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
-    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        cascader.resetOptions()
-        cascader.api.addOptions()
-    }
-})
+watch(
+    () => props.api?.param?.filter,
+    (newVal: any, oldVal: any) => {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+            cascader.resetOptions()
+            cascader.api.addOptions()
+        }
+    },
+)
 </script>
 
 <template>
-    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => ( cascader.ref = el )" v-model="cascader.value"
-        :options="cascader.options" :props="cascader.props" />
-    <ElCascader v-else-if="cascader.props.lazy" :ref="(el: any) => ( cascader.ref = el )" v-model="cascader.value"
-        :placeholder="placeholder" :clearable="clearable" :props="cascader.props" @visible-change="cascader.visibleChange"
-        :disabled="disabled" :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip"
-        :separator="separator" />
-    <ElCascader v-else :ref="(el: any) => ( cascader.ref = el )" v-model="cascader.value" :placeholder="placeholder"
-        :clearable="clearable" :options="cascader.options" :props="cascader.props" :filterable="filterable"
-        @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />
+    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => (cascader.ref = el)" v-model="cascader.value" :options="cascader.options" :props="cascader.props" />
+    <ElCascader
+        v-else-if="cascader.props.lazy"
+        :ref="(el: any) => (cascader.ref = el)"
+        v-model="cascader.value"
+        :placeholder="placeholder"
+        :clearable="clearable"
+        :props="cascader.props"
+        @visible-change="cascader.visibleChange"
+        :disabled="disabled"
+        :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip"
+        :separator="separator"
+    />
+    <ElCascader
+        v-else
+        :ref="(el: any) => (cascader.ref = el)"
+        v-model="cascader.value"
+        :placeholder="placeholder"
+        :clearable="clearable"
+        :options="cascader.options"
+        :props="cascader.props"
+        :filterable="filterable"
+        @visible-change="cascader.visibleChange"
+        :disabled="disabled"
+        :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip"
+        :separator="separator"
+    />
 </template>

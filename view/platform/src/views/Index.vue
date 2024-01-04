@@ -3,7 +3,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-    <div style="text-align: center; font-size: 300px; color: #409EFF;">
+    <div style="text-align: center; font-size: 300px; color: #409eff">
         <ElSpace :size="0">
             <ElIcon class="is-loading">
                 <AutoiconEpOrange />

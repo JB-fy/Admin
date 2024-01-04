@@ -7,15 +7,11 @@ const loginForm = reactive({
     ref: null as any,
     data: {
         loginName: '',
-        password: ''
+        password: '',
     },
     rules: {
-        loginName: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }
-        ],
-        password: [
-            { type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }
-        ]
+        loginName: [{ type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
+        password: [{ type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }],
     } as any,
     loading: false,
     submit: () => {
@@ -27,10 +23,10 @@ const loginForm = reactive({
             try {
                 await useAdminStore().login(loginForm.data.loginName, loginForm.data.password)
                 router.replace((route.query.redirect ? route.query.redirect : '/') as string)
-            } catch (error) { }
+            } catch (error) {}
             loginForm.loading = false
         })
-    }
+    },
 })
 </script>
 
@@ -38,10 +34,9 @@ const loginForm = reactive({
     <div class="particles"></div>
     <ElTag id="login-container">
         <ElDivider>
-            <div style="font-size: 25px;">{{ t('common.login') }}</div>
+            <div style="font-size: 25px">{{ t('common.login') }}</div>
         </ElDivider>
-        <ElForm :ref="(el: any) => ( loginForm.ref = el )" :model="loginForm.data" :rules="loginForm.rules"
-            @keyup.enter="loginForm.submit">
+        <ElForm :ref="(el: any) => (loginForm.ref = el)" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
             <ElFormItem prop="loginName">
                 <ElInput v-model="loginForm.data.loginName" :placeholder="t('login.name.loginName')">
                     <template #prefix>
@@ -50,15 +45,14 @@ const loginForm = reactive({
                 </ElInput>
             </ElFormItem>
             <ElFormItem prop="password">
-                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('login.name.password')"
-                    :show-password="true">
+                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('login.name.password')" :show-password="true">
                     <template #prefix>
                         <AutoiconEpLock />
                     </template>
                 </ElInput>
             </ElFormItem>
             <ElFormItem>
-                <ElButton :loading="loginForm.loading" type="primary" @click="loginForm.submit" style="width:100%;">
+                <ElButton :loading="loginForm.loading" type="primary" @click="loginForm.submit" style="width: 100%">
                     {{ t('common.login') }}
                 </ElButton>
             </ElFormItem>

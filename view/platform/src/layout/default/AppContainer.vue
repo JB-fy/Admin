@@ -6,10 +6,8 @@ const keepAliveStore = useKeepAliveStore()
 <template>
     <RouterView v-slot="{ Component, route }">
         <Transition mode="out-in" name="el-zoom-in-center">
-            <KeepAlive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude"
-                :max="keepAliveStore.appContainerMax">
-                <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1"
-                    :is="Component" :key="route.fullPath" />
+            <KeepAlive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
+                <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1" :is="Component" :key="route.fullPath" />
             </KeepAlive>
         </Transition>
     </RouterView>

@@ -4,7 +4,8 @@ const { t, tm } = useI18n()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
+    data: {
+        //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         hotSearch: [],
         userAgreement: '',
         privacyAgreement: '',
@@ -14,12 +15,8 @@ const saveForm = reactive({
             // { type: 'array', trigger: 'change', message: t('validation.required') },
             { type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
         ],
-        userAgreement: [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
-        privacyAgreement: [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
+        userAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        privacyAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -27,9 +24,9 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config
+                ...res.data.config,
             }
-        } catch (error) { }
+        } catch (error) {}
     },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -40,14 +37,14 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/save', param, true)
-            } catch (error) { }
+            } catch (error) {}
             saveForm.loading = false
         })
     },
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    }
+    },
 })
 
 const hotSearchHandle = reactive({
@@ -77,22 +74,30 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => ( saveForm.ref = el )" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
-        :status-icon="true" :scroll-to-error="false">
+    <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.hotSearch')" prop="hotSearch">
-            <ElTag v-for="(item, index) in saveForm.data.hotSearch"
+            <ElTag
+                v-for="(item, index) in saveForm.data.hotSearch"
                 :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]"
-                @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+                @close="hotSearchHandle.delValue(item)"
+                :key="index"
+                :closable="true"
+                style="margin-right: 10px"
+            >
                 {{ item }}
             </ElTag>
             <template v-if="saveForm.data.hotSearch.length < 10">
-                <ElInput v-if="hotSearchHandle.visible" :ref="(el: any) => ( hotSearchHandle.ref = el )"
-                    v-model="hotSearchHandle.value" :placeholder="t('platform.config.name.hotSearch')"
-                    @keyup.enter="hotSearchHandle.addValue" @blur="hotSearchHandle.addValue" size="small"
-                    style="width: 100px;" />
-                <ElButton v-else type="primary" size="small" @click="hotSearchHandle.visibleChange">
-                    <AutoiconEpPlus />{{ t('common.add') }}
-                </ElButton>
+                <ElInput
+                    v-if="hotSearchHandle.visible"
+                    :ref="(el: any) => (hotSearchHandle.ref = el)"
+                    v-model="hotSearchHandle.value"
+                    :placeholder="t('platform.config.name.hotSearch')"
+                    @keyup.enter="hotSearchHandle.addValue"
+                    @blur="hotSearchHandle.addValue"
+                    size="small"
+                    style="width: 100px"
+                />
+                <ElButton v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"> <AutoiconEpPlus />{{ t('common.add') }} </ElButton>
             </template>
         </ElFormItem>
         <ElFormItem :label="t('platform.config.name.userAgreement')" prop="userAgreement">
@@ -102,12 +107,8 @@ saveForm.initData()
             <MyEditor v-model="saveForm.data.privacyAgreement" />
         </ElFormItem>
         <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
-                <AutoiconEpCircleCheck />{{ t('common.save') }}
-            </ElButton>
-            <ElButton type="info" @click="saveForm.reset">
-                <AutoiconEpCircleClose />{{ t('common.reset') }}
-            </ElButton>
+            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
+            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
         </ElFormItem>
     </ElForm>
 </template>

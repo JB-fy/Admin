@@ -6,7 +6,7 @@
 /**
  * 处理异步批量导入列表
  * @param rawImportListOfAsync 导入列表。必须是import.meta.glob('./*.ts')返回的数据
- * @returns 
+ * @returns
  */
 export const handleBatchImportOfAsync = async (rawImportListOfAsync: any): Promise<{ [propName: string]: any }> => {
     const rawImportList: { [propName: string]: any } = {}
@@ -15,13 +15,7 @@ export const handleBatchImportOfAsync = async (rawImportListOfAsync: any): Promi
     }
     return rawImportList
 }
-/**
- * 批量导入
- * @param rawImportList 导入列表。必须是import.meta.glob('./*.ts', { eager: true })或await handleBatchImportOfAsync(import.meta.glob('./*.ts'))返回的数据
- * @param level 命名层次。特别注意：如果有不同层次文件时，默认以最浅层文件为基准开始命名。正数则表示以父级文件夹（增加相应层数）为基准开始命名；负数则表示以子级文件（减去相应层数）为基准开始命名，意味着将有部分文件不会返回。例如：-1，则最浅层文件将不返回。
- * @param type  类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；10：多维对象（键名保持原样）；11：多维对象（键名小驼峰法）；12：多维对象（键名大驼峰法）；
- * @returns 
- */
+
 /*--------使用方式 开始--------*/
 // console.log(batchImport(import.meta.glob('@/i18n/language/**/*.ts', { eager: true }), 1, 10))
 // console.log(batchImport(import.meta.glob('@/api/**/*.ts', { eager: true })))
@@ -30,6 +24,13 @@ export const handleBatchImportOfAsync = async (rawImportListOfAsync: any): Promi
 // console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/api/**/*.ts'))))
 // console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs'))))
 /*--------使用方式 结束--------*/
+/**
+ * 批量导入
+ * @param rawImportList 导入列表。必须是import.meta.glob('./*.ts', { eager: true })或await handleBatchImportOfAsync(import.meta.glob('./*.ts'))返回的数据
+ * @param level 命名层次。特别注意：如果有不同层次文件时，默认以最浅层文件为基准开始命名。正数则表示以父级文件夹（增加相应层数）为基准开始命名；负数则表示以子级文件（减去相应层数）为基准开始命名，意味着将有部分文件不会返回。例如：-1，则最浅层文件将不返回。
+ * @param type  类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；10：多维对象（键名保持原样）；11：多维对象（键名小驼峰法）；12：多维对象（键名大驼峰法）；
+ * @returns
+ */
 export const batchImport = (rawImportList: any, level: number = 0, type: number = 0): { [propName: string]: any } => {
     let importList: { [propName: string]: any } = {}
     let keyArr: string[] = []
@@ -41,7 +42,8 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
         keyArr = path.split('/')
         keyArr[keyArr.length - 1] = keyArr[keyArr.length - 1].slice(0, keyArr[keyArr.length - 1].indexOf('.'))
         keyList.push(keyArr)
-        if (rawImportList[path].default) {  //有默认值只返回默认值
+        if (rawImportList[path].default) {
+            //有默认值只返回默认值
             importArr.push(rawImportList[path].default)
         } else {
             importArr.push(rawImportList[path])
@@ -50,7 +52,7 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
             levelOfMin = keyArr.length
         }
     }
-    const start: number = levelOfMin - level - 1 < 0 ? 0 : levelOfMin - level - 1;    //键名开始的位置
+    const start: number = levelOfMin - level - 1 < 0 ? 0 : levelOfMin - level - 1 //键名开始的位置
     switch (type) {
         case 0:
             for (const key in keyList) {
@@ -59,35 +61,35 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
                 })
                 importList[keyFinal] = importArr[key]
             }
-            break;
+            break
         case 1:
             for (const key in keyList) {
                 const keyFinal = keyList[key].slice(start).reduce((keyFinalTmp, value, index) => {
                     if (index == 0) {
-                        return keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value, index) => {
+                        return (keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value, index) => {
                             if (index == 0) {
-                                return keyFinalTmp += value.slice(0, 1).toLowerCase() + value.slice(1)
+                                return (keyFinalTmp += value.slice(0, 1).toLowerCase() + value.slice(1))
                             }
-                            return keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1)
-                        }, '')
+                            return (keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1))
+                        }, ''))
                     }
-                    return keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value) => {
+                    return (keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value) => {
                         return keyFinalTmp + value.slice(0, 1).toUpperCase() + value.slice(1)
-                    }, '')
+                    }, ''))
                 }, '')
                 importList[keyFinal] = importArr[key]
             }
-            break;
+            break
         case 2:
             for (const key in keyList) {
                 const keyFinal = keyList[key].slice(start).reduce((keyFinalTmp, value, index) => {
-                    return keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value) => {
+                    return (keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value) => {
                         return keyFinalTmp + value.slice(0, 1).toUpperCase() + value.slice(1)
-                    }, '')
+                    }, ''))
                 }, '')
                 importList[keyFinal] = importArr[key]
             }
-            break;
+            break
         case 10:
             for (const key in keyList) {
                 keyList[key].slice(start).reduce((importTmp, value, index, arr) => {
@@ -101,17 +103,17 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
                         }
                     }
                     return importTmp[keyFinal]
-                }, importList)  //将importList作为importTmp的初始值，当importTmp改变，importList同时也会改变（js对象除非深复制，否则不管多少个变量都是指向同一个内存地址）
+                }, importList) //将importList作为importTmp的初始值，当importTmp改变，importList同时也会改变（js对象除非深复制，否则不管多少个变量都是指向同一个内存地址）
             }
-            break;
+            break
         case 11:
             for (const key in keyList) {
                 keyList[key].slice(start).reduce((importTmp, value, index, arr) => {
                     const keyFinal = value.split(/[\s-_]/).reduce((keyFinalTmp, value, index) => {
                         if (index == 0) {
-                            return keyFinalTmp += value.slice(0, 1).toLowerCase() + value.slice(1)
+                            return (keyFinalTmp += value.slice(0, 1).toLowerCase() + value.slice(1))
                         }
-                        return keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1)
+                        return (keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1))
                     }, '')
 
                     if (index == arr.length - 1) {
@@ -122,14 +124,14 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
                         }
                     }
                     return importTmp[keyFinal]
-                }, importList)  //将importList作为importTmp的初始值，当importTmp改变，importList同时也会改变（js对象除非深复制，否则不管多少个变量都是指向同一个内存地址）
+                }, importList) //将importList作为importTmp的初始值，当importTmp改变，importList同时也会改变（js对象除非深复制，否则不管多少个变量都是指向同一个内存地址）
             }
-            break;
+            break
         case 12:
             for (const key in keyList) {
                 keyList[key].slice(start).reduce((importTmp, value, index, arr) => {
                     const keyFinal = value.split(/[\s-_]/).reduce((keyFinalTmp, value, index) => {
-                        return keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1)
+                        return (keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1))
                     }, '')
 
                     if (index == arr.length - 1) {
@@ -140,9 +142,9 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
                         }
                     }
                     return importTmp[keyFinal]
-                }, importList)  //将importList作为importTmp的初始值，当importTmp改变，importList同时也会改变（js对象除非深复制，否则不管多少个变量都是指向同一个内存地址）
+                }, importList) //将importList作为importTmp的初始值，当importTmp改变，importList同时也会改变（js对象除非深复制，否则不管多少个变量都是指向同一个内存地址）
             }
-            break;
+            break
     }
     return importList
 }

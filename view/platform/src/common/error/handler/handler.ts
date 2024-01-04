@@ -3,7 +3,7 @@ import router from '@/router'
 //错误处理
 export const errorHandle = async (err: Error) => {
     switch (err.name) {
-        case 'ApiError':    //接口请求错误
+        case 'ApiError': //接口请求错误
             const errMsg = JSON.parse(err.message)
             switch (errMsg.code) {
                 case 39994000:
@@ -26,10 +26,10 @@ export const errorHandle = async (err: Error) => {
                     ElMessage.error(errMsg.msg)
                     break
             }
-            break;
-        case 'AxiosError':  //Axios插件错误
+            break
+        case 'AxiosError': //Axios插件错误
         default:
             ElMessage.error(err.message)
-            break;
+            break
     }
 }

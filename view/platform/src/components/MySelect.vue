@@ -8,11 +8,12 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array]
+        type: [String, Number, Array],
     },
-    defaultOptions: {   //选项初始默认值。格式：[{ value: string | number, label: string },...]
+    defaultOptions: {
+        //选项初始默认值。格式：[{ value: string | number, label: string },...]
         type: Array,
-        default: []
+        default: [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
@@ -27,39 +28,39 @@ const props = defineProps({
         required: true,
     },
     placeholder: {
-        type: String
+        type: String,
     },
     clearable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     filterable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     remote: {
         type: Boolean,
-        default: true
+        default: true,
     },
     disabled: {
         type: Boolean,
-        default: false
+        default: false,
     },
     multiple: {
         type: Boolean,
-        default: false
+        default: false,
     },
     collapseTags: {
         type: Boolean,
-        default: true
+        default: true,
     },
     collapseTagsTooltip: {
         type: Boolean,
-        default: true
+        default: true,
     },
     multipleLimit: {
         type: Number,
-        default: 0
+        default: 0,
     },
 })
 
@@ -73,7 +74,7 @@ const select = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        }
+        },
     }),
     options: [...props.defaultOptions] as any,
     initOptions: () => {
@@ -97,27 +98,29 @@ const select = reactive({
     api: {
         isEnd: false,
         loading: false,
-        param: computed((): { filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number } => {
+        param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
             return {
                 filter: {} as { [propName: string]: any },
                 field: ['id', 'label'],
                 sort: 'id desc',
                 page: 1,
                 limit: useSettingStore().scrollSize,
-                ...(props.api?.param ?? {})
+                ...(props.api?.param ?? {}),
             }
         }),
         transform: computed(() => {
-            return props.api.transform ? props.api.transform : (res: any) => {
-                const options: { value: any, label: any }[] = []
-                res.data.list.forEach((item: any) => {
-                    options.push({
-                        value: item[select.api.param.field[0]],
-                        label: item[select.api.param.field[1]]
-                    })
-                })
-                return options
-            }
+            return props.api.transform
+                ? props.api.transform
+                : (res: any) => {
+                      const options: { value: any; label: any }[] = []
+                      res.data.list.forEach((item: any) => {
+                          options.push({
+                              value: item[select.api.param.field[0]],
+                              label: item[select.api.param.field[1]],
+                          })
+                      })
+                      return options
+                  }
         }),
         selectedField: computed((): string => {
             if (props.api.selectedField) {
@@ -146,21 +149,25 @@ const select = reactive({
                 if (select.api.param.limit === 0 || options.length < select.api.param.limit) {
                     select.api.isEnd = true
                 }
-            } catch (error) { }
+            } catch (error) {}
             select.api.loading = false
             return options
         },
         addOptions: () => {
-            select.api.getOptions().then((options) => {
-                if (options?.length) {
-                    select.options = select.options.concat(options ?? [])
-                }
-            }).catch((error) => { })
+            select.api
+                .getOptions()
+                .then((options) => {
+                    if (options?.length) {
+                        select.options = select.options.concat(options ?? [])
+                    }
+                })
+                .catch((error) => {})
         },
     },
     visibleChange: (val: boolean) => {
         //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
-        if (val) {  //每次打开都重新加载
+        if (val) {
+            //每次打开都重新加载
             delete select.api.param.filter[select.api.searchField]
             select.resetOptions()
             select.api.addOptions()
@@ -174,7 +181,7 @@ const select = reactive({
         }
         select.resetOptions()
         select.api.addOptions()
-    }
+    },
 })
 //组件创建时，如有初始值，需初始化options
 if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue) {
@@ -216,32 +223,60 @@ const scrollFunc = (event: any) => {
 /* //分页加载，用到动态设置select.loading时，用这个方式设置滚动事件
 watch(() => select.loading, (newVal: any, oldVal: any) => {
     if (select.loading === false) { */
-watch(() => select.options, (newVal: any, oldVal: any) => {
-    if (select.options.length) {
-        nextTick(() => {
-            /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
+watch(
+    () => select.options,
+    (newVal: any, oldVal: any) => {
+        if (select.options.length) {
+            nextTick(() => {
+                /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
             if (!dropId) {
                 return
             }
             const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
-            const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
-            if (scrollDom) {
-                scrollDom.removeEventListener('scroll', scrollFunc)
-                scrollDom.addEventListener('scroll', scrollFunc)
-            }
-        })
-    }
-})
+                const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
+                if (scrollDom) {
+                    scrollDom.removeEventListener('scroll', scrollFunc)
+                    scrollDom.addEventListener('scroll', scrollFunc)
+                }
+            })
+        }
+    },
+)
 </script>
 
 <template>
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
-    <ElSelectV2 v-if="multiple" :ref="(el: any) => ( select.ref = el )" v-model="select.value" :placeholder="placeholder"
-        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled"
-        :multiple="multiple" :multiple-limit="multipleLimit" :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px;" />
-    <ElSelectV2 v-else :ref="(el: any) => ( select.ref = el )" v-model="select.value" :placeholder="placeholder"
-        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
+    <ElSelectV2
+        v-if="multiple"
+        :ref="(el: any) => (select.ref = el)"
+        v-model="select.value"
+        :placeholder="placeholder"
+        :options="select.options"
+        :clearable="clearable"
+        :filterable="filterable"
+        @visible-change="select.visibleChange"
+        :remote="remote"
+        :remote-method="select.remoteMethod"
+        :loading="select.loading"
+        :disabled="disabled"
+        :multiple="multiple"
+        :multiple-limit="multipleLimit"
+        :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip"
+        style="min-width: 225px"
+    />
+    <ElSelectV2
+        v-else
+        :ref="(el: any) => (select.ref = el)"
+        v-model="select.value"
+        :placeholder="placeholder"
+        :options="select.options"
+        :clearable="clearable"
+        :filterable="filterable"
+        @visible-change="select.visibleChange"
+        :remote="remote"
+        :remote-method="select.remoteMethod"
+        :loading="select.loading"
+        :disabled="disabled"
+    />
 </template>

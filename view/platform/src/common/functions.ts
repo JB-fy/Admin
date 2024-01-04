@@ -2,8 +2,8 @@
 
 /**
  * 获取浏览器当前语言
- * @param defaultValue 
- * @returns 
+ * @param defaultValue
+ * @returns
  */
 export const getBrowserLanguage = (defaultValue: string = 'zh-cn'): string => {
     return (navigator.language || defaultValue).toLowerCase()
@@ -11,18 +11,18 @@ export const getBrowserLanguage = (defaultValue: string = 'zh-cn'): string => {
 
 /**
  * 随机整数
- * @param min 
- * @param max 
- * @returns 
+ * @param min
+ * @param max
+ * @returns
  */
 export const randomInt = (min: number, max: number) => {
-    return Math.round(Math.random() * (max - min)) + min;
+    return Math.round(Math.random() * (max - min)) + min
 }
 
 /**
  * 是否空对象
- * @param obj 
- * @returns 
+ * @param obj
+ * @returns
  */
 export const isEmptyObj = (obj: any) => {
     if (Array.prototype.isPrototypeOf(obj) && obj.length === 0) {
@@ -36,19 +36,15 @@ export const isEmptyObj = (obj: any) => {
 
 /**
  * 清理对象空值属性
- * @param obj 
+ * @param obj
  * @param isClearStr    清理空字符串：''
  * @param isClearObj    清理空对象：[]，{}
- * @returns 
+ * @returns
  */
 export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: boolean = true, isClearObj: boolean = false) => {
     const temp: { [propName: string]: any } = {}
-    Object.keys(obj).forEach(item => {
-        if (!(obj[item] === undefined ||
-            obj[item] === null ||
-            (isClearStr && obj[item] === '') ||
-            (isClearObj && isEmptyObj(obj[item])))
-        ) {
+    Object.keys(obj).forEach((item) => {
+        if (!(obj[item] === undefined || obj[item] === null || (isClearStr && obj[item] === '') || (isClearObj && isEmptyObj(obj[item])))) {
             temp[item] = obj[item]
         }
     })

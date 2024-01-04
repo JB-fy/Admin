@@ -7,8 +7,9 @@
 const { t } = useI18n()
 
 const props = defineProps({
-    modelValue: {   //单选传字符串，多选传数组
-        type: [String, Array]
+    modelValue: {
+        //单选传字符串，多选传数组
+        type: [String, Array],
     },
     /**
      * 接口。格式：{ code: string, param: Object }
@@ -16,19 +17,22 @@ const props = defineProps({
      *      param：非必须。接口函数所需参数。格式：{ [propName: string]: any }
      */
     api: {
-        type: Object
+        type: Object,
     },
-    acceptType: {   //需要严格限制文件格式时使用。示例：['image/png','image/jpg','image/jpeg','image/gif']
+    acceptType: {
+        //需要严格限制文件格式时使用。示例：['image/png','image/jpg','image/jpeg','image/gif']
         type: Array,
-        default: []
+        default: [],
     },
-    maxSize: {  //需要限制文件大小时使用，单位：字节。示例：100 * 1024 * 1024
+    maxSize: {
+        //需要限制文件大小时使用，单位：字节。示例：100 * 1024 * 1024
         type: Number,
-        default: 0
+        default: 0,
     },
-    isImage: { //是否显示图片缩略图
+    isImage: {
+        //是否显示图片缩略图
         type: Boolean,
-        default: true
+        default: true,
     },
     tip: {
         type: String,
@@ -36,20 +40,21 @@ const props = defineProps({
     },
     multiple: {
         type: Boolean,
-        default: false
+        default: false,
     },
     limit: {
-        type: Number
+        type: Number,
     },
-    accept: {   //文件选择弹出框过滤用，但可被人工跳过。示例：image/*; video/*; audio/*; text/*; application/*; .png,.xls,.pdf,.apk,.ipa等
+    accept: {
+        //文件选择弹出框过滤用，但可被人工跳过。示例：image/*; video/*; audio/*; text/*; application/*; .png,.xls,.pdf,.apk,.ipa等
         type: String,
-        default: ''
+        default: '',
     },
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
-    id: 'MyUpload' + new Date().getTime() + '_' + randomInt(1000, 9999) as string,   //用于判断组件是否已经销毁，防止倒计时重复执行
+    id: ('MyUpload' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
     value: ((): any => {
         if (props.multiple) {
@@ -88,14 +93,16 @@ const upload = reactive({
             return (props.modelValue as string[]).map((item) => {
                 return {
                     name: item.slice(item.lastIndexOf('/') + 1),
-                    url: item
+                    url: item,
                 }
             })
         }
-        return [{
-            name: (props.modelValue as string).slice((props.modelValue as string).lastIndexOf('/') + 1),
-            url: (props.modelValue as string)
-        }]
+        return [
+            {
+                name: (props.modelValue as string).slice((props.modelValue as string).lastIndexOf('/') + 1),
+                url: props.modelValue as string,
+            },
+        ]
     })(),
     class: computed((): string => {
         if (props.multiple) {
@@ -106,7 +113,7 @@ const upload = reactive({
     }),
     action: '' as string,
     data: {} as { [propName: string]: any },
-    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
+    signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await upload.api.getSignInfo()
@@ -130,14 +137,14 @@ const upload = reactive({
         let url = upload.signInfo.host + '/' + fileName
         return {
             fileName: fileName,
-            url: url
+            url: url,
         }
     },
     api: {
         loading: false,
         code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
         param: {
-            ...props.api?.param
+            ...props.api?.param,
         },
         getSignInfo: async () => {
             if (upload.api.loading) {
@@ -148,7 +155,7 @@ const upload = reactive({
             try {
                 const res = await request(upload.api.code, upload.api.param)
                 signInfo = res.data
-            } catch (error) { }
+            } catch (error) {}
             upload.api.loading = false
             return signInfo
         },
@@ -169,13 +176,14 @@ const upload = reactive({
         emits('change')
     },
     onSuccess: (res: any, file: any, fileList: any) => {
-        if (upload.signInfo?.isRes) {    //如有回调服务器且有报错，则默认失败
+        if (upload.signInfo?.isRes) {
+            //如有回调服务器且有报错，则默认失败
             if (res.code !== 0) {
                 ElMessage.error(t('common.tip.uploadFail'))
                 fileList.splice(fileList.indexOf(file), 1)
                 return
             }
-            file.raw.saveInfo.url = res.data.url  //有返回以服务器返回地址为准
+            file.raw.saveInfo.url = res.data.url //有返回以服务器返回地址为准
         }
         if (props.multiple) {
             upload.value.push(file.raw.saveInfo.url)
@@ -197,7 +205,7 @@ const upload = reactive({
         }
         rawFile.saveInfo = upload.createSaveInfo(rawFile)
         upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
-    }
+    },
 })
 
 const imageViewer = reactive({
@@ -210,19 +218,31 @@ const imageViewer = reactive({
     visible: false,
     close: () => {
         imageViewer.visible = false
-    }
+    },
 })
 
-upload.initSignInfo()   //初始化签名信息
+upload.initSignInfo() //初始化签名信息
 </script>
 
 <template>
     <div :id="upload.id">
         <div v-if="isImage" class="upload-container">
-            <ElUpload :ref="(el: any) => ( upload.ref = el )" v-model:file-list="upload.fileList" :action="upload.action"
-                :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
-                :on-remove="upload.onRemove" :on-preview="upload.onPreview" :multiple="multiple" :limit="limit"
-                :accept="accept" list-type="picture-card" :drag="true" :class="upload.class">
+            <ElUpload
+                :ref="(el: any) => (upload.ref = el)"
+                v-model:file-list="upload.fileList"
+                :action="upload.action"
+                :data="upload.data"
+                :before-upload="upload.beforeUpload"
+                :on-success="upload.onSuccess"
+                :on-remove="upload.onRemove"
+                :on-preview="upload.onPreview"
+                :multiple="multiple"
+                :limit="limit"
+                :accept="accept"
+                list-type="picture-card"
+                :drag="true"
+                :class="upload.class"
+            >
                 <ElIcon class="el-icon--upload">
                     <AutoiconEpUploadFilled />
                 </ElIcon>
@@ -233,12 +253,22 @@ upload.initSignInfo()   //初始化签名信息
                     </div>
                 </template>
             </ElUpload>
-            <ElImageViewer v-if="imageViewer.visible" :url-list="imageViewer.urlList"
-                :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
+            <ElImageViewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
         </div>
-        <ElUpload v-else :ref="(el: any) => ( upload.ref = el )" v-model:file-list="upload.fileList" :action="upload.action"
-            :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
-            :on-remove="upload.onRemove" :multiple="multiple" :limit="limit" :accept="accept" list-type="text">
+        <ElUpload
+            v-else
+            :ref="(el: any) => (upload.ref = el)"
+            v-model:file-list="upload.fileList"
+            :action="upload.action"
+            :data="upload.data"
+            :before-upload="upload.beforeUpload"
+            :on-success="upload.onSuccess"
+            :on-remove="upload.onRemove"
+            :multiple="multiple"
+            :limit="limit"
+            :accept="accept"
+            list-type="text"
+        >
             <ElButton type="primary">{{ t('common.upload') }}</ElButton>
             <template v-if="tip" #tip>
                 <div class="el-upload__tip">

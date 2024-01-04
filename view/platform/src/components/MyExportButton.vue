@@ -10,15 +10,17 @@ const { t, tm } = useI18n()
 
 const props = defineProps({
     fileName: {
-        type: String
-    },
-    i18nPrefix: {   //i18n包t, tm两个方法参数的前缀。示例：'auth.test'，则对应t('auth.test.name.xxxx')或tm('auth.test.status.xxxx')
         type: String,
-        required: true
     },
-    headerList: {   //表头。格式：{ [propName: string]: string }。也可直接传table.columns，即各个页面table组件的列定义
+    i18nPrefix: {
+        //i18n包t, tm两个方法参数的前缀。示例：'auth.test'，则对应t('auth.test.name.xxxx')或tm('auth.test.status.xxxx')
+        type: String,
+        required: true,
+    },
+    headerList: {
+        //表头。格式：{ [propName: string]: string }。也可直接传table.columns，即各个页面table组件的列定义
         type: [Object, Array],
-        required: true
+        required: true,
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
@@ -39,53 +41,60 @@ const exportButton = reactive({
     headerList: computed(() => {
         if (Array.isArray(props.headerList)) {
             return props.headerList.reduce((headerListTmp: { [propName: string]: string }, item: any) => {
-                item.dataKey ? headerListTmp[item.dataKey] = item.title : null
+                item.dataKey ? (headerListTmp[item.dataKey] = item.title) : null
                 return headerListTmp
             }, {})
         }
         return props.headerList
     }),
     api: {
-        param: computed((): { filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number } => {
+        param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
             const param = {
                 filter: {} as { [propName: string]: any },
                 field: [],
                 sort: 'id desc',
                 page: 1,
                 limit: useSettingStore().exportButton.limit,
-                ...(props.api?.param ?? {})
+                ...(props.api?.param ?? {}),
             }
             param.filter = removeEmptyOfObj(param.filter)
             return param
         }),
         transform: computed(() => {
-            return props.api.transform ? props.api.transform : (res: any) => {
-                return res.data.list.map((item: any) => {
-                    for (const key in item) {
-                        if (key.replace(/([A-Z])/g, '_$1').toLowerCase().startsWith('is_')) {
-                            item[key] = (tm('common.status.whether') as any).find((item1: any) => {
-                                return item1.value == item[key]
-                            }).label
-                        } else {
-                            // let statusArr = tm(props.i18nPrefix + '.status.' + key) as { value: number | string, label: string }[]
-                            let statusArr = tm(props.i18nPrefix + '.status.' + key)
-                            if (statusArr.length) {
-                                item[key] = (statusArr as any).find((item1: any) => {
-                                    return item1.value == item[key]
-                                }).label
-                            }
-                        }
-                    }
-                    return item
-                })
-            }
+            return props.api.transform
+                ? props.api.transform
+                : (res: any) => {
+                      return res.data.list.map((item: any) => {
+                          for (const key in item) {
+                              if (
+                                  key
+                                      .replace(/([A-Z])/g, '_$1')
+                                      .toLowerCase()
+                                      .startsWith('is_')
+                              ) {
+                                  item[key] = (tm('common.status.whether') as any).find((item1: any) => {
+                                      return item1.value == item[key]
+                                  }).label
+                              } else {
+                                  // let statusArr = tm(props.i18nPrefix + '.status.' + key) as { value: number | string, label: string }[]
+                                  let statusArr = tm(props.i18nPrefix + '.status.' + key)
+                                  if (statusArr.length) {
+                                      item[key] = (statusArr as any).find((item1: any) => {
+                                          return item1.value == item[key]
+                                      }).label
+                                  }
+                              }
+                          }
+                          return item
+                      })
+                  }
         }),
         getData: async () => {
             let data = []
             try {
                 const res = await request(props.api.code, exportButton.api.param)
                 data = exportButton.api.transform(res)
-            } catch (error) { }
+            } catch (error) {}
             return data
         },
     },
@@ -93,7 +102,7 @@ const exportButton = reactive({
         return data.map((item: any) => {
             const tmp: { [propName: string]: any } = {}
             for (const key in headerList) {
-                key in item ? tmp[headerList[key]] = item[key] : null
+                key in item ? (tmp[headerList[key]] = item[key]) : null
             }
             return tmp
         })
@@ -104,34 +113,33 @@ const exportButton = reactive({
             title: t('common.tip.configExport'),
             center: true,
             showClose: false,
-        }).then(async () => {
-            exportButton.loading = true
-            while (true) {
-                try {
-                    let data = await exportButton.api.getData()
-                    const length = data.length
-                    if (data.length == 0) {
+        })
+            .then(async () => {
+                exportButton.loading = true
+                while (true) {
+                    try {
+                        let data = await exportButton.api.getData()
+                        const length = data.length
+                        if (data.length == 0) {
+                            break
+                        }
+                        data = exportButton.dataHandle(data, exportButton.headerList)
+                        exportExcel([{ data: data }], exportButton.fileName)
+                        if (exportButton.api.param.limit === 0 || length < exportButton.api.param.limit) {
+                            break
+                        }
+                        exportButton.api.param.page++
+                    } catch (error) {
                         break
                     }
-                    data = exportButton.dataHandle(data, exportButton.headerList)
-                    exportExcel([{ data: data }], exportButton.fileName)
-                    if (exportButton.api.param.limit === 0 || length < exportButton.api.param.limit) {
-                        break
-                    }
-                    exportButton.api.param.page++
-                } catch (error) {
-                    break
                 }
-            }
-            exportButton.loading = false
-        }).catch(() => { })
-    }
+                exportButton.loading = false
+            })
+            .catch(() => {})
+    },
 })
-
 </script>
 
 <template>
-    <ElButton type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading">
-        <AutoiconEpDownload />{{ t('common.export') }}
-    </ElButton>
+    <ElButton type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading"> <AutoiconEpDownload />{{ t('common.export') }} </ElButton>
 </template>

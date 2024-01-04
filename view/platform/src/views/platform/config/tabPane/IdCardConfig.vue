@@ -4,25 +4,18 @@ const { t, tm } = useI18n()
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: { //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
+    data: {
+        //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         idCardType: 'idCardOfAliyun',
         idCardOfAliyunHost: '',
         idCardOfAliyunPath: '',
         idCardOfAliyunAppcode: '',
     } as { [propName: string]: any },
     rules: {
-        idCardType: [
-            { type: 'enum', enum: [`idCardOfAliyun`], trigger: 'change', message: t('validation.select') },
-        ],
-        idCardOfAliyunHost: [
-            { type: 'url', trigger: 'blur', message: t('validation.url') },
-        ],
-        idCardOfAliyunPath: [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
-        idCardOfAliyunAppcode: [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
+        idCardType: [{ type: 'enum', enum: [`idCardOfAliyun`], trigger: 'change', message: t('validation.select') }],
+        idCardOfAliyunHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
+        idCardOfAliyunPath: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        idCardOfAliyunAppcode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -30,9 +23,9 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config
+                ...res.data.config,
             }
-        } catch (error) { }
+        } catch (error) {}
     },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -43,26 +36,24 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data, false)
             try {
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/save', param, true)
-            } catch (error) { }
+            } catch (error) {}
             saveForm.loading = false
         })
     },
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    }
+    },
 })
 
 saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => ( saveForm.ref = el )" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
-        :status-icon="true" :scroll-to-error="false">
+    <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.idCardType')" prop="idCardType">
             <ElRadioGroup v-model="saveForm.data.idCardType">
-                <ElRadio v-for="(item, index) in (tm('platform.config.status.idCardType') as any)" :key="index"
-                    :label="item.value">
+                <ElRadio v-for="(item, index) in tm('platform.config.status.idCardType') as any" :key="index" :label="item.value">
                     {{ item.label }}
                 </ElRadio>
             </ElRadioGroup>
@@ -70,9 +61,7 @@ saveForm.initData()
 
         <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
             <ElFormItem :label="t('platform.config.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
-                <ElInput v-model="saveForm.data.idCardOfAliyunHost"
-                    :placeholder="t('platform.config.name.idCardOfAliyunHost')" :clearable="true"
-                    style="max-width: 500px;" />
+                <ElInput v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.name.idCardOfAliyunHost')" :clearable="true" style="max-width: 500px" />
                 <label>
                     <ElAlert type="info" :show-icon="true" :closable="false">
                         <template #title>
@@ -82,22 +71,16 @@ saveForm.initData()
                 </label>
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
-                <ElInput v-model="saveForm.data.idCardOfAliyunPath"
-                    :placeholder="t('platform.config.name.idCardOfAliyunPath')" :clearable="true" />
+                <ElInput v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.name.idCardOfAliyunPath')" :clearable="true" />
             </ElFormItem>
             <ElFormItem :label="t('platform.config.name.idCardOfAliyunAppcode')" prop="idCardOfAliyunAppcode">
-                <ElInput v-model="saveForm.data.idCardOfAliyunAppcode"
-                    :placeholder="t('platform.config.name.idCardOfAliyunAppcode')" :clearable="true" />
+                <ElInput v-model="saveForm.data.idCardOfAliyunAppcode" :placeholder="t('platform.config.name.idCardOfAliyunAppcode')" :clearable="true" />
             </ElFormItem>
         </template>
 
         <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
-                <AutoiconEpCircleCheck />{{ t('common.save') }}
-            </ElButton>
-            <ElButton type="info" @click="saveForm.reset">
-                <AutoiconEpCircleClose />{{ t('common.reset') }}
-            </ElButton>
+            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
+            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
         </ElFormItem>
     </ElForm>
 </template>

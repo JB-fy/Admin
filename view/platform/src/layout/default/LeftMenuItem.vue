@@ -4,11 +4,11 @@ defineProps({
     tree: {
         //type: Array as PropType<{ title: string, url: string, icon: string, children: [] }[]>,
         type: Array as any,
-        required: true
+        required: true,
     },
     subMenuIndexPrefix: {
         type: String,
-        default: ''
+        default: '',
     },
 })
 </script>

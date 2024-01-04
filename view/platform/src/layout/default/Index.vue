@@ -21,7 +21,7 @@ const settingStore = useSettingStore()
             <ElMain class="main-container">
                 <AppContainer />
                 <ElBacktop target=".main-container" :right="16" :bottom="60">
-                    <span style="font-size: 14px;">{{ t('common.upTop') }}</span>
+                    <span style="font-size: 14px">{{ t('common.upTop') }}</span>
                     <!-- <AutoiconEpTop /> -->
                 </ElBacktop>
             </ElMain>

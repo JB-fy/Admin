@@ -25,7 +25,7 @@ import { createI18n } from 'vue-i18n'
 //import { createI18n } from 'vue-i18n/dist/vue-i18n.cjs.js'  //可以解决控制台警告（也可以在vite.config.ts中设置别名解决）：You are running the esm-bundler build of vue-i18n. It is recommended to configure your bundler to explicitly replace feature flag globals with boolean literals to get proper tree-shaking in the final bundle.
 
 const i18n = createI18n({
-    legacy: false,  //当使用useI18n()时会报错：Uncaught SyntaxError: Not available in legacy mode
+    legacy: false, //当使用useI18n()时会报错：Uncaught SyntaxError: Not available in legacy mode
     locale: getLanguage(),
     fallbackLocale: ['zh-cn', 'en'],
     messages: batchImport(import.meta.glob('@/i18n/language/**/*.ts', { eager: true }), 1, 10),

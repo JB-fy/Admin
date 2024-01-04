@@ -1,7 +1,7 @@
-import { createApp } from "vue"
-import App from "./App.vue"
+import { createApp } from 'vue'
+import App from './App.vue'
 
-import "./assets/css/main.css"
+import './assets/css/main.css'
 
 import i18n from './i18n'
 import router from './router'
@@ -18,7 +18,7 @@ app.mount('#app')
 import * as epIconList from '@element-plus/icons-vue'
 for (let [key, component] of Object.entries(epIconList)) {
     //app.component('Ep' + key, component)
-    app.component('AutoiconEp' + key, component)    //兼容图标插件unplugin-icons，如插件以后支持动态加载<component :is="图标标识变量"/>，不用修改代码
+    app.component('AutoiconEp' + key, component) //兼容图标插件unplugin-icons，如插件以后支持动态加载<component :is="图标标识变量"/>，不用修改代码
 }
 /*-------- 动态加载图标 结束 --------*/
 

@@ -3,18 +3,18 @@ import axios from 'axios'
 const option = {
     languageName: import.meta.env.VITE_LANGUAGE_NAME,
     accessTokenName: import.meta.env.VITE_ACCESS_TOKEN_NAME,
-    baseURL: function () {
+    baseURL: (function () {
         if (import.meta.env.DEV && import.meta.env.VITE_HTTP_HOST.indexOf('http') != 0) {
             return import.meta.env.VITE_DEV_API_PREFIX + import.meta.env.VITE_HTTP_HOST
         }
         return import.meta.env.VITE_HTTP_HOST
-    }(),
+    })(),
     timeout: parseInt(import.meta.env.VITE_HTTP_TIMEOUT),
 }
 
 const http = axios.create({
     baseURL: option.baseURL,
-    timeout: option.timeout
+    timeout: option.timeout,
 })
 
 http.interceptors.request.use(
@@ -25,7 +25,7 @@ http.interceptors.request.use(
     },
     (error) => {
         return Promise.reject(error)
-    }
+    },
 )
 
 http.interceptors.response.use(
@@ -37,7 +37,7 @@ http.interceptors.response.use(
     },
     (error) => {
         return Promise.reject(error)
-    }
+    },
 )
 
 export default http

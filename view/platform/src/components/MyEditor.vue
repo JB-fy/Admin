@@ -12,7 +12,7 @@ const languageStore = useLanguageStore()
 
 const props = defineProps({
     modelValue: {
-        type: String
+        type: String,
     },
     /**
      * 接口。格式：{ code: string, param: Object }
@@ -20,21 +20,21 @@ const props = defineProps({
      *      param：非必须。接口函数所需参数。格式：{ [propName: string]: any }
      */
     api: {
-        type: Object
+        type: Object,
     },
     init: {
         type: Object,
-        default: {}
+        default: {},
     },
     disabled: {
         type: Boolean,
-        default: false
+        default: false,
     },
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
 const myEditor = reactive({
-    id: 'MyEditor' + new Date().getTime() + '_' + randomInt(1000, 9999) as string,   //用于判断组件是否已经销毁，防止倒计时重复执行
+    id: ('MyEditor' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
     value: computed({
         get: () => {
@@ -43,14 +43,14 @@ const myEditor = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        }
+        },
     }),
     init: {
         width: '100%',
         // height: 'auto',
         min_height: 500,
         language: languageStore.tinymceLocale,
-        plugins: 'lists link image table code wordcount fullscreen help',   //autoresize
+        plugins: 'lists link image table code wordcount fullscreen help', //autoresize
         toolbar: 'undo redo | styles formatselect | bold italic | alignleft aligncenter alignright outdent indent bullist numlist | image fullscreen help',
         branding: false, // 右下角Tiny技术支持信息是否显示
         images_upload_handler: (blobInfo: any, progress: any) => {
@@ -59,20 +59,23 @@ const myEditor = reactive({
                 const filename = blobInfo.filename()
                 data.key = myEditor.signInfo.dir + blobInfo.id() + '_' + randomInt(1000, 9999) + filename.slice(filename.lastIndexOf('.'))
                 data.file = blobInfo.blob()
-                axios.post(myEditor.signInfo.uploadUrl, data, { headers: { "Content-Type": "multipart/form-data" } }).then((res) => {
-                    let imgUrl = myEditor.signInfo.host + '/' + data.key
-                    if (myEditor.signInfo?.isRes) {
-                        if (res.data.code !== 0) {
-                            reject(t('common.tip.uploadFail'))
-                            return
+                axios
+                    .post(myEditor.signInfo.uploadUrl, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+                    .then((res) => {
+                        let imgUrl = myEditor.signInfo.host + '/' + data.key
+                        if (myEditor.signInfo?.isRes) {
+                            if (res.data.code !== 0) {
+                                reject(t('common.tip.uploadFail'))
+                                return
+                            }
+                            imgUrl = res.data.data.url
                         }
-                        imgUrl = res.data.data.url
-                    }
-                    resolve(imgUrl)
-                }).catch((error) => {
-                    reject(error.message)
-                }).finally(() => {
-                })
+                        resolve(imgUrl)
+                    })
+                    .catch((error) => {
+                        reject(error.message)
+                    })
+                    .finally(() => {})
             })
         },
         /* file_picker_callback: (callback: any, value: any, meta: any) => {
@@ -82,7 +85,7 @@ const myEditor = reactive({
         } */
         ...props.init,
     },
-    signInfo: {} as { [propName: string]: any },    //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
+    signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await myEditor.api.getSignInfo()
@@ -104,7 +107,7 @@ const myEditor = reactive({
         loading: false,
         code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
         param: {
-            ...props.api?.param
+            ...props.api?.param,
         },
         getSignInfo: async () => {
             if (myEditor.api.loading) {
@@ -115,21 +118,19 @@ const myEditor = reactive({
             try {
                 const res = await request(myEditor.api.code, myEditor.api.param)
                 signInfo = res.data
-            } catch (error) { }
+            } catch (error) {}
             myEditor.api.loading = false
             return signInfo
         },
     },
 })
 
-
-myEditor.initSignInfo()   //初始化签名信息
+myEditor.initSignInfo() //初始化签名信息
 </script>
 
 <template>
-    <div :id="myEditor.id" style="width: 100%;">
-        <Editor :ref="(el: any) => ( myEditor.ref = el )" v-model="myEditor.value" :init="myEditor.init"
-            :disabled="disabled" />
+    <div :id="myEditor.id" style="width: 100%">
+        <Editor :ref="(el: any) => (myEditor.ref = el)" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
     </div>
 </template>
 
