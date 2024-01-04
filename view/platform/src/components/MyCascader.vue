@@ -202,13 +202,13 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
 </script>
 
 <template>
-    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
+    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => ( cascader.ref = el )" v-model="cascader.value"
         :options="cascader.options" :props="cascader.props" />
-    <ElCascader v-else-if="cascader.props.lazy" :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value"
+    <ElCascader v-else-if="cascader.props.lazy" :ref="(el: any) => ( cascader.ref = el )" v-model="cascader.value"
         :placeholder="placeholder" :clearable="clearable" :props="cascader.props" @visible-change="cascader.visibleChange"
         :disabled="disabled" :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip"
         :separator="separator" />
-    <ElCascader v-else :ref="(el: any) => { cascader.ref = el }" v-model="cascader.value" :placeholder="placeholder"
+    <ElCascader v-else :ref="(el: any) => ( cascader.ref = el )" v-model="cascader.value" :placeholder="placeholder"
         :clearable="clearable" :options="cascader.options" :props="cascader.props" :filterable="filterable"
         @visible-change="cascader.visibleChange" :disabled="disabled" :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip" :separator="separator" />

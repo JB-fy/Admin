@@ -113,7 +113,7 @@ watch(() => props.api?.param?.filter, (newVal: any, oldVal: any) => {
 </script>
 
 <template>
-    <ElTransfer :ref="(el: any) => { transfer.ref = el }" v-model="transfer.value" :data="transfer.options"
+    <ElTransfer :ref="(el: any) => ( transfer.ref = el )" v-model="transfer.value" :data="transfer.options"
         :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
 </template>
 

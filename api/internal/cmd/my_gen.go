@@ -2143,7 +2143,7 @@ provide('saveCommon', saveCommon)`
 			<Query />
 		</ElHeader>
 
-		<List :ref="(el: any) => { listCommon.ref = el }" />`
+		<List :ref="(el: any) => ( listCommon.ref = el )" />`
 	if option.IsCreate || option.IsUpdate {
 		tplView += `
 
@@ -2953,7 +2953,7 @@ const queryForm = reactive({
 </script>
 
 <template>
-	<ElForm class="query-form" :ref="(el: any) => { queryForm.ref = el }" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
+	<ElForm class="query-form" :ref="(el: any) => ( queryForm.ref = el )" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
 		<ElFormItem prop="id">
 			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
 		</ElFormItem>` + viewQueryField + `
@@ -3074,8 +3074,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					<ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.tagType[index % ` + field + `Handle.tagType.length]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
 						{{ item }}
 					</ElTag>
-					<!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
-					<ElInput v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
+					<!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => ( ` + field + `Handle.ref = el )" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
+					<ElInput v-if="` + field + `Handle.visible" :ref="(el: any) => ( ` + field + `Handle.ref = el )" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
 					<ElButton v-else type="primary" size="small" @click="` + field + `Handle.visibleChange">
 						<AutoiconEpPlus />{{ t('common.add') }}
 					</ElButton>
@@ -3465,9 +3465,9 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-	<ElDrawer class="save-drawer" :ref="(el: any) => { saveDrawer.ref = el }" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+	<ElDrawer class="save-drawer" :ref="(el: any) => ( saveDrawer.ref = el )" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
 		<ElScrollbar>
-			<ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
+			<ElForm :ref="(el: any) => ( saveForm.ref = el )" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
 			</ElForm>
 		</ElScrollbar>
 		<template #footer>

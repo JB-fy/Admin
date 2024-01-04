@@ -87,7 +87,7 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
+    <ElForm :ref="(el: any) => ( saveForm.ref = el )" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
         <ElTabs tab-position="left">
             <ElTabPane :label="t('platform.config.label.payOfAli')" :lazy="true">

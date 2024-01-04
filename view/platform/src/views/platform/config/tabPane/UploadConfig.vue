@@ -89,7 +89,7 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
+    <ElForm :ref="(el: any) => ( saveForm.ref = el )" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.uploadType')" prop="uploadType">
             <ElRadioGroup v-model="saveForm.data.uploadType">

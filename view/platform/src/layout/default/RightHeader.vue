@@ -125,7 +125,7 @@ const menuTab = reactive({
                 <template v-for="(item, index) in adminStore.getMenuTabList" :key="index">
                     <ElTabPane :name="item.url" :closable="item.closable">
                         <template #label>
-                            <ElDropdown :ref="(el: any) => { menuTab.refList[item.url] = el }" trigger="contextmenu"
+                            <ElDropdown :ref="(el: any) => ( menuTab.refList[item.url] = el )" trigger="contextmenu"
                                 @visible-change="(status: boolean) => { menuTab.visibleChange(status, item.url) }"
                                 style="height: 100%;" :key="item.url">
                                 <ElSpace :size="0">

@@ -219,7 +219,7 @@ upload.initSignInfo()   //初始化签名信息
 <template>
     <div :id="upload.id">
         <div v-if="isImage" class="upload-container">
-            <ElUpload :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
+            <ElUpload :ref="(el: any) => ( upload.ref = el )" v-model:file-list="upload.fileList" :action="upload.action"
                 :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
                 :on-remove="upload.onRemove" :on-preview="upload.onPreview" :multiple="multiple" :limit="limit"
                 :accept="accept" list-type="picture-card" :drag="true" :class="upload.class">
@@ -236,7 +236,7 @@ upload.initSignInfo()   //初始化签名信息
             <ElImageViewer v-if="imageViewer.visible" :url-list="imageViewer.urlList"
                 :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
         </div>
-        <ElUpload v-else :ref="(el: any) => { upload.ref = el }" v-model:file-list="upload.fileList" :action="upload.action"
+        <ElUpload v-else :ref="(el: any) => ( upload.ref = el )" v-model:file-list="upload.fileList" :action="upload.action"
             :data="upload.data" :before-upload="upload.beforeUpload" :on-success="upload.onSuccess"
             :on-remove="upload.onRemove" :multiple="multiple" :limit="limit" :accept="accept" list-type="text">
             <ElButton type="primary">{{ t('common.upload') }}</ElButton>
