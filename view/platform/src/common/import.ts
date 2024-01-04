@@ -17,15 +17,15 @@ export const handleBatchImportOfAsync = async (rawImportListOfAsync: any): Promi
 }
 /**
  * 批量导入
- * @param rawImportList 导入列表。必须是import.meta.globEager('./*.ts')或await handleBatchImportOfAsync(import.meta.glob('./*.ts'))返回的数据
+ * @param rawImportList 导入列表。必须是import.meta.glob('./*.ts', { eager: true })或await handleBatchImportOfAsync(import.meta.glob('./*.ts'))返回的数据
  * @param level 命名层次。特别注意：如果有不同层次文件时，默认以最浅层文件为基准开始命名。正数则表示以父级文件夹（增加相应层数）为基准开始命名；负数则表示以子级文件（减去相应层数）为基准开始命名，意味着将有部分文件不会返回。例如：-1，则最浅层文件将不返回。
  * @param type  类型，默认0。0：一维对象（键名保持原样）；1：一维对象（键名小驼峰法）；2：一维对象（键名大驼峰法）；10：多维对象（键名保持原样）；11：多维对象（键名小驼峰法）；12：多维对象（键名大驼峰法）；
  * @returns 
  */
 /*--------使用方式 开始--------*/
-// console.log(batchImport(import.meta.globEager('@/i18n/language/**/*.ts'), 1, 10))
-// console.log(batchImport(import.meta.globEager('@/api/**/*.ts')))
-// console.log(batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')))
+// console.log(batchImport(import.meta.glob('@/i18n/language/**/*.ts', { eager: true }), 1, 10))
+// console.log(batchImport(import.meta.glob('@/api/**/*.ts', { eager: true })))
+// console.log(batchImport(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true })))
 // console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/i18n/language/**/*.ts')), 1, 10))
 // console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/api/**/*.ts'))))
 // console.log(batchImport(await handleBatchImportOfAsync(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs'))))

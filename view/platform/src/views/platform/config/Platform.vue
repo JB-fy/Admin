@@ -1,6 +1,6 @@
 <!--直接批量导入组件 开始-->
 <!-- <script lang="ts">
-const components: { [propName: string]: any } = batchImport(import.meta.globEager('./tabPane/*.vue'))
+const components: { [propName: string]: any } = batchImport(import.meta.glob('./tabPane/*.vue', { eager: true }))
 export default {
     components: components,
 }

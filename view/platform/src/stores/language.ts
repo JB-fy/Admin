@@ -6,8 +6,8 @@ export const useLanguageStore = defineStore('language', {
   state: () => {
     return {
       language: getLanguage(),
-      //elementPlusLoacleList: import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs'),
-      elementPlusLoacleList: batchImport(import.meta.globEager('@/../node_modules/element-plus/dist/locale/*.min.mjs')),
+      //elementPlusLoacleList: import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true }),
+      elementPlusLoacleList: batchImport(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true })),
     }
   },
   getters: {

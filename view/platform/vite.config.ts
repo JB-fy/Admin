@@ -1,6 +1,8 @@
-import { fileURLToPath, URL } from "node:url";
-import { defineConfig, loadEnv } from "vite";
-import vue from "@vitejs/plugin-vue";
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig, loadEnv } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver, VantResolver } from 'unplugin-vue-components/resolvers'
@@ -8,6 +10,7 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 
 // https://vitejs.dev/config/
+
 export default defineConfig(({ command, mode, ssrBuild }) => {
   /* if (command === 'serve') {  //dev独有配置
     return {}
@@ -48,6 +51,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     },
     plugins: [
       vue(),
+      vueJsx(),
       /*--------按需导入函数 开始--------*/
       AutoImport({
         imports: [  //加载包
