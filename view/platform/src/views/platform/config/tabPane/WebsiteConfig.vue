@@ -54,7 +54,7 @@ const hotSearchHandle = reactive({
     ref: null as any,
     visible: false,
     value: undefined,
-    typeArr: ['', 'success', 'danger', 'info', 'warning'] as any,
+    tagType: tm('common.component.tagType') as any[],
     visibleChange: () => {
         hotSearchHandle.visible = true
         nextTick(() => {
@@ -80,7 +80,8 @@ saveForm.initData()
     <ElForm :ref="(el: any) => { saveForm.ref = el }" :model="saveForm.data" :rules="saveForm.rules" label-width="auto"
         :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.hotSearch')" prop="hotSearch">
-            <ElTag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.typeArr[index % 5]"
+            <ElTag v-for="(item, index) in saveForm.data.hotSearch"
+                :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]"
                 @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                 {{ item }}
             </ElTag>

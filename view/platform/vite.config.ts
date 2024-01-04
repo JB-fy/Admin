@@ -16,9 +16,10 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
   } */
   const env = loadEnv(mode, process.cwd(), ''); //设置第三个参数为 '' 来加载所有环境变量，而不管是否有 `VITE_` 前缀。
   return {
-    /* define: {
-      'process.env': env
-    }, */
+    define: {
+      // 'process.env': env
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: command === 'serve' ? true : false
+    },
     base: env.VITE_BASE_PATH, //URL部署时的目录。打包时给所有静态资源路径加上该前缀,
     build: {
       outDir: env.VITE_OUT_DIR, //构建文件的输出目录

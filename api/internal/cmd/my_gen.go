@@ -2283,7 +2283,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else {
 				arrList = JSON.parse(props.rowData.` + field + `)
 			}
-			let tagType: string[] = tm('common.component.tagType')
+			let tagType = tm('common.component.tagType') as string[]
 			return [
 				h(ElScrollbar, {
 					'wrap-style': 'display: flex; align-items: center;',
@@ -2390,7 +2390,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			let tagType: string[] = tm('common.component.tagType')
+			let tagType = tm('common.component.tagType') as string[]
 			let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
 			let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
 			return [
@@ -3067,7 +3067,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		],`
 			viewSaveField += `
 				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.typeArr[index % 5]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+					<ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.tagType[index % ` + field + `Handle.tagType.length]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
 						{{ item }}
 					</ElTag>
 					<!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => { ` + field + `Handle.ref = el }" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
@@ -3082,7 +3082,7 @@ const ` + field + `Handle = reactive({
 	ref: null as any,
 	visible: false,
 	value: undefined,
-	typeArr: ['', 'success', 'danger', 'info', 'warning'] as any,
+	tagType: tm('common.component.tagType') as string[],
 	visibleChange: () => {
 		` + field + `Handle.visible = true
 		nextTick(() => {
