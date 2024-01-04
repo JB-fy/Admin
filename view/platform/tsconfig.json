@@ -1,22 +1,4 @@
 {
-  // "extends": "@vue/tsconfig/tsconfig.web.json",
-  // //"include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  // //"include": ["env.d.ts", "src/**/*", "src/**/*.vue", "**/*"],
-  // "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "auto-imports.d.ts", "components.d.ts"],
-  // "compilerOptions": {
-  //   "baseUrl": ".",
-  //   "paths": {
-  //     "@/*": ["./src/*"]
-  //   },
-  //   /* "module": "ESNext",
-  //   "target": "ES2022", */
-  //   "ignoreDeprecations":"5.0",
-  // },
-  // "references": [
-  //   {
-  //     "path": "./tsconfig.config.json"
-  //   }
-  // ]
   "files": [],
   "references": [
     {
