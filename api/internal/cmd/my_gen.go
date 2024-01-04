@@ -133,9 +133,9 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	option := MyGenOptionHandle(ctx, parser)
 	tpl := MyGenTplHandle(ctx, option)
 
-	MyGenTplDao(ctx, option, tpl)                         // dao层存在时，增加或修改部分字段的解析代码
-	MyGenTplLogic(ctx, option, tpl)                       // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
-	exec.Command(`gf`, `gen`, `service`).CombinedOutput() // service生成
+	MyGenTplDao(ctx, option, tpl)              // dao层存在时，增加或修改部分字段的解析代码
+	MyGenTplLogic(ctx, option, tpl)            // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	exec.Command(`gf`, `gen`, `service`).Run() // service生成
 
 	if option.IsApi {
 		MyGenTplApi(ctx, option, tpl)        // api模板生成
@@ -150,6 +150,10 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		MyGenTplViewSave(ctx, option, tpl)   // 视图模板Save生成
 		MyGenTplViewI18n(ctx, option, tpl)   // 视图模板I18n生成
 		MyGenTplViewRouter(ctx, option, tpl) // 前端路由生成
+		// 前端代码格式化
+		command := exec.Command(`npm`, `run`, `format`)
+		command.Dir = gfile.SelfDir() + `/../view/` + option.SceneCode
+		command.Run()
 	}
 	return
 }
