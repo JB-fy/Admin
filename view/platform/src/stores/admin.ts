@@ -14,8 +14,8 @@ export const useAdminStore = defineStore('admin', {
                 i18n: {
                     title: {
                         en: 'Dev Tool',
-                        'zh-cn': '开发工具'
-                    }
+                        'zh-cn': '开发工具',
+                    },
                 },
                 icon: 'AutoiconEpHelpFilled',
                 url: '',
@@ -36,70 +36,70 @@ export const useAdminStore = defineStore('admin', {
                         i18n: {
                             title: {
                                 en: 'GoFrame',
-                                'zh-cn': 'GoFrame'
-                            }
+                                'zh-cn': 'GoFrame',
+                            },
                         },
                         icon: 'AutoiconEpChromeFilled',
                         url: 'https://goframe.org/#all-updates',
-                        children: []
+                        children: [],
                     },
                     {
                         i18n: {
                             title: {
                                 en: 'Hyperf',
-                                'zh-cn': 'Hyperf'
-                            }
+                                'zh-cn': 'Hyperf',
+                            },
                         },
                         icon: 'AutoiconEpChromeFilled',
                         url: 'https://www.hyperf.io/',
-                        children: []
+                        children: [],
                     },
                     {
                         i18n: {
                             title: {
                                 en: 'Element Plus',
-                                'zh-cn': 'Element Plus'
-                            }
+                                'zh-cn': 'Element Plus',
+                            },
                         },
                         icon: 'AutoiconEpElementPlus',
                         url: 'https://element-plus.gitee.io/zh-CN/',
-                        children: []
+                        children: [],
                     },
                     {
                         i18n: {
                             title: {
                                 en: 'Vant 4',
-                                'zh-cn': 'Vant 4'
-                            }
+                                'zh-cn': 'Vant 4',
+                            },
                         },
                         icon: 'Vant-wechat-moments',
                         url: 'https://vant-contrib.gitee.io/vant/#/zh-CN',
-                        children: []
+                        children: [],
                     },
                     {
                         i18n: {
                             title: {
                                 en: 'Vue',
-                                'zh-cn': 'Vue'
-                            }
+                                'zh-cn': 'Vue',
+                            },
                         },
                         icon: 'AutoiconEpChromeFilled',
                         url: 'https://cn.vuejs.org/api/',
-                        children: []
+                        children: [],
                     },
                     {
                         i18n: {
                             title: {
                                 en: 'Icon',
-                                'zh-cn': '图标'
-                            }
+                                'zh-cn': '图标',
+                            },
                         },
                         icon: 'AutoiconEpHelp',
                         url: 'https://github.com/antfu/unplugin-icons',
-                        children: []
-                    }
-                ]
-            } as { i18n: { title: { [propName: string]: string } }; icon: string; url: string; children: { [propName: string]: any }[] }
+                        children: [],
+                    },
+                ],
+            } as { i18n: { title: { [propName: string]: string } }; icon: string; url: string; children: { [propName: string]: any }[] },
         }
     },
     getters: {
@@ -117,15 +117,15 @@ export const useAdminStore = defineStore('admin', {
                     {
                         title: useLanguageStore().getMenuTitle(router.currentRoute.value.meta?.menu),
                         url: router.currentRoute.value.fullPath,
-                        icon: (router.currentRoute.value.meta?.menu as any)?.icon
-                    }
+                        icon: (router.currentRoute.value.meta?.menu as any)?.icon,
+                    },
                 ]
             }
             return menu.menuChain.map((item) => {
                 return {
                     title: useLanguageStore().getMenuTitle(item),
                     url: item.url,
-                    icon: item.icon
+                    icon: item.icon,
                 }
             })
         },
@@ -137,7 +137,7 @@ export const useAdminStore = defineStore('admin', {
                     url: item.url,
                     title: useLanguageStore().getMenuTitle(item),
                     icon: item.icon,
-                    closable: item.closable
+                    closable: item.closable,
                 }
             })
             /*--------增加首页的菜单标签并置顶 开始--------*/
@@ -150,7 +150,7 @@ export const useAdminStore = defineStore('admin', {
                     url: routeOfIndex.path,
                     title: useLanguageStore().getMenuTitle(routeOfIndex.meta?.menu),
                     icon: routeOfIndex.meta?.menu?.icon,
-                    closable: false //首页的菜单标签不能关闭
+                    closable: false, //首页的菜单标签不能关闭
                 }
                 const menuOfIndex = state.menuList.find((item) => {
                     return item.url == routeOfIndex.path
@@ -163,7 +163,7 @@ export const useAdminStore = defineStore('admin', {
             }
             /*--------增加首页的菜单标签并置顶 结束--------*/
             return menuTabList
-        }
+        },
     },
     actions: {
         /**
@@ -191,7 +191,7 @@ export const useAdminStore = defineStore('admin', {
             /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 结束--------*/
             this.menuTabList.push({
                 ...menuTab,
-                closable: true
+                closable: true,
             })
         },
         /**
@@ -275,11 +275,11 @@ export const useAdminStore = defineStore('admin', {
          */
         async login(loginName: string, password: string) {
             let res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/salt', {
-                loginName: loginName
+                loginName: loginName,
             })
             res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/login', {
                 loginName: loginName,
-                password: md5(md5(md5(password) + res.data.saltStatic) + res.data.saltDynamic)
+                password: md5(md5(md5(password) + res.data.saltStatic) + res.data.saltDynamic),
             })
             this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
             //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
@@ -304,13 +304,13 @@ export const useAdminStore = defineStore('admin', {
                         i18n: menuTree[i].i18n,
                         icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
                         url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
-                        children: []
+                        children: [],
                     }
                     if (menuTree[i].children?.length) {
                         menuChain.push({
                             i18n: menuTree[i].i18n,
                             icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
-                            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url
+                            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
                         })
                         menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, [...menuChain])
                         menuChain.pop()
@@ -318,12 +318,12 @@ export const useAdminStore = defineStore('admin', {
                         const menu = {
                             i18n: menuTree[i].i18n,
                             icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
-                            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url
+                            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
                         }
                         //设置菜单列表
                         this.menuList.push({
                             ...menu,
-                            menuChain: [...menuChain, menu]
+                            menuChain: [...menuChain, menu],
                         })
                     }
                 }
@@ -345,6 +345,6 @@ export const useAdminStore = defineStore('admin', {
             } else {
                 router.push('/login?redirect=' + toPath)
             }
-        }
-    }
+        },
+    },
 })

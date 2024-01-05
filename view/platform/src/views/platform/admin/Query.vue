@@ -24,7 +24,7 @@ queryCommon.data = {
             return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
-    })
+    }),
 }
 const listCommon = inject('listCommon') as { ref: any }
 const queryForm = reactive({
@@ -39,7 +39,7 @@ const queryForm = reactive({
     reset: () => {
         queryForm.ref.resetFields()
         //queryForm.submit()
-    }
+    },
 })
 </script>
 

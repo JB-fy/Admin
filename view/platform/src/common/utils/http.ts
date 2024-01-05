@@ -9,12 +9,12 @@ const option = {
         }
         return import.meta.env.VITE_HTTP_HOST
     })(),
-    timeout: parseInt(import.meta.env.VITE_HTTP_TIMEOUT)
+    timeout: parseInt(import.meta.env.VITE_HTTP_TIMEOUT),
 }
 
 const http = axios.create({
     baseURL: option.baseURL,
-    timeout: option.timeout
+    timeout: option.timeout,
 })
 
 http.interceptors.request.use(

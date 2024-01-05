@@ -12,7 +12,7 @@ const languageStore = useLanguageStore()
 
 const props = defineProps({
     modelValue: {
-        type: String
+        type: String,
     },
     /**
      * 接口。格式：{ code: string, param: Object }
@@ -20,16 +20,16 @@ const props = defineProps({
      *      param：非必须。接口函数所需参数。格式：{ [propName: string]: any }
      */
     api: {
-        type: Object
+        type: Object,
     },
     init: {
         type: Object,
-        default: {}
+        default: {},
     },
     disabled: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
@@ -43,7 +43,7 @@ const myEditor = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        }
+        },
     }),
     init: {
         width: '100%',
@@ -83,7 +83,7 @@ const myEditor = reactive({
             console.log(value)
             console.log(meta)
         } */
-        ...props.init
+        ...props.init,
     },
     signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
     //生成保存在云服务器中的文件名及完成地址
@@ -107,7 +107,7 @@ const myEditor = reactive({
         loading: false,
         code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
         param: {
-            ...props.api?.param
+            ...props.api?.param,
         },
         getSignInfo: async () => {
             if (myEditor.api.loading) {
@@ -121,8 +121,8 @@ const myEditor = reactive({
             } catch (error) {}
             myEditor.api.loading = false
             return signInfo
-        }
-    }
+        },
+    },
 })
 
 myEditor.initSignInfo() //初始化签名信息

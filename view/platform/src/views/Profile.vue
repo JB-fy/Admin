@@ -14,21 +14,21 @@ const saveForm = reactive({
         avatar: adminStore.info.avatar,
         password: '',
         repeatPassword: '',
-        passwordToCheck: ''
+        passwordToCheck: '',
     } as { [propName: string]: any },
     rules: {
         account: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') }
+            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
         ],
         phone: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') }
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
         ],
         nickname: [{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
         avatar: [
             { type: 'url', trigger: 'change', message: t('validation.upload') },
-            { type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) }
+            { type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) },
         ],
         password: [{ type: 'string', min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) }],
         repeatPassword: [
@@ -44,8 +44,8 @@ const saveForm = reactive({
                     callback()
                 },
                 trigger: 'blur',
-                message: t('validation.repeatPassword')
-            }
+                message: t('validation.repeatPassword'),
+            },
         ],
         passwordToCheck: [
             { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
@@ -54,7 +54,7 @@ const saveForm = reactive({
                     return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false
                 }),
                 trigger: 'blur',
-                message: t('profile.tip.passwordToCheck')
+                message: t('profile.tip.passwordToCheck'),
             },
             {
                 validator: (rule: any, value: any, callback: any) => {
@@ -64,9 +64,9 @@ const saveForm = reactive({
                     callback()
                 },
                 trigger: 'blur',
-                message: t('validation.newPasswordDiffOldPassword')
-            }
-        ]
+                message: t('validation.newPasswordDiffOldPassword'),
+            },
+        ],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -91,7 +91,7 @@ const saveForm = reactive({
             } catch (error) {}
             saveForm.loading = false
         })
-    }
+    },
 })
 </script>
 

@@ -21,7 +21,7 @@ const saveForm = reactive({
         versionNumberOfIos: 0,
         versionNameOfIos: '',
         versionIntroOfIos: '',
-        plistUrlOfIos: ''
+        plistUrlOfIos: '',
     } as { [propName: string]: any },
     rules: {
         packageUrlOfAndroid: [{ type: 'url', trigger: 'change', message: t('validation.upload') }],
@@ -39,7 +39,7 @@ const saveForm = reactive({
         versionNumberOfIos: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }],
         versionNameOfIos: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         versionIntroOfIos: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        plistUrlOfIos: [{ type: 'url', trigger: 'change', message: t('validation.upload') }]
+        plistUrlOfIos: [{ type: 'url', trigger: 'change', message: t('validation.upload') }],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -47,7 +47,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config
+                ...res.data.config,
             }
         } catch (error) {}
     },
@@ -67,7 +67,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    }
+    },
 })
 
 const handleOfAndroid = reactive({
@@ -83,7 +83,7 @@ const handleOfAndroid = reactive({
         }
         saveForm.data.packageSizeOfAndroid = 0
         handleOfAndroid.disabledOfPackageSize = false
-    }
+    },
 })
 
 const handleOfIos = reactive({
@@ -99,7 +99,7 @@ const handleOfIos = reactive({
         }
         saveForm.data.packageSizeOfIos = 0
         handleOfIos.disabledOfPackageSize = false
-    }
+    },
 })
 
 saveForm.initData()

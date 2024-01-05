@@ -2427,28 +2427,30 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
 			return [
-				h(ElSwitch as any, {
-					'model-value': props.rowData.` + field + `,
-					// 'disabled': true,
-					'active-value': 1,
-					'inactive-value': 0,
-					'inline-prompt': true,
-					'active-text': t('common.yes'),
-					'inactive-text': t('common.no'),
-					style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',`
+				<ElSwitch
+					model-value={props.rowData.` + field + `}
+					active-value={1}
+					// disabled={true}
+					inactive-value={0}
+					inline-prompt={true}
+					active-text={t('common.yes')}
+					inactive-text={t('common.no')}
+					style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
 				if option.IsUpdate {
 					cellRendererOfColumn += `
-					onChange: (val: number) => {
+					onChange={(val: number) => {
 						handleUpdate({
 							idArr: [props.rowData.id],
 							` + field + `: val
-						}).then((res) => {
-							props.rowData.` + field + ` = val
-						}).catch((error) => { })
-					},`
+						})
+							.then((res) => {
+								props.rowData.` + field + ` = val
+							})
+							.catch((error) => {})
+					}}`
 				}
 				cellRendererOfColumn += `
-				})
+				/>
 			]
 		},`
 			}
@@ -2549,33 +2551,24 @@ const table = reactive({
 			return [`
 		if option.IsUpdate {
 			tplView += `
-				h(ElButton, {
-					type: 'primary',
-					size: 'small',
-					onClick: () => handleEditCopy(props.rowData.id)
-				}, {
-					default: () => [h(AutoiconEpEdit), t('common.edit')]
-				}),`
+				<ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+					<AutoiconEpEdit />
+					{t('common.edit')}
+				</ElButton>,`
 		}
 		if option.IsDelete {
 			tplView += `
-				h(ElButton, {
-					type: 'danger',
-					size: 'small',
-					onClick: () => handleDelete([props.rowData.id])
-				}, {
-					default: () => [h(AutoiconEpDelete), t('common.delete')]
-				}),`
+				<ElButton type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+					<AutoiconEpDelete />
+					{t('common.delete')}
+				</ElButton>,`
 		}
 		if option.IsCreate {
 			tplView += `
-				h(ElButton, {
-					type: 'warning',
-					size: 'small',
-					onClick: () => handleEditCopy(props.rowData.id, 'copy')
-				}, {
-					default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
-				}),`
+				<ElButton type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+					<AutoiconEpDocumentCopy />
+					{t('common.copy')}
+				</ElButton>,`
 		}
 		tplView += `
 			]

@@ -9,16 +9,16 @@ const saveForm = reactive({
     loading: false,
     data: {
         isStop: 0,
-        ...saveCommon.data
+        ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
         sceneName: [
             { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         sceneCode: [
             { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         sceneConfig: [
             {
@@ -39,11 +39,11 @@ const saveForm = reactive({
                     }
                 },
                 trigger: 'blur',
-                message: t('validation.json')
-            }
+                message: t('validation.json'),
+            },
         ],
         remark: [{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }],
-        isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }]
+        isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -63,7 +63,7 @@ const saveForm = reactive({
             } catch (error) {}
             saveForm.loading = false
         })
-    }
+    },
 })
 
 const saveDrawer = reactive({
@@ -75,7 +75,7 @@ const saveDrawer = reactive({
                 type: 'info',
                 title: t('common.tip.configExit'),
                 center: true,
-                showClose: false
+                showClose: false,
             })
                 .then(() => {
                     done()
@@ -88,7 +88,7 @@ const saveDrawer = reactive({
     buttonClose: () => {
         //saveCommon.visible = false
         saveDrawer.ref.handleClose() //会触发beforeClose
-    }
+    },
 })
 </script>
 

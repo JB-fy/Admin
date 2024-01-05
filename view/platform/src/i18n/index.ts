@@ -29,7 +29,7 @@ const i18n = createI18n({
     locale: getLanguage(),
     fallbackLocale: ['zh-cn', 'en'],
     messages: batchImport(import.meta.glob('@/i18n/language/**/*.ts', { eager: true }), 1, 10),
-    warnHtmlMessage: false
+    warnHtmlMessage: false,
 })
 
 export default i18n

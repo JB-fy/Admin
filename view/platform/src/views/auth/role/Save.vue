@@ -9,12 +9,12 @@ const saveForm = reactive({
     loading: false,
     data: {
         isStop: 0,
-        ...saveCommon.data
+        ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
         roleName: [
             { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         sceneId: [{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }],
         /* tableId: [
@@ -22,7 +22,7 @@ const saveForm = reactive({
 		], */
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
         menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
-        actionIdArr: [{ type: 'array', defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }]
+        actionIdArr: [{ type: 'array', defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -60,7 +60,7 @@ const saveForm = reactive({
             } catch (error) {}
             saveForm.loading = false
         })
-    }
+    },
 })
 
 const saveDrawer = reactive({
@@ -72,7 +72,7 @@ const saveDrawer = reactive({
                 type: 'info',
                 title: t('common.tip.configExit'),
                 center: true,
-                showClose: false
+                showClose: false,
             })
                 .then(() => {
                     done()
@@ -85,7 +85,7 @@ const saveDrawer = reactive({
     buttonClose: () => {
         //saveCommon.visible = false
         saveDrawer.ref.handleClose() //会触发beforeClose
-    }
+    },
 })
 </script>
 

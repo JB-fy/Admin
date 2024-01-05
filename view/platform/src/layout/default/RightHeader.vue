@@ -17,7 +17,7 @@ const userDropdown = reactive({
     status: false,
     visibleChange: (status: boolean) => {
         userDropdown.status = status
-    }
+    },
 })
 
 const menuTab = reactive({
@@ -50,8 +50,8 @@ const menuTab = reactive({
         visibleChange: (status: boolean) => {
             menuTab.buttonDropdown.status = status
             menuTab.visibleChange(status, '')
-        }
-    }
+        },
+    },
 })
 </script>
 

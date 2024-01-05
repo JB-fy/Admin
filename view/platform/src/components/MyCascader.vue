@@ -21,12 +21,12 @@
 <script setup lang="tsx">
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array]
+        type: [String, Number, Array],
     },
     defaultOptions: {
         //选项初始默认值。格式：[{ [cascader.props.value]: string | number, [cascader.props.label]: string },...]
         type: Array,
-        default: []
+        default: [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
@@ -37,44 +37,44 @@ const props = defineProps({
      */
     api: {
         type: Object,
-        required: true
+        required: true,
     },
     isPanel: {
         //是否为面板
         type: Boolean,
-        default: false
+        default: false,
     },
     placeholder: {
-        type: String
+        type: String,
     },
     clearable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     filterable: {
         type: Boolean,
-        default: true
+        default: true,
     },
     disabled: {
         type: Boolean,
-        default: false
+        default: false,
     },
     collapseTags: {
         type: Boolean,
-        default: true
+        default: true,
     },
     collapseTagsTooltip: {
         type: Boolean,
-        default: true
+        default: true,
     },
     separator: {
         type: String,
-        default: '/'
+        default: '/',
     },
     props: {
         type: Object,
-        default: {}
-    }
+        default: {},
+    },
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
@@ -87,7 +87,7 @@ const cascader = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        }
+        },
     }),
     options: [...props.defaultOptions] as any,
     props: {
@@ -113,7 +113,7 @@ const cascader = reactive({
         },
         value: props.api?.param?.field?.[0] ?? 'id',
         label: props.api?.param?.field?.[1] ?? 'label',
-        ...props.props
+        ...props.props,
     },
     initOptions: () => {
         cascader.api.addOptions()
@@ -131,7 +131,7 @@ const cascader = reactive({
                 sort: 'id desc',
                 page: 1,
                 limit: 0,
-                ...(props.api?.param ?? {})
+                ...(props.api?.param ?? {}),
             }
         }),
         transform: computed(() => {
@@ -182,7 +182,7 @@ const cascader = reactive({
                     }
                 })
                 .catch((error) => {})
-        }
+        },
     },
     visibleChange: (val: boolean) => {
         if (val) {
@@ -196,7 +196,7 @@ const cascader = reactive({
                 cascader.api.addOptions()
             }
         }
-    }
+    },
 })
 //组件创建时，如有初始值，需初始化options
 if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue))) {

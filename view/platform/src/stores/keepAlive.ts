@@ -8,7 +8,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
     state: () => {
         return {
             appContainerExclude: [] as string[], //用于页面刷新
-            appContainerMax: 20 as number //缓存组件最大数量
+            appContainerMax: 20 as number, //缓存组件最大数量
         }
     },
     getters: {
@@ -21,7 +21,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
                 }
             })
             return include
-        }
+        },
     },
     actions: {
         /**
@@ -46,6 +46,6 @@ export const useKeepAliveStore = defineStore('keepAlive', {
             if (componentName === router.currentRoute.value.meta.componentName) {
                 router.push(router.currentRoute.value.fullPath)
             }
-        }
-    }
+        },
+    },
 })

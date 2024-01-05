@@ -7,7 +7,7 @@ export const useLanguageStore = defineStore('language', {
         return {
             language: getLanguage(),
             //elementPlusLoacleList: import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true }),
-            elementPlusLoacleList: batchImport(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true }))
+            elementPlusLoacleList: batchImport(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true })),
         }
     },
     getters: {
@@ -35,7 +35,7 @@ export const useLanguageStore = defineStore('language', {
                 default:
                     return state.language
             }
-        }
+        },
     },
     actions: {
         //改变语言
@@ -82,6 +82,6 @@ export const useLanguageStore = defineStore('language', {
                 webTitle += '-' + title
             }
             return webTitle
-        }
-    }
+        },
+    },
 })

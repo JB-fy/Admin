@@ -33,7 +33,7 @@ const table = reactive({
                             }}
                         />
                     </div>,
-                    <div>{t('common.name.id')}</div>
+                    <div>{t('common.name.id')}</div>,
                 ]
             },
             cellRenderer: (props: any): any => {
@@ -45,30 +45,30 @@ const table = reactive({
                             props.rowData.checked = val
                         }}
                     />,
-                    <div>{props.rowData.id}</div>
+                    <div>{props.rowData.id}</div>,
                 ]
-            }
+            },
         },
         {
             dataKey: 'menuName',
             title: t('auth.menu.name.menuName'),
             key: 'menuName',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'sceneName',
             title: t('auth.menu.name.sceneId'),
             key: 'sceneId',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'pMenuName',
             title: t('auth.menu.name.pid'),
             key: 'pid',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'level',
@@ -76,7 +76,7 @@ const table = reactive({
             key: 'level',
             align: 'center',
             width: 100,
-            sortable: true
+            sortable: true,
         },
         {
             dataKey: 'idPath',
@@ -84,7 +84,7 @@ const table = reactive({
             key: 'idPath',
             align: 'center',
             width: 150,
-            hidden: true
+            hidden: true,
         },
         {
             dataKey: 'menuIcon',
@@ -96,17 +96,17 @@ const table = reactive({
                 return [
                     h(MyIconDynamic as any, {
                         icon: props.rowData.menuIcon,
-                        size: '18px'
-                    })
+                        size: '18px',
+                    }),
                 ]
-            }
+            },
         },
         {
             dataKey: 'menuUrl',
             title: t('auth.menu.name.menuUrl'),
             key: 'menuUrl',
             align: 'center',
-            width: 200
+            width: 200,
         },
         {
             dataKey: 'extraData',
@@ -114,7 +114,7 @@ const table = reactive({
             key: 'extraData',
             align: 'center',
             width: 200,
-            hidden: true
+            hidden: true,
         },
         {
             dataKey: 'sort',
@@ -150,7 +150,7 @@ const table = reactive({
                                 if ((currentVal || currentVal === 0) && currentVal != props.rowData.sort) {
                                     handleUpdate({
                                         idArr: [props.rowData.id],
-                                        sort: currentVal
+                                        sort: currentVal,
                                     })
                                         .then((res) => {
                                             props.rowData.sort = currentVal
@@ -167,8 +167,8 @@ const table = reactive({
                                         currentRef?.blur()
                                         break
                                 }
-                            }
-                        })
+                            },
+                        }),
                     ]
                 }
                 return [
@@ -178,14 +178,14 @@ const table = reactive({
                             class: 'inline-edit',
                             onClick: () => {
                                 props.rowData.editSort = true
-                            }
+                            },
                         },
                         {
-                            default: () => props.rowData.sort
+                            default: () => props.rowData.sort,
                         }
-                    )
+                    ),
                 ]
-            }
+            },
         },
         {
             dataKey: 'isStop',
@@ -195,28 +195,28 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
-                    h(ElSwitch as any, {
-                        'model-value': props.rowData.isStop,
-                        // 'disabled': true,
-                        'active-value': 1,
-                        'inactive-value': 0,
-                        'inline-prompt': true,
-                        'active-text': t('common.yes'),
-                        'inactive-text': t('common.no'),
-                        style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
-                        onChange: (val: number) => {
+                    <ElSwitch
+                        model-value={props.rowData.isStop}
+                        active-value={1}
+                        // disabled={true}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
+                        onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val
+                                isStop: val,
                             })
                                 .then((res) => {
                                     props.rowData.isStop = val
                                 })
                                 .catch((error) => {})
-                        }
-                    })
+                        }}
+                    />,
                 ]
-            }
+            },
         },
         {
             dataKey: 'updatedAt',
@@ -224,7 +224,7 @@ const table = reactive({
             key: 'updatedAt',
             align: 'center',
             width: 150,
-            sortable: true
+            sortable: true,
         },
         {
             dataKey: 'createdAt',
@@ -232,7 +232,7 @@ const table = reactive({
             key: 'createdAt',
             align: 'center',
             width: 150,
-            sortable: true
+            sortable: true,
         },
         {
             title: t('common.name.action'),
@@ -242,42 +242,21 @@ const table = reactive({
             fixed: 'right',
             cellRenderer: (props: any): any => {
                 return [
-                    h(
-                        ElButton,
-                        {
-                            type: 'primary',
-                            size: 'small',
-                            onClick: () => handleEditCopy(props.rowData.id)
-                        },
-                        {
-                            default: () => [h(AutoiconEpEdit), t('common.edit')]
-                        }
-                    ),
-                    h(
-                        ElButton,
-                        {
-                            type: 'danger',
-                            size: 'small',
-                            onClick: () => handleDelete([props.rowData.id])
-                        },
-                        {
-                            default: () => [h(AutoiconEpDelete), t('common.delete')]
-                        }
-                    ),
-                    h(
-                        ElButton,
-                        {
-                            type: 'warning',
-                            size: 'small',
-                            onClick: () => handleEditCopy(props.rowData.id, 'copy')
-                        },
-                        {
-                            default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
-                        }
-                    )
+                    <ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                        <AutoiconEpEdit />
+                        {t('common.edit')}
+                    </ElButton>,
+                    <ElButton type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+                        <AutoiconEpDelete />
+                        {t('common.delete')}
+                    </ElButton>,
+                    <ElButton type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+                        <AutoiconEpDocumentCopy />
+                        {t('common.copy')}
+                    </ElButton>,
                 ]
-            }
-        }
+            },
+        },
     ] as any,
     data: [],
     loading: false,
@@ -286,7 +265,7 @@ const table = reactive({
         table.sort.key = sort.key
         table.sort.order = sort.order
         getList()
-    }
+    },
 })
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
@@ -336,7 +315,7 @@ const handleDelete = (idArr: number[]) => {
         type: 'warning',
         title: t('common.tip.configDelete'),
         center: true,
-        showClose: false
+        showClose: false,
     })
         .then(() => {
             request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/del', { idArr: idArr }, true)
@@ -365,7 +344,7 @@ const pagination = reactive({
     },
     pageChange: (val: number) => {
         getList()
-    }
+    },
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
@@ -379,7 +358,7 @@ const getList = async (resetPage: boolean = false) => {
         filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
-        limit: pagination.size
+        limit: pagination.size,
     }
     table.loading = true
     try {
@@ -393,7 +372,7 @@ getList()
 
 //暴露组件接口给父组件
 defineExpose({
-    getList
+    getList,
 })
 </script>
 

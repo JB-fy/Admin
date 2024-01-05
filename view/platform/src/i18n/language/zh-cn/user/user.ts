@@ -10,14 +10,14 @@ export default {
         address: '详细地址',
         idCardName: '身份证姓名',
         idCardNo: '身份证号码',
-        isStop: '停用'
+        isStop: '停用',
     },
     status: {
         gender: [
             { value: 0, label: '未设置' },
             { value: 1, label: '男' },
-            { value: 2, label: '女' }
-        ]
+            { value: 2, label: '女' },
+        ],
     },
-    tip: {}
+    tip: {},
 }

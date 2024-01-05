@@ -31,7 +31,7 @@ const table = reactive({
                             }}
                         />
                     </div>,
-                    <div>{t('common.name.id')}</div>
+                    <div>{t('common.name.id')}</div>,
                 ]
             },
             cellRenderer: (props: any): any => {
@@ -43,30 +43,30 @@ const table = reactive({
                             props.rowData.checked = val
                         }}
                     />,
-                    <div>{props.rowData.id}</div>
+                    <div>{props.rowData.id}</div>,
                 ]
-            }
+            },
         },
         {
             dataKey: 'phone',
             title: t('user.user.name.phone'),
             key: 'phone',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'account',
             title: t('user.user.name.account'),
             key: 'account',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'nickname',
             title: t('user.user.name.nickname'),
             key: 'nickname',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'avatar',
@@ -85,9 +85,9 @@ const table = reactive({
                             //width改大后，可同时修改table属性row-height增加行高，则不会显示滚动条
                             return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList}></ElImage>
                         })}
-                    </ElScrollbar>
+                    </ElScrollbar>,
                 ]
-            }
+            },
         },
         {
             dataKey: 'gender',
@@ -105,14 +105,14 @@ const table = reactive({
                     h(
                         ElTag as any,
                         {
-                            type: tagType[index % tagType.length]
+                            type: tagType[index % tagType.length],
                         },
                         {
-                            default: () => obj[index]?.label
+                            default: () => obj[index]?.label,
                         }
-                    )
+                    ),
                 ]
-            }
+            },
         },
         {
             dataKey: 'birthday',
@@ -120,7 +120,7 @@ const table = reactive({
             key: 'birthday',
             align: 'center',
             width: 100,
-            sortable: true
+            sortable: true,
         },
         {
             dataKey: 'address',
@@ -128,7 +128,7 @@ const table = reactive({
             key: 'address',
             align: 'center',
             width: 150,
-            hidden: true
+            hidden: true,
         },
         {
             dataKey: 'idCardName',
@@ -136,14 +136,14 @@ const table = reactive({
             key: 'idCardName',
             align: 'center',
             width: 150,
-            hidden: true
+            hidden: true,
         },
         {
             dataKey: 'idCardNo',
             title: t('user.user.name.idCardNo'),
             key: 'idCardNo',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'isStop',
@@ -153,28 +153,28 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
-                    h(ElSwitch as any, {
-                        'model-value': props.rowData.isStop,
-                        // 'disabled': true,
-                        'active-value': 1,
-                        'inactive-value': 0,
-                        'inline-prompt': true,
-                        'active-text': t('common.yes'),
-                        'inactive-text': t('common.no'),
-                        style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
-                        onChange: (val: number) => {
+                    <ElSwitch
+                        model-value={props.rowData.isStop}
+                        active-value={1}
+                        // disabled={true}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
+                        onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val
+                                isStop: val,
                             })
                                 .then((res) => {
                                     props.rowData.isStop = val
                                 })
                                 .catch((error) => {})
-                        }
-                    })
+                        }}
+                    />,
                 ]
-            }
+            },
         },
         {
             dataKey: 'updatedAt',
@@ -182,7 +182,7 @@ const table = reactive({
             key: 'updatedAt',
             align: 'center',
             width: 150,
-            sortable: true
+            sortable: true,
         },
         {
             dataKey: 'createdAt',
@@ -190,26 +190,23 @@ const table = reactive({
             key: 'createdAt',
             align: 'center',
             width: 150,
-            sortable: true
-        }
+            sortable: true,
+        },
         /* {
-		title: t('common.name.action'),
-		key: 'action',
-		align: 'center',
-		width: 250,
-		fixed: 'right',
-		cellRenderer: (props: any): any => {
-			return [
-				h(ElButton, {
-					type: 'primary',
-					size: 'small',
-					onClick: () => handleEditCopy(props.rowData.id)
-				}, {
-					default: () => [h(AutoiconEpEdit), t('common.edit')]
-				}),
-			]
-		},
-	} */
+            title: t('common.name.action'),
+            key: 'action',
+            align: 'center',
+            width: 250,
+            fixed: 'right',
+            cellRenderer: (props: any): any => {
+                return [
+                    <ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                        <AutoiconEpEdit />
+                        {t('common.edit')}
+                    </ElButton>
+                ]
+            },
+        } */
     ] as any,
     data: [],
     loading: false,
@@ -218,7 +215,7 @@ const table = reactive({
         table.sort.key = sort.key
         table.sort.order = sort.order
         getList()
-    }
+    },
 })
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
@@ -260,7 +257,7 @@ const pagination = reactive({
     },
     pageChange: (val: number) => {
         getList()
-    }
+    },
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
@@ -274,7 +271,7 @@ const getList = async (resetPage: boolean = false) => {
         filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
-        limit: pagination.size
+        limit: pagination.size,
     }
     table.loading = true
     try {
@@ -288,7 +285,7 @@ getList()
 
 //暴露组件接口给父组件
 defineExpose({
-    getList
+    getList,
 })
 </script>
 

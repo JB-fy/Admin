@@ -17,7 +17,7 @@ const saveForm = reactive({
         payOfWxSerialNo: '',
         payOfWxApiV3Key: '',
         payOfWxPrivateKey: '',
-        payOfWxNotifyUrl: ''
+        payOfWxNotifyUrl: '',
     } as { [propName: string]: any },
     rules: {
         payOfAliAppId: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
@@ -31,7 +31,7 @@ const saveForm = reactive({
         payOfWxSerialNo: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         payOfWxApiV3Key: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         payOfWxPrivateKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        payOfWxNotifyUrl: [{ type: 'url', trigger: 'blur', message: t('validation.url') }]
+        payOfWxNotifyUrl: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -39,7 +39,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config
+                ...res.data.config,
             }
         } catch (error) {}
     },
@@ -59,7 +59,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    }
+    },
 })
 
 saveForm.initData()

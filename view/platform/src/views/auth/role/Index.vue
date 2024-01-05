@@ -5,13 +5,13 @@ import Save from './Save.vue'
 
 //搜索
 const queryCommon = reactive({
-    data: {}
+    data: {},
 })
 provide('queryCommon', queryCommon)
 
 //列表
 const listCommon = reactive({
-    ref: null as any
+    ref: null as any,
 })
 provide('listCommon', listCommon)
 
@@ -19,7 +19,7 @@ provide('listCommon', listCommon)
 const saveCommon = reactive({
     visible: false,
     title: '', //新增|编辑|复制
-    data: {}
+    data: {},
 })
 provide('saveCommon', saveCommon)
 </script>

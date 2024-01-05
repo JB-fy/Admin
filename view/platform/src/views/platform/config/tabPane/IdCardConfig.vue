@@ -9,13 +9,13 @@ const saveForm = reactive({
         idCardType: 'idCardOfAliyun',
         idCardOfAliyunHost: '',
         idCardOfAliyunPath: '',
-        idCardOfAliyunAppcode: ''
+        idCardOfAliyunAppcode: '',
     } as { [propName: string]: any },
     rules: {
         idCardType: [{ type: 'enum', enum: [`idCardOfAliyun`], trigger: 'change', message: t('validation.select') }],
         idCardOfAliyunHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         idCardOfAliyunPath: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        idCardOfAliyunAppcode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }]
+        idCardOfAliyunAppcode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -23,7 +23,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config
+                ...res.data.config,
             }
         } catch (error) {}
     },
@@ -43,7 +43,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    }
+    },
 })
 
 saveForm.initData()

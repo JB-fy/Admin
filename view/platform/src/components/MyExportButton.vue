@@ -10,17 +10,17 @@ const { t, tm } = useI18n()
 
 const props = defineProps({
     fileName: {
-        type: String
+        type: String,
     },
     i18nPrefix: {
         //i18n包t, tm两个方法参数的前缀。示例：'auth.test'，则对应t('auth.test.name.xxxx')或tm('auth.test.status.xxxx')
         type: String,
-        required: true
+        required: true,
     },
     headerList: {
         //表头。格式：{ [propName: string]: string }。也可直接传table.columns，即各个页面table组件的列定义
         type: [Object, Array],
-        required: true
+        required: true,
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
@@ -30,8 +30,8 @@ const props = defineProps({
      */
     api: {
         type: Object,
-        required: true
-    }
+        required: true,
+    },
 })
 
 //导出
@@ -55,7 +55,7 @@ const exportButton = reactive({
                 sort: 'id desc',
                 page: 1,
                 limit: useSettingStore().exportButton.limit,
-                ...(props.api?.param ?? {})
+                ...(props.api?.param ?? {}),
             }
             param.filter = removeEmptyOfObj(param.filter)
             return param
@@ -96,7 +96,7 @@ const exportButton = reactive({
                 data = exportButton.api.transform(res)
             } catch (error) {}
             return data
-        }
+        },
     },
     dataHandle: (data: any, headerList: { [propName: string]: string }) => {
         return data.map((item: any) => {
@@ -112,7 +112,7 @@ const exportButton = reactive({
             type: 'warning',
             title: t('common.tip.configExport'),
             center: true,
-            showClose: false
+            showClose: false,
         })
             .then(async () => {
                 exportButton.loading = true
@@ -136,7 +136,7 @@ const exportButton = reactive({
                 exportButton.loading = false
             })
             .catch(() => {})
-    }
+    },
 })
 </script>
 

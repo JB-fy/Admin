@@ -31,7 +31,7 @@ const table = reactive({
                             }}
                         />
                     </div>,
-                    <div>{t('common.name.id')}</div>
+                    <div>{t('common.name.id')}</div>,
                 ]
             },
             cellRenderer: (props: any): any => {
@@ -43,30 +43,30 @@ const table = reactive({
                             props.rowData.checked = val
                         }}
                     />,
-                    <div>{props.rowData.id}</div>
+                    <div>{props.rowData.id}</div>,
                 ]
-            }
+            },
         },
         {
             dataKey: 'phone',
             title: t('platform.admin.name.phone'),
             key: 'phone',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'account',
             title: t('platform.admin.name.account'),
             key: 'account',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'nickname',
             title: t('platform.admin.name.nickname'),
             key: 'nickname',
             align: 'center',
-            width: 150
+            width: 150,
         },
         {
             dataKey: 'avatar',
@@ -85,9 +85,9 @@ const table = reactive({
                             //width改大后，可同时修改table属性row-height增加行高，则不会显示滚动条
                             return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList}></ElImage>
                         })}
-                    </ElScrollbar>
+                    </ElScrollbar>,
                 ]
-            }
+            },
         },
         {
             dataKey: 'isStop',
@@ -97,28 +97,28 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
-                    h(ElSwitch as any, {
-                        'model-value': props.rowData.isStop,
-                        // 'disabled': true,
-                        'active-value': 1,
-                        'inactive-value': 0,
-                        'inline-prompt': true,
-                        'active-text': t('common.yes'),
-                        'inactive-text': t('common.no'),
-                        style: '--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)',
-                        onChange: (val: number) => {
+                    <ElSwitch
+                        model-value={props.rowData.isStop}
+                        active-value={1}
+                        // disabled={true}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
+                        onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val
+                                isStop: val,
                             })
                                 .then((res) => {
                                     props.rowData.isStop = val
                                 })
                                 .catch((error) => {})
-                        }
-                    })
+                        }}
+                    />,
                 ]
-            }
+            },
         },
         {
             dataKey: 'updatedAt',
@@ -126,7 +126,7 @@ const table = reactive({
             key: 'updatedAt',
             align: 'center',
             width: 150,
-            sortable: true
+            sortable: true,
         },
         {
             dataKey: 'createdAt',
@@ -134,7 +134,7 @@ const table = reactive({
             key: 'createdAt',
             align: 'center',
             width: 150,
-            sortable: true
+            sortable: true,
         },
         {
             title: t('common.name.action'),
@@ -144,42 +144,21 @@ const table = reactive({
             fixed: 'right',
             cellRenderer: (props: any): any => {
                 return [
-                    h(
-                        ElButton,
-                        {
-                            type: 'primary',
-                            size: 'small',
-                            onClick: () => handleEditCopy(props.rowData.id)
-                        },
-                        {
-                            default: () => [h(AutoiconEpEdit), t('common.edit')]
-                        }
-                    ),
-                    h(
-                        ElButton,
-                        {
-                            type: 'danger',
-                            size: 'small',
-                            onClick: () => handleDelete([props.rowData.id])
-                        },
-                        {
-                            default: () => [h(AutoiconEpDelete), t('common.delete')]
-                        }
-                    ),
-                    h(
-                        ElButton,
-                        {
-                            type: 'warning',
-                            size: 'small',
-                            onClick: () => handleEditCopy(props.rowData.id, 'copy')
-                        },
-                        {
-                            default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
-                        }
-                    )
+                    <ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                        <AutoiconEpEdit />
+                        {t('common.edit')}
+                    </ElButton>,
+                    <ElButton type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+                        <AutoiconEpDelete />
+                        {t('common.delete')}
+                    </ElButton>,
+                    <ElButton type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+                        <AutoiconEpDocumentCopy />
+                        {t('common.copy')}
+                    </ElButton>,
                 ]
-            }
-        }
+            },
+        },
     ] as any,
     data: [],
     loading: false,
@@ -188,7 +167,7 @@ const table = reactive({
         table.sort.key = sort.key
         table.sort.order = sort.order
         getList()
-    }
+    },
 })
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
@@ -238,7 +217,7 @@ const handleDelete = (idArr: number[]) => {
         type: 'warning',
         title: t('common.tip.configDelete'),
         center: true,
-        showClose: false
+        showClose: false,
     })
         .then(() => {
             request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/del', { idArr: idArr }, true)
@@ -267,7 +246,7 @@ const pagination = reactive({
     },
     pageChange: (val: number) => {
         getList()
-    }
+    },
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
@@ -281,7 +260,7 @@ const getList = async (resetPage: boolean = false) => {
         filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
-        limit: pagination.size
+        limit: pagination.size,
     }
     table.loading = true
     try {
@@ -295,7 +274,7 @@ getList()
 
 //暴露组件接口给父组件
 defineExpose({
-    getList
+    getList,
 })
 </script>
 

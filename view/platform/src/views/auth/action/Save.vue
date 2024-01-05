@@ -9,20 +9,20 @@ const saveForm = reactive({
     loading: false,
     data: {
         isStop: 0,
-        ...saveCommon.data
+        ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
         actionName: [
             { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         actionCode: [
             { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         remark: [{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }],
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        sceneIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }]
+        sceneIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -42,7 +42,7 @@ const saveForm = reactive({
             } catch (error) {}
             saveForm.loading = false
         })
-    }
+    },
 })
 
 const saveDrawer = reactive({
@@ -54,7 +54,7 @@ const saveDrawer = reactive({
                 type: 'info',
                 title: t('common.tip.configExit'),
                 center: true,
-                showClose: false
+                showClose: false,
             })
                 .then(() => {
                     done()
@@ -67,7 +67,7 @@ const saveDrawer = reactive({
     buttonClose: () => {
         //saveCommon.visible = false
         saveDrawer.ref.handleClose() //会触发beforeClose
-    }
+    },
 })
 </script>
 

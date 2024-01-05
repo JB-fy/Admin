@@ -37,13 +37,13 @@ export default {
         min: '最小值',
         max: '最大值',
         timeRangeStart: '开始时间',
-        timeRangeEnd: '结束时间'
+        timeRangeEnd: '结束时间',
     },
     status: {
         whether: [
             { value: 0, label: '否' },
-            { value: 1, label: '是' }
-        ]
+            { value: 1, label: '是' },
+        ],
     },
     tip: {
         notSet: '未设置',
@@ -59,6 +59,6 @@ export default {
         notWithinFileSize: '文件大小不在允许范围内',
 
         notDuplicate: '不能与现有记录重复',
-        notRequired: '不填则不修改'
-    }
+        notRequired: '不填则不修改',
+    },
 }
