@@ -36,7 +36,7 @@ const loginForm = reactive({
         <ElDivider>
             <div style="font-size: 25px">{{ t('common.login') }}</div>
         </ElDivider>
-        <ElForm :ref="(el: any) => (loginForm.ref = el)" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
+        <ElForm :ref="(el: any) => loginForm.ref = el" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
             <ElFormItem prop="loginName">
                 <ElInput v-model="loginForm.data.loginName" :placeholder="t('login.name.loginName')">
                     <template #prefix>

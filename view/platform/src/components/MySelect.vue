@@ -248,7 +248,7 @@ watch(
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
     <ElSelectV2
         v-if="multiple"
-        :ref="(el: any) => (select.ref = el)"
+        :ref="(el: any) => select.ref = el"
         v-model="select.value"
         :placeholder="placeholder"
         :options="select.options"
@@ -267,7 +267,7 @@ watch(
     />
     <ElSelectV2
         v-else
-        :ref="(el: any) => (select.ref = el)"
+        :ref="(el: any) => select.ref = el"
         v-model="select.value"
         :placeholder="placeholder"
         :options="select.options"

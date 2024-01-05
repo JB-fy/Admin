@@ -126,7 +126,7 @@ const menuTab = reactive({
                     <ElTabPane :name="item.url" :closable="item.closable">
                         <template #label>
                             <ElDropdown
-                                :ref="(el: any) => (menuTab.refList[item.url] = el)"
+                                :ref="(el: any) => menuTab.refList[item.url] = el"
                                 trigger="contextmenu"
                                 @visible-change="
                                     (status: boolean) => {

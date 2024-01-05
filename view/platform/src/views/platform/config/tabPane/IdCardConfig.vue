@@ -50,7 +50,7 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.idCardType')" prop="idCardType">
             <ElRadioGroup v-model="saveForm.data.idCardType">
                 <ElRadio v-for="(item, index) in tm('platform.config.status.idCardType') as any" :key="index" :label="item.value">

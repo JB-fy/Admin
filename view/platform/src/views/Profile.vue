@@ -98,7 +98,7 @@ const saveForm = reactive({
 <template>
     <ElContainer class="common-container">
         <ElMain>
-            <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
                 <ElFormItem :label="t('profile.name.account')" prop="account">
                     <ElInput v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <label>

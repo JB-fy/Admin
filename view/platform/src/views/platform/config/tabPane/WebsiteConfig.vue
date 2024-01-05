@@ -74,7 +74,7 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.hotSearch')" prop="hotSearch">
             <ElTag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px">
                 {{ item }}
@@ -82,7 +82,7 @@ saveForm.initData()
             <template v-if="saveForm.data.hotSearch.length < 10">
                 <ElInput
                     v-if="hotSearchHandle.visible"
-                    :ref="(el: any) => (hotSearchHandle.ref = el)"
+                    :ref="(el: any) => hotSearchHandle.ref = el"
                     v-model="hotSearchHandle.value"
                     :placeholder="t('platform.config.name.hotSearch')"
                     @keyup.enter="hotSearchHandle.addValue"

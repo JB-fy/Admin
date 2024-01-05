@@ -228,7 +228,7 @@ upload.initSignInfo() //初始化签名信息
     <div :id="upload.id">
         <div v-if="isImage" class="upload-container">
             <ElUpload
-                :ref="(el: any) => (upload.ref = el)"
+                :ref="(el: any) => upload.ref = el"
                 v-model:file-list="upload.fileList"
                 :action="upload.action"
                 :data="upload.data"
@@ -257,7 +257,7 @@ upload.initSignInfo() //初始化签名信息
         </div>
         <ElUpload
             v-else
-            :ref="(el: any) => (upload.ref = el)"
+            :ref="(el: any) => upload.ref = el"
             v-model:file-list="upload.fileList"
             :action="upload.action"
             :data="upload.data"

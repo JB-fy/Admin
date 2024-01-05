@@ -74,7 +74,7 @@ const saveDrawer = reactive({
 <template>
     <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <ElScrollbar>
-            <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <ElFormItem :label="t('auth.action.name.actionName')" prop="actionName">
                     <ElInput v-model="saveForm.data.actionName" :placeholder="t('auth.action.name.actionName')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </ElFormItem>

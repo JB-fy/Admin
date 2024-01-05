@@ -66,7 +66,7 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <ElFormItem :label="t('platform.config.name.uploadType')" prop="uploadType">
             <ElRadioGroup v-model="saveForm.data.uploadType">
                 <ElRadio v-for="(item, index) in tm('platform.config.status.uploadType') as any" :key="index" :label="item.value">

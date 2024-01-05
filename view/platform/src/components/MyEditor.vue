@@ -130,7 +130,7 @@ myEditor.initSignInfo() //初始化签名信息
 
 <template>
     <div :id="myEditor.id" style="width: 100%">
-        <Editor :ref="(el: any) => (myEditor.ref = el)" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
+        <Editor :ref="(el: any) => myEditor.ref = el" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
     </div>
 </template>
 

@@ -216,10 +216,10 @@ watch(
 </script>
 
 <template>
-    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => (cascader.ref = el)" v-model="cascader.value" :options="cascader.options" :props="cascader.props" />
+    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="cascader.value" :options="cascader.options" :props="cascader.props" />
     <ElCascader
         v-else-if="cascader.props.lazy"
-        :ref="(el: any) => (cascader.ref = el)"
+        :ref="(el: any) => cascader.ref = el"
         v-model="cascader.value"
         :placeholder="placeholder"
         :clearable="clearable"
@@ -232,7 +232,7 @@ watch(
     />
     <ElCascader
         v-else
-        :ref="(el: any) => (cascader.ref = el)"
+        :ref="(el: any) => cascader.ref = el"
         v-model="cascader.value"
         :placeholder="placeholder"
         :clearable="clearable"
