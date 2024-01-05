@@ -93,12 +93,7 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
-                return [
-                    h(MyIconDynamic as any, {
-                        icon: props.rowData.menuIcon,
-                        size: '18px',
-                    }),
-                ]
+                return <MyIconDynamic icon={props.rowData.menuIcon} size="18px" />
             },
         },
         {
@@ -128,24 +123,22 @@ const table = reactive({
                     let currentRef: any
                     let currentVal = props.rowData.sort
                     return [
-                        h(ElInputNumber as any, {
-                            ref: (el: any) => {
+                        <ElInputNumber
+                            ref={(el: any) => {
                                 currentRef = el
                                 el?.focus()
-                            },
-                            'model-value': currentVal,
-                            placeholder: t('auth.menu.tip.sort'),
-                            precision: 0,
-                            min: 0,
-                            max: 100,
-                            step: 1,
-                            'step-strictly': true,
-                            controls: false, //控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
-                            'controls-position': 'right',
-                            onChange: (val: number) => {
-                                currentVal = val
-                            },
-                            onBlur: () => {
+                            }}
+                            model-value={currentVal}
+                            placeholder={t('auth.menu.tip.sort')}
+                            precision={0}
+                            min={0}
+                            max={100}
+                            step={1}
+                            step-strictly={true}
+                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
+                            controls-position="right"
+                            onChange={(val: number) => (currentVal = val)}
+                            onBlur={() => {
                                 props.rowData.editSort = false
                                 if ((currentVal || currentVal === 0) && currentVal != props.rowData.sort) {
                                     handleUpdate({
@@ -157,8 +150,8 @@ const table = reactive({
                                         })
                                         .catch((error) => {})
                                 }
-                            },
-                            onKeydown: (event: any) => {
+                            }}
+                            onKeydown={(event: any) => {
                                 switch (event.keyCode) {
                                     // case 27:	//Esc键：Escape
                                     // case 32:	//空格键：" "
@@ -167,23 +160,14 @@ const table = reactive({
                                         currentRef?.blur()
                                         break
                                 }
-                            },
-                        }),
+                            }}
+                        />,
                     ]
                 }
                 return [
-                    h(
-                        'div',
-                        {
-                            class: 'inline-edit',
-                            onClick: () => {
-                                props.rowData.editSort = true
-                            },
-                        },
-                        {
-                            default: () => props.rowData.sort,
-                        }
-                    ),
+                    <div class="inline-edit" onClick={() => (props.rowData.editSort = true)}>
+                        {props.rowData.sort}
+                    </div>,
                 ]
             },
         },

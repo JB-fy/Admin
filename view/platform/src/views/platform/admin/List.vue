@@ -82,8 +82,8 @@ const table = reactive({
                 return [
                     <ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {imageList.map((item) => {
-                            //width改大后，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList}></ElImage>
+                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
                         })}
                     </ElScrollbar>,
                 ]

@@ -2246,8 +2246,8 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			return [
 				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
 					{imageList.map((item) => {
-						//width改大后，可同时修改table属性row-height增加行高，则不会显示滚动条
-						return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList}></ElImage>
+						//修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+						return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
 					})}
 				</ElScrollbar>
 			]
@@ -2274,22 +2274,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			cellRendererOfColumn += `
 			return [
-				h(ElScrollbar, {
-					'wrap-style': 'display: flex; align-items: center;',
-					'view-style': 'margin: auto;',
-				}, {
-					default: () => {
-						const content = videoList.map((item) => {
-							return h('video', {
-								'style': 'width: 120px; height: 80px;',	//不想显示滚动条，需设置table属性row-height增加行高
-								'preload': 'none',
-								'controls': true,
-								'src': item
-							})
-						})
-						return content
-					}
-				})
+				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+					{videoList.map((item) => {
+						//修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+						return <video style="width: 120px; height: 80px;" preload="none" controls={true} src={item} />
+					})}
+				</ElScrollbar>,
 			]
 		},`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
@@ -2307,24 +2297,15 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			let tagType = tm('common.component.tagType') as string[]
 			return [
-				h(ElScrollbar, {
-					'wrap-style': 'display: flex; align-items: center;',
-					'view-style': 'margin: auto;',
-				}, {
-					default: () => {
-						const content = arrList.map((item, index) => {
-							return h(ElTag as any, {
-								'style': 'margin: auto 5px 5px auto;',
-								'type': tagType[index % tagType.length]
-							}, {
-								default: () => {
-									return item
-								}
-							})
-						})
-						return content
-					}
-				})
+				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+					{arrList.map((item, index) => {
+						return [
+							<ElTag style="margin: auto 5px 5px auto;" type={tagType[index % tagType.length]}>
+								{item}
+							</ElTag>,
+						]
+					})}
+				</ElScrollbar>,
 			]
 		},`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
@@ -2354,54 +2335,51 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				let currentRef: any
 				let currentVal = props.rowData.` + field + `
 				return [
-					h(ElInputNumber as any, {
-						'ref': (el: any) => { currentRef = el; el?.focus() },
-						'model-value': currentVal,
-						'placeholder': t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `'),
-						'precision': 0,
-						'min': 0,
-						'max': 100,
-						'step': 1,
-						'step-strictly': true,
-						'controls': false,	//控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
-						'controls-position': 'right',
-						onChange: (val: number) => {
-							currentVal = val
-						},
-						onBlur: () => {
+					<ElInputNumber
+						ref={(el: any) => {
+							currentRef = el
+							el?.focus()
+						}}
+						model-value={currentVal}
+						placeholder={t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')}
+						precision={0}
+						min={0}
+						max={100}
+						step={1}
+						step-strictly={true}
+						controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
+						controls-position="right"
+						onChange={(val: number) => (currentVal = val)}
+						onBlur={() => {
 							props.rowData.edit` + gstr.CaseCamel(field) + ` = false
 							if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + field + `) {
 								handleUpdate({
 									idArr: [props.rowData.id],
-									` + field + `: currentVal
-								}).then((res) => {
-									props.rowData.` + field + ` = currentVal
-								}).catch((error) => {
+									` + field + `: currentVal,
 								})
+									.then((res) => {
+										props.rowData.` + field + ` = currentVal
+									})
+									.catch((error) => {})
 							}
-						},
-						onKeydown: (event: any) => {
+						}}
+						onKeydown={(event: any) => {
 							switch (event.keyCode) {
 								// case 27:	//Esc键：Escape
 								// case 32:	//空格键：" "
-								case 13:	//Enter键：Enter
+								case 13: //Enter键：Enter
 									// props.rowData.edit` + gstr.CaseCamel(field) + ` = false	//也会触发onBlur事件
 									currentRef?.blur()
-									break;
+									break
 							}
-						},
-					})
+						}}
+					/>,
 				]
 			}
 			return [
-				h('div', {
-					class: 'inline-edit',
-					onClick: () => {
-						props.rowData.edit` + gstr.CaseCamel(field) + ` = true
-					}
-				}, {
-					default: () => props.rowData.` + field + `
-				})
+				<div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(field) + ` = true)}>
+					{props.rowData.` + field + `}
+				</div>,
 			]
 		},`
 				}
@@ -2415,13 +2393,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			let tagType = tm('common.component.tagType') as string[]
 			let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
 			let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
-			return [
-				h(ElTag as any, {
-					type: tagType[index % tagType.length]
-				}, {
-					default: () => obj[index]?.label
-				})
-			]
+			return <ElTag type={tagType[index % tagType.length]}>{obj[index]?.label}</ElTag>
 		},`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				widthOfColumn = `width: 100,`
