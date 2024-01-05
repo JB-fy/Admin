@@ -102,12 +102,7 @@ const saveForm = reactive({
                 <ElFormItem :label="t('profile.name.account')" prop="account">
                     <ElInput v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <label>
-                        <ElAlert
-                            :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })"
-                            type="info"
-                            :show-icon="true"
-                            :closable="false"
-                        />
+                        <ElAlert :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.phone')" prop="phone">
@@ -123,46 +118,19 @@ const saveForm = reactive({
                     <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.password')" prop="password">
-                    <ElInput
-                        v-model="saveForm.data.password"
-                        :placeholder="t('profile.name.password')"
-                        minlength="6"
-                        maxlength="20"
-                        :show-word-limit="true"
-                        :clearable="true"
-                        :show-password="true"
-                        style="max-width: 250px"
-                    />
+                    <ElInput v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.repeatPassword')" prop="repeatPassword">
-                    <ElInput
-                        v-model="saveForm.data.repeatPassword"
-                        :placeholder="t('profile.name.repeatPassword')"
-                        minlength="6"
-                        maxlength="20"
-                        :show-word-limit="true"
-                        :clearable="true"
-                        :show-password="true"
-                        style="max-width: 250px"
-                    />
+                    <ElInput v-model="saveForm.data.repeatPassword" :placeholder="t('profile.name.repeatPassword')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <label>
                         <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </ElFormItem>
                 <ElFormItem :label="t('profile.name.passwordToCheck')" prop="passwordToCheck">
-                    <ElInput
-                        v-model="saveForm.data.passwordToCheck"
-                        :placeholder="t('profile.name.passwordToCheck')"
-                        minlength="6"
-                        maxlength="20"
-                        :show-word-limit="true"
-                        :clearable="true"
-                        :show-password="true"
-                        style="max-width: 250px"
-                    />
+                    <ElInput v-model="saveForm.data.passwordToCheck" :placeholder="t('profile.name.passwordToCheck')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <label>
                         <ElAlert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true" :closable="false" />
                     </label>

@@ -61,7 +61,4 @@ export default {
         notDuplicate: '不能与现有记录重复',
         notRequired: '不填则不修改',
     },
-    component: {
-        tagType: ['', 'success', 'danger', 'info', 'warning'],
-    }
 }

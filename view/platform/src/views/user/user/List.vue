@@ -130,7 +130,7 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
-                let tagType = tm('common.component.tagType') as string[]
+                let tagType = tm('config.const.tagType') as string[]
                 let obj = tm('user.user.status.gender') as { value: any; label: string }[]
                 let index = obj.findIndex((item) => {
                     return item.value == props.rowData.gender
@@ -333,11 +333,7 @@ defineExpose({
         </ElCol>
         <ElCol :span="8" style="text-align: right">
             <ElSpace :size="10" style="height: 100%">
-                <MyExportButton
-                    i18nPrefix="user.user"
-                    :headerList="table.columns"
-                    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }"
-                />
+                <MyExportButton i18nPrefix="user.user" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <ElDropdown max-height="300" :hide-on-click="false">
                     <ElButton type="info" :circle="true">
                         <AutoiconEpHide />
@@ -359,17 +355,7 @@ defineExpose({
     <ElMain>
         <ElAutoResizer>
             <template #default="{ height, width }">
-                <ElTableV2
-                    class="main-table"
-                    :columns="table.columns"
-                    :data="table.data"
-                    :sort-by="table.sort"
-                    @column-sort="table.handleSort"
-                    :width="width"
-                    :height="height"
-                    :fixed="true"
-                    :row-height="50"
-                >
+                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
                         <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
                             <AutoiconEpLoading />

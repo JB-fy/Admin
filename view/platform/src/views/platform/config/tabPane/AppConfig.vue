@@ -113,15 +113,7 @@ saveForm.initData()
                     <MyUpload v-model="saveForm.data.packageUrlOfAndroid" accept=".apk" :isImage="false" @change="handleOfAndroid.afterUpload" :key="saveForm.data.packageUrlOfAndroid" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.packageSizeOfAndroid')" prop="packageSizeOfAndroid">
-                    <ElInputNumber
-                        v-model="saveForm.data.packageSizeOfAndroid"
-                        :precision="0"
-                        :min="0"
-                        :step="1"
-                        :step-strictly="true"
-                        :controls="false"
-                        :disabled="handleOfAndroid.disabledOfPackageSize"
-                    />
+                    <ElInputNumber v-model="saveForm.data.packageSizeOfAndroid" :precision="0" :min="0" :step="1" :step-strictly="true" :controls="false" :disabled="handleOfAndroid.disabledOfPackageSize" />
                 </ElFormItem>
                 <ElFormItem :label="t('platform.config.name.packageNameOfAndroid')" prop="packageNameOfAndroid">
                     <ElInput v-model="saveForm.data.packageNameOfAndroid" :placeholder="t('platform.config.name.packageNameOfAndroid')" :clearable="true" />
