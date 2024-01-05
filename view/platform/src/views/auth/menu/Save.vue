@@ -102,7 +102,7 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-    <ElDrawer class="save-drawer" :ref="(el: any) => (saveDrawer.ref = el)" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+    <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <ElScrollbar>
             <ElForm :ref="(el: any) => (saveForm.ref = el)" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <ElFormItem :label="t('auth.menu.name.menuName')" prop="menuName">
