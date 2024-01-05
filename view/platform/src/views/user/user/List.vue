@@ -192,7 +192,7 @@ const table = reactive({
                     </ElButton>
                 ]
             },
-        } */
+        }, */
     ] as any,
     data: [],
     loading: false,
