@@ -2144,13 +2144,13 @@ import Save from './Save.vue'`
 
 //搜索
 const queryCommon = reactive({
-	data: {}
+    data: {},
 })
 provide('queryCommon', queryCommon)
 
 //列表
 const listCommon = reactive({
-	ref: null as any,
+    ref: null as any,
 })
 provide('listCommon', listCommon)`
 	if option.IsCreate || option.IsUpdate {
@@ -2158,9 +2158,9 @@ provide('listCommon', listCommon)`
 
 //保存
 const saveCommon = reactive({
-	visible: false,
-	title: '',  //新增|编辑|复制
-	data: {}
+    visible: false,
+    title: '', //新增|编辑|复制
+    data: {},
 })
 provide('saveCommon', saveCommon)`
 	}
@@ -2168,20 +2168,20 @@ provide('saveCommon', saveCommon)`
 </script>
 
 <template>
-	<ElContainer class="main-table-container">
-		<ElHeader>
-			<Query />
-		</ElHeader>
+    <ElContainer class="main-table-container">
+        <ElHeader>
+            <Query />
+        </ElHeader>
 
-		<List :ref="(el: any) => listCommon.ref = el" />`
+        <List :ref="(el: any) => listCommon.ref = el" />`
 	if option.IsCreate || option.IsUpdate {
 		tplView += `
 
-		<!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
-		<Save v-if="saveCommon.visible" />`
+        <!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
+        <Save v-if="saveCommon.visible" />`
 	}
 	tplView += `
-	</ElContainer>
+    </ElContainer>
 </template>`
 
 	gfile.PutContents(saveFile, tplView)
@@ -2227,87 +2227,87 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Icon` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Cover` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Avatar` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Img` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Image` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			if (!props.rowData.` + field + `) {
-				return
-			}`
+                if (!props.rowData.` + field + `) {
+                    return
+                }`
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				cellRendererOfColumn += `
-			const imageList = [props.rowData.` + field + `]`
+                const imageList = [props.rowData.` + field + `]`
 			} else {
 				cellRendererOfColumn += `
-			let imageList: string[]
-			if (Array.isArray(props.rowData.` + field + `)) {
-				imageList = props.rowData.` + field + `
-			} else {
-				imageList = JSON.parse(props.rowData.` + field + `)
-			}`
+                let imageList: string[]
+                if (Array.isArray(props.rowData.` + field + `)) {
+                    imageList = props.rowData.` + field + `
+                } else {
+                    imageList = JSON.parse(props.rowData.` + field + `)
+                }`
 			}
 			cellRendererOfColumn += `
-			return [
-				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-					{imageList.map((item) => {
-						//修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-						return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
-					})}
-				</ElScrollbar>
-			]
-		},`
+                return [
+                    <ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {imageList.map((item) => {
+                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
+                        })}
+                    </ElScrollbar>
+                ]
+            },`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
 			if tableRowHeight < 100 {
 				tableRowHeight = 100
 			}
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			if (!props.rowData.` + field + `) {
-				return
-			}`
+                if (!props.rowData.` + field + `) {
+                    return
+                }`
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				cellRendererOfColumn += `
-			const videoList = [props.rowData.` + field + `]`
+                const videoList = [props.rowData.` + field + `]`
 			} else {
 				cellRendererOfColumn += `
-			let videoList: string[]
-			if (Array.isArray(props.rowData.` + field + `)) {
-				videoList = props.rowData.` + field + `
-			} else {
-				videoList = JSON.parse(props.rowData.` + field + `)
-			}`
+                let videoList: string[]
+                if (Array.isArray(props.rowData.` + field + `)) {
+                    videoList = props.rowData.` + field + `
+                } else {
+                    videoList = JSON.parse(props.rowData.` + field + `)
+                }`
 			}
 			cellRendererOfColumn += `
-			return [
-				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-					{videoList.map((item) => {
-						//修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-						return <video style="width: 120px; height: 80px;" preload="none" controls={true} src={item} />
-					})}
-				</ElScrollbar>,
-			]
-		},`
+                return [
+                    <ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {videoList.map((item) => {
+                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            return <video style="width: 120px; height: 80px;" preload="none" controls={true} src={item} />
+                        })}
+                    </ElScrollbar>,
+                ]
+            },`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			if (!props.rowData.` + field + `) {
-				return
-			}`
+                if (!props.rowData.` + field + `) {
+                    return
+                }`
 			cellRendererOfColumn += `
-			let arrList: any[]
-			if (Array.isArray(props.rowData.` + field + `)) {
-				arrList = props.rowData.` + field + `
-			} else {
-				arrList = JSON.parse(props.rowData.` + field + `)
-			}
-			let tagType = tm('common.component.tagType') as string[]
-			return [
-				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-					{arrList.map((item, index) => {
-						return [
-							<ElTag style="margin: auto 5px 5px auto;" type={tagType[index % tagType.length]}>
-								{item}
-							</ElTag>,
-						]
-					})}
-				</ElScrollbar>,
-			]
-		},`
+                let arrList: any[]
+                if (Array.isArray(props.rowData.` + field + `)) {
+                    arrList = props.rowData.` + field + `
+                } else {
+                    arrList = JSON.parse(props.rowData.` + field + `)
+                }
+                let tagType = tm('common.component.tagType') as string[]
+                return [
+                    <ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {arrList.map((item, index) => {
+                            return [
+                                <ElTag style="margin: auto 5px 5px auto;" type={tagType[index % tagType.length]}>
+                                    {item}
+                                </ElTag>,
+                            ]
+                        })}
+                    </ElScrollbar>,
+                ]
+            },`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			hiddenOfColumn = `hidden: true,`
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
@@ -2331,57 +2331,57 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				sortableOfColumn = `sortable: true,`
 				if option.IsUpdate {
 					cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			if (props.rowData.edit` + gstr.CaseCamel(field) + `) {
-				let currentRef: any
-				let currentVal = props.rowData.` + field + `
-				return [
-					<ElInputNumber
-						ref={(el: any) => {
-							currentRef = el
-							el?.focus()
-						}}
-						model-value={currentVal}
-						placeholder={t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')}
-						precision={0}
-						min={0}
-						max={100}
-						step={1}
-						step-strictly={true}
-						controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
-						controls-position="right"
-						onChange={(val: number) => (currentVal = val)}
-						onBlur={() => {
-							props.rowData.edit` + gstr.CaseCamel(field) + ` = false
-							if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + field + `) {
-								handleUpdate({
-									idArr: [props.rowData.id],
-									` + field + `: currentVal,
-								})
-									.then((res) => {
-										props.rowData.` + field + ` = currentVal
-									})
-									.catch((error) => {})
-							}
-						}}
-						onKeydown={(event: any) => {
-							switch (event.keyCode) {
-								// case 27:	//Esc键：Escape
-								// case 32:	//空格键：" "
-								case 13: //Enter键：Enter
-									// props.rowData.edit` + gstr.CaseCamel(field) + ` = false	//也会触发onBlur事件
-									currentRef?.blur()
-									break
-							}
-						}}
-					/>,
-				]
-			}
-			return [
-				<div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(field) + ` = true)}>
-					{props.rowData.` + field + `}
-				</div>,
-			]
-		},`
+                if (props.rowData.edit` + gstr.CaseCamel(field) + `) {
+                    let currentRef: any
+                    let currentVal = props.rowData.` + field + `
+                    return [
+                        <ElInputNumber
+                            ref={(el: any) => {
+                                currentRef = el
+                                el?.focus()
+                            }}
+                            model-value={currentVal}
+                            placeholder={t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')}
+                            precision={0}
+                            min={0}
+                            max={100}
+                            step={1}
+                            step-strictly={true}
+                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
+                            controls-position="right"
+                            onChange={(val: number) => (currentVal = val)}
+                            onBlur={() => {
+                                props.rowData.edit` + gstr.CaseCamel(field) + ` = false
+                                if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + field + `) {
+                                    handleUpdate({
+                                        idArr: [props.rowData.id],
+                                        ` + field + `: currentVal,
+                                    })
+                                        .then((res) => {
+                                            props.rowData.` + field + ` = currentVal
+                                        })
+                                        .catch((error) => {})
+                                }
+                            }}
+                            onKeydown={(event: any) => {
+                                switch (event.keyCode) {
+                                    // case 27:    //Esc键：Escape
+                                    // case 32:    //空格键：" "
+                                    case 13: //Enter键：Enter
+                                        // props.rowData.edit` + gstr.CaseCamel(field) + ` = false    //也会触发onBlur事件
+                                        currentRef?.blur()
+                                        break
+                                }
+                            }}
+                        />,
+                    ]
+                }
+                return [
+                    <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(field) + ` = true)}>
+                        {props.rowData.` + field + `}
+                    </div>,
+                ]
+            },`
 				}
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
@@ -2390,41 +2390,41 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			let tagType = tm('common.component.tagType') as string[]
-			let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
-			let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
-			return <ElTag type={tagType[index % tagType.length]}>{obj[index]?.label}</ElTag>
-		},`
+                let tagType = tm('common.component.tagType') as string[]
+                let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
+                let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
+                return <ElTag type={tagType[index % tagType.length]}>{obj[index]?.label}</ElTag>
+            },`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			return [
-				<ElSwitch
-					model-value={props.rowData.` + field + `}
-					active-value={1}
-					// disabled={true}
-					inactive-value={0}
-					inline-prompt={true}
-					active-text={t('common.yes')}
-					inactive-text={t('common.no')}
-					style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
+                return [
+                    <ElSwitch
+                        model-value={props.rowData.` + field + `}
+                        active-value={1}
+                        // disabled={true}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
 				if option.IsUpdate {
 					cellRendererOfColumn += `
-					onChange={(val: number) => {
-						handleUpdate({
-							idArr: [props.rowData.id],
-							` + field + `: val
-						})
-							.then((res) => {
-								props.rowData.` + field + ` = val
-							})
-							.catch((error) => {})
-					}}`
+                        onChange={(val: number) => {
+                            handleUpdate({
+                                idArr: [props.rowData.id],
+                                ` + field + `: val
+                            })
+                                .then((res) => {
+                                    props.rowData.` + field + ` = val
+                                })
+                                .catch((error) => {})
+                        }}`
 				}
 				cellRendererOfColumn += `
-				/>
-			]
-		},`
+                    />
+                ]
+            },`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			sortableOfColumn = `sortable: true,`
@@ -2437,199 +2437,207 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		}
 
 		viewListColumn += `
-	{
-		` + dataKeyOfColumn + `
-		` + titleOfColumn + `
-		` + keyOfColumn + `
-		` + alignOfColumn + `
-		` + widthOfColumn
+        {
+            ` + dataKeyOfColumn + `
+            ` + titleOfColumn + `
+            ` + keyOfColumn + `
+            ` + alignOfColumn + `
+            ` + widthOfColumn
 		if sortableOfColumn != `` {
 			viewListColumn += `
-		` + sortableOfColumn
+            ` + sortableOfColumn
 		}
 		if hiddenOfColumn != `` {
 			viewListColumn += `
-		` + hiddenOfColumn
+            ` + hiddenOfColumn
 		}
 		if cellRendererOfColumn != `` {
 			viewListColumn += `
-		` + cellRendererOfColumn
+            ` + cellRendererOfColumn
 		}
 		viewListColumn += `
-	},`
+        },`
 	}
 
 	tplView := `<script setup lang="tsx">
 const { t, tm } = useI18n()
 
 const table = reactive({
-	columns: [{
-		dataKey: 'id',
-		title: t('common.name.id'),
-		key: 'id',
-		align: 'center',
-		width: 200,
-		fixed: 'left',
-		sortable: true,`
+    columns: [
+        {
+            dataKey: 'id',
+            title: t('common.name.id'),
+            key: 'id',
+            align: 'center',
+            width: 200,
+            fixed: 'left',
+            sortable: true,`
 	if option.IsUpdate || option.IsDelete {
 		tplView += `
-		headerCellRenderer: () => {
-			const allChecked = table.data.every((item: any) => item.checked)
-			const someChecked = table.data.some((item: any) => item.checked)
-			return [
-				<div
-					class="id-checkbox"
-					onClick={(event: any) => {
-						event.stopPropagation() //阻止冒泡
-					}}
-				>
-					<ElCheckbox
-						model-value={table.data.length ? allChecked : false}
-						indeterminate={someChecked && !allChecked}
-						onChange={(val: boolean) => {
-							table.data.forEach((item: any) => {
-								item.checked = val
-							})
-						}}
-					/>
-				</div>,
-				<div>{t('common.name.id')}</div>
-			]
-		},
-		cellRenderer: (props: any): any => {
-			return [
-				<ElCheckbox
-					class="id-checkbox"
-					model-value={props.rowData.checked}
-					onChange={(val: boolean) => {
-						props.rowData.checked = val
-					}}
-				/>,
-				<div>{props.rowData.id}</div>
-			]
-		},`
+            headerCellRenderer: () => {
+                const allChecked = table.data.every((item: any) => item.checked)
+                const someChecked = table.data.some((item: any) => item.checked)
+                return [
+                    <div
+                        class="id-checkbox"
+                        onClick={(event: any) => {
+                            event.stopPropagation() //阻止冒泡
+                        }}
+                    >
+                        <ElCheckbox
+                            model-value={table.data.length ? allChecked : false}
+                            indeterminate={someChecked && !allChecked}
+                            onChange={(val: boolean) => {
+                                table.data.forEach((item: any) => {
+                                    item.checked = val
+                                })
+                            }}
+                        />
+                    </div>,
+                    <div>{t('common.name.id')}</div>,
+                ]
+            },
+            cellRenderer: (props: any): any => {
+                return [
+                    <ElCheckbox
+                        class="id-checkbox"
+                        model-value={props.rowData.checked}
+                        onChange={(val: boolean) => {
+                            props.rowData.checked = val
+                        }}
+                    />,
+                    <div>{props.rowData.id}</div>,
+                ]
+            },`
 	}
 	tplView += `
-	},` + viewListColumn
+        },` + viewListColumn
 	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
-	{
-		title: t('common.name.action'),
-		key: 'action',
-		align: 'center',
-		width: 250,
-		fixed: 'right',
-		cellRenderer: (props: any): any => {
-			return [`
+        {
+            title: t('common.name.action'),
+            key: 'action',
+            align: 'center',
+            width: 250,
+            fixed: 'right',
+            cellRenderer: (props: any): any => {
+                return [`
 		if option.IsUpdate {
 			tplView += `
-				<ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
-					<AutoiconEpEdit />
-					{t('common.edit')}
-				</ElButton>,`
+                    <ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                        <AutoiconEpEdit />
+                        {t('common.edit')}
+                    </ElButton>,`
 		}
 		if option.IsDelete {
 			tplView += `
-				<ElButton type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
-					<AutoiconEpDelete />
-					{t('common.delete')}
-				</ElButton>,`
+                    <ElButton type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+                        <AutoiconEpDelete />
+                        {t('common.delete')}
+                    </ElButton>,`
 		}
 		if option.IsCreate {
 			tplView += `
-				<ElButton type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
-					<AutoiconEpDocumentCopy />
-					{t('common.copy')}
-				</ElButton>,`
+                    <ElButton type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+                        <AutoiconEpDocumentCopy />
+                        {t('common.copy')}
+                    </ElButton>,`
 		}
 		tplView += `
-			]
-		},
-	}`
+                ]
+            },
+        },`
 	}
-	tplView += `] as any,
-	data: [],
-	loading: false,
-	sort: { key: 'id', order: 'desc' } as any,
-	handleSort: (sort: any) => {
-		table.sort.key = sort.key
-		table.sort.order = sort.order
-		getList()
-	},
+	tplView += `
+    ] as any,
+    data: [],
+    loading: false,
+    sort: { key: 'id', order: 'desc' } as any,
+    handleSort: (sort: any) => {
+        table.sort.key = sort.key
+        table.sort.order = sort.order
+        getList()
+    },
 })`
 	if option.IsCreate || option.IsUpdate {
 		tplView += `
 
-const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }`
+const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }`
 	}
 	if option.IsCreate {
 		tplView += `
 //新增
 const handleAdd = () => {
-	saveCommon.data = {}
-	saveCommon.title = t('common.add')
-	saveCommon.visible = true
+    saveCommon.data = {}
+    saveCommon.title = t('common.add')
+    saveCommon.visible = true
 }`
 	}
 	if option.IsDelete {
 		tplView += `
 //批量删除
 const handleBatchDelete = () => {
-	const idArr: number[] = [];
-	table.data.forEach((item: any) => {
-		if (item.checked) {
-			idArr.push(item.id)
-		}
-	})
-	if (idArr.length) {
-		handleDelete(idArr)
-	} else {
-		ElMessage.error(t('common.tip.selectDelete'))
-	}
+    const idArr: number[] = []
+    table.data.forEach((item: any) => {
+        if (item.checked) {
+            idArr.push(item.id)
+        }
+    })
+    if (idArr.length) {
+        handleDelete(idArr)
+    } else {
+        ElMessage.error(t('common.tip.selectDelete'))
+    }
 }`
 	}
 	if option.IsCreate || option.IsUpdate {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-	request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/info', { id: id }).then((res) => {
-		saveCommon.data = { ...res.data.info }
-		switch (type) {
-			case 'edit':
-				saveCommon.data.idArr = [saveCommon.data.id]
-				delete saveCommon.data.id
-				saveCommon.title = t('common.edit')
-				break;
-			case 'copy':
-				delete saveCommon.data.id
-				saveCommon.title = t('common.copy')
-				break;
-		}
-		saveCommon.visible = true
-	}).catch(() => { })
+    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/info', { id: id })
+        .then((res) => {
+            saveCommon.data = { ...res.data.info }
+            switch (type) {
+                case 'edit':
+                    saveCommon.data.idArr = [saveCommon.data.id]
+                    delete saveCommon.data.id
+                    saveCommon.title = t('common.edit')
+                    break
+                case 'copy':
+                    delete saveCommon.data.id
+                    saveCommon.title = t('common.copy')
+                    break
+            }
+            saveCommon.visible = true
+        })
+        .catch(() => {})
 }`
 	}
 	if option.IsDelete {
 		tplView += `
 //删除
 const handleDelete = (idArr: number[]) => {
-	ElMessageBox.confirm('', {
-		type: 'warning',
-		title: t('common.tip.configDelete'),
-		center: true,
-		showClose: false,
-	}).then(() => {
-		request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/del', { idArr: idArr }, true).then((res) => {
-			getList()
-		}).catch(() => { })
-	}).catch(() => { })
+    ElMessageBox.confirm('', {
+        type: 'warning',
+        title: t('common.tip.configDelete'),
+        center: true,
+        showClose: false,
+    })
+        .then(() => {
+            request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/del', { idArr: idArr }, true)
+                .then((res) => {
+                    getList()
+                })
+                .catch(() => {})
+        })
+        .catch(() => {})
 }`
 	}
 	if option.IsUpdate {
 		tplView += `
 //更新
-const handleUpdate = async (param: { idArr: number[], [propName: string]: any }) => {
-	await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
+const handleUpdate = async (param: { idArr: number[]; [propName: string]: any }) => {
+    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
 }`
 	}
 	tplView += `
@@ -2637,107 +2645,112 @@ const handleUpdate = async (param: { idArr: number[], [propName: string]: any })
 //分页
 const settingStore = useSettingStore()
 const pagination = reactive({
-	total: 0,
-	page: 1,
-	size: settingStore.pagination.size,
-	sizeList: settingStore.pagination.sizeList,
-	layout: settingStore.pagination.layout,
-	sizeChange: (val: number) => {
-		getList()
-	},
-	pageChange: (val: number) => {
-		getList()
-	}
+    total: 0,
+    page: 1,
+    size: settingStore.pagination.size,
+    sizeList: settingStore.pagination.sizeList,
+    layout: settingStore.pagination.layout,
+    sizeChange: (val: number) => {
+        getList()
+    },
+    pageChange: (val: number) => {
+        getList()
+    },
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 //列表
 const getList = async (resetPage: boolean = false) => {
-	if (resetPage) {
-		pagination.page = 1
-	}
-	const param = {
-		field: [],
-		filter: removeEmptyOfObj(queryCommon.data),
-		sort: table.sort.key + ' ' + table.sort.order,
-		page: pagination.page,
-		limit: pagination.size
-	}
-	table.loading = true
-	try {
-		const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param)
-		table.data = res.data.list?.length ? res.data.list : []
-		pagination.total = res.data.count
-	} catch (error) { }
-	table.loading = false
+    if (resetPage) {
+        pagination.page = 1
+    }
+    const param = {
+        field: [],
+        filter: removeEmptyOfObj(queryCommon.data),
+        sort: table.sort.key + ' ' + table.sort.order,
+        page: pagination.page,
+        limit: pagination.size,
+    }
+    table.loading = true
+    try {
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param)
+        table.data = res.data.list?.length ? res.data.list : []
+        pagination.total = res.data.count
+    } catch (error) {}
+    table.loading = false
 }
 getList()
 
 //暴露组件接口给父组件
 defineExpose({
-	getList
+    getList,
 })
 </script>
 
 <template>
-	<ElRow class="main-table-tool">
-		<ElCol :span="16">
-			<ElSpace :size="10" style="height: 100%; margin-left: 10px;">`
+    <ElRow class="main-table-tool">
+        <ElCol :span="16">
+            <ElSpace :size="10" style="height: 100%; margin-left: 10px">`
 	if option.IsCreate {
 		tplView += `
-				<ElButton type="primary" @click="handleAdd">
-					<AutoiconEpEditPen />{{ t('common.add') }}
-				</ElButton>`
+                <ElButton type="primary" @click="handleAdd"> <AutoiconEpEditPen />{{ t('common.add') }} </ElButton>`
 	}
 	if option.IsDelete {
 		tplView += `
-				<ElButton type="danger" @click="handleBatchDelete">
-					<AutoiconEpDeleteFilled />{{ t('common.batchDelete') }}
-				</ElButton>`
+                <ElButton type="danger" @click="handleBatchDelete"> <AutoiconEpDeleteFilled />{{ t('common.batchDelete') }} </ElButton>`
 	}
 	tplView += `
-			</ElSpace>
-		</ElCol>
-		<ElCol :span="8" style="text-align: right;">
-			<ElSpace :size="10" style="height: 100%;">
-				<MyExportButton i18nPrefix="` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
-				<ElDropdown max-height="300" :hide-on-click="false">
-					<ElButton type="info" :circle="true">
-						<AutoiconEpHide />
-					</ElButton>
-					<template #dropdown>
-						<ElDropdownMenu>
-							<ElDropdownItem v-for="(item, index) in table.columns" :key="index">
-								<ElCheckbox v-model="item.hidden">
-									{{ item.title }}
-								</ElCheckbox>
-							</ElDropdownItem>
-						</ElDropdownMenu>
-					</template>
-				</ElDropdown>
-			</ElSpace>
-		</ElCol>
-	</ElRow>
+            </ElSpace>
+        </ElCol>
+        <ElCol :span="8" style="text-align: right">
+            <ElSpace :size="10" style="height: 100%">
+                <MyExportButton i18nPrefix="` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <ElDropdown max-height="300" :hide-on-click="false">
+                    <ElButton type="info" :circle="true">
+                        <AutoiconEpHide />
+                    </ElButton>
+                    <template #dropdown>
+                        <ElDropdownMenu>
+                            <ElDropdownItem v-for="(item, index) in table.columns" :key="index">
+                                <ElCheckbox v-model="item.hidden">
+                                    {{ item.title }}
+                                </ElCheckbox>
+                            </ElDropdownItem>
+                        </ElDropdownMenu>
+                    </template>
+                </ElDropdown>
+            </ElSpace>
+        </ElCol>
+    </ElRow>
 
-	<ElMain>
-		<ElAutoResizer>
-			<template #default="{ height, width }">
-				<ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(tableRowHeight) + `">
-					<template v-if="table.loading" #overlay>
-						<ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
-							<AutoiconEpLoading />
-						</ElIcon>
-					</template>
-				</ElTableV2>
-			</template>
-		</ElAutoResizer>
-	</ElMain>
+    <ElMain>
+        <ElAutoResizer>
+            <template #default="{ height, width }">
+                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(tableRowHeight) + `">
+                    <template v-if="table.loading" #overlay>
+                        <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
+                            <AutoiconEpLoading />
+                        </ElIcon>
+                    </template>
+                </ElTableV2>
+            </template>
+        </ElAutoResizer>
+    </ElMain>
 
-	<ElRow class="main-table-pagination">
-		<ElCol :span="24">
-			<ElPagination :total="pagination.total" v-model:currentPage="pagination.page" v-model:page-size="pagination.size" @size-change="pagination.sizeChange" @current-change="pagination.pageChange" :page-sizes="pagination.sizeList" :layout="pagination.layout" :background="true" />
-		</ElCol>
-	</ElRow>
+    <ElRow class="main-table-pagination">
+        <ElCol :span="24">
+            <ElPagination
+                :total="pagination.total"
+                v-model:currentPage="pagination.page"
+                v-model:page-size="pagination.size"
+                @size-change="pagination.sizeChange"
+                @current-change="pagination.pageChange"
+                :page-sizes="pagination.sizeList"
+                :layout="pagination.layout"
+                :background="true"
+            />
+        </ElCol>
+    </ElRow>
 </template>`
 
 	gfile.PutContents(saveFile, tplView)
