@@ -1,3 +1,3 @@
 export default {
-    welcome: '欢迎',
+    welcome: '欢迎'
 }

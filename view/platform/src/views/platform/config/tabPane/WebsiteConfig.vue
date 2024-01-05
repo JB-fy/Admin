@@ -8,15 +8,15 @@ const saveForm = reactive({
         //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
         hotSearch: [],
         userAgreement: '',
-        privacyAgreement: '',
+        privacyAgreement: ''
     } as { [propName: string]: any },
     rules: {
         hotSearch: [
             // { type: 'array', trigger: 'change', message: t('validation.required') },
-            { type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
+            { type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } }
         ],
         userAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        privacyAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        privacyAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }]
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -24,7 +24,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config,
+                ...res.data.config
             }
         } catch (error) {}
     },
@@ -44,7 +44,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    },
+    }
 })
 
 const hotSearchHandle = reactive({
@@ -67,7 +67,7 @@ const hotSearchHandle = reactive({
     },
     delValue: (item: any) => {
         saveForm.data.hotSearch.splice(saveForm.data.hotSearch.indexOf(item), 1)
-    },
+    }
 })
 
 saveForm.initData()

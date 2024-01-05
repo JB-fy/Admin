@@ -5,8 +5,8 @@ export default {
         tableId: '关联',
         isStop: '停用',
         menuId: '菜单',
-        actionId: '操作',
+        actionId: '操作'
     },
     status: {},
-    tip: {},
+    tip: {}
 }

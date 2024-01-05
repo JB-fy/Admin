@@ -21,7 +21,7 @@ const table = reactive({
                             class: 'id-checkbox',
                             onClick: (event: any) => {
                                 event.stopPropagation() //阻止冒泡
-                            },
+                            }
                         },
                         {
                             default: () => [
@@ -32,18 +32,18 @@ const table = reactive({
                                         table.data.forEach((item: any) => {
                                             item.checked = val
                                         })
-                                    },
-                                }),
-                            ],
-                        },
+                                    }
+                                })
+                            ]
+                        }
                     ),
                     h(
                         'div',
                         {},
                         {
-                            default: () => t('common.name.id'),
-                        },
-                    ),
+                            default: () => t('common.name.id')
+                        }
+                    )
                 ]
             },
             cellRenderer: (props: any): any => {
@@ -53,38 +53,38 @@ const table = reactive({
                         'model-value': props.rowData.checked,
                         onChange: (val: boolean) => {
                             props.rowData.checked = val
-                        },
+                        }
                     }),
                     h(
                         'div',
                         {},
                         {
-                            default: () => props.rowData.id,
-                        },
-                    ),
+                            default: () => props.rowData.id
+                        }
+                    )
                 ]
-            },
+            }
         },
         {
             dataKey: 'phone',
             title: t('platform.admin.name.phone'),
             key: 'phone',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'account',
             title: t('platform.admin.name.account'),
             key: 'account',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'nickname',
             title: t('platform.admin.name.nickname'),
             key: 'nickname',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'avatar',
@@ -102,7 +102,7 @@ const table = reactive({
                         ElScrollbar,
                         {
                             'wrap-style': 'display: flex; align-items: center;',
-                            'view-style': 'margin: auto;',
+                            'view-style': 'margin: auto;'
                         },
                         {
                             default: () => {
@@ -113,15 +113,15 @@ const table = reactive({
                                         lazy: true,
                                         'hide-on-click-modal': true,
                                         'preview-teleported': true,
-                                        'preview-src-list': imageList,
+                                        'preview-src-list': imageList
                                     })
                                 })
                                 return content
-                            },
-                        },
-                    ),
+                            }
+                        }
+                    )
                 ]
-            },
+            }
         },
         {
             dataKey: 'isStop',
@@ -143,16 +143,16 @@ const table = reactive({
                         onChange: (val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val,
+                                isStop: val
                             })
                                 .then((res) => {
                                     props.rowData.isStop = val
                                 })
                                 .catch((error) => {})
-                        },
-                    }),
+                        }
+                    })
                 ]
-            },
+            }
         },
         {
             dataKey: 'updatedAt',
@@ -160,7 +160,7 @@ const table = reactive({
             key: 'updatedAt',
             align: 'center',
             width: 150,
-            sortable: true,
+            sortable: true
         },
         {
             dataKey: 'createdAt',
@@ -168,7 +168,7 @@ const table = reactive({
             key: 'createdAt',
             align: 'center',
             width: 150,
-            sortable: true,
+            sortable: true
         },
         {
             title: t('common.name.action'),
@@ -183,37 +183,37 @@ const table = reactive({
                         {
                             type: 'primary',
                             size: 'small',
-                            onClick: () => handleEditCopy(props.rowData.id),
+                            onClick: () => handleEditCopy(props.rowData.id)
                         },
                         {
-                            default: () => [h(AutoiconEpEdit), t('common.edit')],
-                        },
+                            default: () => [h(AutoiconEpEdit), t('common.edit')]
+                        }
                     ),
                     h(
                         ElButton,
                         {
                             type: 'danger',
                             size: 'small',
-                            onClick: () => handleDelete([props.rowData.id]),
+                            onClick: () => handleDelete([props.rowData.id])
                         },
                         {
-                            default: () => [h(AutoiconEpDelete), t('common.delete')],
-                        },
+                            default: () => [h(AutoiconEpDelete), t('common.delete')]
+                        }
                     ),
                     h(
                         ElButton,
                         {
                             type: 'warning',
                             size: 'small',
-                            onClick: () => handleEditCopy(props.rowData.id, 'copy'),
+                            onClick: () => handleEditCopy(props.rowData.id, 'copy')
                         },
                         {
-                            default: () => [h(AutoiconEpDocumentCopy), t('common.copy')],
-                        },
-                    ),
+                            default: () => [h(AutoiconEpDocumentCopy), t('common.copy')]
+                        }
+                    )
                 ]
-            },
-        },
+            }
+        }
     ] as any,
     data: [],
     loading: false,
@@ -222,7 +222,7 @@ const table = reactive({
         table.sort.key = sort.key
         table.sort.order = sort.order
         getList()
-    },
+    }
 })
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
@@ -272,7 +272,7 @@ const handleDelete = (idArr: number[]) => {
         type: 'warning',
         title: t('common.tip.configDelete'),
         center: true,
-        showClose: false,
+        showClose: false
     })
         .then(() => {
             request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/del', { idArr: idArr }, true)
@@ -301,7 +301,7 @@ const pagination = reactive({
     },
     pageChange: (val: number) => {
         getList()
-    },
+    }
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
@@ -315,7 +315,7 @@ const getList = async (resetPage: boolean = false) => {
         filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
-        limit: pagination.size,
+        limit: pagination.size
     }
     table.loading = true
     try {
@@ -329,7 +329,7 @@ getList()
 
 //暴露组件接口给父组件
 defineExpose({
-    getList,
+    getList
 })
 </script>
 

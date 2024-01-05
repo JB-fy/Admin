@@ -13,7 +13,7 @@ const saveForm = reactive({
         pushOfTxIosAccessID: '',
         pushOfTxIosSecretKey: '',
         pushOfTxMacOSAccessID: '',
-        pushOfTxMacOSSecretKey: '',
+        pushOfTxMacOSSecretKey: ''
     } as { [propName: string]: any },
     rules: {
         pushType: [{ type: 'enum', enum: [`pushOfTx`], trigger: 'change', message: t('validation.select') }],
@@ -23,7 +23,7 @@ const saveForm = reactive({
         pushOfTxIosAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         pushOfTxIosSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         pushOfTxMacOSAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        pushOfTxMacOSSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        pushOfTxMacOSSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }]
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -31,7 +31,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config,
+                ...res.data.config
             }
         } catch (error) {}
     },
@@ -51,7 +51,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    },
+    }
 })
 
 saveForm.initData()

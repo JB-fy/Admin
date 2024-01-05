@@ -17,7 +17,7 @@ const saveForm = reactive({
         uploadOfAliyunOssAccessKeySecret: '',
         uploadOfAliyunOssCallbackUrl: '',
         uploadOfAliyunOssEndpoint: '',
-        uploadOfAliyunOssRoleArn: '',
+        uploadOfAliyunOssRoleArn: ''
     } as { [propName: string]: any },
     rules: {
         uploadType: [{ type: 'enum', enum: [`uploadOfLocal`, `uploadOfAliyunOss`], trigger: 'change', message: t('validation.select') }],
@@ -31,7 +31,7 @@ const saveForm = reactive({
         uploadOfAliyunOssAccessKeySecret: [{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
         uploadOfAliyunOssCallbackUrl: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         uploadOfAliyunOssEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        uploadOfAliyunOssRoleArn: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        uploadOfAliyunOssRoleArn: [{ type: 'string', trigger: 'blur', message: t('validation.input') }]
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -39,7 +39,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config,
+                ...res.data.config
             }
         } catch (error) {}
     },
@@ -59,7 +59,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    },
+    }
 })
 
 saveForm.initData()

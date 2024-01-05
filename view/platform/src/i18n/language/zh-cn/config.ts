@@ -3,6 +3,6 @@ export default {
     webTitle: '平台后台',
     VITE_HTTP_API_PREFIX: import.meta.env.VITE_HTTP_API_PREFIX,
     const: {
-        tagType: ['', 'success', 'danger', 'info', 'warning'],
-    },
+        tagType: ['', 'success', 'danger', 'info', 'warning']
+    }
 }

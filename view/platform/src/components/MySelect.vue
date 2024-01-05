@@ -8,12 +8,12 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array],
+        type: [String, Number, Array]
     },
     defaultOptions: {
         //选项初始默认值。格式：[{ value: string | number, label: string },...]
         type: Array,
-        default: [],
+        default: []
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
@@ -25,43 +25,43 @@ const props = defineProps({
      */
     api: {
         type: Object,
-        required: true,
+        required: true
     },
     placeholder: {
-        type: String,
+        type: String
     },
     clearable: {
         type: Boolean,
-        default: true,
+        default: true
     },
     filterable: {
         type: Boolean,
-        default: true,
+        default: true
     },
     remote: {
         type: Boolean,
-        default: true,
+        default: true
     },
     disabled: {
         type: Boolean,
-        default: false,
+        default: false
     },
     multiple: {
         type: Boolean,
-        default: false,
+        default: false
     },
     collapseTags: {
         type: Boolean,
-        default: true,
+        default: true
     },
     collapseTagsTooltip: {
         type: Boolean,
-        default: true,
+        default: true
     },
     multipleLimit: {
         type: Number,
-        default: 0,
-    },
+        default: 0
+    }
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
@@ -74,7 +74,7 @@ const select = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        },
+        }
     }),
     options: [...props.defaultOptions] as any,
     initOptions: () => {
@@ -105,7 +105,7 @@ const select = reactive({
                 sort: 'id desc',
                 page: 1,
                 limit: useSettingStore().scrollSize,
-                ...(props.api?.param ?? {}),
+                ...(props.api?.param ?? {})
             }
         }),
         transform: computed(() => {
@@ -116,7 +116,7 @@ const select = reactive({
                       res.data.list.forEach((item: any) => {
                           options.push({
                               value: item[select.api.param.field[0]],
-                              label: item[select.api.param.field[1]],
+                              label: item[select.api.param.field[1]]
                           })
                       })
                       return options
@@ -162,7 +162,7 @@ const select = reactive({
                     }
                 })
                 .catch((error) => {})
-        },
+        }
     },
     visibleChange: (val: boolean) => {
         //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
@@ -181,7 +181,7 @@ const select = reactive({
         }
         select.resetOptions()
         select.api.addOptions()
-    },
+    }
 })
 //组件创建时，如有初始值，需初始化options
 if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue) {
@@ -240,7 +240,7 @@ watch(
                 }
             })
         }
-    },
+    }
 )
 </script>
 

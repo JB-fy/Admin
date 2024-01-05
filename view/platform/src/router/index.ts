@@ -48,7 +48,7 @@ const initRouteList = [
                     component.default.name = '/' //meta.keepAlive为true时，要实现组件缓存和页面刷新，必须设置组件name和meta.componentName，且必须相同
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/' }
             },
             {
                 path: '/auth/action',
@@ -57,7 +57,7 @@ const initRouteList = [
                     component.default.name = '/auth/action'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/action' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/action' }
             },
             {
                 path: '/auth/menu',
@@ -66,7 +66,7 @@ const initRouteList = [
                     component.default.name = '/auth/menu'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/menu' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/menu' }
             },
             {
                 path: '/auth/role',
@@ -75,7 +75,7 @@ const initRouteList = [
                     component.default.name = '/auth/role'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/role' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/role' }
             },
             {
                 path: '/auth/scene',
@@ -84,7 +84,7 @@ const initRouteList = [
                     component.default.name = '/auth/scene'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' }
             },
             {
                 path: '/platform/admin',
@@ -93,7 +93,7 @@ const initRouteList = [
                     component.default.name = '/platform/admin'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/admin' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/admin' }
             },
             {
                 path: '/platform/config/platform',
@@ -102,7 +102,7 @@ const initRouteList = [
                     component.default.name = '/platform/config/platform'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/platform' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/platform' }
             },
             {
                 path: '/platform/config/plugin',
@@ -111,7 +111,7 @@ const initRouteList = [
                     component.default.name = '/platform/config/plugin'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/plugin' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/plugin' }
             },
             {
                 path: '/user/user',
@@ -120,7 +120,7 @@ const initRouteList = [
                     component.default.name = '/user/user'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/user/user' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/user/user' }
             },
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {
@@ -130,31 +130,31 @@ const initRouteList = [
                     component.default.name = '/profile'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { i18n: { title: { en: 'Profile', 'zh-cn': '个人中心' } }, icon: 'AutoiconEpUserFilled' } },
+                meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { i18n: { title: { en: 'Profile', 'zh-cn': '个人中心' } }, icon: 'AutoiconEpUserFilled' } }
             },
             {
                 path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.gitee.io/zh-CN/
                 component: () => import('@/views/ThirdSite.vue'),
-                meta: { isAuth: true, keepAlive: false, menu: { i18n: { title: { en: 'Third Site', 'zh-cn': '第三方站点' } }, icon: 'AutoiconEpChromeFilled' } },
-            },
-        ],
+                meta: { isAuth: true, keepAlive: false, menu: { i18n: { title: { en: 'Third Site', 'zh-cn': '第三方站点' } }, icon: 'AutoiconEpChromeFilled' } }
+            }
+        ]
     },
     {
         path: '/login',
         component: () => import('@/views/Login.vue'),
-        meta: { isAuth: false, keepAlive: false, menu: { i18n: { title: { en: 'Login', 'zh-cn': '登录' } } } },
+        meta: { isAuth: false, keepAlive: false, menu: { i18n: { title: { en: 'Login', 'zh-cn': '登录' } } } }
     },
     {
         path: '/:pathMatch(.*)*',
         component: () => import('@/views/404.vue'),
-        meta: { isAuth: false, keepAlive: false, menu: { i18n: { title: { en: '404', 'zh-cn': '404' } } } },
-    },
+        meta: { isAuth: false, keepAlive: false, menu: { i18n: { title: { en: '404', 'zh-cn': '404' } } } }
+    }
 ]
 
 const router = createRouter({
     //history: createWebHistory(import.meta.env.VITE_BASE_PATH),
     history: createWebHistory(import.meta.env.BASE_URL),
-    routes: initRouteList,
+    routes: initRouteList
 })
 
 router.beforeEach(async (to: any) => {
@@ -197,7 +197,7 @@ router.beforeEach(async (to: any) => {
             keepAlive: to.meta?.keepAlive ?? false,
             componentName: to.meta?.componentName,
             url: to.fullPath,
-            ...to.meta?.menu,
+            ...to.meta?.menu
         })
     }
     /**--------设置菜单标签 结束--------**/

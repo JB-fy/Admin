@@ -12,7 +12,7 @@ const fullScreenIcon = reactive({
             return
         }
         screenfull.toggle()
-    },
+    }
 })
 
 screenfull.onchange(() => {

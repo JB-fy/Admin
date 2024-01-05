@@ -21,7 +21,7 @@ const table = reactive({
                             class: 'id-checkbox',
                             onClick: (event: any) => {
                                 event.stopPropagation() //阻止冒泡
-                            },
+                            }
                         },
                         {
                             default: () => [
@@ -32,18 +32,18 @@ const table = reactive({
                                         table.data.forEach((item: any) => {
                                             item.checked = val
                                         })
-                                    },
-                                }),
-                            ],
-                        },
+                                    }
+                                })
+                            ]
+                        }
                     ),
                     h(
                         'div',
                         {},
                         {
-                            default: () => t('common.name.id'),
-                        },
-                    ),
+                            default: () => t('common.name.id')
+                        }
+                    )
                 ]
             },
             cellRenderer: (props: any): any => {
@@ -53,38 +53,38 @@ const table = reactive({
                         'model-value': props.rowData.checked,
                         onChange: (val: boolean) => {
                             props.rowData.checked = val
-                        },
+                        }
                     }),
                     h(
                         'div',
                         {},
                         {
-                            default: () => props.rowData.id,
-                        },
-                    ),
+                            default: () => props.rowData.id
+                        }
+                    )
                 ]
-            },
+            }
         },
         {
             dataKey: 'phone',
             title: t('user.user.name.phone'),
             key: 'phone',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'account',
             title: t('user.user.name.account'),
             key: 'account',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'nickname',
             title: t('user.user.name.nickname'),
             key: 'nickname',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'avatar',
@@ -102,7 +102,7 @@ const table = reactive({
                         ElScrollbar,
                         {
                             'wrap-style': 'display: flex; align-items: center;',
-                            'view-style': 'margin: auto;',
+                            'view-style': 'margin: auto;'
                         },
                         {
                             default: () => {
@@ -113,15 +113,15 @@ const table = reactive({
                                         lazy: true,
                                         'hide-on-click-modal': true,
                                         'preview-teleported': true,
-                                        'preview-src-list': imageList,
+                                        'preview-src-list': imageList
                                     })
                                 })
                                 return content
-                            },
-                        },
-                    ),
+                            }
+                        }
+                    )
                 ]
-            },
+            }
         },
         {
             dataKey: 'gender',
@@ -139,14 +139,14 @@ const table = reactive({
                     h(
                         ElTag as any,
                         {
-                            type: tagType[index % tagType.length],
+                            type: tagType[index % tagType.length]
                         },
                         {
-                            default: () => obj[index]?.label,
-                        },
-                    ),
+                            default: () => obj[index]?.label
+                        }
+                    )
                 ]
-            },
+            }
         },
         {
             dataKey: 'birthday',
@@ -154,7 +154,7 @@ const table = reactive({
             key: 'birthday',
             align: 'center',
             width: 100,
-            sortable: true,
+            sortable: true
         },
         {
             dataKey: 'address',
@@ -162,7 +162,7 @@ const table = reactive({
             key: 'address',
             align: 'center',
             width: 150,
-            hidden: true,
+            hidden: true
         },
         {
             dataKey: 'idCardName',
@@ -170,14 +170,14 @@ const table = reactive({
             key: 'idCardName',
             align: 'center',
             width: 150,
-            hidden: true,
+            hidden: true
         },
         {
             dataKey: 'idCardNo',
             title: t('user.user.name.idCardNo'),
             key: 'idCardNo',
             align: 'center',
-            width: 150,
+            width: 150
         },
         {
             dataKey: 'isStop',
@@ -199,16 +199,16 @@ const table = reactive({
                         onChange: (val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val,
+                                isStop: val
                             })
                                 .then((res) => {
                                     props.rowData.isStop = val
                                 })
                                 .catch((error) => {})
-                        },
-                    }),
+                        }
+                    })
                 ]
-            },
+            }
         },
         {
             dataKey: 'updatedAt',
@@ -216,7 +216,7 @@ const table = reactive({
             key: 'updatedAt',
             align: 'center',
             width: 150,
-            sortable: true,
+            sortable: true
         },
         {
             dataKey: 'createdAt',
@@ -224,8 +224,8 @@ const table = reactive({
             key: 'createdAt',
             align: 'center',
             width: 150,
-            sortable: true,
-        },
+            sortable: true
+        }
         /* {
 		title: t('common.name.action'),
 		key: 'action',
@@ -252,7 +252,7 @@ const table = reactive({
         table.sort.key = sort.key
         table.sort.order = sort.order
         getList()
-    },
+    }
 })
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
@@ -294,7 +294,7 @@ const pagination = reactive({
     },
     pageChange: (val: number) => {
         getList()
-    },
+    }
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
@@ -308,7 +308,7 @@ const getList = async (resetPage: boolean = false) => {
         filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
-        limit: pagination.size,
+        limit: pagination.size
     }
     table.loading = true
     try {
@@ -322,7 +322,7 @@ getList()
 
 //暴露组件接口给父组件
 defineExpose({
-    getList,
+    getList
 })
 </script>
 

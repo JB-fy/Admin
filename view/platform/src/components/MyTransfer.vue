@@ -7,12 +7,12 @@
 <script setup lang="ts">
 const props = defineProps({
     modelValue: {
-        type: Array,
+        type: Array
     },
     defaultOptions: {
         //选项初始默认值。格式：[{ [transfer.props.key]: string | number, [transfer.props.label]: string },...]
         type: Array,
-        default: [],
+        default: []
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
@@ -22,19 +22,19 @@ const props = defineProps({
      */
     api: {
         type: Object,
-        required: true,
+        required: true
     },
     placeholder: {
-        type: String,
+        type: String
     },
     filterable: {
         type: Boolean,
-        default: true,
+        default: true
     },
     props: {
         type: Object,
-        default: {},
-    },
+        default: {}
+    }
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
@@ -47,13 +47,13 @@ const transfer = reactive({
         set: (val) => {
             emits('update:modelValue', val)
             emits('change')
-        },
+        }
     }),
     options: [...props.defaultOptions] as any,
     props: {
         key: props.api?.param?.field?.[0] ?? 'id',
         label: props.api?.param?.field?.[1] ?? 'label',
-        ...props.props,
+        ...props.props
     },
     initOptions: () => {
         transfer.api.addOptions()
@@ -71,7 +71,7 @@ const transfer = reactive({
                 sort: 'id desc',
                 page: 1,
                 limit: 0,
-                ...(props.api?.param ?? {}),
+                ...(props.api?.param ?? {})
             }
         }),
         transform: computed(() => {
@@ -103,8 +103,8 @@ const transfer = reactive({
                     }
                 })
                 .catch((error) => {})
-        },
-    },
+        }
+    }
 })
 //组件创建时，初始化options
 transfer.initOptions()
@@ -117,7 +117,7 @@ watch(
             transfer.resetOptions()
             transfer.api.addOptions()
         }
-    },
+    }
 )
 </script>
 

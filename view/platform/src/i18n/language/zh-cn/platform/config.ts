@@ -13,7 +13,7 @@ export default {
         ios: '苹果',
 
         payOfAli: '支付宝',
-        payOfWx: '微信',
+        payOfWx: '微信'
     },
     name: {
         hotSearch: '热门搜索',
@@ -88,17 +88,17 @@ export default {
         vodOfAliyunAccessKeyId: '阿里云VOD-AccessKeyId',
         vodOfAliyunAccessKeySecret: '阿里云VOD-AccessKeySecret',
         vodOfAliyunEndpoint: '阿里云VOD-Endpoint',
-        vodOfAliyunRoleArn: '阿里云VOD-RoleArn',
+        vodOfAliyunRoleArn: '阿里云VOD-RoleArn'
     },
     status: {
         uploadType: [
             { value: `uploadOfLocal`, label: '本地' },
-            { value: `uploadOfAliyunOss`, label: '阿里云' },
+            { value: `uploadOfAliyunOss`, label: '阿里云' }
         ],
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
         pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],
-        vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
+        vodType: [{ value: `vodOfAliyun`, label: '阿里云' }]
     },
     tip: {
         uploadOfLocalFileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
@@ -115,6 +115,6 @@ export default {
         pushOfTxHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
 
         vodOfAliyunEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-        vodOfAliyunRoleArn: '用于生成STS凭证',
-    },
+        vodOfAliyunRoleArn: '用于生成STS凭证'
+    }
 }

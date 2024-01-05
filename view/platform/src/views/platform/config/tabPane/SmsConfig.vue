@@ -11,7 +11,7 @@ const saveForm = reactive({
         smsOfAliyunAccessKeySecret: '',
         smsOfAliyunEndpoint: '',
         smsOfAliyunSignName: '',
-        smsOfAliyunTemplateCode: '',
+        smsOfAliyunTemplateCode: ''
     } as { [propName: string]: any },
     rules: {
         smsType: [{ type: 'enum', enum: [`smsOfAliyun`], trigger: 'change', message: t('validation.select') }],
@@ -19,7 +19,7 @@ const saveForm = reactive({
         smsOfAliyunAccessKeySecret: [{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
         smsOfAliyunEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         smsOfAliyunSignName: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        smsOfAliyunTemplateCode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        smsOfAliyunTemplateCode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }]
     } as any,
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
@@ -27,7 +27,7 @@ const saveForm = reactive({
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {
                 ...saveForm.data,
-                ...res.data.config,
+                ...res.data.config
             }
         } catch (error) {}
     },
@@ -47,7 +47,7 @@ const saveForm = reactive({
     reset: () => {
         saveForm.ref.resetFields()
         saveForm.initData()
-    },
+    }
 })
 
 saveForm.initData()
