@@ -166,7 +166,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		MyGenTplViewSave(ctx, option, tpl)   // 视图模板Save生成
 		MyGenTplViewI18n(ctx, option, tpl)   // 视图模板I18n生成
 		MyGenTplViewRouter(ctx, option, tpl) // 前端路由生成
-		// 前端代码格式化
+		/* // 前端代码格式化
 		fmt.Println(`前端代码格式化 开始`)
 		command := exec.Command(`npm`, `run`, `format`)
 		command.Dir = gfile.SelfDir() + `/../view/` + option.SceneCode
@@ -183,7 +183,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			}
 		}
 		command.Wait()
-		fmt.Println(`前端代码格式化 结束`)
+		fmt.Println(`前端代码格式化 结束`) */
 	}
 	return
 }
@@ -2182,7 +2182,8 @@ provide('saveCommon', saveCommon)`
 	}
 	tplView += `
     </ElContainer>
-</template>`
+</template>
+`
 
 	gfile.PutContents(saveFile, tplView)
 }
@@ -2413,7 +2414,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                         onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                ` + field + `: val
+                                ` + field + `: val,
                             })
                                 .then((res) => {
                                     props.rowData.` + field + ` = val
@@ -2422,7 +2423,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                         }}`
 				}
 				cellRendererOfColumn += `
-                    />
+                    />,
                 ]
             },`
 			}
@@ -2751,7 +2752,8 @@ defineExpose({
             />
         </ElCol>
     </ElRow>
-</template>`
+</template>
+`
 
 	gfile.PutContents(saveFile, tplView)
 }
@@ -2781,29 +2783,29 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
 			viewQueryDataInit += `
-	timeRange: (() => {
-		// const date = new Date()
-		return [
-			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-			// new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
-		]
-	})(),
-	timeRangeStart: computed(() => {
-		if (queryCommon.data.timeRange?.length) {
-			return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
-		}
-		return ''
-	}),
-	timeRangeEnd: computed(() => {
-		if (queryCommon.data.timeRange?.length) {
-			return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
-		}
-		return ''
-	}),`
+    timeRange: (() => {
+        // const date = new Date()
+        return [
+            // new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+            // new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+        ]
+    })(),
+    timeRangeStart: computed(() => {
+        if (queryCommon.data.timeRange?.length) {
+            return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
+        }
+        return ''
+    }),
+    timeRangeEnd: computed(() => {
+        if (queryCommon.data.timeRange?.length) {
+            return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
+        }
+        return ''
+    }),`
 			viewQueryField += `
-		<ElFormItem prop="timeRange">
-			<ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
-		</ElFormItem>`
+        <ElFormItem prop="timeRange">
+            <ElDatePicker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
+        </ElFormItem>`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Icon` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Cover` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Avatar` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Img` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Image` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
@@ -2811,29 +2813,29 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
+        </ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
+        </ElFormItem>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <MyCascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
+        </ElFormItem>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="1" :controls="false" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="1" :controls="false" />
+        </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
@@ -2842,44 +2844,44 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
 				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <MySelect v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
+        </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				viewQueryField += `
-		<ElFormItem prop="` + field + `" style="width: 120px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `" style="width: 120px;">
+            <ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+        </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				viewQueryField += `
-		<ElFormItem prop="` + field + `" style="width: 120px;">
-			<ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `" style="width: 120px;">
+            <ElSelectV2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+        </ElFormItem>`
 			} else { //默认处理（int等类型）
 				/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-							viewQueryField += `
-				<ElFormItem prop="` + field + `">
-					<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
-				</ElFormItem>`
-						} else {
-							viewQueryField += `
-				<ElFormItem prop="` + field + `">
-					<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" />
-				</ElFormItem>`
-						} */
+				               viewQueryField += `
+				   <ElFormItem prop="` + field + `">
+				       <ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
+				   </ElFormItem>`
+				           } else {
+				               viewQueryField += `
+				   <ElFormItem prop="` + field + `">
+				       <ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" />
+				   </ElFormItem>`
+				           } */
 			}
 		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
 			/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-					viewQueryField += `
-			<ElFormItem prop="` + field + `">
-				<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
-			</ElFormItem>`
-				} else {
-					viewQueryField += `
-			<ElFormItem prop="` + field + `">
-				<ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
-			</ElFormItem>`
-				} */
+			           viewQueryField += `
+			   <ElFormItem prop="` + field + `">
+			       <ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
+			   </ElFormItem>`
+			       } else {
+			           viewQueryField += `
+			   <ElFormItem prop="` + field + `">
+			       <ElInputNumber v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
+			   </ElFormItem>`
+			       } */
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			typeDatePicker := ``
 			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
@@ -2903,16 +2905,16 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 
 			if typeDatePicker != `` {
 				viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElDatePicker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <ElDatePicker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
+        </ElFormItem>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
 		} else { //默认处理
 			viewQueryField += `
-		<ElFormItem prop="` + field + `">
-			<ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
-		</ElFormItem>`
+        <ElFormItem prop="` + field + `">
+            <ElInput v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+        </ElFormItem>`
 		}
 	}
 
@@ -2923,40 +2925,37 @@ const { t, tm } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
-	...queryCommon.data,` + viewQueryDataInit + `
+    ...queryCommon.data,` + viewQueryDataInit + `
 }
 const listCommon = inject('listCommon') as { ref: any }
 const queryForm = reactive({
-	ref: null as any,
-	loading: false,
-	submit: () => {
-		queryForm.loading = true
-		listCommon.ref.getList(true).finally(() => {
-			queryForm.loading = false
-		})
-	},
-	reset: () => {
-		queryForm.ref.resetFields()
-		//queryForm.submit()
-	}
+    ref: null as any,
+    loading: false,
+    submit: () => {
+        queryForm.loading = true
+        listCommon.ref.getList(true).finally(() => {
+            queryForm.loading = false
+        })
+    },
+    reset: () => {
+        queryForm.ref.resetFields()
+        //queryForm.submit()
+    },
 })
 </script>
 
 <template>
-	<ElForm class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
-		<ElFormItem prop="id">
-			<ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
-		</ElFormItem>` + viewQueryField + `
-		<ElFormItem>
-			<ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading">
-				<AutoiconEpSearch />{{ t('common.query') }}
-			</ElButton>
-			<ElButton type="info" @click="queryForm.reset">
-				<AutoiconEpCircleClose />{{ t('common.reset') }}
-			</ElButton>
-		</ElFormItem>
-	</ElForm>
-</template>`
+    <ElForm class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
+        <ElFormItem prop="id">
+            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
+        </ElFormItem>` + viewQueryField + `
+        <ElFormItem>
+            <ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <AutoiconEpSearch />{{ t('common.query') }} </ElButton>
+            <ElButton type="info" @click="queryForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
+        </ElFormItem>
+    </ElForm>
+</template>
+`
 
 	gfile.PutContents(saveFile, tplView)
 }
@@ -3003,10 +3002,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			multipleStr := ``
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
-			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-		],`
+        ` + field + `: [
+            { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
+        ],`
 			} else {
 				multipleStr = ` :multiple="true"`
 				requiredStr := ``
@@ -3014,23 +3013,23 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					requiredStr = ` required: true,`
 				}
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-			// { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
-		],`
+        ` + field + `: [
+            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
+            // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
+        ],`
 			}
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MyUpload v-model="saveForm.data.` + field + `" accept="image/*"` + multipleStr + ` />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <MyUpload v-model="saveForm.data.` + field + `" accept="image/*"` + multipleStr + ` />
+                </ElFormItem>`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
 			multipleStr := ``
 			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
-			{ type: 'url', trigger: 'change', message: t('validation.upload') },
-		],`
+        ` + field + `: [
+            { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
+        ],`
 			} else {
 				multipleStr = ` :multiple="true"`
 				requiredStr := ``
@@ -3038,81 +3037,81 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					requiredStr = ` required: true,`
 				}
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-			// { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
-		],`
+        ` + field + `: [
+            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
+            // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
+        ],`
 			}
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <MyUpload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
+                </ElFormItem>`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -4) == `List` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Arr`) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
 			viewSaveDataInit += `
-		` + field + `: [],`
+        ` + field + `: [],`
 			requiredStr := ``
 			if column[`Null`].String() == `NO` {
 				requiredStr = ` required: true,`
 			}
 			viewSaveRule += `
-		` + field + `: [
-			{ type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required') },
-			// { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
-		],`
+        ` + field + `: [
+            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required') },
+            // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
+        ],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.tagType[index % ` + field + `Handle.tagType.length]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
-						{{ item }}
-					</ElTag>
-					<!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
-					<ElInput v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
-					<ElButton v-else type="primary" size="small" @click="` + field + `Handle.visibleChange">
-						<AutoiconEpPlus />{{ t('common.add') }}
-					</ElButton>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElTag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.tagType[index % ` + field + `Handle.tagType.length]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+                        {{ item }}
+                    </ElTag>
+                    <!-- <ElInputNumber v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
+                    <ElInput v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
+                    <ElButton v-else type="primary" size="small" @click="` + field + `Handle.visibleChange">
+                        <AutoiconEpPlus />{{ t('common.add') }}
+                    </ElButton>
+                </ElFormItem>`
 			viewFieldHandle += `
 
 const ` + field + `Handle = reactive({
-	ref: null as any,
-	visible: false,
-	value: undefined,
-	tagType: tm('common.component.tagType') as string[],
-	visibleChange: () => {
-		` + field + `Handle.visible = true
-		nextTick(() => {
-			` + field + `Handle.ref?.focus()
-		})
-	},
-	addValue: () => {
-		if (` + field + `Handle.value) {
-			saveForm.data.` + field + `.push(` + field + `Handle.value)
-		}
-		` + field + `Handle.visible = false
-		` + field + `Handle.value = undefined
-	},
-	delValue: (item: any) => {
-		saveForm.data.` + field + `.splice(saveForm.data.` + field + `.indexOf(item), 1)
-	},
+    ref: null as any,
+    visible: false,
+    value: undefined,
+    tagType: tm('common.component.tagType') as string[],
+    visibleChange: () => {
+        ` + field + `Handle.visible = true
+        nextTick(() => {
+            ` + field + `Handle.ref?.focus()
+        })
+    },
+    addValue: () => {
+        if (` + field + `Handle.value) {
+            saveForm.data.` + field + `.push(` + field + `Handle.value)
+        }
+        ` + field + `Handle.visible = false
+        ` + field + `Handle.value = undefined
+    },
+    delValue: (item: any) => {
+        saveForm.data.` + field + `.splice(saveForm.data.` + field + `.indexOf(item), 1)
+    },
 })`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Remark` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Desc` || gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Msg` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Message` || gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Intro` || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `Content`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
 			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', trigger: 'blur', message: t('validation.input') },
-		],`
+        ` + field + `: [
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MyEditor v-model="saveForm.data.` + field + `" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <MyEditor v-model="saveForm.data.` + field + `" />
+                </ElFormItem>`
 			} else {
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
-		],`
+        ` + field + `: [
+            { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + resultStr[1] + `" :show-word-limit="true" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + resultStr[1] + `" :show-word-limit="true" />
+                </ElFormItem>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			ruleStr := ``
@@ -3123,34 +3122,34 @@ const ` + field + `Handle = reactive({
 					requiredStr = ` required: true,`
 				}
 				viewSaveFieldTip = ` style="max-width: 250px;" />
-					<label>
-						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-					</label>`
+                    <label>
+                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                    </label>`
 			}
 			if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Name` { //name后缀
 				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
 					requiredStr = ` required: true,`
 				}
 				ruleStr += `
-			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Code` { //code后缀
 				ruleStr += `
-			{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
+            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Phone` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Mobile` { //mobile,phone后缀
 				ruleStr += `
-			{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -3) == `Url` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Link` { //url,link后缀
 				ruleStr += `
-			{ type: 'url', trigger: 'change', message: t('validation.url') },`
+            { type: 'url', trigger: 'change', message: t('validation.url') },`
 			}
 			viewSaveRule += `
-		` + field + `: [
-			{ type: 'string',` + requiredStr + ` max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },` + ruleStr + `
-		],`
+        ` + field + `: [
+            { type: 'string',` + requiredStr + ` max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },` + ruleStr + `
+        ],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
+                </ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if (gstr.SubStr(fieldCaseCamelOfRemove, -8) == `Password` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Passwd`) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				viewSaveImportTmp := `
@@ -3159,19 +3158,19 @@ import md5 from 'js-md5'`
 					viewSaveImport += viewSaveImportTmp
 				}
 				viewSaveParamHandle += `
-			param.` + field + ` ? param.` + field + ` = md5(param.` + field + `) : delete param.` + field
+            param.` + field + ` ? param.` + field + ` = md5(param.` + field + `) : delete param.` + field
 
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
-		],`
+        ` + field + `: [
+            { type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
-					<label v-if="saveForm.data.idArr?.length">
-						<ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-					</label>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
+                    <label v-if="saveForm.data.idArr?.length">
+                        <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				ruleStr := ``
@@ -3182,48 +3181,48 @@ import md5 from 'js-md5'`
 						requiredStr = ` required: true,`
 					}
 					viewSaveFieldTip = ` style="max-width: 250px;" />
-					<label>
-						<ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-					</label>`
+                    <label>
+                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                    </label>`
 				}
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'string',` + requiredStr + ` len: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.size.string', { size: ` + resultStr[1] + ` }) },` + ruleStr + `
-		],`
+        ` + field + `: [
+            { type: 'string',` + requiredStr + ` len: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.size.string', { size: ` + resultStr[1] + ` }) },` + ruleStr + `
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
+                </ElFormItem>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewSaveParamHandle += `
-			if (param.` + field + ` === undefined) {
-				param.` + field + ` = 0
-			}`
+            if (param.` + field + ` === undefined) {
+                param.` + field + ` = 0
+            }`
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
-		],`
+        ` + field + `: [
+            { type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <MyCascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
+                </ElFormItem>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				viewSaveDataInit += `
-		` + field + `: ` + column[`Default`].String() + `,`
+        ` + field + `: ` + column[`Default`].String() + `,`
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
-		],`
+        ` + field + `: [
+            { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + column[`Default`].String() + `" />
-					<label>
-						<ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
-					</label>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInputNumber v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + column[`Default`].String() + `" />
+                    <label>
+                        <ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
 				if tpl.RelTableMap[field].IsExistRelTableDao {
@@ -3231,92 +3230,92 @@ import md5 from 'js-md5'`
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
 				viewSaveParamHandle += `
-			if (param.` + field + ` === undefined) {
-				param.` + field + ` = 0
-			}`
+            if (param.` + field + ` === undefined) {
+                param.` + field + ` = 0
+            }`
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
-		],`
+        ` + field + `: [
+            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MySelect v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <MySelect v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
+                </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
 				viewSaveDataInit += `
-		` + field + `: ` + statusList[0][0] + `,`
+        ` + field + `: ` + statusList[0][0] + `,`
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
-		],`
+        ` + field + `: [
+            { type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
 				//超过5个状态用select组件，小于5个用radio组件
 				if len(statusList) > 5 {
 					viewSaveField += `
-					<ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="false" />`
+                    <ElSelectV2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="false" />`
 				} else {
 					viewSaveField += `
-					<ElRadioGroup v-model="saveForm.data.` + field + `">
-						<ElRadio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
-							{{ item.label }}
-						</ElRadio>
-					</ElRadioGroup>`
+                    <ElRadioGroup v-model="saveForm.data.` + field + `">
+                        <ElRadio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
+                            {{ item.label }}
+                        </ElRadio>
+                    </ElRadioGroup>`
 				}
 				viewSaveField += `
-				</ElFormItem>`
+                </ElFormItem>`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				viewSaveDataInit += `
-		` + field + `: ` + column[`Default`].String() + `,`
+        ` + field + `: ` + column[`Default`].String() + `,`
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
-		],`
+        ` + field + `: [
+            { type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElSwitch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
+                </ElFormItem>`
 			} else { //默认处理（int等类型）
 				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 					viewSaveRule += `
-		` + field + `: [
-			{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },
-		],`
+        ` + field + `: [
+            { type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },
+        ],`
 					viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false"/>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false"/>
+                </ElFormItem>`
 				} else {
 					viewSaveRule += `
-		` + field + `: [
-			{ type: 'integer', trigger: 'change', message: t('validation.input') },
-		],`
+        ` + field + `: [
+            { type: 'integer', trigger: 'change', message: t('validation.input') },
+        ],`
 					viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false"/>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false"/>
+                </ElFormItem>`
 				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },	// 类型float值为0时验证不能通过
-		],`
+        ` + field + `: [
+            { type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },    // 类型float值为0时验证不能通过
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false"/>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false"/>
+                </ElFormItem>`
 			} else {
 				viewSaveRule += `
-		` + field + `: [
-			{ type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') },	// 类型float值为0时验证不能通过
-		],`
+        ` + field + `: [
+            { type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') },    // 类型float值为0时验证不能通过
+        ],`
 				viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false"/>
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInputNumber v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false"/>
+                </ElFormItem>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
 			typeDatePicker := `datetime`
@@ -3338,136 +3337,139 @@ import md5 from 'js-md5'`
 			}
 
 			viewSaveRule += `
-		` + field + `: [
-			{ type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') },
-		],`
+        ` + field + `: [
+            { type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') },
+        ],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElDatePicker v-model="saveForm.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElDatePicker v-model="saveForm.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
+                </ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
 			requiredStr := ``
 			if column[`Null`].String() == `NO` {
 				requiredStr = `
-				required: true,`
+                required: true,`
 			}
 			viewSaveRule += `
-		` + field + `: [
-			{
-				type: 'object',` + requiredStr + `
-				/* fields: {
-					xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
-					xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
-				}, */
-				transform(value: any) {
-					if (value === '' || value === null || value === undefined) {
-						return undefined
-					}
-					try {
-						return JSON.parse(value)
-					} catch (e) {
-						return value
-					}
-				},
-				trigger: 'blur',
-				message: t('validation.json'),
-			},
-		],`
+        ` + field + `: [
+            {
+                type: 'object',` + requiredStr + `
+                /* fields: {
+                    xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
+                    xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
+                }, */
+                transform(value: any) {
+                    if (value === '' || value === null || value === undefined) {
+                        return undefined
+                    }
+                    try {
+                        return JSON.parse(value)
+                    } catch (e) {
+                        return value
+                    }
+                },
+                trigger: 'blur',
+                message: t('validation.json'),
+            },
+        ],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
-					<ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElAlert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+                    <ElInput v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
+                </ElFormItem>`
 		} else if gstr.Pos(column[`Type`].String(), `text`) != -1 { //text类型
 			viewSaveRule += `
-		` + field + `: [],`
+        ` + field + `: [],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<MyEditor v-model="saveForm.data.` + field + `" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <MyEditor v-model="saveForm.data.` + field + `" />
+                </ElFormItem>`
 		} else { //默认处理
 			viewSaveRule += `
-		` + field + `: [],`
+        ` + field + `: [],`
 			viewSaveField += `
-				<ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-					<ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
-				</ElFormItem>`
+                <ElFormItem :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <ElInput v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+                </ElFormItem>`
 		}
 	}
 
 	tplView := `<script setup lang="tsx">` + viewSaveImport + `
 const { t, tm } = useI18n()
 
-const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }
+const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
 
 const saveForm = reactive({
-	ref: null as any,
-	loading: false,
-	data: {` + viewSaveDataInit + `
-		...saveCommon.data
-	} as { [propName: string]: any },
-	rules: {` + viewSaveRule + `
-	} as any,
-	submit: () => {
-		saveForm.ref.validate(async (valid: boolean) => {
-			if (!valid) {
-				return false
-			}
-			saveForm.loading = true
-			const param = removeEmptyOfObj(saveForm.data, false)` + viewSaveParamHandle + `
-			try {
-				if (param?.idArr?.length > 0) {
-					await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
-				} else {
-					await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/create', param, true)
-				}
-				listCommon.ref.getList(true)
-				saveCommon.visible = false
-			} catch (error) { }
-			saveForm.loading = false
-		})
-	}
+    ref: null as any,
+    loading: false,
+    data: {` + viewSaveDataInit + `
+        ...saveCommon.data,
+    } as { [propName: string]: any },
+    rules: {` + viewSaveRule + `
+    } as any,
+    submit: () => {
+        saveForm.ref.validate(async (valid: boolean) => {
+            if (!valid) {
+                return false
+            }
+            saveForm.loading = true
+            const param = removeEmptyOfObj(saveForm.data, false)` + viewSaveParamHandle + `
+            try {
+                if (param?.idArr?.length > 0) {
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
+                } else {
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/create', param, true)
+                }
+                listCommon.ref.getList(true)
+                saveCommon.visible = false
+            } catch (error) {}
+            saveForm.loading = false
+        })
+    },
 })
 
 const saveDrawer = reactive({
-	ref: null as any,
-	size: useSettingStore().saveDrawer.size,
-	beforeClose: (done: Function) => {
-		if (useSettingStore().saveDrawer.isTipClose) {
-			ElMessageBox.confirm('', {
-				type: 'info',
-				title: t('common.tip.configExit'),
-				center: true,
-				showClose: false,
-			}).then(() => {
-				done()
-			}).catch(() => { })
-		} else {
-			done()
-		}
-	},
-	buttonClose: () => {
-		//saveCommon.visible = false
-		saveDrawer.ref.handleClose()	//会触发beforeClose
-	}
+    ref: null as any,
+    size: useSettingStore().saveDrawer.size,
+    beforeClose: (done: Function) => {
+        if (useSettingStore().saveDrawer.isTipClose) {
+            ElMessageBox.confirm('', {
+                type: 'info',
+                title: t('common.tip.configExit'),
+                center: true,
+                showClose: false,
+            })
+                .then(() => {
+                    done()
+                })
+                .catch(() => {})
+        } else {
+            done()
+        }
+    },
+    buttonClose: () => {
+        //saveCommon.visible = false
+        saveDrawer.ref.handleClose() //会触发beforeClose
+    },
 })` + viewFieldHandle + `
 </script>
 
 <template>
-	<ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
-		<ElScrollbar>
-			<ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
-			</ElForm>
-		</ElScrollbar>
-		<template #footer>
-			<ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
-			<ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
-				{{ t('common.save') }}
-			</ElButton>
-		</template>
-	</ElDrawer>
-</template>`
+    <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+        <ElScrollbar>
+            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
+            </ElForm>
+        </ElScrollbar>
+        <template #footer>
+            <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
+            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+                {{ t('common.save') }}
+            </ElButton>
+        </template>
+    </ElDrawer>
+</template>
+`
 
 	gfile.PutContents(saveFile, tplView)
 }
@@ -3524,7 +3526,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				fieldName = `父级`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Sort` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Weight` { //sort,weight等后缀
 				viewI18nTip += `
-		` + field + `: '` + tip + `',`
+        ` + field + `: '` + tip + `',`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -2) == `Id` { //id后缀
 				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
 					fieldName = tpl.RelTableMap[field].RelTableFieldName
@@ -3532,30 +3534,31 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				statusList := MyGenStatusList(comment)
 				viewI18nStatus += `
-		` + field + `: [`
+        ` + field + `: [`
 				for _, status := range statusList {
 					viewI18nStatus += `
-			{ value: ` + status[0] + `, label: '` + status[1] + `' },`
+            { value: ` + status[0] + `, label: '` + status[1] + `' },`
 				}
 				viewI18nStatus += `
-		],`
+        ],`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
 			viewI18nTip += `
-		` + field + `: '` + tip + `',`
+        ` + field + `: '` + tip + `',`
 		}
 
 		viewI18nName += `
-		` + field + `: '` + fieldName + `',`
+        ` + field + `: '` + fieldName + `',`
 	}
 	tplView := `export default {
-	name: {` + viewI18nName + `
-	},
-	status: {` + viewI18nStatus + `
-	},
-	tip: {` + viewI18nTip + `
-	}
-}`
+    name: {` + viewI18nName + `
+    },
+    status: {` + viewI18nStatus + `
+    },
+    tip: {` + viewI18nTip + `
+    },
+}
+`
 
 	gfile.PutContents(saveFile, tplView)
 }
@@ -3582,8 +3585,8 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
 	} else { //路由已存在则替换
 		tplViewRouter, _ = gregex.ReplaceString(`\{
-				path: '`+path+`',[\s\S]*'`+path+`' \}
-			\},`, replaceStr, tplViewRouter)
+                path: '`+path+`',[\s\S]*'`+path+`' \}
+            \},`, replaceStr, tplViewRouter)
 	}
 	gfile.PutContents(saveFile, tplViewRouter)
 
