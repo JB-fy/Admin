@@ -133,9 +133,25 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	option := MyGenOptionHandle(ctx, parser)
 	tpl := MyGenTplHandle(ctx, option)
 
-	MyGenTplDao(ctx, option, tpl)              // dao层存在时，增加或修改部分字段的解析代码
-	MyGenTplLogic(ctx, option, tpl)            // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
-	exec.Command(`gf`, `gen`, `service`).Run() // service生成
+	MyGenTplDao(ctx, option, tpl)   // dao层存在时，增加或修改部分字段的解析代码
+	MyGenTplLogic(ctx, option, tpl) // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	// service生成
+	fmt.Println(`service生成 开始`)
+	command := exec.Command(`gf`, `gen`, `service`)
+	stdout, _ := command.StdoutPipe()
+	command.Start()
+	buf := make([]byte, 1024)
+	for {
+		n, err := stdout.Read(buf)
+		if err != nil {
+			break
+		}
+		if n > 0 {
+			fmt.Print(string(buf[:n]))
+		}
+	}
+	command.Wait()
+	fmt.Println(`service生成 结束`)
 
 	if option.IsApi {
 		MyGenTplApi(ctx, option, tpl)        // api模板生成
@@ -151,9 +167,23 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		MyGenTplViewI18n(ctx, option, tpl)   // 视图模板I18n生成
 		MyGenTplViewRouter(ctx, option, tpl) // 前端路由生成
 		// 前端代码格式化
+		fmt.Println(`前端代码格式化 开始`)
 		command := exec.Command(`npm`, `run`, `format`)
 		command.Dir = gfile.SelfDir() + `/../view/` + option.SceneCode
-		command.Run()
+		stdout, _ := command.StdoutPipe()
+		command.Start()
+		buf := make([]byte, 1024)
+		for {
+			n, err := stdout.Read(buf)
+			if err != nil {
+				break
+			}
+			if n > 0 {
+				fmt.Print(string(buf[:n]))
+			}
+		}
+		command.Wait()
+		fmt.Println(`前端代码格式化 结束`)
 	}
 	return
 }
@@ -353,7 +383,7 @@ isDeleteEnd:
 		}
 	}
 	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
-		fmt.Println("请重新选择生成哪些接口，不能全是no！")
+		fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
 		goto noAllRestart
 	}
 	// 是否生成后端接口文件
@@ -2287,7 +2317,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else {
 				arrList = JSON.parse(props.rowData.` + field + `)
 			}
-			let tagType = tm('config.const.tagType') as string[]
+			let tagType = tm('common.component.tagType') as string[]
 			return [
 				h(ElScrollbar, {
 					'wrap-style': 'display: flex; align-items: center;',
@@ -2394,7 +2424,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-			let tagType = tm('config.const.tagType') as string[]
+			let tagType = tm('common.component.tagType') as string[]
 			let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
 			let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
 			return [
@@ -3086,7 +3116,7 @@ const ` + field + `Handle = reactive({
 	ref: null as any,
 	visible: false,
 	value: undefined,
-	tagType: tm('config.const.tagType') as string[],
+	tagType: tm('common.component.tagType') as string[],
 	visibleChange: () => {
 		` + field + `Handle.visible = true
 		nextTick(() => {
