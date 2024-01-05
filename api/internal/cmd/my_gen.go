@@ -2479,12 +2479,8 @@ const table = reactive({
                 const allChecked = table.data.every((item: any) => item.checked)
                 const someChecked = table.data.some((item: any) => item.checked)
                 return [
-                    <div
-                        class="id-checkbox"
-                        onClick={(event: any) => {
-                            event.stopPropagation() //阻止冒泡
-                        }}
-                    >
+                    //阻止冒泡
+                    <div class="id-checkbox" onClick={(event: any) => event.stopPropagation()}>
                         <ElCheckbox
                             model-value={table.data.length ? allChecked : false}
                             indeterminate={someChecked && !allChecked}
