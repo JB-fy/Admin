@@ -10,8 +10,7 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 
 // https://vitejs.dev/config/
-
-export default defineConfig(({ command, mode, ssrBuild }) => {
+export default defineConfig(({ command, mode }) => {
   /* if (command === 'serve') {  //dev独有配置
     return {}
   } else if (command === 'build') {//build独有配置
