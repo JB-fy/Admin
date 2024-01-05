@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()

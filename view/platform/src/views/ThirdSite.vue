@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const route = useRoute()
 
 const thirdSiteUrl = route.query.url as string

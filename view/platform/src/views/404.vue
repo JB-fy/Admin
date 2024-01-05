@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import img404 from '@/assets/image/404.jpg'
 
 const { t } = useI18n()

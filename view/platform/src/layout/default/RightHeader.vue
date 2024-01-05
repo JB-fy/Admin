@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const keepAliveStore = useKeepAliveStore()
 const languageStore = useLanguageStore()
 const settingStore = useSettingStore()

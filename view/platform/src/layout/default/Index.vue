@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import AppContainer from './AppContainer.vue'
 import LeftMenu from './LeftMenu.vue'
 import RightHeader from './RightHeader.vue'

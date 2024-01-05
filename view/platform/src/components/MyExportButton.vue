@@ -5,7 +5,7 @@
 <MyExportButton fileName="文件名.xlsx" i18nPrefix="auth.test" :headerList="table.columns"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/test/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
 <!-------- 使用示例 结束-------->
-<script setup lang="ts">
+<script setup lang="tsx">
 const { t, tm } = useI18n()
 
 const props = defineProps({

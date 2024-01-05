@@ -3,7 +3,7 @@
 
 <MyUpload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" :isImage="false" /> -->
 <!-------- 使用示例 结束-------->
-<script setup lang="ts">
+<script setup lang="tsx">
 const { t } = useI18n()
 
 const props = defineProps({

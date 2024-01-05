@@ -2133,7 +2133,7 @@ func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		return
 	}
 
-	tplView := `<script setup lang="ts">
+	tplView := `<script setup lang="tsx">
 import List from './List.vue'
 import Query from './Query.vue'`
 	if option.IsCreate || option.IsUpdate {
@@ -2244,24 +2244,12 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			}
 			cellRendererOfColumn += `
 			return [
-				h(ElScrollbar, {
-					'wrap-style': 'display: flex; align-items: center;',
-					'view-style': 'margin: auto;',
-				}, {
-					default: () => {
-						const content = imageList.map((item) => {
-							return h(ElImage as any, {
-								'style': 'width: 45px;',	//不想显示滚动条，需设置table属性row-height增加行高
-								'src': item,
-								'lazy': true,
-								'hide-on-click-modal': true,
-								'preview-teleported': true,
-								'preview-src-list': imageList
-							})
-						})
-						return content
-					}
-				})
+				<ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+					{imageList.map((item) => {
+						//width改大后，可同时修改table属性row-height增加行高，则不会显示滚动条
+						return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList}></ElImage>
+					})}
+				</ElScrollbar>
 			]
 		},`
 		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -5) == `Video` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -2497,7 +2485,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	},`
 	}
 
-	tplView := `<script setup lang="ts">
+	tplView := `<script setup lang="tsx">
 const { t, tm } = useI18n()
 
 const table = reactive({
@@ -2515,41 +2503,35 @@ const table = reactive({
 			const allChecked = table.data.every((item: any) => item.checked)
 			const someChecked = table.data.some((item: any) => item.checked)
 			return [
-				h('div', {
-					class: 'id-checkbox',
-					onClick: (event: any) => {
-						event.stopPropagation();	//阻止冒泡
-					},
-				}, {
-					default: () => [
-						h(ElCheckbox as any, {
-							'model-value': table.data.length ? allChecked : false,
-							indeterminate: someChecked && !allChecked,
-							onChange: (val: boolean) => {
-								table.data.forEach((item: any) => {
-									item.checked = val
-								})
-							}
-						})
-					]
-				}),
-				h('div', {}, {
-					default: () => t('common.name.id')
-				})
+				<div
+					class="id-checkbox"
+					onClick={(event: any) => {
+						event.stopPropagation() //阻止冒泡
+					}}
+				>
+					<ElCheckbox
+						model-value={table.data.length ? allChecked : false}
+						indeterminate={someChecked && !allChecked}
+						onChange={(val: boolean) => {
+							table.data.forEach((item: any) => {
+								item.checked = val
+							})
+						}}
+					/>
+				</div>,
+				<div>{t('common.name.id')}</div>
 			]
 		},
 		cellRenderer: (props: any): any => {
 			return [
-				h(ElCheckbox as any, {
-					class: 'id-checkbox',
-					'model-value': props.rowData.checked,
-					onChange: (val: boolean) => {
+				<ElCheckbox
+					class="id-checkbox"
+					model-value={props.rowData.checked}
+					onChange={(val: boolean) => {
 						props.rowData.checked = val
-					}
-				}),
-				h('div', {}, {
-					default: () => props.rowData.id
-				})
+					}}
+				/>,
+				<div>{props.rowData.id}</div>
 			]
 		},`
 	}
@@ -2956,7 +2938,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		}
 	}
 
-	tplView := `<script setup lang="ts">
+	tplView := `<script setup lang="tsx">
 import dayjs from 'dayjs'
 
 const { t, tm } = useI18n()
@@ -3435,7 +3417,7 @@ import md5 from 'js-md5'`
 		}
 	}
 
-	tplView := `<script setup lang="ts">` + viewSaveImport + `
+	tplView := `<script setup lang="tsx">` + viewSaveImport + `
 const { t, tm } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean, title: string, data: { [propName: string]: any } }

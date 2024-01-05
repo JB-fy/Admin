@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import screenfull from 'screenfull'
 
 const { t } = useI18n()

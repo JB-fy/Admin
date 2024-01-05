@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const { t, tm } = useI18n()
 
 const saveForm = reactive({

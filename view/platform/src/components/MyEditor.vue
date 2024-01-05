@@ -3,7 +3,7 @@
 
 <MyEditor v-model="saveForm.data.content" :api="{ param: { type: 'common' } }" :init="{width: '375px'}" :disabled="true" /> -->
 <!-------- 使用示例 结束-------->
-<script setup lang="ts">
+<script setup lang="tsx">
 import axios from 'axios'
 import Editor from '@tinymce/tinymce-vue'
 

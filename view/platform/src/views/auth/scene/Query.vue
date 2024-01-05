@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import dayjs from 'dayjs'
 
 const { t, tm } = useI18n()

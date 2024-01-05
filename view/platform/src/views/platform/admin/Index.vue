@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import List from './List.vue'
 import Query from './Query.vue'
 import Save from './Save.vue'

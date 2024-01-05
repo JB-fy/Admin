@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const { t, tm } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }

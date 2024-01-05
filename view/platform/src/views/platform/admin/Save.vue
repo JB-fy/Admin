@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import md5 from 'js-md5'
 const { t, tm } = useI18n()
 

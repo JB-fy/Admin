@@ -4,7 +4,7 @@
 <MyTransfer v-model="saveForm.data.sceneIdArr"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
-<script setup lang="ts">
+<script setup lang="tsx">
 const props = defineProps({
     modelValue: {
         type: Array

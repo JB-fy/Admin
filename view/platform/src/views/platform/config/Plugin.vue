@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.vue'))
 const PayConfig = defineAsyncComponent(() => import('./tabPane/PayConfig.vue'))
 const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))

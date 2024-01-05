@@ -18,7 +18,7 @@
     :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }"
     :props="{ checkStrictly: true, emitPath: false }" /> -->
 <!-------- 使用示例 结束-------->
-<script setup lang="ts">
+<script setup lang="tsx">
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array]
