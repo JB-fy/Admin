@@ -32,10 +32,10 @@ export const handleBatchImportOfAsync = async (rawImportListOfAsync: any): Promi
  * @returns
  */
 export const batchImport = (rawImportList: any, level: number = 0, type: number = 0): { [propName: string]: any } => {
-    let importList: { [propName: string]: any } = {}
+    const importList: { [propName: string]: any } = {}
     let keyArr: string[] = []
-    let keyList: string[][] = []
-    let importArr: any[] = []
+    const keyList: string[][] = []
+    const importArr: any[] = []
     let levelOfMin: number = 0
     for (const path in rawImportList) {
         //keyArr = path.slice(0, path.lastIndexOf('.')).split('/')  //有时.不在最后。比如：xxxx.min.js

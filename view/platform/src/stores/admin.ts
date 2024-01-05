@@ -174,10 +174,10 @@ export const useAdminStore = defineStore('admin', {
             if (menuTab.url == '/') {
                 return
             }
-            let result = this.menuTabList.findIndex((item) => {
+            const index = this.menuTabList.findIndex((item) => {
                 return item.url === menuTab.url
             })
-            if (result !== -1) {
+            if (index !== -1) {
                 return
             }
             /*--------当前路由在菜单列表中时，以菜单列表中的数据为准 开始--------*/

@@ -5,7 +5,7 @@ const activeTimeout = parseInt(import.meta.env.VITE_ACCESS_TOKEN_ACTIVE_TIMEOUT)
 
 //获取accessToken
 export const getAccessToken = (): string | false => {
-    let accessToken = storage.getItem(accessTokenName)
+    const accessToken = storage.getItem(accessTokenName)
     if (accessToken) {
         if (isActiveAccessToken()) {
             return accessToken
@@ -18,7 +18,7 @@ export const getAccessToken = (): string | false => {
 //设置accessToken
 export const setAccessToken = (token: string): void => {
     if (activeTimeout > 0) {
-        let nowTime = new Date().getTime().toString()
+        const nowTime = new Date().getTime().toString()
         storage.setItem(activeTimeName, nowTime)
     }
     storage.setItem(accessTokenName, token)
@@ -35,8 +35,8 @@ export const removeAccessToken = (): void => {
 //判断accessToken是否活跃（调用getAccessToken函数的地方需要马上使用这个函数验证）
 export const isActiveAccessToken = (): boolean => {
     if (activeTimeout > 0) {
-        let activeTime: any = storage.getItem(activeTimeName)
-        let nowTime: any = new Date().getTime().toString()
+        const activeTime: any = storage.getItem(activeTimeName)
+        const nowTime: any = new Date().getTime().toString()
         if (nowTime - activeTime > activeTimeout) {
             return false
         }

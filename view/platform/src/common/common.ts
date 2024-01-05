@@ -26,7 +26,7 @@ try {
  */
 const apiList = batchImport(import.meta.glob('@/api/**/*.ts', { eager: true }), 0, 10) //放外面。这样每次调用都不要重新加载了
 export const request = async (apiCode: string, data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true): Promise<any> => {
-    let apiCodeList: string[] = apiCode.split('/')
+    const apiCodeList: string[] = apiCode.split('/')
     if (apiCodeList[0] === '') {
         apiCodeList.shift()
     }

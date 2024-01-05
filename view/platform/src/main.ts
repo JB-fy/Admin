@@ -16,7 +16,7 @@ app.mount('#app')
 /*-------- 动态加载图标 开始 --------*/
 //app.component('autoiconEpLollipop', autoiconEpLollipop)
 import * as epIconList from '@element-plus/icons-vue'
-for (let [key, component] of Object.entries(epIconList)) {
+for (const [key, component] of Object.entries(epIconList)) {
     //app.component('Ep' + key, component)
     app.component('AutoiconEp' + key, component) //兼容图标插件unplugin-icons，如插件以后支持动态加载<component :is="图标标识变量"/>，不用修改代码
 }
