@@ -166,7 +166,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		MyGenTplViewSave(ctx, option, tpl)   // 视图模板Save生成
 		MyGenTplViewI18n(ctx, option, tpl)   // 视图模板I18n生成
 		MyGenTplViewRouter(ctx, option, tpl) // 前端路由生成
-		/* // 前端代码格式化
+		// 前端代码格式化
 		fmt.Println(`前端代码格式化 开始`)
 		command := exec.Command(`npm`, `run`, `format`)
 		command.Dir = gfile.SelfDir() + `/../view/` + option.SceneCode
@@ -183,7 +183,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			}
 		}
 		command.Wait()
-		fmt.Println(`前端代码格式化 结束`) */
+		fmt.Println(`前端代码格式化 结束`)
 	}
 	return
 }
