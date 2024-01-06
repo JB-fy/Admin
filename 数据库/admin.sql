@@ -4,14 +4,14 @@
  Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.2.200:3306
+ Source Host           : 192.168.0.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 27/12/2023 16:18:22
+ Date: 06/01/2024 14:03:05
 */
 
 SET NAMES utf8mb4;
@@ -36,30 +36,30 @@ CREATE TABLE `auth_action`  (
 -- ----------------------------
 -- Records of auth_action
 -- ----------------------------
-INSERT INTO `auth_action` VALUES (1, '权限场景-查看', 'authSceneLook', '', 0, '2023-07-01 15:38:45', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (2, '权限场景-新增', 'authSceneCreate', '', 0, '2023-07-01 15:38:46', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (3, '权限场景-编辑', 'authSceneUpdate', '', 0, '2023-07-01 15:38:49', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (4, '权限场景-删除', 'authSceneDelete', '', 0, '2023-07-01 15:38:50', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (5, '权限操作-查看', 'authActionLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (6, '权限操作-新增', 'authActionCreate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (7, '权限操作-编辑', 'authActionUpdate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (8, '权限操作-删除', 'authActionDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (9, '权限菜单-查看', 'authMenuLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (10, '权限菜单-新增', 'authMenuCreate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (11, '权限菜单-编辑', 'authMenuUpdate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (12, '权限菜单-删除', 'authMenuDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (13, '权限角色-查看', 'authRoleLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (14, '权限角色-新增', 'authRoleCreate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (15, '权限角色-编辑', 'authRoleUpdate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (16, '权限角色-删除', 'authRoleDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (17, '平台管理员-查看', 'platformAdminLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (18, '平台管理员-新增', 'platformAdminCreate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (19, '平台管理员-编辑', 'platformAdminUpdate', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (20, '平台管理员-删除', 'platformAdminDelete', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2023-06-09 12:03:29', '2023-06-09 12:03:30');
-INSERT INTO `auth_action` VALUES (23, '用户-查看', 'userLook', '', 0, '2023-10-14 16:03:55', '2023-10-14 15:32:37');
-INSERT INTO `auth_action` VALUES (24, '用户-编辑', 'userUpdate', '', 0, '2023-10-14 16:03:59', '2023-10-14 15:32:37');
+INSERT INTO `auth_action` VALUES (1, '权限管理-场景-查看', 'authSceneLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (2, '权限管理-场景-新增', 'authSceneCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (3, '权限管理-场景-编辑', 'authSceneUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (4, '权限管理-场景-删除', 'authSceneDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (5, '权限操作-查看', 'authActionLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (6, '权限操作-新增', 'authActionCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (7, '权限操作-编辑', 'authActionUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (8, '权限操作-删除', 'authActionDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (9, '权限菜单-查看', 'authMenuLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (10, '权限菜单-新增', 'authMenuCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (11, '权限菜单-编辑', 'authMenuUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (12, '权限菜单-删除', 'authMenuDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (13, '权限角色-查看', 'authRoleLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (14, '权限角色-新增', 'authRoleCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (15, '权限角色-编辑', 'authRoleUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (16, '权限角色-删除', 'authRoleDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (17, '平台管理员-查看', 'platformAdminLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (18, '平台管理员-新增', 'platformAdminCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (19, '平台管理员-编辑', 'platformAdminUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (20, '平台管理员-删除', 'platformAdminDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (23, '用户-查看', 'userLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (24, '用户-编辑', 'userUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -78,30 +78,30 @@ CREATE TABLE `auth_action_rel_to_scene`  (
 -- ----------------------------
 -- Records of auth_action_rel_to_scene
 -- ----------------------------
-INSERT INTO `auth_action_rel_to_scene` VALUES (1, 1, '2023-06-30 17:51:35', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (2, 1, '2023-06-30 17:51:35', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (3, 1, '2023-06-30 17:51:35', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (4, 1, '2023-06-30 17:51:35', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (5, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (6, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (7, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (8, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (9, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (10, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (11, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (12, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (13, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (14, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (15, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (16, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (17, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (18, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (19, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (20, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (21, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (22, 1, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_action_rel_to_scene` VALUES (23, 1, '2023-10-14 15:32:37', '2023-10-14 15:32:37');
-INSERT INTO `auth_action_rel_to_scene` VALUES (24, 1, '2023-10-14 15:32:37', '2023-10-14 15:32:37');
+INSERT INTO `auth_action_rel_to_scene` VALUES (1, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (2, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (3, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (4, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (5, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (6, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (7, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (8, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (9, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (10, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (11, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (12, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (13, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (14, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (15, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (16, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (17, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (18, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (19, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (20, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (21, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (22, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (23, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action_rel_to_scene` VALUES (24, 1, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -129,19 +129,19 @@ CREATE TABLE `auth_menu`  (
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO `auth_menu` VALUES (1, '主页', 1, 0, 1, '0-1', 'AutoiconEpHomeFilled', '/', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 0, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (2, '权限管理', 1, 0, 1, '0-2', 'AutoiconEpLock', '', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage\", \"zh-cn\": \"权限管理\"}}}', 90, 0, '2023-09-20 23:02:07', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (3, '场景', 1, 2, 2, '0-2-3', 'AutoiconEpFlag', '/auth/scene', '{\"i18n\": {\"title\": {\"en\": \"Scene\", \"zh-cn\": \"场景\"}}}', 100, 0, '2023-06-30 17:51:35', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (4, '操作', 1, 2, 2, '0-2-4', 'AutoiconEpCoordinate', '/auth/action', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 90, 0, '2023-06-09 12:03:30', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (5, '菜单', 1, 2, 2, '0-2-5', 'AutoiconEpMenu', '/auth/menu', '{\"i18n\": {\"title\": {\"en\": \"Menu\", \"zh-cn\": \"菜单\"}}}', 80, 0, '2023-09-20 23:02:10', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (6, '角色', 1, 2, 2, '0-2-6', 'AutoiconEpView', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 70, 0, '2023-09-20 23:02:11', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (7, '平台管理员', 1, 2, 2, '0-2-7', 'Vant-manager-o', '/platform/admin', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2023-10-14 16:18:16', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (8, '系统管理', 1, 0, 1, '0-8', 'AutoiconEpPlatform', '', '{\"i18n\": {\"title\": {\"en\": \"System Manage\", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2023-09-20 23:02:14', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (9, '配置中心', 1, 8, 2, '0-8-9', 'AutoiconEpSetting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2023-06-24 17:30:46', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (10, '平台配置', 1, 9, 3, '0-8-9-10', '', '/platform/config/platform', '{\"i18n\": {\"title\": {\"en\": \"Platform Config\", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2023-11-22 09:31:42', '2023-06-09 12:03:30');
-INSERT INTO `auth_menu` VALUES (11, '插件配置', 1, 9, 3, '0-8-9-11', '', '/platform/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 50, 0, '2023-11-22 09:31:45', '2023-11-21 11:08:28');
-INSERT INTO `auth_menu` VALUES (12, '用户管理', 1, 0, 1, '0-12', 'Vant-friends', '', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 50, 0, '2023-11-21 11:10:29', '2023-10-14 15:32:37');
-INSERT INTO `auth_menu` VALUES (13, '用户', 1, 12, 2, '0-12-13', 'Vant-user-o', '/user/user', '{\"i18n\": {\"title\": {\"en\": \"User\", \"zh-cn\": \"用户\"}}}', 50, 0, '2023-11-21 11:10:24', '2023-10-14 15:32:37');
+INSERT INTO `auth_menu` VALUES (1, '主页', 1, 0, 1, '0-1', 'autoicon-ep-home-filled', '/', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 0, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (2, '权限管理', 1, 0, 1, '0-2', 'autoicon-ep-lock', '', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage\", \"zh-cn\": \"权限管理\"}}}', 90, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (3, '场景', 1, 2, 2, '0-2-3', 'autoicon-ep-flag', '/auth/scene', '{\"i18n\": {\"title\": {\"en\": \"Scene\", \"zh-cn\": \"场景\"}}}', 100, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (4, '操作', 1, 2, 2, '0-2-4', 'autoicon-ep-coordinate', '/auth/action', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 90, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (5, '菜单', 1, 2, 2, '0-2-5', 'autoicon-ep-menu', '/auth/menu', '{\"i18n\": {\"title\": {\"en\": \"Menu\", \"zh-cn\": \"菜单\"}}}', 80, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (6, '角色', 1, 2, 2, '0-2-6', 'autoicon-ep-view', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 70, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (7, '平台管理员', 1, 2, 2, '0-2-7', 'vant-manager-o', '/platform/admin', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 60, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (8, '系统管理', 1, 0, 1, '0-8', 'autoicon-ep-platform', '', '{\"i18n\": {\"title\": {\"en\": \"System Manage\", \"zh-cn\": \"系统管理\"}}}', 85, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (9, '配置中心', 1, 8, 2, '0-8-9', 'autoicon-ep-setting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 100, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (10, '平台配置', 1, 9, 3, '0-8-9-10', '', '/platform/config/platform', '{\"i18n\": {\"title\": {\"en\": \"Platform Config\", \"zh-cn\": \"平台配置\"}}}', 50, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (11, '插件配置', 1, 9, 3, '0-8-9-11', '', '/platform/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 50, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (12, '用户管理', 1, 0, 1, '0-12', 'vant-friends', '', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 50, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_menu` VALUES (13, '用户', 1, 12, 2, '0-12-13', 'vant-user-o', '/user/user', '{\"i18n\": {\"title\": {\"en\": \"User\", \"zh-cn\": \"用户\"}}}', 50, 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -158,7 +158,7 @@ CREATE TABLE `auth_role`  (
   PRIMARY KEY (`roleId`) USING BTREE,
   INDEX `sceneId`(`sceneId` ASC) USING BTREE,
   INDEX `tableId`(`tableId` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role
@@ -238,8 +238,8 @@ CREATE TABLE `auth_scene`  (
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES (1, '平台后台', 'platform', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', '', 0, '2023-06-14 21:52:16', '2023-06-09 12:03:30');
-INSERT INTO `auth_scene` VALUES (2, 'APP', 'app', '{\"signKey\": \"www.admin.com_app\", \"signType\": \"HS256\", \"expireTime\": 604800}', '', 0, '2023-10-21 17:21:15', '2023-10-21 17:21:15');
+INSERT INTO `auth_scene` VALUES (1, '平台后台', 'platform', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_scene` VALUES (2, 'APP', 'app', '{\"signKey\": \"www.admin.com_app\", \"signType\": \"HS256\", \"expireTime\": 604800}', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for platform_admin
@@ -264,7 +264,7 @@ CREATE TABLE `platform_admin`  (
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'http://www.admin.com/common/20230920/1695222477127_79698554.png', 0, '2023-09-20 23:09:17', '2023-06-09 12:03:30');
+INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'http://www.admin.com/common/20230920/1695222477127_79698554.png', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for platform_config
@@ -281,52 +281,52 @@ CREATE TABLE `platform_config`  (
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO `platform_config` VALUES ('idCardOfAliyunAppcode', 'appcode', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('idCardOfAliyunHost', 'http://idcard.market.alicloudapi.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('idCardOfAliyunPath', '/lianzhuo/idcard', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('idCardType', 'idCardOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfAliAppId', 'appId', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfAliNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfAli', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfAliOpAppId', 'opAppId', '2023-12-27 16:02:36', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfAliPrivateKey', '****************', '2023-12-27 16:16:58', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfAliPublicKey', '****************', '2023-12-27 16:17:00', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfWxApiV3Key', '********', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfWxAppId', 'appId', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfWxMchid', 'mchId', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfWxNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfWx', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfWxPrivateKey', '-----BEGIN RSA PRIVATE KEY-----\n****************************************************************\n-----END RSA PRIVATE KEY-----', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('payOfWxSerialNo', '********', '2023-12-27 12:11:05', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxAndroidAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxAndroidSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxHost', 'https://api.tpns.tencent.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxIosAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxIosSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxMacOSAccessID', 'accessID', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushOfTxMacOSSecretKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('pushType', 'pushOfTx', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('smsOfAliyunAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('smsOfAliyunAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('smsOfAliyunEndpoint', 'dysmsapi.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('smsOfAliyunSignName', 'JB Admin', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('smsOfAliyunTemplateCode', 'SMS_********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('smsType', 'smsOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssBucket', 'bucket', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssCallbackUrl', 'http://JB.Admin.com/upload/notify/uploadOfAliyunOss', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssRoleArn', 'acs:ram::********:role/********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfLocalFileSaveDir', '../public/', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfLocalFileUrlPrefix', 'http://JB.Admin.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfLocalSignKey', 'secretKey', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadOfLocalUrl', 'http://JB.Admin.com/upload/upload', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('uploadType', 'uploadOfLocal', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('vodOfAliyunAccessKeyId', 'accessKeyId', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('vodOfAliyunAccessKeySecret', 'accessKeySecret', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('vodOfAliyunEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('vodOfAliyunRoleArn', 'acs:ram::********:role/********', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
-INSERT INTO `platform_config` VALUES ('vodType', 'vodOfAliyun', '2023-12-23 15:45:01', '2023-12-23 15:45:01');
+INSERT INTO `platform_config` VALUES ('idCardOfAliyunAppcode', 'appcode', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('idCardOfAliyunHost', 'http://idcard.market.alicloudapi.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('idCardOfAliyunPath', '/lianzhuo/idcard', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('idCardType', 'idCardOfAliyun', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfAliAppId', 'appId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfAliNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfAli', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfAliOpAppId', 'opAppId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfAliPrivateKey', '****************', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfAliPublicKey', '****************', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfWxApiV3Key', '********', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfWxAppId', 'appId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfWxMchid', 'mchId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfWxNotifyUrl', 'http://JB.Admin.com/pay/notify/payOfWx', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfWxPrivateKey', '-----BEGIN RSA PRIVATE KEY-----\n****************************************************************\n-----END RSA PRIVATE KEY-----', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('payOfWxSerialNo', '********', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxAndroidAccessID', 'accessID', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxAndroidSecretKey', 'secretKey', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxHost', 'https://api.tpns.tencent.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxIosAccessID', 'accessID', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxIosSecretKey', 'secretKey', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxMacOSAccessID', 'accessID', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushOfTxMacOSSecretKey', 'secretKey', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('pushType', 'pushOfTx', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunAccessKeyId', 'accessKeyId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunAccessKeySecret', 'accessKeySecret', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunEndpoint', 'dysmsapi.aliyuncs.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunSignName', 'JB Admin', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('smsOfAliyunTemplateCode', 'SMS_********', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('smsType', 'smsOfAliyun', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssAccessKeyId', 'accessKeyId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssAccessKeySecret', 'accessKeySecret', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssBucket', 'bucket', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssCallbackUrl', 'http://JB.Admin.com/upload/notify/uploadOfAliyunOss', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssEndpoint', 'sts.cn-hangzhou.aliyuncs.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssHost', 'https://oss-cn-hangzhou.aliyuncs.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfAliyunOssRoleArn', 'acs:ram::********:role/********', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalFileSaveDir', '../public/', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalFileUrlPrefix', 'http://JB.Admin.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalSignKey', 'secretKey', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadOfLocalUrl', 'http://JB.Admin.com/upload/upload', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('uploadType', 'uploadOfLocal', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunAccessKeyId', 'accessKeyId', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunAccessKeySecret', 'accessKeySecret', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunEndpoint', 'sts.cn-shanghai.aliyuncs.com', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('vodOfAliyunRoleArn', 'acs:ram::********:role/********', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_config` VALUES ('vodType', 'vodOfAliyun', '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -340,7 +340,7 @@ CREATE TABLE `platform_server`  (
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`serverId`) USING BTREE,
   UNIQUE INDEX `networkIp`(`networkIp` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
@@ -369,7 +369,7 @@ CREATE TABLE `user`  (
   PRIMARY KEY (`userId`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `account`(`account` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user

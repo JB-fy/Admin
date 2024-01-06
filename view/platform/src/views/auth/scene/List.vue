@@ -31,16 +31,7 @@ const table = reactive({
                 ]
             },
             cellRenderer: (props: any): any => {
-                return [
-                    <el-checkbox
-                        class="id-checkbox"
-                        model-value={props.rowData.checked}
-                        onChange={(val: boolean) => {
-                            props.rowData.checked = val
-                        }}
-                    />,
-                    <div>{props.rowData.id}</div>,
-                ]
+                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
             },
         },
         {
@@ -292,22 +283,22 @@ defineExpose({
     </el-row>
 
     <el-main>
-        <el-auto-resizer>
+        <ElAutoResizer>
             <template #default="{ height, width }">
-                <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
+                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
                         <el-icon class="is-loading" color="var(--el-color-primary)" :size="25">
                             <autoicon-ep-loading />
                         </el-icon>
                     </template>
-                </el-table-v2>
+                </ElTableV2>
             </template>
-        </el-auto-resizer>
+        </ElAutoResizer>
     </el-main>
 
     <el-row class="main-table-pagination">
         <el-col :span="24">
-            <el-pagination
+            <ElPagination
                 :total="pagination.total"
                 v-model:currentPage="pagination.page"
                 v-model:page-size="pagination.size"

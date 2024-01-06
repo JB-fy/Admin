@@ -31,16 +31,7 @@ const table = reactive({
                 ]
             },
             cellRenderer: (props: any): any => {
-                return [
-                    <el-checkbox
-                        class="id-checkbox"
-                        model-value={props.rowData.checked}
-                        onChange={(val: boolean) => {
-                            props.rowData.checked = val
-                        }}
-                    />,
-                    <div>{props.rowData.id}</div>,
-                ]
+                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
             },
         },
         {
