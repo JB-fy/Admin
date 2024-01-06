@@ -2845,12 +2845,12 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
         </el-form-item>`
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				viewQueryField += `
-        <el-form-item prop="` + field + `" style="width: 120px;">
+        <el-form-item prop="` + field + `" style="width: 120px">
             <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
         </el-form-item>`
 			} else if gstr.SubStr(fieldCaseSnake, 0, 3) == `is_` { //is_前缀
 				viewQueryField += `
-        <el-form-item prop="` + field + `" style="width: 120px;">
+        <el-form-item prop="` + field + `" style="width: 120px">
             <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
         </el-form-item>`
 			} else { //默认处理（int等类型）
@@ -3117,7 +3117,7 @@ const ` + field + `Handle = reactive({
 				if column[`Null`].String() == `NO` {
 					requiredStr = ` required: true,`
 				}
-				viewSaveFieldTip = ` style="max-width: 250px;" />
+				viewSaveFieldTip = ` style="max-width: 250px" />
                     <label>
                         <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>`
@@ -3162,7 +3162,7 @@ import md5 from 'js-md5'`
         ],`
 				viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px;" />
+                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <label v-if="saveForm.data.idArr?.length">
                         <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
@@ -3176,7 +3176,7 @@ import md5 from 'js-md5'`
 					if column[`Null`].String() == `NO` {
 						requiredStr = ` required: true,`
 					}
-					viewSaveFieldTip = ` style="max-width: 250px;" />
+					viewSaveFieldTip = ` style="max-width: 250px" />
                     <label>
                         <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>`

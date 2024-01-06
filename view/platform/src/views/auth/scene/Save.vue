@@ -25,9 +25,9 @@ const saveForm = reactive({
                 type: 'object',
                 required: true,
                 /* fields: {
-					xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
-					xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
-				}, */
+                    xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
+                    xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
+                }, */
                 transform(value: any) {
                     if (value === '' || value === null || value === undefined) {
                         return undefined
