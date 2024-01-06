@@ -158,7 +158,7 @@ const menuTab = reactive({
 
             <el-dropdown class="menu-tabs-button" @visible-change="menuTab.buttonDropdown.visibleChange">
                 <el-link :underline="false">
-                    <AutoiconEpMenu :class="{ 'dropdown-icon': true, 'is-dropdown': menuTab.buttonDropdown.status }" />
+                    <autoicon-ep-menu :class="{ 'dropdown-icon': true, 'is-dropdown': menuTab.buttonDropdown.status }" />
                 </el-link>
                 <template #dropdown>
                     <el-dropdown-menu>

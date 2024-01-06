@@ -3621,7 +3621,7 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 				daoAuth.Menu.Columns().SceneId:   sceneId,
 				daoAuth.Menu.Columns().Pid:       pid,
 				daoAuth.Menu.Columns().MenuName:  v,
-				daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
+				daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 				daoAuth.Menu.Columns().MenuUrl:   ``,
 				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
 			})
@@ -3638,7 +3638,7 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 			daoAuth.Menu.Columns().SceneId:   sceneId,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().MenuName:  menuName,
-			daoAuth.Menu.Columns().MenuIcon:  `AutoiconEpLink`,
+			daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		})

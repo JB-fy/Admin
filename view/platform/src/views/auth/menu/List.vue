@@ -1,6 +1,4 @@
 <script setup lang="tsx">
-import MyIconDynamic from '@/components/MyIconDynamic.vue'
-
 const { t, tm } = useI18n()
 
 const table = reactive({

@@ -17,7 +17,7 @@ export const useAdminStore = defineStore('admin', {
                         'zh-cn': '开发工具',
                     },
                 },
-                icon: 'AutoiconEpHelpFilled',
+                icon: 'autoicon-ep-help-filled',
                 url: '',
                 children: [
                     /* {
@@ -27,7 +27,7 @@ export const useAdminStore = defineStore('admin', {
                 "zh-cn": "说明文档"
               },
             },
-            "icon": "AutoiconEpDocument",
+            "icon": "autoicon-ep-document",
             //"url": "https://www.baidu.com/",  //新窗口打开
             "url": "/thirdSite?url=https://www.baidu.com/", //标签页打开
             "children": []
@@ -39,7 +39,7 @@ export const useAdminStore = defineStore('admin', {
                                 'zh-cn': 'GoFrame',
                             },
                         },
-                        icon: 'AutoiconEpChromeFilled',
+                        icon: 'autoicon-ep-chrome-filled',
                         url: 'https://goframe.org/#all-updates',
                         children: [],
                     },
@@ -50,7 +50,7 @@ export const useAdminStore = defineStore('admin', {
                                 'zh-cn': 'Hyperf',
                             },
                         },
-                        icon: 'AutoiconEpChromeFilled',
+                        icon: 'autoicon-ep-chrome-filled',
                         url: 'https://www.hyperf.io/',
                         children: [],
                     },
@@ -61,7 +61,7 @@ export const useAdminStore = defineStore('admin', {
                                 'zh-cn': 'Element Plus',
                             },
                         },
-                        icon: 'AutoiconEpElementPlus',
+                        icon: 'autoicon-ep-element-plus',
                         url: 'https://element-plus.gitee.io/zh-CN/',
                         children: [],
                     },
@@ -72,7 +72,7 @@ export const useAdminStore = defineStore('admin', {
                                 'zh-cn': 'Vant 4',
                             },
                         },
-                        icon: 'Vant-wechat-moments',
+                        icon: 'vant-wechat-moments',
                         url: 'https://vant-contrib.gitee.io/vant/#/zh-CN',
                         children: [],
                     },
@@ -83,7 +83,7 @@ export const useAdminStore = defineStore('admin', {
                                 'zh-cn': 'Vue',
                             },
                         },
-                        icon: 'AutoiconEpChromeFilled',
+                        icon: 'autoicon-ep-chrome-filled',
                         url: 'https://cn.vuejs.org/api/',
                         children: [],
                     },
@@ -94,7 +94,7 @@ export const useAdminStore = defineStore('admin', {
                                 'zh-cn': '图标',
                             },
                         },
-                        icon: 'AutoiconEpHelp',
+                        icon: 'autoicon-ep-help',
                         url: 'https://github.com/antfu/unplugin-icons',
                         children: [],
                     },

@@ -3,7 +3,7 @@ const props = defineProps({
     icon: {
         type: String,
         required: true,
-        default: '', //常用格式：{前缀}{集合}{标识}。参考https://github.com/antfu/unplugin-icons。示例：AutoiconEpGuide。其中Autoicon为vite.config.ts中自定义的前缀，Ep为Element Plus集合，Guide为标识；Vant格式：Vant-{标识}。示例：Vant-like。
+        default: '', //常用格式：{前缀}-{集合}-{标识}。参考https://github.com/antfu/unplugin-icons。示例：autoicon-ep-guide。其中autoicon为vite.config.ts中自定义的前缀，ep为Element Plus集合，guide为标识；vant格式：vant-{标识}。示例：vant-like。
     },
     color: {
         type: String,
