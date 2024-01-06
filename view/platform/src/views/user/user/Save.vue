@@ -95,54 +95,54 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-    <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
-        <ElScrollbar>
-            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('user.user.name.phone')" prop="phone">
-                    <ElInput v-model="saveForm.data.phone" :placeholder="t('user.user.name.phone')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+    <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+        <el-scrollbar>
+            <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+                <el-form-item :label="t('user.user.name.phone')" prop="phone">
+                    <el-input v-model="saveForm.data.phone" :placeholder="t('user.user.name.phone')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <label>
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.account')" prop="account">
-                    <ElInput v-model="saveForm.data.account" :placeholder="t('user.user.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.account')" prop="account">
+                    <el-input v-model="saveForm.data.account" :placeholder="t('user.user.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <label>
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.password')" prop="password">
-                    <ElInput v-model="saveForm.data.password" :placeholder="t('user.user.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.password')" prop="password">
+                    <el-input v-model="saveForm.data.password" :placeholder="t('user.user.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <label v-if="saveForm.data.idArr?.length">
-                        <ElAlert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.nickname')" prop="nickname">
-                    <ElInput v-model="saveForm.data.nickname" :placeholder="t('user.user.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.avatar')" prop="avatar">
-                    <MyUpload v-model="saveForm.data.avatar" accept="image/*" />
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.gender')" prop="gender">
-                    <ElRadioGroup v-model="saveForm.data.gender">
-                        <ElRadio v-for="(item, index) in tm('user.user.status.gender') as any" :key="index" :label="item.value">
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.nickname')" prop="nickname">
+                    <el-input v-model="saveForm.data.nickname" :placeholder="t('user.user.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.avatar')" prop="avatar">
+                    <my-upload v-model="saveForm.data.avatar" accept="image/*" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.gender')" prop="gender">
+                    <el-radio-group v-model="saveForm.data.gender">
+                        <el-radio v-for="(item, index) in tm('user.user.status.gender') as any" :key="index" :label="item.value">
                             {{ item.label }}
-                        </ElRadio>
-                    </ElRadioGroup>
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.birthday')" prop="birthday">
-                    <ElDatePicker v-model="saveForm.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.address')" prop="address">
-                    <ElInput v-model="saveForm.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.idCardName')" prop="idCardName">
-                    <ElInput v-model="saveForm.data.idCardName" :placeholder="t('user.user.name.idCardName')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.idCardNo')" prop="idCardNo">
-                    <ElInput v-model="saveForm.data.idCardNo" :placeholder="t('user.user.name.idCardNo')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('user.user.name.isStop')" prop="isStop">
-                    <ElSwitch
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.birthday')" prop="birthday">
+                    <el-date-picker v-model="saveForm.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.address')" prop="address">
+                    <el-input v-model="saveForm.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.idCardName')" prop="idCardName">
+                    <el-input v-model="saveForm.data.idCardName" :placeholder="t('user.user.name.idCardName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.idCardNo')" prop="idCardNo">
+                    <el-input v-model="saveForm.data.idCardNo" :placeholder="t('user.user.name.idCardNo')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.isStop')" prop="isStop">
+                    <el-switch
                         v-model="saveForm.data.isStop"
                         :active-value="1"
                         :inactive-value="0"
@@ -151,14 +151,14 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </ElFormItem>
-            </ElForm>
-        </ElScrollbar>
+                </el-form-item>
+            </el-form>
+        </el-scrollbar>
         <template #footer>
-            <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+            <el-button @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading">
                 {{ t('common.save') }}
-            </ElButton>
+            </el-button>
         </template>
-    </ElDrawer>
+    </el-drawer>
 </template>

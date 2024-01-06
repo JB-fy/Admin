@@ -50,37 +50,37 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('platform.config.name.idCardType')" prop="idCardType">
-            <ElRadioGroup v-model="saveForm.data.idCardType">
-                <ElRadio v-for="(item, index) in tm('platform.config.status.idCardType') as any" :key="index" :label="item.value">
+    <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-form-item :label="t('platform.config.name.idCardType')" prop="idCardType">
+            <el-radio-group v-model="saveForm.data.idCardType">
+                <el-radio v-for="(item, index) in tm('platform.config.status.idCardType') as any" :key="index" :label="item.value">
                     {{ item.label }}
-                </ElRadio>
-            </ElRadioGroup>
-        </ElFormItem>
+                </el-radio>
+            </el-radio-group>
+        </el-form-item>
 
         <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
-            <ElFormItem :label="t('platform.config.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
-                <ElInput v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.name.idCardOfAliyunHost')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
+                <el-input v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.name.idCardOfAliyunHost')" :clearable="true" style="max-width: 500px" />
                 <label>
-                    <ElAlert type="info" :show-icon="true" :closable="false">
+                    <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
                             <span v-html="t('platform.config.tip.idCardOfAliyunHost')"></span>
                         </template>
-                    </ElAlert>
+                    </el-alert>
                 </label>
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
-                <ElInput v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.name.idCardOfAliyunPath')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.idCardOfAliyunAppcode')" prop="idCardOfAliyunAppcode">
-                <ElInput v-model="saveForm.data.idCardOfAliyunAppcode" :placeholder="t('platform.config.name.idCardOfAliyunAppcode')" :clearable="true" />
-            </ElFormItem>
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
+                <el-input v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.name.idCardOfAliyunPath')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.idCardOfAliyunAppcode')" prop="idCardOfAliyunAppcode">
+                <el-input v-model="saveForm.data.idCardOfAliyunAppcode" :placeholder="t('platform.config.name.idCardOfAliyunAppcode')" :clearable="true" />
+            </el-form-item>
         </template>
 
-        <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
-            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        <el-form-item>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

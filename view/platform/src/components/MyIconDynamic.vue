@@ -26,10 +26,10 @@ const iconCode = computed(() => {
 </script>
 
 <template>
-    <ElIcon v-if="icon" :color="color" :size="size">
-        <VanIcon v-if="prefix === 'vant'" :name="iconCode" />
+    <el-icon v-if="icon" :color="color" :size="size">
+        <van-icon v-if="prefix === 'vant'" :name="iconCode" />
         <component v-else :is="iconCode" />
         <!-- <component v-else-if="icon.indexOf('ep-') === 0" :is="iconCode" />
         <component v-else-if="icon.indexOf('autoicon-') === 0" :is="iconCode" /> -->
-    </ElIcon>
+    </el-icon>
 </template>

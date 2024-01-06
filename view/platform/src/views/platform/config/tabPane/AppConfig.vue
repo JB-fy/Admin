@@ -106,20 +106,20 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <ElTabs tab-position="left">
-            <ElTabPane :label="t('platform.config.label.android')" :lazy="true">
-                <ElFormItem :label="t('platform.config.name.packageUrlOfAndroid')" prop="packageUrlOfAndroid">
-                    <MyUpload v-model="saveForm.data.packageUrlOfAndroid" accept=".apk" :isImage="false" @change="handleOfAndroid.afterUpload" :key="saveForm.data.packageUrlOfAndroid" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.packageSizeOfAndroid')" prop="packageSizeOfAndroid">
-                    <ElInputNumber v-model="saveForm.data.packageSizeOfAndroid" :precision="0" :min="0" :step="1" :step-strictly="true" :controls="false" :disabled="handleOfAndroid.disabledOfPackageSize" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.packageNameOfAndroid')" prop="packageNameOfAndroid">
-                    <ElInput v-model="saveForm.data.packageNameOfAndroid" :placeholder="t('platform.config.name.packageNameOfAndroid')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.isForceUpdateOfAndroid')" prop="isForceUpdateOfAndroid">
-                    <ElSwitch
+    <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-tabs tab-position="left">
+            <el-tab-pane :label="t('platform.config.label.android')" :lazy="true">
+                <el-form-item :label="t('platform.config.name.packageUrlOfAndroid')" prop="packageUrlOfAndroid">
+                    <my-upload v-model="saveForm.data.packageUrlOfAndroid" accept=".apk" :isImage="false" @change="handleOfAndroid.afterUpload" :key="saveForm.data.packageUrlOfAndroid" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.packageSizeOfAndroid')" prop="packageSizeOfAndroid">
+                    <el-input-number v-model="saveForm.data.packageSizeOfAndroid" :precision="0" :min="0" :step="1" :step-strictly="true" :controls="false" :disabled="handleOfAndroid.disabledOfPackageSize" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.packageNameOfAndroid')" prop="packageNameOfAndroid">
+                    <el-input v-model="saveForm.data.packageNameOfAndroid" :placeholder="t('platform.config.name.packageNameOfAndroid')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.isForceUpdateOfAndroid')" prop="isForceUpdateOfAndroid">
+                    <el-switch
                         v-model="saveForm.data.isForceUpdateOfAndroid"
                         :active-value="1"
                         :inactive-value="0"
@@ -128,33 +128,33 @@ saveForm.initData()
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.versionNumberOfAndroid')" prop="versionNumberOfAndroid">
-                    <ElInputNumber v-model="saveForm.data.versionNumberOfAndroid" :precision="0" :min="0" :step="1" :step-strictly="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.versionNameOfAndroid')" prop="versionNameOfAndroid">
-                    <ElInput v-model="saveForm.data.versionNameOfAndroid" :placeholder="t('platform.config.name.versionNameOfAndroid')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.versionIntroOfAndroid')" prop="versionIntroOfAndroid">
-                    <ElInput v-model="saveForm.data.versionIntroOfAndroid" type="textarea" :autosize="{ minRows: 3 }" />
-                </ElFormItem>
-            </ElTabPane>
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.versionNumberOfAndroid')" prop="versionNumberOfAndroid">
+                    <el-input-number v-model="saveForm.data.versionNumberOfAndroid" :precision="0" :min="0" :step="1" :step-strictly="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.versionNameOfAndroid')" prop="versionNameOfAndroid">
+                    <el-input v-model="saveForm.data.versionNameOfAndroid" :placeholder="t('platform.config.name.versionNameOfAndroid')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.versionIntroOfAndroid')" prop="versionIntroOfAndroid">
+                    <el-input v-model="saveForm.data.versionIntroOfAndroid" type="textarea" :autosize="{ minRows: 3 }" />
+                </el-form-item>
+            </el-tab-pane>
 
-            <ElTabPane :label="t('platform.config.label.ios')" :lazy="true">
-                <ElFormItem :label="t('platform.config.name.packageUrlOfIos')" prop="packageUrlOfIos">
-                    <MyUpload v-model="saveForm.data.packageUrlOfIos" accept=".ipa" :isImage="false" @change="handleOfIos.afterUpload" :key="saveForm.data.packageUrlOfIos" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.packageSizeOfIos')" prop="packageSizeOfIos">
-                    <ElInputNumber v-model="saveForm.data.packageSizeOfIos" :precision="0" :min="0" :step="1" :step-strictly="true" :controls="false" :disabled="handleOfIos.disabledOfPackageSize" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.plistUrlOfIos')" prop="plistUrlOfIos">
-                    <MyUpload v-model="saveForm.data.plistUrlOfIos" accept=".plist" :isImage="false" :key="saveForm.data.plistUrlOfIos" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.packageNameOfIos')" prop="packageNameOfIos">
-                    <ElInput v-model="saveForm.data.packageNameOfIos" :placeholder="t('platform.config.name.packageNameOfIos')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.isForceUpdateOfIos')" prop="isForceUpdateOfIos">
-                    <ElSwitch
+            <el-tab-pane :label="t('platform.config.label.ios')" :lazy="true">
+                <el-form-item :label="t('platform.config.name.packageUrlOfIos')" prop="packageUrlOfIos">
+                    <my-upload v-model="saveForm.data.packageUrlOfIos" accept=".ipa" :isImage="false" @change="handleOfIos.afterUpload" :key="saveForm.data.packageUrlOfIos" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.packageSizeOfIos')" prop="packageSizeOfIos">
+                    <el-input-number v-model="saveForm.data.packageSizeOfIos" :precision="0" :min="0" :step="1" :step-strictly="true" :controls="false" :disabled="handleOfIos.disabledOfPackageSize" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.plistUrlOfIos')" prop="plistUrlOfIos">
+                    <my-upload v-model="saveForm.data.plistUrlOfIos" accept=".plist" :isImage="false" :key="saveForm.data.plistUrlOfIos" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.packageNameOfIos')" prop="packageNameOfIos">
+                    <el-input v-model="saveForm.data.packageNameOfIos" :placeholder="t('platform.config.name.packageNameOfIos')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.isForceUpdateOfIos')" prop="isForceUpdateOfIos">
+                    <el-switch
                         v-model="saveForm.data.isForceUpdateOfIos"
                         :active-value="1"
                         :inactive-value="0"
@@ -163,22 +163,22 @@ saveForm.initData()
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.versionNumberOfIos')" prop="versionNumberOfIos">
-                    <ElInputNumber v-model="saveForm.data.versionNumberOfIos" :precision="0" :min="0" :step="1" :step-strictly="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.versionNameOfIos')" prop="versionNameOfIos">
-                    <ElInput v-model="saveForm.data.versionNameOfIos" :placeholder="t('platform.config.name.versionNameOfIos')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.versionIntroOfIos')" prop="versionIntroOfIos">
-                    <ElInput v-model="saveForm.data.versionIntroOfIos" type="textarea" :autosize="{ minRows: 3 }" />
-                </ElFormItem>
-            </ElTabPane>
-        </ElTabs>
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.versionNumberOfIos')" prop="versionNumberOfIos">
+                    <el-input-number v-model="saveForm.data.versionNumberOfIos" :precision="0" :min="0" :step="1" :step-strictly="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.versionNameOfIos')" prop="versionNameOfIos">
+                    <el-input v-model="saveForm.data.versionNameOfIos" :placeholder="t('platform.config.name.versionNameOfIos')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.versionIntroOfIos')" prop="versionIntroOfIos">
+                    <el-input v-model="saveForm.data.versionIntroOfIos" type="textarea" :autosize="{ minRows: 3 }" />
+                </el-form-item>
+            </el-tab-pane>
+        </el-tabs>
 
-        <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
-            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        <el-form-item>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

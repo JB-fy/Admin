@@ -16,11 +16,11 @@ const menuSelect = (fullPath: string) => {
 </script>
 
 <template>
-    <ElScrollbar>
-        <ElMenu :default-active="route.fullPath" :collapse="settingStore.leftMenuFold" :router="false" :unique-opened="true" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" @select="menuSelect">
-            <LeftMenuItem :tree="adminStore.menuTree" />
-        </ElMenu>
-    </ElScrollbar>
+    <el-scrollbar>
+        <el-menu :default-active="route.fullPath" :collapse="settingStore.leftMenuFold" :router="false" :unique-opened="true" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" @select="menuSelect">
+            <left-menu-item :tree="adminStore.menuTree" />
+        </el-menu>
+    </el-scrollbar>
 </template>
 
 <style scoped>

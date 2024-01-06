@@ -66,54 +66,54 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <ElTabs tab-position="left">
-            <ElTabPane :label="t('platform.config.label.payOfAli')" :lazy="true">
-                <ElFormItem :label="t('platform.config.name.payOfAliAppId')" prop="payOfAliAppId">
-                    <ElInput v-model="saveForm.data.payOfAliAppId" :placeholder="t('platform.config.name.payOfAliAppId')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
-                    <ElInput v-model="saveForm.data.payOfAliPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
-                    <ElInput v-model="saveForm.data.payOfAliPublicKey" type="textarea" :autosize="{ minRows: 5 }" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfAliNotifyUrl')" prop="payOfAliNotifyUrl">
-                    <ElInput v-model="saveForm.data.payOfAliNotifyUrl" :placeholder="t('platform.config.name.payOfAliNotifyUrl')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfAliOpAppId')" prop="payOfAliOpAppId">
-                    <ElInput v-model="saveForm.data.payOfAliOpAppId" :placeholder="t('platform.config.name.payOfAliOpAppId')" :clearable="true" style="max-width: 500px" />
+    <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-tabs tab-position="left">
+            <el-tab-pane :label="t('platform.config.label.payOfAli')" :lazy="true">
+                <el-form-item :label="t('platform.config.name.payOfAliAppId')" prop="payOfAliAppId">
+                    <el-input v-model="saveForm.data.payOfAliAppId" :placeholder="t('platform.config.name.payOfAliAppId')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
+                    <el-input v-model="saveForm.data.payOfAliPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
+                    <el-input v-model="saveForm.data.payOfAliPublicKey" type="textarea" :autosize="{ minRows: 5 }" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfAliNotifyUrl')" prop="payOfAliNotifyUrl">
+                    <el-input v-model="saveForm.data.payOfAliNotifyUrl" :placeholder="t('platform.config.name.payOfAliNotifyUrl')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfAliOpAppId')" prop="payOfAliOpAppId">
+                    <el-input v-model="saveForm.data.payOfAliOpAppId" :placeholder="t('platform.config.name.payOfAliOpAppId')" :clearable="true" style="max-width: 500px" />
                     <label>
-                        <ElAlert :title="t('platform.config.tip.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('platform.config.tip.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-            </ElTabPane>
+                </el-form-item>
+            </el-tab-pane>
 
-            <ElTabPane :label="t('platform.config.label.payOfWx')" :lazy="true">
-                <ElFormItem :label="t('platform.config.name.payOfWxAppId')" prop="payOfWxAppId">
-                    <ElInput v-model="saveForm.data.payOfWxAppId" :placeholder="t('platform.config.name.payOfWxAppId')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfWxMchid')" prop="payOfWxMchid">
-                    <ElInput v-model="saveForm.data.payOfWxMchid" :placeholder="t('platform.config.name.payOfWxMchid')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfWxSerialNo')" prop="payOfWxSerialNo">
-                    <ElInput v-model="saveForm.data.payOfWxSerialNo" :placeholder="t('platform.config.name.payOfWxSerialNo')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfWxApiV3Key')" prop="payOfWxApiV3Key">
-                    <ElInput v-model="saveForm.data.payOfWxApiV3Key" :placeholder="t('platform.config.name.payOfWxApiV3Key')" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfWxPrivateKey')" prop="payOfWxPrivateKey">
-                    <ElInput v-model="saveForm.data.payOfWxPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
-                </ElFormItem>
-                <ElFormItem :label="t('platform.config.name.payOfWxNotifyUrl')" prop="payOfWxNotifyUrl">
-                    <ElInput v-model="saveForm.data.payOfWxNotifyUrl" :placeholder="t('platform.config.name.payOfWxNotifyUrl')" :clearable="true" />
-                </ElFormItem>
-            </ElTabPane>
-        </ElTabs>
+            <el-tab-pane :label="t('platform.config.label.payOfWx')" :lazy="true">
+                <el-form-item :label="t('platform.config.name.payOfWxAppId')" prop="payOfWxAppId">
+                    <el-input v-model="saveForm.data.payOfWxAppId" :placeholder="t('platform.config.name.payOfWxAppId')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfWxMchid')" prop="payOfWxMchid">
+                    <el-input v-model="saveForm.data.payOfWxMchid" :placeholder="t('platform.config.name.payOfWxMchid')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfWxSerialNo')" prop="payOfWxSerialNo">
+                    <el-input v-model="saveForm.data.payOfWxSerialNo" :placeholder="t('platform.config.name.payOfWxSerialNo')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfWxApiV3Key')" prop="payOfWxApiV3Key">
+                    <el-input v-model="saveForm.data.payOfWxApiV3Key" :placeholder="t('platform.config.name.payOfWxApiV3Key')" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfWxPrivateKey')" prop="payOfWxPrivateKey">
+                    <el-input v-model="saveForm.data.payOfWxPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
+                </el-form-item>
+                <el-form-item :label="t('platform.config.name.payOfWxNotifyUrl')" prop="payOfWxNotifyUrl">
+                    <el-input v-model="saveForm.data.payOfWxNotifyUrl" :placeholder="t('platform.config.name.payOfWxNotifyUrl')" :clearable="true" />
+                </el-form-item>
+            </el-tab-pane>
+        </el-tabs>
 
-        <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
-            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        <el-form-item>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

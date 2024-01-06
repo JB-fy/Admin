@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyUpload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
+<!-- <my-upload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
-<MyUpload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" :isImage="false" /> -->
+<my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" :isImage="false" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 const { t } = useI18n()
@@ -54,7 +54,7 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue', 'change'])
 const upload = reactive({
-    id: ('MyUpload' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
+    id: ('my-upload' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
     value: ((): any => {
         if (props.multiple) {
@@ -227,7 +227,7 @@ upload.initSignInfo() //初始化签名信息
 <template>
     <div :id="upload.id">
         <div v-if="isImage" class="upload-container">
-            <ElUpload
+            <el-upload
                 :ref="(el: any) => upload.ref = el"
                 v-model:file-list="upload.fileList"
                 :action="upload.action"
@@ -243,19 +243,19 @@ upload.initSignInfo() //初始化签名信息
                 :drag="true"
                 :class="upload.class"
             >
-                <ElIcon class="el-icon--upload">
-                    <AutoiconEpUploadFilled />
-                </ElIcon>
+                <el-icon class="el-icon--upload">
+                    <autoicon-ep-upload-filled />
+                </el-icon>
                 <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
                 <template v-if="tip" #tip>
                     <div class="el-upload__tip">
                         {{ tip }}
                     </div>
                 </template>
-            </ElUpload>
-            <ElImageViewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
+            </el-upload>
+            <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
         </div>
-        <ElUpload
+        <el-upload
             v-else
             :ref="(el: any) => upload.ref = el"
             v-model:file-list="upload.fileList"
@@ -269,13 +269,13 @@ upload.initSignInfo() //初始化签名信息
             :accept="accept"
             list-type="text"
         >
-            <ElButton type="primary">{{ t('common.upload') }}</ElButton>
+            <el-button type="primary">{{ t('common.upload') }}</el-button>
             <template v-if="tip" #tip>
                 <div class="el-upload__tip">
                     {{ tip }}
                 </div>
             </template>
-        </ElUpload>
+        </el-upload>
     </div>
 </template>
 

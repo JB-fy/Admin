@@ -10,28 +10,28 @@ const { t } = useI18n()
 </script>
 
 <template>
-    <ElContainer class="common-container">
-        <ElMain>
-            <ElTabs type="border-card" tab-position="top">
-                <ElTabPane :label="t('platform.config.label.uploadConfig')" :lazy="true">
-                    <UploadConfig />
-                </ElTabPane>
-                <ElTabPane :label="t('platform.config.label.payConfig')" :lazy="true">
-                    <PayConfig />
-                </ElTabPane>
-                <ElTabPane :label="t('platform.config.label.smsConfig')" :lazy="true">
-                    <SmsConfig />
-                </ElTabPane>
-                <ElTabPane :label="t('platform.config.label.idCardConfig')" :lazy="true">
-                    <IdCardConfig />
-                </ElTabPane>
-                <ElTabPane :label="t('platform.config.label.pushConfig')" :lazy="true">
-                    <PushConfig />
-                </ElTabPane>
-                <ElTabPane :label="t('platform.config.label.vodConfig')" :lazy="true">
-                    <VodConfig />
-                </ElTabPane>
-            </ElTabs>
-        </ElMain>
-    </ElContainer>
+    <el-container class="common-container">
+        <el-main>
+            <el-tabs type="border-card" tab-position="top">
+                <el-tab-pane :label="t('platform.config.label.uploadConfig')" :lazy="true">
+                    <upload-config />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.label.payConfig')" :lazy="true">
+                    <pay-config />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.label.smsConfig')" :lazy="true">
+                    <sms-config />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.label.idCardConfig')" :lazy="true">
+                    <id-card-config />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.label.pushConfig')" :lazy="true">
+                    <push-config />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.label.vodConfig')" :lazy="true">
+                    <vod-config />
+                </el-tab-pane>
+            </el-tabs>
+        </el-main>
+    </el-container>
 </template>

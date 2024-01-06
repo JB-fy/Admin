@@ -4,27 +4,27 @@ const keepAliveStore = useKeepAliveStore()
 </script>
 
 <template>
-    <RouterView v-slot="{ Component, route }">
-        <Transition mode="out-in" name="el-zoom-in-center">
-            <KeepAlive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
+    <router-view v-slot="{ Component, route }">
+        <transition mode="out-in" name="el-zoom-in-center">
+            <keep-alive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
                 <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1" :is="Component" :key="route.fullPath" />
-            </KeepAlive>
-        </Transition>
-    </RouterView>
-    <!-- <Suspense>
+            </keep-alive>
+        </transition>
+    </router-view>
+    <!-- <suspense>
         <template #default>
-            <RouterView v-slot="{ Component, route }">
-                <Transition mode="out-in" name="transform">
-                    <KeepAlive :include="keepAliveStore.appContainerInclude"
+            <router-view v-slot="{ Component, route }">
+                <transition mode="out-in" name="transform">
+                    <keep-alive :include="keepAliveStore.appContainerInclude"
                         :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
                         <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1" :is="Component"
                             :key="route.fullPath" />
-                    </KeepAlive>
-                </Transition>
-            </RouterView>
+                    </keep-alive>
+                </transition>
+            </router-view>
         </template>
         <template #fallback>{{ t('common.loading') }}</template>
-    </Suspense> -->
+    </suspense> -->
 </template>
 
 <!-- <style scoped>

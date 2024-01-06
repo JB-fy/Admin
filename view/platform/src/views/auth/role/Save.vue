@@ -90,14 +90,14 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-    <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
-        <ElScrollbar>
-            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('auth.role.name.roleName')" prop="roleName">
-                    <ElInput v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.role.name.sceneId')" prop="sceneId">
-                    <MySelect
+    <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+        <el-scrollbar>
+            <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+                <el-form-item :label="t('auth.role.name.roleName')" prop="roleName">
+                    <el-input v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('auth.role.name.sceneId')" prop="sceneId">
+                    <my-select
                         v-model="saveForm.data.sceneId"
                         :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
                         @change="
@@ -107,18 +107,18 @@ const saveDrawer = reactive({
                             }
                         "
                     />
-                </ElFormItem>
-                <!-- <ElFormItem :label="t('auth.role.name.tableId')" prop="tableId">
-					<MySelect v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
-				</ElFormItem> -->
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuId')" prop="menuIdArr">
-                    <MyCascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
-                </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionId')" prop="actionIdArr">
-                    <MyTransfer v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.role.name.isStop')" prop="isStop">
-                    <ElSwitch
+                </el-form-item>
+                <!-- <el-form-item :label="t('auth.role.name.tableId')" prop="tableId">
+					<my-select v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
+				</el-form-item> -->
+                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuId')" prop="menuIdArr">
+                    <my-cascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
+                </el-form-item>
+                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionId')" prop="actionIdArr">
+                    <my-transfer v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
+                </el-form-item>
+                <el-form-item :label="t('auth.role.name.isStop')" prop="isStop">
+                    <el-switch
                         v-model="saveForm.data.isStop"
                         :active-value="1"
                         :inactive-value="0"
@@ -127,14 +127,14 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </ElFormItem>
-            </ElForm>
-        </ElScrollbar>
+                </el-form-item>
+            </el-form>
+        </el-scrollbar>
         <template #footer>
-            <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+            <el-button @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading">
                 {{ t('common.save') }}
-            </ElButton>
+            </el-button>
         </template>
-    </ElDrawer>
+    </el-drawer>
 </template>

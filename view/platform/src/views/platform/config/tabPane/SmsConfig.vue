@@ -54,36 +54,36 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('platform.config.name.smsType')" prop="smsType">
-            <ElRadioGroup v-model="saveForm.data.smsType">
-                <ElRadio v-for="(item, index) in tm('platform.config.status.smsType') as any" :key="index" :label="item.value">
+    <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-form-item :label="t('platform.config.name.smsType')" prop="smsType">
+            <el-radio-group v-model="saveForm.data.smsType">
+                <el-radio v-for="(item, index) in tm('platform.config.status.smsType') as any" :key="index" :label="item.value">
                     {{ item.label }}
-                </ElRadio>
-            </ElRadioGroup>
-        </ElFormItem>
+                </el-radio>
+            </el-radio-group>
+        </el-form-item>
 
         <template v-if="saveForm.data.smsType == 'smsOfAliyun'">
-            <ElFormItem :label="t('platform.config.name.smsOfAliyunAccessKeyId')" prop="smsOfAliyunAccessKeyId">
-                <ElInput v-model="saveForm.data.smsOfAliyunAccessKeyId" :placeholder="t('platform.config.name.smsOfAliyunAccessKeyId')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.smsOfAliyunAccessKeySecret')" prop="smsOfAliyunAccessKeySecret">
-                <ElInput v-model="saveForm.data.smsOfAliyunAccessKeySecret" :placeholder="t('platform.config.name.smsOfAliyunAccessKeySecret')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.smsOfAliyunEndpoint')" prop="smsOfAliyunEndpoint">
-                <ElInput v-model="saveForm.data.smsOfAliyunEndpoint" :placeholder="t('platform.config.name.smsOfAliyunEndpoint')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.smsOfAliyunSignName')" prop="smsOfAliyunSignName">
-                <ElInput v-model="saveForm.data.smsOfAliyunSignName" :placeholder="t('platform.config.name.smsOfAliyunSignName')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.smsOfAliyunTemplateCode')" prop="smsOfAliyunTemplateCode">
-                <ElInput v-model="saveForm.data.smsOfAliyunTemplateCode" :placeholder="t('platform.config.name.smsOfAliyunTemplateCode')" :clearable="true" />
-            </ElFormItem>
+            <el-form-item :label="t('platform.config.name.smsOfAliyunAccessKeyId')" prop="smsOfAliyunAccessKeyId">
+                <el-input v-model="saveForm.data.smsOfAliyunAccessKeyId" :placeholder="t('platform.config.name.smsOfAliyunAccessKeyId')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.smsOfAliyunAccessKeySecret')" prop="smsOfAliyunAccessKeySecret">
+                <el-input v-model="saveForm.data.smsOfAliyunAccessKeySecret" :placeholder="t('platform.config.name.smsOfAliyunAccessKeySecret')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.smsOfAliyunEndpoint')" prop="smsOfAliyunEndpoint">
+                <el-input v-model="saveForm.data.smsOfAliyunEndpoint" :placeholder="t('platform.config.name.smsOfAliyunEndpoint')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.smsOfAliyunSignName')" prop="smsOfAliyunSignName">
+                <el-input v-model="saveForm.data.smsOfAliyunSignName" :placeholder="t('platform.config.name.smsOfAliyunSignName')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.smsOfAliyunTemplateCode')" prop="smsOfAliyunTemplateCode">
+                <el-input v-model="saveForm.data.smsOfAliyunTemplateCode" :placeholder="t('platform.config.name.smsOfAliyunTemplateCode')" :clearable="true" />
+            </el-form-item>
         </template>
 
-        <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
-            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        <el-form-item>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

@@ -93,27 +93,27 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-    <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
-        <ElScrollbar>
-            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('auth.scene.name.sceneName')" prop="sceneName">
-                    <ElInput v-model="saveForm.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.scene.name.sceneCode')" prop="sceneCode">
-                    <ElInput v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+    <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+        <el-scrollbar>
+            <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+                <el-form-item :label="t('auth.scene.name.sceneName')" prop="sceneName">
+                    <el-input v-model="saveForm.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('auth.scene.name.sceneCode')" prop="sceneCode">
+                    <el-input v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <label>
-                        <ElAlert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-                <ElFormItem :label="t('auth.scene.name.sceneConfig')" prop="sceneConfig">
-                    <ElAlert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true" :closable="false" />
-                    <ElInput v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.scene.name.remark')" prop="remark">
-                    <ElInput v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.scene.name.isStop')" prop="isStop">
-                    <ElSwitch
+                </el-form-item>
+                <el-form-item :label="t('auth.scene.name.sceneConfig')" prop="sceneConfig">
+                    <el-alert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true" :closable="false" />
+                    <el-input v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
+                </el-form-item>
+                <el-form-item :label="t('auth.scene.name.remark')" prop="remark">
+                    <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
+                </el-form-item>
+                <el-form-item :label="t('auth.scene.name.isStop')" prop="isStop">
+                    <el-switch
                         v-model="saveForm.data.isStop"
                         :active-value="1"
                         :inactive-value="0"
@@ -122,14 +122,14 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </ElFormItem>
-            </ElForm>
-        </ElScrollbar>
+                </el-form-item>
+            </el-form>
+        </el-scrollbar>
         <template #footer>
-            <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+            <el-button @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading">
                 {{ t('common.save') }}
-            </ElButton>
+            </el-button>
         </template>
-    </ElDrawer>
+    </el-drawer>
 </template>

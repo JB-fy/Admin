@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
-<!-- <MySelect v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+<!-- <my-select v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
+<my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
     :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
@@ -246,7 +246,7 @@ watch(
 
 <template>
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
-    <ElSelectV2
+    <el-select-v2
         v-if="multiple"
         :ref="(el: any) => select.ref = el"
         v-model="select.value"
@@ -265,7 +265,7 @@ watch(
         :collapse-tags-tooltip="collapseTagsTooltip"
         style="min-width: 225px"
     />
-    <ElSelectV2
+    <el-select-v2
         v-else
         :ref="(el: any) => select.ref = el"
         v-model="select.value"

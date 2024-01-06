@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyTransfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+<!-- <my-transfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<MyTransfer v-model="saveForm.data.sceneIdArr"
+<my-transfer v-model="saveForm.data.sceneIdArr"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
@@ -122,7 +122,7 @@ watch(
 </script>
 
 <template>
-    <ElTransfer :ref="(el: any) => transfer.ref = el" v-model="transfer.value" :data="transfer.options" :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
+    <el-transfer :ref="(el: any) => transfer.ref = el" v-model="transfer.value" :data="transfer.options" :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
 </template>
 
 <style scoped>

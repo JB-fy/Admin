@@ -16,16 +16,16 @@ const { t } = useI18n()
 </script>
 
 <template>
-    <ElContainer class="common-container">
-        <ElMain>
-            <ElTabs type="border-card" tab-position="top">
-                <ElTabPane :label="t('platform.config.label.websiteConfig')" :lazy="true">
-                    <WebsiteConfig />
-                </ElTabPane>
-                <ElTabPane :label="t('platform.config.label.appConfig')" :lazy="true">
-                    <AppConfig />
-                </ElTabPane>
-            </ElTabs>
-        </ElMain>
-    </ElContainer>
+    <el-container class="common-container">
+        <el-main>
+            <el-tabs type="border-card" tab-position="top">
+                <el-tab-pane :label="t('platform.config.label.websiteConfig')" :lazy="true">
+                    <website-config />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.label.appConfig')" :lazy="true">
+                    <app-config />
+                </el-tab-pane>
+            </el-tabs>
+        </el-main>
+    </el-container>
 </template>

@@ -17,7 +17,7 @@ const table = reactive({
                 return [
                     //阻止冒泡
                     <div class="id-checkbox" onClick={(event: any) => event.stopPropagation()}>
-                        <ElCheckbox
+                        <el-checkbox
                             model-value={table.data.length ? allChecked : false}
                             indeterminate={someChecked && !allChecked}
                             onChange={(val: boolean) => {
@@ -32,7 +32,7 @@ const table = reactive({
             },
             cellRenderer: (props: any): any => {
                 return [
-                    <ElCheckbox
+                    <el-checkbox
                         class="id-checkbox"
                         model-value={props.rowData.checked}
                         onChange={(val: boolean) => {
@@ -72,7 +72,7 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
-                    <ElSwitch
+                    <el-switch
                         model-value={props.rowData.isStop}
                         active-value={1}
                         // disabled={true}
@@ -119,18 +119,18 @@ const table = reactive({
             fixed: 'right',
             cellRenderer: (props: any): any => {
                 return [
-                    <ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
-                        <AutoiconEpEdit />
+                    <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                        <autoicon-ep-edit />
                         {t('common.edit')}
-                    </ElButton>,
-                    <ElButton type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
-                        <AutoiconEpDelete />
+                    </el-button>,
+                    <el-button type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+                        <autoicon-ep-delete />
                         {t('common.delete')}
-                    </ElButton>,
-                    <ElButton type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
-                        <AutoiconEpDocumentCopy />
+                    </el-button>,
+                    <el-button type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+                        <autoicon-ep-document-copy />
                         {t('common.copy')}
-                    </ElButton>,
+                    </el-button>,
                 ]
             },
         },
@@ -254,51 +254,51 @@ defineExpose({
 </script>
 
 <template>
-    <ElRow class="main-table-tool">
-        <ElCol :span="16">
-            <ElSpace :size="10" style="height: 100%; margin-left: 10px">
-                <ElButton type="primary" @click="handleAdd"> <AutoiconEpEditPen />{{ t('common.add') }} </ElButton>
-                <ElButton type="danger" @click="handleBatchDelete"> <AutoiconEpDeleteFilled />{{ t('common.batchDelete') }} </ElButton>
-            </ElSpace>
-        </ElCol>
-        <ElCol :span="8" style="text-align: right">
-            <ElSpace :size="10" style="height: 100%">
-                <MyExportButton i18nPrefix="auth.role" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
-                <ElDropdown max-height="300" :hide-on-click="false">
-                    <ElButton type="info" :circle="true">
-                        <AutoiconEpHide />
-                    </ElButton>
+    <el-row class="main-table-tool">
+        <el-col :span="16">
+            <el-space :size="10" style="height: 100%; margin-left: 10px">
+                <el-button type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }} </el-button>
+                <el-button type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }} </el-button>
+            </el-space>
+        </el-col>
+        <el-col :span="8" style="text-align: right">
+            <el-space :size="10" style="height: 100%">
+                <my-export-button i18nPrefix="auth.role" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <el-dropdown max-height="300" :hide-on-click="false">
+                    <el-button type="info" :circle="true">
+                        <autoicon-ep-hide />
+                    </el-button>
                     <template #dropdown>
-                        <ElDropdownMenu>
-                            <ElDropdownItem v-for="(item, index) in table.columns" :key="index">
-                                <ElCheckbox v-model="item.hidden">
+                        <el-dropdown-menu>
+                            <el-dropdown-item v-for="(item, index) in table.columns" :key="index">
+                                <el-checkbox v-model="item.hidden">
                                     {{ item.title }}
-                                </ElCheckbox>
-                            </ElDropdownItem>
-                        </ElDropdownMenu>
+                                </el-checkbox>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
                     </template>
-                </ElDropdown>
-            </ElSpace>
-        </ElCol>
-    </ElRow>
+                </el-dropdown>
+            </el-space>
+        </el-col>
+    </el-row>
 
-    <ElMain>
-        <ElAutoResizer>
+    <el-main>
+        <el-auto-resizer>
             <template #default="{ height, width }">
-                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
+                <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
-                        <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
-                            <AutoiconEpLoading />
-                        </ElIcon>
+                        <el-icon class="is-loading" color="var(--el-color-primary)" :size="25">
+                            <autoicon-ep-loading />
+                        </el-icon>
                     </template>
-                </ElTableV2>
+                </el-table-v2>
             </template>
-        </ElAutoResizer>
-    </ElMain>
+        </el-auto-resizer>
+    </el-main>
 
-    <ElRow class="main-table-pagination">
-        <ElCol :span="24">
-            <ElPagination
+    <el-row class="main-table-pagination">
+        <el-col :span="24">
+            <el-pagination
                 :total="pagination.total"
                 v-model:currentPage="pagination.page"
                 v-model:page-size="pagination.size"
@@ -308,6 +308,6 @@ defineExpose({
                 :layout="pagination.layout"
                 :background="true"
             />
-        </ElCol>
-    </ElRow>
+        </el-col>
+    </el-row>
 </template>

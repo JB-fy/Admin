@@ -1,6 +1,6 @@
 <template>
-    <ElSpace style="height: 100%; color: #909399; font-size: 14px">
+    <el-space style="height: 100%; color: #909399; font-size: 14px">
         Copyright
-        <AutoiconEpLocation /> 2022 JB Admin
-    </ElSpace>
+        <autoicon-ep-location /> 2022 JB Admin
+    </el-space>
 </template>

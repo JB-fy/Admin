@@ -4,14 +4,14 @@ const { t } = useI18n()
 
 <template>
     <div style="text-align: center; font-size: 300px; color: #409eff">
-        <ElSpace :size="0">
-            <ElIcon class="is-loading">
-                <AutoiconEpOrange />
-            </ElIcon>
+        <el-space :size="0">
+            <el-icon class="is-loading">
+                <autoicon-ep-orange />
+            </el-icon>
             {{ t('index.welcome') }}
-            <ElIcon class="is-loading">
-                <AutoiconEpOrange />
-            </ElIcon>
-        </ElSpace>
+            <el-icon class="is-loading">
+                <autoicon-ep-orange />
+            </el-icon>
+        </el-space>
     </div>
 </template>

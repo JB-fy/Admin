@@ -74,13 +74,13 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('platform.config.name.hotSearch')" prop="hotSearch">
-            <ElTag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px">
+    <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-form-item :label="t('platform.config.name.hotSearch')" prop="hotSearch">
+            <el-tag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px">
                 {{ item }}
-            </ElTag>
+            </el-tag>
             <template v-if="saveForm.data.hotSearch.length < 10">
-                <ElInput
+                <el-input
                     v-if="hotSearchHandle.visible"
                     :ref="(el: any) => hotSearchHandle.ref = el"
                     v-model="hotSearchHandle.value"
@@ -90,18 +90,18 @@ saveForm.initData()
                     size="small"
                     style="width: 100px"
                 />
-                <ElButton v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"> <AutoiconEpPlus />{{ t('common.add') }} </ElButton>
+                <el-button v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>
             </template>
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.userAgreement')" prop="userAgreement">
-            <MyEditor v-model="saveForm.data.userAgreement" />
-        </ElFormItem>
-        <ElFormItem :label="t('platform.config.name.privacyAgreement')" prop="privacyAgreement">
-            <MyEditor v-model="saveForm.data.privacyAgreement" />
-        </ElFormItem>
-        <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
-            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        </el-form-item>
+        <el-form-item :label="t('platform.config.name.userAgreement')" prop="userAgreement">
+            <my-editor v-model="saveForm.data.userAgreement" />
+        </el-form-item>
+        <el-form-item :label="t('platform.config.name.privacyAgreement')" prop="privacyAgreement">
+            <my-editor v-model="saveForm.data.privacyAgreement" />
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

@@ -52,43 +52,43 @@ saveForm.initData()
 </script>
 
 <template>
-    <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <ElFormItem :label="t('platform.config.name.vodType')" prop="vodType">
-            <ElRadioGroup v-model="saveForm.data.vodType">
-                <ElRadio v-for="(item, index) in tm('platform.config.status.vodType') as any" :key="index" :label="item.value">
+    <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-form-item :label="t('platform.config.name.vodType')" prop="vodType">
+            <el-radio-group v-model="saveForm.data.vodType">
+                <el-radio v-for="(item, index) in tm('platform.config.status.vodType') as any" :key="index" :label="item.value">
                     {{ item.label }}
-                </ElRadio>
-            </ElRadioGroup>
-        </ElFormItem>
+                </el-radio>
+            </el-radio-group>
+        </el-form-item>
 
         <template v-if="saveForm.data.vodType == 'vodOfAliyun'">
-            <ElFormItem :label="t('platform.config.name.vodOfAliyunAccessKeyId')" prop="vodOfAliyunAccessKeyId">
-                <ElInput v-model="saveForm.data.vodOfAliyunAccessKeyId" :placeholder="t('platform.config.name.vodOfAliyunAccessKeyId')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.vodOfAliyunAccessKeySecret')" prop="vodOfAliyunAccessKeySecret">
-                <ElInput v-model="saveForm.data.vodOfAliyunAccessKeySecret" :placeholder="t('platform.config.name.vodOfAliyunAccessKeySecret')" :clearable="true" />
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
-                <ElInput v-model="saveForm.data.vodOfAliyunEndpoint" :placeholder="t('platform.config.name.vodOfAliyunEndpoint')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.name.vodOfAliyunAccessKeyId')" prop="vodOfAliyunAccessKeyId">
+                <el-input v-model="saveForm.data.vodOfAliyunAccessKeyId" :placeholder="t('platform.config.name.vodOfAliyunAccessKeyId')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.vodOfAliyunAccessKeySecret')" prop="vodOfAliyunAccessKeySecret">
+                <el-input v-model="saveForm.data.vodOfAliyunAccessKeySecret" :placeholder="t('platform.config.name.vodOfAliyunAccessKeySecret')" :clearable="true" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
+                <el-input v-model="saveForm.data.vodOfAliyunEndpoint" :placeholder="t('platform.config.name.vodOfAliyunEndpoint')" :clearable="true" style="max-width: 500px" />
                 <label>
-                    <ElAlert type="info" :show-icon="true" :closable="false">
+                    <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
                             <span v-html="t('platform.config.tip.vodOfAliyunEndpoint')"></span>
                         </template>
-                    </ElAlert>
+                    </el-alert>
                 </label>
-            </ElFormItem>
-            <ElFormItem :label="t('platform.config.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
-                <ElInput v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.name.vodOfAliyunRoleArn')" :clearable="true" style="max-width: 500px" />
+            </el-form-item>
+            <el-form-item :label="t('platform.config.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
+                <el-input v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.name.vodOfAliyunRoleArn')" :clearable="true" style="max-width: 500px" />
                 <label>
-                    <ElAlert :title="t('platform.config.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert :title="t('platform.config.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
                 </label>
-            </ElFormItem>
+            </el-form-item>
         </template>
 
-        <ElFormItem>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <AutoiconEpCircleCheck />{{ t('common.save') }} </ElButton>
-            <ElButton type="info" @click="saveForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        <el-form-item>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

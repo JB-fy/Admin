@@ -32,32 +32,32 @@ const loginForm = reactive({
 
 <template>
     <div class="particles"></div>
-    <ElTag id="login-container">
-        <ElDivider>
+    <el-tag id="login-container">
+        <el-divider>
             <div style="font-size: 25px">{{ t('common.login') }}</div>
-        </ElDivider>
-        <ElForm :ref="(el: any) => loginForm.ref = el" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
-            <ElFormItem prop="loginName">
-                <ElInput v-model="loginForm.data.loginName" :placeholder="t('login.name.loginName')">
+        </el-divider>
+        <el-form :ref="(el: any) => loginForm.ref = el" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
+            <el-form-item prop="loginName">
+                <el-input v-model="loginForm.data.loginName" :placeholder="t('login.name.loginName')">
                     <template #prefix>
-                        <AutoiconEpUser />
+                        <autoicon-ep-user />
                     </template>
-                </ElInput>
-            </ElFormItem>
-            <ElFormItem prop="password">
-                <ElInput v-model="loginForm.data.password" type="password" :placeholder="t('login.name.password')" :show-password="true">
+                </el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+                <el-input v-model="loginForm.data.password" type="password" :placeholder="t('login.name.password')" :show-password="true">
                     <template #prefix>
-                        <AutoiconEpLock />
+                        <autoicon-ep-lock />
                     </template>
-                </ElInput>
-            </ElFormItem>
-            <ElFormItem>
-                <ElButton :loading="loginForm.loading" type="primary" @click="loginForm.submit" style="width: 100%">
+                </el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button :loading="loginForm.loading" type="primary" @click="loginForm.submit" style="width: 100%">
                     {{ t('common.login') }}
-                </ElButton>
-            </ElFormItem>
-        </ElForm>
-    </ElTag>
+                </el-button>
+            </el-form-item>
+        </el-form>
+    </el-tag>
 </template>
 
 <style scoped>

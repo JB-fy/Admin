@@ -56,76 +56,76 @@ const menuTab = reactive({
 </script>
 
 <template>
-    <ElRow>
-        <ElCol :span="12">
-            <ElSpace :size="20" style="height: 100%; margin-left: 20px">
-                <ElLink :underline="false" @click="leftMenuFold">
-                    <AutoiconEpFold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
-                </ElLink>
-                <ElBreadcrumb separator=">">
-                    <ElBreadcrumbItem v-for="(item, index) in adminStore.getCurrentMenuChain" :key="index">
-                        <ElSpace :size="0">
-                            <MyIconDynamic :icon="item.icon" />
+    <el-row>
+        <el-col :span="12">
+            <el-space :size="20" style="height: 100%; margin-left: 20px">
+                <el-link :underline="false" @click="leftMenuFold">
+                    <autoicon-ep-fold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
+                </el-link>
+                <el-breadcrumb separator=">">
+                    <el-breadcrumb-item v-for="(item, index) in adminStore.getCurrentMenuChain" :key="index">
+                        <el-space :size="0">
+                            <my-icon-dynamic :icon="item.icon" />
                             <span>{{ item.title }}</span>
-                        </ElSpace>
-                    </ElBreadcrumbItem>
-                </ElBreadcrumb>
-            </ElSpace>
-        </ElCol>
-        <ElCol :span="12" style="text-align: right">
-            <ElSpace :size="20" style="height: 100%">
-                <ElLink :underline="false" @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
-                    <AutoiconEpRefresh />
-                </ElLink>
+                        </el-space>
+                    </el-breadcrumb-item>
+                </el-breadcrumb>
+            </el-space>
+        </el-col>
+        <el-col :span="12" style="text-align: right">
+            <el-space :size="20" style="height: 100%">
+                <el-link :underline="false" @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
+                    <autoicon-ep-refresh />
+                </el-link>
 
-                <ElDropdown>
-                    <ElLink :underline="false">
-                        <AutoiconEpPlace />
-                    </ElLink>
+                <el-dropdown>
+                    <el-link :underline="false">
+                        <autoicon-ep-place />
+                    </el-link>
                     <template #dropdown>
-                        <ElDropdownMenu v-for="(item, index) in settingStore.language" :key="index">
-                            <ElDropdownItem @click="languageStore.changeLanguage(index)">
+                        <el-dropdown-menu v-for="(item, index) in settingStore.language" :key="index">
+                            <el-dropdown-item @click="languageStore.changeLanguage(index)">
                                 {{ item }}
-                            </ElDropdownItem>
-                        </ElDropdownMenu>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
                     </template>
-                </ElDropdown>
+                </el-dropdown>
 
-                <ElLink :underline="false">
-                    <FullScreenIcon />
-                </ElLink>
+                <el-link :underline="false">
+                    <full-screen-icon />
+                </el-link>
 
-                <ElDropdown @visible-change="userDropdown.visibleChange">
-                    <ElLink :underline="false">
-                        <ElAvatar :src="adminStore.info.avatar" :size="40">
-                            <AutoiconEpAvatar />
-                        </ElAvatar>
+                <el-dropdown @visible-change="userDropdown.visibleChange">
+                    <el-link :underline="false">
+                        <el-avatar :src="adminStore.info.avatar" :size="40">
+                            <autoicon-ep-avatar />
+                        </el-avatar>
                         <span>{{ adminStore.info.nickname }}</span>
-                        <AutoiconEpArrowDown :class="{ 'dropdown-icon': true, 'is-dropdown': userDropdown.status }" />
-                    </ElLink>
+                        <autoicon-ep-arrow-down :class="{ 'dropdown-icon': true, 'is-dropdown': userDropdown.status }" />
+                    </el-link>
                     <template #dropdown>
-                        <ElDropdownMenu>
-                            <ElDropdownItem>
-                                <RouterLink to="/profile" :custom="true" v-slot="{ href, navigate, route }">
-                                    <ElLink :href="href" @click="navigate" :underline="false">
+                        <el-dropdown-menu>
+                            <el-dropdown-item>
+                                <router-link to="/profile" :custom="true" v-slot="{ href, navigate, route }">
+                                    <el-link :href="href" @click="navigate" :underline="false">
                                         {{ languageStore.getMenuTitle(route?.meta?.menu) }}
-                                    </ElLink>
-                                </RouterLink>
-                            </ElDropdownItem>
-                            <ElDropdownItem @click="adminStore.logout()">
+                                    </el-link>
+                                </router-link>
+                            </el-dropdown-item>
+                            <el-dropdown-item @click="adminStore.logout()">
                                 {{ t('common.logout') }}
-                            </ElDropdownItem>
-                        </ElDropdownMenu>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
                     </template>
-                </ElDropdown>
-            </ElSpace>
-        </ElCol>
-        <ElCol :span="24">
-            <ElTabs class="menu-tabs" type="card" :model-value="route.fullPath" @tab-change="menuTab.change" @tab-remove="menuTab.remove">
+                </el-dropdown>
+            </el-space>
+        </el-col>
+        <el-col :span="24">
+            <el-tabs class="menu-tabs" type="card" :model-value="route.fullPath" @tab-change="menuTab.change" @tab-remove="menuTab.remove">
                 <template v-for="(item, index) in adminStore.getMenuTabList" :key="index">
-                    <ElTabPane :name="item.url" :closable="item.closable">
+                    <el-tab-pane :name="item.url" :closable="item.closable">
                         <template #label>
-                            <ElDropdown
+                            <el-dropdown
                                 :ref="(el: any) => menuTab.refList[item.url] = el"
                                 trigger="contextmenu"
                                 @visible-change="
@@ -136,43 +136,43 @@ const menuTab = reactive({
                                 style="height: 100%"
                                 :key="item.url"
                             >
-                                <ElSpace :size="0">
-                                    <MyIconDynamic :icon="item.icon" />
+                                <el-space :size="0">
+                                    <my-icon-dynamic :icon="item.icon" />
                                     <span>{{ item.title }}</span>
-                                </ElSpace>
+                                </el-space>
                                 <template #dropdown>
-                                    <ElDropdownMenu>
-                                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(item.componentName)"> <AutoiconEpRefresh />{{ t('common.refresh') }} </ElDropdownItem>
-                                        <ElDropdownItem @click="adminStore.closeSelfMenuTab(item.url)"> <AutoiconEpClose />{{ t('common.close') }} </ElDropdownItem>
-                                        <ElDropdownItem @click="adminStore.closeLeftMenuTab(item.url)"> <AutoiconEpBack />{{ t('common.closeLeft') }} </ElDropdownItem>
-                                        <ElDropdownItem @click="adminStore.closeRightMenuTab(item.url)"> <AutoiconEpRight />{{ t('common.closeRight') }} </ElDropdownItem>
-                                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(item.url)"> <AutoiconEpSwitch />{{ t('common.closeOther') }} </ElDropdownItem>
-                                        <ElDropdownItem @click="adminStore.closeAllMenuTab()"> <AutoiconEpCircleClose />{{ t('common.closeAll') }} </ElDropdownItem>
-                                    </ElDropdownMenu>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item @click="keepAliveStore.refreshMenuTab(item.componentName)"> <autoicon-ep-refresh />{{ t('common.refresh') }} </el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeSelfMenuTab(item.url)"> <autoicon-ep-close />{{ t('common.close') }} </el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeLeftMenuTab(item.url)"> <autoicon-ep-back />{{ t('common.closeLeft') }} </el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeRightMenuTab(item.url)"> <autoicon-ep-right />{{ t('common.closeRight') }} </el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeOtherMenuTab(item.url)"> <autoicon-ep-switch />{{ t('common.closeOther') }} </el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeAllMenuTab()"> <autoicon-ep-circle-close />{{ t('common.closeAll') }} </el-dropdown-item>
+                                    </el-dropdown-menu>
                                 </template>
-                            </ElDropdown>
+                            </el-dropdown>
                         </template>
-                    </ElTabPane>
+                    </el-tab-pane>
                 </template>
-            </ElTabs>
+            </el-tabs>
 
-            <ElDropdown class="menu-tabs-button" @visible-change="menuTab.buttonDropdown.visibleChange">
-                <ElLink :underline="false">
+            <el-dropdown class="menu-tabs-button" @visible-change="menuTab.buttonDropdown.visibleChange">
+                <el-link :underline="false">
                     <AutoiconEpMenu :class="{ 'dropdown-icon': true, 'is-dropdown': menuTab.buttonDropdown.status }" />
-                </ElLink>
+                </el-link>
                 <template #dropdown>
-                    <ElDropdownMenu>
-                        <ElDropdownItem @click="keepAliveStore.refreshMenuTab(route.meta.componentName)"> <AutoiconEpRefresh />{{ t('common.refresh') }} </ElDropdownItem>
-                        <ElDropdownItem @click="adminStore.closeSelfMenuTab(route.fullPath)"> <AutoiconEpClose />{{ t('common.close') }} </ElDropdownItem>
-                        <ElDropdownItem @click="adminStore.closeLeftMenuTab(route.fullPath)"> <AutoiconEpBack />{{ t('common.closeLeft') }} </ElDropdownItem>
-                        <ElDropdownItem @click="adminStore.closeRightMenuTab(route.fullPath)"> <AutoiconEpRight />{{ t('common.closeRight') }} </ElDropdownItem>
-                        <ElDropdownItem @click="adminStore.closeOtherMenuTab(route.fullPath)"> <AutoiconEpSwitch />{{ t('common.closeOther') }} </ElDropdownItem>
-                        <ElDropdownItem @click="adminStore.closeAllMenuTab()"> <AutoiconEpCircleClose />{{ t('common.closeAll') }} </ElDropdownItem>
-                    </ElDropdownMenu>
+                    <el-dropdown-menu>
+                        <el-dropdown-item @click="keepAliveStore.refreshMenuTab(route.meta.componentName)"> <autoicon-ep-refresh />{{ t('common.refresh') }} </el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeSelfMenuTab(route.fullPath)"> <autoicon-ep-close />{{ t('common.close') }} </el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeLeftMenuTab(route.fullPath)"> <autoicon-ep-back />{{ t('common.closeLeft') }} </el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeRightMenuTab(route.fullPath)"> <autoicon-ep-right />{{ t('common.closeRight') }} </el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeOtherMenuTab(route.fullPath)"> <autoicon-ep-switch />{{ t('common.closeOther') }} </el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeAllMenuTab()"> <autoicon-ep-circle-close />{{ t('common.closeAll') }} </el-dropdown-item>
+                    </el-dropdown-menu>
                 </template>
-            </ElDropdown>
-        </ElCol>
-    </ElRow>
+            </el-dropdown>
+        </el-col>
+    </el-row>
 </template>
 
 <style scoped>

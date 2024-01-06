@@ -9,28 +9,28 @@ const settingStore = useSettingStore()
 </script>
 
 <template>
-    <ElContainer id="layout-container">
-        <ElAside :class="{ 'is-fold': settingStore.leftMenuFold }">
-            <LeftMenu />
-        </ElAside>
-        <ElContainer>
-            <ElHeader>
-                <RightHeader />
-            </ElHeader>
+    <el-container id="layout-container">
+        <el-aside :class="{ 'is-fold': settingStore.leftMenuFold }">
+            <left-menu />
+        </el-aside>
+        <el-container>
+            <el-header>
+                <right-header />
+            </el-header>
 
-            <ElMain class="main-container">
-                <AppContainer />
-                <ElBacktop target=".main-container" :right="16" :bottom="60">
+            <el-main class="main-container">
+                <app-container />
+                <el-backtop target=".main-container" :right="16" :bottom="60">
                     <span style="font-size: 14px">{{ t('common.upTop') }}</span>
-                    <!-- <AutoiconEpTop /> -->
-                </ElBacktop>
-            </ElMain>
+                    <!-- <autoicon-ep-top /> -->
+                </el-backtop>
+            </el-main>
 
-            <ElFooter>
-                <RightFooter />
-            </ElFooter>
-        </ElContainer>
-    </ElContainer>
+            <el-footer>
+                <right-footer />
+            </el-footer>
+        </el-container>
+    </el-container>
 </template>
 
 <style scoped>

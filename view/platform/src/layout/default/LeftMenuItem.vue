@@ -15,18 +15,18 @@ defineProps({
 
 <template>
     <template v-for="(item, index) in tree" :key="index">
-        <ElSubMenu v-if="item.children.length" :index="subMenuIndexPrefix + '/' + index">
+        <el-sub-menu v-if="item.children.length" :index="subMenuIndexPrefix + '/' + index">
             <template #title>
-                <MyIconDynamic :icon="item.icon" />
+                <my-icon-dynamic :icon="item.icon" />
                 <span>{{ languageStore.getMenuTitle(item) }}</span>
             </template>
-            <LeftMenuItem :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + index" />
-        </ElSubMenu>
-        <ElMenuItem v-else :index="item.url">
-            <MyIconDynamic :icon="item.icon" />
+            <left-menu-item :tree="item.children" :subMenuIndexPrefix="subMenuIndexPrefix + '/' + index" />
+        </el-sub-menu>
+        <el-menu-item v-else :index="item.url">
+            <my-icon-dynamic :icon="item.icon" />
             <template #title>
                 <span>{{ languageStore.getMenuTitle(item) }}</span>
             </template>
-        </ElMenuItem>
+        </el-menu-item>
     </template>
 </template>

@@ -44,21 +44,21 @@ const queryForm = reactive({
 </script>
 
 <template>
-    <ElForm class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
-        <ElFormItem prop="id">
-            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
-        </ElFormItem>
-        <ElFormItem prop="sceneName">
-            <ElInput v-model="queryCommon.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem prop="sceneCode">
-            <ElInput v-model="queryCommon.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem prop="isStop" style="width: 120px">
-            <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.isStop')" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem prop="timeRange">
-            <ElDatePicker
+    <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
+        <el-form-item prop="id">
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
+        </el-form-item>
+        <el-form-item prop="sceneName">
+            <el-input v-model="queryCommon.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="sceneCode">
+            <el-input v-model="queryCommon.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="isStop" style="width: 120px">
+            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.isStop')" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="timeRange">
+            <el-date-picker
                 v-model="queryCommon.data.timeRange"
                 type="datetimerange"
                 range-separator="-"
@@ -66,10 +66,10 @@ const queryForm = reactive({
                 :start-placeholder="t('common.name.timeRangeStart')"
                 :end-placeholder="t('common.name.timeRangeEnd')"
             />
-        </ElFormItem>
-        <ElFormItem>
-            <ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <AutoiconEpSearch />{{ t('common.query') }} </ElButton>
-            <ElButton type="info" @click="queryForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <autoicon-ep-search />{{ t('common.query') }} </el-button>
+            <el-button type="info" @click="queryForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

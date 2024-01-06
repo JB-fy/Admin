@@ -102,14 +102,14 @@ const saveDrawer = reactive({
 </script>
 
 <template>
-    <ElDrawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
-        <ElScrollbar>
-            <ElForm :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <ElFormItem :label="t('auth.menu.name.menuName')" prop="menuName">
-                    <ElInput v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.sceneId')" prop="sceneId">
-                    <MySelect
+    <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
+        <el-scrollbar>
+            <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+                <el-form-item :label="t('auth.menu.name.menuName')" prop="menuName">
+                    <el-input v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('auth.menu.name.sceneId')" prop="sceneId">
+                    <my-select
                         v-model="saveForm.data.sceneId"
                         :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
                         @change="
@@ -118,35 +118,35 @@ const saveDrawer = reactive({
                             }
                         "
                     />
-                </ElFormItem>
-                <ElFormItem v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
-                    <MyCascader
+                </el-form-item>
+                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
+                    <my-cascader
                         v-model="saveForm.data.pid"
                         :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId, excIdArr: saveForm.data.idArr } } }"
                         :props="{ checkStrictly: true, emitPath: false }"
                     />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
-                    <ElInput v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                </el-form-item>
+                <el-form-item :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
+                    <el-input v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <label>
-                        <ElAlert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
-                    <ElInput v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :show-word-limit="true" :clearable="true" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.extraData')" prop="extraData">
-                    <ElAlert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
-                    <ElInput v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
-                </ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.sort')" prop="sort">
-                    <ElInputNumber v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="50" />
+                </el-form-item>
+                <el-form-item :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
+                    <el-input v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('auth.menu.name.extraData')" prop="extraData">
+                    <el-alert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
+                    <el-input v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
+                </el-form-item>
+                <el-form-item :label="t('auth.menu.name.sort')" prop="sort">
+                    <el-input-number v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="50" />
                     <label>
-                        <ElAlert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
                     </label>
-                </ElFormItem>
-                <ElFormItem :label="t('auth.menu.name.isStop')" prop="isStop">
-                    <ElSwitch
+                </el-form-item>
+                <el-form-item :label="t('auth.menu.name.isStop')" prop="isStop">
+                    <el-switch
                         v-model="saveForm.data.isStop"
                         :active-value="1"
                         :inactive-value="0"
@@ -155,14 +155,14 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </ElFormItem>
-            </ElForm>
-        </ElScrollbar>
+                </el-form-item>
+            </el-form>
+        </el-scrollbar>
         <template #footer>
-            <ElButton @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</ElButton>
-            <ElButton type="primary" @click="saveForm.submit" :loading="saveForm.loading">
+            <el-button @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</el-button>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading">
                 {{ t('common.save') }}
-            </ElButton>
+            </el-button>
         </template>
-    </ElDrawer>
+    </el-drawer>
 </template>

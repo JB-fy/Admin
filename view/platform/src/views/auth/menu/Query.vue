@@ -44,36 +44,36 @@ const queryForm = reactive({
 </script>
 
 <template>
-    <ElForm class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
-        <ElFormItem prop="id">
-            <ElInputNumber v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
-        </ElFormItem>
-        <ElFormItem prop="menuName">
-            <ElInput v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem prop="sceneId">
-            <MySelect v-model="queryCommon.data.sceneId" :placeholder="t('auth.menu.name.sceneId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
-        </ElFormItem>
-        <ElFormItem prop="pid">
-            <MyCascader
+    <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
+        <el-form-item prop="id">
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
+        </el-form-item>
+        <el-form-item prop="menuName">
+            <el-input v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="sceneId">
+            <my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.menu.name.sceneId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+        </el-form-item>
+        <el-form-item prop="pid">
+            <my-cascader
                 v-model="queryCommon.data.pid"
                 :placeholder="t('auth.menu.name.pid')"
                 :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }"
                 :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]"
                 :props="{ checkStrictly: true, emitPath: false }"
             />
-        </ElFormItem>
-        <ElFormItem prop="level">
-            <ElInputNumber v-model="queryCommon.data.level" :placeholder="t('auth.menu.name.level')" :min="1" :controls="false" />
-        </ElFormItem>
-        <ElFormItem prop="menuUrl">
-            <ElInput v-model="queryCommon.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem prop="isStop" style="width: 120px">
-            <ElSelectV2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.isStop')" :clearable="true" />
-        </ElFormItem>
-        <ElFormItem prop="timeRange">
-            <ElDatePicker
+        </el-form-item>
+        <el-form-item prop="level">
+            <el-input-number v-model="queryCommon.data.level" :placeholder="t('auth.menu.name.level')" :min="1" :controls="false" />
+        </el-form-item>
+        <el-form-item prop="menuUrl">
+            <el-input v-model="queryCommon.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="isStop" style="width: 120px">
+            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.isStop')" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="timeRange">
+            <el-date-picker
                 v-model="queryCommon.data.timeRange"
                 type="datetimerange"
                 range-separator="-"
@@ -81,10 +81,10 @@ const queryForm = reactive({
                 :start-placeholder="t('common.name.timeRangeStart')"
                 :end-placeholder="t('common.name.timeRangeEnd')"
             />
-        </ElFormItem>
-        <ElFormItem>
-            <ElButton type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <AutoiconEpSearch />{{ t('common.query') }} </ElButton>
-            <ElButton type="info" @click="queryForm.reset"> <AutoiconEpCircleClose />{{ t('common.reset') }} </ElButton>
-        </ElFormItem>
-    </ElForm>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <autoicon-ep-search />{{ t('common.query') }} </el-button>
+            <el-button type="info" @click="queryForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
+        </el-form-item>
+    </el-form>
 </template>

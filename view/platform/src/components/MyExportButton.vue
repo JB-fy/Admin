@@ -1,8 +1,8 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyExportButton i18nPrefix="auth.test" :headerList="table.columns"
+<!-- <my-export-button i18nPrefix="auth.test" :headerList="table.columns"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/test/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
 
-<MyExportButton fileName="文件名.xlsx" i18nPrefix="auth.test" :headerList="table.columns"
+<my-export-button fileName="文件名.xlsx" i18nPrefix="auth.test" :headerList="table.columns"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/test/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order }, limit: 0 }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
@@ -141,5 +141,5 @@ const exportButton = reactive({
 </script>
 
 <template>
-    <ElButton type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading"> <AutoiconEpDownload />{{ t('common.export') }} </ElButton>
+    <el-button type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading"> <autoicon-ep-download />{{ t('common.export') }} </el-button>
 </template>

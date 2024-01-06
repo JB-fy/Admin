@@ -1,11 +1,11 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyEditor v-model="saveForm.data.content" />
+<!-- <my-editor v-model="saveForm.data.content" />
 
-<MyEditor v-model="saveForm.data.content" :api="{ param: { type: 'common' } }" :init="{width: '375px'}" :disabled="true" /> -->
+<my-editor v-model="saveForm.data.content" :api="{ param: { type: 'common' } }" :init="{width: '375px'}" :disabled="true" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import axios from 'axios'
-import Editor from '@tinymce/tinymce-vue'
+import editor from '@tinymce/tinymce-vue'
 
 const { t } = useI18n()
 const languageStore = useLanguageStore()
@@ -34,7 +34,7 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue', 'change'])
 const myEditor = reactive({
-    id: ('MyEditor' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
+    id: ('my_editor' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
     ref: null as any,
     value: computed({
         get: () => {
@@ -130,7 +130,7 @@ myEditor.initSignInfo() //初始化签名信息
 
 <template>
     <div :id="myEditor.id" style="width: 100%">
-        <Editor :ref="(el: any) => myEditor.ref = el" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
+        <editor :ref="(el: any) => myEditor.ref = el" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
     </div>
 </template>
 

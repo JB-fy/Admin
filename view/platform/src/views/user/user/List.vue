@@ -17,7 +17,7 @@ const table = reactive({
                 return [
                     //阻止冒泡
                     <div class="id-checkbox" onClick={(event: any) => event.stopPropagation()}>
-                        <ElCheckbox
+                        <el-checkbox
                             model-value={table.data.length ? allChecked : false}
                             indeterminate={someChecked && !allChecked}
                             onChange={(val: boolean) => {
@@ -32,7 +32,7 @@ const table = reactive({
             },
             cellRenderer: (props: any): any => {
                 return [
-                    <ElCheckbox
+                    <el-checkbox
                         class="id-checkbox"
                         model-value={props.rowData.checked}
                         onChange={(val: boolean) => {
@@ -76,12 +76,12 @@ const table = reactive({
                 }
                 const imageList = [props.rowData.avatar]
                 return [
-                    <ElScrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {imageList.map((item) => {
                             //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <ElImage style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
+                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
                         })}
-                    </ElScrollbar>,
+                    </el-scrollbar>,
                 ]
             },
         },
@@ -97,7 +97,7 @@ const table = reactive({
                 let index = obj.findIndex((item) => {
                     return item.value == props.rowData.gender
                 })
-                return <ElTag type={tagType[index % tagType.length]}>{obj[index]?.label}</ElTag>
+                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             },
         },
         {
@@ -139,7 +139,7 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
-                    <ElSwitch
+                    <el-switch
                         model-value={props.rowData.isStop}
                         active-value={1}
                         // disabled={true}
@@ -186,10 +186,10 @@ const table = reactive({
             fixed: 'right',
             cellRenderer: (props: any): any => {
                 return [
-                    <ElButton type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
-                        <AutoiconEpEdit />
+                    <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                        <autoicon-ep-edit />
                         {t('common.edit')}
-                    </ElButton>
+                    </el-button>
                 ]
             },
         }, */
@@ -276,48 +276,48 @@ defineExpose({
 </script>
 
 <template>
-    <ElRow class="main-table-tool">
-        <ElCol :span="16">
-            <ElSpace :size="10" style="height: 100%; margin-left: 10px"> </ElSpace>
-        </ElCol>
-        <ElCol :span="8" style="text-align: right">
-            <ElSpace :size="10" style="height: 100%">
-                <MyExportButton i18nPrefix="user.user" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
-                <ElDropdown max-height="300" :hide-on-click="false">
-                    <ElButton type="info" :circle="true">
-                        <AutoiconEpHide />
-                    </ElButton>
+    <el-row class="main-table-tool">
+        <el-col :span="16">
+            <el-space :size="10" style="height: 100%; margin-left: 10px"> </el-space>
+        </el-col>
+        <el-col :span="8" style="text-align: right">
+            <el-space :size="10" style="height: 100%">
+                <my-export-button i18nPrefix="user.user" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <el-dropdown max-height="300" :hide-on-click="false">
+                    <el-button type="info" :circle="true">
+                        <autoicon-ep-hide />
+                    </el-button>
                     <template #dropdown>
-                        <ElDropdownMenu>
-                            <ElDropdownItem v-for="(item, index) in table.columns" :key="index">
-                                <ElCheckbox v-model="item.hidden">
+                        <el-dropdown-menu>
+                            <el-dropdown-item v-for="(item, index) in table.columns" :key="index">
+                                <el-checkbox v-model="item.hidden">
                                     {{ item.title }}
-                                </ElCheckbox>
-                            </ElDropdownItem>
-                        </ElDropdownMenu>
+                                </el-checkbox>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
                     </template>
-                </ElDropdown>
-            </ElSpace>
-        </ElCol>
-    </ElRow>
+                </el-dropdown>
+            </el-space>
+        </el-col>
+    </el-row>
 
-    <ElMain>
-        <ElAutoResizer>
+    <el-main>
+        <el-auto-resizer>
             <template #default="{ height, width }">
-                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
+                <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
-                        <ElIcon class="is-loading" color="var(--el-color-primary)" :size="25">
-                            <AutoiconEpLoading />
-                        </ElIcon>
+                        <el-icon class="is-loading" color="var(--el-color-primary)" :size="25">
+                            <autoicon-ep-loading />
+                        </el-icon>
                     </template>
-                </ElTableV2>
+                </el-table-v2>
             </template>
-        </ElAutoResizer>
-    </ElMain>
+        </el-auto-resizer>
+    </el-main>
 
-    <ElRow class="main-table-pagination">
-        <ElCol :span="24">
-            <ElPagination
+    <el-row class="main-table-pagination">
+        <el-col :span="24">
+            <el-pagination
                 :total="pagination.total"
                 v-model:currentPage="pagination.page"
                 v-model:page-size="pagination.size"
@@ -327,6 +327,6 @@ defineExpose({
                 :layout="pagination.layout"
                 :background="true"
             />
-        </ElCol>
-    </ElRow>
+        </el-col>
+    </el-row>
 </template>

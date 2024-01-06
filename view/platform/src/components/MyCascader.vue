@@ -1,20 +1,20 @@
 <!-------- 使用示例 开始-------->
-<!-- <MyCascader v-model="saveForm.data.menuId" :placeholder="t('common.name.rel.menuId')"
+<!-- <my-cascader v-model="saveForm.data.menuId" :placeholder="t('common.name.rel.menuId')"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { field: ['id', 'menuName'] } }"
     :props="{ emitPath: false, value: 'id', label: 'menuName' }" />
 
-<MyCascader v-model="saveForm.data.menuIdArr"
+<my-cascader v-model="saveForm.data.menuIdArr"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true"
     :props="{ multiple: true }" />
 
-<MyCascader v-model="saveForm.data.pid"
+<my-cascader v-model="saveForm.data.pid"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
     :props="{ checkStrictly: true, emitPath: false }" />
-<MyCascader v-model="saveForm.data.pid"
+<my-cascader v-model="saveForm.data.pid"
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/list', param: { filter: { sceneId: saveForm.data.sceneId } } }"
     :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
 
-<MyCascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
+<my-cascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
     :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }"
     :props="{ checkStrictly: true, emitPath: false }" /> -->
 <!-------- 使用示例 结束-------->
@@ -216,8 +216,8 @@ watch(
 </script>
 
 <template>
-    <ElCascaderPanel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="cascader.value" :options="cascader.options" :props="cascader.props" />
-    <ElCascader
+    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="cascader.value" :options="cascader.options" :props="cascader.props" />
+    <el-cascader
         v-else-if="cascader.props.lazy"
         :ref="(el: any) => cascader.ref = el"
         v-model="cascader.value"
@@ -230,7 +230,7 @@ watch(
         :collapse-tags-tooltip="collapseTagsTooltip"
         :separator="separator"
     />
-    <ElCascader
+    <el-cascader
         v-else
         :ref="(el: any) => cascader.ref = el"
         v-model="cascader.value"
