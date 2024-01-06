@@ -6,22 +6,13 @@ export const useLanguageStore = defineStore('language', {
     state: () => {
         return {
             language: getLanguage(),
-            //elementPlusLoacleList: import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true }),
             elementPlusLoacleList: batchImport(import.meta.glob('@/../node_modules/element-plus/dist/locale/*.min.mjs', { eager: true })),
         }
     },
     getters: {
-        // elementPlusLocale: async (state) => {
-        //   switch (state.language) {
-        //     default:
-        //       //return (await import(/* @vite-ignore */'../../node_modules/element-plus/dist/locale/' + state.language + '.mjs')).default
-        //       return (await import(/* @vite-ignore */'/node_modules/element-plus/dist/locale/' + state.language + '.mjs')).default
-        //   }
-        // },
         elementPlusLocale: (state) => {
             switch (state.language) {
                 default:
-                    //console.log(state.elementPlusLoacleList)
                     //return (<any>state.elementPlusLoacleList)['/node_modules/element-plus/dist/locale/' + state.language + '.min.mjs'].default
                     return state.elementPlusLoacleList[state.language]
             }
@@ -53,11 +44,11 @@ export const useLanguageStore = defineStore('language', {
              */
             router.go(0) //刷新页面
             /* //没必要做了，刷新页面会重新设置
-      //this.language = language  //这里会导致死循环而卡死。错误信息：Maximum recursive updates exceeded in component <el-dropdown>. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include component template, render function, updated hook or watcher source function.
-      //i18n.global.locale = language //当i18n设置legacy: false，要使用i18n.global.locale.value
-      i18n.global.locale.value = language
+            //this.language = language  //这里会导致死循环而卡死。错误信息：Maximum recursive updates exceeded in component <el-dropdown>. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include component template, render function, updated hook or watcher source function.
+            //i18n.global.locale = language //当i18n设置legacy: false，要使用i18n.global.locale.value
+            i18n.global.locale.value = language
 
-      document.title = this.getWebTitle() */
+            document.title = this.getWebTitle() */
         },
         //获取页面标题
         getMenuTitle(menu: any) {

@@ -21,17 +21,17 @@ export const useAdminStore = defineStore('admin', {
                 url: '',
                 children: [
                     /* {
-            "i18n": {
-              "title": {
-                "en": "Document",
-                "zh-cn": "说明文档"
-              },
-            },
-            "icon": "autoicon-ep-document",
-            //"url": "https://www.baidu.com/",  //新窗口打开
-            "url": "/thirdSite?url=https://www.baidu.com/", //标签页打开
-            "children": []
-          }, */
+                        i18n: {
+                            title: {
+                                en: 'Document',
+                                'zh-cn': '说明文档',
+                            },
+                        },
+                        icon: 'autoicon-ep-document',
+                        //"url": "https://www.baidu.com/",  //新窗口打开
+                        url: '/thirdSite?url=https://www.baidu.com/', //标签页打开
+                        children: [],
+                    }, */
                     {
                         i18n: {
                             title: {

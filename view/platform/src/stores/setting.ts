@@ -26,12 +26,4 @@ export const useSettingStore = defineStore('setting', {
             },
         }
     },
-    // actions: {
-    //   /**
-    //    * 折叠左侧菜单
-    //    */
-    //   leftMenuFold() {
-    //     this.leftMenuFold = (!this.leftMenuFold)
-    //   },
-    // },
 })
