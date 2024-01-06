@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 06/01/2024 14:03:05
+ Date: 01/01/2024 00:00:00
 */
 
 SET NAMES utf8mb4;
@@ -264,7 +264,7 @@ CREATE TABLE `platform_admin`  (
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'http://www.admin.com/common/20230920/1695222477127_79698554.png', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `platform_admin` VALUES (1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'http://JB.Admin.com/common/20240106/1704522339892_31917913.png', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for platform_config
