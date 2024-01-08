@@ -2296,7 +2296,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                 } else {
                     arrList = JSON.parse(props.rowData.` + field + `)
                 }
-                let tagType = tm('common.component.tagType') as string[]
+                let tagType = tm('config.const.tagType') as string[]
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {arrList.map((item, index) => {
@@ -2391,7 +2391,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender` { //status,type,gender等后缀
 				widthOfColumn = `width: 100,`
 				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-                let tagType = tm('common.component.tagType') as string[]
+                let tagType = tm('config.const.tagType') as string[]
                 let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
@@ -3062,7 +3062,7 @@ const ` + field + `Handle = reactive({
     ref: null as any,
     visible: false,
     value: undefined,
-    tagType: tm('common.component.tagType') as string[],
+    tagType: tm('config.const.tagType') as string[],
     visibleChange: () => {
         ` + field + `Handle.visible = true
         nextTick(() => {
