@@ -20,32 +20,32 @@ func NewPay() *Pay {
 var (
 	payList = []api.PayListItem{
 		{
-			PayMethod: 0,
+			PayMethod: 1,
 			PayName:   `支付宝APP支付`,
 			PayIcon:   `http://JB.Admin.com/xxxx.png`,
 		},
 		{
-			PayMethod: 1,
+			PayMethod: 2,
 			PayName:   `支付宝H5支付`,
 			PayIcon:   `http://JB.Admin.com/xxxx.png`,
 		},
 		{
-			PayMethod: 2,
+			PayMethod: 3,
 			PayName:   `支付宝JSAPI支付`,
 			PayIcon:   `http://JB.Admin.com/xxxx.png`,
 		},
 		{
-			PayMethod: 10,
+			PayMethod: 11,
 			PayName:   `微信APP支付`,
 			PayIcon:   `http://JB.Admin.com/xxxx.png`,
 		},
 		{
-			PayMethod: 11,
+			PayMethod: 12,
 			PayName:   `微信H5支付`,
 			PayIcon:   `http://JB.Admin.com/xxxx.png`,
 		},
 		{
-			PayMethod: 12,
+			PayMethod: 13,
 			PayName:   `微信JSAPI支付`,
 			PayIcon:   `http://JB.Admin.com/xxxx.png`,
 		},
@@ -59,7 +59,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	switch sceneCode {
 	case `app`:
-		res.List = append(res.List, payList[0], payList[3])
+		res.List = append(res.List, payList[1], payList[4])
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
 		return
@@ -100,19 +100,19 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 
 	var payInfo pay.PayInfo
 	switch req.PayMethod {
-	case 0: //APP支付(支付宝)
+	case 1: //APP支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).App(payData)
-	case 1: //H5支付(支付宝)
+	case 2: //H5支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).H5(payData)
-	/* case 2: //JSAPI支付(支付宝)
+	/* case 3: //JSAPI支付(支付宝)
 	payData.OpenId = ``
 	payInfo, err = pay.NewPay(ctx, `payOfAli`).Jsapi(payData) */
-	case 10: //APP支付(微信)
+	case 11: //APP支付(微信)
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).App(payData)
-	case 11: //H5支付(微信)
+	case 12: //H5支付(微信)
 		payData.ClientIp = g.RequestFromCtx(ctx).GetClientIp()
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).H5(payData)
-	/* case 12: //JSAPI支付(微信)
+	/* case 13: //JSAPI支付(微信)
 	payData.OpenId = ``
 	payInfo, err = pay.NewPay(ctx, `payOfWx`).Jsapi(payData) */
 	default:
