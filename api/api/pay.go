@@ -26,7 +26,7 @@ type PayListItem struct {
 type PayPayReq struct {
 	g.Meta    `path:"/pay" method:"post" tags:"支付" sm:"支付"`
 	OrderNo   string `json:"orderNo" v:"required|max-length:60" dc:"订单号"`
-	PayMethod uint   `json:"payMethod" v:"required|in:0,1,2,10,11,12" dc:"支付类型：1APP支付(支付宝) 2H5支付(支付宝) 3JSAPI支付(支付宝) 11APP支付(微信) 12H5支付(微信) 13JSAPI支付(微信)"`
+	PayMethod uint   `json:"payMethod" v:"required|in:1,2,3,11,12,13" dc:"支付类型：1APP支付(支付宝) 2H5支付(支付宝) 3JSAPI支付(支付宝) 11APP支付(微信) 12H5支付(微信) 13JSAPI支付(微信)"`
 }
 
 type PayPayRes struct {
