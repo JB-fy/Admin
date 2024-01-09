@@ -37,7 +37,7 @@ gf gen service
 		关联ID		命名：id后缀；					类型：int等类型；
 		排序|权重	命名：sort,weight等后缀；		类型：int等类型；
 		是否		命名：is_前缀；					类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		状态|类型	命名：status,type,gender等后缀；类型：int等类型或varchar或char；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		状态|类型	命名：status,type,method,gender等后缀；类型：int等类型或varchar或char；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		开始时间	命名：start_前缀；				类型：timestamp或datetime或date；
 		结束时间	命名：end_前缀；				类型：timestamp或datetime或date；
 		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器

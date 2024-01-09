@@ -46,7 +46,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		关联ID		命名：id后缀；					类型：int等类型；
 		排序|权重	命名：sort,weight等后缀；		类型：int等类型；
 		是否		命名：is_前缀；					类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		状态|类型	命名：status,type,gender等后缀；类型：int等类型或varchar或char；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		状态|类型	命名：status,type,method,gender等后缀；类型：int等类型或varchar或char；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		开始时间	命名：start_前缀；				类型：timestamp或datetime或date；
 		结束时间	命名：end_前缀；				类型：timestamp或datetime或date；
 		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
@@ -1380,7 +1380,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqFilter = `min:1`
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 			typeRes = `*string`
-		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,gender等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Method` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,gender等后缀
 			typeReqFilter = `string`
 			typeReqCreate = `*string`
 			typeReqUpdate = `*string`
@@ -2244,7 +2244,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
 			hiddenOfColumn = `hidden: true,`
-		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,gender等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Method` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,gender等后缀
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
@@ -2814,7 +2814,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
         </el-form-item>`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
-		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,gender等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Method` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,gender等后缀
 			viewQueryField += `
         <el-form-item prop="` + field + `" style="width: 120px">
             <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
@@ -3004,7 +3004,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
-		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,gender等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Method` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,gender等后缀
 			isStr := true
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
 				isStr = false
@@ -3536,7 +3536,7 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Salt` && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			continue
-		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,gender等后缀
+		} else if (gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Status` || gstr.SubStr(fieldCaseCamelOfRemove, -4) == `Type` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Method` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `Gender`) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,gender等后缀
 			isStr := true
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
 				isStr = false
