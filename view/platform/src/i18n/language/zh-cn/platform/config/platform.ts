@@ -10,7 +10,7 @@ export default {
         hotSearch: '热门搜索',
         userAgreement: '用户协议',
         privacyAgreement: '隐私协议',
-        
+
         packageUrlOfAndroid: '安装包(安卓)',
         packageSizeOfAndroid: '包大小(安卓)',
         packageNameOfAndroid: '包名(安卓)',
@@ -28,8 +28,6 @@ export default {
         versionIntroOfIos: '版本介绍(苹果)',
         plistUrlOfIos: 'plist文件(苹果)',
     },
-    status: {
-    },
-    tip: {
-    },
+    status: {},
+    tip: {},
 }
