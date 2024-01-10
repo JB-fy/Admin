@@ -36,6 +36,7 @@ export default {
         allTopLevel: '全部顶级',
         min: '最小值',
         max: '最大值',
+        timeRange: '时间范围',
         timeRangeStart: '开始时间',
         timeRangeEnd: '结束时间',
     },
