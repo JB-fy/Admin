@@ -59,42 +59,42 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.name.pushType')" prop="pushType">
+        <el-form-item :label="t('platform.config.plugin.name.pushType')" prop="pushType">
             <el-radio-group v-model="saveForm.data.pushType">
-                <el-radio v-for="(item, index) in tm('platform.config.status.pushType') as any" :key="index" :label="item.value">
+                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.pushType') as any" :key="index" :label="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>
         </el-form-item>
 
         <template v-if="saveForm.data.pushType == 'pushOfTx'">
-            <el-form-item :label="t('platform.config.name.pushOfTxHost')" prop="pushOfTxHost">
-                <el-input v-model="saveForm.data.pushOfTxHost" :placeholder="t('platform.config.name.pushOfTxHost')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxHost')" prop="pushOfTxHost">
+                <el-input v-model="saveForm.data.pushOfTxHost" :placeholder="t('platform.config.plugin.name.pushOfTxHost')" :clearable="true" style="max-width: 500px" />
                 <label>
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.tip.pushOfTxHost')"></span>
+                            <span v-html="t('platform.config.plugin.tip.pushOfTxHost')"></span>
                         </template>
                     </el-alert>
                 </label>
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.pushOfTxAndroidAccessID')" prop="pushOfTxAndroidAccessID">
-                <el-input v-model="saveForm.data.pushOfTxAndroidAccessID" :placeholder="t('platform.config.name.pushOfTxAndroidAccessID')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxAndroidAccessID')" prop="pushOfTxAndroidAccessID">
+                <el-input v-model="saveForm.data.pushOfTxAndroidAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxAndroidAccessID')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.pushOfTxAndroidSecretKey')" prop="pushOfTxAndroidSecretKey">
-                <el-input v-model="saveForm.data.pushOfTxAndroidSecretKey" :placeholder="t('platform.config.name.pushOfTxAndroidSecretKey')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxAndroidSecretKey')" prop="pushOfTxAndroidSecretKey">
+                <el-input v-model="saveForm.data.pushOfTxAndroidSecretKey" :placeholder="t('platform.config.plugin.name.pushOfTxAndroidSecretKey')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.pushOfTxIosAccessID')" prop="pushOfTxIosAccessID">
-                <el-input v-model="saveForm.data.pushOfTxIosAccessID" :placeholder="t('platform.config.name.pushOfTxIosAccessID')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxIosAccessID')" prop="pushOfTxIosAccessID">
+                <el-input v-model="saveForm.data.pushOfTxIosAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxIosAccessID')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.pushOfTxIosSecretKey')" prop="pushOfTxIosSecretKey">
-                <el-input v-model="saveForm.data.pushOfTxIosSecretKey" :placeholder="t('platform.config.name.pushOfTxIosSecretKey')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxIosSecretKey')" prop="pushOfTxIosSecretKey">
+                <el-input v-model="saveForm.data.pushOfTxIosSecretKey" :placeholder="t('platform.config.plugin.name.pushOfTxIosSecretKey')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.pushOfTxMacOSAccessID')" prop="pushOfTxMacOSAccessID">
-                <el-input v-model="saveForm.data.pushOfTxMacOSAccessID" :placeholder="t('platform.config.name.pushOfTxMacOSAccessID')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxMacOSAccessID')" prop="pushOfTxMacOSAccessID">
+                <el-input v-model="saveForm.data.pushOfTxMacOSAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxMacOSAccessID')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.pushOfTxMacOSSecretKey')" prop="pushOfTxMacOSSecretKey">
-                <el-input v-model="saveForm.data.pushOfTxMacOSSecretKey" :placeholder="t('platform.config.name.pushOfTxMacOSSecretKey')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTxMacOSSecretKey')" prop="pushOfTxMacOSSecretKey">
+                <el-input v-model="saveForm.data.pushOfTxMacOSSecretKey" :placeholder="t('platform.config.plugin.name.pushOfTxMacOSSecretKey')" :clearable="true" />
             </el-form-item>
         </template>
 

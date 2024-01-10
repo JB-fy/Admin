@@ -53,35 +53,35 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.name.vodType')" prop="vodType">
+        <el-form-item :label="t('platform.config.plugin.name.vodType')" prop="vodType">
             <el-radio-group v-model="saveForm.data.vodType">
-                <el-radio v-for="(item, index) in tm('platform.config.status.vodType') as any" :key="index" :label="item.value">
+                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.vodType') as any" :key="index" :label="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>
         </el-form-item>
 
         <template v-if="saveForm.data.vodType == 'vodOfAliyun'">
-            <el-form-item :label="t('platform.config.name.vodOfAliyunAccessKeyId')" prop="vodOfAliyunAccessKeyId">
-                <el-input v-model="saveForm.data.vodOfAliyunAccessKeyId" :placeholder="t('platform.config.name.vodOfAliyunAccessKeyId')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunAccessKeyId')" prop="vodOfAliyunAccessKeyId">
+                <el-input v-model="saveForm.data.vodOfAliyunAccessKeyId" :placeholder="t('platform.config.plugin.name.vodOfAliyunAccessKeyId')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.vodOfAliyunAccessKeySecret')" prop="vodOfAliyunAccessKeySecret">
-                <el-input v-model="saveForm.data.vodOfAliyunAccessKeySecret" :placeholder="t('platform.config.name.vodOfAliyunAccessKeySecret')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunAccessKeySecret')" prop="vodOfAliyunAccessKeySecret">
+                <el-input v-model="saveForm.data.vodOfAliyunAccessKeySecret" :placeholder="t('platform.config.plugin.name.vodOfAliyunAccessKeySecret')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
-                <el-input v-model="saveForm.data.vodOfAliyunEndpoint" :placeholder="t('platform.config.name.vodOfAliyunEndpoint')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
+                <el-input v-model="saveForm.data.vodOfAliyunEndpoint" :placeholder="t('platform.config.plugin.name.vodOfAliyunEndpoint')" :clearable="true" style="max-width: 500px" />
                 <label>
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.tip.vodOfAliyunEndpoint')"></span>
+                            <span v-html="t('platform.config.plugin.tip.vodOfAliyunEndpoint')"></span>
                         </template>
                     </el-alert>
                 </label>
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
-                <el-input v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.name.vodOfAliyunRoleArn')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
+                <el-input v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.plugin.name.vodOfAliyunRoleArn')" :clearable="true" style="max-width: 500px" />
                 <label>
-                    <el-alert :title="t('platform.config.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert :title="t('platform.config.plugin.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
                 </label>
             </el-form-item>
         </template>

@@ -68,45 +68,45 @@ saveForm.initData()
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <el-tabs tab-position="left">
-            <el-tab-pane :label="t('platform.config.label.payOfAli')" :lazy="true">
-                <el-form-item :label="t('platform.config.name.payOfAliAppId')" prop="payOfAliAppId">
-                    <el-input v-model="saveForm.data.payOfAliAppId" :placeholder="t('platform.config.name.payOfAliAppId')" :clearable="true" />
+            <el-tab-pane :label="t('platform.config.plugin.label.payOfAli')" :lazy="true">
+                <el-form-item :label="t('platform.config.plugin.name.payOfAliAppId')" prop="payOfAliAppId">
+                    <el-input v-model="saveForm.data.payOfAliAppId" :placeholder="t('platform.config.plugin.name.payOfAliAppId')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
+                <el-form-item :label="t('platform.config.plugin.name.payOfAliPrivateKey')" prop="payOfAliPrivateKey">
                     <el-input v-model="saveForm.data.payOfAliPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
+                <el-form-item :label="t('platform.config.plugin.name.payOfAliPublicKey')" prop="payOfAliPublicKey">
                     <el-input v-model="saveForm.data.payOfAliPublicKey" type="textarea" :autosize="{ minRows: 5 }" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfAliNotifyUrl')" prop="payOfAliNotifyUrl">
-                    <el-input v-model="saveForm.data.payOfAliNotifyUrl" :placeholder="t('platform.config.name.payOfAliNotifyUrl')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.payOfAliNotifyUrl')" prop="payOfAliNotifyUrl">
+                    <el-input v-model="saveForm.data.payOfAliNotifyUrl" :placeholder="t('platform.config.plugin.name.payOfAliNotifyUrl')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfAliOpAppId')" prop="payOfAliOpAppId">
-                    <el-input v-model="saveForm.data.payOfAliOpAppId" :placeholder="t('platform.config.name.payOfAliOpAppId')" :clearable="true" style="max-width: 500px" />
+                <el-form-item :label="t('platform.config.plugin.name.payOfAliOpAppId')" prop="payOfAliOpAppId">
+                    <el-input v-model="saveForm.data.payOfAliOpAppId" :placeholder="t('platform.config.plugin.name.payOfAliOpAppId')" :clearable="true" style="max-width: 500px" />
                     <label>
-                        <el-alert :title="t('platform.config.tip.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('platform.config.plugin.tip.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </el-form-item>
             </el-tab-pane>
 
-            <el-tab-pane :label="t('platform.config.label.payOfWx')" :lazy="true">
-                <el-form-item :label="t('platform.config.name.payOfWxAppId')" prop="payOfWxAppId">
-                    <el-input v-model="saveForm.data.payOfWxAppId" :placeholder="t('platform.config.name.payOfWxAppId')" :clearable="true" />
+            <el-tab-pane :label="t('platform.config.plugin.label.payOfWx')" :lazy="true">
+                <el-form-item :label="t('platform.config.plugin.name.payOfWxAppId')" prop="payOfWxAppId">
+                    <el-input v-model="saveForm.data.payOfWxAppId" :placeholder="t('platform.config.plugin.name.payOfWxAppId')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfWxMchid')" prop="payOfWxMchid">
-                    <el-input v-model="saveForm.data.payOfWxMchid" :placeholder="t('platform.config.name.payOfWxMchid')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.payOfWxMchid')" prop="payOfWxMchid">
+                    <el-input v-model="saveForm.data.payOfWxMchid" :placeholder="t('platform.config.plugin.name.payOfWxMchid')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfWxSerialNo')" prop="payOfWxSerialNo">
-                    <el-input v-model="saveForm.data.payOfWxSerialNo" :placeholder="t('platform.config.name.payOfWxSerialNo')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.payOfWxSerialNo')" prop="payOfWxSerialNo">
+                    <el-input v-model="saveForm.data.payOfWxSerialNo" :placeholder="t('platform.config.plugin.name.payOfWxSerialNo')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfWxApiV3Key')" prop="payOfWxApiV3Key">
-                    <el-input v-model="saveForm.data.payOfWxApiV3Key" :placeholder="t('platform.config.name.payOfWxApiV3Key')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.payOfWxApiV3Key')" prop="payOfWxApiV3Key">
+                    <el-input v-model="saveForm.data.payOfWxApiV3Key" :placeholder="t('platform.config.plugin.name.payOfWxApiV3Key')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfWxPrivateKey')" prop="payOfWxPrivateKey">
+                <el-form-item :label="t('platform.config.plugin.name.payOfWxPrivateKey')" prop="payOfWxPrivateKey">
                     <el-input v-model="saveForm.data.payOfWxPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.name.payOfWxNotifyUrl')" prop="payOfWxNotifyUrl">
-                    <el-input v-model="saveForm.data.payOfWxNotifyUrl" :placeholder="t('platform.config.name.payOfWxNotifyUrl')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.payOfWxNotifyUrl')" prop="payOfWxNotifyUrl">
+                    <el-input v-model="saveForm.data.payOfWxNotifyUrl" :placeholder="t('platform.config.plugin.name.payOfWxNotifyUrl')" :clearable="true" />
                 </el-form-item>
             </el-tab-pane>
         </el-tabs>

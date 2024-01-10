@@ -55,29 +55,29 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.name.smsType')" prop="smsType">
+        <el-form-item :label="t('platform.config.plugin.name.smsType')" prop="smsType">
             <el-radio-group v-model="saveForm.data.smsType">
-                <el-radio v-for="(item, index) in tm('platform.config.status.smsType') as any" :key="index" :label="item.value">
+                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.smsType') as any" :key="index" :label="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>
         </el-form-item>
 
         <template v-if="saveForm.data.smsType == 'smsOfAliyun'">
-            <el-form-item :label="t('platform.config.name.smsOfAliyunAccessKeyId')" prop="smsOfAliyunAccessKeyId">
-                <el-input v-model="saveForm.data.smsOfAliyunAccessKeyId" :placeholder="t('platform.config.name.smsOfAliyunAccessKeyId')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunAccessKeyId')" prop="smsOfAliyunAccessKeyId">
+                <el-input v-model="saveForm.data.smsOfAliyunAccessKeyId" :placeholder="t('platform.config.plugin.name.smsOfAliyunAccessKeyId')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.smsOfAliyunAccessKeySecret')" prop="smsOfAliyunAccessKeySecret">
-                <el-input v-model="saveForm.data.smsOfAliyunAccessKeySecret" :placeholder="t('platform.config.name.smsOfAliyunAccessKeySecret')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunAccessKeySecret')" prop="smsOfAliyunAccessKeySecret">
+                <el-input v-model="saveForm.data.smsOfAliyunAccessKeySecret" :placeholder="t('platform.config.plugin.name.smsOfAliyunAccessKeySecret')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.smsOfAliyunEndpoint')" prop="smsOfAliyunEndpoint">
-                <el-input v-model="saveForm.data.smsOfAliyunEndpoint" :placeholder="t('platform.config.name.smsOfAliyunEndpoint')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunEndpoint')" prop="smsOfAliyunEndpoint">
+                <el-input v-model="saveForm.data.smsOfAliyunEndpoint" :placeholder="t('platform.config.plugin.name.smsOfAliyunEndpoint')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.smsOfAliyunSignName')" prop="smsOfAliyunSignName">
-                <el-input v-model="saveForm.data.smsOfAliyunSignName" :placeholder="t('platform.config.name.smsOfAliyunSignName')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunSignName')" prop="smsOfAliyunSignName">
+                <el-input v-model="saveForm.data.smsOfAliyunSignName" :placeholder="t('platform.config.plugin.name.smsOfAliyunSignName')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.name.smsOfAliyunTemplateCode')" prop="smsOfAliyunTemplateCode">
-                <el-input v-model="saveForm.data.smsOfAliyunTemplateCode" :placeholder="t('platform.config.name.smsOfAliyunTemplateCode')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunTemplateCode')" prop="smsOfAliyunTemplateCode">
+                <el-input v-model="saveForm.data.smsOfAliyunTemplateCode" :placeholder="t('platform.config.plugin.name.smsOfAliyunTemplateCode')" :clearable="true" />
             </el-form-item>
         </template>
 

@@ -1,10 +1,10 @@
 <script setup lang="tsx">
-const UploadConfig = defineAsyncComponent(() => import('./tabPane/UploadConfig.vue'))
-const PayConfig = defineAsyncComponent(() => import('./tabPane/PayConfig.vue'))
-const SmsConfig = defineAsyncComponent(() => import('./tabPane/SmsConfig.vue'))
-const IdCardConfig = defineAsyncComponent(() => import('./tabPane/IdCardConfig.vue'))
-const PushConfig = defineAsyncComponent(() => import('./tabPane/PushConfig.vue'))
-const VodConfig = defineAsyncComponent(() => import('./tabPane/VodConfig.vue'))
+const Upload = defineAsyncComponent(() => import('./plugin/Upload.vue'))
+const Pay = defineAsyncComponent(() => import('./plugin/Pay.vue'))
+const Sms = defineAsyncComponent(() => import('./plugin/Sms.vue'))
+const IdCard = defineAsyncComponent(() => import('./plugin/IdCard.vue'))
+const Push = defineAsyncComponent(() => import('./plugin/Push.vue'))
+const Vod = defineAsyncComponent(() => import('./plugin/Vod.vue'))
 
 const { t } = useI18n()
 </script>
@@ -13,23 +13,23 @@ const { t } = useI18n()
     <el-container class="common-container">
         <el-main>
             <el-tabs type="border-card" tab-position="top">
-                <el-tab-pane :label="t('platform.config.label.uploadConfig')" :lazy="true">
-                    <upload-config />
+                <el-tab-pane :label="t('platform.config.plugin.label.upload')" :lazy="true">
+                    <upload />
                 </el-tab-pane>
-                <el-tab-pane :label="t('platform.config.label.payConfig')" :lazy="true">
-                    <pay-config />
+                <el-tab-pane :label="t('platform.config.plugin.label.pay')" :lazy="true">
+                    <pay />
                 </el-tab-pane>
-                <el-tab-pane :label="t('platform.config.label.smsConfig')" :lazy="true">
-                    <sms-config />
+                <el-tab-pane :label="t('platform.config.plugin.label.sms')" :lazy="true">
+                    <sms />
                 </el-tab-pane>
-                <el-tab-pane :label="t('platform.config.label.idCardConfig')" :lazy="true">
-                    <id-card-config />
+                <el-tab-pane :label="t('platform.config.plugin.label.idCard')" :lazy="true">
+                    <id-card />
                 </el-tab-pane>
-                <el-tab-pane :label="t('platform.config.label.pushConfig')" :lazy="true">
-                    <push-config />
+                <el-tab-pane :label="t('platform.config.plugin.label.push')" :lazy="true">
+                    <push />
                 </el-tab-pane>
-                <el-tab-pane :label="t('platform.config.label.vodConfig')" :lazy="true">
-                    <vod-config />
+                <el-tab-pane :label="t('platform.config.plugin.label.vod')" :lazy="true">
+                    <vod />
                 </el-tab-pane>
             </el-tabs>
         </el-main>

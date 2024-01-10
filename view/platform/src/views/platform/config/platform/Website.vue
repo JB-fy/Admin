@@ -75,7 +75,7 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.name.hotSearch')" prop="hotSearch">
+        <el-form-item :label="t('platform.config.platform.name.hotSearch')" prop="hotSearch">
             <el-tag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px">
                 {{ item }}
             </el-tag>
@@ -84,7 +84,7 @@ saveForm.initData()
                     v-if="hotSearchHandle.visible"
                     :ref="(el: any) => hotSearchHandle.ref = el"
                     v-model="hotSearchHandle.value"
-                    :placeholder="t('platform.config.name.hotSearch')"
+                    :placeholder="t('platform.config.platform.name.hotSearch')"
                     @keyup.enter="hotSearchHandle.addValue"
                     @blur="hotSearchHandle.addValue"
                     size="small"
@@ -93,10 +93,10 @@ saveForm.initData()
                 <el-button v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>
             </template>
         </el-form-item>
-        <el-form-item :label="t('platform.config.name.userAgreement')" prop="userAgreement">
+        <el-form-item :label="t('platform.config.platform.name.userAgreement')" prop="userAgreement">
             <my-editor v-model="saveForm.data.userAgreement" />
         </el-form-item>
-        <el-form-item :label="t('platform.config.name.privacyAgreement')" prop="privacyAgreement">
+        <el-form-item :label="t('platform.config.platform.name.privacyAgreement')" prop="privacyAgreement">
             <my-editor v-model="saveForm.data.privacyAgreement" />
         </el-form-item>
         <el-form-item>
