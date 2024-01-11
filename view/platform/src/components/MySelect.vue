@@ -112,16 +112,16 @@ const select = reactive({
             return props.api.transform
                 ? props.api.transform
                 : (res: any) => {
-                    const options: { value: any; label: any }[] = []
-                    res.data.list.forEach((item: any) => {
-                        options.push({
-                            ...item,
-                            value: item[select.api.param.field[0]],
-                            label: item[select.api.param.field[1]],
-                        })
-                    })
-                    return options
-                }
+                      const options: { value: any; label: any }[] = []
+                      res.data.list.forEach((item: any) => {
+                          options.push({
+                              ...item,
+                              value: item[select.api.param.field[0]],
+                              label: item[select.api.param.field[1]],
+                          })
+                      })
+                      return options
+                  }
         }),
         selectedField: computed((): string => {
             if (props.api.selectedField) {
@@ -150,7 +150,7 @@ const select = reactive({
                 if (select.api.param.limit === 0 || options.length < select.api.param.limit) {
                     select.api.isEnd = true
                 }
-            } catch (error) { }
+            } catch (error) {}
             select.api.loading = false
             return options
         },
@@ -162,7 +162,7 @@ const select = reactive({
                         select.options = select.options.concat(options ?? [])
                     }
                 })
-                .catch((error) => { })
+                .catch((error) => {})
         },
     },
     visibleChange: (val: boolean) => {
@@ -254,12 +254,37 @@ defineExpose({
 
 <template>
     <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
-    <el-select-v2 v-if="multiple" :ref="(el: any) => select.ref = el" v-model="select.value" :placeholder="placeholder"
-        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled"
-        :multiple="multiple" :multiple-limit="multipleLimit" :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip" style="min-width: 225px" />
-    <el-select-v2 v-else :ref="(el: any) => select.ref = el" v-model="select.value" :placeholder="placeholder"
-        :options="select.options" :clearable="clearable" :filterable="filterable" @visible-change="select.visibleChange"
-        :remote="remote" :remote-method="select.remoteMethod" :loading="select.loading" :disabled="disabled" />
+    <el-select-v2
+        v-if="multiple"
+        :ref="(el: any) => select.ref = el"
+        v-model="select.value"
+        :placeholder="placeholder"
+        :options="select.options"
+        :clearable="clearable"
+        :filterable="filterable"
+        @visible-change="select.visibleChange"
+        :remote="remote"
+        :remote-method="select.remoteMethod"
+        :loading="select.loading"
+        :disabled="disabled"
+        :multiple="multiple"
+        :multiple-limit="multipleLimit"
+        :collapse-tags="collapseTags"
+        :collapse-tags-tooltip="collapseTagsTooltip"
+        style="min-width: 225px"
+    />
+    <el-select-v2
+        v-else
+        :ref="(el: any) => select.ref = el"
+        v-model="select.value"
+        :placeholder="placeholder"
+        :options="select.options"
+        :clearable="clearable"
+        :filterable="filterable"
+        @visible-change="select.visibleChange"
+        :remote="remote"
+        :remote-method="select.remoteMethod"
+        :loading="select.loading"
+        :disabled="disabled"
+    />
 </template>
