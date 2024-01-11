@@ -119,6 +119,13 @@ watch(
         }
     }
 )
+
+//暴露组件属性给父组件
+defineExpose({
+    options: computed(() => {
+        return transfer.options
+    }),
+})
 </script>
 
 <template>
