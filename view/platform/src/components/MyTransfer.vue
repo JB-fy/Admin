@@ -5,6 +5,7 @@
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+const slots = useSlots()
 const props = defineProps({
     modelValue: {
         type: Array,
@@ -129,7 +130,17 @@ defineExpose({
 </script>
 
 <template>
-    <el-transfer :ref="(el: any) => transfer.ref = el" v-model="transfer.value" :data="transfer.options" :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props" />
+    <el-transfer :ref="(el: any) => transfer.ref = el" v-model="transfer.value" :data="transfer.options" :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props">
+        <template v-if="slots.default" #default="{ option }">
+            <slot name="default" :option="option"></slot>
+        </template>
+        <template v-if="slots.leftFooter" #left-footer>
+            <slot name="left-footer"></slot>
+        </template>
+        <template v-if="slots.rightFooter" #right-footer>
+            <slot name="right-footer"></slot>
+        </template>
+    </el-transfer>
 </template>
 
 <style scoped>

@@ -19,6 +19,7 @@
     :props="{ checkStrictly: true, emitPath: false }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+const slots = useSlots()
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array],
@@ -223,7 +224,11 @@ defineExpose({
 </script>
 
 <template>
-    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="cascader.value" :options="cascader.options" :props="cascader.props" />
+    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="cascader.value" :options="cascader.options" :props="cascader.props">
+        <template v-if="slots.default" #default="{ node, data }">
+            <slot name="default" :node="node" :data="data"></slot>
+        </template>
+    </el-cascader-panel>
     <el-cascader
         v-else-if="cascader.props.lazy"
         :ref="(el: any) => cascader.ref = el"
@@ -236,7 +241,14 @@ defineExpose({
         :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip"
         :separator="separator"
-    />
+    >
+        <template v-if="slots.default" #default="{ node, data }">
+            <slot name="default" :node="node" :data="data"></slot>
+        </template>
+        <template v-if="slots.empty" #empty>
+            <slot name="empty"></slot>
+        </template>
+    </el-cascader>
     <el-cascader
         v-else
         :ref="(el: any) => cascader.ref = el"
@@ -251,5 +263,12 @@ defineExpose({
         :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip"
         :separator="separator"
-    />
+    >
+        <template v-if="slots.default" #default="{ node, data }">
+            <slot name="default" :node="node" :data="data"></slot>
+        </template>
+        <template v-if="slots.empty" #empty>
+            <slot name="empty"></slot>
+        </template>
+    </el-cascader>
 </template>

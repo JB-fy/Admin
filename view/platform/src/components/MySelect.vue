@@ -6,6 +6,7 @@
     :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+const slots = useSlots()
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array],
@@ -272,7 +273,21 @@ defineExpose({
         :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip"
         style="min-width: 225px"
-    />
+    >
+        <template v-if="slots.default" #default="{ item }">
+            <slot name="default" :item="item"></slot>
+        </template>
+        <template v-if="slots.empty" #empty>
+            <slot name="empty"></slot>
+        </template>
+        <template v-if="slots.prefix" #prefix>
+            <slot name="prefix"></slot>
+        </template>
+        <template v-if="slots.tag" #tag>
+            <slot name="tag"></slot>
+        </template>
+    </el-select-v2>
+
     <el-select-v2
         v-else
         :ref="(el: any) => select.ref = el"
@@ -286,5 +301,18 @@ defineExpose({
         :remote-method="select.remoteMethod"
         :loading="select.loading"
         :disabled="disabled"
-    />
+    >
+        <template v-if="slots.default" #default="{ item }">
+            <slot :item="item"></slot>
+        </template>
+        <template v-if="slots.empty" #empty>
+            <slot name="empty"></slot>
+        </template>
+        <template v-if="slots.prefix" #prefix>
+            <slot name="prefix"></slot>
+        </template>
+        <template v-if="slots.tag" #tag>
+            <slot name="tag"></slot>
+        </template>
+    </el-select-v2>
 </template>

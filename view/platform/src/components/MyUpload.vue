@@ -6,6 +6,7 @@
 <script setup lang="tsx">
 const { t } = useI18n()
 
+const slots = useSlots()
 const props = defineProps({
     modelValue: {
         //单选传字符串，多选传数组
@@ -33,10 +34,6 @@ const props = defineProps({
         //是否显示图片缩略图
         type: Boolean,
         default: true,
-    },
-    tip: {
-        type: String,
-        //default: 'jpg/png files with a size less than 500kb'
     },
     multiple: {
         type: Boolean,
@@ -247,10 +244,8 @@ upload.initSignInfo() //初始化签名信息
                     <autoicon-ep-upload-filled />
                 </el-icon>
                 <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
-                <template v-if="tip" #tip>
-                    <div class="el-upload__tip">
-                        {{ tip }}
-                    </div>
+                <template v-if="slots.tip" #tip>
+                    <slot name="tip"></slot>
                 </template>
             </el-upload>
             <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
@@ -270,10 +265,8 @@ upload.initSignInfo() //初始化签名信息
             list-type="text"
         >
             <el-button type="primary">{{ t('common.upload') }}</el-button>
-            <template v-if="tip" #tip>
-                <div class="el-upload__tip">
-                    {{ tip }}
-                </div>
+            <template v-if="slots.tip" #tip>
+                <slot name="tip"></slot>
             </template>
         </el-upload>
     </div>
