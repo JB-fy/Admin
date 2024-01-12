@@ -240,12 +240,23 @@ upload.initSignInfo() //初始化签名信息
                 :drag="true"
                 :class="upload.class"
             >
-                <el-icon class="el-icon--upload">
-                    <autoicon-ep-upload-filled />
-                </el-icon>
-                <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
+                <template #default>
+                    <slot v-if="slots.default" name="default"></slot>
+                    <template v-else>
+                        <el-icon class="el-icon--upload">
+                            <autoicon-ep-upload-filled />
+                        </el-icon>
+                        <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
+                    </template>
+                </template>
+                <template v-if="slots.trigger" #trigger>
+                    <slot name="trigger"></slot>
+                </template>
                 <template v-if="slots.tip" #tip>
                     <slot name="tip"></slot>
+                </template>
+                <template v-if="slots.file" #file="{ file }">
+                    <slot name="file" :file="file"></slot>
                 </template>
             </el-upload>
             <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
@@ -264,9 +275,18 @@ upload.initSignInfo() //初始化签名信息
             :accept="accept"
             list-type="text"
         >
-            <el-button type="primary">{{ t('common.upload') }}</el-button>
+            <template #default>
+                <slot v-if="slots.default" name="default"></slot>
+                <el-button v-else type="primary">{{ t('common.upload') }}</el-button>
+            </template>
+            <template v-if="slots.trigger" #trigger>
+                <slot name="trigger"></slot>
+            </template>
             <template v-if="slots.tip" #tip>
                 <slot name="tip"></slot>
+            </template>
+            <template v-if="slots.file" #file="{ file }">
+                <slot name="file" :file="file"></slot>
             </template>
         </el-upload>
     </div>
