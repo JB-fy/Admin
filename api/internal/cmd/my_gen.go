@@ -1154,7 +1154,7 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 
 // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
-	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.CaseSnake(tpl.ModuleDirCaseCamel) + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.LcFirst(tpl.ModuleDirCaseCamel) + `/` + tpl.TableNameCaseSnake + `.go`
 	if gfile.IsFile(saveFile) {
 		return
 	}
