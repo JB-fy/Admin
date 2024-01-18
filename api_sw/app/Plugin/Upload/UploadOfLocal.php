@@ -107,7 +107,7 @@ class UploadOfLocal extends AbstractUpload
      */
     protected function createSign(array $signData): string
     {
-        sort($signData);
+        ksort($signData);
         $str = '';
         foreach ($signData as $key => $value) {
             $str .= $key . '=' . $value . '&';
