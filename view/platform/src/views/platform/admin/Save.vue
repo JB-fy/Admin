@@ -55,7 +55,7 @@ const saveForm = reactive({
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        roleIdArr: [{ type: 'array', required: true, min: 1, defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }],
+        roleIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {

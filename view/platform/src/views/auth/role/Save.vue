@@ -22,7 +22,7 @@ const saveForm = reactive({
 		], */
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
         menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
-        actionIdArr: [{ type: 'array', defaultField: { type: 'integer' }, trigger: 'change', message: t('validation.select') }],
+        actionIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
