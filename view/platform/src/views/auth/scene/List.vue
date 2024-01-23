@@ -74,8 +74,8 @@ const table = reactive({
                 return [
                     <el-switch
                         model-value={props.rowData.isStop}
-                        active-value={1}
                         // disabled={true}
+                        active-value={1}
                         inactive-value={0}
                         inline-prompt={true}
                         active-text={t('common.yes')}
