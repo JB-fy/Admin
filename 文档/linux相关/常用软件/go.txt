@@ -32,12 +32,3 @@ go env -w GO111MODULE=on
 #在当前目录的任意一个带有（//go:generate）开头注释的xx.go文件，自动化执行该注释后面的命令
     go generate -x（显示并执行命令） -n（显示不执行命令） -v（显示被处理的包名和源文件名）
 /**----------------常用命令 结束----------------**/
-
-/**----------------常用插件 开始----------------**/
-#热更新
-    go install github.com/cosmtrek/air
-    air
-#自动生成api文档
-    go install github.com/swaggo/swag/cmd/swag@v1.7.0
-    swag init
-/**----------------常用插件 结束----------------**/
