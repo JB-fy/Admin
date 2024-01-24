@@ -2,6 +2,8 @@
     tar -xvf go1.20.4.linux-amd64.tar.gz
 移动到指定目录
     mv /server/go /server/tool/go-1.20.4
+设置环境变量增加以下目录（参考linux常用命令）
+    /server/tool/go-1.20.4/bin
 
 
 
