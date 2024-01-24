@@ -12,7 +12,9 @@ import (
 	"sort"
 	"time"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -163,17 +165,22 @@ func (uploadThis *UploadOfLocal) Notify() (notifyInfo NotifyInfo, err error) {
 }
 
 // 生成签名
-func (uploadThis *UploadOfLocal) CreateSign(signData map[string]interface{}) (sign string) {
+func (uploadThis *UploadOfLocal) CreateSign(data map[string]interface{}) (sign string) {
 	keyArr := []string{}
-	for k := range signData {
+	for k := range data {
 		keyArr = append(keyArr, k)
 	}
 	sort.Strings(keyArr)
-	str := ``
+	strArr := []string{}
 	for _, k := range keyArr {
-		str += k + `=` + gconv.String(signData[k]) + `&`
+		tmp := gvar.New(data[k])
+		if tmp.IsMap() || tmp.IsSlice() {
+			strArr = append(strArr, k+`=`+gjson.MustEncodeString(data[k]))
+		} else {
+			strArr = append(strArr, k+`=`+gconv.String(data[k]))
+		}
 	}
-	str += `key=` + uploadThis.SignKey
-	sign = gmd5.MustEncryptString(str)
+	strArr = append(strArr, `key=`+uploadThis.SignKey)
+	sign = gmd5.MustEncryptString(gstr.Join(strArr, `&`))
 	return
 }
