@@ -2,6 +2,7 @@ package controller
 
 import (
 	"api/api"
+
 	// daoAuth "api/internal/dao/auth"
 	"context"
 
@@ -113,6 +114,38 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// grand.S(8)                        // abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
 	// grand.Symbols(8)                  // !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~
 	/*--------函数结果示例 结束--------*/
+
+	/*--------常用协程示例 开始--------*/
+	/* //阻塞，等待协程完成。
+	mp := sync.Map{}
+	var wg sync.WaitGroup
+	var mx sync.Mutex
+	total := 0
+	listRaw := []map[string]interface{}{}
+	for k, v := range listRaw {
+		wg.Add(1)
+		go func(ctx context.Context, key int, value map[string]interface{}) {
+			defer wg.Done()
+			mp.Store(key, value)
+
+			mx.Lock()
+			total += key
+			mx.Unlock()
+		}(ctx, k, v)
+	}
+	wg.Wait()
+	listResult := []map[string]interface{}{}
+	mp.Range(func(key, value interface{}) bool {
+		listResult = append(listResult, value.(map[string]interface{}))
+		return true
+	}) */
+
+	/* //不阻塞，直接返回响应数据。注意：gctx.NeverDone(ctx)必须有
+	go func(ctx context.Context) {
+		// ctx := g.RequestFromCtx(ctx).GetNeverDoneCtx()
+		utils.GetCtxSceneInfo(ctx)
+	}(gctx.NeverDone(ctx)) */
+	/*--------常用协程示例 结束--------*/
 
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	// err = utils.NewErrorCode(ctx, 99999999, ``)
