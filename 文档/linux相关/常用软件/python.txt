@@ -1,0 +1,12 @@
+依赖：yum install gcc gcc-c++ make zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel 
+    1、创建安装目录
+        mkdir -p /server/tool/python-3.12.1
+    2、解压python安装
+        tar -xvf Python-3.12.1.tgz
+
+        #进入解压目录编译并安装
+        ./configure --prefix=/server/tool/python-3.12.1
+
+        make && make install
+    3、设置环境变量增加以下目录（参考linux常用命令）
+        /server/tool/python-3.12.1/bin

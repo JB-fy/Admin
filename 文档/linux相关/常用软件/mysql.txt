@@ -1,7 +1,7 @@
 依赖：yum install gcc gcc-c++ cmake make ncurses-devel rpcgen patchelf libtirpc-devel
     1：创建mysql的安装目录及配置文件目录,数据库存放目录,日志目录
         mkdir -p /server/tool/mysql-8.0.33/data /server/tool/mysql-8.0.33/conf /server/tool/mysql-8.0.33/log /server/tool/mysql-8.0.33/run
-    2：解压mysql压缩包并进入解压的文件夹内编译安装
+    2：解压mysql安装
         tar -xvf mysql-boost-8.0.33.tar.gz
 报错处理：
     错误：Not a supported openssl version in WITH_SSL=system.
@@ -27,9 +27,10 @@
         //5.7版本建议添加-DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci
         //5.7版本以上必须添加-DDOWNLOAD_BOOST=1 -DWITH_BOOST=/server/mysql-8.0.33/boost
         cmake -DCMAKE_INSTALL_PREFIX=/server/tool/mysql-8.0.33 -DMYSQL_DATADIR=/server/tool/mysql-8.0.33/data -DSYSCONFDIR=/server/tool/mysql-8.0.33/conf -DMYSQL_UNIX_ADDR=/server/tool/mysql-8.0.33/mysql.sock -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/server/mysql-8.0.33/boost -DFORCE_INSOURCE_BUILD=1 -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DWITH_SSL=/server/openssl -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci
-    3、运行安装命令
+
+        //编译
         make && make install
-    4、新建配置文件（多版本要改端口）：
+    3、新建配置文件（多版本要改端口）：
         vi /server/tool/mysql-8.0.33/conf/my.cnf
 [mysqld]
 #服务id（集群时必须唯一，建议为IP最后一个数字。5.7版本设置log-bin后，该值也必须设置）
@@ -62,7 +63,7 @@ sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ZERO_DATE,NO_ZERO_IN_
 max_allowed_packet=1024M
 #使用GROUP_CONCAT函数时，返回结果默认限制1024长度，超出部分会丢失。建议设置大点，防止数据丢失
 group_concat_max_len = 102400
-    5、初始化数据库（初始化后会生成默认密码，请记录下来）
+    4、初始化数据库（初始化后会生成默认密码，请记录下来）
         //创建用户组，用户并改变文件所属用户组和用户
         groupadd mysql
         useradd -r -g mysql -s /bin/false mysql
@@ -71,7 +72,7 @@ group_concat_max_len = 102400
         /server/tool/mysql-8.0.33/bin/mysqld --user=mysql --initialize-insecure
         //安装ssl
         /server/tool/mysql-8.0.33/bin/mysql_ssl_rsa_setup
-    6、编辑自启动文件
+    5、编辑自启动文件
         vi /etc/systemd/system/mysql-8.0.33.service
 [Unit]
 Description=mysql-8.0.33
@@ -85,9 +86,9 @@ ExecStop=/server/tool/mysql-8.0.33/support-files/mysql.server stop
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
-    7、设置自启动
+    6、设置自启动
         systemctl enable mysql-8.0.33
-    8、启动mysql
+    7、启动mysql
         /server/tool/mysql-8.0.33/support-files/mysql.server start
         //登录数据库
         /server/tool/mysql-8.0.33/bin/mysql -uroot -p
@@ -102,9 +103,9 @@ WantedBy=multi-user.target
         FLUSH PRIVILEGES;
         //退出数据库
         EXIT;
-    9、设置环境变量增加以下目录（参考linux常用命令）
+    8、设置环境变量增加以下目录（参考linux常用命令）
         /server/tool/mysql-8.0.33/bin
-    10、服务器对外开放3306端口（需要重启防火墙生效）
+    9、服务器对外开放3306端口（需要重启防火墙生效）
         firewall-cmd --zone=public --add-port=3306/tcp --permanent
 
 

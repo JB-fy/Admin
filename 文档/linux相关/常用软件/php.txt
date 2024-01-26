@@ -4,12 +4,6 @@
     2、解压php安装
         tar -xvf php-8.2.5.tar.gz
 
-        进入解压目录运行
-            #apache模块加载方式设置
-            --with-apxs2=/tool/apache/bin/apxs
-            #php-fpm方式设置
-            --enable-fpm
-
 报错处理
     报错：Cannot find ldap libraries in /usr/lib.
         ln -s /usr/lib64/libldap* /usr/lib/
@@ -32,6 +26,11 @@
         mv /usr/local/bin/openssl /usr/local/bin/openssl-1.1.1q
 		ln -s /usr/bin/openssl /usr/local/bin/openssl
 
+        进入解压目录编译并安装
+        #apache模块加载方式设置
+        --with-apxs2=/tool/apache/bin/apxs
+        #php-fpm方式设置
+        --enable-fpm
         #8.0版本弃用
         --enable-inline-optimization --enable-maintainer-zts --with-xmlrpc --with-iconv-dir
         #可增加PKG_CONFIG_PATH=:/server/tool/x1:/server/tool/x2来增加检测依赖的目录。意味着不用--with-foo-dir=DIR等类似参数
