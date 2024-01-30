@@ -1,7 +1,7 @@
-import builtins
 from fastapi import APIRouter, Body
 from exception.json_exception import JsonException
 from pydantic import BaseModel, Field
+import builtins
 
 router = APIRouter(
     prefix="/auth/scene",
@@ -29,11 +29,13 @@ async def list(
     filter: Filter = Body(default=Filter()),
     field: list[str] = Body(default=[]),
     sort: str = Body(default="id DESC"),
-    page: int = Body(default=1,gt=200),
+    page: int = Body(default=1, gt=200),
     limit: int = Body(default=10),
 ):
     print(filter)
-    filter = dict(builtins.filter(lambda item: item[1] is not None, vars(filter).items()))
+    filter = dict(
+        builtins.filter(lambda item: item[1] is not None, vars(filter).items())
+    )
     print(filter)
 
     raise JsonException(data={"list": [{"username": "Rick"}, {"username": "Morty"}]})
