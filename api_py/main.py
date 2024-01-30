@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from middleware import register_middleware
 from exception import register_exception_handler
 from router import register_router
+from config import config
 import uvicorn
 
 app = FastAPI(docs_url=None, redoc_url="/redoc")
@@ -13,4 +14,7 @@ register_router(app)
 # 一般用于调试：uvicorn main:app --host=0.0.0.0 --port=8000 --reload
 # 线上服务器用：python3.12 main.py
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", host="0.0.0.0", port=8000)
+    if config().app_env == "dev":
+        uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
+    else:
+        uvicorn.run(app="main:app", host="0.0.0.0", port=8000)
