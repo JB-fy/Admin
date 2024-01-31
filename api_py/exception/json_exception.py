@@ -1,5 +1,5 @@
 class JsonException(Exception):
-    def __init__(self, code: int = 0, msg: str = "", data: object = {}):
+    def __init__(self, code: int = 0, msg: str = "", data: dict = {}):
         self.code = code
         self.msg = msg
         self.data = data

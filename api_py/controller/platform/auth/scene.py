@@ -9,9 +9,12 @@ router = APIRouter(
 
 
 class Filter(BaseModel):
-    # sceneId: int | None = Field(default=None, description="场景ID")
-    sceneId: int = Field(default=None, description="场景ID")
-    sceneName: str = Field(default=None, description="场景名称")
+    id: int = Field(default=None, gt=0, description="ID")
+    idArr: list[int] = Field(default=None, min_length=1, description="ID数组")
+    excId: int = Field(default=None, gt=0, description="排除ID")
+    excIdArr: list[int] = Field(default=None, min_length=1, description="排除ID数组")
+    sceneId: int = Field(default=None, gt=0, description="场景ID")
+    sceneName: str = Field(default=None, max_length=30, description="场景名称")
 
 
 class ListReq(BaseModel):
