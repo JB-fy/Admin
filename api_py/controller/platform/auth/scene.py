@@ -1,11 +1,18 @@
 from fastapi import APIRouter, Body
 from exception.json_exception import JsonException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 import builtins
+from datetime import date, datetime
+from enum import Enum
 
 router = APIRouter(
     prefix="/auth/scene",
 )
+
+
+class IsStop(int, Enum):
+    NO = 0
+    YES = 1
 
 
 class Filter(BaseModel):
@@ -13,8 +20,28 @@ class Filter(BaseModel):
     idArr: list[int] = Field(default=None, min_length=1, description="ID数组")
     excId: int = Field(default=None, gt=0, description="排除ID")
     excIdArr: list[int] = Field(default=None, min_length=1, description="排除ID数组")
+    label: str = Field(
+        default=None,
+        max_length=30,
+        pattern="^[\p{L}\p{M}\p{N}_-]+$",
+        description="标签。常用于前端组件",
+    )
     sceneId: int = Field(default=None, gt=0, description="场景ID")
     sceneName: str = Field(default=None, max_length=30, description="场景名称")
+    # isStop: int = Field(default=None, ge=0, le=1, description="停用：0否 1是")
+    isStop: IsStop = Field(default=None, description="停用：0否 1是")
+    timeRangeStart: datetime = Field(
+        default=None, description="开始时间：YYYY-mm-dd HH:ii:ss"
+    )  # v:"date-format:Y-m-d H:i:s"
+    timeRangeEnd: datetime = Field(
+        default=None, description="结束时间：YYYY-mm-dd HH:ii:ss"
+    )  # v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart"
+
+    @validator("idArr", "excIdArr")
+    def validator_unique(cls, value):
+        if len(value) != len(set(value)):
+            raise ValueError("不能有重复值")
+        return value
 
 
 class ListReq(BaseModel):
