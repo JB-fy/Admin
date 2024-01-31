@@ -14,7 +14,7 @@ register_router(app)
 # 一般用于调试：uvicorn main:app --host=0.0.0.0 --port=8000 --reload
 # 线上服务器用：python3.12 main.py
 if __name__ == "__main__":
-    if config().app_env == "dev":
+    if config().is_dev:
         uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
     else:
         uvicorn.run(app="main:app", host="0.0.0.0", port=8000)
