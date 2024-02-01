@@ -32,10 +32,10 @@ class Filter(BaseModel):
     isStop: IsStop = Field(default=None, description="停用：0否 1是")
     timeRangeStart: datetime = Field(
         default=None, description="开始时间：YYYY-mm-dd HH:ii:ss"
-    )  # v:"date-format:Y-m-d H:i:s"
+    )
     timeRangeEnd: datetime = Field(
         default=None, description="结束时间：YYYY-mm-dd HH:ii:ss"
-    )  # v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart"
+    )
 
     @validator("idArr", "excIdArr")
     def validator_unique(cls, value):
