@@ -19,8 +19,8 @@ class Config extends AbstractModel
      */
     protected ?string $table = 'platform_config';
     protected string $primaryKey = 'configKey';
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected string $keyType = 'string';
+    public bool $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
