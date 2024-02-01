@@ -44,7 +44,7 @@ gf gen service
 ./main myGen
 ```
 
-#### PHP服务端（不推荐。代码目录：[api_sw](./api_sw)）
+#### PHP服务端（不推荐。代码目录：[api_php](./api_php)）
 ```bash
 # 服务启动
 php bin/hyperf.php start
