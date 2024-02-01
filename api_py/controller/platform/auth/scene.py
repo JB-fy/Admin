@@ -23,7 +23,7 @@ class Filter(BaseModel):
     label: str = Field(
         default=None,
         max_length=30,
-        pattern="^[\p{L}\p{M}\p{N}_-]+$",
+        pattern="^[\\p{L}\\p{M}\\p{N}_-]+$",
         description="标签。常用于前端组件",
     )
     sceneId: int = Field(default=None, gt=0, description="场景ID")
@@ -41,6 +41,16 @@ class Filter(BaseModel):
     def validator_unique(cls, value):
         if len(value) != len(set(value)):
             raise ValueError("不能有重复值")
+        return value
+
+    @validator("timeRangeEnd")
+    def validator_datetime(cls, value, values):
+        if (
+            value is not None
+            and "timeRangeStart" in values
+            and value < values["timeRangeStart"]
+        ):
+            raise ValueError("结束时间不能小于开始时间")
         return value
 
 
@@ -68,11 +78,10 @@ class ListRes(BaseModel):
 # @router.get("/", response_model=ListRes, tags=["平台后台/权限管理/场景"], summary="列表")
 @router.post("/list", tags=["平台后台/权限管理/场景"], summary="列表")
 async def list(req: ListReq) -> ListRes:
-    print(req)
+    print(req.filter)
     filter = dict(
         builtins.filter(lambda item: item[1] is not None, vars(req.filter).items())
     )
-    print(req.filter)
     print(filter)
     res = ListRes()
     # res.count = 0
