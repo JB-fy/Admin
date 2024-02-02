@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body,Request
 from exception.json_exception import JsonException
 from pydantic import BaseModel, Field, validator
 import builtins
@@ -77,7 +77,8 @@ class ListRes(BaseModel):
 
 # @router.get("/", response_model=ListRes, tags=["平台后台/权限管理/场景"], summary="列表")
 @router.post("/list", tags=["平台后台/权限管理/场景"], summary="列表")
-async def list(req: ListReq) -> ListRes:
+async def list(request: Request, req: ListReq) -> ListRes:
+    print(request.state.sceneInfo)
     print(req.filter)
     filter = dict(
         builtins.filter(lambda item: item[1] is not None, vars(req.filter).items())
