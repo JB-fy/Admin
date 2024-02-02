@@ -23,7 +23,7 @@
     pip install pip-review
     pip-review --interactive
 # 显示已安装依赖包（--outdated查看哪些包需要更新）
-    pip list --outdated
+    pip list [--outdated]
 # 依赖包导入到requirements.txt
     pip freeze > requirements.txt
 # 从requirements.txt安装依赖包
