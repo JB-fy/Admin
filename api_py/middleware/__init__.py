@@ -17,4 +17,4 @@ def register_middleware(app: FastAPI):
         response = await call_next(request)
         return response """
     app.add_middleware(I18n)
-    # app.add_middleware(Log)
+    app.add_middleware(Log)
