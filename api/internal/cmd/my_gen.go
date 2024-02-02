@@ -2673,7 +2673,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     const param = {
         field: [],
-        filter: removeEmptyOfObj(queryCommon.data),
+        filter: removeEmptyOfObj(queryCommon.data, true, true),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
         limit: pagination.size,
@@ -2790,11 +2790,12 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
 			viewQueryDataInit += `
     timeRange: (() => {
-        // const date = new Date()
+        return undefined
+        /* const date = new Date()
         return [
-            // new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-            // new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
-        ]
+            new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+            new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+        ] */
     })(),
     timeRangeStart: computed(() => {
         if (queryCommon.data.timeRange?.length) {
@@ -3429,7 +3430,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = removeEmptyOfObj(saveForm.data, false)` + viewSaveParamHandle + `
+            const param = removeEmptyOfObj(saveForm.data)` + viewSaveParamHandle + `
             try {
                 if (param?.idArr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)

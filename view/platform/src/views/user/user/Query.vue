@@ -7,11 +7,12 @@ const queryCommon = inject('queryCommon') as { data: { [propName: string]: any }
 queryCommon.data = {
     ...queryCommon.data,
     timeRange: (() => {
-        // const date = new Date()
+        return undefined
+        /* const date = new Date()
         return [
-            // new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-            // new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
-        ]
+            new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+            new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+        ] */
     })(),
     timeRangeStart: computed(() => {
         if (queryCommon.data.timeRange?.length) {

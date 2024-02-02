@@ -41,7 +41,7 @@ export const isEmptyObj = (obj: any) => {
  * @param isClearObj    清理空对象：[]，{}
  * @returns
  */
-export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: boolean = true, isClearObj: boolean = false) => {
+export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: boolean = false, isClearObj: boolean = false) => {
     const temp: { [propName: string]: any } = {}
     Object.keys(obj).forEach((item) => {
         if (!(obj[item] === undefined || obj[item] === null || (isClearStr && obj[item] === '') || (isClearObj && isEmptyObj(obj[item])))) {

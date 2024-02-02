@@ -30,7 +30,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = removeEmptyOfObj(saveForm.data, false)
+            const param = removeEmptyOfObj(saveForm.data)
             try {
                 if (param?.idArr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/action/update', param, true)

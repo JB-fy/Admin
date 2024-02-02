@@ -74,7 +74,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = removeEmptyOfObj(saveForm.data, false)
+            const param = removeEmptyOfObj(saveForm.data)
             param.account || delete param.account
             param.phone || delete param.phone
             param.password ? (param.password = md5(param.password)) : delete param.password

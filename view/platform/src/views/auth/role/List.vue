@@ -223,7 +223,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     const param = {
         field: [],
-        filter: removeEmptyOfObj(queryCommon.data),
+        filter: removeEmptyOfObj(queryCommon.data, true, true),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
         limit: pagination.size,

@@ -37,7 +37,7 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = removeEmptyOfObj(saveForm.data, false)
+            const param = removeEmptyOfObj(saveForm.data)
             try {
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/save', param, true)
             } catch (error) {}
