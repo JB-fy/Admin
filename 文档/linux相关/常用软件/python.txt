@@ -10,3 +10,22 @@
         make && make install
     3、设置环境变量增加以下目录（参考linux常用命令）
         /server/tool/python-3.12.1/bin
+
+
+
+/**----------------常用命令 开始----------------**/
+# 安装依赖包
+    pip install 包名
+# 更新依赖包
+    pip install --upgrade 包名
+# 更新依赖包（批量）
+    # 先安装pip-review工具
+    pip install pip-review
+    pip-review --interactive
+# 显示已安装依赖包（--outdated查看哪些包需要更新）
+    pip list --outdated
+# 依赖包导入到requirements.txt
+    pip freeze > requirements.txt
+# 从requirements.txt安装依赖包
+    pip install -r requirements
+/**----------------常用命令 结束----------------**/
