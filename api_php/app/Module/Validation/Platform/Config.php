@@ -10,7 +10,7 @@ class Config extends AbstractValidation
 {
     protected array $rule = [
         'configKeyArr' => 'sometimes|required_if_null|array|min:1',
-        'configKeyArr.*' => 'sometimes|required|string|between:1,30|distinct',
+        'configKeyArr.*' => 'sometimes|required|string|between:1,60|distinct',
 
         'hotSearch' => 'array',
         'hotSearch.*' => 'sometimes|required|string|min:1|distinct',

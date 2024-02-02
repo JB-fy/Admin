@@ -108,11 +108,22 @@ class UploadOfLocal extends AbstractUpload
     protected function createSign(array $signData): string
     {
         ksort($signData);
-        $str = '';
+        $strArr = [];
         foreach ($signData as $key => $value) {
-            $str .= $key . '=' . $value . '&';
+            if (is_array($value) || is_object($value)) {
+                // $strArr[] = $key . '=' . json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+                $strArr[] = $key . '=' . json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_AMP);
+            } elseif (is_bool($value)) {
+                if ($value) {
+                    $strArr[] = $key . '=true';
+                } else {
+                    $strArr[] = $key . '=false';
+                }
+            } else {
+                $strArr[] = $key . '=' . $value;
+            }
         }
-        $str .= 'key=' . $this->config['signKey'];
-        return md5($str);
+        $strArr[] = 'key=' . $this->config['signKey'];
+        return md5(implode('&', $strArr));
     }
 }

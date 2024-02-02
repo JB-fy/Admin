@@ -97,10 +97,6 @@ Router::addGroup('/platform', function () {
                     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/get', [\App\Controller\Platform\Platform\Config::class, 'get']);
                     Router::addRoute(['GET', 'POST', 'OPTIONS'], '/save', [\App\Controller\Platform\Platform\Config::class, 'save']);
                 });
-
-                Router::addGroup('/platform/server', function () {
-                    Router::addRoute(['GET', 'POST', 'OPTIONS'], '/list', [\App\Controller\Platform\Platform\Server::class, 'list']);
-                });
             }, ['middleware' => [\App\Middleware\SceneLoginOfPlatform::class]]);
         }, ['middleware' => [\App\Middleware\Scene::class]]);
     }, ['middleware' => [\App\Middleware\LogHttp::class]]);
