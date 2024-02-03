@@ -63,21 +63,28 @@ def get_db(group: str = "default") -> Session:
     return db
 
 
-a = get_db().query(Test).filter(Test.sceneId == 1).order_by(Test.sceneId).first()
-print(a)
-print(a.sceneCode)
-print(a.rels)
+result = get_db().query(Test).filter(Test.sceneId == 1).order_by(Test.sceneId).first()
 
-app = FastAPI(docs_url=None, redoc_url="/redoc")
-register_middleware(app)
-register_exception_handler(app)
-register_router(app)
+print(result)
+print(result.sceneCode)
+print(result.rels)
+
+
+def create_app():
+    app = FastAPI(docs_url=None, redoc_url="/redoc")
+    register_middleware(app)
+    register_exception_handler(app)
+    register_router(app)
+    return app
+
 
 # 启动方式（两种）
-# 一般用于调试：uvicorn main:app --host=0.0.0.0 --port=20080 --reload
+# 一般用于调试：uvicorn main:app --host=0.0.0.0 --port=8000 --reload
 # 线上服务器用：python3.12 main.py
 if __name__ == "__main__":
-    if config().is_dev:
-        uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
-    else:
-        uvicorn.run(app="main:app", host="0.0.0.0", port=20080)
+    uvicorn.run(
+        app="main:create_app",
+        host=config().server_http_host,
+        port=config().server_http_port,
+        reload=config().is_dev,
+    )
