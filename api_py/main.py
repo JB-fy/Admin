@@ -16,7 +16,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 
@@ -63,11 +63,23 @@ def get_db(group: str = "default") -> Session:
     return db
 
 
-result = get_db().query(Test).filter(Test.sceneId == 1).order_by(Test.sceneId).first()
+from sqlalchemy import func
 
+query = (
+    get_db().query(Test, Test.sceneName.label("label"), TestRel.relId, func.GROUP_CONCAT(TestRel.relId).label("relIdArr"))
+    # .join(TestRel, TestRel.sceneId == Test.sceneId, isouter=True)
+    # .outerjoin(TestRel, TestRel.sceneId == Test.sceneId)
+    # .options(load_only(Test.sceneId, Test.sceneName))
+    # .options(load_only(Test.isStop))
+    # .filter(Test.sceneId == 1)
+    # .group_by(Test.sceneId)
+    # .order_by(Test.sceneId.desc())
+    # .offset(0)
+    # .limit(1)
+)
+print(query)
+result = query.first()
 print(result)
-print(result.sceneCode)
-print(result.rels)
 
 
 def create_app():
@@ -75,6 +87,9 @@ def create_app():
     register_middleware(app)
     register_exception_handler(app)
     register_router(app)
+    """ @app.get("/test")
+    async def test():
+        return """
     return app
 
 
