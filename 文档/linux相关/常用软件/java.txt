@@ -31,11 +31,11 @@
 
 
 
-/**----------------Spring Boot CLI安装及常用命令（可不用） 开始----------------**/
+/**----------------Spring Boot CLI安装及常用命令 开始----------------**/
 解压安装包
     tar -xvf spring-boot-cli-3.2.2-bin.tar.gz
 移动到指定目录
     mv /server/spring-3.2.2 /server/tool/spring
 设置环境变量增加以下目录（参考linux常用命令）
     /server/tool/spring/bin
-/**----------------Spring Boot CLI安装及常用命令（可不用） 结束----------------**/
+/**----------------Spring Boot CLI安装及常用命令 结束----------------**/
