@@ -6,3 +6,14 @@
     /server/tool/jdk-21.0.2/bin
 设置软链接（不影响系统自带的java版本）
     ln -s /server/tool/jdk-21.0.2/bin/java /server/tool/jdk-21.0.2/binjava21.0.2
+
+
+
+/**----------------Maven包管理器安装及常用命令 开始----------------**/
+解压安装包
+    tar -xvf apache-maven-3.9.6-bin.tar.gz
+移动到指定目录
+    mv /server/composer.phar /server/tool/maven
+设置环境变量增加以下目录（参考linux常用命令）
+    /server/tool/maven/bin
+/**----------------Maven包管理器安装及常用命令 结束----------------**/
