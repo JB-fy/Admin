@@ -9,17 +9,6 @@
 
 
 
-/**----------------Maven包管理器安装及常用命令 开始----------------**/
-解压安装包
-    tar -xvf apache-maven-3.9.6-bin.tar.gz
-移动到指定目录
-    mv /server/apache-maven-3.9.6 /server/tool/maven
-设置环境变量增加以下目录（参考linux常用命令）
-    /server/tool/maven/bin
-/**----------------Maven包管理器安装及常用命令 结束----------------**/
-
-
-
 /**----------------Gradle包管理器安装及常用命令 开始----------------**/
 解压安装包
     unzip gradle-8.6-bin.zip
@@ -28,6 +17,17 @@
 设置环境变量增加以下目录（参考linux常用命令）
     /server/tool/gradle/bin
 /**----------------Gradle包管理器安装及常用命令 结束----------------**/
+
+
+
+/**----------------Maven包管理器安装及常用命令 开始----------------**/
+解压安装包
+    tar -xvf apache-maven-3.9.6-bin.tar.gz
+移动到指定目录
+    mv /server/apache-maven-3.9.6 /server/tool/maven
+设置环境变量增加以下目录（参考linux常用命令）
+    /server/tool/maven/bin
+/**----------------Maven包管理器安装及常用命令 结束----------------**/
 
 
 
