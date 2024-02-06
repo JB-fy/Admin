@@ -3,7 +3,7 @@
 移动到指定目录
     mv /server/jdk-21.0.2/ /server/tool/jdk-21.0.2
 设置环境变量增加JAVA_HOME变量及以下目录（参考linux常用命令）
-    JAVA_HOME=/server/tool/jdk-21.0.2
+    export JAVA_HOME=/server/tool/jdk-21.0.2
     $JAVA_HOME/bin
 设置软链接（不影响系统自带的java版本）
     ln -s /server/tool/jdk-21.0.2/bin/java /server/tool/jdk-21.0.2/binjava21.0.2
