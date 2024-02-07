@@ -16,26 +16,29 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 
-class Test(Base):
-    __tablename__ = "test"
-    sceneId = Column(Integer, primary_key=True)
-    sceneName = Column(String)
-    sceneCode = Column(String, unique=True, index=True)
-    sceneConfig = Column(String)
+class Action(Base):
+    __tablename__ = "auth_action"
+    actionId = Column(Integer, primary_key=True)
+    actionName = Column(String)
+    actionCode = Column(String, unique=True, index=True)
+    remark = Column(String)
     isStop = Column(Boolean, default=False)
-    rels = relationship("TestRel", back_populates="tests")
+    updatedAt = Column(DateTime)
+    createdAt = Column(DateTime)
+    rels = relationship("ActionRelToScene", back_populates="actions")
 
 
-class TestRel(Base):
-    __tablename__ = "test_rel"
-    relId = Column(Integer, primary_key=True)
-    relName = Column(String)
-    sceneId = Column(Integer, ForeignKey("test.sceneId"))
-    tests = relationship("Test", back_populates="rels")
+class ActionRelToScene(Base):
+    __tablename__ = "auth_action_rel_to_scene"
+    actionId = Column(Integer, ForeignKey("auth_action.actionId"), primary_key=True)
+    sceneId = Column(Integer, primary_key=True)
+    updatedAt = Column(DateTime)
+    createdAt = Column(DateTime)
+    actions = relationship("Action", back_populates="rels")
 
 
 from sqlalchemy.orm import Session
@@ -64,23 +67,25 @@ def create_app():
 
     @app.get("/test")
     async def test(db: Session = Depends(get_db())):
-        # from sqlalchemy import func
-        # db.query(Test, Test.sceneName.label("label"), TestRel.relId, func.GROUP_CONCAT(TestRel.relId).label("relIdArr"))
-        # .join(TestRel, TestRel.sceneId == Test.sceneId, isouter=True)
-        # .outerjoin(TestRel, TestRel.sceneId == Test.sceneId)
-        # .filter(Test.sceneId == 1)
-        # .group_by(Test.sceneId)
-        # .order_by(Test.sceneId.desc())
-        # .offset(0)
-        # .limit(1)
+        """from sqlalchemy import func
+        (
+            db.query(Action, Action.actionName.label("label"), func.GROUP_CONCAT(ActionRelToScene.sceneId).label("sceneIdArr"))
+            .join(ActionRelToScene, ActionRelToScene.actionId == Action.actionId, isouter=True)
+            .outerjoin(ActionRelToScene, ActionRelToScene.actionId == Action.actionId)
+            .filter(Action.actionId == 1)
+            .group_by(Action.actionId)
+            .order_by(Action.actionId.desc())
+            .offset(0)
+            .limit(1)
+        )"""
 
         """async for db in get_db()():
-        query = db.query(Test)
+        query = db.query(Action)
         print(query)
         result = query.first()
         print(result)"""
 
-        query = db.query(Test)
+        query = db.query(Action)
         print(query)
         result = query.first()
         print(result)
