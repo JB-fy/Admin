@@ -6,7 +6,7 @@ package dao
 
 import (
 	"{TplImportPrefix}/internal"
-	daoIndex "api/internal/dao/handler"
+	daoIndex "api/internal/dao"
 	"context"
 	"database/sql"
 

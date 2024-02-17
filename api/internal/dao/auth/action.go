@@ -5,8 +5,8 @@
 package dao
 
 import (
+	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
-	daoIndex "api/internal/dao/handler"
 	"context"
 	"database/sql"
 
