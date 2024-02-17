@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
@@ -31,7 +30,7 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 	if okPid {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).Fields(daoThis.Columns().SceneId, daoThis.Columns().IdPath, daoThis.Columns().Level).One()
+			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
@@ -46,20 +45,18 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 		data[daoThis.Columns().Pid] = 0
 	}
 
-	id, err = dao.NewDaoHandler(ctx, &daoThis).Insert(data).GetModel().InsertAndGetId()
+	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
-	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
-	if len(idArr) == 0 {
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
-	hookData := map[string]interface{}{}
 
 	_, okPid := data[daoThis.Columns().Pid]
 	if okPid {
@@ -73,8 +70,8 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 			}
 		}
 		updateChildIdPathAndLevelList := []map[string]interface{}{}
-		for _, id := range idArr {
-			if pid == id.Uint() { //父级不能是自身
+		for _, id := range daoHandlerThis.IdArr {
+			if pid == id { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ``)
 				return
 			}
@@ -100,7 +97,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}
 				updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-					`newIdPath`: pIdPath + `-` + id.String(),
+					`newIdPath`: pIdPath + `-` + gconv.String(id),
 					`oldIdPath`: oldInfo[daoThis.Columns().IdPath],
 					`newLevel`:  pLevel + 1,
 					`oldLevel`:  oldInfo[daoThis.Columns().Level],
@@ -108,31 +105,30 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 			}
 		}
 		if len(updateChildIdPathAndLevelList) > 0 {
-			hookData[`updateChildIdPathAndLevelList`] = updateChildIdPathAndLevelList
+			daoHandlerThis.AfterUpdate[`updateChildIdPathAndLevelList`] = updateChildIdPathAndLevelList
 		}
 	}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
-	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
-	if len(idArr) == 0 {
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().Pid, idArr).Count()
+	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().Pid, daoHandlerThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ``)
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.Delete().GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

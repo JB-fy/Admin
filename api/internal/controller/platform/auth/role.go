@@ -3,7 +3,6 @@ package controller
 import (
 	"api/api"
 	apiAuth "api/api/platform/auth"
-	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
@@ -45,7 +44,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoAuth.Role).Filter(filter)
+	daoHandlerThis := daoAuth.Role.HandlerCtx(ctx).Filter(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
@@ -82,7 +81,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := dao.NewDaoHandler(ctx, &daoAuth.Role).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Role.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

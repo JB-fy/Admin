@@ -2,7 +2,6 @@ package controller
 
 import (
 	apiMy "api/api/platform/my"
-	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"context"
@@ -28,7 +27,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 			`loginId`:   loginInfo[`loginId`],
 		},
 	}
-	list, err := dao.NewDaoHandler(ctx, &daoAuth.Action).Field(field).Filter(filter).JoinGroupByPrimaryKey().GetModel().All()
+	list, err := daoAuth.Action.HandlerCtx(ctx).Field(field).Filter(filter).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

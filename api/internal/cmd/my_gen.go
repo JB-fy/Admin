@@ -994,13 +994,13 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 							if relTable.RelSuffix != `` {
 								daoParseFieldTmp = `
 			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + " + `" + relTable.RelSuffix + "`: " + daoParseFieldTmp + `
-				table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
+				table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + ` + ` + "` AS `" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + `, daoHandler))`
 							} else {
 								daoParseFieldTmp = `
 			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + `: ` + daoParseFieldTmp + `
-				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(ctx)
+				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
 				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, daoHandler))`
 							}
@@ -1008,12 +1008,12 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 						}
 					}
 					daoParseJoinTmp := `
-		case ` + daoPath + `.ParseDbTable(ctx):
+		case ` + daoPath + `.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
 					if relTable.RelSuffix != `` {
 						daoParseJoinTmp = `
-		case ` + daoPath + `.ParseDbTable(ctx) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `:
-			m = m.LeftJoin(` + daoPath + `.ParseDbTable(ctx)+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
+		case ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `:
+			m = m.LeftJoin(` + daoPath + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + fieldCaseCamel + `)`
 					}
 					if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
 						daoParseJoin += daoParseJoinTmp
@@ -1136,9 +1136,9 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 	}
 	if daoParseJoin != `` {
 		daoParseJoinPoint := `
-		/* case Xxxx.ParseDbTable(ctx):
+		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoHandler.DbTable+` + "`.`" + `+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.ParseDbTable(ctx)+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoHandler.DbTable+` + "`.`" + `+daoThis.PrimaryKey()) */`
+		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoHandler.DbTable+` + "`.`" + `+daoThis.PrimaryKey()) */`
 		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoinPoint+daoParseJoin, 1)
 	}
 	if daoFunc != `` {
@@ -1244,8 +1244,8 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 			}
 		}
 		updateChildIdPathAndLevelList := []map[string]interface{}{}
-		for _, id := range idArr {
-			if pid == id.Uint() { //父级不能是自身
+		for _, id := range daoHandlerThis.IdArr {
+			if pid == id { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 				return
 			}
@@ -1262,7 +1262,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
 				updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-					` + "`" + `newIdPath` + "`" + `: pIdPath + ` + "`-`" + ` + id.String(),
+					` + "`" + `newIdPath` + "`" + `: pIdPath + ` + "`-`" + ` + gconv.String(id),
 					` + "`" + `oldIdPath` + "`" + `: oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `],
 					` + "`" + `newLevel` + "`" + `:  pLevel + 1,
 					` + "`" + `oldLevel` + "`" + `:  oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `],
@@ -1282,8 +1282,8 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 				return
 			}
 		}
-		for _, id := range idArr {
-			if pid == id.Uint() { //父级不能是自身
+		for _, id := range daoHandlerThis.IdArr {
+			if pid == id { //父级不能是自身
 				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 				return
 			}
@@ -1309,7 +1309,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
-	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, idArr).Count()
+	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, daoHandlerThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ` + "``" + `)
 		return

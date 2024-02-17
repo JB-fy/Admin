@@ -138,10 +138,10 @@ const table = reactive({
                             }}
                             onKeydown={(event: any) => {
                                 switch (event.keyCode) {
-                                    // case 27:	//Esc键：Escape
-                                    // case 32:	//空格键：" "
+                                    // case 27:    //Esc键：Escape
+                                    // case 32:    //空格键：" "
                                     case 13: //Enter键：Enter
-                                        // props.rowData.editSort = false	//也会触发onBlur事件
+                                        // props.rowData.editSort = false    //也会触发onBlur事件
                                         currentRef?.blur()
                                         break
                                 }
