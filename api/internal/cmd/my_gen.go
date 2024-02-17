@@ -3032,12 +3032,16 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				isStr = false
 			}
 			statusList := MyGenStatusList(comment, isStr)
+			defaultVal := column[`Default`].String()
+			if defaultVal == `` {
+				defaultVal = statusList[0][0]
+			}
 			if isStr {
 				viewSaveDataInit += `
-        ` + field + `: '` + statusList[0][0] + `',`
+        ` + field + `: '` + defaultVal + `',`
 			} else {
 				viewSaveDataInit += `
-        ` + field + `: ` + statusList[0][0] + `,`
+        ` + field + `: ` + defaultVal + `,`
 			}
 			viewSaveRule += `
         ` + field + `: [
@@ -3271,15 +3275,18 @@ import md5 from 'js-md5'`
                 </el-form-item>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-				viewSaveDataInit += `
-        ` + field + `: ` + gconv.String(column[`Default`].Int()) + `,`
+				defaultVal := column[`Default`].Int()
+				if defaultVal != 0 {
+					viewSaveDataInit += `
+        ` + field + `: ` + gconv.String(defaultVal) + `,`
+				}
 				viewSaveRule += `
         ` + field + `: [
             { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
         ],`
 				viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(column[`Default`].Int()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(defaultVal) + `" />
                     <label>
                         <el-alert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
                     </label>
@@ -3303,8 +3310,11 @@ import md5 from 'js-md5'`
                     <my-select v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
                 </el-form-item>`
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				viewSaveDataInit += `
-        ` + field + `: ` + gconv.String(column[`Default`].Int()) + `,`
+				defaultVal := column[`Default`].Int()
+				if defaultVal != 0 {
+					viewSaveDataInit += `
+        ` + field + `: ` + gconv.String(defaultVal) + `,`
+				}
 				viewSaveRule += `
         ` + field + `: [
             { type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
@@ -3315,26 +3325,41 @@ import md5 from 'js-md5'`
                 </el-form-item>`
 			} else { //默认处理（int等类型）
 				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
+					defaultVal := column[`Default`].Uint()
+					if defaultVal != 0 {
+						viewSaveDataInit += `
+        ` + field + `: ` + gconv.String(defaultVal) + `,`
+					}
 					viewSaveRule += `
         ` + field + `: [
             { type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },
         ],`
 					viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Uint()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 				} else {
+					defaultVal := column[`Default`].Int()
+					if defaultVal != 0 {
+						viewSaveDataInit += `
+        ` + field + `: ` + gconv.String(defaultVal) + `,`
+					}
 					viewSaveRule += `
         ` + field + `: [
             { type: 'integer', trigger: 'change', message: t('validation.input') },
         ],`
 					viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Int()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
+			defaultVal := column[`Default`].Float64()
+			if defaultVal != 0 {
+				viewSaveDataInit += `
+        ` + field + `: ` + gconv.String(defaultVal) + `,`
+			}
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 				viewSaveRule += `
         ` + field + `: [
@@ -3342,7 +3367,7 @@ import md5 from 'js-md5'`
         ],`
 				viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Float64()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 			} else {
 				viewSaveRule += `
@@ -3351,7 +3376,7 @@ import md5 from 'js-md5'`
         ],`
 				viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Float64()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
