@@ -123,6 +123,8 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, daoHandler 
 			switch k {
 			case `id`:
 				updateData[daoHandler.DbTable+`.`+daoThis.PrimaryKey()] = v
+			case `sceneIdArr`:
+				daoHandler.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoHandler.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
@@ -203,7 +205,7 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]i
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(ctx), daoHandler))
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoHandler))
 			daoHandler.AfterField = append(daoHandler.AfterField, v) */
 			case `id`:
 				m = m.Fields(daoHandler.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -368,9 +370,9 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoHandler *daoIndex.DaoHa
 		}
 		daoHandler.JoinTableArr = append(daoHandler.JoinTableArr, joinTable)
 		switch joinTable {
-		/* case Xxxx.ParseDbTable(ctx):
+		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.ParseDbTable(ctx)+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey()) */
+		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey()) */
 		case Role.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.ParseDbTable(m.GetCtx())+`.`+RoleRelToAction.Columns().RoleId)
 		case RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):

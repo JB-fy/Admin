@@ -180,7 +180,7 @@ func (daoThis *roleRelToActionDao) ParseField(field []string, fieldWithParam map
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(ctx), daoHandler))
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoHandler))
 			daoHandler.AfterField = append(daoHandler.AfterField, v) */
 			case `id`:
 				m = m.Fields(daoHandler.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
@@ -302,9 +302,9 @@ func (daoThis *roleRelToActionDao) ParseJoin(joinTable string, daoHandler *daoIn
 		}
 		daoHandler.JoinTableArr = append(daoHandler.JoinTableArr, joinTable)
 		switch joinTable {
-		/* case Xxxx.ParseDbTable(ctx):
+		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.ParseDbTable(ctx)+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey()) */
+		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey()) */
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey())
 		}

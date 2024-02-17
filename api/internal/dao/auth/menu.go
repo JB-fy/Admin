@@ -235,7 +235,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(ctx), daoHandler))
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoHandler))
 			daoHandler.AfterField = append(daoHandler.AfterField, v) */
 			case `id`:
 				m = m.Fields(daoHandler.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)

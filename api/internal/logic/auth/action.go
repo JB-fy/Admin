@@ -35,12 +35,6 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]inte
 		return
 	}
 
-	_, okSceneIdArr := data[`sceneIdArr`]
-	if okSceneIdArr {
-		daoHandlerThis.AfterUpdate[`sceneIdArr`] = data[`sceneIdArr`]
-		delete(data, `sceneIdArr`)
-	}
-
 	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
 	return
 }
