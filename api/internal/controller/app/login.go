@@ -4,7 +4,6 @@ import (
 	"api/api"
 	apiCurrent "api/api/app"
 	"api/internal/cache"
-	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
@@ -29,7 +28,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -58,7 +57,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -107,7 +106,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	userColumns := daoUser.User.Columns()
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -127,7 +126,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -136,7 +135,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 
-	userId, err := dao.NewDaoHandler(ctx, &daoUser.User).Insert(data).GetModel().InsertAndGetId()
+	userId, err := daoUser.User.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
 	if err != nil {
 		return
 	}
@@ -163,7 +162,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		return
 	}
 
-	row, err := dao.NewDaoHandler(ctx, &daoUser.User).Filter(g.Map{daoUser.User.Columns().Phone: req.Phone}).Update(g.Map{daoUser.User.Columns().Password: req.Password}).GetModel().UpdateAndGetAffected()
+	row, err := daoUser.User.HandlerCtx(ctx).Filter(g.Map{daoUser.User.Columns().Phone: req.Phone}).Update(g.Map{daoUser.User.Columns().Password: req.Password}).GetModel().UpdateAndGetAffected()
 	if err != nil {
 		return
 	}

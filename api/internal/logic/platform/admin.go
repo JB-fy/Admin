@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
@@ -38,20 +37,18 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 		}
 	}
 
-	id, err = dao.NewDaoHandler(ctx, &daoThis).Insert(data).GetModel().InsertAndGetId()
+	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
-	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
-	if len(idArr) == 0 {
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
-	hookData := map[string]interface{}{}
 
 	_, okRoleIdArr := data[`roleIdArr`]
 	if okRoleIdArr {
@@ -62,25 +59,24 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
 		}
-		hookData[`roleIdArr`] = data[`roleIdArr`]
+		daoHandlerThis.AfterUpdate[`roleIdArr`] = data[`roleIdArr`]
 		delete(data, `roleIdArr`)
 	}
 
-	row, err = daoHandlerThis.Update(data).HookUpdate(hookData, gconv.SliceUint(idArr)...).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoHandlerThis := dao.NewDaoHandler(ctx, &daoThis).Filter(filter)
-	idArr, _ := daoHandlerThis.GetModel(true).Array(daoThis.PrimaryKey())
-	if len(idArr) == 0 {
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	result, err := daoHandlerThis.HookDelete(gconv.SliceUint(idArr)...).GetModel().Delete()
+	result, err := daoHandlerThis.Delete().GetModel().Delete()
 	row, _ = result.RowsAffected()
 	return
 }

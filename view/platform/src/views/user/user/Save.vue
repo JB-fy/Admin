@@ -10,7 +10,6 @@ const saveForm = reactive({
     loading: false,
     data: {
         gender: 0,
-        isStop: 0,
         ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
@@ -124,7 +123,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.gender')" prop="gender">
                     <el-radio-group v-model="saveForm.data.gender">
-                        <el-radio v-for="(item, index) in tm('user.user.status.gender') as any" :key="index" :label="item.value">
+                        <el-radio v-for="(item, index) in (tm('user.user.status.gender') as any)" :key="index" :label="item.value">
                             {{ item.label }}
                         </el-radio>
                     </el-radio-group>

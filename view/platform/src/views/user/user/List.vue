@@ -180,7 +180,7 @@ const table = reactive({
                     <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
                         <autoicon-ep-edit />
                         {t('common.edit')}
-                    </el-button>
+                    </el-button>,
                 ]
             },
         }, */
