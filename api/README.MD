@@ -27,7 +27,7 @@ gf gen service
 		层级路径	命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
 		排序		命名：sort；			类型：int等类型；		注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
 	常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
-		密码		命名：password后缀；			类型：char(32)；
+		密码		命名：password,passwd后缀；		类型：char(32)；
 		加密盐 		命名：salt后缀；     			类型：char；	注意：password,salt同时存在时，有特殊处理
 		名称		命名：name后缀；				类型：varchar；
 		标识		命名：code后缀；				类型：varchar；
@@ -37,7 +37,7 @@ gf gen service
 		关联ID		命名：id后缀；					类型：int等类型；
 		排序|权重	命名：sort,weight等后缀；		类型：int等类型；
 		是否		命名：is_前缀；					类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		状态|类型	命名：status,type,method,gender等后缀；类型：int等类型或varchar或char；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		状态|类型	命名：status,type,method,pos,position,gender等后缀；类型：int等类型或varchar或char；注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		开始时间	命名：start_前缀；				类型：timestamp或datetime或date；
 		结束时间	命名：end_前缀；				类型：timestamp或datetime或date；
 		(富)文本	命名：remark,desc,msg,message,intro,content后缀；类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
