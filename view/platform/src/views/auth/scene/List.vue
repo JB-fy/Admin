@@ -283,22 +283,22 @@ defineExpose({
     </el-row>
 
     <el-main>
-        <ElAutoResizer>
+        <el-auto-resizer>
             <template #default="{ height, width }">
-                <ElTableV2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
+                <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="50">
                     <template v-if="table.loading" #overlay>
                         <el-icon class="is-loading" color="var(--el-color-primary)" :size="25">
                             <autoicon-ep-loading />
                         </el-icon>
                     </template>
-                </ElTableV2>
+                </el-table-v2>
             </template>
-        </ElAutoResizer>
+        </el-auto-resizer>
     </el-main>
 
     <el-row class="main-table-pagination">
         <el-col :span="24">
-            <ElPagination
+            <el-pagination
                 :total="pagination.total"
                 v-model:currentPage="pagination.page"
                 v-model:page-size="pagination.size"
