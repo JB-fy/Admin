@@ -3342,7 +3342,7 @@ import md5 from 'js-md5'`
         ],`
 				viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Uint()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Float64()) + `" />
                 </el-form-item>`
 			} else {
 				viewSaveRule += `
@@ -3351,7 +3351,7 @@ import md5 from 'js-md5'`
         ],`
 				viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Int()) + `" />
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(column[`Default`].Float64()) + `" />
                 </el-form-item>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
