@@ -925,7 +925,23 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
 				updateData[daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gdb.Raw(` + "`CONCAT('`" + ` + pIdPath + ` + "`-', `" + ` + daoThis.PrimaryKey() + ` + "`)`" + `)
-				updateData[daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1`
+				updateData[daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1
+				//更新所有子孙级的idPath和level
+				updateChildIdPathAndLevelList := []map[string]interface{}{}
+				oldList, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), daoHandler.IdArr).All()
+				for _, oldInfo := range oldList {
+					if gconv.Uint(v) != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
+						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
+							` + "`newIdPath`" + `: pIdPath + ` + "` - `" + ` + oldInfo[daoThis.PrimaryKey()].String(),
+							` + "`oldIdPath`" + `: oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `],
+							` + "`newLevel`" + `:  pLevel + 1,
+							` + "`oldLevel`" + `:  oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `],
+						})
+					}
+				}
+				if len(updateChildIdPathAndLevelList) > 0 {
+					daoHandler.AfterUpdate[` + "`updateChildIdPathAndLevelList`" + `] = updateChildIdPathAndLevelList
+				}`
 					if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
 						daoParseUpdate += daoParseUpdateTmp
 					}
