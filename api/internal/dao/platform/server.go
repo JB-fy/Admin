@@ -61,11 +61,11 @@ func (daoThis *serverDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[st
 func (daoThis *serverDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]interface{}) *gdb.Model {
 	switch len(dbOpt) {
 	case 1:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx)).Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
 	case 2:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx, dbOpt[1])).Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx, dbOpt[1])). /* Safe(). */ Ctx(ctx)
 	default:
-		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)).Ctx(ctx)
+		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
 	}
 }
 

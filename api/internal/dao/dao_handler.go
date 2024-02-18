@@ -76,8 +76,7 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbOpt ...map[string]in
 		daoHandlerObj.DbGroup = daoHandlerObj.dao.ParseDbGroup(ctx)
 		daoHandlerObj.DbTable = daoHandlerObj.dao.ParseDbTable(ctx)
 	}
-	// daoHandlerObj.model = daoHandlerObj.dao.ParseDbCtx(daoHandlerObj.Ctx, dbOpt...)
-	daoHandlerObj.model = g.DB(daoHandlerObj.DbGroup).Model(daoHandlerObj.DbTable).Ctx(ctx)
+	daoHandlerObj.model = g.DB(daoHandlerObj.DbGroup).Model(daoHandlerObj.DbTable). /* Safe(). */ Ctx(ctx)
 	return &daoHandlerObj
 }
 
