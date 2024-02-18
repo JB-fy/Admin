@@ -73,6 +73,10 @@ func (daoThis *menuDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]inte
 // 解析insert
 func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
+		_, okPid := insert[daoThis.Columns().Pid]
+		if !okPid {
+			insert[daoThis.Columns().Pid] = 0
+		}
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {

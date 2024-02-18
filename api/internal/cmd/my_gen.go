@@ -696,6 +696,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 	tplDao := gfile.GetContents(saveFile)
 
+	daoParseInsertBefore := ``
 	daoParseInsert := ``
 	daoHookInsert := ``
 	daoParseUpdate := ``
@@ -883,6 +884,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 
 				if tpl.PidHandle.IsCoexist {
+					daoParseInsertBeforeTmp := `
+		_, okPid := insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]
+		if !okPid {
+			insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `] = 0
+		}`
+					if gstr.Pos(tplDao, daoParseInsertBeforeTmp) == -1 {
+						daoParseInsertBefore += daoParseInsertBeforeTmp
+					}
 					daoParseInsertTmp := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
@@ -1095,6 +1104,11 @@ func (daoThis *` + tpl.TableNameCaseCamelLower + `Dao) UpdateChildIdPathAndLevel
 		}
 	}
 
+	if daoParseInsertBefore != `` {
+		daoParseInsertBeforePoint := `
+		insertData := map[string]interface{}{}`
+		tplDao = gstr.Replace(tplDao, daoParseInsertBeforePoint, daoParseInsertBefore+daoParseInsertBeforePoint, 1)
+	}
 	if daoParseInsert != `` {
 		daoParseInsertPoint := `case ` + "`id`" + `:
 				insertData[daoThis.PrimaryKey()] = v`
@@ -1220,13 +1234,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 				return
 			}
 		}
-	}`
-		if tpl.PidHandle.IsCoexist {
-			tplLogic += ` else {
-		data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `] = 0
-	}`
-		}
-		tplLogic += `
+	}
 `
 	}
 	tplLogic += `

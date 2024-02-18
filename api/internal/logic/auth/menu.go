@@ -40,8 +40,6 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 				return
 			}
 		}
-	} else {
-		data[daoThis.Columns().Pid] = 0
 	}
 
 	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
