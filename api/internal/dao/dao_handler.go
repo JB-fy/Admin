@@ -118,16 +118,19 @@ func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParamL ...map[s
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) FilterOne(key string, val interface{}, isIdArr ...bool) *DaoHandler {
-	return daoHandlerThis.Filter(map[string]interface{}{key: val}, isIdArr...)
+func (daoHandlerThis *DaoHandler) FilterOne(key string, val interface{}) *DaoHandler {
+	return daoHandlerThis.Filter(map[string]interface{}{key: val})
 }
 
-func (daoHandlerThis *DaoHandler) Filter(filter map[string]interface{}, isIdArr ...bool) *DaoHandler {
+func (daoHandlerThis *DaoHandler) Filter(filter map[string]interface{}) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis))
-	if len(isIdArr) > 0 && isIdArr[0] {
-		idArr, _ := daoHandlerThis.GetModel(true).Array(daoHandlerThis.dao.PrimaryKey())
-		daoHandlerThis.IdArr = gconv.SliceUint(idArr)
-	}
+	return daoHandlerThis
+}
+
+// 一般在更新删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
+func (daoHandlerThis *DaoHandler) SetIdArr() *DaoHandler {
+	idArr, _ := daoHandlerThis.GetModel(true).Array(daoHandlerThis.dao.PrimaryKey())
+	daoHandlerThis.IdArr = gconv.SliceUint(idArr)
 	return daoHandlerThis
 }
 

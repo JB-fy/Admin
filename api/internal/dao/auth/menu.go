@@ -153,6 +153,22 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 				}
 				updateData[daoHandler.DbTable+`.`+daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.PrimaryKey() + `)`)
 				updateData[daoHandler.DbTable+`.`+daoThis.Columns().Level] = pLevel + 1
+				//更新所有子孙级的idPath和level
+				updateChildIdPathAndLevelList := []map[string]interface{}{}
+				oldList, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), daoHandler.IdArr).All()
+				for _, oldInfo := range oldList {
+					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
+						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
+							`newIdPath`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`oldIdPath`: oldInfo[daoThis.Columns().IdPath],
+							`newLevel`:  pLevel + 1,
+							`oldLevel`:  oldInfo[daoThis.Columns().Level],
+						})
+					}
+				}
+				if len(updateChildIdPathAndLevelList) > 0 {
+					daoHandler.AfterUpdate[`updateChildIdPathAndLevelList`] = updateChildIdPathAndLevelList
+				}
 			case daoThis.Columns().ExtraData:
 				updateData[daoHandler.DbTable+`.`+k] = gvar.New(v)
 				if gconv.String(v) == `` {

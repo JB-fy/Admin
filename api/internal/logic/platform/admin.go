@@ -44,7 +44,7 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 // 修改
 func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter).SetIdArr()
 	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -68,7 +68,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 // 删除
 func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter).SetIdArr()
 	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return

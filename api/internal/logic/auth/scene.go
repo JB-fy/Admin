@@ -27,7 +27,7 @@ func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]interfa
 // 修改
 func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter).SetIdArr()
 	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -40,7 +40,7 @@ func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]inter
 // 删除
 func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter, true)
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter).SetIdArr()
 	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
