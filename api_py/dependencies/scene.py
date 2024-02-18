@@ -7,7 +7,7 @@ async def scene(request: Request):
     sceneCode = pathArr[1]
     if sceneCode == "":
         raise JsonException(39999998)
-    """ sceneInfo, _ := daoAuth.Scene.ParseDbCtx(r.GetCtx()).Where(daoAuth.Scene.Columns().SceneCode, sceneCode).One()
+    """ sceneInfo, _ := db.query(Scene).filter(Scene.sceneCode == sceneCode).first()
     if sceneInfo.IsEmpty() {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
