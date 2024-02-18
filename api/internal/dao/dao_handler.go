@@ -81,6 +81,10 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbOpt ...map[string]in
 	return &daoHandlerObj
 }
 
+func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
+	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
+}
+
 func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data, daoHandlerThis))
 	return daoHandlerThis
