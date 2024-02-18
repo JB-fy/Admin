@@ -932,7 +932,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-							` + "`newIdPath`" + `: pIdPath + ` + "` - `" + ` + oldInfo[daoThis.PrimaryKey()].String(),
+							` + "`newIdPath`" + `: pIdPath + ` + "`-`" + ` + oldInfo[daoThis.PrimaryKey()].String(),
 							` + "`oldIdPath`" + `: oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `],
 							` + "`newLevel`" + `:  pLevel + 1,
 							` + "`oldLevel`" + `:  oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `],
@@ -1262,19 +1262,6 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 					err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 					return
 				}
-				if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
-					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
-						err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
-						return
-					}
-				}
-			}
-			for _, id := range daoHandlerThis.IdArr {
-				if pid == id { //父级不能是自身
-					err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
-					return
-				}
-				oldInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).One()
 				if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
 					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
 						err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
