@@ -2,7 +2,6 @@ package cmd
 
 import (
 	daoAuth "api/internal/dao/auth"
-	"api/internal/service"
 	"api/internal/utils"
 	"context"
 	"fmt"
@@ -888,7 +887,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
 					daoHandler.AfterInsert[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
 					daoHandler.AfterInsert[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				} else {
@@ -921,7 +920,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				pIdPath := ` + "`0`" + `
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `).One()
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
 					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
 					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
@@ -3690,14 +3689,14 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 	for _, v := range menuNameArr[:len(menuNameArr)-1] {
 		pidVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuName, v).Value(daoAuth.Menu.PrimaryKey())
 		if pidVar.Uint() == 0 {
-			pid, _ = service.AuthMenu().Create(ctx, g.Map{
+			pid, _ = daoAuth.Menu.HandlerCtx(ctx).Insert(g.Map{
 				daoAuth.Menu.Columns().SceneId:   sceneId,
 				daoAuth.Menu.Columns().Pid:       pid,
 				daoAuth.Menu.Columns().MenuName:  v,
 				daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 				daoAuth.Menu.Columns().MenuUrl:   ``,
 				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
-			})
+			}).GetModel().InsertAndGetId()
 		} else {
 			pid = pidVar.Int64()
 		}
@@ -3707,20 +3706,25 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 	idVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuUrl, menuUrl).Value(daoAuth.Menu.PrimaryKey())
 	id := idVar.Uint()
 	if id == 0 {
-		service.AuthMenu().Create(ctx, g.Map{
+		daoAuth.Menu.HandlerCtx(ctx).Insert(g.Map{
 			daoAuth.Menu.Columns().SceneId:   sceneId,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().MenuName:  menuName,
 			daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		})
+		}).GetModel().Insert()
 	} else {
-		service.AuthMenu().Update(ctx, g.Map{daoAuth.Menu.PrimaryKey(): id}, g.Map{
+		daoAuth.Menu.HandlerCtx(ctx).Filter(g.Map{daoAuth.Menu.PrimaryKey(): id}, true).Update(g.Map{
 			daoAuth.Menu.Columns().MenuName:  menuName,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		})
+		}).GetModel().Update()
+		/* service.AuthMenu().Update(ctx, g.Map{daoAuth.Menu.PrimaryKey(): id}, g.Map{
+			daoAuth.Menu.Columns().MenuName:  menuName,
+			daoAuth.Menu.Columns().Pid:       pid,
+			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+		}) */
 	}
 }
 

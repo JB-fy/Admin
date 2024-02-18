@@ -73,8 +73,6 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 				return
 			}
 		}
-		daoHandlerThis.AfterUpdate[`menuIdArr`] = data[`menuIdArr`]
-		delete(data, `menuIdArr`)
 	}
 	_, okActionIdArr := data[`actionIdArr`]
 	if okActionIdArr {
@@ -92,8 +90,6 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 				return
 			}
 		}
-		daoHandlerThis.AfterUpdate[`actionIdArr`] = data[`actionIdArr`]
-		delete(data, `actionIdArr`)
 	}
 
 	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()

@@ -81,7 +81,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoHandler *d
 			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
 					daoHandler.AfterInsert[`pIdPath`] = pInfo[daoThis.Columns().IdPath].String()
 					daoHandler.AfterInsert[`pLevel`] = pInfo[daoThis.Columns().Level].Uint()
 				} else {
@@ -147,7 +147,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 				pIdPath := `0`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).Fields(daoThis.Columns().IdPath, daoThis.Columns().Level).One()
+					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}

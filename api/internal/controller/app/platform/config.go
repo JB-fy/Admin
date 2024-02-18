@@ -4,8 +4,6 @@ import (
 	apiPlatform "api/api/app/platform"
 	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Config struct{}
@@ -22,6 +20,6 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	}
 
 	res = &apiPlatform.ConfigGetRes{}
-	gconv.Struct(config, &res.Config)
+	config.Struct(&res.Config)
 	return
 }

@@ -138,8 +138,9 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 	}
 	//订单回调处理
 	gutil.Dump(notifyInfo)
-	/* err = daoXxxx.Order.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		row, err := tx.Model(daoXxxx.Order.ParseDbTable(ctx)).Where(g.Map{
+	/* xxxxOrderHandler := daoXxxx.Order.HandlerCtx(ctx)
+	err = xxxxOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+		row, err := tx.Model(xxxxOrderHandler.DbTable).Where(g.Map{
 			daoXxxx.Order.Columns().OrderNo:   notifyInfo.OrderNo,
 			daoXxxx.Order.Columns().Price:     notifyInfo.Amount,
 			daoXxxx.Order.Columns().PayStatus: 0,

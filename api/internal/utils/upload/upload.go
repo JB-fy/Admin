@@ -63,10 +63,10 @@ func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 	switch uploadType {
 	case `uploadOfAliyunOss`:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`})
-		return NewUploadOfAliyunOss(ctx, config)
+		return NewUploadOfAliyunOss(ctx, config.Map())
 	// case `uploadOfLocal`:
 	default:
 		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`})
-		return NewUploadOfLocal(ctx, config)
+		return NewUploadOfLocal(ctx, config.Map())
 	}
 }

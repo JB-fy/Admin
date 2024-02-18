@@ -32,7 +32,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	}
 
 	res = &apiPlatform.ConfigGetRes{}
-	gconv.Struct(config, &res.Config)
+	config.Struct(&res.Config)
 	return
 }
 

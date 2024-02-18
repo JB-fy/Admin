@@ -55,9 +55,11 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// dao常用示例
 	// list, err := daoXxxx.Txxx.HandlerCtx(ctx).Filter(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Field(append(&daoXxxx.Txxx.ColumnArr(), `aaaa`)).JoinGroupByPrimaryKey().GetModel().All()
 	/* // 数据库事务
-	err = daoXxxx.Txxx.ParseDbCtx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		// _, err = tx.Model(daoXxxx.Txxx.ParseDbTable(ctx)).Data(g.Map{`Xxxx`: `xxxx`}).Update()
-		// id, err = daoXxxx.Txxx.HandlerCtx(ctx).Insert(g.Map{`Xxxx`: `xxxx`}).GetModel().TX(tx).InsertAndGetId()
+	xxxxTxxxHandler := daoXxxx.Txxx.HandlerCtx(ctx)
+	err = xxxxTxxxHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+		// _, err = tx.Model(xxxxTxxxHandler.DbTable).Data(g.Map{`Xxxx`: `xxxx`}).Update()
+		// id, err := xxxxTxxxHandler.NewModel().TX(tx).Data(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()
+		// id, err := daoXxxx.Txxx.HandlerCtx(ctx).Insert(g.Map{`Xxxx`: `xxxx`}).GetModel().TX(tx).InsertAndGetId()
 		return
 	}) */
 	/*--------数据库使用示例 结束--------*/

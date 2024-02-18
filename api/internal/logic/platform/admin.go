@@ -59,8 +59,6 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
 		}
-		daoHandlerThis.AfterUpdate[`roleIdArr`] = data[`roleIdArr`]
-		delete(data, `roleIdArr`)
 	}
 
 	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()

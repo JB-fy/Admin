@@ -164,6 +164,8 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoHandler *
 				updateData[daoHandler.DbTable+`.`+daoThis.Columns().Salt] = salt
 				password = gmd5.MustEncrypt(password + salt)
 				updateData[daoHandler.DbTable+`.`+k] = password
+			case `roleIdArr`:
+				daoHandler.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoHandler.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式

@@ -125,6 +125,8 @@ func (daoThis *roleDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 			switch k {
 			case `id`:
 				updateData[daoHandler.DbTable+`.`+daoThis.PrimaryKey()] = v
+			case `menuIdArr`, `actionIdArr`:
+				daoHandler.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
 					updateData[daoHandler.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式

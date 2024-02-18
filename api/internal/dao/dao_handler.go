@@ -76,8 +76,12 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbOpt ...map[string]in
 		daoHandlerObj.DbGroup = daoHandlerObj.dao.ParseDbGroup(ctx)
 		daoHandlerObj.DbTable = daoHandlerObj.dao.ParseDbTable(ctx)
 	}
-	daoHandlerObj.model = g.DB(daoHandlerObj.DbGroup).Model(daoHandlerObj.DbTable). /* Safe(). */ Ctx(ctx)
+	daoHandlerObj.model = daoHandlerObj.NewModel()
 	return &daoHandlerObj
+}
+
+func (daoHandlerThis *DaoHandler) NewModel() *gdb.Model {
+	return g.DB(daoHandlerThis.DbGroup).Model(daoHandlerThis.DbTable). /* Safe(). */ Ctx(daoHandlerThis.Ctx)
 }
 
 func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
@@ -112,6 +116,10 @@ func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParamL ...map[s
 		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookSelect(daoHandlerThis))
 	}
 	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) FilterOne(key string, val interface{}, isIdArr ...bool) *DaoHandler {
+	return daoHandlerThis.Filter(map[string]interface{}{key: val}, isIdArr...)
 }
 
 func (daoHandlerThis *DaoHandler) Filter(filter map[string]interface{}, isIdArr ...bool) *DaoHandler {
