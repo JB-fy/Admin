@@ -191,17 +191,45 @@ func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
 	return daoHandlerThis
 }
 
+// 列表（有联表默认group主键）
+func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
+	return daoHandlerThis.JoinGroupByPrimaryKey().All()
+}
+
 // 总数（有联表默认group主键）
-func (daoHandlerThis *DaoHandler) Count() (count int, err error) {
+func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
 	if daoHandlerThis.isJoin() {
-		count, err = daoHandlerThis.GetModel(true).Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
-		return
+		return daoHandlerThis.GetModel(true).Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
 	}
-	count, err = daoHandlerThis.model.Count()
-	return
+	return daoHandlerThis.model.Count()
 }
 
 // 开启事务
 func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
+}
+
+func (daoHandlerThis *DaoHandler) Page(page, limit int) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Page(page, limit)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) All() (gdb.Result, error) {
+	return daoHandlerThis.model.All()
+}
+
+func (daoHandlerThis *DaoHandler) One(where ...interface{}) (gdb.Record, error) {
+	return daoHandlerThis.model.One(where...)
+}
+
+func (daoHandlerThis *DaoHandler) Array(fieldsAndWhere ...interface{}) ([]gdb.Value, error) {
+	return daoHandlerThis.model.Array(fieldsAndWhere...)
+}
+
+func (daoHandlerThis *DaoHandler) Value(fieldsAndWhere ...interface{}) (gdb.Value, error) {
+	return daoHandlerThis.model.Value(fieldsAndWhere...)
+}
+
+func (daoHandlerThis *DaoHandler) Count(where ...interface{}) (int, error) {
+	return daoHandlerThis.model.Count(where...)
 }

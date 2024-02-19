@@ -45,11 +45,11 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	/**--------权限验证 结束--------**/
 
 	daoHandlerThis := daoAuth.Role.HandlerCtx(ctx).Filters(filter)
-	count, err := daoHandlerThis.Count()
+	count, err := daoHandlerThis.CountOfApi()
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Fields(field).Order(req.Sort).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
+	list, err := daoHandlerThis.Fields(field).Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
 	if err != nil {
 		return
 	}

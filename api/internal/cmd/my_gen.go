@@ -1902,13 +1902,13 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	daoHandlerThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter)`
 		if option.IsCount {
 			tplController += `
-	count, err := daoHandlerThis.Count()
+	count, err := daoHandlerThis.CountOfApi()
 	if err != nil {
 		return
 	}`
 		}
 		tplController += `
-	list, err := daoHandlerThis.Fields(field).Order(req.Sort).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
+	list, err := daoHandlerThis.Fields(field).Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
 	if err != nil {
 		return
 	}
