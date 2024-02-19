@@ -83,7 +83,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoPlatform.Admin.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoPlatform.Admin.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
 	if err != nil {
 		return
 	}

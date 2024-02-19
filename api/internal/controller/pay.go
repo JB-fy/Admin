@@ -84,7 +84,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
 			daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
 			daoXxxx.Order.Columns().PayStatus: 0,
-		}).GetModel().One()
+		}).One()
 		if orderInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999998, ``)
 			return

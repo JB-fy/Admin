@@ -70,7 +70,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 			`loginId`:   loginInfo[`loginId`],
 		},
 	}
-	count, err := daoAuth.Action.HandlerCtx(ctx).Filters(filter).GetModel().Count()
+	count, err := daoAuth.Action.HandlerCtx(ctx).Filters(filter).Count()
 	if count == 0 {
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return

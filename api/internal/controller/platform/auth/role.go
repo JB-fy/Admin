@@ -81,7 +81,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Role.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Role.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
 	if err != nil {
 		return
 	}

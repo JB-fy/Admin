@@ -28,7 +28,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	info, _ := daoUser.User.HandlerCtx(ctx).Filter(`loginName`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -57,7 +57,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	info, _ := daoUser.User.HandlerCtx(ctx).Filter(`loginName`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -106,7 +106,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	userColumns := daoUser.User.Columns()
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Account: req.Account}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filter(userColumns.Account, req.Account).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -126,7 +126,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filter(userColumns.Phone, req.Phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return

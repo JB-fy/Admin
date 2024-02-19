@@ -1958,7 +1958,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().One()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
 	if err != nil {
 		return
 	}
@@ -2109,7 +2109,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().All()
+	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().ListOfApi()
 	if err != nil {
 		return
 	}

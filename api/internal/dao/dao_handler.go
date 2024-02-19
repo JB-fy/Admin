@@ -200,6 +200,11 @@ func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
 	return daoHandlerThis.model.Count()
 }
 
+// 详情（有联表默认group主键）
+func (daoHandlerThis *DaoHandler) OneOfApi() (gdb.Record, error) {
+	return daoHandlerThis.JoinGroupByPrimaryKey().One()
+}
+
 /*--------复制原模型方法并封装一些常用方法 开始--------*/
 // 开启事务
 func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {

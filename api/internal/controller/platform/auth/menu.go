@@ -81,7 +81,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
 	if err != nil {
 		return
 	}
@@ -184,7 +184,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 
 	field = append(field, `tree`)
 
-	list, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().All()
+	list, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().ListOfApi()
 	if err != nil {
 		return
 	}
