@@ -44,7 +44,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := daoAuth.Scene.HandlerCtx(ctx).Filter(filter)
+	daoHandlerThis := daoAuth.Scene.HandlerCtx(ctx).Filters(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
@@ -81,7 +81,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Scene.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Scene.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

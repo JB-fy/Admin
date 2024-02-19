@@ -26,7 +26,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 	phone := req.Phone
 	switch req.UseScene {
 	case 0, 2: //登录，密码找回
-		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Phone: phone}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Phone: phone}).GetModel().One()
 		if info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
@@ -36,7 +36,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			return
 		}
 	case 1: //注册
-		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Phone: phone}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Phone: phone}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -62,7 +62,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39990005, ``)
 			return
 		}
-		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Phone: phone}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Phone: phone}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990006, ``)
 			return

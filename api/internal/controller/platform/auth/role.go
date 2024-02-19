@@ -44,7 +44,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := daoAuth.Role.HandlerCtx(ctx).Filter(filter)
+	daoHandlerThis := daoAuth.Role.HandlerCtx(ctx).Filters(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
@@ -81,7 +81,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Role.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Role.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

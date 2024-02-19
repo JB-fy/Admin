@@ -28,7 +28,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -57,7 +57,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{`loginName`: req.LoginName}).GetModel().One()
+	info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{`loginName`: req.LoginName}).GetModel().One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -106,7 +106,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	userColumns := daoUser.User.Columns()
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Account: req.Account}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Account: req.Account}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -126,7 +126,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := daoUser.User.HandlerCtx(ctx).Filter(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
+		info, _ := daoUser.User.HandlerCtx(ctx).Filters(g.Map{userColumns.Phone: req.Phone}).GetModel().One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -162,7 +162,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		return
 	}
 
-	row, err := daoUser.User.HandlerCtx(ctx).Filter(g.Map{daoUser.User.Columns().Phone: req.Phone}).Update(g.Map{daoUser.User.Columns().Password: req.Password}).GetModel().UpdateAndGetAffected()
+	row, err := daoUser.User.HandlerCtx(ctx).Filters(g.Map{daoUser.User.Columns().Phone: req.Phone}).Update(g.Map{daoUser.User.Columns().Password: req.Password}).GetModel().UpdateAndGetAffected()
 	if err != nil {
 		return
 	}

@@ -44,7 +44,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := daoUser.User.HandlerCtx(ctx).Filter(filter)
+	daoHandlerThis := daoUser.User.HandlerCtx(ctx).Filters(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
@@ -81,7 +81,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoUser.User.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoUser.User.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

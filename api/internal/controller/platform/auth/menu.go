@@ -44,7 +44,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := daoAuth.Menu.HandlerCtx(ctx).Filter(filter)
+	daoHandlerThis := daoAuth.Menu.HandlerCtx(ctx).Filters(filter)
 	count, err := daoHandlerThis.Count()
 	if err != nil {
 		return
@@ -81,7 +81,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Menu.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}
@@ -184,7 +184,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 
 	field = append(field, `tree`)
 
-	list, err := daoAuth.Menu.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
+	list, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

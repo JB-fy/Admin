@@ -80,14 +80,6 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbOpt ...map[string]in
 	return &daoHandlerObj
 }
 
-func (daoHandlerThis *DaoHandler) NewModel() *gdb.Model {
-	return g.DB(daoHandlerThis.DbGroup).Model(daoHandlerThis.DbTable). /* Safe(). */ Ctx(daoHandlerThis.Ctx)
-}
-
-func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
-	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
-}
-
 func (daoHandlerThis *DaoHandler) Insert(data map[string]interface{}) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data, daoHandlerThis))
 	return daoHandlerThis
@@ -118,19 +110,12 @@ func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParamL ...map[s
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) FilterOne(key string, val interface{}) *DaoHandler {
-	return daoHandlerThis.Filter(map[string]interface{}{key: val})
+func (daoHandlerThis *DaoHandler) Filter(key string, val interface{}) *DaoHandler {
+	return daoHandlerThis.Filters(map[string]interface{}{key: val})
 }
 
-func (daoHandlerThis *DaoHandler) Filter(filter map[string]interface{}) *DaoHandler {
+func (daoHandlerThis *DaoHandler) Filters(filter map[string]interface{}) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis))
-	return daoHandlerThis
-}
-
-// 一般在更新删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
-func (daoHandlerThis *DaoHandler) SetIdArr() *DaoHandler {
-	idArr, _ := daoHandlerThis.GetModel(true).Array(daoHandlerThis.dao.PrimaryKey())
-	daoHandlerThis.IdArr = gconv.SliceUint(idArr)
 	return daoHandlerThis
 }
 
@@ -149,6 +134,19 @@ func (daoHandlerThis *DaoHandler) Join(joinTable string) *DaoHandler {
 	return daoHandlerThis
 }
 
+// 生成模型
+func (daoHandlerThis *DaoHandler) NewModel() *gdb.Model {
+	return g.DB(daoHandlerThis.DbGroup).Model(daoHandlerThis.DbTable). /* Safe(). */ Ctx(daoHandlerThis.Ctx)
+}
+
+// 一般在更新|删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
+func (daoHandlerThis *DaoHandler) SetIdArr() *DaoHandler {
+	idArr, _ := daoHandlerThis.GetModel(true).Array(daoHandlerThis.dao.PrimaryKey())
+	daoHandlerThis.IdArr = gconv.SliceUint(idArr)
+	return daoHandlerThis
+}
+
+// 返回当前模型（当外部还需要做特殊处理时使用）
 func (daoHandlerThis *DaoHandler) GetModel(isClone ...bool) *gdb.Model {
 	if len(isClone) > 0 && isClone[0] {
 		return daoHandlerThis.model.Clone()
@@ -157,13 +155,13 @@ func (daoHandlerThis *DaoHandler) GetModel(isClone ...bool) *gdb.Model {
 }
 
 // 判断是否联表
-func (daoHandlerThis *DaoHandler) IsJoin() bool {
+func (daoHandlerThis *DaoHandler) isJoin() bool {
 	return len(daoHandlerThis.JoinTableArr) > 0
 }
 
 // 联表则GroupBy主键
 func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
-	if daoHandlerThis.IsJoin() {
+	if daoHandlerThis.isJoin() {
 		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey())
 	}
 	return daoHandlerThis
@@ -171,10 +169,15 @@ func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
 
 // 总数（有联表默认group主键）
 func (daoHandlerThis *DaoHandler) Count() (count int, err error) {
-	if daoHandlerThis.IsJoin() {
+	if daoHandlerThis.isJoin() {
 		count, err = daoHandlerThis.GetModel(true).Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
 		return
 	}
 	count, err = daoHandlerThis.model.Count()
 	return
+}
+
+// 开启事务
+func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
+	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
 }

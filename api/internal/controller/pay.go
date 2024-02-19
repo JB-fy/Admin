@@ -80,7 +80,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			return
 		}
 		//订单查询
-		/* orderInfo, _ := daoXxxx.Order.HandlerCtx(ctx).Filter(g.Map{
+		/* orderInfo, _ := daoXxxx.Order.HandlerCtx(ctx).Filters(g.Map{
 			daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
 			daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
 			daoXxxx.Order.Columns().PayStatus: 0,

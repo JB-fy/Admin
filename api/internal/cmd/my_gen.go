@@ -1245,7 +1245,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 // 修改
 func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter).SetIdArr()
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
 	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1307,7 +1307,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 // 删除
 func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filter(filter).SetIdArr()
+	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
 	if len(daoHandlerThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1899,7 +1899,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 `
 		}
 		tplController += `
-	daoHandlerThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filter(filter)`
+	daoHandlerThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter)`
 		if option.IsCount {
 			tplController += `
 	count, err := daoHandlerThis.Count()
@@ -1959,7 +1959,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}
@@ -2110,7 +2110,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filter(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
+	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}
@@ -3722,7 +3722,7 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		}).GetModel().Insert()
 	} else {
-		daoAuth.Menu.HandlerCtx(ctx).FilterOne(daoAuth.Menu.PrimaryKey(), id).SetIdArr().Update(g.Map{
+		daoAuth.Menu.HandlerCtx(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).SetIdArr().Update(g.Map{
 			daoAuth.Menu.Columns().MenuName:  menuName,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
