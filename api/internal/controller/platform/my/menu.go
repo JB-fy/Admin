@@ -28,7 +28,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 			`loginId`:   loginInfo[`loginId`],
 		},
 	}
-	list, err := daoAuth.Menu.HandlerCtx(ctx).Field(field).Filters(filter).JoinGroupByPrimaryKey().GetModel().All()
+	list, err := daoAuth.Menu.HandlerCtx(ctx).Fields(field).Filters(filter).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

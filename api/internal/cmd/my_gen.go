@@ -1908,7 +1908,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	}`
 		}
 		tplController += `
-	list, err := daoHandlerThis.Field(field).Order([]string{req.Sort}).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
+	list, err := daoHandlerThis.Fields(field).Order(req.Sort).JoinGroupByPrimaryKey().GetModel().Page(req.Page, req.Limit).All()
 	if err != nil {
 		return
 	}
@@ -1959,7 +1959,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}
@@ -2110,7 +2110,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Field(field).JoinGroupByPrimaryKey().GetModel().All()
+	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}

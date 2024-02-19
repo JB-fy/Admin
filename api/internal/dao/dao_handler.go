@@ -98,7 +98,18 @@ func (daoHandlerThis *DaoHandler) Delete() *DaoHandler {
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParamL ...map[string]interface{}) *DaoHandler {
+func (daoHandlerThis *DaoHandler) Field(field string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField([]string{field}, map[string]interface{}{}, daoHandlerThis))
+	return daoHandlerThis
+	// return daoHandlerThis.Fields([]string{field})
+}
+
+/* func (daoHandlerThis *DaoHandler) Fields(field []string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField(field, map[string]interface{}{}, daoHandlerThis))
+	return daoHandlerThis
+} */
+
+func (daoHandlerThis *DaoHandler) Fields(field []string, fieldWithParamL ...map[string]interface{}) *DaoHandler {
 	fieldWithParam := map[string]interface{}{}
 	if len(fieldWithParamL) > 0 {
 		fieldWithParam = fieldWithParamL[0]
@@ -107,6 +118,11 @@ func (daoHandlerThis *DaoHandler) Field(field []string, fieldWithParamL ...map[s
 	if len(daoHandlerThis.AfterField) > 0 || len(daoHandlerThis.AfterFieldWithParam) > 0 {
 		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookSelect(daoHandlerThis))
 	}
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) FieldWithParam(fieldWithParam map[string]interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField([]string{}, fieldWithParam, daoHandlerThis))
 	return daoHandlerThis
 }
 
@@ -119,12 +135,20 @@ func (daoHandlerThis *DaoHandler) Filters(filter map[string]interface{}) *DaoHan
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) Group(group []string) *DaoHandler {
+func (daoHandlerThis *DaoHandler) Group(group string) *DaoHandler {
+	return daoHandlerThis.Groups([]string{group})
+}
+
+func (daoHandlerThis *DaoHandler) Groups(group []string) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseGroup(group, daoHandlerThis))
 	return daoHandlerThis
 }
 
-func (daoHandlerThis *DaoHandler) Order(order []string) *DaoHandler {
+func (daoHandlerThis *DaoHandler) Order(order string) *DaoHandler {
+	return daoHandlerThis.Orders([]string{order})
+}
+
+func (daoHandlerThis *DaoHandler) Orders(order []string) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseOrder(order, daoHandlerThis))
 	return daoHandlerThis
 }
