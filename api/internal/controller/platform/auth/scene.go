@@ -49,7 +49,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Fields(field).Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
+	list, err := daoHandlerThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
 	if err != nil {
 		return
 	}
@@ -81,7 +81,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Scene.HandlerCtx(ctx).Filters(filter).Fields(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := daoAuth.Scene.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}

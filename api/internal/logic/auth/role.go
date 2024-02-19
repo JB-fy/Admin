@@ -44,7 +44,7 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 		}
 	}
 
-	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
+	id, err = daoThis.HandlerCtx(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
@@ -92,7 +92,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 		}
 	}
 
-	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
@@ -105,7 +105,6 @@ func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	result, err := daoHandlerThis.Delete().GetModel().Delete()
-	row, _ = result.RowsAffected()
+	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
 	return
 }

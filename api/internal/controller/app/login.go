@@ -135,7 +135,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 
-	userId, err := daoUser.User.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
+	userId, err := daoUser.User.HandlerCtx(ctx).HookInsert(data).InsertAndGetId()
 	if err != nil {
 		return
 	}
@@ -162,7 +162,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		return
 	}
 
-	row, err := daoUser.User.HandlerCtx(ctx).Filters(g.Map{daoUser.User.Columns().Phone: req.Phone}).Update(g.Map{daoUser.User.Columns().Password: req.Password}).GetModel().UpdateAndGetAffected()
+	row, err := daoUser.User.HandlerCtx(ctx).Filter(daoUser.User.Columns().Phone, req.Phone).HookUpdate(g.Map{daoUser.User.Columns().Password: req.Password}).UpdateAndGetAffected()
 	if err != nil {
 		return
 	}

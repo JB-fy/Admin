@@ -20,7 +20,7 @@ func init() {
 // 新增
 func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Scene
-	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
+	id, err = daoThis.HandlerCtx(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
@@ -33,7 +33,7 @@ func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]inter
 		return
 	}
 
-	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
@@ -46,7 +46,6 @@ func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]inter
 		return
 	}
 
-	result, err := daoHandlerThis.Delete().GetModel().Delete()
-	row, _ = result.RowsAffected()
+	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
 	return
 }

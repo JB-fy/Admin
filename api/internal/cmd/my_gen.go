@@ -1238,7 +1238,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 `
 	}
 	tplLogic += `
-	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
+	id, err = daoThis.HandlerCtx(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
@@ -1300,7 +1300,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
@@ -1323,8 +1323,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	result, err := daoHandlerThis.Delete().GetModel().Delete()
-	row, _ = result.RowsAffected()
+	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
 	return
 }
 `
@@ -1908,7 +1907,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	}`
 		}
 		tplController += `
-	list, err := daoHandlerThis.Fields(field).Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
+	list, err := daoHandlerThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
 	if err != nil {
 		return
 	}
@@ -1959,7 +1958,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).JoinGroupByPrimaryKey().GetModel().One()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().One()
 	if err != nil {
 		return
 	}
@@ -2110,7 +2109,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).JoinGroupByPrimaryKey().GetModel().All()
+	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().JoinGroupByPrimaryKey().GetModel().All()
 	if err != nil {
 		return
 	}
@@ -3696,14 +3695,14 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 	for _, v := range menuNameArr[:len(menuNameArr)-1] {
 		pidVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuName, v).Value(daoAuth.Menu.PrimaryKey())
 		if pidVar.Uint() == 0 {
-			pid, _ = daoAuth.Menu.HandlerCtx(ctx).Insert(g.Map{
+			pid, _ = daoAuth.Menu.HandlerCtx(ctx).HookInsert(g.Map{
 				daoAuth.Menu.Columns().SceneId:   sceneId,
 				daoAuth.Menu.Columns().Pid:       pid,
 				daoAuth.Menu.Columns().MenuName:  v,
 				daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 				daoAuth.Menu.Columns().MenuUrl:   ``,
 				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
-			}).GetModel().InsertAndGetId()
+			}).InsertAndGetId()
 		} else {
 			pid = pidVar.Int64()
 		}
@@ -3713,20 +3712,22 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 	idVar, _ := daoAuth.Menu.ParseDbCtx(ctx).Where(daoAuth.Menu.Columns().SceneId, sceneId).Where(daoAuth.Menu.Columns().MenuUrl, menuUrl).Value(daoAuth.Menu.PrimaryKey())
 	id := idVar.Uint()
 	if id == 0 {
-		daoAuth.Menu.HandlerCtx(ctx).Insert(g.Map{
+		daoAuth.Menu.HandlerCtx(ctx).HookInsert(g.Map{
 			daoAuth.Menu.Columns().SceneId:   sceneId,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().MenuName:  menuName,
 			daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		}).GetModel().Insert()
+		}).Insert()
 	} else {
-		daoAuth.Menu.HandlerCtx(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).SetIdArr().Update(g.Map{
-			daoAuth.Menu.Columns().MenuName:  menuName,
-			daoAuth.Menu.Columns().Pid:       pid,
-			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		}).GetModel().Update()
+		daoAuth.Menu.HandlerCtx(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).
+			SetIdArr().
+			HookUpdate(g.Map{
+				daoAuth.Menu.Columns().MenuName:  menuName,
+				daoAuth.Menu.Columns().Pid:       pid,
+				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
+			}).Update()
 	}
 }
 

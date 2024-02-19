@@ -37,7 +37,7 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 		}
 	}
 
-	id, err = daoThis.HandlerCtx(ctx).Insert(data).GetModel().InsertAndGetId()
+	id, err = daoThis.HandlerCtx(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
@@ -61,7 +61,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 		}
 	}
 
-	row, err = daoHandlerThis.Update(data).GetModel().UpdateAndGetAffected()
+	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
@@ -74,7 +74,6 @@ func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]i
 		return
 	}
 
-	result, err := daoHandlerThis.Delete().GetModel().Delete()
-	row, _ = result.RowsAffected()
+	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
 	return
 }
