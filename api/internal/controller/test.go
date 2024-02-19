@@ -43,7 +43,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	/* //生成登录token（测试用）
 	claims := utils.CustomClaims{LoginId: 1}
-	sceneConfig, _ := daoAuth.Scene.ParseDbCtx(ctx).Where(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneConfig)
+	sceneConfig, _ := daoAuth.Scene.HandlerCtx(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneConfig)
 	jwt := utils.NewJWT(ctx, sceneConfig.Map())
 	token, err := jwt.CreateToken(claims)
 	fmt.Println(token) */

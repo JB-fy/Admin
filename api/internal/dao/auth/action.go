@@ -192,8 +192,8 @@ func (daoThis *actionDao) HookDelete(daoHandler *daoIndex.DaoHandler) gdb.HookHa
 				return
 			}
 
-			ActionRelToScene.ParseDbCtx(ctx).Where(ActionRelToScene.Columns().ActionId, daoHandler.IdArr).Delete()
-			RoleRelToAction.ParseDbCtx(ctx).Where(RoleRelToAction.Columns().ActionId, daoHandler.IdArr).Delete()
+			ActionRelToScene.HandlerCtx(ctx).Filter(ActionRelToScene.Columns().ActionId, daoHandler.IdArr).Delete()
+			RoleRelToAction.HandlerCtx(ctx).Filter(RoleRelToAction.Columns().ActionId, daoHandler.IdArr).Delete()
 			return
 		},
 	}
@@ -244,7 +244,7 @@ func (daoThis *actionDao) HookSelect(daoHandler *daoIndex.DaoHandler) gdb.HookHa
 				for _, v := range daoHandler.AfterField {
 					switch v {
 					case `sceneIdArr`:
-						idArr, _ := ActionRelToScene.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
+						idArr, _ := ActionRelToScene.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
 						record[v] = gvar.New(idArr)
 					default:
 						record[v] = gvar.New(nil)
@@ -395,7 +395,7 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id 
 	relDao := ActionRelToScene
 	priKey := relDao.Columns().ActionId
 	relKey := relDao.Columns().SceneId
-	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relIdArrOfOldTmp, _ := relDao.HandlerCtx(ctx).Filter(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
@@ -415,7 +415,10 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id 
 	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
+		relDao.HandlerCtx(ctx).Filters(g.Map{
+			priKey: id,
+			relKey: deleteRelIdArr,
+		}).Delete()
 	}
 	/**----删除关联 结束----**/
 }

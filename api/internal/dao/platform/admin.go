@@ -233,7 +233,7 @@ func (daoThis *adminDao) HookDelete(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 				return
 			}
 
-			daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoHandler.IdArr).Delete()
+			daoAuth.RoleRelOfPlatformAdmin.HandlerCtx(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoHandler.IdArr).Delete()
 			return
 		},
 	}
@@ -284,7 +284,7 @@ func (daoThis *adminDao) HookSelect(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 				for _, v := range daoHandler.AfterField {
 					switch v {
 					case `roleIdArr`:
-						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
+						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
 						record[v] = gvar.New(idArr)
 					default:
 						record[v] = gvar.New(nil)
@@ -410,7 +410,7 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []uint, id ui
 	relDao := daoAuth.RoleRelOfPlatformAdmin
 	priKey := relDao.Columns().AdminId
 	relKey := relDao.Columns().RoleId
-	relIdArrOfOldTmp, _ := relDao.ParseDbCtx(ctx).Where(priKey, id).Array(relKey)
+	relIdArrOfOldTmp, _ := relDao.HandlerCtx(ctx).Filter(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
@@ -430,7 +430,10 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []uint, id ui
 	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		relDao.ParseDbCtx(ctx).Where(priKey, id).Where(relKey, deleteRelIdArr).Delete()
+		relDao.HandlerCtx(ctx).Filters(g.Map{
+			priKey: id,
+			relKey: deleteRelIdArr,
+		}).Delete()
 	}
 	/**----删除关联 结束----**/
 }

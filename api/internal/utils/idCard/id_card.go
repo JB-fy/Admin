@@ -21,7 +21,7 @@ func NewIdCard(ctx context.Context, idCardTypeOpt ...string) IdCard {
 	if len(idCardTypeOpt) > 0 {
 		idCardType = idCardTypeOpt[0]
 	} else {
-		idCardTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `idCardType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		idCardTypeVar, _ := daoPlatform.Config.HandlerCtx(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `idCardType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		idCardType = idCardTypeVar.String()
 	}
 

@@ -29,7 +29,7 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 	if okPid {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
@@ -59,12 +59,12 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 	if okPid {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			oldList, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), daoHandlerThis.IdArr).All()
+			oldList, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), daoHandlerThis.IdArr).All()
 			for _, oldInfo := range oldList {
 				if pid == oldInfo[daoThis.PrimaryKey()].Uint() { //父级不能是自身
 					err = utils.NewErrorCode(ctx, 29999996, ``)
@@ -102,7 +102,7 @@ func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	count, _ := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().Pid, daoHandlerThis.IdArr).Count()
+	count, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.Columns().Pid, daoHandlerThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ``)
 		return

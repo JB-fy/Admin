@@ -261,6 +261,11 @@ func (daoHandlerThis *DaoHandler) Unscoped() *DaoHandler {
 	return daoHandlerThis
 }
 
+func (daoHandlerThis *DaoHandler) Data(data ...interface{}) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Data(data...)
+	return daoHandlerThis
+}
+
 func (daoHandlerThis *DaoHandler) Distinct() *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Distinct()
 	return daoHandlerThis

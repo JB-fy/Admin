@@ -131,7 +131,7 @@ func (daoThis *menuDao) HookInsert(daoHandler *daoIndex.DaoHandler) gdb.HookHand
 				}
 			}
 			if len(updateSelfData) > 0 {
-				daoThis.ParseDbCtx(ctx).Where(daoThis.PrimaryKey(), id).Data(updateSelfData).Update()
+				daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}
 			return
 		},

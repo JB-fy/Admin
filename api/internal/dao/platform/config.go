@@ -316,16 +316,7 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoHandler *daoIndex.DaoHa
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config gdb.Record, err error) {
-	result, err := daoThis.ParseDbCtx(ctx).Where(daoThis.Columns().ConfigKey, configKeyArr).Fields(daoThis.Columns().ConfigKey, daoThis.Columns().ConfigValue).All()
-	if err != nil {
-		return
-	}
-	config = gdb.Record{}
-	for _, v := range result {
-		key := v[daoThis.Columns().ConfigKey].String()
-		config[key] = v[daoThis.Columns().ConfigValue]
-	}
-	return
+	return daoThis.HandlerCtx(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).Pluck(daoThis.Columns().ConfigKey, daoThis.Columns().ConfigValue)
 }
 
 // 保存配置

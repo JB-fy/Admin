@@ -25,7 +25,7 @@ func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
 	if len(vodTypeOpt) > 0 {
 		vodType = vodTypeOpt[0]
 	} else {
-		vodTypeVar, _ := daoPlatform.Config.ParseDbCtx(ctx).Where(daoPlatform.Config.Columns().ConfigKey, `vodType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		vodTypeVar, _ := daoPlatform.Config.HandlerCtx(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		vodType = vodTypeVar.String()
 	}
 

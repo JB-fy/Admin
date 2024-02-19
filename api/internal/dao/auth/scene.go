@@ -170,9 +170,9 @@ func (daoThis *sceneDao) HookDelete(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 				return
 			}
 
-			Menu.ParseDbCtx(ctx).Where(Menu.Columns().SceneId, daoHandler.IdArr).Delete()
-			ActionRelToScene.ParseDbCtx(ctx).Where(ActionRelToScene.Columns().SceneId, daoHandler.IdArr).Delete()
-			Role.ParseDbCtx(ctx).Where(Role.Columns().SceneId, daoHandler.IdArr).Delete()
+			Menu.HandlerCtx(ctx).Filter(Menu.Columns().SceneId, daoHandler.IdArr).Delete()
+			ActionRelToScene.HandlerCtx(ctx).Filter(ActionRelToScene.Columns().SceneId, daoHandler.IdArr).Delete()
+			Role.HandlerCtx(ctx).Filter(Role.Columns().SceneId, daoHandler.IdArr).Delete()
 			return
 		},
 	}
