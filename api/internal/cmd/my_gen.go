@@ -896,7 +896,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					daoHandler.AfterInsert[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
 					daoHandler.AfterInsert[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				} else {
@@ -918,7 +918,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 			if len(updateSelfData) > 0 {
-				daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), id).Data(updateSelfData).Update()
+				daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}`
 					if gstr.Pos(tplDao, daoHookInsertTmp) == -1 {
 						daoHookInsert += daoHookInsertTmp
@@ -929,7 +929,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				pIdPath := ` + "`0`" + `
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
 					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
@@ -937,7 +937,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				updateData[daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1
 				//更新所有子孙级的idPath和level
 				updateChildIdPathAndLevelList := []map[string]interface{}{}
-				oldList, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), daoHandler.IdArr).All()
+				oldList, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoHandler.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
@@ -3674,14 +3674,14 @@ func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionNam
 	idVar, _ := daoAuth.Action.HandlerCtx(ctx).Filter(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
 	id := idVar.Int64()
 	if id == 0 {
-		id, _ = daoAuth.Action.ParseDbCtx(ctx).Data(map[string]interface{}{
+		id, _ = daoAuth.Action.HandlerCtx(ctx).HookInsert(map[string]interface{}{
 			daoAuth.Action.Columns().ActionCode: actionCode,
 			daoAuth.Action.Columns().ActionName: actionName,
 		}).InsertAndGetId()
 	} else {
 		daoAuth.Action.HandlerCtx(ctx).Filter(daoAuth.Action.PrimaryKey(), id).HookUpdate(g.Map{daoAuth.Action.Columns().ActionName: actionName}).Update()
 	}
-	daoAuth.ActionRelToScene.ParseDbCtx(ctx).Data(map[string]interface{}{
+	daoAuth.ActionRelToScene.HandlerCtx(ctx).Data(map[string]interface{}{
 		daoAuth.ActionRelToScene.Columns().ActionId: id,
 		daoAuth.ActionRelToScene.Columns().SceneId:  sceneId,
 	}).Save()

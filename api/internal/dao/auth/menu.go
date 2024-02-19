@@ -85,7 +85,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoHandler *d
 			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					daoHandler.AfterInsert[`pIdPath`] = pInfo[daoThis.Columns().IdPath].String()
 					daoHandler.AfterInsert[`pLevel`] = pInfo[daoThis.Columns().Level].Uint()
 				} else {
@@ -151,7 +151,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 				pIdPath := `0`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}
@@ -159,7 +159,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 				updateData[daoHandler.DbTable+`.`+daoThis.Columns().Level] = pLevel + 1
 				//更新所有子孙级的idPath和level
 				updateChildIdPathAndLevelList := []map[string]interface{}{}
-				oldList, _ := daoThis.ParseDbCtx(m.GetCtx()).Where(daoThis.PrimaryKey(), daoHandler.IdArr).All()
+				oldList, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoHandler.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{

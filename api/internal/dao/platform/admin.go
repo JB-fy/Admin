@@ -423,7 +423,7 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []uint, id ui
 				relKey: v,
 			})
 		}
-		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.HandlerCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 结束----**/
 

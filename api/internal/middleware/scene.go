@@ -15,7 +15,7 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	sceneInfo, _ := daoAuth.Scene.ParseDbCtx(r.GetCtx()).Where(daoAuth.Scene.Columns().SceneCode, sceneCode).One()
+	sceneInfo, _ := daoAuth.Scene.HandlerCtx(r.GetCtx()).Filter(daoAuth.Scene.Columns().SceneCode, sceneCode).One()
 	if sceneInfo.IsEmpty() {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return

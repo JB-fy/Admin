@@ -408,7 +408,7 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id 
 				relKey: v,
 			})
 		}
-		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.HandlerCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 结束----**/
 

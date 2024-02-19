@@ -408,7 +408,7 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []uint, id uin
 				relKey: v,
 			})
 		}
-		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.HandlerCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 结束----**/
 
@@ -441,7 +441,7 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []uint, id u
 				relKey: v,
 			})
 		}
-		relDao.ParseDbCtx(ctx).Data(insertList).Insert()
+		relDao.HandlerCtx(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 开始----**/
 

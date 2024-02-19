@@ -324,7 +324,10 @@ func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{
 	daoHandlerThis := daoThis.HandlerCtx(ctx)
 	err = daoHandlerThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
-			_, err = tx.Model(daoHandlerThis.DbTable).Data(g.Map{daoThis.Columns().ConfigKey: k, daoThis.Columns().ConfigValue: v}).Save()
+			_, err = tx.Model(daoHandlerThis.DbTable).Data(g.Map{
+				daoThis.Columns().ConfigKey:   k,
+				daoThis.Columns().ConfigValue: v,
+			}).Save()
 			if err != nil {
 				return
 			}
