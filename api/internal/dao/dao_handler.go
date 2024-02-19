@@ -200,9 +200,84 @@ func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
 	return daoHandlerThis.model.Count()
 }
 
+/*--------复制原模型方法并封装一些常用方法 开始--------*/
 // 开启事务
 func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
+}
+
+func (daoHandlerThis *DaoHandler) TX(tx gdb.TX) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.TX(tx)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) LockShared() *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.LockShared()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) LockUpdate() *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.LockUpdate()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Master() *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Master()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Slave() *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Slave()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Schema(schema string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Schema(schema)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Partition(partitions ...string) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Partition(partitions...)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Union(unions ...*gdb.Model) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Union(unions...)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) UnionAll(unions ...*gdb.Model) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.UnionAll(unions...)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Unscoped() *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Unscoped()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Distinct() *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Distinct()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Page(page, limit int) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Page(page, limit)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Offset(offset int) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Offset(offset)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Limit(limit ...int) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Limit(limit...)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Save(data ...interface{}) (result sql.Result, err error) {
+	return daoHandlerThis.model.Save(data...)
 }
 
 func (daoHandlerThis *DaoHandler) Insert(data ...interface{}) (result sql.Result, err error) {
@@ -257,11 +332,51 @@ func (daoHandlerThis *DaoHandler) Value(fieldsAndWhere ...interface{}) (gdb.Valu
 	return daoHandlerThis.model.Value(fieldsAndWhere...)
 }
 
+func (daoHandlerThis *DaoHandler) Pluck(key string, val string) (gdb.Record, error) {
+	list, err := daoHandlerThis.model.Fields(key, val).All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	data := gdb.Record{}
+	for _, v := range list {
+		data[v[key].String()] = v[val]
+	}
+	return data, nil
+}
+
 func (daoHandlerThis *DaoHandler) Count(where ...interface{}) (int, error) {
 	return daoHandlerThis.model.Count(where...)
 }
 
-func (daoHandlerThis *DaoHandler) Page(page, limit int) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Page(page, limit)
-	return daoHandlerThis
+func (daoHandlerThis *DaoHandler) CountColumn(column string) (int, error) {
+	return daoHandlerThis.model.CountColumn(column)
 }
+
+func (daoHandlerThis *DaoHandler) Sum(column string) (float64, error) {
+	return daoHandlerThis.model.Sum(column)
+}
+
+func (daoHandlerThis *DaoHandler) Avg(column string) (float64, error) {
+	return daoHandlerThis.model.Avg(column)
+}
+
+func (daoHandlerThis *DaoHandler) Min(column string) (float64, error) {
+	return daoHandlerThis.model.Min(column)
+}
+
+func (daoHandlerThis *DaoHandler) Max(column string) (float64, error) {
+	return daoHandlerThis.model.Max(column)
+}
+
+func (daoHandlerThis *DaoHandler) Increment(column string, amount interface{}) (sql.Result, error) {
+	return daoHandlerThis.model.Increment(column, amount)
+}
+
+func (daoHandlerThis *DaoHandler) Decrement(column string, amount interface{}) (sql.Result, error) {
+	return daoHandlerThis.model.Decrement(column, amount)
+}
+
+/*--------复制原模型方法并封装一些常用方法 结束--------*/
