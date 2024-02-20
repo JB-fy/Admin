@@ -39,7 +39,7 @@ type DaoModel struct {
 	IdArr               []uint
 	AfterInsert         map[string]interface{}
 	AfterUpdate         map[string]interface{}
-	AfterField          []string
+	AfterField          *gset.StrSet
 	AfterFieldWithParam map[string]interface{}
 	JoinTableSet        *gset.StrSet
 }
@@ -51,7 +51,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 		IdArr:               []uint{},
 		AfterInsert:         map[string]interface{}{},
 		AfterUpdate:         map[string]interface{}{},
-		AfterField:          []string{},
+		AfterField:          gset.NewStrSet(),
 		AfterFieldWithParam: map[string]interface{}{},
 		JoinTableSet:        gset.NewStrSet(),
 	}
@@ -160,7 +160,7 @@ func (daoModelThis *DaoModel) FieldWithParam(fieldWithParam map[string]interface
 }
 
 func (daoModelThis *DaoModel) HookSelect() *DaoModel {
-	if len(daoModelThis.AfterField) > 0 || len(daoModelThis.AfterFieldWithParam) > 0 {
+	if daoModelThis.AfterField.Size() > 0 || len(daoModelThis.AfterFieldWithParam) > 0 {
 		daoModelThis.Hook(daoModelThis.dao.HookSelect(daoModelThis))
 	}
 	return daoModelThis

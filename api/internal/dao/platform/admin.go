@@ -233,14 +233,14 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]in
 			switch v {
 			/* case `xxxx`:
 			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField = append(daoModel.AfterField, v) */
+			daoModel.AfterField.Add(v) */
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(`IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `) AS ` + v)
 			case `roleIdArr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
-				daoModel.AfterField = append(daoModel.AfterField, v)
+				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -268,7 +268,7 @@ func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 			for _, record := range result {
-				for _, v := range daoModel.AfterField {
+				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `roleIdArr`:
 						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.DaoModelCtx(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)

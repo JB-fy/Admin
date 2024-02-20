@@ -167,7 +167,7 @@ func (daoThis *roleRelToMenuDao) ParseField(field []string, fieldWithParam map[s
 			switch v {
 			/* case `xxxx`:
 			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField = append(daoModel.AfterField, v) */
+			daoModel.AfterField.Add(v) */
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			default:
@@ -197,7 +197,7 @@ func (daoThis *roleRelToMenuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.Hoo
 				return
 			}
 			for _, record := range result {
-				for _, v := range daoModel.AfterField {
+				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					default:
 						record[v] = gvar.New(nil)

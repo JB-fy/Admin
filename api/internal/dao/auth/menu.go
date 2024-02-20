@@ -265,7 +265,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 			switch v {
 			/* case `xxxx`:
 			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField = append(daoModel.AfterField, v) */
+			daoModel.AfterField.Add(v) */
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
@@ -289,7 +289,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraData)
 				// m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, \`$.i18n\`)) AS i18n`))	//mysql不能直接转成对象返回
-				daoModel.AfterField = append(daoModel.AfterField, v)
+				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -317,7 +317,7 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 			for _, record := range result {
-				for _, v := range daoModel.AfterField {
+				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `showMenu`:
 						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])

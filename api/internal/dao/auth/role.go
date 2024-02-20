@@ -201,7 +201,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 			switch v {
 			/* case `xxxx`:
 			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField = append(daoModel.AfterField, v) */
+			daoModel.AfterField.Add(v) */
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
@@ -212,13 +212,13 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
 			case `menuIdArr`, `actionIdArr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
-				daoModel.AfterField = append(daoModel.AfterField, v)
+				daoModel.AfterField.Add(v)
 			case `tableName`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().TableId)
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + Scene.Columns().SceneCode)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
-				daoModel.AfterField = append(daoModel.AfterField, v)
+				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -246,7 +246,7 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 			for _, record := range result {
-				for _, v := range daoModel.AfterField {
+				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `menuIdArr`:
 						idArr, _ := RoleRelToMenu.DaoModelCtx(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
