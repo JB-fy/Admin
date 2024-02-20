@@ -980,7 +980,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 								` + "`pIdPathOfNew`" + `: v1[` + "`pIdPathOfNew`" + `],
 							},
 							` + "`childLevel`" + `: g.Map{
-								` + "`pLevelOfOld`" + `: v1[` + "`pIdPathOfOld`" + `],
+								` + "`pLevelOfOld`" + `: v1[` + "`pLevelOfOld`" + `],
 								` + "`pLevelOfNew`" + `: v1[` + "`pLevelOfNew`" + `],
 							},
 						}).Update()
@@ -992,7 +992,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 					}
 					daoParseFilterTmp := `
 			case ` + "`pIdPathOfOld`" + `: //父级IdPath（旧）
-				m = m.WhereGTE(daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, gconv.String(v)+` + "`-%`" + `)`
+				m = m.WhereLike(daoHandler.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, gconv.String(v)+` + "`-%`" + `)`
 					if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 						daoParseFilter += daoParseFilterTmp
 					}
