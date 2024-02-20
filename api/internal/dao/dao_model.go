@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -26,8 +27,7 @@ type DaoInterface interface {
 	ParseJoin(joinTable string, daoModel *DaoModel) gdb.ModelHandler
 
 	PrimaryKey() string
-	// ColumnArr() []string
-	// ColumnArrG() *garray.StrArray
+	// ColumnArr() *garray.StrArray
 }
 
 type DaoModel struct {
@@ -41,7 +41,7 @@ type DaoModel struct {
 	AfterUpdate         map[string]interface{}
 	AfterField          []string
 	AfterFieldWithParam map[string]interface{}
-	JoinTableArr        []string
+	JoinTableSet        *gset.StrSet
 }
 
 func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]interface{}) *DaoModel {
@@ -53,7 +53,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 		AfterUpdate:         map[string]interface{}{},
 		AfterField:          []string{},
 		AfterFieldWithParam: map[string]interface{}{},
-		JoinTableArr:        []string{},
+		JoinTableSet:        gset.NewStrSet(),
 	}
 	switch len(dbOpt) {
 	case 1:
@@ -95,7 +95,7 @@ func (daoModelThis *DaoModel) SetIdArr() *DaoModel {
 
 // 判断是否联表
 func (daoModelThis *DaoModel) IsJoin() bool {
-	return len(daoModelThis.JoinTableArr) > 0
+	return daoModelThis.JoinTableSet.Size() > 0
 }
 
 // 联表时，GroupBy主键

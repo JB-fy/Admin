@@ -11,7 +11,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -374,10 +373,10 @@ func (daoThis *adminDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 // 解析join
 func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		if garray.NewStrArrayFrom(daoModel.JoinTableArr).Contains(joinTable) {
+		if daoModel.JoinTableSet.Contains(joinTable) {
 			return m
 		}
-		daoModel.JoinTableArr = append(daoModel.JoinTableArr, joinTable)
+		daoModel.JoinTableSet.Add(joinTable)
 		switch joinTable {
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
