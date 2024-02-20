@@ -57,14 +57,14 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 	}
 	switch len(dbOpt) {
 	case 1:
-		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx, dbOpt[0])
-		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx)
-	case 2:
-		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx, dbOpt[0])
-		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx, dbOpt[1])
-	default:
+		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx, dbOpt[0])
 		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx)
+	case 2:
+		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx, dbOpt[0])
+		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx, dbOpt[1])
+	default:
 		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx)
+		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx)
 	}
 	daoModelObj.model = daoModelObj.NewModel()
 	return &daoModelObj
@@ -78,7 +78,7 @@ func (daoModelThis *DaoModel) NewModel() *gdb.Model {
 
 // 返回当前模型的副本（当外部还需要做特殊处理时使用）
 func (daoModelThis *DaoModel) CloneModel() *gdb.Model {
-	return daoModelThis.model.Clone()
+	return daoModelThis.GetModel().Clone()
 }
 
 // 返回当前模型（当外部还需要做特殊处理时使用）
@@ -101,7 +101,7 @@ func (daoModelThis *DaoModel) IsJoin() bool {
 // 联表时，GroupBy主键
 func (daoModelThis *DaoModel) GroupPriOnJoin() *DaoModel {
 	if daoModelThis.IsJoin() {
-		daoModelThis.model = daoModelThis.model.Group(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey())
+		daoModelThis.Group(`id`)
 	}
 	return daoModelThis
 }
@@ -114,7 +114,7 @@ func (daoModelThis *DaoModel) ListPri() (gdb.Result, error) {
 // 总数（联表时，主键去重）
 func (daoModelThis *DaoModel) CountPri() (int, error) {
 	if daoModelThis.IsJoin() {
-		return daoModelThis.CloneModel().Group(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey()).Distinct().Fields(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey()).Count()
+		return daoModelThis.CloneModel(). /* Group(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey()). */ Distinct().CountColumn(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey())
 	}
 	return daoModelThis.Count()
 }
