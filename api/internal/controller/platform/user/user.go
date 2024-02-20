@@ -81,7 +81,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoUser.User.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
+	info, err := daoUser.User.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoOfApi()
 	if err != nil {
 		return
 	}

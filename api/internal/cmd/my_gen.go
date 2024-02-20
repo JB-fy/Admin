@@ -1958,7 +1958,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoOfApi()
 	if err != nil {
 		return
 	}

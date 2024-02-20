@@ -81,7 +81,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().OneOfApi()
+	info, err := daoAuth.Menu.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoOfApi()
 	if err != nil {
 		return
 	}

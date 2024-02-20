@@ -100,9 +100,7 @@ func (daoHandlerThis *DaoHandler) HookDelete() *DaoHandler {
 }
 
 func (daoHandlerThis *DaoHandler) Field(field string) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField([]string{field}, map[string]interface{}{}, daoHandlerThis))
-	return daoHandlerThis
-	// return daoHandlerThis.Fields([]string{field})
+	return daoHandlerThis.Fields([]string{field})
 }
 
 func (daoHandlerThis *DaoHandler) Fields(field []string) *DaoHandler {
@@ -159,29 +157,31 @@ func (daoHandlerThis *DaoHandler) NewModel() *gdb.Model {
 	return g.DB(daoHandlerThis.DbGroup).Model(daoHandlerThis.DbTable). /* Safe(). */ Ctx(daoHandlerThis.Ctx)
 }
 
+// 返回当前模型（当外部还需要做特殊处理时使用）
+func (daoHandlerThis *DaoHandler) GetModel() *gdb.Model {
+	return daoHandlerThis.model
+}
+
+// 返回当前模型的副本（当外部还需要做特殊处理时使用）
+func (daoHandlerThis *DaoHandler) CloneModel() *gdb.Model {
+	return daoHandlerThis.model.Clone()
+}
+
 // 一般在更新|删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
 func (daoHandlerThis *DaoHandler) SetIdArr() *DaoHandler {
-	idArr, _ := daoHandlerThis.model.Clone().Array(daoHandlerThis.dao.PrimaryKey())
+	idArr, _ := daoHandlerThis.CloneModel().Array(daoHandlerThis.dao.PrimaryKey())
 	daoHandlerThis.IdArr = gconv.SliceUint(idArr)
 	return daoHandlerThis
 }
 
-// 返回当前模型（当外部还需要做特殊处理时使用）
-func (daoHandlerThis *DaoHandler) GetModel(isClone ...bool) *gdb.Model {
-	if len(isClone) > 0 && isClone[0] {
-		return daoHandlerThis.model.Clone()
-	}
-	return daoHandlerThis.model
-}
-
 // 判断是否联表
-func (daoHandlerThis *DaoHandler) isJoin() bool {
+func (daoHandlerThis *DaoHandler) IsJoin() bool {
 	return len(daoHandlerThis.JoinTableArr) > 0
 }
 
-// 联表则GroupBy主键
-func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
-	if daoHandlerThis.isJoin() {
+// 当有联表时，GroupBy主键
+func (daoHandlerThis *DaoHandler) GroupPriOnJoin() *DaoHandler {
+	if daoHandlerThis.IsJoin() {
 		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey())
 	}
 	return daoHandlerThis
@@ -189,20 +189,20 @@ func (daoHandlerThis *DaoHandler) JoinGroupByPrimaryKey() *DaoHandler {
 
 // 列表（有联表默认group主键）
 func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
-	return daoHandlerThis.JoinGroupByPrimaryKey().All()
+	return daoHandlerThis.GroupPriOnJoin().All()
 }
 
 // 总数（有联表默认group主键）
 func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
-	if daoHandlerThis.isJoin() {
-		return daoHandlerThis.model.Clone().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
+	if daoHandlerThis.IsJoin() {
+		return daoHandlerThis.CloneModel().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
 	}
 	return daoHandlerThis.model.Count()
 }
 
 // 详情（有联表默认group主键）
-func (daoHandlerThis *DaoHandler) OneOfApi() (gdb.Record, error) {
-	return daoHandlerThis.JoinGroupByPrimaryKey().One()
+func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
+	return daoHandlerThis.GroupPriOnJoin().One()
 }
 
 /*--------复制原模型方法并封装一些常用方法 开始--------*/
