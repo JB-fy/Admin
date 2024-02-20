@@ -34,7 +34,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *configDao) DaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *configDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -303,12 +303,12 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config gdb.Record, err error) {
-	return daoThis.DaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).Pluck(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	return daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).Pluck(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
 }
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{}) (err error) {
-	daoModelThis := daoThis.DaoModel(ctx)
+	daoModelThis := daoThis.CtxDaoModel(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
 			_, err = tx.Model(daoModelThis.DbTable).Data(g.Map{

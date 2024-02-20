@@ -22,7 +22,7 @@ func NewLogin() *Login {
 // 获取加密盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
 	adminColumns := daoPlatform.Admin.Columns()
-	info, _ := daoPlatform.Admin.DaoModel(ctx).Filter(`loginName`, req.LoginName).One()
+	info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(`loginName`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -46,7 +46,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
 	adminColumns := daoPlatform.Admin.Columns()
-	info, _ := daoPlatform.Admin.DaoModel(ctx).Filter(`loginName`, req.LoginName).One()
+	info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(`loginName`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return

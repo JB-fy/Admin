@@ -44,7 +44,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	daoModelThis := daoUser.User.DaoModel(ctx).Filters(filter)
+	daoModelThis := daoUser.User.CtxDaoModel(ctx).Filters(filter)
 	count, err := daoModelThis.CountPri()
 	if err != nil {
 		return
@@ -81,7 +81,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoUser.User.DaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
+	info, err := daoUser.User.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
 	if err != nil {
 		return
 	}

@@ -33,7 +33,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *sceneDao) DaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *sceneDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -156,9 +156,9 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			Menu.DaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
-			ActionRelToScene.DaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
-			Role.DaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete()
+			Menu.CtxDaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
+			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
+			Role.CtxDaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete()
 			return
 		},
 	}

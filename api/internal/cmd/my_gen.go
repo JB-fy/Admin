@@ -200,7 +200,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	}
 	for {
 		if option.SceneCode != `` {
-			count, _ := daoAuth.Scene.DaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).Count()
+			count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).Count()
 			if count > 0 {
 				break
 			}
@@ -465,7 +465,7 @@ isCoverEnd:
 // 模板参数处理
 func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
-	sceneInfo, _ := daoAuth.Scene.DaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
+	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
 	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
 	tpl = &MyGenTpl{
 		TableColumnList:         tableColumnList,
@@ -896,7 +896,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.DaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					daoModel.AfterInsert[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
 					daoModel.AfterInsert[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				} else {
@@ -918,7 +918,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 			if len(updateSelfData) > 0 {
-				daoThis.DaoModel(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
+				daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}`
 					if gstr.Pos(tplDao, daoHookInsertTmp) == -1 {
 						daoHookInsert += daoHookInsertTmp
@@ -929,7 +929,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				pIdPath := ` + "`0`" + `
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.DaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
 					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
 				}
@@ -937,7 +937,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1
 				//更新所有子孙级的idPath和level
 				updateChildIdPathAndLevelList := []map[string]interface{}{}
-				oldList, _ := daoThis.DaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoModel.IdArr).All()
+				oldList, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
@@ -974,7 +974,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				case ` + "`updateChildIdPathAndLevelList`" + `: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{` + "`pIdPathOfOld`" + `: ` + "`父级IdPath（旧）`" + `, ` + "`pIdPathOfNew`" + `: ` + "`父级IdPath（新）`" + `, ` + "`pLevelOfOld`" + `: ` + "`父级Level（旧）`" + `, ` + "`pLevelOfNew`" + `: ` + "`父级Level（新）`" + `}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.DaoModel(ctx).Filter(` + "`pIdPathOfOld`" + `, v1[` + "`pIdPathOfOld`" + `]).HookUpdate(g.Map{
+						daoThis.CtxDaoModel(ctx).Filter(` + "`pIdPathOfOld`" + `, v1[` + "`pIdPathOfOld`" + `]).HookUpdate(g.Map{
 							` + "`childIdPath`" + `: g.Map{
 								` + "`pIdPathOfOld`" + `: v1[` + "`pIdPathOfOld`" + `],
 								` + "`pIdPathOfNew`" + `: v1[` + "`pIdPathOfNew`" + `],
@@ -1241,7 +1241,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 	if okPid {
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
-			pInfo, _ := daoThis.DaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
@@ -1251,14 +1251,14 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 `
 	}
 	tplLogic += `
-	id, err = daoThis.DaoModel(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoThis.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	daoModelThis := daoThis.DaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1272,12 +1272,12 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 			tplLogic += `
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
-			pInfo, _ := daoThis.DaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
 			}
-			oldList, _ := daoThis.DaoModel(ctx).Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
+			oldList, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
 			for _, oldInfo := range oldList {
 				if pid == oldInfo[daoThis.PrimaryKey()].Uint() { //父级不能是自身
 					err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
@@ -1295,7 +1295,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 			tplLogic += `
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
-			pInfo, _ := daoThis.DaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
@@ -1320,7 +1320,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 // 删除
 func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	daoModelThis := daoThis.DaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1328,7 +1328,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
-	count, _ := daoThis.DaoModel(ctx).Filter(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, daoModelThis.IdArr).Count()
+	count, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, daoModelThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ` + "``" + `)
 		return
@@ -1911,7 +1911,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 `
 		}
 		tplController += `
-	daoModelThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.DaoModel(ctx).Filters(filter)`
+	daoModelThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.CtxDaoModel(ctx).Filters(filter)`
 		if option.IsCount {
 			tplController += `
 	count, err := daoModelThis.CountPri()
@@ -1971,7 +1971,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.DaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
 	if err != nil {
 		return
 	}
@@ -2122,7 +2122,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.DaoModel(ctx).Filters(filter).Fields(field).HookSelect().ListPri()
+	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().ListPri()
 	if err != nil {
 		return
 	}
@@ -3684,17 +3684,17 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionName string) {
 	actionName = gstr.Replace(actionName, `/`, `-`)
 
-	idVar, _ := daoAuth.Action.DaoModel(ctx).Filter(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
+	idVar, _ := daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
 	id := idVar.Int64()
 	if id == 0 {
-		id, _ = daoAuth.Action.DaoModel(ctx).HookInsert(map[string]interface{}{
+		id, _ = daoAuth.Action.CtxDaoModel(ctx).HookInsert(map[string]interface{}{
 			daoAuth.Action.Columns().ActionCode: actionCode,
 			daoAuth.Action.Columns().ActionName: actionName,
 		}).InsertAndGetId()
 	} else {
-		daoAuth.Action.DaoModel(ctx).Filter(daoAuth.Action.PrimaryKey(), id).HookUpdate(g.Map{daoAuth.Action.Columns().ActionName: actionName}).Update()
+		daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.PrimaryKey(), id).HookUpdate(g.Map{daoAuth.Action.Columns().ActionName: actionName}).Update()
 	}
-	daoAuth.ActionRelToScene.DaoModel(ctx).Data(map[string]interface{}{
+	daoAuth.ActionRelToScene.CtxDaoModel(ctx).Data(map[string]interface{}{
 		daoAuth.ActionRelToScene.Columns().ActionId: id,
 		daoAuth.ActionRelToScene.Columns().SceneId:  sceneId,
 	}).Save()
@@ -3706,12 +3706,12 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 
 	var pid int64 = 0
 	for _, v := range menuNameArr[:len(menuNameArr)-1] {
-		pidVar, _ := daoAuth.Menu.DaoModel(ctx).Filters(g.Map{
+		pidVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
 			daoAuth.Menu.Columns().SceneId:  sceneId,
 			daoAuth.Menu.Columns().MenuName: v,
 		}).Value(daoAuth.Menu.PrimaryKey())
 		if pidVar.Uint() == 0 {
-			pid, _ = daoAuth.Menu.DaoModel(ctx).HookInsert(g.Map{
+			pid, _ = daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
 				daoAuth.Menu.Columns().SceneId:   sceneId,
 				daoAuth.Menu.Columns().Pid:       pid,
 				daoAuth.Menu.Columns().MenuName:  v,
@@ -3725,13 +3725,13 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 	}
 
 	menuName = menuNameArr[len(menuNameArr)-1]
-	idVar, _ := daoAuth.Menu.DaoModel(ctx).Filters(g.Map{
+	idVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
 		daoAuth.Menu.Columns().SceneId: sceneId,
 		daoAuth.Menu.Columns().MenuUrl: menuUrl,
 	}).Value(daoAuth.Menu.PrimaryKey())
 	id := idVar.Uint()
 	if id == 0 {
-		daoAuth.Menu.DaoModel(ctx).HookInsert(g.Map{
+		daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
 			daoAuth.Menu.Columns().SceneId:   sceneId,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().MenuName:  menuName,
@@ -3740,7 +3740,7 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		}).Insert()
 	} else {
-		daoAuth.Menu.DaoModel(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).
+		daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).
 			SetIdArr().
 			HookUpdate(g.Map{
 				daoAuth.Menu.Columns().MenuName:  menuName,

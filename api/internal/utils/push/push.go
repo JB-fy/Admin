@@ -61,7 +61,7 @@ func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	if len(pushTypeOpt) > 0 {
 		pushType = pushTypeOpt[0]
 	} else {
-		pushTypeVar, _ := daoPlatform.Config.DaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushType`).Value(daoPlatform.Config.Columns().ConfigValue)
+		pushTypeVar, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushType`).Value(daoPlatform.Config.Columns().ConfigValue)
 		pushType = pushTypeVar.String()
 	}
 

@@ -35,7 +35,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *actionDao) DaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *actionDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -179,8 +179,8 @@ func (daoThis *actionDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				return
 			}
 
-			ActionRelToScene.DaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, daoModel.IdArr).Delete()
-			RoleRelToAction.DaoModel(ctx).Filter(RoleRelToAction.Columns().ActionId, daoModel.IdArr).Delete()
+			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, daoModel.IdArr).Delete()
+			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().ActionId, daoModel.IdArr).Delete()
 			return
 		},
 	}
@@ -231,7 +231,7 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `sceneIdArr`:
-						idArr, _ := ActionRelToScene.DaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
+						idArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
 						record[v] = gvar.New(idArr)
 					default:
 						record[v] = gvar.New(nil)
@@ -382,7 +382,7 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id 
 	relDao := ActionRelToScene
 	priKey := relDao.Columns().ActionId
 	relKey := relDao.Columns().SceneId
-	relIdArrOfOldTmp, _ := relDao.DaoModel(ctx).Filter(priKey, id).Array(relKey)
+	relIdArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
@@ -395,14 +395,14 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id 
 				relKey: v,
 			})
 		}
-		relDao.DaoModel(ctx).Data(insertList).Insert()
+		relDao.CtxDaoModel(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 结束----**/
 
 	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		relDao.DaoModel(ctx).Filters(g.Map{
+		relDao.CtxDaoModel(ctx).Filters(g.Map{
 			priKey: id,
 			relKey: deleteRelIdArr,
 		}).Delete()

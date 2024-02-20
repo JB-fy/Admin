@@ -33,7 +33,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *roleRelToMenuDao) DaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *roleRelToMenuDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 

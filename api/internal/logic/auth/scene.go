@@ -20,14 +20,14 @@ func init() {
 // 新增
 func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Scene
-	id, err = daoThis.DaoModel(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoThis.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
-	daoModelThis := daoThis.DaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -40,7 +40,7 @@ func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]inter
 // 删除
 func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Scene
-	daoModelThis := daoThis.DaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
