@@ -276,6 +276,11 @@ func (daoHandlerThis *DaoHandler) Hook(hook gdb.HookHandler) *DaoHandler {
 	return daoHandlerThis
 }
 
+func (daoHandlerThis *DaoHandler) Cache(option gdb.CacheOption) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Cache(option)
+	return daoHandlerThis
+}
+
 func (daoHandlerThis *DaoHandler) Data(data ...interface{}) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Data(data...)
 	return daoHandlerThis
@@ -303,6 +308,10 @@ func (daoHandlerThis *DaoHandler) Limit(limit ...int) *DaoHandler {
 
 func (daoHandlerThis *DaoHandler) Save(data ...interface{}) (result sql.Result, err error) {
 	return daoHandlerThis.model.Save(data...)
+}
+
+func (daoHandlerThis *DaoHandler) Replace(data ...interface{}) (result sql.Result, err error) {
+	return daoHandlerThis.model.Replace(data...)
 }
 
 func (daoHandlerThis *DaoHandler) Insert(data ...interface{}) (result sql.Result, err error) {
@@ -336,6 +345,22 @@ func (daoHandlerThis *DaoHandler) DeleteAndGetAffected(where ...interface{}) (af
 		return 0, err
 	}
 	return result.RowsAffected()
+}
+
+func (daoHandlerThis *DaoHandler) Chunk(size int, handler gdb.ChunkHandler) {
+	daoHandlerThis.model.Chunk(size, handler)
+}
+
+func (daoHandlerThis *DaoHandler) Scan(pointer interface{}, where ...interface{}) error {
+	return daoHandlerThis.model.Scan(pointer, where...)
+}
+
+func (daoHandlerThis *DaoHandler) ScanAndCount(pointer interface{}, totalCount *int, useFieldForCount bool) (err error) {
+	return daoHandlerThis.model.ScanAndCount(pointer, totalCount, useFieldForCount)
+}
+
+func (daoHandlerThis *DaoHandler) ScanList(structSlicePointer interface{}, bindToAttrName string, relationAttrNameAndFields ...string) (err error) {
+	return daoHandlerThis.model.ScanList(structSlicePointer, bindToAttrName, relationAttrNameAndFields...)
 }
 
 func (daoHandlerThis *DaoHandler) All() (gdb.Result, error) {
@@ -388,6 +413,10 @@ func (daoHandlerThis *DaoHandler) Plucks(field []string, key string) (map[string
 		result[v[key].String()] = v
 	}
 	return result, nil
+}
+
+func (daoHandlerThis *DaoHandler) HasField(field string) (bool, error) {
+	return daoHandlerThis.model.HasField(field)
 }
 
 func (daoHandlerThis *DaoHandler) Count(where ...interface{}) (int, error) {
