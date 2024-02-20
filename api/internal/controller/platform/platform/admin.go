@@ -46,12 +46,12 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := daoPlatform.Admin.HandlerCtx(ctx).Filters(filter)
-	count, err := daoHandlerThis.CountPri()
+	daoModelThis := daoPlatform.Admin.HandlerCtx(ctx).Filters(filter)
+	count, err := daoModelThis.CountPri()
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListPri()
+	list, err := daoModelThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListPri()
 	if err != nil {
 		return
 	}

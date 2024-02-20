@@ -34,9 +34,9 @@ var (
 	}
 )
 
-// 获取daoHandler
-func (daoThis *sceneDao) HandlerCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoHandler {
-	return daoIndex.NewDaoHandler(ctx, daoThis, dbOpt...)
+// 获取daoModel
+func (daoThis *sceneDao) HandlerCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
@@ -70,7 +70,7 @@ func (daoThis *sceneDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]int
 }
 
 // 解析insert
-func (daoThis *sceneDao) ParseInsert(insert map[string]interface{}, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
@@ -84,15 +84,15 @@ func (daoThis *sceneDao) ParseInsert(insert map[string]interface{}, daoHandler *
 			}
 		}
 		m = m.Data(insertData)
-		if len(daoHandler.AfterInsert) > 0 {
-			m = m.Hook(daoThis.HookInsert(daoHandler))
+		if len(daoModel.AfterInsert) > 0 {
+			m = m.Hook(daoThis.HookInsert(daoModel))
 		}
 		return m
 	}
 }
 
 // hook insert
-func (daoThis *sceneDao) HookInsert(daoHandler *daoIndex.DaoHandler) gdb.HookHandler {
+func (daoThis *sceneDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -106,16 +106,16 @@ func (daoThis *sceneDao) HookInsert(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 }
 
 // 解析update
-func (daoThis *sceneDao) ParseUpdate(update map[string]interface{}, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
 			case `id`:
-				updateData[daoHandler.DbTable+`.`+daoThis.PrimaryKey()] = v
+				updateData[daoModel.DbTable+`.`+daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					updateData[daoHandler.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 				}
 			}
 		}
@@ -140,7 +140,7 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]interface{}, daoHandler *
 }
 
 // hook update
-func (daoThis *sceneDao) HookUpdate(daoHandler *daoIndex.DaoHandler) gdb.HookHandler {
+func (daoThis *sceneDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -158,7 +158,7 @@ func (daoThis *sceneDao) HookUpdate(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 }
 
 // hook delete
-func (daoThis *sceneDao) HookDelete(daoHandler *daoIndex.DaoHandler) gdb.HookHandler {
+func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -170,29 +170,29 @@ func (daoThis *sceneDao) HookDelete(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 				return
 			}
 
-			Menu.HandlerCtx(ctx).Filter(Menu.Columns().SceneId, daoHandler.IdArr).Delete()
-			ActionRelToScene.HandlerCtx(ctx).Filter(ActionRelToScene.Columns().SceneId, daoHandler.IdArr).Delete()
-			Role.HandlerCtx(ctx).Filter(Role.Columns().SceneId, daoHandler.IdArr).Delete()
+			Menu.HandlerCtx(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
+			ActionRelToScene.HandlerCtx(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
+			Role.HandlerCtx(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete()
 			return
 		},
 	}
 }
 
 // 解析field
-func (daoThis *sceneDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
 			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoHandler))
-			daoHandler.AfterField = append(daoHandler.AfterField, v) */
+			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
+			daoModel.AfterField = append(daoModel.AfterField, v) */
 			case `id`:
-				m = m.Fields(daoHandler.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
-				m = m.Fields(daoHandler.DbTable + `.` + daoThis.Columns().SceneName + ` AS ` + v)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().SceneName + ` AS ` + v)
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Fields(daoHandler.DbTable + `.` + v)
+					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
 				}
@@ -201,7 +201,7 @@ func (daoThis *sceneDao) ParseField(field []string, fieldWithParam map[string]in
 		for k, v := range fieldWithParam {
 			switch k {
 			default:
-				daoHandler.AfterFieldWithParam[k] = v
+				daoModel.AfterFieldWithParam[k] = v
 			}
 		}
 		return m
@@ -209,7 +209,7 @@ func (daoThis *sceneDao) ParseField(field []string, fieldWithParam map[string]in
 }
 
 // hook select
-func (daoThis *sceneDao) HookSelect(daoHandler *daoIndex.DaoHandler) gdb.HookHandler {
+func (daoThis *sceneDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -217,13 +217,13 @@ func (daoThis *sceneDao) HookSelect(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 				return
 			}
 			for _, record := range result {
-				for _, v := range daoHandler.AfterField {
+				for _, v := range daoModel.AfterField {
 					switch v {
 					default:
 						record[v] = gvar.New(nil)
 					}
 				}
-				/* for k, v := range daoHandler.AfterFieldWithParam {
+				/* for k, v := range daoModel.AfterFieldWithParam {
 					switch k {
 					case `xxxx`:
 						record[k] = gvar.New(v)
@@ -236,29 +236,29 @@ func (daoThis *sceneDao) HookSelect(daoHandler *daoIndex.DaoHandler) gdb.HookHan
 }
 
 // 解析filter
-func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
 			case `excId`, `excIdArr`:
 				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoHandler.DbTable+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 				} else {
-					m = m.WhereNot(daoHandler.DbTable+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 				}
 			case `id`, `idArr`:
-				m = m.Where(daoHandler.DbTable+`.`+daoThis.PrimaryKey(), v)
+				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 			case `label`:
-				m = m.WhereLike(daoHandler.DbTable+`.`+daoThis.Columns().SceneName, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().SceneName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().SceneName:
-				m = m.WhereLike(daoHandler.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `timeRangeStart`:
-				m = m.WhereGTE(daoHandler.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
-				m = m.WhereLTE(daoHandler.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Where(daoHandler.DbTable+`.`+k, v)
+					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
 				}
@@ -269,15 +269,15 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, daoHandler *
 }
 
 // 解析group
-func (daoThis *sceneDao) ParseGroup(group []string, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoHandler.DbTable + `.` + daoThis.PrimaryKey())
+				m = m.Group(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArrG().Contains(v) {
-					m = m.Group(daoHandler.DbTable + `.` + v)
+					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
 				}
@@ -288,17 +288,17 @@ func (daoThis *sceneDao) ParseGroup(group []string, daoHandler *daoIndex.DaoHand
 }
 
 // 解析order
-func (daoThis *sceneDao) ParseOrder(order []string, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
 			k := gstr.Split(v, ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoHandler.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
 				if daoThis.ColumnArrG().Contains(k) {
-					m = m.Order(daoHandler.DbTable + `.` + v)
+					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)
 				}
@@ -309,18 +309,18 @@ func (daoThis *sceneDao) ParseOrder(order []string, daoHandler *daoIndex.DaoHand
 }
 
 // 解析join
-func (daoThis *sceneDao) ParseJoin(joinTable string, daoHandler *daoIndex.DaoHandler) gdb.ModelHandler {
+func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		if garray.NewStrArrayFrom(daoHandler.JoinTableArr).Contains(joinTable) {
+		if garray.NewStrArrayFrom(daoModel.JoinTableArr).Contains(joinTable) {
 			return m
 		}
-		daoHandler.JoinTableArr = append(daoHandler.JoinTableArr, joinTable)
+		daoModel.JoinTableArr = append(daoModel.JoinTableArr, joinTable)
 		switch joinTable {
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
-		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey()) */
+		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
 		default:
-			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoHandler.DbTable+`.`+daoThis.PrimaryKey())
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}
 		return m
 	}

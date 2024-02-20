@@ -49,8 +49,8 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 // 修改
 func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
-	if len(daoHandlerThis.IdArr) == 0 {
+	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
@@ -64,7 +64,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			oldList, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), daoHandlerThis.IdArr).All()
+			oldList, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
 			for _, oldInfo := range oldList {
 				if pid == oldInfo[daoThis.PrimaryKey()].Uint() { //父级不能是自身
 					err = utils.NewErrorCode(ctx, 29999996, ``)
@@ -89,25 +89,25 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		}
 	}
 
-	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
+	row, err = daoModelThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
-	if len(daoHandlerThis.IdArr) == 0 {
+	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	count, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.Columns().Pid, daoHandlerThis.IdArr).Count()
+	count, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.Columns().Pid, daoModelThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ``)
 		return
 	}
 
-	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
 	return
 }

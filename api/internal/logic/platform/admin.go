@@ -44,8 +44,8 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 // 修改
 func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
-	if len(daoHandlerThis.IdArr) == 0 {
+	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
@@ -61,19 +61,19 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 		}
 	}
 
-	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
+	row, err = daoModelThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
-	if len(daoHandlerThis.IdArr) == 0 {
+	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
 	return
 }

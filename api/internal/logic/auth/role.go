@@ -51,8 +51,8 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 // 修改
 func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
-	if len(daoHandlerThis.IdArr) == 0 {
+	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
@@ -60,7 +60,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 	_, okMenuIdArr := data[`menuIdArr`]
 	if okMenuIdArr {
 		menuIdArr := gconv.SliceUint(data[`menuIdArr`])
-		for _, id := range daoHandlerThis.IdArr {
+		for _, id := range daoModelThis.IdArr {
 			oldInfo, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), id).One()
 			filterTmp := g.Map{daoAuth.Menu.PrimaryKey(): menuIdArr, daoAuth.Menu.Columns().SceneId: oldInfo[`sceneId`]}
 			_, okSceneId := data[`sceneId`]
@@ -77,7 +77,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 	_, okActionIdArr := data[`actionIdArr`]
 	if okActionIdArr {
 		actionIdArr := gconv.SliceUint(data[`actionIdArr`])
-		for _, id := range daoHandlerThis.IdArr {
+		for _, id := range daoModelThis.IdArr {
 			oldInfo, _ := daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), id).One()
 			filterTmp := g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: oldInfo[`sceneId`]}
 			_, okSceneId := data[`sceneId`]
@@ -92,19 +92,19 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 		}
 	}
 
-	row, err = daoHandlerThis.HookUpdate(data).UpdateAndGetAffected()
+	row, err = daoModelThis.HookUpdate(data).UpdateAndGetAffected()
 	return
 }
 
 // 删除
 func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
-	daoHandlerThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
-	if len(daoHandlerThis.IdArr) == 0 {
+	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	row, err = daoHandlerThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
 	return
 }

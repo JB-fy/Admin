@@ -44,12 +44,12 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	}
 	/**--------权限验证 结束--------**/
 
-	daoHandlerThis := daoAuth.Action.HandlerCtx(ctx).Filters(filter)
-	count, err := daoHandlerThis.CountPri()
+	daoModelThis := daoAuth.Action.HandlerCtx(ctx).Filters(filter)
+	count, err := daoModelThis.CountPri()
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListPri()
+	list, err := daoModelThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListPri()
 	if err != nil {
 		return
 	}
