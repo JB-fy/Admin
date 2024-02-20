@@ -292,6 +292,9 @@ func (daoHandlerThis *DaoHandler) Distinct() *DaoHandler {
 }
 
 func (daoHandlerThis *DaoHandler) Page(page, limit int) *DaoHandler {
+	if limit == 0 {
+		return daoHandlerThis
+	}
 	daoHandlerThis.model = daoHandlerThis.model.Page(page, limit)
 	return daoHandlerThis
 }

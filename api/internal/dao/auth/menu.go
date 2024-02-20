@@ -163,15 +163,28 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-							`newIdPath`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
-							`oldIdPath`: oldInfo[daoThis.Columns().IdPath],
-							`newLevel`:  pLevel + 1,
-							`oldLevel`:  oldInfo[daoThis.Columns().Level],
+							`pIdPathOfNew`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`pIdPathOfOld`: oldInfo[daoThis.Columns().IdPath],
+							`pLevelOfNew`:  pLevel + 1,
+							`pLevelOfOld`:  oldInfo[daoThis.Columns().Level],
 						})
 					}
 				}
 				if len(updateChildIdPathAndLevelList) > 0 {
 					daoHandler.AfterUpdate[`updateChildIdPathAndLevelList`] = updateChildIdPathAndLevelList
+				}
+			case `childIdPath`: //更新所有子孙级的idPath。参数：map[string]interface{}{`pIdPathOfOld`: `父级IdPath（旧）`, `pIdPathOfNew`: `父级IdPath（新）`}
+				val := gconv.Map(v)
+				pIdPathOfOld := gconv.String(val[`pIdPathOfOld`])
+				pIdPathOfNew := gconv.String(val[`pIdPathOfNew`])
+				updateData[daoHandler.DbTable+`.`+daoThis.Columns().IdPath] = gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + pIdPathOfOld + `', '` + pIdPathOfNew + `')`)
+			case `childLevel`: //更新所有子孙级的level。参数：map[string]interface{}{`pLevelOfOld`: `父级Level（旧）`, `pLevelOfNew`: `父级Level（新）`}
+				val := gconv.Map(v)
+				pLevelOfOld := gconv.Uint(val[`pLevelOfOld`])
+				pLevelOfNew := gconv.Uint(val[`pLevelOfNew`])
+				updateData[daoHandler.DbTable+`.`+daoThis.Columns().Level] = gdb.Raw(daoHandler.DbTable + `.` + daoThis.Columns().Level + ` + ` + gconv.String(pLevelOfNew-pLevelOfOld))
+				if pLevelOfNew < pLevelOfOld {
+					updateData[daoHandler.DbTable+`.`+daoThis.Columns().Level] = gdb.Raw(daoHandler.DbTable + `.` + daoThis.Columns().Level + ` - ` + gconv.String(pLevelOfOld-pLevelOfNew))
 				}
 			case daoThis.Columns().ExtraData:
 				updateData[daoHandler.DbTable+`.`+k] = gvar.New(v)
@@ -220,10 +233,19 @@ func (daoThis *menuDao) HookUpdate(daoHandler *daoIndex.DaoHandler) gdb.HookHand
 
 			for k, v := range daoHandler.AfterUpdate {
 				switch k {
-				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{newIdPath: 父级新idPath, oldIdPath: 父级旧idPath, newLevel: 父级新level, oldLevel: 父级旧level}
+				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{pIdPathOfNew: 父级新idPath, pIdPathOfOld: 父级旧idPath, pLevelOfNew: 父级新level, pLevelOfOld: 父级旧level}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.UpdateChildIdPathAndLevel(ctx, gconv.String(v1[`newIdPath`]), gconv.String(v1[`oldIdPath`]), gconv.Uint(v1[`newLevel`]), gconv.Uint(v1[`oldLevel`]))
+						daoThis.HandlerCtx(ctx).Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
+							`childIdPath`: g.Map{
+								`pIdPathOfOld`: v1[`pIdPathOfOld`],
+								`pIdPathOfNew`: v1[`pIdPathOfNew`],
+							},
+							`childLevel`: g.Map{
+								`pLevelOfOld`: v1[`pLevelOfOld`],
+								`pLevelOfNew`: v1[`pLevelOfNew`],
+							},
+						}).Update()
 					}
 				}
 			}
@@ -353,6 +375,8 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoHandler *d
 				m = m.WhereGTE(daoHandler.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoHandler.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `pIdPathOfOld`: //父级IdPath（旧）
+				m = m.WhereLike(daoHandler.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
 				m = m.Where(daoHandler.DbTable+`.`+daoThis.Columns().SceneId, val[`sceneId`])
@@ -465,15 +489,3 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoHandler *daoIndex.DaoHand
 }
 
 // Fill with you ideas below.
-
-// 修改pid时，更新所有子孙级的idPath和level
-func (daoThis *menuDao) UpdateChildIdPathAndLevel(ctx context.Context, newIdPath string, oldIdPath string, newLevel uint, oldLevel uint) {
-	data := g.Map{
-		daoThis.Columns().IdPath: gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + oldIdPath + `', '` + newIdPath + `')`),
-		daoThis.Columns().Level:  gdb.Raw(daoThis.Columns().Level + ` + ` + gconv.String(newLevel-oldLevel)),
-	}
-	if newLevel < oldLevel {
-		data[daoThis.Columns().Level] = gdb.Raw(daoThis.Columns().Level + ` - ` + gconv.String(oldLevel-newLevel))
-	}
-	daoThis.ParseDbCtx(ctx).WhereLike(daoThis.Columns().IdPath, oldIdPath+`-%`).Data(data).Update()
-}
