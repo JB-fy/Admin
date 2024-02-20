@@ -206,7 +206,6 @@ func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
 }
 
 /*--------复制原模型方法并封装一些常用方法 开始--------*/
-// 开启事务
 func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
 }
@@ -314,8 +313,9 @@ func (daoHandlerThis *DaoHandler) Delete(where ...interface{}) (result sql.Resul
 	return daoHandlerThis.model.Delete(where...)
 }
 
+// 封装常用方法
 func (daoHandlerThis *DaoHandler) DeleteAndGetAffected(where ...interface{}) (affected int64, err error) {
-	result, err := daoHandlerThis.model.Delete(where...)
+	result, err := daoHandlerThis.Delete(where...)
 	if err != nil {
 		return 0, err
 	}
@@ -342,19 +342,36 @@ func (daoHandlerThis *DaoHandler) Value(fieldsAndWhere ...interface{}) (gdb.Valu
 	return daoHandlerThis.model.Value(fieldsAndWhere...)
 }
 
-func (daoHandlerThis *DaoHandler) Pluck(key string, val string) (gdb.Record, error) {
-	list, err := daoHandlerThis.model.Fields(key, val).All()
+// 封装常用方法
+func (daoHandlerThis *DaoHandler) Pluck(field string, key string) (gdb.Record, error) {
+	list, err := daoHandlerThis.Fields([]string{field, key}).HookSelect().All()
 	if err != nil {
 		return nil, err
 	}
 	if list.IsEmpty() {
 		return nil, nil
 	}
-	data := gdb.Record{}
+	result := gdb.Record{}
 	for _, v := range list {
-		data[v[key].String()] = v[val]
+		result[v[key].String()] = v[field]
 	}
-	return data, nil
+	return result, nil
+}
+
+// 封装常用方法
+func (daoHandlerThis *DaoHandler) Plucks(field []string, key string) (map[string]gdb.Record, error) {
+	list, err := daoHandlerThis.Fields(append(field, key)).HookSelect().All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := map[string]gdb.Record{}
+	for _, v := range list {
+		result[v[key].String()] = v
+	}
+	return result, nil
 }
 
 func (daoHandlerThis *DaoHandler) Count(where ...interface{}) (int, error) {
