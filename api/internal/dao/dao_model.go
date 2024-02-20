@@ -392,22 +392,6 @@ func (daoModelThis *DaoModel) Pluck(field string, key string) (gdb.Record, error
 	return result, nil
 }
 
-// 封装常用方法
-func (daoModelThis *DaoModel) Plucks(field []string, key string) (map[string]gdb.Record, error) {
-	list, err := daoModelThis.Fields(append(field, key)).HookSelect().All()
-	if err != nil {
-		return nil, err
-	}
-	if list.IsEmpty() {
-		return nil, nil
-	}
-	result := map[string]gdb.Record{}
-	for _, v := range list {
-		result[v[key].String()] = v
-	}
-	return result, nil
-}
-
 func (daoModelThis *DaoModel) HasField(field string) (bool, error) {
 	return daoModelThis.model.HasField(field)
 }
