@@ -192,7 +192,7 @@ func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
 	return daoHandlerThis.GroupPriOnJoin().All()
 }
 
-// 总数（有联表默认group主键）
+// 总数（有联表去重group主键）
 func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
 	if daoHandlerThis.IsJoin() {
 		return daoHandlerThis.CloneModel().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
