@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -26,18 +25,9 @@ type DaoInterface interface {
 	ParseOrder(order []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseJoin(joinTable string, daoModel *DaoModel) gdb.ModelHandler
 
-	DB() gdb.DB
-	Table() string
-	// Columns() SceneColumns
-	// Columns() struct{}
-	// Columns() interface{}
-	Group() string
-	Ctx(ctx context.Context) *gdb.Model
-	Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error)
-
 	PrimaryKey() string
-	ColumnArr() []string
-	ColumnArrG() *garray.StrArray
+	// ColumnArr() []string
+	// ColumnArrG() *garray.StrArray
 }
 
 type DaoModel struct {
