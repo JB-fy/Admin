@@ -22,14 +22,14 @@ func init() {
 // 新增
 func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Action
-	id, err = daoThis.HandlerCtx(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoThis.DaoModelCtx(ctx).HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
-	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.DaoModelCtx(ctx).Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -42,7 +42,7 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]inte
 // 删除
 func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Action
-	daoModelThis := daoThis.HandlerCtx(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.DaoModelCtx(ctx).Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -70,7 +70,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 			`loginId`:   loginInfo[`loginId`],
 		},
 	}
-	count, err := daoAuth.Action.HandlerCtx(ctx).Filters(filter).Count()
+	count, err := daoAuth.Action.DaoModelCtx(ctx).Filters(filter).Count()
 	if count == 0 {
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return

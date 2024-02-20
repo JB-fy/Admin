@@ -80,7 +80,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			return
 		}
 		//订单查询
-		/* orderInfo, _ := daoXxxx.Order.HandlerCtx(ctx).Filters(g.Map{
+		/* orderInfo, _ := daoXxxx.Order.DaoModelCtx(ctx).Filters(g.Map{
 			daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
 			daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
 			daoXxxx.Order.Columns().PayStatus: 0,
@@ -138,7 +138,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 	}
 	//订单回调处理
 	gutil.Dump(notifyInfo)
-	/* xxxxOrderHandler := daoXxxx.Order.HandlerCtx(ctx)
+	/* xxxxOrderHandler := daoXxxx.Order.DaoModelCtx(ctx)
 	err = xxxxOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		row, err := tx.Model(xxxxOrderHandler.DbTable).Where(g.Map{
 			daoXxxx.Order.Columns().OrderNo:   notifyInfo.OrderNo,

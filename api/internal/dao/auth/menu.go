@@ -36,7 +36,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *menuDao) HandlerCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *menuDao) DaoModelCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -58,18 +58,6 @@ func (daoThis *menuDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[stri
 	return table
 }
 
-// 解析分库分表（对外暴露使用）
-func (daoThis *menuDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]interface{}) *gdb.Model {
-	switch len(dbOpt) {
-	case 1:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	case 2:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx, dbOpt[1])). /* Safe(). */ Ctx(ctx)
-	default:
-		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	}
-}
-
 // 解析insert
 func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -85,7 +73,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.DaoModelCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					daoModel.AfterInsert[`pIdPath`] = pInfo[daoThis.Columns().IdPath].String()
 					daoModel.AfterInsert[`pLevel`] = pInfo[daoThis.Columns().Level].Uint()
 				} else {
@@ -131,7 +119,7 @@ func (daoThis *menuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				}
 			}
 			if len(updateSelfData) > 0 {
-				daoThis.HandlerCtx(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
+				daoThis.DaoModelCtx(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}
 			return
 		},
@@ -151,7 +139,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				pIdPath := `0`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
+					pInfo, _ := daoThis.DaoModelCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}
@@ -159,7 +147,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				updateData[daoModel.DbTable+`.`+daoThis.Columns().Level] = pLevel + 1
 				//更新所有子孙级的idPath和level
 				updateChildIdPathAndLevelList := []map[string]interface{}{}
-				oldList, _ := daoThis.HandlerCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoModel.IdArr).All()
+				oldList, _ := daoThis.DaoModelCtx(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
@@ -236,7 +224,7 @@ func (daoThis *menuDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`pIdPathOfOld`: `父级IdPath（旧）`, `pIdPathOfNew`: `父级IdPath（新）`, `pLevelOfOld`: `父级Level（旧）`, `pLevelOfNew`: `父级Level（新）`}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.HandlerCtx(ctx).Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
+						daoThis.DaoModelCtx(ctx).Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
 							`childIdPath`: g.Map{
 								`pIdPathOfOld`: v1[`pIdPathOfOld`],
 								`pIdPathOfNew`: v1[`pIdPathOfNew`],

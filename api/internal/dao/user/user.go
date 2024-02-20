@@ -37,7 +37,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *userDao) HandlerCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *userDao) DaoModelCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -57,18 +57,6 @@ func (daoThis *userDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[stri
 	/* if len(dbTableOpt) > 0 {
 	} */
 	return table
-}
-
-// 解析分库分表（对外暴露使用）
-func (daoThis *userDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]interface{}) *gdb.Model {
-	switch len(dbOpt) {
-	case 1:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	case 2:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx, dbOpt[1])). /* Safe(). */ Ctx(ctx)
-	default:
-		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	}
 }
 
 // 解析insert

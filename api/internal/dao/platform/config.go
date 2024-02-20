@@ -35,7 +35,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *configDao) HandlerCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *configDao) DaoModelCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -55,18 +55,6 @@ func (daoThis *configDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[st
 	/* if len(dbTableOpt) > 0 {
 	} */
 	return table
-}
-
-// 解析分库分表（对外暴露使用）
-func (daoThis *configDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]interface{}) *gdb.Model {
-	switch len(dbOpt) {
-	case 1:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	case 2:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx, dbOpt[1])). /* Safe(). */ Ctx(ctx)
-	default:
-		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	}
 }
 
 // 解析insert
@@ -316,12 +304,12 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config gdb.Record, err error) {
-	return daoThis.HandlerCtx(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).Pluck(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	return daoThis.DaoModelCtx(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).Pluck(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
 }
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{}) (err error) {
-	daoModelThis := daoThis.HandlerCtx(ctx)
+	daoModelThis := daoThis.DaoModelCtx(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
 			_, err = tx.Model(daoModelThis.DbTable).Data(g.Map{

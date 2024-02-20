@@ -13,7 +13,6 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -35,7 +34,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *sceneDao) HandlerCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *sceneDao) DaoModelCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -55,18 +54,6 @@ func (daoThis *sceneDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[str
 	/* if len(dbTableOpt) > 0 {
 	} */
 	return table
-}
-
-// 解析分库分表（对外暴露使用）
-func (daoThis *sceneDao) ParseDbCtx(ctx context.Context, dbOpt ...map[string]interface{}) *gdb.Model {
-	switch len(dbOpt) {
-	case 1:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	case 2:
-		return g.DB(daoThis.ParseDbGroup(ctx, dbOpt[0])).Model(daoThis.ParseDbTable(ctx, dbOpt[1])). /* Safe(). */ Ctx(ctx)
-	default:
-		return g.DB(daoThis.ParseDbGroup(ctx)).Model(daoThis.ParseDbTable(ctx)). /* Safe(). */ Ctx(ctx)
-	}
 }
 
 // 解析insert
@@ -170,9 +157,9 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			Menu.HandlerCtx(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
-			ActionRelToScene.HandlerCtx(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
-			Role.HandlerCtx(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete()
+			Menu.DaoModelCtx(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
+			ActionRelToScene.DaoModelCtx(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
+			Role.DaoModelCtx(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete()
 			return
 		},
 	}

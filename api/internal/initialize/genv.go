@@ -17,7 +17,7 @@ func initGenv(ctx context.Context) {
 	genv.Set(`SERVER_NETWORK_IP`, serverNetworkIp) //设置服务器外网ip（key必须由大写和_组成，才能用g.Cfg().MustGetWithEnv(ctx, `SERVER_NETWORK_IP`)方法读取）
 	genv.Set(`SERVER_LOCAL_IP`, serverLocalIp)     //设置服务器内网ip（key必须由大写和_组成，才能用g.Cfg().MustGetWithEnv(ctx, `SERVER_LOCAL_IP`)方法读取）
 
-	daoPlatform.Server.HandlerCtx(ctx).Data(g.Map{
+	daoPlatform.Server.DaoModelCtx(ctx).Data(g.Map{
 		daoPlatform.Server.Columns().NetworkIp: serverNetworkIp,
 		daoPlatform.Server.Columns().LocalIp:   serverLocalIp,
 	}).Save()

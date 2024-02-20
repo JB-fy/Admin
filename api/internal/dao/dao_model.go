@@ -14,7 +14,6 @@ import (
 type DaoInterface interface {
 	ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string
 	ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string
-	ParseDbCtx(ctx context.Context, dbOpt ...map[string]interface{}) *gdb.Model
 	ParseInsert(insert map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
 	HookInsert(daoModel *DaoModel) gdb.HookHandler
 	ParseUpdate(update map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
