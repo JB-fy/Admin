@@ -179,7 +179,7 @@ func (daoHandlerThis *DaoHandler) IsJoin() bool {
 	return len(daoHandlerThis.JoinTableArr) > 0
 }
 
-// 当有联表时，GroupBy主键
+// 联表时，GroupBy主键
 func (daoHandlerThis *DaoHandler) GroupPriOnJoin() *DaoHandler {
 	if daoHandlerThis.IsJoin() {
 		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey())
@@ -187,12 +187,12 @@ func (daoHandlerThis *DaoHandler) GroupPriOnJoin() *DaoHandler {
 	return daoHandlerThis
 }
 
-// 列表（有联表默认group主键）
+// 列表（联表时，GroupBy主键）
 func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
 	return daoHandlerThis.GroupPriOnJoin().All()
 }
 
-// 总数（有联表去重group主键）
+// 总数（联表时，主键去重）
 func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
 	if daoHandlerThis.IsJoin() {
 		return daoHandlerThis.CloneModel().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
@@ -200,7 +200,7 @@ func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
 	return daoHandlerThis.model.Count()
 }
 
-// 详情（有联表默认group主键）
+// 详情（联表时，GroupBy主键）
 func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
 	return daoHandlerThis.GroupPriOnJoin().One()
 }
