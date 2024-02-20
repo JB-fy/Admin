@@ -163,10 +163,10 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoHandler *d
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-							`pIdPathOfNew`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
 							`pIdPathOfOld`: oldInfo[daoThis.Columns().IdPath],
-							`pLevelOfNew`:  pLevel + 1,
+							`pIdPathOfNew`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
 							`pLevelOfOld`:  oldInfo[daoThis.Columns().Level],
+							`pLevelOfNew`:  pLevel + 1,
 						})
 					}
 				}
@@ -233,7 +233,7 @@ func (daoThis *menuDao) HookUpdate(daoHandler *daoIndex.DaoHandler) gdb.HookHand
 
 			for k, v := range daoHandler.AfterUpdate {
 				switch k {
-				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{pIdPathOfNew: 父级新idPath, pIdPathOfOld: 父级旧idPath, pLevelOfNew: 父级新level, pLevelOfOld: 父级旧level}
+				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`pIdPathOfOld`: `父级IdPath（旧）`, `pIdPathOfNew`: `父级IdPath（新）`, `pLevelOfOld`: `父级Level（旧）`, `pLevelOfNew`: `父级Level（新）`}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
 						daoThis.HandlerCtx(ctx).Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
@@ -371,12 +371,12 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoHandler *d
 				m = m.WhereLike(daoHandler.DbTable+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().MenuName:
 				m = m.WhereLike(daoHandler.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
+			case `pIdPathOfOld`: //父级IdPath（旧）
+				m = m.WhereLike(daoHandler.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
 			case `timeRangeStart`:
 				m = m.WhereGTE(daoHandler.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoHandler.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `pIdPathOfOld`: //父级IdPath（旧）
-				m = m.WhereLike(daoHandler.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
 				m = m.Where(daoHandler.DbTable+`.`+daoThis.Columns().SceneId, val[`sceneId`])
