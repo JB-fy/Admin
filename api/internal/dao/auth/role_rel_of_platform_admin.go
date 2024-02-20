@@ -65,7 +65,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseInsert(insert map[string]interfac
 			case `id`:
 				insertData[daoThis.PrimaryKey()] = v
 			default:
-				if daoThis.ColumnArrG().Contains(k) {
+				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -101,7 +101,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]interfac
 			case `id`:
 				updateData[daoModel.DbTable+`.`+daoThis.PrimaryKey()] = v
 			default:
-				if daoThis.ColumnArrG().Contains(k) {
+				if daoThis.ColumnArr().Contains(k) {
 					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
 				}
 			}
@@ -172,7 +172,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, fieldWithPa
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			default:
-				if daoThis.ColumnArrG().Contains(v) {
+				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -230,7 +230,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interfac
 			case `id`, `idArr`:
 				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 			default:
-				if daoThis.ColumnArrG().Contains(k) {
+				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -249,7 +249,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseGroup(group []string, daoModel *d
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 			default:
-				if daoThis.ColumnArrG().Contains(v) {
+				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -270,7 +270,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseOrder(order []string, daoModel *d
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
-				if daoThis.ColumnArrG().Contains(k) {
+				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

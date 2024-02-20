@@ -1881,7 +1881,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	}
 `
 		tplController += `
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr().Slice()
 	allowField = append(allowField, ` + controllerAlloweFieldList + `)`
 		/* if controllerAlloweFieldDiff != `` {
 				tplController += `
@@ -1940,7 +1940,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 // 详情
 func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr().Slice()
 	allowField = append(allowField, ` + controllerAlloweFieldInfo + `)`
 		/* if controllerAlloweFieldDiff != `` {
 				tplController += `
@@ -2090,7 +2090,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		filter = map[string]interface{}{}
 	}
 
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr().Slice()
 	allowField = append(allowField, ` + controllerAlloweFieldTree + `)`
 		/* if controllerAlloweFieldDiff != `` {
 				tplController += `

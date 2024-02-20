@@ -28,7 +28,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 		filter = map[string]interface{}{}
 	}
 
-	allowField := daoPlatform.Admin.ColumnArr()
+	allowField := daoPlatform.Admin.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
@@ -64,7 +64,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 // 详情
 func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInfoReq) (res *apiPlatform.AdminInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoPlatform.Admin.ColumnArr()
+	allowField := daoPlatform.Admin.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`, `roleIdArr`)
 	field := allowField
 	if len(req.Field) > 0 {

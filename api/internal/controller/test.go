@@ -53,7 +53,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// gregex.IsMatchString(`1062.*Duplicate.*`, err.Error()) //判断错误是不是唯一索引已存在
 	// m = m.Where(m.Builder().Where(`xxxx`).WhereOr(`xxxx`)) // 复杂条件
 	// dao常用示例
-	// list, err := daoXxxx.Txxx.DaoModelCtx(ctx).Filters(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Fields(append(&daoXxxx.Txxx.ColumnArr(), `aaaa`)).ListPri()
+	// list, err := daoXxxx.Txxx.DaoModelCtx(ctx).Filters(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Fields(append(&daoXxxx.Txxx.ColumnArr().Slice(), `aaaa`)).ListPri()
 	/* // 数据库事务
 	xxxxTxxxHandler := daoXxxx.Txxx.DaoModelCtx(ctx)
 	err = xxxxTxxxHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {

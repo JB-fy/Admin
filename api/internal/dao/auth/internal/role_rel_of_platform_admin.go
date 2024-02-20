@@ -19,8 +19,7 @@ type RoleRelOfPlatformAdminDao struct {
 	group      string                        // group is the database configuration group name of current DAO.
 	columns    RoleRelOfPlatformAdminColumns // columns contains all the column names of Table for convenient usage.
 	primaryKey string                        // 主键ID
-	columnArr  []string                      // 所有字段的数组
-	columnArrG *garray.StrArray              // 所有字段的数组（该格式更方便使用）
+	columnArr  *garray.StrArray              // 所有字段的数组
 }
 
 // RoleRelOfPlatformAdminColumns defines and stores column names for table auth_role_rel_of_platform_admin.
@@ -48,16 +47,7 @@ func NewRoleRelOfPlatformAdminDao() *RoleRelOfPlatformAdminDao {
 		primaryKey: func() string {
 			return reflect.ValueOf(roleRelOfPlatformAdminColumns).Field(0).String()
 		}(),
-		columnArr: func() []string {
-			v := reflect.ValueOf(roleRelOfPlatformAdminColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return column
-		}(),
-		columnArrG: func() *garray.StrArray {
+		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(roleRelOfPlatformAdminColumns)
 			count := v.NumField()
 			column := make([]string, count)
@@ -111,11 +101,6 @@ func (dao *RoleRelOfPlatformAdminDao) PrimaryKey() string {
 }
 
 // 所有字段的数组
-func (dao *RoleRelOfPlatformAdminDao) ColumnArr() []string {
+func (dao *RoleRelOfPlatformAdminDao) ColumnArr() *garray.StrArray {
 	return dao.columnArr
-}
-
-// 所有字段的数组（该格式更方便使用）
-func (dao *RoleRelOfPlatformAdminDao) ColumnArrG() *garray.StrArray {
-	return dao.columnArrG
 }

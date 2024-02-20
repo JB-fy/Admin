@@ -26,7 +26,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 		filter = map[string]interface{}{}
 	}
 
-	allowField := daoAuth.Menu.ColumnArr()
+	allowField := daoAuth.Menu.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`, `pMenuName`, daoAuth.Scene.Columns().SceneName)
 	field := allowField
 	if len(req.Field) > 0 {
@@ -62,7 +62,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 // 详情
 func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) (res *apiAuth.MenuInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Menu.ColumnArr()
+	allowField := daoAuth.Menu.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
@@ -164,7 +164,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 		filter = map[string]interface{}{}
 	}
 
-	allowField := daoAuth.Menu.ColumnArr()
+	allowField := daoAuth.Menu.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {

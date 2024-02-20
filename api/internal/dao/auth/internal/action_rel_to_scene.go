@@ -19,8 +19,7 @@ type ActionRelToSceneDao struct {
 	group      string                  // group is the database configuration group name of current DAO.
 	columns    ActionRelToSceneColumns // columns contains all the column names of Table for convenient usage.
 	primaryKey string                  // 主键ID
-	columnArr  []string                // 所有字段的数组
-	columnArrG *garray.StrArray        // 所有字段的数组（该格式更方便使用）
+	columnArr  *garray.StrArray        // 所有字段的数组
 }
 
 // ActionRelToSceneColumns defines and stores column names for table auth_action_rel_to_scene.
@@ -48,16 +47,7 @@ func NewActionRelToSceneDao() *ActionRelToSceneDao {
 		primaryKey: func() string {
 			return reflect.ValueOf(actionRelToSceneColumns).Field(0).String()
 		}(),
-		columnArr: func() []string {
-			v := reflect.ValueOf(actionRelToSceneColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return column
-		}(),
-		columnArrG: func() *garray.StrArray {
+		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(actionRelToSceneColumns)
 			count := v.NumField()
 			column := make([]string, count)
@@ -111,11 +101,6 @@ func (dao *ActionRelToSceneDao) PrimaryKey() string {
 }
 
 // 所有字段的数组
-func (dao *ActionRelToSceneDao) ColumnArr() []string {
+func (dao *ActionRelToSceneDao) ColumnArr() *garray.StrArray {
 	return dao.columnArr
-}
-
-// 所有字段的数组（该格式更方便使用）
-func (dao *ActionRelToSceneDao) ColumnArrG() *garray.StrArray {
-	return dao.columnArrG
 }

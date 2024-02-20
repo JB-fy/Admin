@@ -26,7 +26,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 		filter = map[string]interface{}{}
 	}
 
-	allowField := daoAuth.Action.ColumnArr()
+	allowField := daoAuth.Action.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
@@ -62,7 +62,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 // 详情
 func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoReq) (res *apiAuth.ActionInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Action.ColumnArr()
+	allowField := daoAuth.Action.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`, `sceneIdArr`)
 	field := allowField
 	if len(req.Field) > 0 {

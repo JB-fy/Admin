@@ -19,8 +19,7 @@ type ActionDao struct {
 	group      string           // group is the database configuration group name of current DAO.
 	columns    ActionColumns    // columns contains all the column names of Table for convenient usage.
 	primaryKey string           // 主键ID
-	columnArr  []string         // 所有字段的数组
-	columnArrG *garray.StrArray // 所有字段的数组（该格式更方便使用）
+	columnArr  *garray.StrArray // 所有字段的数组
 }
 
 // ActionColumns defines and stores column names for table auth_action.
@@ -54,16 +53,7 @@ func NewActionDao() *ActionDao {
 		primaryKey: func() string {
 			return reflect.ValueOf(actionColumns).Field(0).String()
 		}(),
-		columnArr: func() []string {
-			v := reflect.ValueOf(actionColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return column
-		}(),
-		columnArrG: func() *garray.StrArray {
+		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(actionColumns)
 			count := v.NumField()
 			column := make([]string, count)
@@ -117,11 +107,6 @@ func (dao *ActionDao) PrimaryKey() string {
 }
 
 // 所有字段的数组
-func (dao *ActionDao) ColumnArr() []string {
+func (dao *ActionDao) ColumnArr() *garray.StrArray {
 	return dao.columnArr
-}
-
-// 所有字段的数组（该格式更方便使用）
-func (dao *ActionDao) ColumnArrG() *garray.StrArray {
-	return dao.columnArrG
 }

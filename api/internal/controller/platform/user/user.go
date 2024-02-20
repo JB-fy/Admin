@@ -26,7 +26,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 		filter = map[string]interface{}{}
 	}
 
-	allowField := daoUser.User.ColumnArr()
+	allowField := daoUser.User.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {
@@ -62,7 +62,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 // 详情
 func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) (res *apiUser.UserInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoUser.User.ColumnArr()
+	allowField := daoUser.User.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`)
 	field := allowField
 	if len(req.Field) > 0 {

@@ -26,7 +26,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 		filter = map[string]interface{}{}
 	}
 
-	allowField := daoAuth.Role.ColumnArr()
+	allowField := daoAuth.Role.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `tableName`)
 	field := allowField
 	if len(req.Field) > 0 {
@@ -62,7 +62,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 // 详情
 func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) (res *apiAuth.RoleInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Role.ColumnArr()
+	allowField := daoAuth.Role.ColumnArr().Slice()
 	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `menuIdArr`, `actionIdArr`)
 	field := allowField
 	if len(req.Field) > 0 {

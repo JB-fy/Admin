@@ -19,8 +19,7 @@ type MenuDao struct {
 	group      string           // group is the database configuration group name of current DAO.
 	columns    MenuColumns      // columns contains all the column names of Table for convenient usage.
 	primaryKey string           // 主键ID
-	columnArr  []string         // 所有字段的数组
-	columnArrG *garray.StrArray // 所有字段的数组（该格式更方便使用）
+	columnArr  *garray.StrArray // 所有字段的数组
 }
 
 // MenuColumns defines and stores column names for table auth_menu.
@@ -66,16 +65,7 @@ func NewMenuDao() *MenuDao {
 		primaryKey: func() string {
 			return reflect.ValueOf(menuColumns).Field(0).String()
 		}(),
-		columnArr: func() []string {
-			v := reflect.ValueOf(menuColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return column
-		}(),
-		columnArrG: func() *garray.StrArray {
+		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(menuColumns)
 			count := v.NumField()
 			column := make([]string, count)
@@ -129,11 +119,6 @@ func (dao *MenuDao) PrimaryKey() string {
 }
 
 // 所有字段的数组
-func (dao *MenuDao) ColumnArr() []string {
+func (dao *MenuDao) ColumnArr() *garray.StrArray {
 	return dao.columnArr
-}
-
-// 所有字段的数组（该格式更方便使用）
-func (dao *MenuDao) ColumnArrG() *garray.StrArray {
-	return dao.columnArrG
 }

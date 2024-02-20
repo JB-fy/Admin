@@ -19,8 +19,7 @@ type SceneDao struct {
 	group      string           // group is the database configuration group name of current DAO.
 	columns    SceneColumns     // columns contains all the column names of Table for convenient usage.
 	primaryKey string           // 主键ID
-	columnArr  []string         // 所有字段的数组
-	columnArrG *garray.StrArray // 所有字段的数组（该格式更方便使用）
+	columnArr  *garray.StrArray // 所有字段的数组
 }
 
 // SceneColumns defines and stores column names for table auth_scene.
@@ -56,16 +55,7 @@ func NewSceneDao() *SceneDao {
 		primaryKey: func() string {
 			return reflect.ValueOf(sceneColumns).Field(0).String()
 		}(),
-		columnArr: func() []string {
-			v := reflect.ValueOf(sceneColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return column
-		}(),
-		columnArrG: func() *garray.StrArray {
+		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(sceneColumns)
 			count := v.NumField()
 			column := make([]string, count)
@@ -119,11 +109,6 @@ func (dao *SceneDao) PrimaryKey() string {
 }
 
 // 所有字段的数组
-func (dao *SceneDao) ColumnArr() []string {
+func (dao *SceneDao) ColumnArr() *garray.StrArray {
 	return dao.columnArr
-}
-
-// 所有字段的数组（该格式更方便使用）
-func (dao *SceneDao) ColumnArrG() *garray.StrArray {
-	return dao.columnArrG
 }
