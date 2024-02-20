@@ -44,6 +44,7 @@ type DaoModel struct {
 	JoinTableSet        *gset.StrSet
 }
 
+// 注意：dbOpt存在时，dbOpt[0]解析DbTable，dbOpt[1]索引参数解析DbGroup
 func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]interface{}) *DaoModel {
 	daoModelObj := DaoModel{
 		Ctx:                 ctx,
