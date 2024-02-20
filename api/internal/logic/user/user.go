@@ -46,6 +46,6 @@ func (logicThis *sUser) Delete(ctx context.Context, filter map[string]interface{
 		return
 	}
 
-	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }

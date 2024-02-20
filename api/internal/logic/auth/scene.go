@@ -46,6 +46,6 @@ func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]inter
 		return
 	}
 
-	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }

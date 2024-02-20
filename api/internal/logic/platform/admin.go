@@ -74,6 +74,6 @@ func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]i
 		return
 	}
 
-	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }

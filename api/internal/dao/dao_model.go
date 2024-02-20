@@ -34,9 +34,9 @@ type DaoModel struct {
 	Ctx                 context.Context
 	dao                 DaoInterface
 	model               *gdb.Model
-	DbGroup             string //分库情况下，解析后所确定的库
-	DbTable             string //分表情况下，解析后所确定的表
-	IdArr               []uint
+	DbGroup             string // 分库情况下，解析后所确定的库
+	DbTable             string // 分表情况下，解析后所确定的表
+	IdArr               []uint // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 	AfterInsert         map[string]interface{}
 	AfterUpdate         map[string]interface{}
 	AfterField          *gset.StrSet
@@ -86,7 +86,7 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 	return daoModelThis.model
 }
 
-// 一般在更新|删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
+// 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 func (daoModelThis *DaoModel) SetIdArr() *DaoModel {
 	idArr, _ := daoModelThis.CloneModel().Array(daoModelThis.dao.PrimaryKey())
 	daoModelThis.IdArr = gconv.SliceUint(idArr)

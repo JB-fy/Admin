@@ -1336,7 +1336,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	}
 	tplLogic += `
-	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }
 `

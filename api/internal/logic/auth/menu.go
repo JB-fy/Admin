@@ -108,6 +108,6 @@ func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	row, err = daoModelThis.HookSelect().DeleteAndGetAffected()
+	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }
