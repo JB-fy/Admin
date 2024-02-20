@@ -45,11 +45,11 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	/**--------权限验证 结束--------**/
 
 	daoHandlerThis := daoUser.User.HandlerCtx(ctx).Filters(filter)
-	count, err := daoHandlerThis.CountOfApi()
+	count, err := daoHandlerThis.CountPri()
 	if err != nil {
 		return
 	}
-	list, err := daoHandlerThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListOfApi()
+	list, err := daoHandlerThis.Fields(field).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListPri()
 	if err != nil {
 		return
 	}
@@ -81,7 +81,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoUser.User.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoOfApi()
+	info, err := daoUser.User.HandlerCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
 	if err != nil {
 		return
 	}

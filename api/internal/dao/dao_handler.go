@@ -118,20 +118,20 @@ func (daoHandlerThis *DaoHandler) GroupPriOnJoin() *DaoHandler {
 }
 
 // 列表（联表时，GroupBy主键）
-func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
+func (daoHandlerThis *DaoHandler) ListPri() (gdb.Result, error) {
 	return daoHandlerThis.GroupPriOnJoin().All()
 }
 
 // 总数（联表时，主键去重）
-func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
+func (daoHandlerThis *DaoHandler) CountPri() (int, error) {
 	if daoHandlerThis.IsJoin() {
 		return daoHandlerThis.CloneModel().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
 	}
-	return daoHandlerThis.model.Count()
+	return daoHandlerThis.Count()
 }
 
 // 详情（联表时，GroupBy主键）
-func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
+func (daoHandlerThis *DaoHandler) InfoPri() (gdb.Record, error) {
 	return daoHandlerThis.GroupPriOnJoin().One()
 }
 
@@ -139,20 +139,20 @@ func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
 
 /*--------简化对dao方法的调用 开始--------*/
 func (daoHandlerThis *DaoHandler) HookInsert(data map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseInsert(data, daoHandlerThis))
 	return daoHandlerThis
 }
 
 func (daoHandlerThis *DaoHandler) HookUpdate(data map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseUpdate(data, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseUpdate(data, daoHandlerThis))
 	if len(daoHandlerThis.AfterUpdate) > 0 {
-		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookUpdate(daoHandlerThis))
+		daoHandlerThis.Hook(daoHandlerThis.dao.HookUpdate(daoHandlerThis))
 	}
 	return daoHandlerThis
 }
 
 func (daoHandlerThis *DaoHandler) HookDelete() *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookDelete(daoHandlerThis))
+	daoHandlerThis.Hook(daoHandlerThis.dao.HookDelete(daoHandlerThis))
 	return daoHandlerThis
 }
 
@@ -161,18 +161,18 @@ func (daoHandlerThis *DaoHandler) Field(field string) *DaoHandler {
 }
 
 func (daoHandlerThis *DaoHandler) Fields(field []string) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField(field, map[string]interface{}{}, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseField(field, map[string]interface{}{}, daoHandlerThis))
 	return daoHandlerThis
 }
 
 func (daoHandlerThis *DaoHandler) FieldWithParam(fieldWithParam map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseField([]string{}, fieldWithParam, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseField([]string{}, fieldWithParam, daoHandlerThis))
 	return daoHandlerThis
 }
 
 func (daoHandlerThis *DaoHandler) HookSelect() *DaoHandler {
 	if len(daoHandlerThis.AfterField) > 0 || len(daoHandlerThis.AfterFieldWithParam) > 0 {
-		daoHandlerThis.model = daoHandlerThis.model.Hook(daoHandlerThis.dao.HookSelect(daoHandlerThis))
+		daoHandlerThis.Hook(daoHandlerThis.dao.HookSelect(daoHandlerThis))
 	}
 	return daoHandlerThis
 }
@@ -182,7 +182,7 @@ func (daoHandlerThis *DaoHandler) Filter(key string, val interface{}) *DaoHandle
 }
 
 func (daoHandlerThis *DaoHandler) Filters(filter map[string]interface{}) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseFilter(filter, daoHandlerThis))
 	return daoHandlerThis
 }
 
@@ -191,7 +191,7 @@ func (daoHandlerThis *DaoHandler) Group(group string) *DaoHandler {
 }
 
 func (daoHandlerThis *DaoHandler) Groups(group []string) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseGroup(group, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseGroup(group, daoHandlerThis))
 	return daoHandlerThis
 }
 
@@ -200,12 +200,12 @@ func (daoHandlerThis *DaoHandler) Order(order string) *DaoHandler {
 }
 
 func (daoHandlerThis *DaoHandler) Orders(order []string) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseOrder(order, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseOrder(order, daoHandlerThis))
 	return daoHandlerThis
 }
 
 func (daoHandlerThis *DaoHandler) Join(joinTable string) *DaoHandler {
-	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseJoin(joinTable, daoHandlerThis))
+	daoHandlerThis.Handler(daoHandlerThis.dao.ParseJoin(joinTable, daoHandlerThis))
 	return daoHandlerThis
 }
 
@@ -263,6 +263,16 @@ func (daoHandlerThis *DaoHandler) UnionAll(unions ...*gdb.Model) *DaoHandler {
 
 func (daoHandlerThis *DaoHandler) Unscoped() *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Unscoped()
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Handler(handlers ...gdb.ModelHandler) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Handler(handlers...)
+	return daoHandlerThis
+}
+
+func (daoHandlerThis *DaoHandler) Hook(hook gdb.HookHandler) *DaoHandler {
+	daoHandlerThis.model = daoHandlerThis.model.Hook(hook)
 	return daoHandlerThis
 }
 
