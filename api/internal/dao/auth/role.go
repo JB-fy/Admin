@@ -35,7 +35,7 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *roleDao) DaoModelCtx(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *roleDao) DaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
@@ -186,9 +186,9 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 
-			RoleRelToMenu.DaoModelCtx(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
-			RoleRelToAction.DaoModelCtx(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
-			RoleRelOfPlatformAdmin.DaoModelCtx(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr).Delete()
+			RoleRelToMenu.DaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
+			RoleRelToAction.DaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
+			RoleRelOfPlatformAdmin.DaoModel(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr).Delete()
 			return
 		},
 	}
@@ -249,10 +249,10 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `menuIdArr`:
-						idArr, _ := RoleRelToMenu.DaoModelCtx(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
+						idArr, _ := RoleRelToMenu.DaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
 						record[v] = gvar.New(idArr)
 					case `actionIdArr`:
-						idArr, _ := RoleRelToAction.DaoModelCtx(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
+						idArr, _ := RoleRelToAction.DaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
 						record[v] = gvar.New(idArr)
 					case `tableName`:
 						if record[daoThis.Columns().TableId].Uint() == 0 {
@@ -382,7 +382,7 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []uint, id uin
 	relDao := RoleRelToMenu
 	priKey := relDao.Columns().RoleId
 	relKey := relDao.Columns().MenuId
-	relIdArrOfOldTmp, _ := relDao.DaoModelCtx(ctx).Filter(priKey, id).Array(relKey)
+	relIdArrOfOldTmp, _ := relDao.DaoModel(ctx).Filter(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
@@ -395,14 +395,14 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []uint, id uin
 				relKey: v,
 			})
 		}
-		relDao.DaoModelCtx(ctx).Data(insertList).Insert()
+		relDao.DaoModel(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 结束----**/
 
 	/**----删除关联 开始----**/
 	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		relDao.DaoModelCtx(ctx).Filters(g.Map{
+		relDao.DaoModel(ctx).Filters(g.Map{
 			priKey: id,
 			relKey: deleteRelIdArr,
 		}).Delete()
@@ -415,7 +415,7 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []uint, id u
 	relDao := RoleRelToAction
 	priKey := relDao.Columns().RoleId
 	relKey := relDao.Columns().ActionId
-	relIdArrOfOldTmp, _ := relDao.DaoModelCtx(ctx).Filter(priKey, id).Array(relKey)
+	relIdArrOfOldTmp, _ := relDao.DaoModel(ctx).Filter(priKey, id).Array(relKey)
 	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
 
 	/**----新增关联 开始----**/
@@ -428,14 +428,14 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []uint, id u
 				relKey: v,
 			})
 		}
-		relDao.DaoModelCtx(ctx).Data(insertList).Insert()
+		relDao.DaoModel(ctx).Data(insertList).Insert()
 	}
 	/**----新增关联 开始----**/
 
 	/**----删除关联 结束----**/
 	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
 	if len(deleteRelIdArr) > 0 {
-		relDao.DaoModelCtx(ctx).Filters(g.Map{
+		relDao.DaoModel(ctx).Filters(g.Map{
 			priKey: id,
 			relKey: deleteRelIdArr,
 		}).Delete()

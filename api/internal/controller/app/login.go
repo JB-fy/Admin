@@ -28,7 +28,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.DaoModelCtx(ctx).Filter(`loginName`, req.LoginName).One()
+	info, _ := daoUser.User.DaoModel(ctx).Filter(`loginName`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -57,7 +57,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.DaoModelCtx(ctx).Filter(`loginName`, req.LoginName).One()
+	info, _ := daoUser.User.DaoModel(ctx).Filter(`loginName`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -106,7 +106,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	userColumns := daoUser.User.Columns()
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := daoUser.User.DaoModelCtx(ctx).Filter(userColumns.Account, req.Account).One()
+		info, _ := daoUser.User.DaoModel(ctx).Filter(userColumns.Account, req.Account).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -126,7 +126,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := daoUser.User.DaoModelCtx(ctx).Filter(userColumns.Phone, req.Phone).One()
+		info, _ := daoUser.User.DaoModel(ctx).Filter(userColumns.Phone, req.Phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -135,7 +135,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[userColumns.Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 
-	userId, err := daoUser.User.DaoModelCtx(ctx).HookInsert(data).InsertAndGetId()
+	userId, err := daoUser.User.DaoModel(ctx).HookInsert(data).InsertAndGetId()
 	if err != nil {
 		return
 	}
@@ -162,7 +162,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		return
 	}
 
-	row, err := daoUser.User.DaoModelCtx(ctx).Filter(daoUser.User.Columns().Phone, req.Phone).HookUpdate(g.Map{daoUser.User.Columns().Password: req.Password}).UpdateAndGetAffected()
+	row, err := daoUser.User.DaoModel(ctx).Filter(daoUser.User.Columns().Phone, req.Phone).HookUpdate(g.Map{daoUser.User.Columns().Password: req.Password}).UpdateAndGetAffected()
 	if err != nil {
 		return
 	}

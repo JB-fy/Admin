@@ -43,7 +43,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	/* //生成登录token（测试用）
 	claims := utils.CustomClaims{LoginId: 1}
-	sceneConfig, _ := daoAuth.Scene.DaoModelCtx(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneConfig)
+	sceneConfig, _ := daoAuth.Scene.DaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneConfig)
 	jwt := utils.NewJWT(ctx, sceneConfig.Map())
 	token, err := jwt.CreateToken(claims)
 	fmt.Println(token) */
@@ -53,13 +53,13 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// gregex.IsMatchString(`1062.*Duplicate.*`, err.Error()) //判断错误是不是唯一索引已存在
 	// m = m.Where(m.Builder().Where(`xxxx`).WhereOr(`xxxx`)) // 复杂条件
 	// dao常用示例
-	// list, err := daoXxxx.Txxx.DaoModelCtx(ctx).Filters(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Fields(append(&daoXxxx.Txxx.ColumnArr().Slice(), `aaaa`)).ListPri()
+	// list, err := daoXxxx.Txxx.DaoModel(ctx).Filters(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Fields(append(&daoXxxx.Txxx.ColumnArr().Slice(), `aaaa`)).ListPri()
 	/* // 数据库事务
-	xxxxTxxxHandler := daoXxxx.Txxx.DaoModelCtx(ctx)
+	xxxxTxxxHandler := daoXxxx.Txxx.DaoModel(ctx)
 	err = xxxxTxxxHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		// _, err = tx.Model(xxxxTxxxHandler.DbTable).Data(g.Map{`Xxxx`: `xxxx`}).Update()
 		// id, err := xxxxTxxxHandler.NewModel().TX(tx).Data(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()
-		// id, err := daoXxxx.Txxx.DaoModelCtx(ctx).TX(tx).HookInsert(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()
+		// id, err := daoXxxx.Txxx.DaoModel(ctx).TX(tx).HookInsert(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()
 		return
 	}) */
 	/*--------数据库使用示例 结束--------*/

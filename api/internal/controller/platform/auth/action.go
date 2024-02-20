@@ -44,7 +44,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	}
 	/**--------权限验证 结束--------**/
 
-	daoModelThis := daoAuth.Action.DaoModelCtx(ctx).Filters(filter)
+	daoModelThis := daoAuth.Action.DaoModel(ctx).Filters(filter)
 	count, err := daoModelThis.CountPri()
 	if err != nil {
 		return
@@ -81,7 +81,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Action.DaoModelCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
+	info, err := daoAuth.Action.DaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
 	if err != nil {
 		return
 	}

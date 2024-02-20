@@ -46,7 +46,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	}
 	/**--------权限验证 结束--------**/
 
-	daoModelThis := daoPlatform.Admin.DaoModelCtx(ctx).Filters(filter)
+	daoModelThis := daoPlatform.Admin.DaoModel(ctx).Filters(filter)
 	count, err := daoModelThis.CountPri()
 	if err != nil {
 		return
@@ -83,7 +83,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoPlatform.Admin.DaoModelCtx(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
+	info, err := daoPlatform.Admin.DaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
 	if err != nil {
 		return
 	}

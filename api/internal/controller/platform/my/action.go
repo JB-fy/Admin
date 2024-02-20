@@ -27,7 +27,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 			`loginId`:   loginInfo[`loginId`],
 		},
 	}
-	list, err := daoAuth.Action.DaoModelCtx(ctx).Filters(filter).Fields(field).HookSelect().ListPri()
+	list, err := daoAuth.Action.DaoModel(ctx).Filters(filter).Fields(field).HookSelect().ListPri()
 	if err != nil {
 		return
 	}
