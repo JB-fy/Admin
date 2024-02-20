@@ -81,6 +81,63 @@ func NewDaoHandler(ctx context.Context, dao DaoInterface, dbOpt ...map[string]in
 	return &daoHandlerObj
 }
 
+/*--------业务可能用到的方法 开始--------*/
+// 生成模型
+func (daoHandlerThis *DaoHandler) NewModel() *gdb.Model {
+	return g.DB(daoHandlerThis.DbGroup).Model(daoHandlerThis.DbTable). /* Safe(). */ Ctx(daoHandlerThis.Ctx)
+}
+
+// 返回当前模型的副本（当外部还需要做特殊处理时使用）
+func (daoHandlerThis *DaoHandler) CloneModel() *gdb.Model {
+	return daoHandlerThis.model.Clone()
+}
+
+// 返回当前模型（当外部还需要做特殊处理时使用）
+func (daoHandlerThis *DaoHandler) GetModel() *gdb.Model {
+	return daoHandlerThis.model
+}
+
+// 一般在更新|删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
+func (daoHandlerThis *DaoHandler) SetIdArr() *DaoHandler {
+	idArr, _ := daoHandlerThis.CloneModel().Array(daoHandlerThis.dao.PrimaryKey())
+	daoHandlerThis.IdArr = gconv.SliceUint(idArr)
+	return daoHandlerThis
+}
+
+// 判断是否联表
+func (daoHandlerThis *DaoHandler) IsJoin() bool {
+	return len(daoHandlerThis.JoinTableArr) > 0
+}
+
+// 联表时，GroupBy主键
+func (daoHandlerThis *DaoHandler) GroupPriOnJoin() *DaoHandler {
+	if daoHandlerThis.IsJoin() {
+		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey())
+	}
+	return daoHandlerThis
+}
+
+// 列表（联表时，GroupBy主键）
+func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
+	return daoHandlerThis.GroupPriOnJoin().All()
+}
+
+// 总数（联表时，主键去重）
+func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
+	if daoHandlerThis.IsJoin() {
+		return daoHandlerThis.CloneModel().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
+	}
+	return daoHandlerThis.model.Count()
+}
+
+// 详情（联表时，GroupBy主键）
+func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
+	return daoHandlerThis.GroupPriOnJoin().One()
+}
+
+/*--------业务可能用到的方法 结束--------*/
+
+/*--------简化对dao方法的调用 开始--------*/
 func (daoHandlerThis *DaoHandler) HookInsert(data map[string]interface{}) *DaoHandler {
 	daoHandlerThis.model = daoHandlerThis.model.Handler(daoHandlerThis.dao.ParseInsert(data, daoHandlerThis))
 	return daoHandlerThis
@@ -152,60 +209,9 @@ func (daoHandlerThis *DaoHandler) Join(joinTable string) *DaoHandler {
 	return daoHandlerThis
 }
 
-// 生成模型
-func (daoHandlerThis *DaoHandler) NewModel() *gdb.Model {
-	return g.DB(daoHandlerThis.DbGroup).Model(daoHandlerThis.DbTable). /* Safe(). */ Ctx(daoHandlerThis.Ctx)
-}
+/*--------简化对dao方法的调用 结束--------*/
 
-// 返回当前模型（当外部还需要做特殊处理时使用）
-func (daoHandlerThis *DaoHandler) GetModel() *gdb.Model {
-	return daoHandlerThis.model
-}
-
-// 返回当前模型的副本（当外部还需要做特殊处理时使用）
-func (daoHandlerThis *DaoHandler) CloneModel() *gdb.Model {
-	return daoHandlerThis.model.Clone()
-}
-
-// 一般在更新|删除操作需要做后置处理时使用，注意：必须在filter条件都设置完成后使用
-func (daoHandlerThis *DaoHandler) SetIdArr() *DaoHandler {
-	idArr, _ := daoHandlerThis.CloneModel().Array(daoHandlerThis.dao.PrimaryKey())
-	daoHandlerThis.IdArr = gconv.SliceUint(idArr)
-	return daoHandlerThis
-}
-
-// 判断是否联表
-func (daoHandlerThis *DaoHandler) IsJoin() bool {
-	return len(daoHandlerThis.JoinTableArr) > 0
-}
-
-// 联表时，GroupBy主键
-func (daoHandlerThis *DaoHandler) GroupPriOnJoin() *DaoHandler {
-	if daoHandlerThis.IsJoin() {
-		daoHandlerThis.model = daoHandlerThis.model.Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey())
-	}
-	return daoHandlerThis
-}
-
-// 列表（联表时，GroupBy主键）
-func (daoHandlerThis *DaoHandler) ListOfApi() (gdb.Result, error) {
-	return daoHandlerThis.GroupPriOnJoin().All()
-}
-
-// 总数（联表时，主键去重）
-func (daoHandlerThis *DaoHandler) CountOfApi() (int, error) {
-	if daoHandlerThis.IsJoin() {
-		return daoHandlerThis.CloneModel().Group(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Distinct().Fields(daoHandlerThis.DbTable + `.` + daoHandlerThis.dao.PrimaryKey()).Count()
-	}
-	return daoHandlerThis.model.Count()
-}
-
-// 详情（联表时，GroupBy主键）
-func (daoHandlerThis *DaoHandler) InfoOfApi() (gdb.Record, error) {
-	return daoHandlerThis.GroupPriOnJoin().One()
-}
-
-/*--------复制原模型方法并封装一些常用方法 开始--------*/
+/*--------简化对model方法的调用，并封装部分常用方法 开始--------*/
 func (daoHandlerThis *DaoHandler) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return daoHandlerThis.model.Transaction(daoHandlerThis.Ctx, f)
 }
@@ -406,4 +412,4 @@ func (daoHandlerThis *DaoHandler) Decrement(column string, amount interface{}) (
 	return daoHandlerThis.model.Decrement(column, amount)
 }
 
-/*--------复制原模型方法并封装一些常用方法 结束--------*/
+/*--------简化对gdb.Model方法的调用，并封装部分常用方法 结束--------*/
