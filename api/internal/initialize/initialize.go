@@ -14,5 +14,6 @@ func init() {
 
 	initGvalid(ctx) // 自定义校验规则注册
 
+	initDb(ctx)   // 数据库设置
 	initCron(ctx) // 定时器设置
 }

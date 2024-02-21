@@ -33,6 +33,7 @@ type DaoInterface interface {
 type DaoModel struct {
 	Ctx                 context.Context
 	dao                 DaoInterface
+	db                  gdb.DB
 	model               *gdb.Model
 	DbGroup             string // 分库情况下，解析后所确定的库
 	DbTable             string // 分表情况下，解析后所确定的表
@@ -67,14 +68,25 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx)
 		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx)
 	}
+	daoModelObj.db = daoModelObj.NewDB()
 	daoModelObj.model = daoModelObj.NewModel()
 	return &daoModelObj
 }
 
 /*--------业务可能用到的方法 开始--------*/
+// 生成数据库
+func (daoModelThis *DaoModel) NewDB() gdb.DB {
+	return g.DB(daoModelThis.DbGroup)
+}
+
+// 返回当前数据库
+func (daoModelThis *DaoModel) GetDB() gdb.DB {
+	return daoModelThis.db
+}
+
 // 生成模型
 func (daoModelThis *DaoModel) NewModel() *gdb.Model {
-	return g.DB(daoModelThis.DbGroup).Model(daoModelThis.DbTable). /* Safe(). */ Ctx(daoModelThis.Ctx)
+	return daoModelThis.GetDB().Model(daoModelThis.DbTable). /* Safe(). */ Ctx(daoModelThis.Ctx)
 }
 
 // 返回当前模型的副本（当外部还需要做特殊处理时使用）
