@@ -49,17 +49,16 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/
-	// g.DB(`default`).Model(`xxxx_txxx`).Safe().Ctx(ctx)     // 数据库连接
 	// gregex.IsMatchString(`1062.*Duplicate.*`, err.Error()) //判断错误是不是唯一索引已存在
 	// m = m.Where(m.Builder().Where(`xxxx`).WhereOr(`xxxx`)) // 复杂条件
-	// dao常用示例
-	// list, err := daoXxxx.Txxx.CtxDaoModel(ctx).Filters(g.Map{&daoXxxx.Txxx.Columns().Xxxx: `xxxx`}).Fields(append(&daoXxxx.Txxx.ColumnArr().Slice(), `aaaa`)).ListPri()
 	/* // 数据库事务
 	xxxxTxxxHandler := daoXxxx.Txxx.CtxDaoModel(ctx)
 	err = xxxxTxxxHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
-		// _, err = tx.Model(xxxxTxxxHandler.DbTable).Data(g.Map{`Xxxx`: `xxxx`}).Update()
-		// id, err := xxxxTxxxHandler.NewModel().TX(tx).Data(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()
-		// id, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).HookInsert(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()
+		id, err := xxxxTxxxHandler.CloneNew().TX(tx).HookInsert(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()                             //新增
+		row, err := xxxxTxxxHandler.CloneNew().TX(tx).HookUpdate(g.Map{`Xxxx`: `xxxx`}).SetIdArr().UpdateAndGetAffected()           //修改
+		row, err := xxxxTxxxHandler.CloneNew().TX(tx).Filters(g.Map{`Xxxx`: `xxxx`}).SetIdArr().HookDelete().DeleteAndGetAffected() //删除
+		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`Xxxx`, `xxxx`).Field(`xxxx`).HookSelect().All()                   //查询
+		// _, err = tx.Model(xxxxTxxxHandler.DbTable).Data(g.Map{`Xxxx`: `xxxx`}).Update()                                             // 不建议用
 		return
 	}) */
 	/*--------数据库使用示例 结束--------*/
