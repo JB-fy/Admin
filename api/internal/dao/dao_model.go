@@ -74,6 +74,25 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 }
 
 /*--------业务可能用到的方法 开始--------*/
+// 复制新的daoModel（所有属性重置）
+func (daoModelThis *DaoModel) CloneNew() *DaoModel {
+	daoModelObj := DaoModel{
+		Ctx:                 daoModelThis.Ctx,
+		dao:                 daoModelThis.dao,
+		db:                  daoModelThis.db,
+		DbGroup:             daoModelThis.DbGroup,
+		DbTable:             daoModelThis.DbTable,
+		IdArr:               []uint{},
+		AfterInsert:         map[string]interface{}{},
+		AfterUpdate:         map[string]interface{}{},
+		AfterField:          gset.NewStrSet(),
+		AfterFieldWithParam: map[string]interface{}{},
+		JoinTableSet:        gset.NewStrSet(),
+	}
+	daoModelObj.model = daoModelObj.NewModel()
+	return &daoModelObj
+}
+
 // 生成数据库
 func (daoModelThis *DaoModel) NewDB() gdb.DB {
 	return g.DB(daoModelThis.DbGroup)
