@@ -135,8 +135,6 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	if option.IsCover {
 		// dao生成
 		fmt.Println(`dao生成 开始`)
-		// gf gen dao -l "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" -g "default" -r "auth_" -d "dao/auth" -o "model/entity/auth" -e "model/entity/auth" -t "auth_scene" -t1 "resource/gen/gen_dao_template_dao.txt" -t2 "resource/gen/gen_dao_template_dao_internal.txt" -v true
-		// gf gen dao --link "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" --group default --removePrefix auth_ --daoPath dao/auth --doPath model/entity/auth --entityPath model/entity/auth --tables auth_scene --tplDaoIndexPath "resource/gen/gen_dao_template_dao.txt" --tplDaoInternalPath "resource/gen/gen_dao_template_dao_internal.txt" --overwriteDao true
 		overwriteDao := `false`
 		if option.IsCover {
 			overwriteDao = `true`
