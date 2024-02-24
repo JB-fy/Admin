@@ -228,8 +228,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 	}
 	// db表
-	tableArrTmp, _ := db.GetArray(ctx, `SHOW TABLES`)
-	tableArr := gconv.SliceStr(tableArrTmp)
+	tableArr, _ := db.Tables(ctx)
 	if option.DbTable == `` {
 		option.DbTable = gcmd.Scan("> 请输入db表:\n")
 	}
@@ -766,7 +765,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 
-			if column[`Key`].String() == `UNI` && column[`Null`].String() == `YES` {
+			if column[`Key`].String() == `UNI` && column[`Null`].Bool() {
 				daoParseInsertTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				insertData[k] = v
@@ -823,7 +822,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
-				if column[`Key`].String() == `UNI` && column[`Null`].String() == `YES` {
+				if column[`Key`].String() == `UNI` && column[`Null`].Bool() {
 					daoParseInsertTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				insertData[k] = v
@@ -1072,7 +1071,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.WhereLTE(daoModel.DbTable+` + "`.`" + `+k, v)`
-				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+				if !column[`Null`].Bool() && column[`Default`].String() == `` {
 					daoParseFilterTmp = `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.Where(m.Builder().WhereLTE(daoModel.DbTable+` + "`.`" + `+k, v).WhereOrNull(daoModel.DbTable + ` + "`.`" + ` + k))`
@@ -1084,7 +1083,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				daoParseFilterTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.WhereGTE(daoModel.DbTable+` + "`.`" + `+k, v)`
-				if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+				if !column[`Null`].Bool() && column[`Default`].String() == `` {
 					daoParseFilterTmp = `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.Where(m.Builder().WhereGTE(daoModel.DbTable+` + "`.`" + `+k, v).WhereOrNull(daoModel.DbTable + ` + "`.`" + ` + k))`
@@ -1094,7 +1093,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
-			if column[`Null`].String() == `YES` {
+			if column[`Null`].Bool() {
 				daoParseInsertTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				insertData[k] = v
@@ -1440,7 +1439,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				ruleReqCreate = `max-length:` + resultStr[1] + `|url`
 				ruleReqUpdate = `max-length:` + resultStr[1] + `|url`
 			} else {
-				if column[`Null`].String() == `NO` {
+				if !column[`Null`].Bool() {
 					isRequired = true
 				}
 				typeReqCreate = `*[]string`
@@ -1450,7 +1449,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				ruleReqUpdate = `distinct|foreach|url|foreach|min-length:1`
 			}
 		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-			if column[`Null`].String() == `NO` {
+			if !column[`Null`].Bool() {
 				isRequired = true
 			}
 			typeReqCreate = `*[]interface{}`
@@ -1474,7 +1473,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			ruleReqFilter = `max-length:` + resultStr[1]
 			ruleReqCreate = `max-length:` + resultStr[1]
 			ruleReqUpdate = `max-length:` + resultStr[1]
-			if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
+			if column[`Key`].String() == `UNI` && !column[`Null`].Bool() {
 				isRequired = true
 			}
 
@@ -1518,7 +1517,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				continue
 			} else {
-				if column[`Key`].String() == `UNI` && column[`Null`].String() == `NO` {
+				if column[`Key`].String() == `UNI` && !column[`Null`].Bool() {
 					isRequired = true
 				}
 			}
@@ -1595,7 +1594,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				ruleReqCreate = `date-format:Y-m-d`
 				ruleReqUpdate = `date-format:Y-m-d`
 			}
-			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+			if !column[`Null`].Bool() && column[`Default`].String() == `` {
 				isRequired = true
 			}
 
@@ -1603,7 +1602,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				typeReqFilter = `*gtime.Time`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
-			if column[`Null`].String() == `NO` {
+			if !column[`Null`].Bool() {
 				isRequired = true
 			}
 			typeReqCreate = `*string`
@@ -3087,7 +3086,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else {
 				multipleStr = ` :multiple="true"`
 				requiredStr := ``
-				if column[`Null`].String() == `NO` {
+				if !column[`Null`].Bool() {
 					requiredStr = ` required: true,`
 				}
 				viewSaveRule += `
@@ -3111,7 +3110,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			} else {
 				multipleStr = ` :multiple="true"`
 				requiredStr := ``
-				if column[`Null`].String() == `NO` {
+				if !column[`Null`].Bool() {
 					requiredStr = ` required: true,`
 				}
 				viewSaveRule += `
@@ -3128,7 +3127,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			viewSaveDataInit += `
         ` + field + `: [],`
 			requiredStr := ``
-			if column[`Null`].String() == `NO` {
+			if !column[`Null`].Bool() {
 				requiredStr = ` required: true,`
 			}
 			viewSaveRule += `
@@ -3196,7 +3195,7 @@ const ` + field + `Handle = reactive({
 			requiredStr := ``
 			viewSaveFieldTip := ` />`
 			if column[`Key`].String() == `UNI` {
-				if column[`Null`].String() == `NO` {
+				if !column[`Null`].Bool() {
 					requiredStr = ` required: true,`
 				}
 				viewSaveFieldTip = ` style="max-width: 250px" />
@@ -3255,7 +3254,7 @@ import md5 from 'js-md5'`
 				requiredStr := ``
 				viewSaveFieldTip := ` />`
 				if column[`Key`].String() == `UNI` {
-					if column[`Null`].String() == `NO` {
+					if !column[`Null`].Bool() {
 						requiredStr = ` required: true,`
 					}
 					viewSaveFieldTip = ` style="max-width: 250px" />
@@ -3401,7 +3400,7 @@ import md5 from 'js-md5'`
 				formatDatePicker = `YYYY-MM-DD`
 			}
 			requiredStr := ``
-			if column[`Null`].String() == `NO` && column[`Default`].String() == `` {
+			if !column[`Null`].Bool() && column[`Default`].String() == `` {
 				requiredStr = ` required: true,`
 			}
 
@@ -3421,7 +3420,7 @@ import md5 from 'js-md5'`
                 </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
 			requiredStr := ``
-			if column[`Null`].String() == `NO` {
+			if !column[`Null`].Bool() {
 				requiredStr = `
                 required: true,`
 			}

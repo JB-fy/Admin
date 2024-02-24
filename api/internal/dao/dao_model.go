@@ -232,6 +232,17 @@ func (daoModelThis *DaoModel) Join(joinTable string) *DaoModel {
 
 /*--------简化对dao方法的调用 结束--------*/
 
+/*--------简化对db部分常用方法的调用 开始--------*/
+func (daoModelThis *DaoModel) Begin(ctx context.Context) (gdb.TX, error) {
+	return daoModelThis.db.Begin(ctx)
+}
+
+func (daoModelThis *DaoModel) GetCore() *gdb.Core {
+	return daoModelThis.db.GetCore()
+}
+
+/*--------简化对db部分常用方法的调用 结束--------*/
+
 /*--------简化对model方法的调用，并封装部分常用方法 开始--------*/
 func (daoModelThis *DaoModel) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return daoModelThis.model.Transaction(daoModelThis.Ctx, f)
