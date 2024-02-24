@@ -132,6 +132,41 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	option := MyGenOptionHandle(ctx, parser)
 	tpl := MyGenTplHandle(ctx, option)
 
+	if option.IsCover {
+		// dao生成
+		fmt.Println(`dao生成 开始`)
+		// gf gen dao -l "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" -g "default" -r "auth_" -d "dao/auth" -o "model/entity/auth" -e "model/entity/auth" -t "auth_scene" -t1 "resource/gen/gen_dao_template_dao.txt" -t2 "resource/gen/gen_dao_template_dao_internal.txt" -v true
+		// gf gen dao --link "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" --group default --removePrefix auth_ --daoPath dao/auth --doPath model/entity/auth --entityPath model/entity/auth --tables auth_scene --tplDaoIndexPath "resource/gen/gen_dao_template_dao.txt" --tplDaoInternalPath "resource/gen/gen_dao_template_dao_internal.txt" --overwriteDao true
+		overwriteDao := `false`
+		if option.IsCover {
+			overwriteDao = `true`
+		}
+		command := exec.Command(`gf`, `gen`, `dao`,
+			`--link`, gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[option.DbGroup])[0][`link`]),
+			`--group`, option.DbGroup,
+			`--removePrefix`, option.RemovePrefix,
+			`--daoPath`, `dao/`+option.ModuleDir,
+			`--doPath`, `model/entity/`+option.ModuleDir,
+			`--entityPath`, `model/entity/`+option.ModuleDir,
+			`--tables`, option.DbTable,
+			`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
+			`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+			`--overwriteDao`, overwriteDao)
+		stdout, _ := command.StdoutPipe()
+		command.Start()
+		buf := make([]byte, 1024)
+		for {
+			n, err := stdout.Read(buf)
+			if err != nil {
+				break
+			}
+			if n > 0 {
+				fmt.Print(string(buf[:n]))
+			}
+		}
+		command.Wait()
+		fmt.Println(`dao生成 结束`)
+	}
 	MyGenTplDao(ctx, option, tpl)   // dao层存在时，增加或修改部分字段的解析代码
 	MyGenTplLogic(ctx, option, tpl) // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 	// service生成
@@ -1202,7 +1237,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.LcFirst(tpl.ModuleDirCaseCamel) + `/` + tpl.TableNameCaseSnake + `.go`
-	if gfile.IsFile(saveFile) {
+	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 

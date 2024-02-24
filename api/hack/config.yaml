@@ -5,37 +5,17 @@ gfcli:
     packSrc: "manifest,resource" # 需要打包资源目录
     # output: "../" #默认文件名main，也可写成../xxxx指定文件名
   gen:
-    dao:
-      - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
-        group: "default"
-        removePrefix: "auth_"
-        daoPath: "dao/auth"
-        doPath: "model/do/auth"
-        entityPath: "model/entity/auth"
-        tables: "auth_action,auth_action_rel_to_scene,auth_menu,auth_role,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu,auth_scene"
-        tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
-        tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-        overwriteDao: false
-      - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
-        group: "default"
-        removePrefix: "platform_"
-        daoPath: "dao/platform"
-        doPath: "model/do/platform"
-        entityPath: "model/entity/platform"
-        tables: "platform_admin,platform_config,platform_server"
-        tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
-        tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-        overwriteDao: false
-      - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
-        group: "default"
-        removePrefix: ""
-        daoPath: "dao/user"
-        doPath: "model/do/user"
-        entityPath: "model/entity/user"
-        tables: "user"
-        tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
-        tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-        overwriteDao: false
     pbentity:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         tables: "auth_test"
+    # dao: # 只限不使用my_gen全自动代码生成的表（如：中间表和关联表）使用，且使用后必须全部注释掉。否则会影响其它使用my_gen全自动代码生成的主表
+    #   - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
+    #     group: "default"
+    #     removePrefix: "auth_"
+    #     daoPath: "dao/auth"
+    #     doPath: "model/do/auth"
+    #     entityPath: "model/entity/auth"
+    #     tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
+    #     tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
+    #     tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
+    #     overwriteDao: false
