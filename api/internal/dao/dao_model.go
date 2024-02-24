@@ -75,7 +75,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 	return &daoModelObj
 }
 
-// 缓存暂时不考虑
+// 缓存暂不考虑。原因：当key很多时，删除操作会有效率问题，而当直接清空全部缓存也很不友好
 //	func (daoModelThis *DaoModel) SetCache() *DaoModel {
 //		daoModelThis.Cache(gdb.CacheOption{
 //			Duration: 0, // 5 * time.Minute
@@ -87,7 +87,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 //		keyArr := cache.MustKeyStrings(daoModelThis.Ctx)
 //		keyArrOfRemove := []interface{}{}
 //		for _, key := range keyArr {
-//			if gstr.Pos(key, "#`"+daoModelThis.DbTable+"`#") != -1 {
+//			if gstr.Pos(key, "SelectCache:#`"+daoModelThis.DbTable+"`#") == 0 {
 //				keyArrOfRemove = append(keyArrOfRemove, key)
 //			}
 //		}
