@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -73,6 +74,26 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 	daoModelObj.model = daoModelObj.NewModel()
 	return &daoModelObj
 }
+
+// 缓存暂时不考虑
+//	func (daoModelThis *DaoModel) SetCache() *DaoModel {
+//		daoModelThis.Cache(gdb.CacheOption{
+//			Duration: 0, // 5 * time.Minute
+//			Name:     "#`" + daoModelThis.DbTable + "`#All",
+//			Force:    true,
+//		})
+//		/* // daoModelThis.GetCore().ClearCache(daoModelThis.Ctx, daoModelThis.DbTable)
+//		cache := daoModelThis.GetDB().GetCache()
+//		keyArr := cache.MustKeyStrings(daoModelThis.Ctx)
+//		keyArrOfRemove := []interface{}{}
+//		for _, key := range keyArr {
+//			if gstr.Pos(key, "#`"+daoModelThis.DbTable+"`#") != -1 {
+//				keyArrOfRemove = append(keyArrOfRemove, key)
+//			}
+//		}
+//		cache.Removes(daoModelThis.Ctx, keyArrOfRemove) */
+//		return daoModelThis
+//	}
 
 /*--------业务可能用到的方法 开始--------*/
 // 复制新的daoModel（所有属性重置）
@@ -242,6 +263,10 @@ func (daoModelThis *DaoModel) GetCore() *gdb.Core {
 	return daoModelThis.db.GetCore()
 }
 
+func (daoModelThis *DaoModel) GetCache() *gcache.Cache {
+	return daoModelThis.db.GetCache()
+}
+
 /*--------简化对db部分常用方法的调用 结束--------*/
 
 /*--------简化对model方法的调用，并封装部分常用方法 开始--------*/
@@ -279,18 +304,8 @@ func (daoModelThis *DaoModel) Schema(schema string) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Partition(partitions ...string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Partition(partitions...)
-	return daoModelThis
-}
-
-func (daoModelThis *DaoModel) Union(unions ...*gdb.Model) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Union(unions...)
-	return daoModelThis
-}
-
-func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
-	daoModelThis.model = daoModelThis.model.UnionAll(unions...)
+func (daoModelThis *DaoModel) Cache(option gdb.CacheOption) *DaoModel {
+	daoModelThis.model = daoModelThis.model.Cache(option)
 	return daoModelThis
 }
 
@@ -309,11 +324,6 @@ func (daoModelThis *DaoModel) Hook(hook gdb.HookHandler) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Cache(option gdb.CacheOption) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Cache(option)
-	return daoModelThis
-}
-
 func (daoModelThis *DaoModel) Data(data ...interface{}) *DaoModel {
 	daoModelThis.model = daoModelThis.model.Data(data...)
 	return daoModelThis
@@ -321,6 +331,21 @@ func (daoModelThis *DaoModel) Data(data ...interface{}) *DaoModel {
 
 func (daoModelThis *DaoModel) Distinct() *DaoModel {
 	daoModelThis.model = daoModelThis.model.Distinct()
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) Partition(partitions ...string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.Partition(partitions...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) Union(unions ...*gdb.Model) *DaoModel {
+	daoModelThis.model = daoModelThis.model.Union(unions...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
+	daoModelThis.model = daoModelThis.model.UnionAll(unions...)
 	return daoModelThis
 }
 
@@ -368,6 +393,32 @@ func (daoModelThis *DaoModel) Update(dataAndWhere ...interface{}) (result sql.Re
 
 func (daoModelThis *DaoModel) UpdateAndGetAffected(dataAndWhere ...interface{}) (affected int64, err error) {
 	return daoModelThis.model.UpdateAndGetAffected(dataAndWhere...)
+}
+
+func (daoModelThis *DaoModel) Increment(column string, amount interface{}) (sql.Result, error) {
+	return daoModelThis.model.Increment(column, amount)
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) IncrementAndGetAffected(column string, amount interface{}) (int64, error) {
+	result, err := daoModelThis.model.Increment(column, amount)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+func (daoModelThis *DaoModel) Decrement(column string, amount interface{}) (sql.Result, error) {
+	return daoModelThis.model.Decrement(column, amount)
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) DecrementAndGetAffected(column string, amount interface{}) (int64, error) {
+	result, err := daoModelThis.model.Decrement(column, amount)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 func (daoModelThis *DaoModel) Delete(where ...interface{}) (result sql.Result, err error) {
@@ -493,14 +544,6 @@ func (daoModelThis *DaoModel) Min(column string) (float64, error) {
 
 func (daoModelThis *DaoModel) Max(column string) (float64, error) {
 	return daoModelThis.model.Max(column)
-}
-
-func (daoModelThis *DaoModel) Increment(column string, amount interface{}) (sql.Result, error) {
-	return daoModelThis.model.Increment(column, amount)
-}
-
-func (daoModelThis *DaoModel) Decrement(column string, amount interface{}) (sql.Result, error) {
-	return daoModelThis.model.Decrement(column, amount)
 }
 
 /*--------简化对gdb.Model方法的调用，并封装部分常用方法 结束--------*/
