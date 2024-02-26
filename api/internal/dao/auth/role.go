@@ -381,8 +381,7 @@ func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []uint, id uin
 	relDao := RoleRelToMenu
 	priKey := relDao.Columns().RoleId
 	relKey := relDao.Columns().MenuId
-	relIdArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).Array(relKey)
-	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
+	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
 
 	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
@@ -414,8 +413,7 @@ func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []uint, id u
 	relDao := RoleRelToAction
 	priKey := relDao.Columns().RoleId
 	relKey := relDao.Columns().ActionId
-	relIdArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).Array(relKey)
-	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
+	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
 
 	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()

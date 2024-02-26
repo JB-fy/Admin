@@ -208,7 +208,11 @@ func (daoModelThis *DaoModel) Fields(field []string) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) FieldWithParam(fieldWithParam map[string]interface{}) *DaoModel {
+func (daoModelThis *DaoModel) FieldWithParam(key string, val interface{}) *DaoModel {
+	return daoModelThis.FieldsWithParam(map[string]interface{}{key: val})
+}
+
+func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]interface{}) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseField([]string{}, fieldWithParam, daoModelThis))
 	return daoModelThis
 }
@@ -464,6 +468,33 @@ func (daoModelThis *DaoModel) One(where ...interface{}) (gdb.Record, error) {
 
 func (daoModelThis *DaoModel) Array(fieldsAndWhere ...interface{}) ([]gdb.Value, error) {
 	return daoModelThis.model.Array(fieldsAndWhere...)
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...interface{}) ([]string, error) {
+	arr, err := daoModelThis.model.Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	return gconv.SliceStr(arr), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...interface{}) ([]int, error) {
+	arr, err := daoModelThis.model.Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	return gconv.SliceInt(arr), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...interface{}) ([]uint, error) {
+	arr, err := daoModelThis.model.Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	return gconv.SliceUint(arr), nil
 }
 
 func (daoModelThis *DaoModel) Value(fieldsAndWhere ...interface{}) (gdb.Value, error) {

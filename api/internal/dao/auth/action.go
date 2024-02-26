@@ -381,8 +381,7 @@ func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id 
 	relDao := ActionRelToScene
 	priKey := relDao.Columns().ActionId
 	relKey := relDao.Columns().SceneId
-	relIdArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).Array(relKey)
-	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
+	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
 
 	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()

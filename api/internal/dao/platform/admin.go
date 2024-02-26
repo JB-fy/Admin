@@ -396,8 +396,7 @@ func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []uint, id ui
 	relDao := daoAuth.RoleRelOfPlatformAdmin
 	priKey := relDao.Columns().AdminId
 	relKey := relDao.Columns().RoleId
-	relIdArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).Array(relKey)
-	relIdArrOfOld := gconv.SliceUint(relIdArrOfOldTmp)
+	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
 
 	/**----新增关联 开始----**/
 	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
