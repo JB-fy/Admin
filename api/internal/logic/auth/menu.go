@@ -24,11 +24,12 @@ func init() {
 // 新增
 func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
+	daoModelThis := daoThis.CtxDaoModel(ctx)
 
 	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
@@ -41,14 +42,16 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 		}
 	}
 
-	id, err = daoThis.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -57,12 +60,12 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			oldList, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
+			oldList, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
 			for _, oldInfo := range oldList {
 				if pid == oldInfo[daoThis.PrimaryKey()].Uint() { //父级不能是自身
 					err = utils.NewErrorCode(ctx, 29999996, ``)
@@ -93,13 +96,15 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 // 删除
 func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Menu
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}
 
-	count, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().Pid, daoModelThis.IdArr).Count()
+	count, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().Pid, daoModelThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ``)
 		return

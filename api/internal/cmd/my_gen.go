@@ -945,7 +945,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				}
 			}
 			if len(updateSelfData) > 0 {
-				daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
+				daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}`
 					if gstr.Pos(tplDao, daoHookInsertTmp) == -1 {
 						daoHookInsert += daoHookInsertTmp
@@ -1001,7 +1001,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				case ` + "`updateChildIdPathAndLevelList`" + `: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{` + "`pIdPathOfOld`" + `: ` + "`父级IdPath（旧）`" + `, ` + "`pIdPathOfNew`" + `: ` + "`父级IdPath（新）`" + `, ` + "`pLevelOfOld`" + `: ` + "`父级Level（旧）`" + `, ` + "`pLevelOfNew`" + `: ` + "`父级Level（新）`" + `}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.CtxDaoModel(ctx).Filter(` + "`pIdPathOfOld`" + `, v1[` + "`pIdPathOfOld`" + `]).HookUpdate(g.Map{
+						daoModel.CloneNew().Filter(` + "`pIdPathOfOld`" + `, v1[` + "`pIdPathOfOld`" + `]).HookUpdate(g.Map{
 							` + "`childIdPath`" + `: g.Map{
 								` + "`pIdPathOfOld`" + `: v1[` + "`pIdPathOfOld`" + `],
 								` + "`pIdPathOfNew`" + `: v1[` + "`pIdPathOfNew`" + `],
@@ -1260,14 +1260,15 @@ func init() {
 
 // 新增
 func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
-	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+`
 	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
-
 	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
-			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
@@ -1277,14 +1278,16 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 `
 	}
 	tplLogic += `
-	id, err = daoThis.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1297,12 +1300,12 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 			tplLogic += `
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
-			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
 			}
-			oldList, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
+			oldList, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
 			for _, oldInfo := range oldList {
 				if pid == oldInfo[daoThis.PrimaryKey()].Uint() { //父级不能是自身
 					err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
@@ -1320,7 +1323,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 			tplLogic += `
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
-			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
 				return
@@ -1345,7 +1348,9 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 // 删除
 func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -1353,7 +1358,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 `
 	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
-	count, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, daoModelThis.IdArr).Count()
+	count, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, daoModelThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ` + "``" + `)
 		return

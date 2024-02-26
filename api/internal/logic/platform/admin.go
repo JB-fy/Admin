@@ -24,6 +24,7 @@ func init() {
 // 新增
 func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoPlatform.Admin
+	daoModelThis := daoThis.CtxDaoModel(ctx)
 
 	if _, ok := data[`roleIdArr`]; ok {
 		roleIdArr := gconv.SliceUint(data[`roleIdArr`])
@@ -36,14 +37,16 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 		}
 	}
 
-	id, err = daoThis.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -66,7 +69,9 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 // 删除
 func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoPlatform.Admin
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return

@@ -117,7 +117,7 @@ func (daoThis *menuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				}
 			}
 			if len(updateSelfData) > 0 {
-				daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
+				daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}
 			return
 		},
@@ -221,7 +221,7 @@ func (daoThis *menuDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				case `updateChildIdPathAndLevelList`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`pIdPathOfOld`: `父级IdPath（旧）`, `pIdPathOfNew`: `父级IdPath（新）`, `pLevelOfOld`: `父级Level（旧）`, `pLevelOfNew`: `父级Level（新）`}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoThis.CtxDaoModel(ctx).Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
+						daoModel.CloneNew().Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
 							`childIdPath`: g.Map{
 								`pIdPathOfOld`: v1[`pIdPathOfOld`],
 								`pIdPathOfNew`: v1[`pIdPathOfNew`],

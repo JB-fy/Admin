@@ -96,7 +96,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 //	}
 
 /*--------业务可能用到的方法 开始--------*/
-// 复制新的daoModel（所有属性重置）
+// 复制新的daoModel（所有属性重置）。作用：对同一个表做多次操作时，不用再解析分库分表
 func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 	daoModelObj := DaoModel{
 		Ctx:                 daoModelThis.Ctx,

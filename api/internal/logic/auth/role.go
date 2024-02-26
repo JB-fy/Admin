@@ -23,6 +23,8 @@ func init() {
 // 新增
 func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Role
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
 	if _, ok := data[`menuIdArr`]; ok {
 		menuIdArr := gconv.SliceUint(data[`menuIdArr`])
 		filterTmp := g.Map{daoAuth.Menu.PrimaryKey(): menuIdArr, daoAuth.Menu.Columns().SceneId: data[`sceneId`]}
@@ -42,14 +44,16 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 		}
 	}
 
-	id, err = daoThis.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
 func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -58,7 +62,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 	if _, ok := data[`menuIdArr`]; ok {
 		menuIdArr := gconv.SliceUint(data[`menuIdArr`])
 		for _, id := range daoModelThis.IdArr {
-			oldInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), id).One()
+			oldInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), id).One()
 			filterTmp := g.Map{daoAuth.Menu.PrimaryKey(): menuIdArr, daoAuth.Menu.Columns().SceneId: oldInfo[`sceneId`]}
 			if _, ok := data[`sceneId`]; ok {
 				filterTmp[daoAuth.Menu.Columns().SceneId] = data[`sceneId`]
@@ -74,7 +78,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 	if _, ok := data[`actionIdArr`]; ok {
 		actionIdArr := gconv.SliceUint(data[`actionIdArr`])
 		for _, id := range daoModelThis.IdArr {
-			oldInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), id).One()
+			oldInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), id).One()
 			filterTmp := g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: oldInfo[`sceneId`]}
 			if _, ok := data[`sceneId`]; ok {
 				filterTmp[daoAuth.ActionRelToScene.Columns().SceneId] = data[`sceneId`]
@@ -94,7 +98,9 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 // 删除
 func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoAuth.Role
-	daoModelThis := daoThis.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelThis := daoThis.CtxDaoModel(ctx)
+
+	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
