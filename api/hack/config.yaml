@@ -8,17 +8,17 @@ gfcli:
     pbentity:
       - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
         tables: "auth_test"
-    # 下面dao配置只限不使用my_gen全自动代码生成的表（如：中间表和关联表）使用，且使用后必须全部注释掉。否则会影响其它使用my_gen全自动代码生成的主表
-    # 中间表和关联表，也可以直接使用以下命令生成
-    # gf gen dao --link "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" --group "default" --removePrefix "xxxx_" --daoPath "dao/xxxx" --doPath "model/entity/xxxx" --entityPath "model/entity/xxxx" --tables "xxxx_table1,xxxx_table2," --tplDaoIndexPath "resource/gen/gen_dao_template_dao.txt" --tplDaoInternalPath "resource/gen/gen_dao_template_dao_internal.txt" --overwriteDao true
-    # dao:
-    #   - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
-    #     group: "default"
-    #     removePrefix: "auth_"
-    #     daoPath: "dao/auth"
-    #     doPath: "model/do/auth"
-    #     entityPath: "model/entity/auth"
-    #     tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
-    #     tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
-    #     tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-    #     overwriteDao: false
+    dao:
+      # 下面dao配置只限不使用my_gen全自动代码生成的表（如：中间表和关联表）使用，且使用后必须全部注释掉。否则会影响其它使用my_gen全自动代码生成的主表
+      # 中间表和关联表，也可以直接使用以下命令生成
+      # gf gen dao --link "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" --group "default" --removePrefix "xxxx_" --daoPath "dao/xxxx" --doPath "model/entity/xxxx" --entityPath "model/entity/xxxx" --tables "xxxx_table1,xxxx_table2," --tplDaoIndexPath "resource/gen/gen_dao_template_dao.txt" --tplDaoInternalPath "resource/gen/gen_dao_template_dao_internal.txt" --overwriteDao true
+      # - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
+      #   group: "default"
+      #   removePrefix: "auth_"
+      #   daoPath: "dao/auth"
+      #   doPath: "model/do/auth"
+      #   entityPath: "model/entity/auth"
+      #   tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
+      #   tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
+      #   tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
+      #   overwriteDao: false
