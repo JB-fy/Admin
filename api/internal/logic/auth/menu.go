@@ -25,8 +25,7 @@ func init() {
 func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoAuth.Menu
 
-	_, okPid := data[daoThis.Columns().Pid]
-	if okPid {
+	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
 			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
@@ -55,8 +54,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	_, okPid := data[daoThis.Columns().Pid]
-	if okPid {
+	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
 			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
@@ -72,8 +70,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 				}
 				if pid != oldInfo[daoThis.Columns().Pid].Uint() {
 					sceneId := oldInfo[daoThis.Columns().SceneId].Uint()
-					_, okSceneId := data[daoThis.Columns().SceneId]
-					if okSceneId {
+					if _, ok := data[daoThis.Columns().SceneId]; ok {
 						sceneId = gconv.Uint(data[daoThis.Columns().SceneId])
 					}
 					if pInfo[daoThis.Columns().SceneId].Uint() != sceneId {

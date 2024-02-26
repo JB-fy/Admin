@@ -60,8 +60,7 @@ func (daoThis *menuDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[stri
 // 解析insert
 func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		_, okPid := insert[daoThis.Columns().Pid]
-		if !okPid {
+		if _, ok := insert[daoThis.Columns().Pid]; !ok {
 			insert[daoThis.Columns().Pid] = 0
 		}
 		insertData := map[string]interface{}{}
@@ -189,8 +188,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
-			_, ok := v.(gdb.Raw)
-			if ok {
+			if _, ok := v.(gdb.Raw); ok {
 				fieldArr = append(fieldArr, k+` = `+gconv.String(v))
 			} else {
 				fieldArr = append(fieldArr, k+` = ?`)

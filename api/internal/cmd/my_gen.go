@@ -227,8 +227,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 	gconv.Struct(optionMap, option)
 
 	// 场景标识
-	_, ok := optionMap[`sceneCode`]
-	if !ok {
+	if _, ok := optionMap[`sceneCode`]; !ok {
 		option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
 	}
 	for {
@@ -272,8 +271,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
 	}
 	// db表前缀
-	_, ok = optionMap[`removePrefix`]
-	if !ok {
+	if _, ok := optionMap[`removePrefix`]; !ok {
 		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
 	}
 	for {
@@ -283,8 +281,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
 	// 模块目录
-	_, ok = optionMap[`moduleDir`]
-	if !ok {
+	if _, ok := optionMap[`moduleDir`]; !ok {
 		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
 	for {
@@ -294,8 +291,7 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
 	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
-	_, ok = optionMap[`commonName`]
-	if !ok {
+	if _, ok := optionMap[`commonName`]; !ok {
 		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
 	}
 	for {
@@ -917,8 +913,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 				if tpl.PidHandle.IsCoexist {
 					daoParseInsertBeforeTmp := `
-		_, okPid := insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]
-		if !okPid {
+		if _, ok := insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; !ok {
 			insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `] = 0
 		}`
 					if gstr.Pos(tplDao, daoParseInsertBeforeTmp) == -1 {
@@ -1269,8 +1264,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
 
-	_, okPid := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]
-	if okPid {
+	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
 		if pid > 0 {
 			pInfo, _ := daoThis.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), pid).One()
@@ -1298,8 +1292,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 `
 	if tpl.PidHandle.PidField != `` {
 		tplLogic += `
-	_, okPid := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]
-	if okPid {`
+	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; ok {`
 		if tpl.PidHandle.IsCoexist {
 			tplLogic += `
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])

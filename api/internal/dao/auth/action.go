@@ -123,8 +123,7 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, daoModel *d
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
-			_, ok := v.(gdb.Raw)
-			if ok {
+			if _, ok := v.(gdb.Raw); ok {
 				fieldArr = append(fieldArr, k+` = `+gconv.String(v))
 			} else {
 				fieldArr = append(fieldArr, k+` = ?`)
