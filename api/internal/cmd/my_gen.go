@@ -118,6 +118,7 @@ type RelTableItem struct {
 	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
 	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
 	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
 }
 
 type PasswordHandleItem struct {
@@ -603,6 +604,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					RelSuffix:                  ``,
 					RelSuffixCaseCamel:         ``,
 					RelSuffixCaseSnake:         ``,
+					RelTableIsExistPidField:    false,
 				}
 				fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
 				if len(fieldCaseSnakeArr) > 1 {
@@ -667,6 +669,11 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 				}
 				relTableItem.RelDaoDirCaseCamel = gstr.Join(relDaoDirCaseCamelArr, ``)
 				relTableItem.RelDaoDirCaseCamelLower = gstr.Join(relDaoDirCaseCamelLowerArr, `/`)
+				if relTableItem.IsExistRelTableDao {
+					if gstr.Pos(gfile.GetContents(selfDir+`/internal/dao/`+relTableItem.RelDaoDir+`/internal/`+relTableItem.RelTableNameCaseSnake+`.go`), `Pid: `) != -1 {
+						relTableItem.RelTableIsExistPidField = true
+					}
+				}
 				tpl.RelTableMap[field] = relTableItem
 			}
 		}
@@ -2916,10 +2923,17 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
 					relTable := tpl.RelTableMap[field]
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
-				viewQueryField += `
+				if tpl.RelTableMap[field].RelTableIsExistPidField {
+					viewQueryField += `
+        <el-form-item prop="` + field + `">
+            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
+        </el-form-item>`
+				} else {
+					viewQueryField += `
         <el-form-item prop="` + field + `">
             <my-select v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
         </el-form-item>`
+				}
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				viewQueryField += `
         <el-form-item prop="` + field + `" style="width: 120px">
@@ -3348,10 +3362,17 @@ import md5 from 'js-md5'`
         ` + field + `: [
             { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
         ],`
-				viewSaveField += `
+				if tpl.RelTableMap[field].RelTableIsExistPidField {
+					viewSaveField += `
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
+                </el-form-item>`
+				} else {
+					viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-select v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
                 </el-form-item>`
+				}
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				defaultVal := column[`Default`].Int()
 				if defaultVal != 0 {
