@@ -87,6 +87,13 @@ func (daoThis *configDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				return
 			}
 			// id, _ := result.LastInsertId()
+
+			/* for k, v := range daoModel.AfterInsert {
+				switch k {
+				case `xxxx`:
+					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+				}
+			} */
 			return
 		},
 	}
@@ -137,6 +144,15 @@ func (daoThis *configDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
+			} */
+
+			/* for k, v := range daoModel.AfterUpdate {
+				switch k {
+				case `xxxx`:
+					for _, id := range daoModel.IdArr {
+						daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+					}
+				}
 			} */
 			return
 		},
@@ -301,7 +317,7 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // Fill with you ideas below.
 
 // 获取配置
-func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config gdb.Record, err error) {
+func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config map[string]gdb.Value, err error) {
 	return daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
 }
 

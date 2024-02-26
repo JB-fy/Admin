@@ -16,9 +16,7 @@ const saveForm = reactive({
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         sceneId: [{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }],
-        /* tableId: [
-			{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
-		], */
+        /* tableId: [{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }], */
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
         menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
         actionIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
@@ -108,8 +106,8 @@ const saveDrawer = reactive({
                     />
                 </el-form-item>
                 <!-- <el-form-item :label="t('auth.role.name.tableId')" prop="tableId">
-					<my-select v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
-				</el-form-item> -->
+                    <my-select v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
+                </el-form-item> -->
                 <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuId')" prop="menuIdArr">
                     <my-cascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
                 </el-form-item>

@@ -86,6 +86,13 @@ func (daoThis *roleRelToMenuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.Hoo
 				return
 			}
 			// id, _ := result.LastInsertId()
+
+			/* for k, v := range daoModel.AfterInsert {
+				switch k {
+				case `xxxx`:
+					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+				}
+			} */
 			return
 		},
 	}
@@ -136,6 +143,15 @@ func (daoThis *roleRelToMenuDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.Hoo
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
+			} */
+
+			/* for k, v := range daoModel.AfterUpdate {
+				switch k {
+				case `xxxx`:
+					for _, id := range daoModel.IdArr {
+						daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+					}
+				}
 			} */
 			return
 		},

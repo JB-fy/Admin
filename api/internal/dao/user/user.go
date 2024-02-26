@@ -108,6 +108,13 @@ func (daoThis *userDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 			// id, _ := result.LastInsertId()
+
+			/* for k, v := range daoModel.AfterInsert {
+				switch k {
+				case `xxxx`:
+					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+				}
+			} */
 			return
 		},
 	}
@@ -177,6 +184,15 @@ func (daoThis *userDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
+			} */
+
+			/* for k, v := range daoModel.AfterUpdate {
+				switch k {
+				case `xxxx`:
+					for _, id := range daoModel.IdArr {
+						daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+					}
+				}
 			} */
 			return
 		},
