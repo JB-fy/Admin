@@ -514,7 +514,7 @@ func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) PluckStr(field string, key string) (map[string]gdb.Value, error) {
+func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, error) {
 	list, err := daoModelThis.Fields([]string{field, key}).HookSelect().All()
 	if err != nil {
 		return nil, err
@@ -522,7 +522,7 @@ func (daoModelThis *DaoModel) PluckStr(field string, key string) (map[string]gdb
 	if list.IsEmpty() {
 		return nil, nil
 	}
-	result := make(map[string]gdb.Value, len(list))
+	result := make(gdb.Record, len(list))
 	for _, v := range list {
 		result[v[key].String()] = v[field]
 	}

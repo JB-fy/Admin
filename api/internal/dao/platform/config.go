@@ -317,7 +317,7 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // Fill with you ideas below.
 
 // 获取配置
-func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config map[string]gdb.Value, err error) {
+func (daoThis *configDao) Get(ctx context.Context, configKeyArr []string) (config gdb.Record, err error) {
 	return daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
 }
 
