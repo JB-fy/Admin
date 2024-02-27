@@ -68,8 +68,7 @@ func (smsThis *SmsOfAliyun) SendSms(phoneArr []string, templateParam string) (er
 
 	if tryErr != nil {
 		var errSDK = &tea.SDKError{}
-		_t, ok := tryErr.(*tea.SDKError)
-		if ok {
+		if _t, ok := tryErr.(*tea.SDKError); ok {
 			errSDK = _t
 		} else {
 			errSDK.Message = tea.String(tryErr.Error())

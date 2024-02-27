@@ -53,106 +53,18 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		视频		命名：video,video_list,videoList,video_arr,videoArr等后缀；类型：单视频varchar，多视频json或text
 		数组		命名：list,arr等后缀；类型：json或text；
 */
-type MyGenOption struct {
-	SceneCode    string `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
-	DbGroup      string `json:"dbGroup"`      //db分组。示例：default
-	DbTable      string `json:"dbTable"`      //db表。示例：auth_test
-	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
-	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
-	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
-	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
-	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
-	IsCreate     bool   `json:"isCreate"`     //是否生成创建接口
-	IsUpdate     bool   `json:"isUpdate"`     //是否生成更新接口
-	IsDelete     bool   `json:"isDelete"`     //是否生成删除接口
-	IsApi        bool   `json:"isApi"`        //是否生成后端接口文件
-	IsAuthAction bool   `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
-	IsView       bool   `json:"isView"`       //是否生成前端视图文件
-	IsCover      bool   `json:"isCover"`      //是否覆盖原文件(设置为true时，建议与git一起使用，防止代码覆盖风险)
-}
-
-type MyGenTpl struct {
-	TableColumnList                gdb.Result //表字段详情
-	SceneName                      string     //场景名称
-	SceneId                        uint       //场景ID
-	TableNameCaseCamel             string     //去除前缀表名（大驼峰）
-	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
-	TableNameCaseSnake             string     //去除前缀表名（蛇形）
-	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
-	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
-	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
-	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableNameCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	PrimaryKey                     string     //表主键
-	DeletedField                   string     //表删除时间字段
-	UpdatedField                   string     //表更新时间字段
-	CreatedField                   string     //表创建时间字段
-	// 以下字段用于对某些表字段做特殊处理
-	LabelHandle struct { //dao层label对应的字段(常用于前端组件)
-		LabelField string //是否同时存在
-		IsCoexist  bool   //当LabelField=phone或account时，是否同时存在phone和account两个字段
-	}
-	PasswordHandleMap map[string]PasswordHandleItem //password|passwd,salt同时存在时，需特殊处理
-	PidHandle         struct {                      //pid,level,idPath|id_path同时存在时，需特殊处理
-		IsCoexist   bool   //是否同时存在
-		PidField    string //父级字段
-		LevelField  string //层级字段gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
-		IdPathField string //层级路径字段
-		SortField   string //排序字段
-	}
-	RelTableMap     map[string]RelTableItem     //一对一关联表。id后缀字段，能确定关联表时，会自动生成联表查询代码
-	RelTableManyMap map[string]RelTableManyItem //一对多关联表。关联表命名必须table_rel_to_table，能确定关联表时，会自动生成联表查询代码
-}
-
-type PasswordHandleItem struct {
-	IsCoexist      bool   //是否同时存在
-	PasswordField  string //密码字段
-	PasswordLength string //密码字段长度
-	SaltField      string //加密盐字段
-	SaltLength     string //加密盐字段长度
-}
-
-// 一对一
-type RelTableItem struct {
-	IsExistRelTableDao         bool   //是否存在关联表dao层
-	RelDaoDir                  string //关联表dao层目录
-	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
-	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
-	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
-	RelTableNameCaseCamel      string //关联表名（大驼峰）
-	RelTableNameCaseCamelLower string //关联表名（小驼峰）
-	RelTableNameCaseSnake      string //关联表名（蛇形）
-	RelTableField              string //关联表字段
-	RelTableFieldName          string //关联表字段名称
-	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
-	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
-	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
-	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
-}
-
-// TODO 一对多
-type RelTableManyItem struct {
-	IsExistRelTableDao         bool   //是否存在关联表dao层
-	RelDaoDir                  string //关联表dao层目录
-	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
-	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
-	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
-	RelTableNameCaseCamel      string //关联表名（大驼峰）
-	RelTableNameCaseCamelLower string //关联表名（小驼峰）
-	RelTableNameCaseSnake      string //关联表名（蛇形）
-	RelTableField              string //关联表字段
-	RelTableFieldName          string //关联表字段名称
-	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
-	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
-	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
-	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
-}
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
-	option := MyGenOptionHandle(ctx, parser)
-	tpl := MyGenTplHandle(ctx, option)
+	handler := myGenHandler{
+		ctx:    ctx,
+		parser: parser,
+		// tableArr: []string{},
+		// option:   &myGenOption{},
+		// tpl:      &myGenTpl{},
+	}
+	handler.setOption()
+	handler.setTpl()
+	option := handler.option
 
 	if option.IsCover {
 		// dao生成
@@ -187,8 +99,9 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		command.Wait()
 		fmt.Println(`dao生成 结束`)
 	}
-	MyGenTplDao(ctx, option, tpl)   // dao层存在时，增加或修改部分字段的解析代码
-	MyGenTplLogic(ctx, option, tpl) // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+
+	handler.genDao()   // dao层存在时，增加或修改部分字段的解析代码
+	handler.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 	// service生成
 	fmt.Println(`service生成 开始`)
 	command := exec.Command(`gf`, `gen`, `service`)
@@ -208,18 +121,18 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	fmt.Println(`service生成 结束`)
 
 	if option.IsApi {
-		MyGenTplApi(ctx, option, tpl)        // api模板生成
-		MyGenTplController(ctx, option, tpl) // controller模板生成
-		MyGenTplRouter(ctx, option, tpl)     // 后端路由生成
+		handler.genApi()        // api模板生成
+		handler.genController() // controller模板生成
+		handler.genRouter()     // 后端路由生成
 	}
 
 	if option.IsView {
-		MyGenTplViewIndex(ctx, option, tpl)  // 视图模板Index生成
-		MyGenTplViewList(ctx, option, tpl)   // 视图模板List生成
-		MyGenTplViewQuery(ctx, option, tpl)  // 视图模板Query生成
-		MyGenTplViewSave(ctx, option, tpl)   // 视图模板Save生成
-		MyGenTplViewI18n(ctx, option, tpl)   // 视图模板I18n生成
-		MyGenTplViewRouter(ctx, option, tpl) // 前端路由生成
+		handler.genViewIndex()  // 视图模板Index生成
+		handler.genViewList()   // 视图模板List生成
+		handler.genViewQuery()  // 视图模板Query生成
+		handler.genViewSave()   // 视图模板Save生成
+		handler.genViewI18n()   // 视图模板I18n生成
+		handler.genViewRouter() // 前端路由生成
 		// 前端代码格式化
 		fmt.Println(`前端代码格式化 开始`)
 		command := exec.Command(`npm`, `run`, `format`)
@@ -242,11 +155,117 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	return
 }
 
+type myGenHandler struct {
+	ctx      context.Context
+	parser   *gcmd.Parser
+	tableArr []string
+	option   *myGenOption
+	tpl      *myGenTpl
+}
+
+type myGenOption struct {
+	SceneCode    string `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	DbGroup      string `json:"dbGroup"`      //db分组。示例：default
+	DbTable      string `json:"dbTable"`      //db表。示例：auth_test
+	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。必须和hack/config.yaml内removePrefix保持一致，示例：auth_
+	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
+	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
+	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
+	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
+	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
+	IsCreate     bool   `json:"isCreate"`     //是否生成创建接口
+	IsUpdate     bool   `json:"isUpdate"`     //是否生成更新接口
+	IsDelete     bool   `json:"isDelete"`     //是否生成删除接口
+	IsApi        bool   `json:"isApi"`        //是否生成后端接口文件
+	IsAuthAction bool   `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
+	IsView       bool   `json:"isView"`       //是否生成前端视图文件
+	IsCover      bool   `json:"isCover"`      //是否覆盖原文件(设置为true时，建议与git一起使用，防止代码覆盖风险)
+}
+
+type myGenTpl struct {
+	TableColumnList                gdb.Result //表字段详情
+	SceneName                      string     //场景名称
+	SceneId                        uint       //场景ID
+	TableNameCaseCamel             string     //去除前缀表名（大驼峰）
+	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
+	TableNameCaseSnake             string     //去除前缀表名（蛇形）
+	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
+	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
+	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
+	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableNameCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	PrimaryKey                     string     //表主键
+	DeletedField                   string     //表删除时间字段
+	UpdatedField                   string     //表更新时间字段
+	CreatedField                   string     //表创建时间字段
+	// 以下字段用于对某些表字段做特殊处理
+	LabelHandle struct { //dao层label对应的字段(常用于前端组件)
+		LabelField string //是否同时存在
+		IsCoexist  bool   //当LabelField=phone或account时，是否同时存在phone和account两个字段
+	}
+	PasswordHandleMap map[string]passwordHandleItem //password|passwd,salt同时存在时，需特殊处理
+	PidHandle         struct {                      //pid,level,idPath|id_path同时存在时，需特殊处理
+		IsCoexist   bool   //是否同时存在
+		PidField    string //父级字段
+		LevelField  string //层级字段gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
+		IdPathField string //层级路径字段
+		SortField   string //排序字段
+	}
+	RelTableMap     map[string]relTableItem     //一对一关联表。id后缀字段，能确定关联表时，会自动生成联表查询代码
+	RelTableManyMap map[string]relTableManyItem //一对多关联表。关联表命名必须table_rel_to_table，能确定关联表时，会自动生成联表查询代码
+}
+
+type passwordHandleItem struct {
+	IsCoexist      bool   //是否同时存在
+	PasswordField  string //密码字段
+	PasswordLength string //密码字段长度
+	SaltField      string //加密盐字段
+	SaltLength     string //加密盐字段长度
+}
+
+// 一对一
+type relTableItem struct {
+	IsExistRelTableDao         bool   //是否存在关联表dao层
+	RelDaoDir                  string //关联表dao层目录
+	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
+	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
+	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
+	RelTableNameCaseCamel      string //关联表名（大驼峰）
+	RelTableNameCaseCamelLower string //关联表名（小驼峰）
+	RelTableNameCaseSnake      string //关联表名（蛇形）
+	RelTableField              string //关联表字段
+	RelTableFieldName          string //关联表字段名称
+	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
+	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
+}
+
+// TODO 一对多
+type relTableManyItem struct {
+	IsExistRelTableDao         bool   //是否存在关联表dao层
+	RelDaoDir                  string //关联表dao层目录
+	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
+	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
+	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
+	RelTableNameCaseCamel      string //关联表名（大驼峰）
+	RelTableNameCaseCamelLower string //关联表名（小驼峰）
+	RelTableNameCaseSnake      string //关联表名（蛇形）
+	RelTableField              string //关联表字段
+	RelTableFieldName          string //关联表字段名称
+	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
+	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
+}
+
 // 参数处理
-func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenOption) {
-	optionMap := parser.GetOptAll()
-	option = &MyGenOption{}
-	gconv.Struct(optionMap, option)
+func (myGenThis *myGenHandler) setOption() {
+	ctx := myGenThis.ctx
+	optionMap := myGenThis.parser.GetOptAll()
+	option := myGenOption{}
+	gconv.Struct(optionMap, &option)
 
 	// 场景标识
 	if _, ok := optionMap[`sceneCode`]; !ok {
@@ -282,12 +301,12 @@ func MyGenOptionHandle(ctx context.Context, parser *gcmd.Parser) (option *MyGenO
 		}
 	}
 	// db表
-	tableArr, _ := db.Tables(ctx)
+	myGenThis.tableArr, _ = db.Tables(ctx)
 	if option.DbTable == `` {
 		option.DbTable = gcmd.Scan("> 请输入db表:\n")
 	}
 	for {
-		if option.DbTable != `` && garray.NewStrArrayFrom(tableArr).Contains(option.DbTable) {
+		if option.DbTable != `` && garray.NewStrArrayFrom(myGenThis.tableArr).Contains(option.DbTable) {
 			break
 		}
 		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
@@ -509,23 +528,26 @@ isCoverEnd:
 			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
 		}
 	}
-	return
+	myGenThis.option = &option
 }
 
 // 模板参数处理
-func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) setTpl() {
+	ctx := myGenThis.ctx
+	option := myGenThis.option
+
 	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
 	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
 	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
-	tpl = &MyGenTpl{
+	tpl := &myGenTpl{
 		TableColumnList:         tableColumnList,
 		SceneName:               sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
 		SceneId:                 sceneInfo[daoAuth.Scene.Columns().SceneId].Uint(),
 		TableNameCaseCamel:      gstr.CaseCamel(tableName),
 		TableNameCaseCamelLower: gstr.CaseCamelLower(tableName),
 		TableNameCaseSnake:      gstr.CaseSnakeFirstUpper(tableName),
-		PasswordHandleMap:       map[string]PasswordHandleItem{},
-		RelTableMap:             map[string]RelTableItem{},
+		PasswordHandleMap:       map[string]passwordHandleItem{},
+		RelTableMap:             map[string]relTableItem{},
 	}
 	moduleDirArr := gstr.Split(option.ModuleDir, `/`)
 	moduleDirCaseCamelArr := []string{}
@@ -573,31 +595,31 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-				passwordHandleMapKey := MyGenPasswordHandleMapKey(field)
-				passwordHandleItem, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
+				passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(field)
+				passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
 				if ok {
-					passwordHandleItem.PasswordField = field
-					passwordHandleItem.PasswordLength = resultStr[1]
+					passwordHandleItemObj.PasswordField = field
+					passwordHandleItemObj.PasswordLength = resultStr[1]
 				} else {
-					passwordHandleItem = PasswordHandleItem{
+					passwordHandleItemObj = passwordHandleItem{
 						PasswordField:  field,
 						PasswordLength: resultStr[1],
 					}
 				}
-				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItem
+				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) { //salt后缀
-				passwordHandleMapKey := MyGenPasswordHandleMapKey(field)
-				passwordHandleItem, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
+				passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(field)
+				passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
 				if ok {
-					passwordHandleItem.SaltField = field
-					passwordHandleItem.SaltLength = resultStr[1]
+					passwordHandleItemObj.SaltField = field
+					passwordHandleItemObj.SaltLength = resultStr[1]
 				} else {
-					passwordHandleItem = PasswordHandleItem{
+					passwordHandleItemObj = passwordHandleItem{
 						SaltField:  field,
 						SaltLength: resultStr[1],
 					}
 				}
-				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItem
+				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
@@ -609,7 +631,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					tpl.PidHandle.SortField = field
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				tpl.RelTableMap[field] = MyGenRelTable(field, fieldName, tpl.ModuleDirCaseCamelLower, tpl.TableNameCaseSnake)
+				tpl.RelTableMap[field] = myGenThis.genRelTable(field, fieldName, tpl.ModuleDirCaseCamelLower, tpl.TableNameCaseSnake)
 			}
 		}
 	}
@@ -655,11 +677,13 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 	if tpl.PidHandle.PidField != `` && tpl.PidHandle.LevelField != `` && tpl.PidHandle.IdPathField != `` {
 		tpl.PidHandle.IsCoexist = true
 	}
-	return
+	myGenThis.tpl = tpl
 }
 
 // dao层存在时，增加或修改部分字段的解析代码
-func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genDao() {
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !gfile.IsFile(saveFile) {
 		return
@@ -770,7 +794,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}`
-				passwordHandleMapKey := MyGenPasswordHandleMapKey(field)
+				passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(field)
 				if tpl.PasswordHandleMap[passwordHandleMapKey].IsCoexist {
 					daoParseInsertTmp += `
 				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
@@ -791,7 +815,7 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
 					daoParseUpdate += daoParseUpdateTmp
 				}
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				if column[`Key`].String() == `UNI` && column[`Null`].Bool() {
 					daoParseInsertTmp := `
@@ -1186,7 +1210,10 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 }
 
 // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
-func MyGenTplLogic(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genLogic() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.LcFirst(tpl.ModuleDirCaseCamel) + `/` + tpl.TableNameCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -1334,7 +1361,10 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 }
 
 // api模板生成
-func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genApi() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -1411,7 +1441,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				isStr = false
 			}
 
-			statusList := MyGenStatusList(comment, isStr)
+			statusList := myGenThis.genStatusList(comment, isStr)
 			statusArr := make([]string, len(statusList))
 			for index, status := range statusList {
 				statusArr[index] = status[0]
@@ -1503,7 +1533,7 @@ func MyGenTplApi(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				typeRes = ``
 				ruleReqFilter = ``
 				isRequired = true
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				continue
 			} else {
 				if column[`Key`].String() == `UNI` && !column[`Null`].Bool() {
@@ -1768,7 +1798,10 @@ type ` + tpl.TableNameCaseCamel + `TreeItem struct {
 }
 
 // controller模板生成
-func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genController() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -1812,7 +1845,7 @@ func MyGenTplController(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -1888,7 +1921,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
-			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1948,7 +1981,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
-			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1985,7 +2018,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Create`
 			actionName := option.CommonName + `-新增`
-			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2023,7 +2056,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Update`
 			actionName := option.CommonName + `-编辑`
-			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2051,7 +2084,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 		if option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Delete`
 			actionName := option.CommonName + `-删除`
-			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2097,7 +2130,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		if option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
-			MyGenAction(ctx, tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2128,7 +2161,10 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 }
 
 // 后端路由生成
-func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genRouter() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
 
 	tplRouter := gfile.GetContents(saveFile)
@@ -2159,7 +2195,10 @@ func MyGenTplRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 }
 
 // 视图模板Index生成
-func MyGenTplViewIndex(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genViewIndex() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -2221,7 +2260,10 @@ provide('saveCommon', saveCommon)`
 }
 
 // 视图模板List生成
-func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genViewList() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/List.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -2361,7 +2403,7 @@ func MyGenTplViewList(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				continue
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 				continue
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -2781,7 +2823,10 @@ defineExpose({
 }
 
 // 视图模板Query生成
-func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genViewQuery() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Query.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -2849,7 +2894,7 @@ func MyGenTplViewQuery(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) 
         </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				viewQueryField += `
         <el-form-item prop="` + field + `">
@@ -2994,7 +3039,10 @@ const queryForm = reactive({
 }
 
 // 视图模板Save生成
-func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genViewSave() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	if !(option.IsCreate || option.IsUpdate) {
 		return
 	}
@@ -3040,7 +3088,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
 				isStr = false
 			}
-			statusList := MyGenStatusList(comment, isStr)
+			statusList := myGenThis.genStatusList(comment, isStr)
 			defaultVal := column[`Default`].String()
 			if defaultVal == `` {
 				defaultVal = statusList[0][0]
@@ -3245,7 +3293,7 @@ import md5 from 'js-md5'`
                         <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </el-form-item>`
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				ruleStr := ``
 				requiredStr := ``
@@ -3555,7 +3603,10 @@ const saveDrawer = reactive({
 }
 
 // 视图模板I18n生成
-func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genViewI18n() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
@@ -3602,14 +3653,14 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			continue
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
-		} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[MyGenPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+		} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
 			continue
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			isStr := true
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
 				isStr = false
 			}
-			statusList := MyGenStatusList(comment, isStr)
+			statusList := myGenThis.genStatusList(comment, isStr)
 			viewI18nStatus += `
         ` + field + `: [`
 			for _, status := range statusList {
@@ -3656,7 +3707,10 @@ func MyGenTplViewI18n(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 }
 
 // 前端路由生成
-func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
+func (myGenThis *myGenHandler) genViewRouter() {
+	option := myGenThis.option
+	tpl := myGenThis.tpl
+
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/router/index.ts`
 
 	tplViewRouter := gfile.GetContents(saveFile)
@@ -3682,11 +3736,13 @@ func MyGenTplViewRouter(ctx context.Context, option *MyGenOption, tpl *MyGenTpl)
 	}
 	gfile.PutContents(saveFile, tplViewRouter)
 
-	MyGenMenu(ctx, tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
+	myGenThis.genMenu(tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
 }
 
-// 自动生成操作
-func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionName string) {
+// 自动生成操作权限
+func (myGenThis *myGenHandler) genAction(sceneId uint, actionCode string, actionName string) {
+	ctx := myGenThis.ctx
+
 	actionName = gstr.Replace(actionName, `/`, `-`)
 
 	idVar, _ := daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionCode, actionCode).Value(daoAuth.Action.PrimaryKey())
@@ -3706,7 +3762,9 @@ func MyGenAction(ctx context.Context, sceneId uint, actionCode string, actionNam
 }
 
 // 自动生成菜单
-func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
+func (myGenThis *myGenHandler) genMenu(sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
+	ctx := myGenThis.ctx
+
 	menuNameArr := gstr.Split(menuName, `/`)
 
 	var pid int64 = 0
@@ -3756,7 +3814,7 @@ func MyGenMenu(ctx context.Context, sceneId uint, menuUrl string, menuName strin
 }
 
 // status字段注释解析
-func MyGenStatusList(comment string, isStrOpt ...bool) (statusList [][2]string) {
+func (myGenThis *myGenHandler) genStatusList(comment string, isStrOpt ...bool) (statusList [][2]string) {
 	isStr := false
 	if len(isStrOpt) > 0 && isStrOpt[0] {
 		isStr = true
@@ -3782,7 +3840,7 @@ func MyGenStatusList(comment string, isStrOpt ...bool) (statusList [][2]string) 
 }
 
 // 获取PasswordHandleMap的Key（以Password为主）
-func MyGenPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey string) {
+func (myGenThis *myGenHandler) genPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey string) {
 	passwordOrsalt = gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`, 1) //替换salt
 	passwordOrsalt = gstr.Replace(passwordOrsalt, `Passwd`, `Password`, 1)               //替换passwd
 	passwordHandleMapKey = gstr.CaseCamelLower(passwordOrsalt)                           //默认：小驼峰
@@ -3793,13 +3851,13 @@ func MyGenPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey stri
 }
 
 // 获取id后缀字段关联的表信息
-func MyGenRelTable(field string, fieldName string, moduleDirCaseCamelLower string, tableNameCaseSnake string) RelTableItem {
+func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, moduleDirCaseCamelLower string, tableNameCaseSnake string) relTableItem {
 	fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 	fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 
 	relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
-	relTableItem := RelTableItem{
+	relTableItem := relTableItem{
 		IsExistRelTableDao:         false,
 		RelDaoDir:                  ``,
 		RelDaoDirCaseCamel:         ``,
