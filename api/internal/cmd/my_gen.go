@@ -3891,6 +3891,12 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 		relTableItem.RelTableFieldName = gstr.SubStr(relTableItem.RelTableFieldName, 0, -2)
 	}
 
+	/* // TODO
+	for _, table := range myGenThis.tableArr {
+		if table == myGenThis.option.DbTable { //自身跳过
+			continue
+		}
+	} */
 	selfDir := gfile.SelfDir()
 	fileArr, _ := gfile.ScanDirFile(selfDir+`/internal/dao/`, relTableItem.RelTableNameCaseSnake+`\.go`, true)
 	relDaoDirList := []string{}
