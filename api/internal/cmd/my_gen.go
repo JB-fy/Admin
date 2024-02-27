@@ -92,7 +92,6 @@ type MyGenTpl struct {
 		LabelField string //是否同时存在
 		IsCoexist  bool   //当LabelField=phone或account时，是否同时存在phone和account两个字段
 	}
-	RelTableMap       map[string]RelTableItem       //id后缀字段，能确定关联表时，会自动生成联表查询代码
 	PasswordHandleMap map[string]PasswordHandleItem //password|passwd,salt同时存在时，需特殊处理
 	PidHandle         struct {                      //pid,level,idPath|id_path同时存在时，需特殊处理
 		IsCoexist   bool   //是否同时存在
@@ -101,8 +100,19 @@ type MyGenTpl struct {
 		IdPathField string //层级路径字段
 		SortField   string //排序字段
 	}
+	RelTableMap     map[string]RelTableItem     //一对一关联表。id后缀字段，能确定关联表时，会自动生成联表查询代码
+	RelTableManyMap map[string]RelTableManyItem //一对多关联表。关联表命名必须table_rel_to_table，能确定关联表时，会自动生成联表查询代码
 }
 
+type PasswordHandleItem struct {
+	IsCoexist      bool   //是否同时存在
+	PasswordField  string //密码字段
+	PasswordLength string //密码字段长度
+	SaltField      string //加密盐字段
+	SaltLength     string //加密盐字段长度
+}
+
+// 一对一
 type RelTableItem struct {
 	IsExistRelTableDao         bool   //是否存在关联表dao层
 	RelDaoDir                  string //关联表dao层目录
@@ -121,12 +131,23 @@ type RelTableItem struct {
 	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
 }
 
-type PasswordHandleItem struct {
-	IsCoexist      bool   //是否同时存在
-	PasswordField  string //密码字段
-	PasswordLength string //密码字段长度
-	SaltField      string //加密盐字段
-	SaltLength     string //加密盐字段长度
+// TODO 一对多
+type RelTableManyItem struct {
+	IsExistRelTableDao         bool   //是否存在关联表dao层
+	RelDaoDir                  string //关联表dao层目录
+	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
+	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
+	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
+	RelTableNameCaseCamel      string //关联表名（大驼峰）
+	RelTableNameCaseCamelLower string //关联表名（小驼峰）
+	RelTableNameCaseSnake      string //关联表名（蛇形）
+	RelTableField              string //关联表字段
+	RelTableFieldName          string //关联表字段名称
+	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
+	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
 }
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -503,8 +524,8 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		TableNameCaseCamel:      gstr.CaseCamel(tableName),
 		TableNameCaseCamelLower: gstr.CaseCamelLower(tableName),
 		TableNameCaseSnake:      gstr.CaseSnakeFirstUpper(tableName),
-		RelTableMap:             map[string]RelTableItem{},
 		PasswordHandleMap:       map[string]PasswordHandleItem{},
+		RelTableMap:             map[string]RelTableItem{},
 	}
 	moduleDirArr := gstr.Split(option.ModuleDir, `/`)
 	moduleDirCaseCamelArr := []string{}
@@ -529,7 +550,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 		fieldCaseCamel := gstr.CaseCamel(field)
 		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
+		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
 		// fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
@@ -588,93 +609,7 @@ func MyGenTplHandle(ctx context.Context, option *MyGenOption) (tpl *MyGenTpl) {
 					tpl.PidHandle.SortField = field
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
-				relTableItem := RelTableItem{
-					IsExistRelTableDao:         false,
-					RelDaoDir:                  ``,
-					RelDaoDirCaseCamel:         ``,
-					RelDaoDirCaseCamelLower:    ``,
-					IsSameDir:                  false,
-					RelTableNameCaseCamel:      relTableNameCaseCamel,
-					RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel),
-					RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameCaseCamel),
-					RelTableField:              ``,
-					RelTableFieldName:          fieldName,
-					IsRedundRelNameField:       false,
-					RelSuffix:                  ``,
-					RelSuffixCaseCamel:         ``,
-					RelSuffixCaseSnake:         ``,
-					RelTableIsExistPidField:    false,
-				}
-				fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
-				if len(fieldCaseSnakeArr) > 1 {
-					relTableItem.RelSuffixCaseSnake = `_of_` + gstr.Join(fieldCaseSnakeArr[1:], `_of_`)
-					relTableItem.RelSuffixCaseCamel = gstr.CaseCamel(relTableItem.RelSuffixCaseSnake)
-					relTableItem.RelSuffix = relTableItem.RelSuffixCaseCamel //默认：小驼峰
-				}
-				relTableItem.RelTableField = relTableItem.RelTableNameCaseCamelLower + `Name` //默认：小驼峰
-				if gstr.CaseCamelLower(field) != field {                                      //判断字段是不是蛇形
-					relTableItem.RelTableField = relTableItem.RelTableNameCaseSnake + `_name`
-					if len(fieldCaseSnakeArr) > 1 {
-						relTableItem.RelSuffix = relTableItem.RelSuffixCaseSnake
-					}
-				}
-				if gstr.ToUpper(gstr.SubStr(relTableItem.RelTableFieldName, -2)) == `ID` {
-					relTableItem.RelTableFieldName = gstr.SubStr(relTableItem.RelTableFieldName, 0, -2)
-				}
-
-				selfDir := gfile.SelfDir()
-				fileArr, _ := gfile.ScanDirFile(selfDir+`/internal/dao/`, relTableItem.RelTableNameCaseSnake+`\.go`, true)
-				relDaoDirList := []string{}
-				for _, v := range fileArr {
-					if gstr.Count(v, `/internal/`) == 1 {
-						if v == selfDir+`/internal/dao/`+tpl.ModuleDirCaseCamelLower+`/`+tpl.TableNameCaseSnake+`.go` { //自身跳过
-							continue
-						}
-						relDaoDirTmp := gstr.Replace(v, selfDir+`/internal/dao/`, ``, 1)
-						relDaoDirTmp = gstr.Replace(relDaoDirTmp, `/`+relTableItem.RelTableNameCaseSnake+`.go`, ``, 1)
-						if relDaoDirTmp == tpl.ModuleDirCaseCamelLower { //关联dao层在相同目录下时，直接返回
-							relTableItem.IsExistRelTableDao = true
-							relTableItem.RelDaoDir = relDaoDirTmp
-							relTableItem.IsSameDir = true
-							break
-						}
-						relDaoDirList = append(relDaoDirList, relDaoDirTmp)
-					}
-				}
-				if !relTableItem.IsExistRelTableDao {
-					if len(relDaoDirList) == 1 {
-						relTableItem.IsExistRelTableDao = true
-						relTableItem.RelDaoDir = relDaoDirList[0]
-					} else {
-						// gstr.SubStr(tpl.ModuleDirCaseCamelLower, 0, gstr.PosR(tpl.ModuleDirCaseCamelLower, `/`))
-						relDaoCount := 0 //计算dao层同层目录的数量
-						for _, v := range relDaoDirList {
-							if gstr.Count(v, `/`) == gstr.Count(tpl.ModuleDirCaseCamelLower, `/`) {
-								relDaoCount++
-								relTableItem.RelDaoDir = v
-							}
-						}
-						if relDaoCount == 1 { //当同层目录只存在一个关联dao时，以这个为准
-							relTableItem.IsExistRelTableDao = true
-						}
-					}
-				}
-				relDaoDirArr := gstr.Split(relTableItem.RelDaoDir, `/`)
-				relDaoDirCaseCamelArr := []string{}
-				relDaoDirCaseCamelLowerArr := []string{}
-				for _, v := range relDaoDirArr {
-					relDaoDirCaseCamelArr = append(relDaoDirCaseCamelArr, gstr.CaseCamel(v))
-					relDaoDirCaseCamelLowerArr = append(relDaoDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
-				}
-				relTableItem.RelDaoDirCaseCamel = gstr.Join(relDaoDirCaseCamelArr, ``)
-				relTableItem.RelDaoDirCaseCamelLower = gstr.Join(relDaoDirCaseCamelLowerArr, `/`)
-				if relTableItem.IsExistRelTableDao {
-					if gstr.Pos(gfile.GetContents(selfDir+`/internal/dao/`+relTableItem.RelDaoDir+`/internal/`+relTableItem.RelTableNameCaseSnake+`.go`), `Pid: `) != -1 {
-						relTableItem.RelTableIsExistPidField = true
-					}
-				}
-				tpl.RelTableMap[field] = relTableItem
+				tpl.RelTableMap[field] = MyGenRelTable(field, fieldName, tpl.ModuleDirCaseCamelLower, tpl.TableNameCaseSnake)
 			}
 		}
 	}
@@ -3070,7 +3005,8 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 
 	viewSaveImport := ``
 	viewSaveParamHandle := ``
-	viewSaveDataInit := ``
+	viewSaveDataInitBefore := ``
+	viewSaveDataInitAfter := ``
 	viewSaveRule := ``
 	viewSaveField := ``
 	viewFieldHandle := ``
@@ -3110,10 +3046,10 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 				defaultVal = statusList[0][0]
 			}
 			if isStr {
-				viewSaveDataInit += `
+				viewSaveDataInitBefore += `
         ` + field + `: '` + defaultVal + `',`
 			} else {
-				viewSaveDataInit += `
+				viewSaveDataInitBefore += `
         ` + field + `: ` + defaultVal + `,`
 			}
 			viewSaveRule += `
@@ -3185,7 +3121,7 @@ func MyGenTplViewSave(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
                     <my-upload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
                 </el-form-item>`
 		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-			viewSaveDataInit += `
+			viewSaveDataInitBefore += `
         ` + field + `: [],`
 			requiredStr := ``
 			if !column[`Null`].Bool() {
@@ -3350,7 +3286,7 @@ import md5 from 'js-md5'`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
 				defaultVal := column[`Default`].Int()
 				if defaultVal != 0 {
-					viewSaveDataInit += `
+					viewSaveDataInitBefore += `
         ` + field + `: ` + gconv.String(defaultVal) + `,`
 				}
 				viewSaveRule += `
@@ -3384,6 +3320,8 @@ import md5 from 'js-md5'`
                     <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
                 </el-form-item>`
 				} else {
+					viewSaveDataInitAfter += `
+        ` + field + `: saveCommon.data.` + field + ` ? saveCommon.data.` + field + ` : undefined,`
 					viewSaveField += `
                 <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-select v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
@@ -3392,7 +3330,7 @@ import md5 from 'js-md5'`
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				defaultVal := column[`Default`].Int()
 				if defaultVal != 0 {
-					viewSaveDataInit += `
+					viewSaveDataInitBefore += `
         ` + field + `: ` + gconv.String(defaultVal) + `,`
 				}
 				viewSaveRule += `
@@ -3407,7 +3345,7 @@ import md5 from 'js-md5'`
 				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 					defaultVal := column[`Default`].Uint()
 					if defaultVal != 0 {
-						viewSaveDataInit += `
+						viewSaveDataInitBefore += `
         ` + field + `: ` + gconv.String(defaultVal) + `,`
 					}
 					viewSaveRule += `
@@ -3421,7 +3359,7 @@ import md5 from 'js-md5'`
 				} else {
 					defaultVal := column[`Default`].Int()
 					if defaultVal != 0 {
-						viewSaveDataInit += `
+						viewSaveDataInitBefore += `
         ` + field + `: ` + gconv.String(defaultVal) + `,`
 					}
 					viewSaveRule += `
@@ -3437,7 +3375,7 @@ import md5 from 'js-md5'`
 		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
 			defaultVal := column[`Default`].Float64()
 			if defaultVal != 0 {
-				viewSaveDataInit += `
+				viewSaveDataInitBefore += `
         ` + field + `: ` + gconv.String(defaultVal) + `,`
 			}
 			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
@@ -3545,8 +3483,8 @@ const listCommon = inject('listCommon') as { ref: any }
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: {` + viewSaveDataInit + `
-        ...saveCommon.data,
+    data: {` + viewSaveDataInitBefore + `
+        ...saveCommon.data,` + viewSaveDataInitAfter + `
     } as { [propName: string]: any },
     rules: {` + viewSaveRule + `
     } as any,
@@ -3852,4 +3790,99 @@ func MyGenPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey stri
 		passwordHandleMapKey = gstr.CaseSnake(passwordHandleMapKey)
 	}
 	return
+}
+
+// 获取id后缀字段关联的表信息
+func MyGenRelTable(field string, fieldName string, moduleDirCaseCamelLower string, tableNameCaseSnake string) RelTableItem {
+	fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+	fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
+
+	relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
+	relTableItem := RelTableItem{
+		IsExistRelTableDao:         false,
+		RelDaoDir:                  ``,
+		RelDaoDirCaseCamel:         ``,
+		RelDaoDirCaseCamelLower:    ``,
+		IsSameDir:                  false,
+		RelTableNameCaseCamel:      relTableNameCaseCamel,
+		RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel),
+		RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameCaseCamel),
+		RelTableField:              ``,
+		RelTableFieldName:          fieldName,
+		IsRedundRelNameField:       false,
+		RelSuffix:                  ``,
+		RelSuffixCaseCamel:         ``,
+		RelSuffixCaseSnake:         ``,
+		RelTableIsExistPidField:    false,
+	}
+	fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
+	if len(fieldCaseSnakeArr) > 1 {
+		relTableItem.RelSuffixCaseSnake = `_of_` + gstr.Join(fieldCaseSnakeArr[1:], `_of_`)
+		relTableItem.RelSuffixCaseCamel = gstr.CaseCamel(relTableItem.RelSuffixCaseSnake)
+		relTableItem.RelSuffix = relTableItem.RelSuffixCaseCamel //默认：小驼峰
+	}
+	relTableItem.RelTableField = relTableItem.RelTableNameCaseCamelLower + `Name` //默认：小驼峰
+	if gstr.CaseCamelLower(field) != field {                                      //判断字段是不是蛇形
+		relTableItem.RelTableField = relTableItem.RelTableNameCaseSnake + `_name`
+		if len(fieldCaseSnakeArr) > 1 {
+			relTableItem.RelSuffix = relTableItem.RelSuffixCaseSnake
+		}
+	}
+	if gstr.ToUpper(gstr.SubStr(relTableItem.RelTableFieldName, -2)) == `ID` {
+		relTableItem.RelTableFieldName = gstr.SubStr(relTableItem.RelTableFieldName, 0, -2)
+	}
+
+	selfDir := gfile.SelfDir()
+	fileArr, _ := gfile.ScanDirFile(selfDir+`/internal/dao/`, relTableItem.RelTableNameCaseSnake+`\.go`, true)
+	relDaoDirList := []string{}
+	for _, v := range fileArr {
+		if gstr.Count(v, `/internal/`) == 1 {
+			if v == selfDir+`/internal/dao/`+moduleDirCaseCamelLower+`/`+tableNameCaseSnake+`.go` { //自身跳过
+				continue
+			}
+			relDaoDirTmp := gstr.Replace(v, selfDir+`/internal/dao/`, ``, 1)
+			relDaoDirTmp = gstr.Replace(relDaoDirTmp, `/`+relTableItem.RelTableNameCaseSnake+`.go`, ``, 1)
+			if relDaoDirTmp == moduleDirCaseCamelLower { //关联dao层在相同目录下时，直接返回
+				relTableItem.IsExistRelTableDao = true
+				relTableItem.RelDaoDir = relDaoDirTmp
+				relTableItem.IsSameDir = true
+				break
+			}
+			relDaoDirList = append(relDaoDirList, relDaoDirTmp)
+		}
+	}
+	if !relTableItem.IsExistRelTableDao {
+		if len(relDaoDirList) == 1 {
+			relTableItem.IsExistRelTableDao = true
+			relTableItem.RelDaoDir = relDaoDirList[0]
+		} else {
+			// gstr.SubStr(moduleDirCaseCamelLower, 0, gstr.PosR(moduleDirCaseCamelLower, `/`))
+			relDaoCount := 0 //计算dao层同层目录的数量
+			for _, v := range relDaoDirList {
+				if gstr.Count(v, `/`) == gstr.Count(moduleDirCaseCamelLower, `/`) {
+					relDaoCount++
+					relTableItem.RelDaoDir = v
+				}
+			}
+			if relDaoCount == 1 { //当同层目录只存在一个关联dao时，以这个为准
+				relTableItem.IsExistRelTableDao = true
+			}
+		}
+	}
+	relDaoDirArr := gstr.Split(relTableItem.RelDaoDir, `/`)
+	relDaoDirCaseCamelArr := []string{}
+	relDaoDirCaseCamelLowerArr := []string{}
+	for _, v := range relDaoDirArr {
+		relDaoDirCaseCamelArr = append(relDaoDirCaseCamelArr, gstr.CaseCamel(v))
+		relDaoDirCaseCamelLowerArr = append(relDaoDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
+	}
+	relTableItem.RelDaoDirCaseCamel = gstr.Join(relDaoDirCaseCamelArr, ``)
+	relTableItem.RelDaoDirCaseCamelLower = gstr.Join(relDaoDirCaseCamelLowerArr, `/`)
+	if relTableItem.IsExistRelTableDao {
+		if gstr.Pos(gfile.GetContents(selfDir+`/internal/dao/`+relTableItem.RelDaoDir+`/internal/`+relTableItem.RelTableNameCaseSnake+`.go`), `Pid: `) != -1 {
+			relTableItem.RelTableIsExistPidField = true
+		}
+	}
+	return relTableItem
 }
