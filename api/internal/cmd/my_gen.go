@@ -731,8 +731,8 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 	}
 	tplDao := gfile.GetContents(saveFile)
 
-	daoParseInsertBefore := ``
 	daoParseInsert := ``
+	daoParseInsertBefore := ``
 	daoHookInsert := ``
 	daoParseUpdate := ``
 	daoHookUpdateBefore := ``
@@ -1162,7 +1162,14 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 		tplDao = gstr.Replace(tplDao, daoParseInsertPoint, daoParseInsertPoint+daoParseInsert, 1)
 	}
 	if daoHookInsert != `` {
-		daoHookInsertPoint := `// id, _ := result.LastInsertId()`
+		daoHookInsertPoint := `// id, _ := result.LastInsertId()
+
+			/* for k, v := range daoModel.AfterInsert {
+				switch k {
+				case ` + "`xxxx`" + `:
+					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+				}
+			} */`
 		tplDao = gstr.Replace(tplDao, daoHookInsertPoint, `id, _ := result.LastInsertId()`+daoHookInsert, 1)
 	}
 	if daoParseUpdate != `` {
@@ -1176,6 +1183,15 @@ func MyGenTplDao(ctx context.Context, option *MyGenOption, tpl *MyGenTpl) {
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
+			} */
+
+			/* for k, v := range daoModel.AfterUpdate {
+				switch k {
+				case ` + "`xxxx`" + `:
+					for _, id := range daoModel.IdArr {
+						daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+					}
+				}
 			} */`
 		if daoHookUpdateBefore != `` {
 			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, daoHookUpdateBefore+daoHookUpdatePoint, 1)

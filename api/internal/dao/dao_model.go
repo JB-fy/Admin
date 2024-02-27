@@ -142,7 +142,7 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 
 // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 func (daoModelThis *DaoModel) SetIdArr() *DaoModel {
-	idArr, _ := daoModelThis.CloneModel().Array(daoModelThis.dao.PrimaryKey())
+	idArr, _ := daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.PrimaryKey())
 	daoModelThis.IdArr = gconv.SliceUint(idArr)
 	return daoModelThis
 }
