@@ -102,31 +102,25 @@ const (
 )
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
-	myGenThis := myGenHandler{
-		ctx:    ctx,
-		parser: parser,
-		option: &myGenOption{},
-		tpl:    &myGenTpl{},
-	}
-	myGenThis.setOption()
+	myGenThis := myGenHandler{ctx: ctx}
+	myGenThis.init(parser)
 	myGenThis.setTpl()
-	option := myGenThis.option
 
-	if option.IsCover {
+	if myGenThis.option.IsCover {
 		// dao生成
 		overwriteDao := `false`
-		if option.IsCover {
+		if myGenThis.option.IsCover {
 			overwriteDao = `true`
 		}
 		myGenThis.command(`当前表dao生成`, true, ``,
 			`gf`, `gen`, `dao`,
 			`--link`, myGenThis.dbLink,
-			`--group`, option.DbGroup,
-			`--removePrefix`, option.RemovePrefix,
-			`--daoPath`, `dao/`+option.ModuleDir,
-			`--doPath`, `model/entity/`+option.ModuleDir,
-			`--entityPath`, `model/entity/`+option.ModuleDir,
-			`--tables`, option.DbTable,
+			`--group`, myGenThis.option.DbGroup,
+			`--removePrefix`, myGenThis.option.RemovePrefix,
+			`--daoPath`, `dao/`+myGenThis.option.ModuleDir,
+			`--doPath`, `model/entity/`+myGenThis.option.ModuleDir,
+			`--entityPath`, `model/entity/`+myGenThis.option.ModuleDir,
+			`--tables`, myGenThis.option.DbTable,
 			`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 			`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
 			`--overwriteDao`, overwriteDao)
@@ -138,13 +132,13 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	myGenThis.command(`service生成`, true, ``,
 		`gf`, `gen`, `service`)
 
-	if option.IsApi {
+	if myGenThis.option.IsApi {
 		myGenThis.genApi()        // api模板生成
 		myGenThis.genController() // controller模板生成
 		myGenThis.genRouter()     // 后端路由生成
 	}
 
-	if option.IsView {
+	if myGenThis.option.IsView {
 		myGenThis.genViewIndex()  // 视图模板Index生成
 		myGenThis.genViewList()   // 视图模板List生成
 		myGenThis.genViewQuery()  // 视图模板Query生成
@@ -152,20 +146,22 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		myGenThis.genViewI18n()   // 视图模板I18n生成
 		myGenThis.genViewRouter() // 前端路由生成
 		// 前端代码格式化
-		myGenThis.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode,
+		myGenThis.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode,
 			`npm`, `run`, `format`)
 	}
 	return
 }
 
 type myGenHandler struct {
-	ctx      context.Context
-	parser   *gcmd.Parser
-	dbLink   string
-	db       gdb.DB
-	tableArr []string
-	option   *myGenOption
-	tpl      *myGenTpl
+	ctx             context.Context
+	sceneId         uint     //场景ID
+	sceneName       string   //场景名称
+	dbLink          string   //当前数据库连接配置（gf gen dao命令生成dao时需要）
+	db              gdb.DB   //当前数据库连接
+	tableArr        []string //当前db全部数据表
+	logicStructName string   //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	option          myGenOption
+	tpl             *myGenTpl
 }
 
 type myGenOption struct {
@@ -188,8 +184,6 @@ type myGenOption struct {
 }
 
 type myGenTpl struct {
-	SceneId                        uint       //场景ID
-	SceneName                      string     //场景名称
 	TableRaw                       string     //表名（原始，包含前缀）
 	TableCaseSnake                 string     //表名（蛇形，已去除前缀）
 	TableCaseCamel                 string     //表名（大驼峰，已去除前缀）
@@ -198,7 +192,6 @@ type myGenTpl struct {
 	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
 	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
-	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	PrimaryKey                     string     //表主键
 	DeletedField                   string     //表删除时间字段
 	UpdatedField                   string     //表更新时间字段
@@ -230,7 +223,7 @@ type passwordHandleItem struct {
 
 // 一对一
 type relTableItem struct {
-	TableRaw                string     //表名（原始）
+	TableRaw                string     //表名（原始，包含前缀）
 	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
 	RelTableCaseCamel       string     //表名（大驼峰，已去除前缀）
 	RelTableCaseCamelLower  string     //表名（小驼峰，已去除前缀）
@@ -250,7 +243,7 @@ type relTableItem struct {
 
 // TODO 一对多
 type relTableManyItem struct {
-	TableRaw                string     //表名（原始）
+	TableRaw                string     //表名（原始，包含前缀）
 	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
 	RelTableCaseCamel       string     //表名（大驼峰，已去除前缀）
 	RelTableCaseCamelLower  string     //表名（小驼峰，已去除前缀）
@@ -269,83 +262,122 @@ type relTableManyItem struct {
 }
 
 // 参数处理
-func (myGenThis *myGenHandler) setOption() {
-	optionMap := myGenThis.parser.GetOptAll()
-	gconv.Struct(optionMap, myGenThis.option)
+func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
+	optionMap := parser.GetOptAll()
+	option := myGenOption{}
+	gconv.Struct(optionMap, &option)
+	defer func() {
+		myGenThis.option = option
+
+		removePrefixOfReal := myGenThis.option.ModuleDir
+		if myGenThis.option.DbGroup != `default` {
+			removePrefixOfReal = gstr.TrimLeftStr(removePrefixOfReal, myGenThis.option.DbGroup+`/`)
+		}
+		removePrefixOfReal = gstr.CaseSnake(gstr.Replace(removePrefixOfReal, `/`, `_`))
+		tableOfRemove := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
+		if removePrefixOfReal == tableOfRemove {
+			myGenThis.logicStructName = gstr.CaseCamel(gstr.Replace(myGenThis.option.ModuleDir, `/`, `_`))
+		} else {
+			myGenThis.logicStructName = gstr.CaseCamel(gstr.Replace(myGenThis.option.ModuleDir, `/`, `_`)) + gstr.CaseCamel(tableOfRemove)
+		}
+		/* TODO
+		tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+myGenThis.option.DbTable)
+		table := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
+		tpl := &myGenTpl{
+			TableRaw:            myGenThis.option.DbTable,
+			TableCaseSnake:      gstr.CaseSnake(table),
+			TableCaseCamel:      gstr.CaseCamel(table),
+			TableCaseCamelLower: gstr.CaseCamelLower(table),
+			TableColumnList:     tableColumnList,
+			PasswordHandleMap:   map[string]passwordHandleItem{},
+			RelTableMap:         map[string]relTableItem{},
+		}
+		moduleDirArr := gstr.Split(myGenThis.option.ModuleDir, `/`)
+		moduleDirCaseCamelArr := []string{}
+		moduleDirCaseCamelLowerArr := []string{}
+		for _, v := range moduleDirArr {
+			moduleDirCaseCamelArr = append(moduleDirCaseCamelArr, gstr.CaseCamel(v))
+			moduleDirCaseCamelLowerArr = append(moduleDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
+		}
+		tpl.ModuleDirCaseCamel = gstr.Join(moduleDirCaseCamelArr, ``)
+		tpl.ModuleDirCaseCamelLower = gstr.Join(moduleDirCaseCamelLowerArr, `/`)
+		tpl.ModuleDirCaseCamelLowerReplace = gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
+		if gstr.CaseSnake(moduleDirCaseCamelArr[len(moduleDirCaseCamelArr)-1]) == tpl.TableCaseSnake {
+			myGenThis.logicStructName = tpl.ModuleDirCaseCamel
+		} else {
+			myGenThis.logicStructName = tpl.ModuleDirCaseCamel + tpl.TableCaseCamel
+		} */
+	}()
 
 	// 场景标识
-	if _, ok := optionMap[`sceneCode`]; !ok {
-		myGenThis.option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
+	if option.SceneCode == `` {
+		option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
 	}
 	for {
-		if myGenThis.option.SceneCode != `` {
-			count, _ := daoAuth.Scene.CtxDaoModel(myGenThis.ctx).Filter(daoAuth.Scene.Columns().SceneCode, myGenThis.option.SceneCode).Count()
-			if count > 0 {
+		if option.SceneCode != `` {
+			sceneInfo, _ := daoAuth.Scene.CtxDaoModel(myGenThis.ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
+			if !sceneInfo.IsEmpty() {
+				myGenThis.sceneId = sceneInfo[daoAuth.Scene.Columns().SceneId].Uint()
+				myGenThis.sceneName = sceneInfo[daoAuth.Scene.Columns().SceneName].String()
 				break
 			}
 		}
-		myGenThis.option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
+		option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
 	}
 	// db分组
-	if myGenThis.option.DbGroup == `` {
-		myGenThis.option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
-		if myGenThis.option.DbGroup == `` {
-			myGenThis.option.DbGroup = `default`
+	if option.DbGroup == `` {
+		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
+		if option.DbGroup == `` {
+			option.DbGroup = `default`
 		}
 	}
 	for {
 		err := g.Try(myGenThis.ctx, func(ctx context.Context) {
-			myGenThis.db = g.DB(myGenThis.option.DbGroup)
-			myGenThis.dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(myGenThis.ctx, `database`).MapStrAny()[myGenThis.option.DbGroup])[0][`link`])
+			myGenThis.db = g.DB(option.DbGroup)
+			myGenThis.dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(myGenThis.ctx, `database`).MapStrAny()[option.DbGroup])[0][`link`])
 		})
 		if err == nil {
 			break
 		}
-		myGenThis.option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入，默认(default):\n")
-		if myGenThis.option.DbGroup == `` {
-			myGenThis.option.DbGroup = `default`
+		option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入，默认(default):\n")
+		if option.DbGroup == `` {
+			option.DbGroup = `default`
 		}
 	}
 	// db表
 	myGenThis.tableArr, _ = myGenThis.db.Tables(myGenThis.ctx)
-	if myGenThis.option.DbTable == `` {
-		myGenThis.option.DbTable = gcmd.Scan("> 请输入db表:\n")
+	if option.DbTable == `` {
+		option.DbTable = gcmd.Scan("> 请输入db表:\n")
 	}
 	for {
-		if myGenThis.option.DbTable != `` && garray.NewStrArrayFrom(myGenThis.tableArr).Contains(myGenThis.option.DbTable) {
+		if option.DbTable != `` && garray.NewStrArrayFrom(myGenThis.tableArr).Contains(option.DbTable) {
 			break
 		}
-		myGenThis.option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
+		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
 	}
 	// db表前缀
 	if _, ok := optionMap[`removePrefix`]; !ok {
-		myGenThis.option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
+		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
 	}
 	for {
-		if myGenThis.option.RemovePrefix == `` || gstr.Pos(myGenThis.option.DbTable, myGenThis.option.RemovePrefix) == 0 {
+		if option.RemovePrefix == `` || gstr.Pos(option.DbTable, option.RemovePrefix) == 0 {
 			break
 		}
-		myGenThis.option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
+		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
 	// 模块目录
-	if _, ok := optionMap[`moduleDir`]; !ok {
-		myGenThis.option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
-	}
 	for {
-		if myGenThis.option.ModuleDir != `` {
+		if option.ModuleDir != `` {
 			break
 		}
-		myGenThis.option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
 	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
-	if _, ok := optionMap[`commonName`]; !ok {
-		myGenThis.option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
-	}
 	for {
-		if myGenThis.option.CommonName != `` {
+		if option.CommonName != `` {
 			break
 		}
-		myGenThis.option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
+		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
 	}
 noAllRestart:
 	// 是否生成列表接口
@@ -357,10 +389,10 @@ isListEnd:
 	for {
 		switch isList {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsList = true
+			option.IsList = true
 			break isListEnd
 		case `0`, `no`:
-			myGenThis.option.IsList = false
+			option.IsList = false
 			break isListEnd
 		default:
 			isList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
@@ -375,10 +407,10 @@ isCountEnd:
 	for {
 		switch isCount {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsCount = true
+			option.IsCount = true
 			break isCountEnd
 		case `0`, `no`:
-			myGenThis.option.IsCount = false
+			option.IsCount = false
 			break isCountEnd
 		default:
 			isCount = gcmd.Scan("> 输入错误，请重新输入，列表接口是否返回总数，默认(yes):\n")
@@ -393,10 +425,10 @@ isInfoEnd:
 	for {
 		switch isInfo {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsInfo = true
+			option.IsInfo = true
 			break isInfoEnd
 		case `0`, `no`:
-			myGenThis.option.IsInfo = false
+			option.IsInfo = false
 			break isInfoEnd
 		default:
 			isInfo = gcmd.Scan("> 输入错误，请重新输入，是否生成详情接口，默认(yes):\n")
@@ -411,10 +443,10 @@ isCreateEnd:
 	for {
 		switch isCreate {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsCreate = true
+			option.IsCreate = true
 			break isCreateEnd
 		case `0`, `no`:
-			myGenThis.option.IsCreate = false
+			option.IsCreate = false
 			break isCreateEnd
 		default:
 			isCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
@@ -429,10 +461,10 @@ isUpdateEnd:
 	for {
 		switch isUpdate {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsUpdate = true
+			option.IsUpdate = true
 			break isUpdateEnd
 		case `0`, `no`:
-			myGenThis.option.IsUpdate = false
+			option.IsUpdate = false
 			break isUpdateEnd
 		default:
 			isUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
@@ -447,16 +479,16 @@ isDeleteEnd:
 	for {
 		switch isDelete {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsDelete = true
+			option.IsDelete = true
 			break isDeleteEnd
 		case `0`, `no`:
-			myGenThis.option.IsDelete = false
+			option.IsDelete = false
 			break isDeleteEnd
 		default:
 			isDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
 		}
 	}
-	if !(myGenThis.option.IsList || myGenThis.option.IsInfo || myGenThis.option.IsCreate || myGenThis.option.IsUpdate || myGenThis.option.IsDelete) {
+	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
 		fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
 		goto noAllRestart
 	}
@@ -469,16 +501,16 @@ isApiEnd:
 	for {
 		switch isApi {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsApi = true
+			option.IsApi = true
 			break isApiEnd
 		case `0`, `no`:
-			myGenThis.option.IsApi = false
+			option.IsApi = false
 			break isApiEnd
 		default:
 			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端接口文件，默认(yes):\n")
 		}
 	}
-	if myGenThis.option.IsApi {
+	if option.IsApi {
 		// 是否判断操作权限，如是，则同时会生成操作权限
 		isAuthAction, ok := optionMap[`isAuthAction`]
 		if !ok {
@@ -488,10 +520,10 @@ isApiEnd:
 		for {
 			switch isAuthAction {
 			case ``, `1`, `yes`:
-				myGenThis.option.IsAuthAction = true
+				option.IsAuthAction = true
 				break isAuthActionEnd
 			case `0`, `no`:
-				myGenThis.option.IsAuthAction = false
+				option.IsAuthAction = false
 				break isAuthActionEnd
 			default:
 				isAuthAction = gcmd.Scan("> 输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes):\n")
@@ -507,10 +539,10 @@ isViewEnd:
 	for {
 		switch isView {
 		case ``, `1`, `yes`:
-			myGenThis.option.IsView = true
+			option.IsView = true
 			break isViewEnd
 		case `0`, `no`:
-			myGenThis.option.IsView = false
+			option.IsView = false
 			break isViewEnd
 		default:
 			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端视图文件，默认(yes):\n")
@@ -525,10 +557,10 @@ isCoverEnd:
 	for {
 		switch isCover {
 		case `1`, `yes`:
-			myGenThis.option.IsCover = true
+			option.IsCover = true
 			break isCoverEnd
 		case ``, `0`, `no`:
-			myGenThis.option.IsCover = false
+			option.IsCover = false
 			break isCoverEnd
 		default:
 			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
@@ -541,11 +573,8 @@ func (myGenThis *myGenHandler) setTpl() {
 	ctx := myGenThis.ctx
 
 	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+myGenThis.option.DbTable)
-	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, myGenThis.option.SceneCode).One()
 	table := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
 	tpl := &myGenTpl{
-		SceneId:             sceneInfo[daoAuth.Scene.Columns().SceneId].Uint(),
-		SceneName:           sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
 		TableRaw:            myGenThis.option.DbTable,
 		TableCaseSnake:      gstr.CaseSnake(table),
 		TableCaseCamel:      gstr.CaseCamel(table),
@@ -564,11 +593,6 @@ func (myGenThis *myGenHandler) setTpl() {
 	tpl.ModuleDirCaseCamel = gstr.Join(moduleDirCaseCamelArr, ``)
 	tpl.ModuleDirCaseCamelLower = gstr.Join(moduleDirCaseCamelLowerArr, `/`)
 	tpl.ModuleDirCaseCamelLowerReplace = gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
-	if gstr.CaseSnake(moduleDirCaseCamelArr[len(moduleDirCaseCamelArr)-1]) == tpl.TableCaseSnake {
-		tpl.LogicStructName = tpl.ModuleDirCaseCamel
-	} else {
-		tpl.LogicStructName = tpl.ModuleDirCaseCamel + tpl.TableCaseCamel
-	}
 
 	fieldArr := make([]string, len(tpl.TableColumnList))
 	fieldCaseCamelArr := make([]string, len(tpl.TableColumnList))
@@ -1238,18 +1262,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type s` + tpl.LogicStructName + ` struct{}
+type s` + myGenThis.logicStructName + ` struct{}
 
-func New` + tpl.LogicStructName + `() *s` + tpl.LogicStructName + ` {
-	return &s` + tpl.LogicStructName + `{}
+func New` + myGenThis.logicStructName + `() *s` + myGenThis.logicStructName + ` {
+	return &s` + myGenThis.logicStructName + `{}
 }
 
 func init() {
-	service.Register` + tpl.LogicStructName + `(New` + tpl.LogicStructName + `())
+	service.Register` + myGenThis.logicStructName + `(New` + myGenThis.logicStructName + `())
 }
 
 // 新增
-func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *s` + myGenThis.logicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 `
@@ -1273,7 +1297,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 }
 
 // 修改
-func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *s` + myGenThis.logicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -1336,7 +1360,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 }
 
 // 删除
-func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *s` + myGenThis.logicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -1683,7 +1707,7 @@ import (
 		tplApi += `
 /*--------列表 开始--------*/
 type ` + tpl.TableCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/list" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
 	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
@@ -1721,7 +1745,7 @@ type ` + tpl.TableCaseCamel + `ListItem struct {
 	if option.IsInfo {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/info" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
 	Id     uint     ` + "`" + `json:"id" v:"required|min:1" dc:"ID"` + "`" + `
 	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 }
@@ -1742,7 +1766,7 @@ type ` + tpl.TableCaseCamel + `Info struct {
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/create" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/create" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + `
 	` + apiReqCreateColumn + `
 }
 
@@ -1754,7 +1778,7 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/update" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
 	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	` + apiReqUpdateColumn + `
 }
@@ -1767,7 +1791,7 @@ type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/del" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
 	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 
@@ -1779,7 +1803,7 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 		tplApi += `
 /*--------列表（树状） 开始--------*/
 type ` + tpl.TableCaseCamel + `TreeReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/tree" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
 	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
@@ -1924,9 +1948,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
+			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
-			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -1984,9 +2008,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
+			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
-			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2021,9 +2045,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Create`
+			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Create`
 			actionName := option.CommonName + `-新增`
-			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2034,7 +2058,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 `
 		}
 		tplController += `
-	id, err := service.` + tpl.LogicStructName + `().Create(ctx, data)
+	id, err := service.` + myGenThis.logicStructName + `().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -2059,9 +2083,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Update`
+			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Update`
 			actionName := option.CommonName + `-编辑`
-			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2072,7 +2096,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 `
 		}
 		tplController += `
-	_, err = service.` + tpl.LogicStructName + `().Update(ctx, filter, data)
+	_, err = service.` + myGenThis.logicStructName + `().Update(ctx, filter, data)
 	return
 }
 `
@@ -2087,9 +2111,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Delete`
+			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Delete`
 			actionName := option.CommonName + `-删除`
-			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -2100,7 +2124,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 `
 		}
 		tplController += `
-	_, err = service.` + tpl.LogicStructName + `().Delete(ctx, filter)
+	_, err = service.` + myGenThis.logicStructName + `().Delete(ctx, filter)
 	return
 }
 `
@@ -2133,9 +2157,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
+			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
-			myGenThis.genAction(tpl.SceneId, actionCode, actionName) // 数据库权限操作处理
+			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
@@ -3741,7 +3765,7 @@ func (myGenThis *myGenHandler) genViewRouter() {
 	}
 	gfile.PutContents(saveFile, tplViewRouter)
 
-	myGenThis.genMenu(tpl.SceneId, path, option.CommonName, tpl.TableCaseCamel) // 数据库权限菜单处理
+	myGenThis.genMenu(myGenThis.sceneId, path, option.CommonName, tpl.TableCaseCamel) // 数据库权限菜单处理
 }
 
 // 自动生成操作权限
