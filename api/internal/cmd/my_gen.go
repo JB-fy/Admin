@@ -203,16 +203,17 @@ type myGenOption struct {
 }
 
 type myGenTpl struct {
-	TableColumnList                gdb.Result //表字段详情
-	SceneName                      string     //场景名称
 	SceneId                        uint       //场景ID
-	TableNameCaseCamel             string     //去除前缀表名（大驼峰）
-	TableNameCaseCamelLower        string     //去除前缀表名（小驼峰）
-	TableNameCaseSnake             string     //去除前缀表名（蛇形）
+	SceneName                      string     //场景名称
+	TableRaw                       string     //表名（原始，包含前缀）
+	TableCaseSnake                 string     //表名（蛇形，已去除前缀）
+	TableCaseCamel                 string     //表名（大驼峰，已去除前缀）
+	TableCaseCamelLower            string     //表名（小驼峰，已去除前缀）
+	TableColumnList                gdb.Result //表字段详情
 	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
 	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
-	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableNameCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	PrimaryKey                     string     //表主键
 	DeletedField                   string     //表删除时间字段
 	UpdatedField                   string     //表更新时间字段
@@ -244,121 +245,122 @@ type passwordHandleItem struct {
 
 // 一对一
 type relTableItem struct {
-	TableRaw                   string //表名（原始）
-	RelDaoDir                  string //关联表dao层目录
-	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
-	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
-	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
-	RelTableNameCaseCamel      string //关联表名（大驼峰）
-	RelTableNameCaseCamelLower string //关联表名（小驼峰）
-	RelTableNameCaseSnake      string //关联表名（蛇形）
-	RelTableField              string //关联表字段
-	RelTableFieldName          string //关联表字段名称
-	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
-	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
-	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
-	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
+	TableRaw                string     //表名（原始）
+	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
+	RelTableCaseCamel       string     //表名（大驼峰，已去除前缀）
+	RelTableCaseCamelLower  string     //表名（小驼峰，已去除前缀）
+	TableColumnList         gdb.Result //表字段详情
+	RelDaoDir               string     //关联表dao层目录
+	RelDaoDirCaseCamel      string     //关联表dao层目录（大驼峰，/会被去除）
+	RelDaoDirCaseCamelLower string     //关联表dao层目录（小驼峰，/会被保留）
+	IsSameDir               bool       //关联表dao层是否与当前生成dao层在相同目录下
+	RelTableField           string     //关联表字段
+	RelTableFieldName       string     //关联表字段名称
+	IsRedundRelNameField    bool       //当前表是否冗余关联表字段
+	RelSuffix               string     //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	RelSuffixCaseCamel      string     //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+	RelSuffixCaseSnake      string     //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+	RelTableIsExistPidField bool       //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
 }
 
 // TODO 一对多
 type relTableManyItem struct {
-	TableRaw                   string //表名（原始）
-	RelDaoDir                  string //关联表dao层目录
-	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
-	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
-	IsSameDir                  bool   //关联表dao层是否与当前生成dao层在相同目录下
-	RelTableNameCaseCamel      string //关联表名（大驼峰）
-	RelTableNameCaseCamelLower string //关联表名（小驼峰）
-	RelTableNameCaseSnake      string //关联表名（蛇形）
-	RelTableField              string //关联表字段
-	RelTableFieldName          string //关联表字段名称
-	IsRedundRelNameField       bool   //当前表是否冗余关联表字段
-	RelSuffix                  string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-	RelSuffixCaseCamel         string //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
-	RelSuffixCaseSnake         string //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
-	RelTableIsExistPidField    bool   //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
+	TableRaw                string     //表名（原始）
+	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
+	RelTableCaseCamel       string     //表名（大驼峰，已去除前缀）
+	RelTableCaseCamelLower  string     //表名（小驼峰，已去除前缀）
+	TableColumnList         gdb.Result //表字段详情
+	RelDaoDir               string     //关联表dao层目录
+	RelDaoDirCaseCamel      string     //关联表dao层目录（大驼峰，/会被去除）
+	RelDaoDirCaseCamelLower string     //关联表dao层目录（小驼峰，/会被保留）
+	IsSameDir               bool       //关联表dao层是否与当前生成dao层在相同目录下
+	RelTableField           string     //关联表字段
+	RelTableFieldName       string     //关联表字段名称
+	IsRedundRelNameField    bool       //当前表是否冗余关联表字段
+	RelSuffix               string     //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	RelSuffixCaseCamel      string     //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+	RelSuffixCaseSnake      string     //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+	RelTableIsExistPidField bool       //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
 }
 
 // 参数处理
 func (myGenThis *myGenHandler) setOption() {
 	optionMap := myGenThis.parser.GetOptAll()
-	option := myGenOption{}
-	gconv.Struct(optionMap, &option)
+	gconv.Struct(optionMap, myGenThis.option)
 
 	// 场景标识
 	if _, ok := optionMap[`sceneCode`]; !ok {
-		option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
+		myGenThis.option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
 	}
 	for {
-		if option.SceneCode != `` {
-			count, _ := daoAuth.Scene.CtxDaoModel(myGenThis.ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).Count()
+		if myGenThis.option.SceneCode != `` {
+			count, _ := daoAuth.Scene.CtxDaoModel(myGenThis.ctx).Filter(daoAuth.Scene.Columns().SceneCode, myGenThis.option.SceneCode).Count()
 			if count > 0 {
 				break
 			}
 		}
-		option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
+		myGenThis.option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
 	}
 	// db分组
-	if option.DbGroup == `` {
-		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
-		if option.DbGroup == `` {
-			option.DbGroup = `default`
+	if myGenThis.option.DbGroup == `` {
+		myGenThis.option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
+		if myGenThis.option.DbGroup == `` {
+			myGenThis.option.DbGroup = `default`
 		}
 	}
 	for {
 		err := g.Try(myGenThis.ctx, func(ctx context.Context) {
-			myGenThis.db = g.DB(option.DbGroup)
-			myGenThis.dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(myGenThis.ctx, `database`).MapStrAny()[option.DbGroup])[0][`link`])
+			myGenThis.db = g.DB(myGenThis.option.DbGroup)
+			myGenThis.dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(myGenThis.ctx, `database`).MapStrAny()[myGenThis.option.DbGroup])[0][`link`])
 		})
 		if err == nil {
 			break
 		}
-		option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入，默认(default):\n")
-		if option.DbGroup == `` {
-			option.DbGroup = `default`
+		myGenThis.option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入，默认(default):\n")
+		if myGenThis.option.DbGroup == `` {
+			myGenThis.option.DbGroup = `default`
 		}
 	}
 	// db表
 	myGenThis.tableArr, _ = myGenThis.db.Tables(myGenThis.ctx)
-	if option.DbTable == `` {
-		option.DbTable = gcmd.Scan("> 请输入db表:\n")
+	if myGenThis.option.DbTable == `` {
+		myGenThis.option.DbTable = gcmd.Scan("> 请输入db表:\n")
 	}
 	for {
-		if option.DbTable != `` && garray.NewStrArrayFrom(myGenThis.tableArr).Contains(option.DbTable) {
+		if myGenThis.option.DbTable != `` && garray.NewStrArrayFrom(myGenThis.tableArr).Contains(myGenThis.option.DbTable) {
 			break
 		}
-		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
+		myGenThis.option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
 	}
 	// db表前缀
 	if _, ok := optionMap[`removePrefix`]; !ok {
-		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
+		myGenThis.option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
 	}
 	for {
-		if option.RemovePrefix == `` || gstr.Pos(option.DbTable, option.RemovePrefix) == 0 {
+		if myGenThis.option.RemovePrefix == `` || gstr.Pos(myGenThis.option.DbTable, myGenThis.option.RemovePrefix) == 0 {
 			break
 		}
-		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
+		myGenThis.option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
 	}
 	// 模块目录
 	if _, ok := optionMap[`moduleDir`]; !ok {
-		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+		myGenThis.option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
 	for {
-		if option.ModuleDir != `` {
+		if myGenThis.option.ModuleDir != `` {
 			break
 		}
-		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+		myGenThis.option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
 	}
 	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
 	if _, ok := optionMap[`commonName`]; !ok {
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
+		myGenThis.option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
 	}
 	for {
-		if option.CommonName != `` {
+		if myGenThis.option.CommonName != `` {
 			break
 		}
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
+		myGenThis.option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
 	}
 noAllRestart:
 	// 是否生成列表接口
@@ -370,10 +372,10 @@ isListEnd:
 	for {
 		switch isList {
 		case ``, `1`, `yes`:
-			option.IsList = true
+			myGenThis.option.IsList = true
 			break isListEnd
 		case `0`, `no`:
-			option.IsList = false
+			myGenThis.option.IsList = false
 			break isListEnd
 		default:
 			isList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
@@ -388,10 +390,10 @@ isCountEnd:
 	for {
 		switch isCount {
 		case ``, `1`, `yes`:
-			option.IsCount = true
+			myGenThis.option.IsCount = true
 			break isCountEnd
 		case `0`, `no`:
-			option.IsCount = false
+			myGenThis.option.IsCount = false
 			break isCountEnd
 		default:
 			isCount = gcmd.Scan("> 输入错误，请重新输入，列表接口是否返回总数，默认(yes):\n")
@@ -406,10 +408,10 @@ isInfoEnd:
 	for {
 		switch isInfo {
 		case ``, `1`, `yes`:
-			option.IsInfo = true
+			myGenThis.option.IsInfo = true
 			break isInfoEnd
 		case `0`, `no`:
-			option.IsInfo = false
+			myGenThis.option.IsInfo = false
 			break isInfoEnd
 		default:
 			isInfo = gcmd.Scan("> 输入错误，请重新输入，是否生成详情接口，默认(yes):\n")
@@ -424,10 +426,10 @@ isCreateEnd:
 	for {
 		switch isCreate {
 		case ``, `1`, `yes`:
-			option.IsCreate = true
+			myGenThis.option.IsCreate = true
 			break isCreateEnd
 		case `0`, `no`:
-			option.IsCreate = false
+			myGenThis.option.IsCreate = false
 			break isCreateEnd
 		default:
 			isCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
@@ -442,10 +444,10 @@ isUpdateEnd:
 	for {
 		switch isUpdate {
 		case ``, `1`, `yes`:
-			option.IsUpdate = true
+			myGenThis.option.IsUpdate = true
 			break isUpdateEnd
 		case `0`, `no`:
-			option.IsUpdate = false
+			myGenThis.option.IsUpdate = false
 			break isUpdateEnd
 		default:
 			isUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
@@ -460,16 +462,16 @@ isDeleteEnd:
 	for {
 		switch isDelete {
 		case ``, `1`, `yes`:
-			option.IsDelete = true
+			myGenThis.option.IsDelete = true
 			break isDeleteEnd
 		case `0`, `no`:
-			option.IsDelete = false
+			myGenThis.option.IsDelete = false
 			break isDeleteEnd
 		default:
 			isDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
 		}
 	}
-	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
+	if !(myGenThis.option.IsList || myGenThis.option.IsInfo || myGenThis.option.IsCreate || myGenThis.option.IsUpdate || myGenThis.option.IsDelete) {
 		fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
 		goto noAllRestart
 	}
@@ -482,16 +484,16 @@ isApiEnd:
 	for {
 		switch isApi {
 		case ``, `1`, `yes`:
-			option.IsApi = true
+			myGenThis.option.IsApi = true
 			break isApiEnd
 		case `0`, `no`:
-			option.IsApi = false
+			myGenThis.option.IsApi = false
 			break isApiEnd
 		default:
 			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端接口文件，默认(yes):\n")
 		}
 	}
-	if option.IsApi {
+	if myGenThis.option.IsApi {
 		// 是否判断操作权限，如是，则同时会生成操作权限
 		isAuthAction, ok := optionMap[`isAuthAction`]
 		if !ok {
@@ -501,10 +503,10 @@ isApiEnd:
 		for {
 			switch isAuthAction {
 			case ``, `1`, `yes`:
-				option.IsAuthAction = true
+				myGenThis.option.IsAuthAction = true
 				break isAuthActionEnd
 			case `0`, `no`:
-				option.IsAuthAction = false
+				myGenThis.option.IsAuthAction = false
 				break isAuthActionEnd
 			default:
 				isAuthAction = gcmd.Scan("> 输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes):\n")
@@ -520,10 +522,10 @@ isViewEnd:
 	for {
 		switch isView {
 		case ``, `1`, `yes`:
-			option.IsView = true
+			myGenThis.option.IsView = true
 			break isViewEnd
 		case `0`, `no`:
-			option.IsView = false
+			myGenThis.option.IsView = false
 			break isViewEnd
 		default:
 			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端视图文件，默认(yes):\n")
@@ -538,37 +540,36 @@ isCoverEnd:
 	for {
 		switch isCover {
 		case `1`, `yes`:
-			option.IsCover = true
+			myGenThis.option.IsCover = true
 			break isCoverEnd
 		case ``, `0`, `no`:
-			option.IsCover = false
+			myGenThis.option.IsCover = false
 			break isCoverEnd
 		default:
 			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
 		}
 	}
-	myGenThis.option = &option
 }
 
 // 模板参数处理
 func (myGenThis *myGenHandler) setTpl() {
 	ctx := myGenThis.ctx
-	option := myGenThis.option
 
-	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
-	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
-	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
+	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+myGenThis.option.DbTable)
+	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, myGenThis.option.SceneCode).One()
+	table := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
 	tpl := &myGenTpl{
-		TableColumnList:         tableColumnList,
-		SceneName:               sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
-		SceneId:                 sceneInfo[daoAuth.Scene.Columns().SceneId].Uint(),
-		TableNameCaseCamel:      gstr.CaseCamel(tableName),
-		TableNameCaseCamelLower: gstr.CaseCamelLower(tableName),
-		TableNameCaseSnake:      gstr.CaseSnakeFirstUpper(tableName),
-		PasswordHandleMap:       map[string]passwordHandleItem{},
-		RelTableMap:             map[string]relTableItem{},
+		SceneId:             sceneInfo[daoAuth.Scene.Columns().SceneId].Uint(),
+		SceneName:           sceneInfo[daoAuth.Scene.Columns().SceneName].String(),
+		TableRaw:            myGenThis.option.DbTable,
+		TableCaseSnake:      gstr.CaseSnake(table),
+		TableCaseCamel:      gstr.CaseCamel(table),
+		TableCaseCamelLower: gstr.CaseCamelLower(table),
+		TableColumnList:     tableColumnList,
+		PasswordHandleMap:   map[string]passwordHandleItem{},
+		RelTableMap:         map[string]relTableItem{},
 	}
-	moduleDirArr := gstr.Split(option.ModuleDir, `/`)
+	moduleDirArr := gstr.Split(myGenThis.option.ModuleDir, `/`)
 	moduleDirCaseCamelArr := []string{}
 	moduleDirCaseCamelLowerArr := []string{}
 	for _, v := range moduleDirArr {
@@ -578,10 +579,10 @@ func (myGenThis *myGenHandler) setTpl() {
 	tpl.ModuleDirCaseCamel = gstr.Join(moduleDirCaseCamelArr, ``)
 	tpl.ModuleDirCaseCamelLower = gstr.Join(moduleDirCaseCamelLowerArr, `/`)
 	tpl.ModuleDirCaseCamelLowerReplace = gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
-	if gstr.CaseSnakeFirstUpper(moduleDirCaseCamelArr[len(moduleDirCaseCamelArr)-1]) == tpl.TableNameCaseSnake {
+	if gstr.CaseSnake(moduleDirCaseCamelArr[len(moduleDirCaseCamelArr)-1]) == tpl.TableCaseSnake {
 		tpl.LogicStructName = tpl.ModuleDirCaseCamel
 	} else {
-		tpl.LogicStructName = tpl.ModuleDirCaseCamel + tpl.TableNameCaseCamel
+		tpl.LogicStructName = tpl.ModuleDirCaseCamel + tpl.TableCaseCamel
 	}
 
 	fieldArr := make([]string, len(tpl.TableColumnList))
@@ -589,7 +590,7 @@ func (myGenThis *myGenHandler) setTpl() {
 	for index, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -650,7 +651,7 @@ func (myGenThis *myGenHandler) setTpl() {
 					tpl.PidHandle.SortField = field
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				tpl.RelTableMap[field] = myGenThis.genRelTable(field, fieldName, tpl.ModuleDirCaseCamelLower, tpl.TableNameCaseSnake)
+				tpl.RelTableMap[field] = myGenThis.genRelTable(field, fieldName)
 			}
 		}
 	}
@@ -658,7 +659,7 @@ func (myGenThis *myGenHandler) setTpl() {
 	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
 	// 根据name字段优先级排序
 	nameFieldList := []string{
-		tpl.TableNameCaseCamel + `Name`,
+		tpl.TableCaseCamel + `Name`,
 		gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`,
 		`Name`,
 		`Phone`,
@@ -703,7 +704,7 @@ func (myGenThis *myGenHandler) setTpl() {
 func (myGenThis *myGenHandler) genDao() {
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseSnake + `.go`
 	if !gfile.IsFile(saveFile) {
 		return
 	}
@@ -749,7 +750,7 @@ func (myGenThis *myGenHandler) genDao() {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -1028,9 +1029,9 @@ func (myGenThis *myGenHandler) genDao() {
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				if tpl.RelTableMap[field].TableRaw != `` {
 					relTable := tpl.RelTableMap[field]
-					daoPath := relTable.RelTableNameCaseCamel
+					daoPath := relTable.RelTableCaseCamel
 					if !relTable.IsSameDir {
-						daoPath = `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
+						daoPath = `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
 						daoImportOtherDaoTmp := `
 	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
 						if gstr.Pos(tplDao, daoImportOtherDaoTmp) == -1 {
@@ -1038,20 +1039,20 @@ func (myGenThis *myGenHandler) genDao() {
 						}
 					}
 					if !tpl.RelTableMap[field].IsRedundRelNameField {
-						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelTableField + relTable.RelSuffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
+						daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelTableField + relTable.RelSuffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
 						if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 							if relTable.RelSuffix != `` {
 								daoParseFieldTmp = `
 			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + " + `" + relTable.RelSuffix + "`: " + daoParseFieldTmp + `
-				table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
-				m = m.Fields(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + ` + ` + "` AS `" + ` + v)
-				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + relTable.RelSuffixCaseCamel + `, daoModel))`
+				table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
+				m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + ` + ` + "` AS `" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + `, daoModel))`
 							} else {
 								daoParseFieldTmp = `
 			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + `: ` + daoParseFieldTmp + `
-				table` + relTable.RelTableNameCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
-				m = m.Fields(table` + relTable.RelTableNameCaseCamel + ` + ` + "`.`" + ` + v)
-				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableNameCaseCamel + `, daoModel))`
+				table` + relTable.RelTableCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
+				m = m.Fields(table` + relTable.RelTableCaseCamel + ` + ` + "`.`" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableCaseCamel + `, daoModel))`
 							}
 							daoParseField += daoParseFieldTmp
 						}
@@ -1233,7 +1234,7 @@ func (myGenThis *myGenHandler) genLogic() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.LcFirst(tpl.ModuleDirCaseCamel) + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.LcFirst(tpl.ModuleDirCaseCamel) + `/` + tpl.TableCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1264,7 +1265,7 @@ func init() {
 
 // 新增
 func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
-	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 `
 	if tpl.PidHandle.PidField != `` {
@@ -1288,7 +1289,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 
 // 修改
 func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
-	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
@@ -1351,7 +1352,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 
 // 删除
 func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
-	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `
+	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
@@ -1384,7 +1385,7 @@ func (myGenThis *myGenHandler) genApi() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1401,7 +1402,7 @@ func (myGenThis *myGenHandler) genApi() {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -1696,16 +1697,16 @@ import (
 	if option.IsList {
 		tplApi += `
 /*--------列表 开始--------*/
-type ` + tpl.TableNameCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
-	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+type ` + tpl.TableCaseCamel + `ListReq struct {
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/list" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
+	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
 	Page   int             ` + "`" + `json:"page" v:"min:1" default:"1" dc:"页码"` + "`" + `
 	Limit  int             ` + "`" + `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `ListFilter struct {
+type ` + tpl.TableCaseCamel + `ListFilter struct {
 	Id             *uint       ` + "`" + `json:"id,omitempty" v:"min:1" dc:"ID"` + "`" + `
 	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
@@ -1713,16 +1714,16 @@ type ` + tpl.TableNameCaseCamel + `ListFilter struct {
 	` + apiReqFilterColumn + `
 }
 
-type ` + tpl.TableNameCaseCamel + `ListRes struct {`
+type ` + tpl.TableCaseCamel + `ListRes struct {`
 		if option.IsCount {
 			tplApi += `
 	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
 		}
 		tplApi += `
-	List  []` + tpl.TableNameCaseCamel + `ListItem ` + "`" + `json:"list" dc:"列表"` + "`" + `
+	List  []` + tpl.TableCaseCamel + `ListItem ` + "`" + `json:"list" dc:"列表"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `ListItem struct {
+type ` + tpl.TableCaseCamel + `ListItem struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
 	` + apiResColumn + `
 	` + apiResColumnAlloweFieldList + `
@@ -1734,17 +1735,17 @@ type ` + tpl.TableNameCaseCamel + `ListItem struct {
 	}
 	if option.IsInfo {
 		tplApi += `/*--------详情 开始--------*/
-type ` + tpl.TableNameCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
+type ` + tpl.TableCaseCamel + `InfoReq struct {
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/info" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
 	Id     uint     ` + "`" + `json:"id" v:"required|min:1" dc:"ID"` + "`" + `
 	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `InfoRes struct {
-	Info ` + tpl.TableNameCaseCamel + `Info ` + "`" + `json:"info" dc:"详情"` + "`" + `
+type ` + tpl.TableCaseCamel + `InfoRes struct {
+	Info ` + tpl.TableCaseCamel + `Info ` + "`" + `json:"info" dc:"详情"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `Info struct {
+type ` + tpl.TableCaseCamel + `Info struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
 	` + apiResColumn + `
 }
@@ -1755,8 +1756,8 @@ type ` + tpl.TableNameCaseCamel + `Info struct {
 	}
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
-type ` + tpl.TableNameCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/create" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + `
+type ` + tpl.TableCaseCamel + `CreateReq struct {
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/create" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + `
 	` + apiReqCreateColumn + `
 }
 
@@ -1767,8 +1768,8 @@ type ` + tpl.TableNameCaseCamel + `CreateReq struct {
 
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
-type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
+type ` + tpl.TableCaseCamel + `UpdateReq struct {
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/update" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
 	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	` + apiReqUpdateColumn + `
 }
@@ -1780,8 +1781,8 @@ type ` + tpl.TableNameCaseCamel + `UpdateReq struct {
 
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
-type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
+type ` + tpl.TableCaseCamel + `DeleteReq struct {
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/del" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
 	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 
@@ -1792,20 +1793,20 @@ type ` + tpl.TableNameCaseCamel + `DeleteReq struct {
 	if option.IsList && tpl.PidHandle.PidField != `` {
 		tplApi += `
 /*--------列表（树状） 开始--------*/
-type ` + tpl.TableNameCaseCamel + `TreeReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableNameCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
+type ` + tpl.TableCaseCamel + `TreeReq struct {
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseCamelLower + `/tree" method:"post" tags:"` + tpl.SceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
-	Filter ` + tpl.TableNameCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `TreeRes struct {
-	Tree []` + tpl.TableNameCaseCamel + `TreeItem ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
+type ` + tpl.TableCaseCamel + `TreeRes struct {
+	Tree []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
 }
 
-type ` + tpl.TableNameCaseCamel + `TreeItem struct {
+type ` + tpl.TableCaseCamel + `TreeItem struct {
 	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
 	` + apiResColumn + `
-	Children []` + tpl.TableNameCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
+	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 }
 
 /*--------列表（树状） 结束--------*/
@@ -1821,7 +1822,7 @@ func (myGenThis *myGenHandler) genController() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseSnake + `.go`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -1842,15 +1843,15 @@ func (myGenThis *myGenHandler) genController() {
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
 		if tpl.LabelHandle.IsCoexist {
-			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().Phone, ` + `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().Account, `
+			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().Phone, ` + `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().Account, `
 		} else {
-			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
+			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
 		}
 	}
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -1859,20 +1860,20 @@ func (myGenThis *myGenHandler) genController() {
 
 		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			if field != `id` {
-				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
+				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
+				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
-				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + fieldCaseCamel + `, `
+				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					// controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
-					daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
+					daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
 					daoImportOtherDao += `
 	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
 					controllerAlloweFieldList += daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField)
@@ -1904,16 +1905,16 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type ` + tpl.TableNameCaseCamel + ` struct{}
+type ` + tpl.TableCaseCamel + ` struct{}
 
-func New` + tpl.TableNameCaseCamel + `() *` + tpl.TableNameCaseCamel + ` {
-	return &` + tpl.TableNameCaseCamel + `{}
+func New` + tpl.TableCaseCamel + `() *` + tpl.TableCaseCamel + ` {
+	return &` + tpl.TableCaseCamel + `{}
 }
 `
 	if option.IsList {
 		tplController += `
 // 列表
-func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes, err error) {
+func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
@@ -1921,7 +1922,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	}
 `
 		tplController += `
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr().Slice()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
 	allowField = append(allowField, ` + controllerAlloweFieldList + `)`
 		/* if controllerAlloweFieldDiff != `` {
 				tplController += `
@@ -1951,7 +1952,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 `
 		}
 		tplController += `
-	daoModelThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.CtxDaoModel(ctx).Filters(filter)`
+	daoModelThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter)`
 		if option.IsCount {
 			tplController += `
 	count, err := daoModelThis.CountPri()
@@ -1965,11 +1966,11 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 		return
 	}
 
-	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListRes{`
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListRes{`
 		if option.IsCount {
 			tplController += `Count: count, `
 		}
-		tplController += `List:  []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `ListItem{}}
+		tplController += `List:  []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListItem{}}
 	list.Structs(&res.List)
 	return
 }
@@ -1978,9 +1979,9 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) List(ctx context.Context, 
 	if option.IsInfo {
 		tplController += `
 // 详情
-func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes, err error) {
+func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr().Slice()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
 	allowField = append(allowField, ` + controllerAlloweFieldInfo + `)`
 		/* if controllerAlloweFieldDiff != `` {
 				tplController += `
@@ -2011,7 +2012,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 `
 		}
 		tplController += `
-	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
+	info, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().InfoPri()
 	if err != nil {
 		return
 	}
@@ -2020,7 +2021,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 		return
 	}
 
-	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `InfoRes{}
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes{}
 	info.Struct(&res.Info)
 	return
 }
@@ -2029,7 +2030,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Info(ctx context.Context, 
 	if option.IsCreate {
 		tplController += `
 // 新增
-func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
+func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
@@ -2061,7 +2062,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Create(ctx context.Context
 	if option.IsUpdate {
 		tplController += `
 // 修改
-func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, ` + "`idArr`" + `)
@@ -2095,7 +2096,7 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Update(ctx context.Context
 	if option.IsDelete {
 		tplController += `
 // 删除
-func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
@@ -2123,14 +2124,14 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Delete(ctx context.Context
 	if option.IsList && tpl.PidHandle.PidField != `` {
 		tplController += `
 // 列表（树状）
-func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes, err error) {
+func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
 		filter = map[string]interface{}{}
 	}
 
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.ColumnArr().Slice()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
 	allowField = append(allowField, ` + controllerAlloweFieldTree + `)`
 		/* if controllerAlloweFieldDiff != `` {
 				tplController += `
@@ -2162,13 +2163,13 @@ func (controllerThis *` + tpl.TableNameCaseCamel + `) Tree(ctx context.Context, 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().ListPri()
+	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field).HookSelect().ListPri()
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PrimaryKey) + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PrimaryKey) + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
 
-	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableNameCaseCamel + `TreeRes{}
+	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeRes{}
 	gconv.Structs(tree, &res.Tree)
 	return
 }
@@ -2195,17 +2196,17 @@ func (myGenThis *myGenHandler) genRouter() {
 	"api/internal/middleware"`, 1)
 		//路由生成
 		tplRouter = gstr.Replace(tplRouter, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
-				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())
+				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableCaseCamel+`())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
 		gfile.PutContents(saveFile, tplRouter)
 	} else {
 		//路由不存在时需生成
-		if gstr.Pos(tplRouter, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`) == -1 {
+		if gstr.Pos(tplRouter, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableCaseCamel+`())`) == -1 {
 			//路由生成
 			tplRouter = gstr.Replace(tplRouter, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseCamelLower+"`"+`, func(group *ghttp.RouterGroup) {
-				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableNameCaseCamel+`())`, 1)
+				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableCaseCamel+`())`, 1)
 			gfile.PutContents(saveFile, tplRouter)
 		}
 	}
@@ -2218,7 +2219,7 @@ func (myGenThis *myGenHandler) genViewIndex() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Index.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/Index.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2283,7 +2284,7 @@ func (myGenThis *myGenHandler) genViewList() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/List.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/List.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2293,7 +2294,7 @@ func (myGenThis *myGenHandler) genViewList() {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -2301,7 +2302,7 @@ func (myGenThis *myGenHandler) genViewList() {
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
 
 		dataKeyOfColumn := `dataKey: '` + field + `',`
-		titleOfColumn := `title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `'),`
+		titleOfColumn := `title: t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `'),`
 		keyOfColumn := `key: '` + field + `',`
 		alignOfColumn := `align: 'center',`
 		widthOfColumn := `width: 150,`
@@ -2325,7 +2326,7 @@ func (myGenThis *myGenHandler) genViewList() {
 			widthOfColumn = `width: 100,`
 			cellRendererOfColumn = `cellRenderer: (props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
+                let obj = tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.status.` + field + `') as { value: any, label: string }[]
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             },`
@@ -2446,7 +2447,7 @@ func (myGenThis *myGenHandler) genViewList() {
                                 el?.focus()
                             }}
                             model-value={currentVal}
-                            placeholder={t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')}
+                            placeholder={t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.tip.` + field + `')}
                             precision={0}
                             min={0}
                             max={100}
@@ -2678,7 +2679,7 @@ const handleBatchDelete = () => {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/info', { id: id })
+    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/info', { id: id })
         .then((res) => {
             saveCommon.data = { ...res.data.info }
             switch (type) {
@@ -2708,7 +2709,7 @@ const handleDelete = (idArr: number[]) => {
         showClose: false,
     })
         .then(() => {
-            request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/del', { idArr: idArr }, true)
+            request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/del', { idArr: idArr }, true)
                 .then((res) => {
                     getList()
                 })
@@ -2721,7 +2722,7 @@ const handleDelete = (idArr: number[]) => {
 		tplView += `
 //更新
 const handleUpdate = async (param: { idArr: number[]; [propName: string]: any }) => {
-    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
+    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/update', param, true)
 }`
 	}
 	tplView += `
@@ -2757,7 +2758,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param)
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/list', param)
         table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
     } catch (error) {}
@@ -2788,7 +2789,7 @@ defineExpose({
         </el-col>
         <el-col :span="8" style="text-align: right">
             <el-space :size="10" style="height: 100%">
-                <my-export-button i18nPrefix="` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <my-export-button i18nPrefix="` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <el-dropdown max-height="300" :hide-on-click="false">
                     <el-button type="info" :circle="true">
                         <autoicon-ep-hide />
@@ -2846,7 +2847,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Query.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/Query.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -2856,7 +2857,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -2901,7 +2902,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			viewQueryField += `
         <el-form-item prop="` + field + `" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+            <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :clearable="true" />
         </el-form-item>`
 		} else if (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr` || garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
 		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
@@ -2909,7 +2910,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			viewQueryField += `
         <el-form-item prop="` + field + `">
-            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
+            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
         </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
@@ -2917,53 +2918,53 @@ func (myGenThis *myGenHandler) genViewQuery() {
 			} else {
 				viewQueryField += `
         <el-form-item prop="` + field + `">
-            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
+            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
         </el-form-item>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				viewQueryField += `
         <el-form-item prop="` + field + `">
-            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
+            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
         </el-form-item>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 				viewQueryField += `
         <el-form-item prop="` + field + `">
-            <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="1" :controls="false" />
+            <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :min="1" :controls="false" />
         </el-form-item>`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
 				if tpl.RelTableMap[field].TableRaw != `` {
 					relTable := tpl.RelTableMap[field]
-					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
+					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
 				}
 				if tpl.RelTableMap[field].RelTableIsExistPidField {
 					viewQueryField += `
         <el-form-item prop="` + field + `">
-            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
+            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
         </el-form-item>`
 				} else {
 					viewQueryField += `
         <el-form-item prop="` + field + `">
-            <my-select v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
+            <my-select v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
         </el-form-item>`
 				}
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				viewQueryField += `
         <el-form-item prop="` + field + `" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+            <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :clearable="true" />
         </el-form-item>`
 			} else { //默认处理（int等类型）
 				/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 				               viewQueryField += `
 				   <el-form-item prop="` + field + `">
-				       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
+				       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" />
 				   </el-form-item>`
 				           } else {
 				               viewQueryField += `
 				   <el-form-item prop="` + field + `">
-				       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" />
+				       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :controls="false" />
 				   </el-form-item>`
 				           } */
 			}
@@ -2971,12 +2972,12 @@ func (myGenThis *myGenHandler) genViewQuery() {
 			/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
 			           viewQueryField += `
 			   <el-form-item prop="` + field + `">
-			       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
+			       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
 			   </el-form-item>`
 			       } else {
 			           viewQueryField += `
 			   <el-form-item prop="` + field + `">
-			       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
+			       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
 			   </el-form-item>`
 			       } */
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
@@ -3003,14 +3004,14 @@ func (myGenThis *myGenHandler) genViewQuery() {
 			if typeDatePicker != `` {
 				viewQueryField += `
         <el-form-item prop="` + field + `">
-            <el-date-picker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
+            <el-date-picker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
         </el-form-item>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
 		} else { //默认处理
 			viewQueryField += `
         <el-form-item prop="` + field + `">
-            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :clearable="true" />
         </el-form-item>`
 		}
 	}
@@ -3065,7 +3066,7 @@ func (myGenThis *myGenHandler) genViewSave() {
 	if !(option.IsCreate || option.IsUpdate) {
 		return
 	}
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/Save.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/Save.vue`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -3080,7 +3081,7 @@ func (myGenThis *myGenHandler) genViewSave() {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -3121,18 +3122,18 @@ func (myGenThis *myGenHandler) genViewSave() {
 			}
 			viewSaveRule += `
         ` + field + `: [
-            { type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
+            { type: 'enum', enum: (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
         ],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">`
 			//超过5个状态用select组件，小于5个用radio组件
 			if len(statusList) > 5 {
 				viewSaveField += `
-                    <el-select-v2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="false" />`
+                    <el-select-v2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :clearable="false" />`
 			} else {
 				viewSaveField += `
                     <el-radio-group v-model="saveForm.data.` + field + `">
-                        <el-radio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
+                        <el-radio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.status.` + field + `') as any)" :key="index" :label="item.value">
                             {{ item.label }}
                         </el-radio>
                     </el-radio-group>`
@@ -3160,7 +3161,7 @@ func (myGenThis *myGenHandler) genViewSave() {
         ],`
 			}
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-upload v-model="saveForm.data.` + field + `" accept="image/*"` + multipleStr + ` />
                 </el-form-item>`
 		} else if (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -3184,7 +3185,7 @@ func (myGenThis *myGenHandler) genViewSave() {
         ],`
 			}
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-upload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
                 </el-form-item>`
 		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
@@ -3200,12 +3201,12 @@ func (myGenThis *myGenHandler) genViewSave() {
             // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
         ],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <el-tag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.tagType[index % ` + field + `Handle.tagType.length]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                         {{ item }}
                     </el-tag>
-                    <!-- <el-input-number v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
-                    <el-input v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
+                    <!-- <el-input-number v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
+                    <el-input v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
                     <el-button v-else type="primary" size="small" @click="` + field + `Handle.visibleChange">
                         <autoicon-ep-plus />{{ t('common.add') }}
                     </el-button>
@@ -3241,7 +3242,7 @@ const ` + field + `Handle = reactive({
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-editor v-model="saveForm.data.` + field + `" />
                 </el-form-item>`
 			} else {
@@ -3250,7 +3251,7 @@ const ` + field + `Handle = reactive({
             { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <el-input v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + resultStr[1] + `" :show-word-limit="true" />
                 </el-form-item>`
 			}
@@ -3288,8 +3289,8 @@ const ` + field + `Handle = reactive({
             { type: 'string',` + requiredStr + ` max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },` + ruleStr + `
         ],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
                 </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
@@ -3306,8 +3307,8 @@ import md5 from 'js-md5'`
             { type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <label v-if="saveForm.data.idArr?.length">
                         <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
@@ -3331,8 +3332,8 @@ import md5 from 'js-md5'`
             { type: 'string',` + requiredStr + ` len: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.size.string', { size: ` + resultStr[1] + ` }) },` + ruleStr + `
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
                 </el-form-item>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -3346,8 +3347,8 @@ import md5 from 'js-md5'`
             { type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
                 </el-form-item>`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
@@ -3361,17 +3362,17 @@ import md5 from 'js-md5'`
             { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <el-input-number v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(defaultVal) + `" />
                     <label>
-                        <el-alert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+                        <el-alert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </el-form-item>`
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
 				if tpl.RelTableMap[field].TableRaw != `` {
 					relTable := tpl.RelTableMap[field]
-					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
+					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
 				}
 				viewSaveParamHandle += `
             if (param.` + field + ` === undefined) {
@@ -3383,14 +3384,14 @@ import md5 from 'js-md5'`
         ],`
 				if tpl.RelTableMap[field].RelTableIsExistPidField {
 					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
                 </el-form-item>`
 				} else {
 					viewSaveDataInitAfter += `
         ` + field + `: saveCommon.data.` + field + ` ? saveCommon.data.` + field + ` : undefined,`
 					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-select v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
                 </el-form-item>`
 				}
@@ -3405,7 +3406,7 @@ import md5 from 'js-md5'`
             { type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <el-switch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
                 </el-form-item>`
 			} else { //默认处理（int等类型）
@@ -3420,8 +3421,8 @@ import md5 from 'js-md5'`
             { type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },
         ],`
 					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 				} else {
 					defaultVal := column[`Default`].Int()
@@ -3434,8 +3435,8 @@ import md5 from 'js-md5'`
             { type: 'integer', trigger: 'change', message: t('validation.input') },
         ],`
 					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 				}
 			}
@@ -3451,8 +3452,8 @@ import md5 from 'js-md5'`
             { type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },    // 类型float值为0时验证不能通过
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 			} else {
 				viewSaveRule += `
@@ -3460,8 +3461,8 @@ import md5 from 'js-md5'`
             { type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') },    // 类型float值为0时验证不能通过
         ],`
 				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
                 </el-form-item>`
 			}
 		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
@@ -3488,8 +3489,8 @@ import md5 from 'js-md5'`
             { type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') },
         ],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-date-picker v-model="saveForm.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-date-picker v-model="saveForm.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
                 </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
 			requiredStr := ``
@@ -3520,23 +3521,23 @@ import md5 from 'js-md5'`
             },
         ],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-alert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-alert :title="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
                     <el-input v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `text`) != -1 { //text类型
 			viewSaveRule += `
         ` + field + `: [],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
                     <my-editor v-model="saveForm.data.` + field + `" />
                 </el-form-item>`
 		} else { //默认处理
 			viewSaveRule += `
         ` + field + `: [],`
 			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableNameCaseCamelLower + `.name.` + field + `')" :clearable="true" />
+                <el-form-item :label="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" prop="` + field + `">
+                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseCamelLowerReplace + `.` + tpl.TableCaseCamelLower + `.name.` + field + `')" :clearable="true" />
                 </el-form-item>`
 		}
 	}
@@ -3564,9 +3565,9 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)` + viewSaveParamHandle + `
             try {
                 if (param?.idArr?.length > 0) {
-                    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/update', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/update', param, true)
                 } else {
-                    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `/create', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
@@ -3626,7 +3627,7 @@ func (myGenThis *myGenHandler) genViewI18n() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower + `.ts`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower + `.ts`
 	if !option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
@@ -3637,7 +3638,7 @@ func (myGenThis *myGenHandler) genViewI18n() {
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
 		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+		fieldCaseSnake := gstr.CaseSnake(field)
 		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
@@ -3734,7 +3735,7 @@ func (myGenThis *myGenHandler) genViewRouter() {
 
 	tplViewRouter := gfile.GetContents(saveFile)
 
-	path := `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableNameCaseCamelLower
+	path := `/` + tpl.ModuleDirCaseCamelLower + `/` + tpl.TableCaseCamelLower
 	replaceStr := `{
                 path: '` + path + `',
                 component: async () => {
@@ -3755,7 +3756,7 @@ func (myGenThis *myGenHandler) genViewRouter() {
 	}
 	gfile.PutContents(saveFile, tplViewRouter)
 
-	myGenThis.genMenu(tpl.SceneId, path, option.CommonName, tpl.TableNameCaseCamel) // 数据库权限菜单处理
+	myGenThis.genMenu(tpl.SceneId, path, option.CommonName, tpl.TableCaseCamel) // 数据库权限菜单处理
 }
 
 // 自动生成操作权限
@@ -3870,28 +3871,28 @@ func (myGenThis *myGenHandler) genPasswordHandleMapKey(passwordOrsalt string) (p
 }
 
 // 获取id后缀字段关联的表信息
-func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, moduleDirCaseCamelLower string, tableNameCaseSnake string) relTableItem {
-	fieldCaseSnake := gstr.CaseSnakeFirstUpper(field)
+func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTableItem {
+	fieldCaseSnake := gstr.CaseSnake(field)
 	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 	fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
 
-	relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
+	relTableCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
 	relTableItem := relTableItem{
-		TableRaw:                   ``,
-		RelDaoDir:                  ``,
-		RelDaoDirCaseCamel:         ``,
-		RelDaoDirCaseCamelLower:    ``,
-		IsSameDir:                  false,
-		RelTableNameCaseCamel:      relTableNameCaseCamel,
-		RelTableNameCaseCamelLower: gstr.CaseCamelLower(relTableNameCaseCamel),
-		RelTableNameCaseSnake:      gstr.CaseSnakeFirstUpper(relTableNameCaseCamel),
-		RelTableField:              ``,
-		RelTableFieldName:          fieldName,
-		IsRedundRelNameField:       false,
-		RelSuffix:                  ``,
-		RelSuffixCaseCamel:         ``,
-		RelSuffixCaseSnake:         ``,
-		RelTableIsExistPidField:    false,
+		TableRaw:                ``,
+		RelTableCaseSnake:       gstr.CaseSnake(relTableCaseCamel),
+		RelTableCaseCamel:       relTableCaseCamel,
+		RelTableCaseCamelLower:  gstr.CaseCamelLower(relTableCaseCamel),
+		RelDaoDir:               ``,
+		RelDaoDirCaseCamel:      ``,
+		RelDaoDirCaseCamelLower: ``,
+		IsSameDir:               false,
+		RelTableField:           ``,
+		RelTableFieldName:       fieldName,
+		IsRedundRelNameField:    false,
+		RelSuffix:               ``,
+		RelSuffixCaseCamel:      ``,
+		RelSuffixCaseSnake:      ``,
+		RelTableIsExistPidField: false,
 	}
 	fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
 	if len(fieldCaseSnakeArr) > 1 {
@@ -3899,9 +3900,9 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 		relTableItem.RelSuffixCaseCamel = gstr.CaseCamel(relTableItem.RelSuffixCaseSnake)
 		relTableItem.RelSuffix = relTableItem.RelSuffixCaseCamel //默认：小驼峰
 	}
-	relTableItem.RelTableField = relTableItem.RelTableNameCaseCamelLower + `Name` //默认：小驼峰
-	if gstr.CaseCamelLower(field) != field {                                      //判断字段是不是蛇形
-		relTableItem.RelTableField = relTableItem.RelTableNameCaseSnake + `_name`
+	relTableItem.RelTableField = relTableItem.RelTableCaseCamelLower + `Name` //默认：小驼峰
+	if gstr.CaseCamelLower(field) != field {                                  //判断字段是不是蛇形
+		relTableItem.RelTableField = relTableItem.RelTableCaseSnake + `_name`
 		if len(fieldCaseSnakeArr) > 1 {
 			relTableItem.RelSuffix = relTableItem.RelSuffixCaseSnake
 		}
@@ -3912,12 +3913,12 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 
 	/*--------确定关联表 开始--------*/
 	tableSame := ``         //表名完全一致的表
-	tableList := []string{} ////表后缀一致的表列表
+	tableList := []string{} //表后缀一致的表列表
 	for _, v := range myGenThis.tableArr {
 		if v == myGenThis.option.DbTable { //自身跳过
 			continue
 		}
-		if v == myGenThis.option.RemovePrefix+relTableItem.RelTableNameCaseSnake { //关联表在同模块目录下时
+		if v == myGenThis.option.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下时
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -3925,13 +3926,13 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 				relTableItem.IsSameDir = true
 				break
 			}
-		} else if v == relTableItem.RelTableNameCaseSnake { //表名完全一致
+		} else if v == relTableItem.RelTableCaseSnake { //表名完全一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
 				tableSame = v
 			}
-		} else if len(v) == gstr.PosR(v, `_`+relTableItem.RelTableNameCaseSnake)+len(`_`+relTableItem.RelTableNameCaseSnake) { //表后缀一致
+		} else if len(v) == gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake)+len(`_`+relTableItem.RelTableCaseSnake) { //表后缀一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -3968,7 +3969,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 			removePrefix = myGenThis.option.RemovePrefix
 			relTableItem.RelDaoDir = myGenThis.option.ModuleDir
 		} else {
-			removePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableNameCaseSnake)
+			removePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableCaseSnake)
 			relDaoDir := gstr.Trim(removePrefix, `_`)
 			for _, v := range gstr.Split(gstr.Trim(myGenThis.option.RemovePrefix, `_`), `_`) { //根据当前表要删除的前缀，删除关联表相同的前缀
 				relDaoDirTmp := gstr.TrimLeftStr(relDaoDir, v+`_`)
@@ -3978,8 +3979,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 				relDaoDir = relDaoDirTmp
 			}
 			if relDaoDir == `` {
-				// relDaoDir = relTableItem.RelTableNameCaseCamelLower
-				relDaoDir = relTableItem.RelTableNameCaseSnake
+				relDaoDir = relTableItem.RelTableCaseSnake
 			} else {
 				relDaoDir = gstr.Replace(relDaoDir, `_`, `/`)
 			}
@@ -3988,7 +3988,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 			}
 		}
 		// 判断dao文件是否存在，不存在则生成
-		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTableItem.RelDaoDir + `/` + relTableItem.RelTableNameCaseSnake + `.go`) {
+		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTableItem.RelDaoDir + `/` + relTableItem.RelTableCaseSnake + `.go`) {
 			fmt.Println(`关联表（` + relTableItem.TableRaw + `）dao生成 开始`)
 			command := exec.Command(`gf`, `gen`, `dao`,
 				`--link`, myGenThis.dbLink,
@@ -4017,8 +4017,8 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 			fmt.Println(`关联表（` + relTableItem.TableRaw + `）dao生成 结束`)
 		}
 		//判断关联表是否存在pid字段
-		tableColumnList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW FULL COLUMNS FROM `+relTableItem.TableRaw)
-		for _, v := range tableColumnList {
+		relTableItem.TableColumnList, _ = myGenThis.db.GetAll(myGenThis.ctx, `SHOW FULL COLUMNS FROM `+relTableItem.TableRaw)
+		for _, v := range relTableItem.TableColumnList {
 			if v[`Field`].String() == `pid` {
 				relTableItem.RelTableIsExistPidField = true
 				break
