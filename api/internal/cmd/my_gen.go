@@ -75,10 +75,38 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 			数组		命名：list,arr等后缀；类型：json或text；
 */
 
+type FieldType = string
+
+const (
+	Pid            FieldType = `命名：pid；		类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，有特殊处理`
+	Level          FieldType = `命名：level；	类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理`
+	IdPath         FieldType = `命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理`
+	Sort           FieldType = `命名：sort；	类型：int等类型；	注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理`
+	PasswordSuffix FieldType = `命名：password,passwd后缀；		类型：char(32)；`
+	SaltSuffix     FieldType = `命名：salt后缀；	类型：char；	注意：password,salt同时存在时，有特殊处理`
+	NameSuffix     FieldType = `命名：name后缀；	类型：varchar；`
+	CodeSuffix     FieldType = `命名：code后缀；	类型：varchar；`
+	MobileSuffix   FieldType = `命名：mobile,phone后缀；	类型：varchar；`
+	UrlSuffix      FieldType = `命名：url,link后缀；	类型：varchar；`
+	IpSuffix       FieldType = `命名：IP后缀；	类型：varchar；`
+	IdSuffix       FieldType = `命名：id后缀；	类型：int等类型；`
+	SortSuffix     FieldType = `命名：sort,weight等后缀；	类型：int等类型；`
+	IsPrefix       FieldType = `命名：is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）`
+	StatusPrefix   FieldType = `命名：status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）`
+	StartPrefix    FieldType = `命名：start_前缀；	类型：timestamp或datetime或date；`
+	EndPrefix      FieldType = `命名：end_前缀；	类型：timestamp或datetime或date；`
+	RemarkSuffix   FieldType = `命名：remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器`
+	ImageSuffix    FieldType = `命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text`
+	VideoSuffix    FieldType = `命名：video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text`
+	ArrSuffix      FieldType = `命名：list,arr等后缀；	类型：json或text；`
+)
+
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	myGenThis := myGenHandler{
 		ctx:    ctx,
 		parser: parser,
+		option: &myGenOption{},
+		tpl:    &myGenTpl{},
 	}
 	myGenThis.setOption()
 	myGenThis.setTpl()
@@ -86,12 +114,12 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 
 	if option.IsCover {
 		// dao生成
-		fmt.Println(`dao生成 开始`)
 		overwriteDao := `false`
 		if option.IsCover {
 			overwriteDao = `true`
 		}
-		command := exec.Command(`gf`, `gen`, `dao`,
+		myGenThis.command(`当前表dao生成`, true, ``,
+			`gf`, `gen`, `dao`,
 			`--link`, myGenThis.dbLink,
 			`--group`, option.DbGroup,
 			`--removePrefix`, option.RemovePrefix,
@@ -102,41 +130,13 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 			`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
 			`--overwriteDao`, overwriteDao)
-		stdout, _ := command.StdoutPipe()
-		command.Start()
-		buf := make([]byte, 1024)
-		for {
-			n, err := stdout.Read(buf)
-			if err != nil {
-				break
-			}
-			if n > 0 {
-				fmt.Print(string(buf[:n]))
-			}
-		}
-		command.Wait()
-		fmt.Println(`dao生成 结束`)
 	}
 
 	myGenThis.genDao()   // dao层存在时，增加或修改部分字段的解析代码
 	myGenThis.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 	// service生成
-	fmt.Println(`service生成 开始`)
-	command := exec.Command(`gf`, `gen`, `service`)
-	stdout, _ := command.StdoutPipe()
-	command.Start()
-	buf := make([]byte, 1024)
-	for {
-		n, err := stdout.Read(buf)
-		if err != nil {
-			break
-		}
-		if n > 0 {
-			fmt.Print(string(buf[:n]))
-		}
-	}
-	command.Wait()
-	fmt.Println(`service生成 结束`)
+	myGenThis.command(`service生成`, true, ``,
+		`gf`, `gen`, `service`)
 
 	if option.IsApi {
 		myGenThis.genApi()        // api模板生成
@@ -152,23 +152,8 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		myGenThis.genViewI18n()   // 视图模板I18n生成
 		myGenThis.genViewRouter() // 前端路由生成
 		// 前端代码格式化
-		fmt.Println(`前端代码格式化 开始`)
-		command := exec.Command(`npm`, `run`, `format`)
-		command.Dir = gfile.SelfDir() + `/../view/` + option.SceneCode
-		stdout, _ := command.StdoutPipe()
-		command.Start()
-		buf := make([]byte, 1024)
-		for {
-			n, err := stdout.Read(buf)
-			if err != nil {
-				break
-			}
-			if n > 0 {
-				fmt.Print(string(buf[:n]))
-			}
-		}
-		command.Wait()
-		fmt.Println(`前端代码格式化 结束`)
+		myGenThis.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode,
+			`npm`, `run`, `format`)
 	}
 	return
 }
@@ -3833,6 +3818,34 @@ func (myGenThis *myGenHandler) genMenu(sceneId uint, menuUrl string, menuName st
 	}
 }
 
+// 获取PasswordHandleMap的Key（以Password为主）
+func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, name string, arg ...string) {
+	command := exec.Command(name, arg...)
+	if dir != `` {
+		command.Dir = dir
+	}
+	fmt.Println(title + ` 开始`)
+	fmt.Println(`执行命令：` + command.String())
+	stdout, _ := command.StdoutPipe()
+	command.Start()
+	if isOut {
+		buf := make([]byte, 1024)
+		for {
+			n, err := stdout.Read(buf)
+			if err != nil {
+				break
+			}
+			if n > 0 {
+				fmt.Print(string(buf[:n]))
+			}
+		}
+	} else {
+		fmt.Println(`请稍等，命令正在执行中...`)
+	}
+	command.Wait()
+	fmt.Println(title + ` 结束`)
+}
+
 // status字段注释解析
 func (myGenThis *myGenHandler) genStatusList(comment string, isStrOpt ...bool) (statusList [][2]string) {
 	isStr := false
@@ -3989,8 +4002,8 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 		}
 		// 判断dao文件是否存在，不存在则生成
 		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTableItem.RelDaoDir + `/` + relTableItem.RelTableCaseSnake + `.go`) {
-			fmt.Println(`关联表（` + relTableItem.TableRaw + `）dao生成 开始`)
-			command := exec.Command(`gf`, `gen`, `dao`,
+			myGenThis.command(`关联表（`+relTableItem.TableRaw+`）dao生成`, true, ``,
+				`gf`, `gen`, `dao`,
 				`--link`, myGenThis.dbLink,
 				`--group`, myGenThis.option.DbGroup,
 				`--removePrefix`, removePrefix,
@@ -4001,20 +4014,6 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 				`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
 				`--overwriteDao`, `false`)
-			stdout, _ := command.StdoutPipe()
-			command.Start()
-			buf := make([]byte, 1024)
-			for {
-				n, err := stdout.Read(buf)
-				if err != nil {
-					break
-				}
-				if n > 0 {
-					fmt.Print(string(buf[:n]))
-				}
-			}
-			command.Wait()
-			fmt.Println(`关联表（` + relTableItem.TableRaw + `）dao生成 结束`)
 		}
 		//判断关联表是否存在pid字段
 		relTableItem.TableColumnList, _ = myGenThis.db.GetAll(myGenThis.ctx, `SHOW FULL COLUMNS FROM `+relTableItem.TableRaw)
