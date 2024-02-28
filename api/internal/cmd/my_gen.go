@@ -76,16 +76,13 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 */
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
-	handler := myGenHandler{
+	myGenThis := myGenHandler{
 		ctx:    ctx,
 		parser: parser,
-		// tableArr: []string{},
-		// option:   &myGenOption{},
-		// tpl:      &myGenTpl{},
 	}
-	handler.setOption()
-	handler.setTpl()
-	option := handler.option
+	myGenThis.setOption()
+	myGenThis.setTpl()
+	option := myGenThis.option
 
 	if option.IsCover {
 		// dao生成
@@ -95,7 +92,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			overwriteDao = `true`
 		}
 		command := exec.Command(`gf`, `gen`, `dao`,
-			`--link`, gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[option.DbGroup])[0][`link`]),
+			`--link`, myGenThis.dbLink,
 			`--group`, option.DbGroup,
 			`--removePrefix`, option.RemovePrefix,
 			`--daoPath`, `dao/`+option.ModuleDir,
@@ -121,8 +118,8 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		fmt.Println(`dao生成 结束`)
 	}
 
-	handler.genDao()   // dao层存在时，增加或修改部分字段的解析代码
-	handler.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	myGenThis.genDao()   // dao层存在时，增加或修改部分字段的解析代码
+	myGenThis.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 	// service生成
 	fmt.Println(`service生成 开始`)
 	command := exec.Command(`gf`, `gen`, `service`)
@@ -142,18 +139,18 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	fmt.Println(`service生成 结束`)
 
 	if option.IsApi {
-		handler.genApi()        // api模板生成
-		handler.genController() // controller模板生成
-		handler.genRouter()     // 后端路由生成
+		myGenThis.genApi()        // api模板生成
+		myGenThis.genController() // controller模板生成
+		myGenThis.genRouter()     // 后端路由生成
 	}
 
 	if option.IsView {
-		handler.genViewIndex()  // 视图模板Index生成
-		handler.genViewList()   // 视图模板List生成
-		handler.genViewQuery()  // 视图模板Query生成
-		handler.genViewSave()   // 视图模板Save生成
-		handler.genViewI18n()   // 视图模板I18n生成
-		handler.genViewRouter() // 前端路由生成
+		myGenThis.genViewIndex()  // 视图模板Index生成
+		myGenThis.genViewList()   // 视图模板List生成
+		myGenThis.genViewQuery()  // 视图模板Query生成
+		myGenThis.genViewSave()   // 视图模板Save生成
+		myGenThis.genViewI18n()   // 视图模板I18n生成
+		myGenThis.genViewRouter() // 前端路由生成
 		// 前端代码格式化
 		fmt.Println(`前端代码格式化 开始`)
 		command := exec.Command(`npm`, `run`, `format`)
@@ -179,6 +176,8 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 type myGenHandler struct {
 	ctx      context.Context
 	parser   *gcmd.Parser
+	dbLink   string
+	db       gdb.DB
 	tableArr []string
 	option   *myGenOption
 	tpl      *myGenTpl
@@ -245,6 +244,7 @@ type passwordHandleItem struct {
 
 // 一对一
 type relTableItem struct {
+	TableRaw                   string //表名（原始）
 	IsExistRelTableDao         bool   //是否存在关联表dao层
 	RelDaoDir                  string //关联表dao层目录
 	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
@@ -283,7 +283,6 @@ type relTableManyItem struct {
 
 // 参数处理
 func (myGenThis *myGenHandler) setOption() {
-	ctx := myGenThis.ctx
 	optionMap := myGenThis.parser.GetOptAll()
 	option := myGenOption{}
 	gconv.Struct(optionMap, &option)
@@ -294,7 +293,7 @@ func (myGenThis *myGenHandler) setOption() {
 	}
 	for {
 		if option.SceneCode != `` {
-			count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).Count()
+			count, _ := daoAuth.Scene.CtxDaoModel(myGenThis.ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).Count()
 			if count > 0 {
 				break
 			}
@@ -302,7 +301,6 @@ func (myGenThis *myGenHandler) setOption() {
 		option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
 	}
 	// db分组
-	var db gdb.DB
 	if option.DbGroup == `` {
 		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
 		if option.DbGroup == `` {
@@ -310,8 +308,9 @@ func (myGenThis *myGenHandler) setOption() {
 		}
 	}
 	for {
-		err := g.Try(ctx, func(ctx context.Context) {
-			db = g.DB(option.DbGroup)
+		err := g.Try(myGenThis.ctx, func(ctx context.Context) {
+			myGenThis.db = g.DB(option.DbGroup)
+			myGenThis.dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(myGenThis.ctx, `database`).MapStrAny()[option.DbGroup])[0][`link`])
 		})
 		if err == nil {
 			break
@@ -322,7 +321,7 @@ func (myGenThis *myGenHandler) setOption() {
 		}
 	}
 	// db表
-	myGenThis.tableArr, _ = db.Tables(ctx)
+	myGenThis.tableArr, _ = myGenThis.db.Tables(myGenThis.ctx)
 	if option.DbTable == `` {
 		option.DbTable = gcmd.Scan("> 请输入db表:\n")
 	}
@@ -557,7 +556,7 @@ func (myGenThis *myGenHandler) setTpl() {
 	ctx := myGenThis.ctx
 	option := myGenThis.option
 
-	tableColumnList, _ := g.DB(option.DbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
+	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+option.DbTable)
 	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
 	tableName := gstr.Replace(option.DbTable, option.RemovePrefix, ``, 1)
 	tpl := &myGenTpl{
@@ -3879,6 +3878,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 
 	relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
 	relTableItem := relTableItem{
+		TableRaw:                   ``,
 		IsExistRelTableDao:         false,
 		RelDaoDir:                  ``,
 		RelDaoDirCaseCamel:         ``,
@@ -3912,49 +3912,123 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 		relTableItem.RelTableFieldName = gstr.SubStr(relTableItem.RelTableFieldName, 0, -2)
 	}
 
-	/* // TODO
-	for _, table := range myGenThis.tableArr {
-		if table == myGenThis.option.DbTable { //自身跳过
+	/*--------确定关联表 开始--------*/
+	tableSame := ``         //表名完全一致的表
+	tableList := []string{} ////表后缀一致的表列表
+	for _, v := range myGenThis.tableArr {
+		if v == myGenThis.option.DbTable { //自身跳过
 			continue
 		}
-	} */
-	selfDir := gfile.SelfDir()
-	fileArr, _ := gfile.ScanDirFile(selfDir+`/internal/dao/`, relTableItem.RelTableNameCaseSnake+`\.go`, true)
-	relDaoDirList := []string{}
-	for _, v := range fileArr {
-		if gstr.Count(v, `/internal/`) == 1 {
-			if v == selfDir+`/internal/dao/`+moduleDirCaseCamelLower+`/`+tableNameCaseSnake+`.go` { //自身跳过
-				continue
-			}
-			relDaoDirTmp := gstr.Replace(v, selfDir+`/internal/dao/`, ``, 1)
-			relDaoDirTmp = gstr.Replace(relDaoDirTmp, `/`+relTableItem.RelTableNameCaseSnake+`.go`, ``, 1)
-			if relDaoDirTmp == moduleDirCaseCamelLower { //关联dao层在相同目录下时，直接返回
-				relTableItem.IsExistRelTableDao = true
-				relTableItem.RelDaoDir = relDaoDirTmp
+		if v == myGenThis.option.RemovePrefix+relTableItem.RelTableNameCaseSnake { //关联表在同模块目录下时
+			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
+			primaryKey := tableIndexList[0][`Column_name`].String()
+			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
+				relTableItem.TableRaw = v
 				relTableItem.IsSameDir = true
 				break
 			}
-			relDaoDirList = append(relDaoDirList, relDaoDirTmp)
+		} else if v == relTableItem.RelTableNameCaseSnake { //表名完全一致
+			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
+			primaryKey := tableIndexList[0][`Column_name`].String()
+			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
+				tableSame = v
+			}
+		} else if len(v) == gstr.PosR(v, `_`+relTableItem.RelTableNameCaseSnake)+len(`_`+relTableItem.RelTableNameCaseSnake) { //表后缀一致
+			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
+			primaryKey := tableIndexList[0][`Column_name`].String()
+			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
+				tableList = append(tableList, v)
+			}
 		}
 	}
 	if !relTableItem.IsExistRelTableDao {
-		if len(relDaoDirList) == 1 {
-			relTableItem.IsExistRelTableDao = true
-			relTableItem.RelDaoDir = relDaoDirList[0]
+		if tableSame != `` {
+			relTableItem.TableRaw = tableSame
 		} else {
-			// gstr.SubStr(moduleDirCaseCamelLower, 0, gstr.PosR(moduleDirCaseCamelLower, `/`))
-			relDaoCount := 0 //计算dao层同层目录的数量
-			for _, v := range relDaoDirList {
-				if gstr.Count(v, `/`) == gstr.Count(moduleDirCaseCamelLower, `/`) {
-					relDaoCount++
-					relTableItem.RelDaoDir = v
+			if len(tableList) == 1 {
+				relTableItem.TableRaw = tableList[0]
+			} else {
+				count := 0 //与当前模块同层的其它模块存在多少表后缀一致的表
+				tableSameDir := ``
+				for _, v := range tableList {
+					if gstr.Count(v, `_`) == gstr.Count(myGenThis.option.DbTable, `_`) {
+						count++
+						tableSameDir = v
+					}
 				}
-			}
-			if relDaoCount == 1 { //当同层目录只存在一个关联dao时，以这个为准
-				relTableItem.IsExistRelTableDao = true
+				if count == 1 { //当只存在一个表后缀一致的表时，直接使用该表
+					relTableItem.TableRaw = tableSameDir
+				}
 			}
 		}
 	}
+	/*--------确定关联表 结束--------*/
+
+	if relTableItem.TableRaw != `` {
+		relTableItem.IsExistRelTableDao = true
+		removePrefix := ``
+		if relTableItem.IsSameDir {
+			removePrefix = myGenThis.option.RemovePrefix
+			relTableItem.RelDaoDir = myGenThis.option.ModuleDir
+		} else {
+			removePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableNameCaseSnake)
+			relDaoDir := gstr.Trim(removePrefix, `_`)
+			for _, v := range gstr.Split(gstr.Trim(myGenThis.option.RemovePrefix, `_`), `_`) { //根据当前表要删除的前缀，删除关联表相同的前缀
+				relDaoDirTmp := gstr.TrimLeftStr(relDaoDir, v+`_`)
+				if relDaoDirTmp == relDaoDir {
+					break
+				}
+				relDaoDir = relDaoDirTmp
+			}
+			if relDaoDir == `` {
+				// relDaoDir = relTableItem.RelTableNameCaseCamelLower
+				relDaoDir = relTableItem.RelTableNameCaseSnake
+			} else {
+				relDaoDir = gstr.Replace(relDaoDir, `_`, `/`)
+			}
+			if myGenThis.option.DbGroup != `default` {
+				relTableItem.RelDaoDir = myGenThis.option.DbGroup + `/` + relDaoDir
+			}
+		}
+		// 判断dao文件是否存在，不存在则生成
+		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTableItem.RelDaoDir + `/` + relTableItem.RelTableNameCaseSnake + `.go`) {
+			fmt.Println(`关联表（` + relTableItem.TableRaw + `）dao生成 开始`)
+			command := exec.Command(`gf`, `gen`, `dao`,
+				`--link`, myGenThis.dbLink,
+				`--group`, myGenThis.option.DbGroup,
+				`--removePrefix`, removePrefix,
+				`--daoPath`, `dao/`+relTableItem.RelDaoDir,
+				`--doPath`, `model/entity/`+relTableItem.RelDaoDir,
+				`--entityPath`, `model/entity/`+relTableItem.RelDaoDir,
+				`--tables`, relTableItem.TableRaw,
+				`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
+				`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+				`--overwriteDao`, `false`)
+			stdout, _ := command.StdoutPipe()
+			command.Start()
+			buf := make([]byte, 1024)
+			for {
+				n, err := stdout.Read(buf)
+				if err != nil {
+					break
+				}
+				if n > 0 {
+					fmt.Print(string(buf[:n]))
+				}
+			}
+			command.Wait()
+			fmt.Println(`关联表（` + relTableItem.TableRaw + `）dao生成 结束`)
+		}
+		//判断关联表是否存在pid字段
+		tableColumnList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW FULL COLUMNS FROM `+relTableItem.TableRaw)
+		for _, v := range tableColumnList {
+			if v[`Field`].String() == `pid` {
+				relTableItem.RelTableIsExistPidField = true
+				break
+			}
+		}
+	}
+
 	relDaoDirArr := gstr.Split(relTableItem.RelDaoDir, `/`)
 	relDaoDirCaseCamelArr := []string{}
 	relDaoDirCaseCamelLowerArr := []string{}
@@ -3964,10 +4038,5 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 	}
 	relTableItem.RelDaoDirCaseCamel = gstr.Join(relDaoDirCaseCamelArr, ``)
 	relTableItem.RelDaoDirCaseCamelLower = gstr.Join(relDaoDirCaseCamelLowerArr, `/`)
-	if relTableItem.IsExistRelTableDao {
-		if gstr.Pos(gfile.GetContents(selfDir+`/internal/dao/`+relTableItem.RelDaoDir+`/internal/`+relTableItem.RelTableNameCaseSnake+`.go`), `Pid: `) != -1 {
-			relTableItem.RelTableIsExistPidField = true
-		}
-	}
 	return relTableItem
 }
