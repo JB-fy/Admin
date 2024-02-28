@@ -245,7 +245,6 @@ type passwordHandleItem struct {
 // 一对一
 type relTableItem struct {
 	TableRaw                   string //表名（原始）
-	IsExistRelTableDao         bool   //是否存在关联表dao层
 	RelDaoDir                  string //关联表dao层目录
 	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
 	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
@@ -264,7 +263,7 @@ type relTableItem struct {
 
 // TODO 一对多
 type relTableManyItem struct {
-	IsExistRelTableDao         bool   //是否存在关联表dao层
+	TableRaw                   string //表名（原始）
 	RelDaoDir                  string //关联表dao层目录
 	RelDaoDirCaseCamel         string //关联表dao层目录（大驼峰，/会被去除）
 	RelDaoDirCaseCamelLower    string //关联表dao层目录（小驼峰，/会被保留）
@@ -1027,7 +1026,7 @@ func (myGenThis *myGenHandler) genDao() {
 					daoParseOrder += daoParseOrderTmp
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].IsExistRelTableDao {
+				if tpl.RelTableMap[field].TableRaw != `` {
 					relTable := tpl.RelTableMap[field]
 					daoPath := relTable.RelTableNameCaseCamel
 					if !relTable.IsSameDir {
@@ -1588,7 +1587,7 @@ func (myGenThis *myGenHandler) genApi() {
 				ruleReqCreate += `between:0,100`
 				ruleReqUpdate += `between:0,100`
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
+				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelTableField) + relTable.RelSuffixCaseCamel + ` *string ` + "`" + `json:"` + relTable.RelTableField + relTable.RelSuffix + `,omitempty" dc:"` + relTable.RelTableFieldName + `"` + "`\n"
 				}
@@ -1870,7 +1869,7 @@ func (myGenThis *myGenHandler) genController() {
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
+				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
 					relTable := tpl.RelTableMap[field]
 					// controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
 					daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableNameCaseCamel
@@ -2490,7 +2489,7 @@ func (myGenThis *myGenHandler) genViewList() {
             },`
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
+				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
 					dataKeyOfColumn = `dataKey: '` + tpl.RelTableMap[field].RelTableField + tpl.RelTableMap[field].RelSuffix + `',`
 				}
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
@@ -2935,7 +2934,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
-				if tpl.RelTableMap[field].IsExistRelTableDao {
+				if tpl.RelTableMap[field].TableRaw != `` {
 					relTable := tpl.RelTableMap[field]
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
@@ -3370,7 +3369,7 @@ import md5 from 'js-md5'`
                 </el-form-item>`
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				apiUrl := tpl.ModuleDirCaseCamelLower + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
-				if tpl.RelTableMap[field].IsExistRelTableDao {
+				if tpl.RelTableMap[field].TableRaw != `` {
 					relTable := tpl.RelTableMap[field]
 					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableNameCaseCamelLower
 				}
@@ -3701,7 +3700,7 @@ func (myGenThis *myGenHandler) genViewI18n() {
 				viewI18nTip += `
         ` + field + `: '` + tip + `',`
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].IsExistRelTableDao && !tpl.RelTableMap[field].IsRedundRelNameField {
+				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
 					fieldName = tpl.RelTableMap[field].RelTableFieldName
 				}
 			}
@@ -3879,7 +3878,6 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 	relTableNameCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
 	relTableItem := relTableItem{
 		TableRaw:                   ``,
-		IsExistRelTableDao:         false,
 		RelDaoDir:                  ``,
 		RelDaoDirCaseCamel:         ``,
 		RelDaoDirCaseCamelLower:    ``,
@@ -3941,7 +3939,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 			}
 		}
 	}
-	if !relTableItem.IsExistRelTableDao {
+	if relTableItem.TableRaw == `` {
 		if tableSame != `` {
 			relTableItem.TableRaw = tableSame
 		} else {
@@ -3965,7 +3963,6 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string, modul
 	/*--------确定关联表 结束--------*/
 
 	if relTableItem.TableRaw != `` {
-		relTableItem.IsExistRelTableDao = true
 		removePrefix := ``
 		if relTableItem.IsSameDir {
 			removePrefix = myGenThis.option.RemovePrefix
