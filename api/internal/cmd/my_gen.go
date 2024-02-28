@@ -3993,11 +3993,9 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 			}
 			if relDaoDir == `` {
 				relDaoDir = relTableItem.RelTableCaseSnake
-			} else {
-				relDaoDir = gstr.Replace(relDaoDir, `_`, `/`)
 			}
 			if myGenThis.option.DbGroup != `default` {
-				relTableItem.RelDaoDir = myGenThis.option.DbGroup + `/` + relDaoDir
+				relTableItem.RelDaoDir = myGenThis.option.DbGroup + `/` + gstr.CaseCamelLower(relDaoDir)
 			}
 		}
 		// 判断dao文件是否存在，不存在则生成
