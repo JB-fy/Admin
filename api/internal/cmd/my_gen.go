@@ -3949,13 +3949,15 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 	}
 
 	/*--------确定关联表 开始--------*/
+	//TODO
+	// tableListOfSame := []string{} //关联表在同模块目录的子孙目录下
 	tableSame := ``         //表名完全一致的表
 	tableList := []string{} //表后缀一致的表列表
 	for _, v := range myGenThis.tableArr {
 		if v == myGenThis.option.DbTable { //自身跳过
 			continue
 		}
-		if v == myGenThis.option.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下时
+		if v == myGenThis.option.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -3963,7 +3965,13 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				relTableItem.IsSameDir = true
 				break
 			}
-		} else if v == relTableItem.RelTableCaseSnake { //表名完全一致
+		} else /* if gstr.PosR(v, `_`+myGenThis.option.RemovePrefix) != -1 && gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake) != -1 { //关联表在同模块目录的子孙目录下
+			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
+			primaryKey := tableIndexList[0][`Column_name`].String()
+			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
+				tableListOfSame = append(tableListOfSame, v)
+			}
+		} else  */if v == relTableItem.RelTableCaseSnake { //表名完全一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -3978,7 +3986,23 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 		}
 	}
 	if relTableItem.TableRaw == `` {
-		if tableSame != `` {
+		/* if len(tableListOfSame) > 0 {
+			if len(tableListOfSame) == 1 {
+				relTableItem.TableRaw = tableListOfSame[0]
+			} else {
+				count := 0 //与当前模块同层的其它模块存在多少表后缀一致的表
+				tableSameDir := ``
+				for _, v := range tableList {
+					if gstr.Count(v, `_`) == gstr.Count(myGenThis.option.DbTable, `_`) {
+						count++
+						tableSameDir = v
+					}
+				}
+				if count == 1 { //当只存在一个表后缀一致的表时，直接使用该表
+					relTableItem.TableRaw = tableSameDir
+				}
+			}
+		} else  */if tableSame != `` {
 			relTableItem.TableRaw = tableSame
 		} else {
 			if len(tableList) == 1 {
