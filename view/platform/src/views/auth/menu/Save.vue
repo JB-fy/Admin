@@ -10,6 +10,7 @@ const saveForm = reactive({
     data: {
         sort: 50,
         ...saveCommon.data,
+        sceneId: saveCommon.data.sceneId ? saveCommon.data.sceneId : undefined,
     } as { [propName: string]: any },
     rules: {
         menuName: [
@@ -108,15 +109,7 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.sceneId')" prop="sceneId">
-                    <my-select
-                        v-model="saveForm.data.sceneId"
-                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
-                        @change="
-                            () => {
-                                saveForm.data.pid = 0
-                            }
-                        "
-                    />
+                    <my-select v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => (saveForm.data.pid = 0)" />
                 </el-form-item>
                 <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
                     <my-cascader
