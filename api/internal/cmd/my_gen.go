@@ -196,9 +196,9 @@ type myGenFieldTypeName = string
 const (
 	//用于结构体中，需从1开始，否则结构体会默认0，即Int
 	Int       myGenFieldType = iota + 1 // `int等类型`
-	Uint                                // `int等类型（unsigned）`
+	IntU                                // `int等类型（unsigned）`
 	Float                               // `float等类型（unsigned）`
-	Ufloat                              // `float等类型（unsigned）`
+	FloatU                              // `float等类型（unsigned）`
 	Char                                // `char类型`
 	Varchar                             // `varchar类型`
 	Text                                // `text类型`
@@ -676,7 +676,7 @@ func (myGenThis *myGenHandler) setTpl() {
 		} else if fieldTmp.FieldTypeRaw == `PRI` {
 			fieldTmp.FieldType = Int
 			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = Uint
+				fieldTmp.FieldType = IntU
 			}
 
 			fieldTmp.FieldTypeName = Pri
@@ -697,7 +697,7 @@ func (myGenThis *myGenHandler) setTpl() {
 
 			fieldTmp.FieldType = Int
 			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = Uint
+				fieldTmp.FieldType = IntU
 			}
 			isStr := true
 			if gstr.Pos(fieldTmp.FieldTypeRaw, `char`) != -1 {
@@ -789,7 +789,7 @@ func (myGenThis *myGenHandler) setTpl() {
 		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1 { //int等类型
 			fieldTmp.FieldType = Int
 			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = Uint
+				fieldTmp.FieldType = IntU
 			}
 
 			if fieldTmp.FieldRaw == `pid` { //pid
@@ -813,7 +813,7 @@ func (myGenThis *myGenHandler) setTpl() {
 			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `double`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `float`) != -1 { //float类型
 				fieldTmp.FieldType = Float
 				if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-					fieldTmp.FieldType = Ufloat
+					fieldTmp.FieldType = FloatU
 				}
 			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `timestamp`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 { //timestamp或datetime或date类型
 				fieldTmp.FieldType = Timestamp
