@@ -199,13 +199,13 @@ const (
 	IntU                                // `int等类型（unsigned）`
 	Float                               // `float等类型（unsigned）`
 	FloatU                              // `float等类型（unsigned）`
-	Char                                // `char类型`
 	Varchar                             // `varchar类型`
+	Char                                // `char类型`
 	Text                                // `text类型`
 	Json                                // `json类型`
-	Date                                // `date类型`
-	Datetime                            // `datetime类型`
 	Timestamp                           // `timestamp类型`
+	Datetime                            // `datetime类型`
+	Date                                // `date类型`
 
 	Deleted        myGenFieldTypeName = `软删除字段`
 	Updated        myGenFieldTypeName = `更新时间字段`
