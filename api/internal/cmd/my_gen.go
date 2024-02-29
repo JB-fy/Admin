@@ -116,10 +116,10 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			`gf`, `gen`, `dao`,
 			`--link`, myGenThis.dbLink,
 			`--group`, myGenThis.option.DbGroup,
-			`--removePrefix`, myGenThis.option.RemovePrefix,
-			`--daoPath`, `dao/`+myGenThis.option.ModuleDir,
-			`--doPath`, `model/entity/`+myGenThis.option.ModuleDir,
-			`--entityPath`, `model/entity/`+myGenThis.option.ModuleDir,
+			`--removePrefix`, myGenThis.option.RemovePrefixCommon+myGenThis.option.RemovePrefixAlone,
+			`--daoPath`, `dao/`+myGenThis.tpl.ModuleDirCaseKebab,
+			`--doPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
+			`--entityPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
 			`--tables`, myGenThis.option.DbTable,
 			`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 			`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
@@ -153,23 +153,23 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 }
 
 type myGenHandler struct {
-	ctx             context.Context
-	sceneId         uint     //场景ID
-	sceneName       string   //场景名称
-	dbLink          string   //当前数据库连接配置（gf gen dao命令生成dao时需要）
-	db              gdb.DB   //当前数据库连接
-	tableArr        []string //当前db全部数据表
-	logicStructName string   //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	option          myGenOption
-	tpl             *myGenTpl
+	ctx       context.Context
+	sceneId   uint     //场景ID
+	sceneName string   //场景名称
+	dbLink    string   //当前数据库连接配置（gf gen dao命令生成dao时需要）
+	db        gdb.DB   //当前数据库连接
+	tableArr  []string //当前db全部数据表
+	option    myGenOption
+	tpl       myGenTpl
 }
 
 type myGenOption struct {
-	SceneCode    string `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
-	DbGroup      string `json:"dbGroup"`      //db分组。示例：default
-	DbTable      string `json:"dbTable"`      //db表。示例：auth_test
-	RemovePrefix string `json:"removePrefix"` //要删除的db表前缀。必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
+	SceneCode          string `json:"sceneCode"`          //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	DbGroup            string `json:"dbGroup"`            //db分组。示例：default
+	DbTable            string `json:"dbTable"`            //db表。示例：auth_test
+	RemovePrefixCommon string `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
+	RemovePrefixAlone  string `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
+	// ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
 	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
 	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
@@ -184,14 +184,17 @@ type myGenOption struct {
 }
 
 type myGenTpl struct {
+	RemovePrefix                   string     //要删除的前缀
 	TableRaw                       string     //表名（原始，包含前缀）
 	TableCaseSnake                 string     //表名（蛇形，已去除前缀）
 	TableCaseCamel                 string     //表名（大驼峰，已去除前缀）
 	TableCaseCamelLower            string     //表名（小驼峰，已去除前缀）
 	TableColumnList                gdb.Result //表字段详情
+	ModuleDirCaseKebab             string     //模块目录（横线，/会被保留）
 	ModuleDirCaseCamel             string     //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseCamelLower        string     //模块目录（小驼峰，/会被保留）
 	ModuleDirCaseCamelLowerReplace string     //模块目录（小驼峰，/会被替换成.）
+	LogicStructName                string     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	PrimaryKey                     string     //表主键
 	DeletedField                   string     //表删除时间字段
 	UpdatedField                   string     //表更新时间字段
@@ -221,8 +224,8 @@ type passwordHandleItem struct {
 	SaltLength     string //加密盐字段长度
 }
 
-// 一对一
 type relTableItem struct {
+	RemovePrefix            string     //要删除的前缀
 	TableRaw                string     //表名（原始，包含前缀）
 	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
 	RelTableCaseCamel       string     //表名（大驼峰，已去除前缀）
@@ -268,45 +271,6 @@ func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
 	gconv.Struct(optionMap, &option)
 	defer func() {
 		myGenThis.option = option
-
-		removePrefixOfReal := myGenThis.option.ModuleDir
-		if myGenThis.option.DbGroup != `default` {
-			removePrefixOfReal = gstr.TrimLeftStr(removePrefixOfReal, myGenThis.option.DbGroup+`/`)
-		}
-		removePrefixOfReal = gstr.CaseSnake(gstr.Replace(removePrefixOfReal, `/`, `_`))
-		tableOfRemove := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
-		if removePrefixOfReal == tableOfRemove {
-			myGenThis.logicStructName = gstr.CaseCamel(gstr.Replace(myGenThis.option.ModuleDir, `/`, `_`))
-		} else {
-			myGenThis.logicStructName = gstr.CaseCamel(gstr.Replace(myGenThis.option.ModuleDir, `/`, `_`)) + gstr.CaseCamel(tableOfRemove)
-		}
-		/* TODO
-		tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+myGenThis.option.DbTable)
-		table := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
-		tpl := &myGenTpl{
-			TableRaw:            myGenThis.option.DbTable,
-			TableCaseSnake:      gstr.CaseSnake(table),
-			TableCaseCamel:      gstr.CaseCamel(table),
-			TableCaseCamelLower: gstr.CaseCamelLower(table),
-			TableColumnList:     tableColumnList,
-			PasswordHandleMap:   map[string]passwordHandleItem{},
-			RelTableMap:         map[string]relTableItem{},
-		}
-		moduleDirArr := gstr.Split(myGenThis.option.ModuleDir, `/`)
-		moduleDirCaseCamelArr := []string{}
-		moduleDirCaseCamelLowerArr := []string{}
-		for _, v := range moduleDirArr {
-			moduleDirCaseCamelArr = append(moduleDirCaseCamelArr, gstr.CaseCamel(v))
-			moduleDirCaseCamelLowerArr = append(moduleDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
-		}
-		tpl.ModuleDirCaseCamel = gstr.Join(moduleDirCaseCamelArr, ``)
-		tpl.ModuleDirCaseCamelLower = gstr.Join(moduleDirCaseCamelLowerArr, `/`)
-		tpl.ModuleDirCaseCamelLowerReplace = gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
-		if gstr.CaseSnake(moduleDirCaseCamelArr[len(moduleDirCaseCamelArr)-1]) == tpl.TableCaseSnake {
-			myGenThis.logicStructName = tpl.ModuleDirCaseCamel
-		} else {
-			myGenThis.logicStructName = tpl.ModuleDirCaseCamel + tpl.TableCaseCamel
-		} */
 	}()
 
 	// 场景标识
@@ -355,22 +319,25 @@ func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
 		}
 		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
 	}
-	// db表前缀
-	if _, ok := optionMap[`removePrefix`]; !ok {
-		option.RemovePrefix = gcmd.Scan("> 请输入要删除的db表前缀，默认(空):\n")
+	// 要删除的共有前缀
+	if _, ok := optionMap[`removePrefixCommon`]; !ok {
+		option.RemovePrefixCommon = gcmd.Scan("> 请输入要删除的共有前缀，默认(空):\n")
 	}
 	for {
-		if option.RemovePrefix == `` || gstr.Pos(option.DbTable, option.RemovePrefix) == 0 {
+		if option.RemovePrefixCommon == `` || gstr.Pos(option.DbTable, option.RemovePrefixCommon) == 0 {
 			break
 		}
-		option.RemovePrefix = gcmd.Scan("> 要删除的db表前缀不存在，请重新输入，默认(空):\n")
+		option.RemovePrefixCommon = gcmd.Scan("> 要删除的共有前缀不存在，请重新输入，默认(空):\n")
 	}
-	// 模块目录
+	// 要删除的独有前缀
+	if _, ok := optionMap[`removePrefixAlone`]; !ok {
+		option.RemovePrefixAlone = gcmd.Scan("> 请输入要删除的独有前缀，默认(空):\n")
+	}
 	for {
-		if option.ModuleDir != `` {
+		if option.RemovePrefixAlone == `` || gstr.Pos(option.DbTable, option.RemovePrefixCommon+option.RemovePrefixAlone) == 0 {
 			break
 		}
-		option.ModuleDir = gcmd.Scan("> 请输入模块目录:\n")
+		option.RemovePrefixAlone = gcmd.Scan("> 要删除的独有前缀不存在，请重新输入，默认(空):\n")
 	}
 	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
 	for {
@@ -573,8 +540,10 @@ func (myGenThis *myGenHandler) setTpl() {
 	ctx := myGenThis.ctx
 
 	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+myGenThis.option.DbTable)
-	table := gstr.Replace(myGenThis.option.DbTable, myGenThis.option.RemovePrefix, ``, 1)
-	tpl := &myGenTpl{
+	removePrefix := myGenThis.option.RemovePrefixCommon + myGenThis.option.RemovePrefixAlone
+	table := gstr.Replace(myGenThis.option.DbTable, removePrefix, ``, 1)
+	tpl := myGenTpl{
+		RemovePrefix:        removePrefix,
 		TableRaw:            myGenThis.option.DbTable,
 		TableCaseSnake:      gstr.CaseSnake(table),
 		TableCaseCamel:      gstr.CaseCamel(table),
@@ -583,15 +552,26 @@ func (myGenThis *myGenHandler) setTpl() {
 		PasswordHandleMap:   map[string]passwordHandleItem{},
 		RelTableMap:         map[string]relTableItem{},
 	}
-	moduleDirArr := gstr.Split(myGenThis.option.ModuleDir, `/`)
-	moduleDirCaseCamelArr := []string{}
-	moduleDirCaseCamelLowerArr := []string{}
-	for _, v := range moduleDirArr {
-		moduleDirCaseCamelArr = append(moduleDirCaseCamelArr, gstr.CaseCamel(v))
-		moduleDirCaseCamelLowerArr = append(moduleDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
+
+	logicStructName := gstr.TrimLeftStr(myGenThis.option.DbTable, myGenThis.option.RemovePrefixCommon, 1)
+	moduleDirCaseKebab := gstr.CaseKebab(logicStructName)
+	moduleDirCaseCamel := gstr.CaseCamel(logicStructName)
+	moduleDirCaseCamelLower := gstr.CaseCamelLower(logicStructName)
+	if myGenThis.option.RemovePrefixAlone != `` {
+		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(myGenThis.option.RemovePrefixAlone, `_`))
+		moduleDirCaseCamel = gstr.CaseCamel(myGenThis.option.RemovePrefixAlone)
+		moduleDirCaseCamelLower = gstr.CaseCamelLower(myGenThis.option.RemovePrefixAlone)
 	}
-	tpl.ModuleDirCaseCamel = gstr.Join(moduleDirCaseCamelArr, ``)
-	tpl.ModuleDirCaseCamelLower = gstr.Join(moduleDirCaseCamelLowerArr, `/`)
+	if myGenThis.option.DbGroup != `default` {
+		logicStructName = myGenThis.option.DbGroup + `_` + logicStructName
+		moduleDirCaseKebab = gstr.CaseKebab(myGenThis.option.DbGroup) + `/` + moduleDirCaseKebab
+		moduleDirCaseCamel = gstr.CaseCamel(myGenThis.option.DbGroup) + moduleDirCaseCamel
+		moduleDirCaseCamelLower = gstr.CaseCamelLower(myGenThis.option.DbGroup) + `/` + moduleDirCaseCamelLower
+	}
+	tpl.LogicStructName = gstr.CaseCamel(logicStructName)
+	tpl.ModuleDirCaseKebab = moduleDirCaseKebab
+	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
+	tpl.ModuleDirCaseCamelLower = moduleDirCaseCamelLower
 	tpl.ModuleDirCaseCamelLowerReplace = gstr.Replace(tpl.ModuleDirCaseCamelLower, `/`, `.`)
 
 	fieldArr := make([]string, len(tpl.TableColumnList))
@@ -660,6 +640,7 @@ func (myGenThis *myGenHandler) setTpl() {
 					tpl.PidHandle.SortField = field
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
+				myGenThis.tpl = tpl
 				tpl.RelTableMap[field] = myGenThis.genRelTable(field, fieldName)
 			}
 		}
@@ -1262,18 +1243,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type s` + myGenThis.logicStructName + ` struct{}
+type s` + myGenThis.tpl.LogicStructName + ` struct{}
 
-func New` + myGenThis.logicStructName + `() *s` + myGenThis.logicStructName + ` {
-	return &s` + myGenThis.logicStructName + `{}
+func New` + myGenThis.tpl.LogicStructName + `() *s` + myGenThis.tpl.LogicStructName + ` {
+	return &s` + myGenThis.tpl.LogicStructName + `{}
 }
 
 func init() {
-	service.Register` + myGenThis.logicStructName + `(New` + myGenThis.logicStructName + `())
+	service.Register` + myGenThis.tpl.LogicStructName + `(New` + myGenThis.tpl.LogicStructName + `())
 }
 
 // 新增
-func (logicThis *s` + myGenThis.logicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 `
@@ -1297,7 +1278,7 @@ func (logicThis *s` + myGenThis.logicStructName + `) Create(ctx context.Context,
 }
 
 // 修改
-func (logicThis *s` + myGenThis.logicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -1360,7 +1341,7 @@ func (logicThis *s` + myGenThis.logicStructName + `) Update(ctx context.Context,
 }
 
 // 删除
-func (logicThis *s` + myGenThis.logicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -1948,7 +1929,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Look`
+			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
@@ -2008,7 +1989,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Look`
+			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
@@ -2045,7 +2026,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Create`
+			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Create`
 			actionName := option.CommonName + `-新增`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
@@ -2058,7 +2039,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 `
 		}
 		tplController += `
-	id, err := service.` + myGenThis.logicStructName + `().Create(ctx, data)
+	id, err := service.` + myGenThis.tpl.LogicStructName + `().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -2083,7 +2064,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Update`
+			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Update`
 			actionName := option.CommonName + `-编辑`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
@@ -2096,7 +2077,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 `
 		}
 		tplController += `
-	_, err = service.` + myGenThis.logicStructName + `().Update(ctx, filter, data)
+	_, err = service.` + myGenThis.tpl.LogicStructName + `().Update(ctx, filter, data)
 	return
 }
 `
@@ -2111,7 +2092,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Delete`
+			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Delete`
 			actionName := option.CommonName + `-删除`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
@@ -2124,7 +2105,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 `
 		}
 		tplController += `
-	_, err = service.` + myGenThis.logicStructName + `().Delete(ctx, filter)
+	_, err = service.` + myGenThis.tpl.LogicStructName + `().Delete(ctx, filter)
 	return
 }
 `
@@ -2157,7 +2138,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(myGenThis.logicStructName) + `Look`
+			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Look`
 			actionName := option.CommonName + `-查看`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
@@ -3915,21 +3896,10 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 
 	relTableCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
 	relTableItem := relTableItem{
-		TableRaw:                ``,
-		RelTableCaseSnake:       gstr.CaseSnake(relTableCaseCamel),
-		RelTableCaseCamel:       relTableCaseCamel,
-		RelTableCaseCamelLower:  gstr.CaseCamelLower(relTableCaseCamel),
-		RelDaoDir:               ``,
-		RelDaoDirCaseCamel:      ``,
-		RelDaoDirCaseCamelLower: ``,
-		IsSameDir:               false,
-		RelTableField:           ``,
-		RelTableFieldName:       fieldName,
-		IsRedundRelNameField:    false,
-		RelSuffix:               ``,
-		RelSuffixCaseCamel:      ``,
-		RelSuffixCaseSnake:      ``,
-		RelTableIsExistPidField: false,
+		RelTableCaseSnake:      gstr.CaseSnake(relTableCaseCamel),
+		RelTableCaseCamel:      relTableCaseCamel,
+		RelTableCaseCamelLower: gstr.CaseCamelLower(relTableCaseCamel),
+		RelTableFieldName:      fieldName,
 	}
 	fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
 	if len(fieldCaseSnakeArr) > 1 {
@@ -3949,15 +3919,14 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 	}
 
 	/*--------确定关联表 开始--------*/
-	//TODO
-	// tableListOfSame := []string{} //关联表在同模块目录的子孙目录下
-	tableSame := ``         //表名完全一致的表
-	tableList := []string{} //表后缀一致的表列表
+	tableListSame := []string{} //关联表在同模块目录下，但表后缀一致
+	tableSame := ``             //表名完全一致的表
+	tableList := []string{}     //表后缀一致的表列表
 	for _, v := range myGenThis.tableArr {
 		if v == myGenThis.option.DbTable { //自身跳过
 			continue
 		}
-		if v == myGenThis.option.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下
+		if v == myGenThis.tpl.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下，且表名一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -3965,13 +3934,13 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				relTableItem.IsSameDir = true
 				break
 			}
-		} else /* if gstr.PosR(v, `_`+myGenThis.option.RemovePrefix) != -1 && gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake) != -1 { //关联表在同模块目录的子孙目录下
+		} else if gstr.Pos(v, `_`+myGenThis.tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake)+len(`_`+relTableItem.RelTableCaseSnake) { //关联表在同模块目录下，但表后缀一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
-				tableListOfSame = append(tableListOfSame, v)
+				tableListSame = append(tableListSame, v)
 			}
-		} else  */if v == relTableItem.RelTableCaseSnake { //表名完全一致
+		} else if gstr.Replace(v, myGenThis.option.RemovePrefixCommon, ``, 1) == relTableItem.RelTableCaseSnake { //表名完全一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -3986,11 +3955,13 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 		}
 	}
 	if relTableItem.TableRaw == `` {
-		/* if len(tableListOfSame) > 0 {
-			if len(tableListOfSame) == 1 {
-				relTableItem.TableRaw = tableListOfSame[0]
+		if len(tableListSame) > 0 {
+			if len(tableListSame) == 1 {
+				relTableItem.TableRaw = tableListSame[0]
+				relTableItem.IsSameDir = true
 			} else {
-				count := 0 //与当前模块同层的其它模块存在多少表后缀一致的表
+				// TODO
+				count := 0 //关联表在同模块目录下，但表后缀一致
 				tableSameDir := ``
 				for _, v := range tableList {
 					if gstr.Count(v, `_`) == gstr.Count(myGenThis.option.DbTable, `_`) {
@@ -4000,14 +3971,16 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				}
 				if count == 1 { //当只存在一个表后缀一致的表时，直接使用该表
 					relTableItem.TableRaw = tableSameDir
+					relTableItem.IsSameDir = true
 				}
 			}
-		} else  */if tableSame != `` {
+		} else if tableSame != `` {
 			relTableItem.TableRaw = tableSame
 		} else {
 			if len(tableList) == 1 {
 				relTableItem.TableRaw = tableList[0]
 			} else {
+				// TODO
 				count := 0 //与当前模块同层的其它模块存在多少表后缀一致的表
 				tableSameDir := ``
 				for _, v := range tableList {
@@ -4025,26 +3998,20 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 	/*--------确定关联表 结束--------*/
 
 	if relTableItem.TableRaw != `` {
-		removePrefix := ``
 		if relTableItem.IsSameDir {
-			removePrefix = myGenThis.option.RemovePrefix
-			relTableItem.RelDaoDir = myGenThis.option.ModuleDir
+			relTableItem.RemovePrefix = myGenThis.tpl.RemovePrefix
+			relTableItem.RelDaoDir = myGenThis.tpl.ModuleDirCaseKebab
 		} else {
-			removePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableCaseSnake)
-			relDaoDir := gstr.Trim(removePrefix, `_`)
-			for _, v := range gstr.Split(gstr.Trim(myGenThis.option.RemovePrefix, `_`), `_`) { //根据当前表要删除的前缀，删除关联表相同的前缀
-				relDaoDirTmp := gstr.TrimLeftStr(relDaoDir, v+`_`)
-				if relDaoDirTmp == relDaoDir {
-					break
-				}
-				relDaoDir = relDaoDirTmp
-			}
+			relTableItem.RemovePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableCaseSnake, 1)
+			relDaoDir := gstr.Trim(relTableItem.RemovePrefix, `_`)
+			relDaoDir = gstr.TrimLeftStr(relDaoDir, myGenThis.option.RemovePrefixCommon, 1)
 			if relDaoDir == `` {
 				relDaoDir = relTableItem.RelTableCaseSnake
 			}
 			if myGenThis.option.DbGroup != `default` {
-				relTableItem.RelDaoDir = myGenThis.option.DbGroup + `/` + gstr.CaseCamelLower(relDaoDir)
+				relDaoDir = gstr.CaseKebab(myGenThis.option.DbGroup) + `/` + gstr.CaseKebab(relDaoDir)
 			}
+			relTableItem.RelDaoDir = relDaoDir
 		}
 		// 判断dao文件是否存在，不存在则生成
 		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTableItem.RelDaoDir + `/` + relTableItem.RelTableCaseSnake + `.go`) {
@@ -4052,7 +4019,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				`gf`, `gen`, `dao`,
 				`--link`, myGenThis.dbLink,
 				`--group`, myGenThis.option.DbGroup,
-				`--removePrefix`, removePrefix,
+				`--removePrefix`, relTableItem.RemovePrefix,
 				`--daoPath`, `dao/`+relTableItem.RelDaoDir,
 				`--doPath`, `model/entity/`+relTableItem.RelDaoDir,
 				`--entityPath`, `model/entity/`+relTableItem.RelDaoDir,

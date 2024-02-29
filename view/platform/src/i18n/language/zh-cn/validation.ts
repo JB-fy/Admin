@@ -23,6 +23,7 @@ export default {
         upload: '必须上传 {size} 个文件',
         array: '必须等于 {size} 个元素',
     },
+    number: '必须是数字',
     regex: '格式是无效的',
     json: '必须是有效的JSON格式',
     url: '必须是有效的URL格式',
