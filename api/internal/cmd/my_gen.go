@@ -75,51 +75,28 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 */
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
-	myGenThis := myGenHandler{ctx: ctx}
-	myGenThis.init(parser)
-	myGenThis.tpl = myGenThis.setTpl(myGenThis.option.DbTable, myGenThis.option.RemovePrefixAlone)
+	myGenHandler := myGenHandler{ctx: ctx}
+	myGenHandler.init(parser)
+	myGenHandler.tpl = myGenHandler.setTpl(myGenHandler.option.DbTable, myGenHandler.option.RemovePrefixAlone)
 
-	if myGenThis.option.IsCover {
-		// dao生成
-		overwriteDao := `false`
-		if myGenThis.option.IsCover {
-			overwriteDao = `true`
-		}
-		myGenThis.command(`当前表dao生成`, true, ``,
-			`gf`, `gen`, `dao`,
-			`--link`, myGenThis.dbLink,
-			`--group`, myGenThis.option.DbGroup,
-			`--removePrefix`, myGenThis.option.RemovePrefixCommon+myGenThis.option.RemovePrefixAlone,
-			`--daoPath`, `dao/`+myGenThis.tpl.ModuleDirCaseKebab,
-			`--doPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
-			`--entityPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
-			`--tables`, myGenThis.option.DbTable,
-			`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
-			`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
-			`--overwriteDao`, overwriteDao)
+	myGenHandler.genDao()   // dao层存在时，增加或修改部分字段的解析代码
+	myGenHandler.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+
+	if myGenHandler.option.IsApi {
+		myGenHandler.genApi()        // api模板生成
+		myGenHandler.genController() // controller模板生成
+		myGenHandler.genRouter()     // 后端路由生成
 	}
 
-	myGenThis.genDao()   // dao层存在时，增加或修改部分字段的解析代码
-	myGenThis.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
-	// service生成
-	myGenThis.command(`service生成`, true, ``,
-		`gf`, `gen`, `service`)
-
-	if myGenThis.option.IsApi {
-		myGenThis.genApi()        // api模板生成
-		myGenThis.genController() // controller模板生成
-		myGenThis.genRouter()     // 后端路由生成
-	}
-
-	if myGenThis.option.IsView {
-		myGenThis.genViewIndex()  // 视图模板Index生成
-		myGenThis.genViewList()   // 视图模板List生成
-		myGenThis.genViewQuery()  // 视图模板Query生成
-		myGenThis.genViewSave()   // 视图模板Save生成
-		myGenThis.genViewI18n()   // 视图模板I18n生成
-		myGenThis.genViewRouter() // 前端路由生成
+	if myGenHandler.option.IsView {
+		myGenHandler.genViewIndex()  // 视图模板Index生成
+		myGenHandler.genViewList()   // 视图模板List生成
+		myGenHandler.genViewQuery()  // 视图模板Query生成
+		myGenHandler.genViewSave()   // 视图模板Save生成
+		myGenHandler.genViewI18n()   // 视图模板I18n生成
+		myGenHandler.genViewRouter() // 前端路由生成
 		// 前端代码格式化
-		myGenThis.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode,
+		myGenHandler.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandler.option.SceneCode,
 			`npm`, `run`, `format`)
 	}
 	return
@@ -812,8 +789,7 @@ func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGe
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			myGenThis.tpl = tpl
-			tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.genRelTable(fieldTmp.FieldRaw, fieldTmp.FieldName)
+			tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.genRelTable(tpl, fieldTmp.FieldRaw, fieldTmp.FieldName)
 		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			isStr := false
@@ -875,12 +851,26 @@ func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGe
 
 // dao层存在时，增加或修改部分字段的解析代码
 func (myGenThis *myGenHandler) genDao() {
+	overwriteDao := `false`
+	if myGenThis.option.IsCover {
+		overwriteDao = `true`
+	}
+	myGenThis.command(`当前表dao生成`, true, ``,
+		`gf`, `gen`, `dao`,
+		`--link`, myGenThis.dbLink,
+		`--group`, myGenThis.option.DbGroup,
+		`--removePrefix`, myGenThis.option.RemovePrefixCommon+myGenThis.option.RemovePrefixAlone,
+		`--daoPath`, `dao/`+myGenThis.tpl.ModuleDirCaseKebab,
+		`--doPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
+		`--entityPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
+		`--tables`, myGenThis.option.DbTable,
+		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
+		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+		`--overwriteDao`, overwriteDao)
+
 	tpl := myGenThis.tpl
 
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	if !gfile.IsFile(saveFile) {
-		return
-	}
 	tplDao := gfile.GetContents(saveFile)
 
 	daoParseInsert := ``
@@ -1563,6 +1553,8 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Cont
 
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
+	myGenThis.command(`service生成`, true, ``,
+		`gf`, `gen`, `service`)
 }
 
 // api模板生成
@@ -4083,7 +4075,7 @@ func (myGenThis *myGenHandler) genHandlePasswordMapKey(passwordOrsalt string) (h
 }
 
 // 获取id后缀字段关联的表信息
-func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTableItem {
+func (myGenThis *myGenHandler) genRelTable(tpl myGenTpl, field string, fieldName string) relTableItem {
 	fieldCaseSnake := gstr.CaseSnake(field)
 	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 	fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
@@ -4117,10 +4109,10 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 	tableSame := ``             //表名完全一致的表
 	tableList := []string{}     //表后缀一致的表列表
 	for _, v := range myGenThis.tableArr {
-		if v == myGenThis.option.DbTable { //自身跳过
+		if v == tpl.TableRaw { //自身跳过
 			continue
 		}
-		if v == myGenThis.tpl.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下，且表名一致
+		if v == tpl.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下，且表名一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -4128,7 +4120,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				relTableItem.IsSameDir = true
 				break
 			}
-		} else if gstr.Pos(v, `_`+myGenThis.tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake)+len(`_`+relTableItem.RelTableCaseSnake) { //关联表在同模块目录下，但表后缀一致
+		} else if gstr.Pos(v, `_`+tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake)+len(`_`+relTableItem.RelTableCaseSnake) { //关联表在同模块目录下，但表后缀一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -4158,7 +4150,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				count := 0 //关联表在同模块目录下，但表后缀一致
 				tableSameDir := ``
 				for _, v := range tableList {
-					if gstr.Count(v, `_`) == gstr.Count(myGenThis.option.DbTable, `_`) {
+					if gstr.Count(v, `_`) == gstr.Count(tpl.TableRaw, `_`) {
 						count++
 						tableSameDir = v
 					}
@@ -4178,7 +4170,7 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 				count := 0 //与当前模块同层的其它模块存在多少表后缀一致的表
 				tableSameDir := ``
 				for _, v := range tableList {
-					if gstr.Count(v, `_`) == gstr.Count(myGenThis.option.DbTable, `_`) {
+					if gstr.Count(v, `_`) == gstr.Count(tpl.TableRaw, `_`) {
 						count++
 						tableSameDir = v
 					}
@@ -4193,8 +4185,8 @@ func (myGenThis *myGenHandler) genRelTable(field string, fieldName string) relTa
 
 	if relTableItem.TableRaw != `` {
 		if relTableItem.IsSameDir {
-			relTableItem.RemovePrefix = myGenThis.tpl.RemovePrefix
-			relTableItem.RelDaoDir = myGenThis.tpl.ModuleDirCaseKebab
+			relTableItem.RemovePrefix = tpl.RemovePrefix
+			relTableItem.RelDaoDir = tpl.ModuleDirCaseKebab
 		} else {
 			relTableItem.RemovePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableCaseSnake, 1)
 			relDaoDir := gstr.Trim(relTableItem.RemovePrefix, `_`)
