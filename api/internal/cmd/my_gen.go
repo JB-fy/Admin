@@ -77,7 +77,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	myGenThis := myGenHandler{ctx: ctx}
 	myGenThis.init(parser)
-	myGenThis.setTpl()
+	myGenThis.tpl = myGenThis.setTpl(myGenThis.option.DbTable, myGenThis.option.RemovePrefixAlone)
 
 	if myGenThis.option.IsCover {
 		// dao生成
@@ -168,13 +168,12 @@ type myGenTpl struct {
 	ModuleDirCaseKebabReplace string       //模块目录（横线，/被替换成.）
 	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
 	LogicStructName           string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-
-	FieldPrimary string //主键字段
-	FieldDeleted string //删除时间字段
-	FieldUpdated string //更新时间字段
-	FieldCreated string //创建时间字段
-	// 以下字段用于对某些表字段做特殊处理
-	HandelLabelList   []string                  //label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID + Name > Name > Title > Nickname > Account > Email > Phone
+	FieldPrimary              string       //主键字段
+	FieldDeleted              string       //删除时间字段
+	FieldUpdated              string       //更新时间字段
+	FieldCreated              string       //创建时间字段
+	// 以下属性用于对字段做特殊处理
+	HandelLabelList   []string                  //label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID + Name > Name > Title > Phone > Email > Account > Nickname
 	HandlePasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
 	HandlePid         struct {                  //pid,level,idPath|id_path同时存在时，需特殊处理
 		IsCoexist   bool   //是否同时存在
@@ -185,19 +184,7 @@ type myGenTpl struct {
 	}
 	HandleIdRelTableMap map[string]myGenTpl //id后缀字段关联表信息
 
-	PrimaryKey   string //主键字段
-	DeletedField string //删除时间字段
-	UpdatedField string //更新时间字段
-	CreatedField string //创建时间字段
 	// 以下字段用于对某些表字段做特殊处理
-	PasswordHandleMap map[string]passwordHandleItem //password|passwd,salt同时存在时，需特殊处理
-	PidHandle         struct {                      //pid,level,idPath|id_path同时存在时，需特殊处理
-		IsCoexist   bool   //是否同时存在
-		PidField    string //父级字段
-		LevelField  string //层级字段
-		IdPathField string //层级路径字段
-		SortField   string //排序字段
-	}
 	RelTableMap     map[string]relTableItem     //一对一关联表。id后缀字段，能确定关联表时，会自动生成联表查询代码
 	RelTableManyMap map[string]relTableManyItem //一对多关联表。关联表命名必须table_rel_to_table，能确定关联表时，会自动生成联表查询代码
 }
@@ -272,14 +259,6 @@ type myGenField struct {
 }
 
 type handlePassword struct {
-	IsCoexist      bool   //是否同时存在
-	PasswordField  string //密码字段
-	PasswordLength string //密码字段长度
-	SaltField      string //加密盐字段
-	SaltLength     string //加密盐字段长度
-}
-
-type passwordHandleItem struct {
 	IsCoexist      bool   //是否同时存在
 	PasswordField  string //密码字段
 	PasswordLength string //密码字段长度
@@ -599,29 +578,29 @@ isCoverEnd:
 }
 
 // 模板参数处理
-func (myGenThis *myGenHandler) setTpl() {
+func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGenTpl) {
 	ctx := myGenThis.ctx
 
-	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+myGenThis.option.DbTable)
-	removePrefix := myGenThis.option.RemovePrefixCommon + myGenThis.option.RemovePrefixAlone
-	table := gstr.Replace(myGenThis.option.DbTable, removePrefix, ``, 1)
-	tpl := myGenTpl{
+	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
+	removePrefix := myGenThis.option.RemovePrefixCommon + removePrefixAlone
+	tableReomve := gstr.Replace(table, removePrefix, ``, 1)
+	tpl = myGenTpl{
 		RemovePrefix:      removePrefix,
-		TableRaw:          myGenThis.option.DbTable,
-		TableCaseKebab:    gstr.CaseKebab(table),
-		TableCaseSnake:    gstr.CaseSnake(table),
-		TableCaseCamel:    gstr.CaseCamel(table),
+		TableRaw:          table,
+		TableCaseKebab:    gstr.CaseKebab(tableReomve),
+		TableCaseSnake:    gstr.CaseSnake(tableReomve),
+		TableCaseCamel:    gstr.CaseCamel(tableReomve),
 		TableColumnList:   tableColumnList,
-		PasswordHandleMap: map[string]passwordHandleItem{},
+		HandlePasswordMap: map[string]handlePassword{},
 		RelTableMap:       map[string]relTableItem{},
 	}
 
-	logicStructName := gstr.TrimLeftStr(myGenThis.option.DbTable, myGenThis.option.RemovePrefixCommon, 1)
+	logicStructName := gstr.TrimLeftStr(table, myGenThis.option.RemovePrefixCommon, 1)
 	moduleDirCaseKebab := gstr.CaseKebab(logicStructName)
 	moduleDirCaseCamel := gstr.CaseCamel(logicStructName)
-	if myGenThis.option.RemovePrefixAlone != `` {
-		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(myGenThis.option.RemovePrefixAlone, `_`))
-		moduleDirCaseCamel = gstr.CaseCamel(myGenThis.option.RemovePrefixAlone)
+	if removePrefixAlone != `` {
+		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(removePrefixAlone, `_`))
+		moduleDirCaseCamel = gstr.CaseCamel(removePrefixAlone)
 	}
 	if myGenThis.option.DbGroup != `default` {
 		logicStructName = myGenThis.option.DbGroup + `_` + logicStructName
@@ -785,48 +764,48 @@ func (myGenThis *myGenHandler) setTpl() {
 		/*--------特殊处理字段解析 开始--------*/
 		switch fieldTmp.FieldTypeName {
 		case TypeNameDeleted: // 软删除字段
-			tpl.DeletedField = fieldTmp.FieldRaw
+			tpl.FieldDeleted = fieldTmp.FieldRaw
 		case TypeNameUpdated: // 更新时间字段
-			tpl.UpdatedField = fieldTmp.FieldRaw
+			tpl.FieldUpdated = fieldTmp.FieldRaw
 		case TypeNameCreated: // 创建时间字段
-			tpl.CreatedField = fieldTmp.FieldRaw
+			tpl.FieldCreated = fieldTmp.FieldRaw
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
-			tpl.PrimaryKey = fieldTmp.FieldRaw
+			tpl.FieldPrimary = fieldTmp.FieldRaw
 		case TypeNamePid: // pid；		类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，有特殊处理
-			tpl.PidHandle.PidField = fieldTmp.FieldRaw
+			tpl.HandlePid.PidField = fieldTmp.FieldRaw
 		case TypeNameLevel: // level；	类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-			tpl.PidHandle.LevelField = fieldTmp.FieldRaw
+			tpl.HandlePid.LevelField = fieldTmp.FieldRaw
 		case TypeNameIdPath: // idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
-			tpl.PidHandle.IdPathField = fieldTmp.FieldRaw
+			tpl.HandlePid.IdPathField = fieldTmp.FieldRaw
 		case TypeNameSort: // sort；	类型：int等类型；	注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
-			tpl.PidHandle.SortField = fieldTmp.FieldRaw
+			tpl.HandlePid.SortField = fieldTmp.FieldRaw
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-			passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(fieldTmp.FieldRaw)
-			passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
+			handlePasswordMapKey := myGenThis.genHandlePasswordMapKey(fieldTmp.FieldRaw)
+			handlePasswordObj, ok := tpl.HandlePasswordMap[handlePasswordMapKey]
 			if ok {
-				passwordHandleItemObj.PasswordField = fieldTmp.FieldRaw
-				passwordHandleItemObj.PasswordLength = fieldTmp.FieldLimitStr
+				handlePasswordObj.PasswordField = fieldTmp.FieldRaw
+				handlePasswordObj.PasswordLength = fieldTmp.FieldLimitStr
 			} else {
-				passwordHandleItemObj = passwordHandleItem{
+				handlePasswordObj = handlePassword{
 					PasswordField:  fieldTmp.FieldRaw,
 					PasswordLength: fieldTmp.FieldLimitStr,
 				}
 			}
-			tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
+			tpl.HandlePasswordMap[handlePasswordMapKey] = handlePasswordObj
 		case TypeNameSaltSuffix: // salt后缀；	类型：char；	注意：password,salt同时存在时，有特殊处理
-			passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(fieldTmp.FieldRaw)
-			passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
+			handlePasswordMapKey := myGenThis.genHandlePasswordMapKey(fieldTmp.FieldRaw)
+			handlePasswordObj, ok := tpl.HandlePasswordMap[handlePasswordMapKey]
 			if ok {
-				passwordHandleItemObj.SaltField = fieldTmp.FieldRaw
-				passwordHandleItemObj.SaltLength = fieldTmp.FieldLimitStr
+				handlePasswordObj.SaltField = fieldTmp.FieldRaw
+				handlePasswordObj.SaltLength = fieldTmp.FieldLimitStr
 			} else {
-				passwordHandleItemObj = passwordHandleItem{
+				handlePasswordObj = handlePassword{
 					SaltField:  fieldTmp.FieldRaw,
 					SaltLength: fieldTmp.FieldLimitStr,
 				}
 			}
-			tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
+			tpl.HandlePasswordMap[handlePasswordMapKey] = handlePasswordObj
 		case TypeNameNameSuffix: // name后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
@@ -859,13 +838,14 @@ func (myGenThis *myGenHandler) setTpl() {
 
 	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
 
-	// label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID  + Name > Name > Title > Nickname > Account > Email > Phone
+	// TODO 可优化Phone，Account等为后缀也算
+	// label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID  + Name > Name > Title > Phone > Email > Account > Nickname
 	labelList := []string{tpl.TableCaseCamel + `Name`}
-	tmpLabel := gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`
+	tmpLabel := gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2) + `Name`
 	if tmpLabel != labelList[0] && tmpLabel != `Name` {
 		labelList = append(labelList, tpl.TableCaseCamel+`Name`)
 	}
-	labelList = append(labelList, `Name`, `Title`, `Nickname`, `Account`, `Email`, `Phone`)
+	labelList = append(labelList, `Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`)
 	tpl.HandelLabelList = []string{}
 	for _, v := range labelList {
 		if index := fieldCaseCamelArrG.Search(v); index != -1 {
@@ -880,17 +860,17 @@ func (myGenThis *myGenHandler) setTpl() {
 		}
 	}
 
-	for k, v := range tpl.PasswordHandleMap {
+	for k, v := range tpl.HandlePasswordMap {
 		if v.PasswordField != `` && v.SaltField != `` {
 			v.IsCoexist = true
-			tpl.PasswordHandleMap[k] = v
+			tpl.HandlePasswordMap[k] = v
 		}
 	}
 
-	if tpl.PidHandle.PidField != `` && tpl.PidHandle.LevelField != `` && tpl.PidHandle.IdPathField != `` {
-		tpl.PidHandle.IsCoexist = true
+	if tpl.HandlePid.PidField != `` && tpl.HandlePid.LevelField != `` && tpl.HandlePid.IdPathField != `` {
+		tpl.HandlePid.IsCoexist = true
 	}
-	myGenThis.tpl = tpl
+	return
 }
 
 // dao层存在时，增加或修改部分字段的解析代码
@@ -927,22 +907,21 @@ func (myGenThis *myGenHandler) genDao() {
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
 		if handelLabelListLen > 1 {
 			parseFieldStr := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[handelLabelListLen-1]) + " + `"
+			parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[handelLabelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 			for i := handelLabelListLen - 2; i >= 0; i-- {
 				parseFieldStr = "IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[i]) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[i]) + " + `, " + parseFieldStr + ")"
+				if i == 0 {
+					parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
+				} else {
+					parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
+				}
 			}
-			/* for k, v := range tpl.HandelLabelList[:len(tpl.HandelLabelList)-2] {
-				parseFieldStr += "`IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(v) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(v) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[k+1]) + " + `)"
-				// m = m.Fields(`IF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `) AS ` + v)
-			}
-			daoParseFieldTmp = `
-			case ` + "`label`" + `:
-				m = m.Fields(` + "`IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `) AS ` + v)" */
 			daoParseFieldTmp = `
 			case ` + "`label`" + `:
 				m = m.Fields(` + "`" + parseFieldStr + " AS ` + v)"
 			daoParseFilterTmp = `
 			case ` + "`label`" + `:
-				m = m.Where(` + "m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))"
+				m = m.Where(m.Builder().` + parseFilterStr + `)`
 		}
 		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 			daoParseField += daoParseFieldTmp
@@ -974,7 +953,7 @@ func (myGenThis *myGenHandler) genDao() {
 				daoParseFilter += daoParseFilterTmp
 			}
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.HandlePid.IsCoexist { //idPath|id_path
 		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
 			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
 				daoParseFilterTmp := `
@@ -1019,15 +998,15 @@ func (myGenThis *myGenHandler) genDao() {
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}`
-				passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(field)
-				if tpl.PasswordHandleMap[passwordHandleMapKey].IsCoexist {
+				handlePasswordMapKey := myGenThis.genHandlePasswordMapKey(field)
+				if tpl.HandlePasswordMap[handlePasswordMapKey].IsCoexist {
 					daoParseInsertTmp += `
-				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
-				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[passwordHandleMapKey].SaltField) + `] = salt
+				salt := grand.S(` + tpl.HandlePasswordMap[handlePasswordMapKey].SaltLength + `)
+				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePasswordMap[handlePasswordMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
 					daoParseUpdateTmp += `
-				salt := grand.S(` + tpl.PasswordHandleMap[passwordHandleMapKey].SaltLength + `)
-				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PasswordHandleMap[passwordHandleMapKey].SaltField) + `] = salt
+				salt := grand.S(` + tpl.HandlePasswordMap[handlePasswordMapKey].SaltLength + `)
+				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePasswordMap[handlePasswordMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
 				}
 				daoParseInsertTmp += `
@@ -1040,7 +1019,7 @@ func (myGenThis *myGenHandler) genDao() {
 				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
 					daoParseUpdate += daoParseUpdateTmp
 				}
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				if column[`Key`].String() == `UNI` && column[`Null`].Bool() {
 					daoParseInsertTmp := `
@@ -1086,9 +1065,9 @@ func (myGenThis *myGenHandler) genDao() {
 				daoParseOrderTmp := `
 			case ` + "`tree`" + `:
 				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + fieldCaseCamel + `)`
-				if tpl.PidHandle.SortField != `` {
+				if tpl.HandlePid.SortField != `` {
 					daoParseOrderTmp += `
-				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.SortField) + `)`
+				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.SortField) + `)`
 				}
 				daoParseOrderTmp += `
 				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())`
@@ -1102,21 +1081,21 @@ func (myGenThis *myGenHandler) genDao() {
 					daoParseJoin += daoParseJoinTmp
 				}
 
-				if tpl.PidHandle.IsCoexist {
+				if tpl.HandlePid.IsCoexist {
 					daoParseInsertBeforeTmp := `
-		if _, ok := insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; !ok {
-			insert[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `] = 0
+		if _, ok := insert[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `]; !ok {
+			insert[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `] = 0
 		}`
 					if gstr.Pos(tplDao, daoParseInsertBeforeTmp) == -1 {
 						daoParseInsertBefore += daoParseInsertBeforeTmp
 					}
 					daoParseInsertTmp := `
-			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
+			case daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
-					daoModel.AfterInsert[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
-					daoModel.AfterInsert[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
+					daoModel.AfterInsert[` + "`pIdPath`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `].String()
+					daoModel.AfterInsert[` + "`pLevel`" + `] = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `].Uint()
 				} else {
 					daoModel.AfterInsert[` + "`pIdPath`" + `] = ` + "`0`" + `
 					daoModel.AfterInsert[` + "`pLevel`" + `] = 0
@@ -1130,9 +1109,9 @@ func (myGenThis *myGenHandler) genDao() {
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case ` + "`pIdPath`" + `:
-					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gconv.String(v) + ` + "`-`" + ` + gconv.String(id)
+					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `] = gconv.String(v) + ` + "`-`" + ` + gconv.String(id)
 				case ` + "`pLevel`" + `:
-					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gconv.Uint(v) + 1
+					updateSelfData[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `] = gconv.Uint(v) + 1
 				}
 			}
 			if len(updateSelfData) > 0 {
@@ -1142,26 +1121,26 @@ func (myGenThis *myGenHandler) genDao() {
 						daoHookInsert += daoHookInsertTmp
 					}
 					daoParseUpdateTmp := `
-			case daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `:
+			case daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+k] = v
 				pIdPath := ` + "`0`" + `
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), v).One()
-					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String()
-					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `].Uint()
+					pIdPath = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `].String()
+					pLevel = pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `].Uint()
 				}
-				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gdb.Raw(` + "`CONCAT('`" + ` + pIdPath + ` + "`-', `" + ` + daoThis.PrimaryKey() + ` + "`)`" + `)
-				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = pLevel + 1
+				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `] = gdb.Raw(` + "`CONCAT('`" + ` + pIdPath + ` + "`-', `" + ` + daoThis.PrimaryKey() + ` + "`)`" + `)
+				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `] = pLevel + 1
 				//更新所有子孙级的idPath和level
 				updateChildIdPathAndLevelList := []map[string]interface{}{}
 				oldList, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.PrimaryKey(), daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
-					if gconv.Uint(v) != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
+					if gconv.Uint(v) != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-							` + "`pIdPathOfOld`" + `: oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `],
+							` + "`pIdPathOfOld`" + `: oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `],
 							` + "`pIdPathOfNew`" + `: pIdPath + ` + "`-`" + ` + oldInfo[daoThis.PrimaryKey()].String(),
-							` + "`pLevelOfOld`" + `:  oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `],
+							` + "`pLevelOfOld`" + `:  oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `],
 							` + "`pLevelOfNew`" + `:  pLevel + 1,
 						})
 					}
@@ -1173,14 +1152,14 @@ func (myGenThis *myGenHandler) genDao() {
 				val := gconv.Map(v)
 				pIdPathOfOld := gconv.String(val[` + "`pIdPathOfOld`" + `])
 				pIdPathOfNew := gconv.String(val[` + "`pIdPathOfNew`" + `])
-				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `] = gdb.Raw(` + "`REPLACE(`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + ` + ` + "`, '`" + ` + pIdPathOfOld + ` + "`', '`" + ` + pIdPathOfNew + ` + "`')`" + `)
+				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `] = gdb.Raw(` + "`REPLACE(`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + ` + ` + "`, '`" + ` + pIdPathOfOld + ` + "`', '`" + ` + pIdPathOfNew + ` + "`')`" + `)
 			case ` + "`childLevel`" + `: //更新所有子孙级的level。参数：map[string]interface{}{` + "`pLevelOfOld`" + `: ` + "`父级Level（旧）`" + `, ` + "`pLevelOfNew`" + `: ` + "`父级Level（新）`" + `}
 				val := gconv.Map(v)
 				pLevelOfOld := gconv.Uint(val[` + "`pLevelOfOld`" + `])
 				pLevelOfNew := gconv.Uint(val[` + "`pLevelOfNew`" + `])
-				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gdb.Raw(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + "` + `" + ` + gconv.String(pLevelOfNew-pLevelOfOld))
+				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `] = gdb.Raw(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + ` + ` + "` + `" + ` + gconv.String(pLevelOfNew-pLevelOfOld))
 				if pLevelOfNew < pLevelOfOld {
-					updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + `] = gdb.Raw(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.LevelField) + ` + ` + "` - `" + ` + gconv.String(pLevelOfOld-pLevelOfNew))
+					updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + `] = gdb.Raw(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.LevelField) + ` + ` + "` - `" + ` + gconv.String(pLevelOfOld-pLevelOfNew))
 				}`
 					if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
 						daoParseUpdate += daoParseUpdateTmp
@@ -1210,12 +1189,12 @@ func (myGenThis *myGenHandler) genDao() {
 					}
 					daoParseFilterTmp := `
 			case ` + "`pIdPathOfOld`" + `: //父级IdPath（旧）
-				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `, gconv.String(v)+` + "`-%`" + `)`
+				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `, gconv.String(v)+` + "`-%`" + `)`
 					if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
 						daoParseFilter += daoParseFilterTmp
 					}
 				}
-			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
+			} else if field == `level` && tpl.HandlePid.IsCoexist { //level
 				daoParseOrderTmp := `
 			case daoThis.Columns().` + fieldCaseCamel + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
@@ -1426,9 +1405,10 @@ func (myGenThis *myGenHandler) genDao() {
 	}
 
 	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/util/grand"
-	"github.com/gogf/gf/v2/container/garray"`, 1)
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/grand"`, 1)
 
 	gfile.PutContents(saveFile, tplDao)
 	utils.GoFileFmt(saveFile)
@@ -1473,10 +1453,10 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Create(ctx context.Cont
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 `
-	if tpl.PidHandle.PidField != `` {
+	if tpl.HandlePid.PidField != `` {
 		tplLogic += `
-	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; ok {
-		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `]; ok {
+		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `])
 		if pid > 0 {
 			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -1503,12 +1483,12 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Update(ctx context.Cont
 		return
 	}
 `
-	if tpl.PidHandle.PidField != `` {
+	if tpl.HandlePid.PidField != `` {
 		tplLogic += `
-	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `]; ok {`
-		if tpl.PidHandle.IsCoexist {
+	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `]; ok {`
+		if tpl.HandlePid.IsCoexist {
 			tplLogic += `
-		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `])
 		if pid > 0 {
 			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -1521,8 +1501,8 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Update(ctx context.Cont
 					err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 					return
 				}
-				if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `].Uint() {
-					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
+				if pid != oldInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `].Uint() {
+					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.IdPathField) + `].String(), ` + "`-`" + `)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
 						err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
 						return
 					}
@@ -1531,7 +1511,7 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Update(ctx context.Cont
 		}`
 		} else {
 			tplLogic += `
-		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `])
+		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `])
 		if pid > 0 {
 			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
 			if pInfo.IsEmpty() {
@@ -1566,9 +1546,9 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Cont
 		return
 	}
 `
-	if tpl.PidHandle.PidField != `` {
+	if tpl.HandlePid.PidField != `` {
 		tplLogic += `
-	count, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `, daoModelThis.IdArr).Count()
+	count, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `, daoModelThis.IdArr).Count()
 	if count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ` + "``" + `)
 		return
@@ -1644,7 +1624,7 @@ func (myGenThis *myGenHandler) genApi() {
 			typeReqFilter = `*uint`
 			typeRes = `*uint`
 			ruleReqFilter = `min:1`
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.HandlePid.IsCoexist { //idPath|id_path
 			typeRes = `*string`
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			typeReqFilter = `string`
@@ -1722,7 +1702,7 @@ func (myGenThis *myGenHandler) genApi() {
 			}
 
 			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
-				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
+				if gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2)+`Name` == fieldCaseCamel {
 					isRequired = true
 				}
 				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
@@ -1758,7 +1738,7 @@ func (myGenThis *myGenHandler) genApi() {
 				typeRes = ``
 				ruleReqFilter = ``
 				isRequired = true
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 				continue
 			} else {
 				if column[`Key`].String() == `UNI` && !column[`Null`].Bool() {
@@ -1784,7 +1764,7 @@ func (myGenThis *myGenHandler) genApi() {
 				if len(tpl.HandelLabelList) > 0 {
 					apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.HandelLabelList[0]) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `,omitempty" dc:"父级"` + "`\n"
 				}
-			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
+			} else if field == `level` && tpl.HandlePid.IsCoexist { //level
 				typeReqCreate = ``
 				typeReqUpdate = ``
 				ruleReqFilter += `min:1`
@@ -1995,7 +1975,7 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 `
 	}
 
-	if option.IsList && tpl.PidHandle.PidField != `` {
+	if option.IsList && tpl.HandlePid.PidField != `` {
 		tplApi += `
 /*--------列表（树状） 开始--------*/
 type ` + tpl.TableCaseCamel + `TreeReq struct {
@@ -2042,7 +2022,7 @@ func (myGenThis *myGenHandler) genController() {
 		controllerAlloweFieldList += "`label`, "
 		controllerAlloweFieldInfo += "`label`, "
 		controllerAlloweFieldTree += "`label`, "
-		if tpl.PidHandle.PidField != `` {
+		if tpl.HandlePid.PidField != `` {
 			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.HandelLabelList[0]) + "`, "
 			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.HandelLabelList[0]) + "`, "
 		}
@@ -2074,7 +2054,7 @@ func (myGenThis *myGenHandler) genController() {
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
@@ -2330,7 +2310,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 `
 	}
 
-	if option.IsList && tpl.PidHandle.PidField != `` {
+	if option.IsList && tpl.HandlePid.PidField != `` {
 		tplController += `
 // 列表（树状）
 func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeRes, err error) {
@@ -2376,7 +2356,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PrimaryKey) + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.PidHandle.PidField) + `)
+	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.FieldPrimary) + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.HandlePid.PidField) + `)
 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeRes{}
 	gconv.Structs(tree, &res.Tree)
@@ -2529,7 +2509,7 @@ func (myGenThis *myGenHandler) genViewList() {
 			sortableOfColumn = `sortable: true,`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.HandlePid.IsCoexist { //idPath|id_path
 			hiddenOfColumn = `hidden: true,`
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			widthOfColumn = `width: 100,`
@@ -2632,13 +2612,13 @@ func (myGenThis *myGenHandler) genViewList() {
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
 				continue
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 				continue
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
 				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `',`
-			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
+			} else if field == `level` && tpl.HandlePid.IsCoexist { //level
 				widthOfColumn = `width: 100,`
 				sortableOfColumn = `sortable: true,`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
@@ -3107,7 +3087,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
             <el-date-picker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
         </el-form-item>`
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.HandlePid.IsCoexist { //idPath|id_path
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			viewQueryField += `
         <el-form-item prop="` + field + `" style="width: 120px">
@@ -3123,7 +3103,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
         </el-form-item>`
 		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				viewQueryField += `
         <el-form-item prop="` + field + `">
@@ -3136,7 +3116,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
         <el-form-item prop="` + field + `">
             <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
         </el-form-item>`
-			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
+			} else if field == `level` && tpl.HandlePid.IsCoexist { //level
 				viewQueryField += `
         <el-form-item prop="` + field + `">
             <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :min="1" :controls="false" />
@@ -3311,7 +3291,7 @@ func (myGenThis *myGenHandler) genViewSave() {
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.PidHandle.IsCoexist { //idPath|id_path
+		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.HandlePid.IsCoexist { //idPath|id_path
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			isStr := true
 			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
@@ -3478,7 +3458,7 @@ const ` + field + `Handle = reactive({
                     </label>`
 			}
 			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
-				if gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2)+`Name` == fieldCaseCamel {
+				if gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2)+`Name` == fieldCaseCamel {
 					requiredStr = ` required: true,`
 				}
 				ruleStr += `
@@ -3522,7 +3502,7 @@ import md5 from 'js-md5'`
                         <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                     </label>
                 </el-form-item>`
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 			} else {
 				ruleStr := ``
 				requiredStr := ``
@@ -3559,7 +3539,7 @@ import md5 from 'js-md5'`
                 <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
                     <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
                 </el-form-item>`
-			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
+			} else if field == `level` && tpl.HandlePid.IsCoexist { //level
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
 				defaultVal := column[`Default`].Int()
 				if defaultVal != 0 {
@@ -3882,7 +3862,7 @@ func (myGenThis *myGenHandler) genViewI18n() {
 			continue
 		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
 			continue
-		} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.PasswordHandleMap[myGenThis.genPasswordHandleMapKey(field)].IsCoexist { //salt后缀
+		} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.HandlePasswordMap[myGenThis.genHandlePasswordMapKey(field)].IsCoexist { //salt后缀
 			continue
 		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
 			isStr := true
@@ -4042,7 +4022,7 @@ func (myGenThis *myGenHandler) genMenu(sceneId uint, menuUrl string, menuName st
 	}
 }
 
-// 获取PasswordHandleMap的Key（以Password为主）
+// 获取HandlePasswordMap的Key（以Password为主）
 func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, name string, arg ...string) {
 	command := exec.Command(name, arg...)
 	if dir != `` {
@@ -4071,12 +4051,7 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 }
 
 // status字段注释解析
-func (myGenThis *myGenHandler) genStatusList(comment string, isStrOpt ...bool) (statusList [][2]string) {
-	isStr := false
-	if len(isStrOpt) > 0 && isStrOpt[0] {
-		isStr = true
-	}
-
+func (myGenThis *myGenHandler) genStatusList(comment string, isStr bool) (statusList [][2]string) {
 	var tmp [][]string
 	if isStr {
 		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；)）]+)`, comment)
@@ -4096,13 +4071,13 @@ func (myGenThis *myGenHandler) genStatusList(comment string, isStrOpt ...bool) (
 	return
 }
 
-// 获取PasswordHandleMap的Key（以Password为主）
-func (myGenThis *myGenHandler) genPasswordHandleMapKey(passwordOrsalt string) (passwordHandleMapKey string) {
+// 获取HandlePasswordMap的Key（以Password为主）
+func (myGenThis *myGenHandler) genHandlePasswordMapKey(passwordOrsalt string) (handlePasswordMapKey string) {
 	passwordOrsalt = gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`, 1) //替换salt
 	passwordOrsalt = gstr.Replace(passwordOrsalt, `Passwd`, `Password`, 1)               //替换passwd
-	passwordHandleMapKey = gstr.CaseCamelLower(passwordOrsalt)                           //默认：小驼峰
+	handlePasswordMapKey = gstr.CaseCamelLower(passwordOrsalt)                           //默认：小驼峰
 	if gstr.CaseCamelLower(passwordOrsalt) != passwordOrsalt {                           //判断字段是不是蛇形
-		passwordHandleMapKey = gstr.CaseSnake(passwordHandleMapKey)
+		handlePasswordMapKey = gstr.CaseSnake(handlePasswordMapKey)
 	}
 	return
 }
