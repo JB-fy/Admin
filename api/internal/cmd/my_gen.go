@@ -8,7 +8,6 @@ import (
 	"os/exec"
 
 	"github.com/gogf/gf/v2/container/garray"
-	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -169,15 +168,28 @@ type myGenTpl struct {
 	ModuleDirCaseKebabReplace string       //模块目录（横线，/被替换成.）
 	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
 	LogicStructName           string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	PrimaryKey                string       //表主键
-	DeletedField              string       //表删除时间字段
-	UpdatedField              string       //表更新时间字段
-	CreatedField              string       //表创建时间字段
+
+	FieldPrimary string //主键字段
+	FieldDeleted string //删除时间字段
+	FieldUpdated string //更新时间字段
+	FieldCreated string //创建时间字段
 	// 以下字段用于对某些表字段做特殊处理
-	LabelHandle struct { //dao层label对应的字段(常用于前端组件)
-		LabelField string //是否同时存在
-		IsCoexist  bool   //当LabelField=phone或account时，是否同时存在phone和account两个字段
+	HandelLabelList   []string                  //label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID + Name > Name > Title > Nickname > Account > Email > Phone
+	HandlePasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
+	HandlePid         struct {                  //pid,level,idPath|id_path同时存在时，需特殊处理
+		IsCoexist   bool   //是否同时存在
+		PidField    string //父级字段
+		LevelField  string //层级字段
+		IdPathField string //层级路径字段
+		SortField   string //排序字段
 	}
+	HandleIdRelTableMap map[string]myGenTpl //id后缀字段关联表信息
+
+	PrimaryKey   string //主键字段
+	DeletedField string //删除时间字段
+	UpdatedField string //更新时间字段
+	CreatedField string //创建时间字段
+	// 以下字段用于对某些表字段做特殊处理
 	PasswordHandleMap map[string]passwordHandleItem //password|passwd,salt同时存在时，需特殊处理
 	PidHandle         struct {                      //pid,level,idPath|id_path同时存在时，需特殊处理
 		IsCoexist   bool   //是否同时存在
@@ -195,44 +207,44 @@ type myGenFieldTypeName = string
 
 const (
 	//用于结构体中，需从1开始，否则结构体会默认0，即Int
-	Int       myGenFieldType = iota + 1 // `int等类型`
-	IntU                                // `int等类型（unsigned）`
-	Float                               // `float等类型（unsigned）`
-	FloatU                              // `float等类型（unsigned）`
-	Varchar                             // `varchar类型`
-	Char                                // `char类型`
-	Text                                // `text类型`
-	Json                                // `json类型`
-	Timestamp                           // `timestamp类型`
-	Datetime                            // `datetime类型`
-	Date                                // `date类型`
+	TypeInt       myGenFieldType = iota + 1 // `int等类型`
+	TypeIntU                                // `int等类型（unsigned）`
+	TypeFloat                               // `float等类型（unsigned）`
+	TypeFloatU                              // `float等类型（unsigned）`
+	TypeVarchar                             // `varchar类型`
+	TypeChar                                // `char类型`
+	TypeText                                // `text类型`
+	TypeJson                                // `json类型`
+	TypeTimestamp                           // `timestamp类型`
+	TypeDatetime                            // `datetime类型`
+	TypeDate                                // `date类型`
 
-	Deleted        myGenFieldTypeName = `软删除字段`
-	Updated        myGenFieldTypeName = `更新时间字段`
-	Created        myGenFieldTypeName = `创建时间字段`
-	Pri            myGenFieldTypeName = `主键`
-	PriAutoInc     myGenFieldTypeName = `主键（自增）`
-	Pid            myGenFieldTypeName = `命名：pid；		类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，有特殊处理`
-	Level          myGenFieldTypeName = `命名：level；	类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理`
-	IdPath         myGenFieldTypeName = `命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理`
-	Sort           myGenFieldTypeName = `命名：sort；	类型：int等类型；	注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理`
-	PasswordSuffix myGenFieldTypeName = `命名：password,passwd后缀；		类型：char(32)；`
-	SaltSuffix     myGenFieldTypeName = `命名：salt后缀；	类型：char；	注意：password,salt同时存在时，有特殊处理`
-	NameSuffix     myGenFieldTypeName = `命名：name后缀；	类型：varchar；`
-	CodeSuffix     myGenFieldTypeName = `命名：code后缀；	类型：varchar；`
-	PhoneSuffix    myGenFieldTypeName = `命名：phone,mobile后缀；	类型：varchar；`
-	UrlSuffix      myGenFieldTypeName = `命名：url,link后缀；	类型：varchar；`
-	IpSuffix       myGenFieldTypeName = `命名：IP后缀；	类型：varchar；`
-	IdSuffix       myGenFieldTypeName = `命名：id后缀；	类型：int等类型；`
-	SortSuffix     myGenFieldTypeName = `命名：sort,weight等后缀；	类型：int等类型；`
-	StatusSuffix   myGenFieldTypeName = `命名：status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）`
-	IsPrefix       myGenFieldTypeName = `命名：is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）`
-	StartPrefix    myGenFieldTypeName = `命名：start_前缀；	类型：timestamp或datetime或date；`
-	EndPrefix      myGenFieldTypeName = `命名：end_前缀；	类型：timestamp或datetime或date；`
-	RemarkSuffix   myGenFieldTypeName = `命名：remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器`
-	ImageSuffix    myGenFieldTypeName = `命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text`
-	VideoSuffix    myGenFieldTypeName = `命名：video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text`
-	ArrSuffix      myGenFieldTypeName = `命名：list,arr等后缀；	类型：json或text；`
+	TypeNameDeleted        myGenFieldTypeName = `软删除字段`
+	TypeNameUpdated        myGenFieldTypeName = `更新时间字段`
+	TypeNameCreated        myGenFieldTypeName = `创建时间字段`
+	TypeNamePri            myGenFieldTypeName = `主键`
+	TypeNamePriAutoInc     myGenFieldTypeName = `主键（自增）`
+	TypeNamePid            myGenFieldTypeName = `命名：pid；		类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，有特殊处理`
+	TypeNameLevel          myGenFieldTypeName = `命名：level；	类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理`
+	TypeNameIdPath         myGenFieldTypeName = `命名：idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理`
+	TypeNameSort           myGenFieldTypeName = `命名：sort；	类型：int等类型；	注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理`
+	TypeNamePasswordSuffix myGenFieldTypeName = `命名：password,passwd后缀；		类型：char(32)；`
+	TypeNameSaltSuffix     myGenFieldTypeName = `命名：salt后缀；	类型：char；	注意：password,salt同时存在时，有特殊处理`
+	TypeNameNameSuffix     myGenFieldTypeName = `命名：name后缀；	类型：varchar；`
+	TypeNameCodeSuffix     myGenFieldTypeName = `命名：code后缀；	类型：varchar；`
+	TypeNamePhoneSuffix    myGenFieldTypeName = `命名：phone,mobile后缀；	类型：varchar；`
+	TypeNameUrlSuffix      myGenFieldTypeName = `命名：url,link后缀；	类型：varchar；`
+	TypeNameIpSuffix       myGenFieldTypeName = `命名：IP后缀；	类型：varchar；`
+	TypeNameIdSuffix       myGenFieldTypeName = `命名：id后缀；	类型：int等类型；`
+	TypeNameSortSuffix     myGenFieldTypeName = `命名：sort,weight等后缀；	类型：int等类型；`
+	TypeNameStatusSuffix   myGenFieldTypeName = `命名：status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）`
+	TypeNameIsPrefix       myGenFieldTypeName = `命名：is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）`
+	TypeNameStartPrefix    myGenFieldTypeName = `命名：start_前缀；	类型：timestamp或datetime或date；`
+	TypeNameEndPrefix      myGenFieldTypeName = `命名：end_前缀；	类型：timestamp或datetime或date；`
+	TypeNameRemarkSuffix   myGenFieldTypeName = `命名：remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器`
+	TypeNameImageSuffix    myGenFieldTypeName = `命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text`
+	TypeNameVideoSuffix    myGenFieldTypeName = `命名：video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text`
+	TypeNameArrSuffix      myGenFieldTypeName = `命名：list,arr等后缀；	类型：json或text；`
 )
 
 type myGenField struct {
@@ -257,6 +269,14 @@ type myGenField struct {
 	StatusList           [][2]string        // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 	FieldLimitStr        string             // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitFloat      [2]string          // 浮点数字段限制。第1个表示整数位，第2个表示小数位
+}
+
+type handlePassword struct {
+	IsCoexist      bool   //是否同时存在
+	PasswordField  string //密码字段
+	PasswordLength string //密码字段长度
+	SaltField      string //加密盐字段
+	SaltLength     string //加密盐字段长度
 }
 
 type passwordHandleItem struct {
@@ -654,187 +674,183 @@ func (myGenThis *myGenHandler) setTpl() {
 		})
 
 		tmpFieldLimitStr, _ := gregex.MatchString(`.*\((\d*)\)`, fieldTmp.FieldTypeRaw)
-		fieldTmp.FieldLimitStr = tmpFieldLimitStr[1]
+		if len(tmpFieldLimitStr) > 1 {
+			fieldTmp.FieldLimitStr = tmpFieldLimitStr[1]
+		}
 		tmpFieldLimitFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, fieldTmp.FieldTypeRaw)
 		if len(tmpFieldLimitFloat) < 3 {
 			tmpFieldLimitFloat = []string{``, `10`, `2`}
 		}
 		fieldTmp.FieldLimitFloat = [2]string{tmpFieldLimitFloat[1], tmpFieldLimitFloat[2]}
 
+		/*--------确定字段数据类型 开始--------*/
+		if gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1 { //int等类型
+			fieldTmp.FieldType = TypeInt
+			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
+				fieldTmp.FieldType = TypeIntU
+			}
+		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `double`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `float`) != -1 { //float类型
+			fieldTmp.FieldType = TypeFloat
+			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
+				fieldTmp.FieldType = TypeFloatU
+			}
+		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 { //varchar类型
+			fieldTmp.FieldType = TypeVarchar
+		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `char`) != -1 { //char类型
+			fieldTmp.FieldType = TypeChar
+		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 { //text类型
+			fieldTmp.FieldType = TypeText
+		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 { //json类型
+			fieldTmp.FieldType = TypeJson
+
+		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `timestamp`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 { //timestamp或datetime或date类型
+			fieldTmp.FieldType = TypeTimestamp
+			if gstr.Pos(fieldTmp.FieldTypeRaw, `datetime`) == -1 {
+				fieldTmp.FieldType = TypeDatetime
+			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 {
+				fieldTmp.FieldType = TypeDate
+			}
+		}
+		/*--------确定字段数据类型 结束--------*/
+
+		/*--------确定字段命名类型 开始--------*/
 		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
 		fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
 		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldTmp.FieldCaseCamel) {
-			fieldTmp.FieldTypeName = Deleted
-			tpl.DeletedField = fieldTmp.FieldRaw
+			fieldTmp.FieldTypeName = TypeNameDeleted
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldTmp.FieldCaseCamel) {
-			fieldTmp.FieldTypeName = Updated
-			tpl.UpdatedField = fieldTmp.FieldRaw
+			fieldTmp.FieldTypeName = TypeNameUpdated
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldTmp.FieldCaseCamel) {
-			fieldTmp.FieldTypeName = Created
-			tpl.CreatedField = fieldTmp.FieldRaw
-		} else if fieldTmp.FieldTypeRaw == `PRI` {
-			fieldTmp.FieldType = Int
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = IntU
-			}
-
-			fieldTmp.FieldTypeName = Pri
+			fieldTmp.FieldTypeName = TypeNameCreated
+		} else if fieldTmp.IndexRaw == `PRI` {
+			fieldTmp.FieldTypeName = TypeNamePri
 			if fieldTmp.Extra == `auto_increment` {
-				fieldTmp.FieldTypeName = PriAutoInc
-				tpl.PrimaryKey = fieldTmp.FieldRaw
+				fieldTmp.FieldTypeName = TypeNamePriAutoInc
 			}
-		} else if fieldTmp.FieldCaseCamel == `IdPath` && (gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1) { //idPath|id_path
-			fieldTmp.FieldType = Varchar
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 {
-				fieldTmp.FieldType = Text
-			}
-
-			fieldTmp.FieldTypeName = IdPath
-			tpl.PidHandle.IdPathField = fieldTmp.FieldRaw
-		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1) || gstr.Pos(fieldTmp.FieldTypeRaw, `char`) != -1) { //status,type,method,pos,position,gender等后缀
-			fieldTmp.FieldTypeName = StatusSuffix
-
-			fieldTmp.FieldType = Int
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = IntU
-			}
-			isStr := true
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `char`) != -1 {
-				fieldTmp.FieldType = Varchar
-				isStr = false
-			}
-
-			fieldTmp.StatusList = myGenThis.genStatusList(fieldTmp.FieldDesc, isStr)
-		} else if (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) && (gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
-			fieldTmp.FieldTypeName = ImageSuffix
-
-			fieldTmp.FieldType = Varchar
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 {
-				fieldTmp.FieldType = Json
-			}
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 {
-				fieldTmp.FieldType = Text
-			}
-		} else if (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) && (gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
-			fieldTmp.FieldTypeName = VideoSuffix
-
-			fieldTmp.FieldType = Varchar
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 {
-				fieldTmp.FieldType = Json
-			}
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 {
-				fieldTmp.FieldType = Text
-			}
-		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1) { //list,arr等后缀
-			fieldTmp.FieldTypeName = ArrSuffix
-
-			fieldTmp.FieldType = Json
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 {
-				fieldTmp.FieldType = Text
-			}
-		} else if garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) && (gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1) { //remark,desc,msg,message,intro,content后缀
-			fieldTmp.FieldTypeName = RemarkSuffix
-
-			fieldTmp.FieldType = Varchar
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 {
-				fieldTmp.FieldType = Text
-			}
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 { //varchar类型
-			fieldTmp.FieldType = Varchar
-
+		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //idPath|id_path
+			fieldTmp.FieldTypeName = TypeNameIdPath
+		} else if garray.NewFrom([]interface{}{TypeInt, TypeIntU, TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) { //status,type,method,pos,position,gender等后缀
+			fieldTmp.FieldTypeName = TypeNameStatusSuffix
+		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+			fieldTmp.FieldTypeName = TypeNameImageSuffix
+		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
+			fieldTmp.FieldTypeName = TypeNameVideoSuffix
+		} else if garray.NewFrom([]interface{}{TypeText, TypeJson}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) { //list,arr等后缀
+			fieldTmp.FieldTypeName = TypeNameArrSuffix
+		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) { //remark,desc,msg,message,intro,content后缀
+			fieldTmp.FieldTypeName = TypeNameRemarkSuffix
+		} else if fieldTmp.FieldType == TypeVarchar { //varchar类型
 			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
-				fieldTmp.FieldTypeName = NameSuffix
+				fieldTmp.FieldTypeName = TypeNameNameSuffix
 			} else if garray.NewStrArrayFrom([]string{`code`}).Contains(fieldSuffix) { //code后缀
-				fieldTmp.FieldTypeName = CodeSuffix
+				fieldTmp.FieldTypeName = TypeNameCodeSuffix
 			} else if garray.NewStrArrayFrom([]string{`phone`, `mobile`}).Contains(fieldSuffix) { //phone,mobile后缀
-				fieldTmp.FieldTypeName = PhoneSuffix
+				fieldTmp.FieldTypeName = TypeNamePhoneSuffix
 			} else if garray.NewStrArrayFrom([]string{`url`, `link`}).Contains(fieldSuffix) { //url,link后缀
-				fieldTmp.FieldTypeName = UrlSuffix
+				fieldTmp.FieldTypeName = TypeNameUrlSuffix
 			} else if garray.NewStrArrayFrom([]string{`ip`}).Contains(fieldSuffix) { //IP后缀
-				fieldTmp.FieldTypeName = IpSuffix
+				fieldTmp.FieldTypeName = TypeNameIpSuffix
 			}
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `char`) != -1 { //char类型
-			fieldTmp.FieldType = Char
-
+		} else if fieldTmp.FieldType == TypeChar { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && fieldTmp.FieldTypeRaw == `char(32)` { //password,passwd后缀
-				fieldTmp.FieldTypeName = PasswordSuffix
-				passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(fieldTmp.FieldRaw)
-				passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
-				if ok {
-					passwordHandleItemObj.PasswordField = fieldTmp.FieldRaw
-					passwordHandleItemObj.PasswordLength = fieldTmp.FieldLimitStr
-				} else {
-					passwordHandleItemObj = passwordHandleItem{
-						PasswordField:  fieldTmp.FieldRaw,
-						PasswordLength: fieldTmp.FieldLimitStr,
-					}
-				}
-				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
+				fieldTmp.FieldTypeName = TypeNamePasswordSuffix
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) { //salt后缀
-				fieldTmp.FieldTypeName = SaltSuffix
-				passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(fieldTmp.FieldRaw)
-				passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
-				if ok {
-					passwordHandleItemObj.SaltField = fieldTmp.FieldRaw
-					passwordHandleItemObj.SaltLength = fieldTmp.FieldLimitStr
-				} else {
-					passwordHandleItemObj = passwordHandleItem{
-						SaltField:  fieldTmp.FieldRaw,
-						SaltLength: fieldTmp.FieldLimitStr,
-					}
-				}
-				tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
+				fieldTmp.FieldTypeName = TypeNameSaltSuffix
 			}
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1 { //int等类型
-			fieldTmp.FieldType = Int
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = IntU
-			}
-
+		} else if garray.NewFrom([]interface{}{TypeInt, TypeIntU}).Contains(fieldTmp.FieldType) { //int等类型
 			if fieldTmp.FieldRaw == `pid` { //pid
-				fieldTmp.FieldTypeName = Pid
-				tpl.PidHandle.PidField = fieldTmp.FieldRaw
+				fieldTmp.FieldTypeName = TypeNamePid
 			} else if fieldTmp.FieldRaw == `level` { //level
-				fieldTmp.FieldTypeName = Level
-				tpl.PidHandle.LevelField = fieldTmp.FieldRaw
+				fieldTmp.FieldTypeName = TypeNameLevel
 			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-				fieldTmp.FieldTypeName = SortSuffix
+				fieldTmp.FieldTypeName = TypeNameSortSuffix
 				if fieldTmp.FieldRaw == `sort` { //sort
-					fieldTmp.FieldTypeName = Sort
-					tpl.PidHandle.SortField = fieldTmp.FieldRaw
+					fieldTmp.FieldTypeName = TypeNameSort
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				fieldTmp.FieldTypeName = IdSuffix
-				myGenThis.tpl = tpl
-				tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.genRelTable(fieldTmp.FieldRaw, fieldTmp.FieldName)
+				fieldTmp.FieldTypeName = TypeNameIdSuffix
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				fieldTmp.FieldTypeName = IsPrefix
-			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `double`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `float`) != -1 { //float类型
-				fieldTmp.FieldType = Float
-				if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-					fieldTmp.FieldType = FloatU
-				}
-			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `timestamp`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 { //timestamp或datetime或date类型
-				fieldTmp.FieldType = Timestamp
-				if gstr.Pos(fieldTmp.FieldTypeRaw, `datetime`) == -1 {
-					fieldTmp.FieldType = Datetime
-				} else if gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 {
-					fieldTmp.FieldType = Date
-				}
-
-				if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
-					fieldTmp.FieldTypeName = StartPrefix
-				} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀
-					fieldTmp.FieldTypeName = EndPrefix
-				}
-			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 { //json类型
-				fieldTmp.FieldType = Json
-
-			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 { //text类型
-				fieldTmp.FieldType = Text
+				fieldTmp.FieldTypeName = TypeNameIsPrefix
+			}
+		} else if garray.NewFrom([]interface{}{TypeTimestamp, TypeDatetime, TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
+			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
+				fieldTmp.FieldTypeName = TypeNameStartPrefix
+			} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀
+				fieldTmp.FieldTypeName = TypeNameEndPrefix
 			}
 		}
+		/*--------确定字段命名类型 结束--------*/
+
+		/*--------特殊处理字段解析 开始--------*/
+		switch fieldTmp.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
+			tpl.DeletedField = fieldTmp.FieldRaw
+		case TypeNameUpdated: // 更新时间字段
+			tpl.UpdatedField = fieldTmp.FieldRaw
+		case TypeNameCreated: // 创建时间字段
+			tpl.CreatedField = fieldTmp.FieldRaw
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			tpl.PrimaryKey = fieldTmp.FieldRaw
+		case TypeNamePid: // pid；		类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，有特殊处理
+			tpl.PidHandle.PidField = fieldTmp.FieldRaw
+		case TypeNameLevel: // level；	类型：int等类型；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+			tpl.PidHandle.LevelField = fieldTmp.FieldRaw
+		case TypeNameIdPath: // idPath|id_path；	类型：varchar或text；	注意：pid,level,idPath|id_path同时存在时，(才)有特殊处理
+			tpl.PidHandle.IdPathField = fieldTmp.FieldRaw
+		case TypeNameSort: // sort；	类型：int等类型；	注意：pid,level,idPath|id_path|sort同时存在时，(才)有特殊处理
+			tpl.PidHandle.SortField = fieldTmp.FieldRaw
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(fieldTmp.FieldRaw)
+			passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
+			if ok {
+				passwordHandleItemObj.PasswordField = fieldTmp.FieldRaw
+				passwordHandleItemObj.PasswordLength = fieldTmp.FieldLimitStr
+			} else {
+				passwordHandleItemObj = passwordHandleItem{
+					PasswordField:  fieldTmp.FieldRaw,
+					PasswordLength: fieldTmp.FieldLimitStr,
+				}
+			}
+			tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
+		case TypeNameSaltSuffix: // salt后缀；	类型：char；	注意：password,salt同时存在时，有特殊处理
+			passwordHandleMapKey := myGenThis.genPasswordHandleMapKey(fieldTmp.FieldRaw)
+			passwordHandleItemObj, ok := tpl.PasswordHandleMap[passwordHandleMapKey]
+			if ok {
+				passwordHandleItemObj.SaltField = fieldTmp.FieldRaw
+				passwordHandleItemObj.SaltLength = fieldTmp.FieldLimitStr
+			} else {
+				passwordHandleItemObj = passwordHandleItem{
+					SaltField:  fieldTmp.FieldRaw,
+					SaltLength: fieldTmp.FieldLimitStr,
+				}
+			}
+			tpl.PasswordHandleMap[passwordHandleMapKey] = passwordHandleItemObj
+		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			myGenThis.tpl = tpl
+			tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.genRelTable(fieldTmp.FieldRaw, fieldTmp.FieldName)
+		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			isStr := false
+			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) {
+				isStr = true
+			}
+			fieldTmp.StatusList = myGenThis.genStatusList(fieldTmp.FieldDesc, isStr)
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		}
+		/*--------特殊处理字段解析 结束--------*/
 
 		fieldList[k] = fieldTmp
 		fieldArr[k] = fieldTmp.FieldRaw
@@ -842,26 +858,18 @@ func (myGenThis *myGenHandler) setTpl() {
 	}
 
 	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
-	// 根据name字段优先级排序
-	nameFieldList := []string{
-		tpl.TableCaseCamel + `Name`,
-		gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`,
-		`Name`,
-		`Phone`,
-		`Account`,
-		`Nickname`,
-		`Title`,
+
+	// label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID  + Name > Name > Title > Nickname > Account > Email > Phone
+	labelList := []string{tpl.TableCaseCamel + `Name`}
+	tmpLabel := gstr.SubStr(gstr.CaseCamel(tpl.PrimaryKey), 0, -2) + `Name`
+	if tmpLabel != labelList[0] && tmpLabel != `Name` {
+		labelList = append(labelList, tpl.TableCaseCamel+`Name`)
 	}
-	for _, v := range nameFieldList {
-		index := fieldCaseCamelArrG.Search(v)
-		if index != -1 {
-			tpl.LabelHandle.LabelField = fieldArr[index]
-			break
-		}
-	}
-	if tpl.LabelHandle.LabelField == `phone` || tpl.LabelHandle.LabelField == `account` {
-		if gset.NewStrSetFrom([]string{`Phone`, `Account`}).Intersect(gset.NewStrSetFrom(fieldCaseCamelArr)).Size() == 2 {
-			tpl.LabelHandle.IsCoexist = true
+	labelList = append(labelList, `Name`, `Title`, `Nickname`, `Account`, `Email`, `Phone`)
+	tpl.HandelLabelList = []string{}
+	for _, v := range labelList {
+		if index := fieldCaseCamelArrG.Search(v); index != -1 {
+			tpl.HandelLabelList = append(tpl.HandelLabelList, fieldArr[index])
 		}
 	}
 
@@ -909,17 +917,29 @@ func (myGenThis *myGenHandler) genDao() {
 	daoFunc := ``
 	daoImportOtherDao := ``
 
-	if tpl.LabelHandle.LabelField != `` {
+	handelLabelListLen := len(tpl.HandelLabelList)
+	if handelLabelListLen > 0 {
 		daoParseFieldTmp := `
 			case ` + "`label`" + `:
-				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` + ` + "` AS `" + ` + v)`
+				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.HandelLabelList[0]) + ` + ` + "` AS `" + ` + v)`
 		daoParseFilterTmp := `
 			case ` + "`label`" + `:
-				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-		if tpl.LabelHandle.IsCoexist {
+				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+		if handelLabelListLen > 1 {
+			parseFieldStr := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[handelLabelListLen-1]) + " + `"
+			for i := handelLabelListLen - 2; i >= 0; i-- {
+				parseFieldStr = "IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[i]) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[i]) + " + `, " + parseFieldStr + ")"
+			}
+			/* for k, v := range tpl.HandelLabelList[:len(tpl.HandelLabelList)-2] {
+				parseFieldStr += "`IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(v) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(v) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.HandelLabelList[k+1]) + " + `)"
+				// m = m.Fields(`IF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `) AS ` + v)
+			}
 			daoParseFieldTmp = `
 			case ` + "`label`" + `:
-				m = m.Fields(` + "`IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `) AS ` + v)"
+				m = m.Fields(` + "`IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `) AS ` + v)" */
+			daoParseFieldTmp = `
+			case ` + "`label`" + `:
+				m = m.Fields(` + "`" + parseFieldStr + " AS ` + v)"
 			daoParseFilterTmp = `
 			case ` + "`label`" + `:
 				m = m.Where(` + "m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`))"
@@ -1045,11 +1065,11 @@ func (myGenThis *myGenHandler) genDao() {
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
-				if tpl.LabelHandle.LabelField != `` {
+				if len(tpl.HandelLabelList) > 0 {
 					daoParseFieldTmp := `
-			case ` + "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`" + `:
+			case ` + "`p" + gstr.CaseCamel(tpl.HandelLabelList[0]) + "`" + `:
 				tableP := ` + "`p_`" + ` + daoModel.DbTable
-				m = m.Fields(tableP + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` + ` + "` AS `" + ` + v)
+				m = m.Fields(tableP + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.HandelLabelList[0]) + ` + ` + "` AS `" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))`
 					if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
 						daoParseField += daoParseFieldTmp
@@ -1580,7 +1600,7 @@ func (myGenThis *myGenHandler) genApi() {
 	apiReqUpdateColumn := ``
 	apiResColumn := ``
 	apiResColumnAlloweFieldList := ``
-	if tpl.LabelHandle.LabelField != `` {
+	if len(tpl.HandelLabelList) > 0 {
 		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
 		apiResColumn += `Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`\n"
 	}
@@ -1761,8 +1781,8 @@ func (myGenThis *myGenHandler) genApi() {
 			}
 
 			if field == `pid` { //pid
-				if tpl.LabelHandle.LabelField != `` {
-					apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `,omitempty" dc:"父级"` + "`\n"
+				if len(tpl.HandelLabelList) > 0 {
+					apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.HandelLabelList[0]) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `,omitempty" dc:"父级"` + "`\n"
 				}
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 				typeReqCreate = ``
@@ -2018,20 +2038,24 @@ func (myGenThis *myGenHandler) genController() {
 	controllerAlloweFieldNoAuth := "`id`, "
 	// controllerAlloweFieldDiff := `` // 可以不要。数据返回时，会根据API文件中的结构体做过滤
 	daoImportOtherDao := ``
-	if tpl.LabelHandle.LabelField != `` {
+	if len(tpl.HandelLabelList) > 0 {
 		controllerAlloweFieldList += "`label`, "
 		controllerAlloweFieldInfo += "`label`, "
 		controllerAlloweFieldTree += "`label`, "
 		if tpl.PidHandle.PidField != `` {
-			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`, "
-			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.LabelHandle.LabelField) + "`, "
+			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.HandelLabelList[0]) + "`, "
+			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.HandelLabelList[0]) + "`, "
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
-		if tpl.LabelHandle.IsCoexist {
+		//TODO
+		for _, v := range tpl.HandelLabelList {
+			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(v) + `, `
+		}
+		/* if tpl.LabelHandle.IsCoexist {
 			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().Phone, ` + `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().Account, `
 		} else {
-			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `, `
-		}
+			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `, `
+		} */
 	}
 	for _, column := range tpl.TableColumnList {
 		field := column[`Field`].String()
@@ -2613,7 +2637,7 @@ func (myGenThis *myGenHandler) genViewList() {
 			}
 		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
 			if field == `pid` { //pid
-				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.LabelHandle.LabelField) + `',`
+				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.HandelLabelList[0]) + `',`
 			} else if field == `level` && tpl.PidHandle.IsCoexist { //level
 				widthOfColumn = `width: 100,`
 				sortableOfColumn = `sortable: true,`
