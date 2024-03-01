@@ -75,28 +75,28 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 */
 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
-	myGenHandler := myGenHandler{ctx: ctx}
-	myGenHandler.init(parser)
-	myGenHandler.tpl = myGenHandler.setTpl(myGenHandler.option.DbTable, myGenHandler.option.RemovePrefixAlone)
+	myGenHandlerObj := myGenHandler{ctx: ctx}
+	myGenHandlerObj.init(parser)
+	myGenHandlerObj.tpl = myGenHandlerObj.setTpl(myGenHandlerObj.option.DbTable, myGenHandlerObj.option.RemovePrefixAlone)
 
-	myGenHandler.genDao()   // dao层存在时，增加或修改部分字段的解析代码
-	myGenHandler.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	myGenHandlerObj.genDao()   // dao层存在时，增加或修改部分字段的解析代码
+	myGenHandlerObj.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
 
-	if myGenHandler.option.IsApi {
-		myGenHandler.genApi()        // api模板生成
-		myGenHandler.genController() // controller模板生成
-		myGenHandler.genRouter()     // 后端路由生成
+	if myGenHandlerObj.option.IsApi {
+		myGenHandlerObj.genApi()        // api模板生成
+		myGenHandlerObj.genController() // controller模板生成
+		myGenHandlerObj.genRouter()     // 后端路由生成
 	}
 
-	if myGenHandler.option.IsView {
-		myGenHandler.genViewIndex()  // 视图模板Index生成
-		myGenHandler.genViewList()   // 视图模板List生成
-		myGenHandler.genViewQuery()  // 视图模板Query生成
-		myGenHandler.genViewSave()   // 视图模板Save生成
-		myGenHandler.genViewI18n()   // 视图模板I18n生成
-		myGenHandler.genViewRouter() // 前端路由生成
+	if myGenHandlerObj.option.IsView {
+		myGenHandlerObj.genViewIndex()  // 视图模板Index生成
+		myGenHandlerObj.genViewList()   // 视图模板List生成
+		myGenHandlerObj.genViewQuery()  // 视图模板Query生成
+		myGenHandlerObj.genViewSave()   // 视图模板Save生成
+		myGenHandlerObj.genViewI18n()   // 视图模板I18n生成
+		myGenHandlerObj.genViewRouter() // 前端路由生成
 		// 前端代码格式化
-		myGenHandler.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandler.option.SceneCode,
+		myGenHandlerObj.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandlerObj.option.SceneCode,
 			`npm`, `run`, `format`)
 	}
 	return
