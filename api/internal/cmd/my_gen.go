@@ -77,7 +77,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	myGenHandlerObj := myGenHandler{ctx: ctx}
 	myGenHandlerObj.init(parser)
-	myGenHandlerObj.tpl = myGenHandlerObj.setTpl(myGenHandlerObj.option.DbTable, myGenHandlerObj.option.RemovePrefixAlone)
+	myGenHandlerObj.tpl = myGenHandlerObj.createTpl(myGenHandlerObj.option.DbTable, myGenHandlerObj.option.RemovePrefixCommon, myGenHandlerObj.option.RemovePrefixAlone)
 
 	myGenHandlerObj.genDao()   // dao层存在时，增加或修改部分字段的解析代码
 	myGenHandlerObj.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
@@ -134,16 +134,18 @@ type myGenOption struct {
 }
 
 type myGenTpl struct {
+	RemovePrefixCommon        string       //要删除的共有前缀
+	RemovePrefixAlone         string       //要删除的独有前缀
 	RemovePrefix              string       //要删除的前缀
 	TableRaw                  string       //表名（原始，包含前缀）
-	TableCaseKebab            string       //表名（横线，已去除前缀）
 	TableCaseSnake            string       //表名（蛇形，已去除前缀）
 	TableCaseCamel            string       //表名（大驼峰，已去除前缀）
+	TableCaseKebab            string       //表名（横线，已去除前缀）
 	TableColumnList           gdb.Result   //字段详情
 	FieldList                 []myGenField //字段列表
+	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseKebab        string       //模块目录（横线，/会被保留）
 	ModuleDirCaseKebabReplace string       //模块目录（横线，/被替换成.）
-	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
 	LogicStructName           string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	FieldPrimary              string       //主键字段
 	FieldDeleted              string       //删除时间字段
@@ -244,6 +246,8 @@ type handlePassword struct {
 }
 
 type relTableItem struct {
+	RemovePrefixCommon      string     //要删除的共有前缀
+	RemovePrefixAlone       string     //要删除的独有前缀
 	RemovePrefix            string     //要删除的前缀
 	TableRaw                string     //表名（原始，包含前缀）
 	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
@@ -555,34 +559,35 @@ isCoverEnd:
 }
 
 // 模板参数处理
-func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGenTpl) {
+func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, removePrefixAlone string) (tpl myGenTpl) {
 	ctx := myGenThis.ctx
+	db := myGenThis.db
+	option := myGenThis.option
 
-	tableColumnList, _ := myGenThis.db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
-	removePrefix := myGenThis.option.RemovePrefixCommon + removePrefixAlone
-	tableReomve := gstr.Replace(table, removePrefix, ``, 1)
 	tpl = myGenTpl{
-		RemovePrefix:      removePrefix,
-		TableRaw:          table,
-		TableCaseKebab:    gstr.CaseKebab(tableReomve),
-		TableCaseSnake:    gstr.CaseSnake(tableReomve),
-		TableCaseCamel:    gstr.CaseCamel(tableReomve),
-		TableColumnList:   tableColumnList,
-		HandlePasswordMap: map[string]handlePassword{},
-		RelTableMap:       map[string]relTableItem{},
+		RemovePrefixCommon: removePrefixCommon,
+		RemovePrefixAlone:  removePrefixAlone,
+		RemovePrefix:       removePrefixCommon + removePrefixAlone,
+		TableRaw:           table,
+		HandlePasswordMap:  map[string]handlePassword{},
+		RelTableMap:        map[string]relTableItem{},
 	}
+	tpl.TableColumnList, _ = db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
+	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.TableRaw, tpl.RemovePrefix, ``, 1))
+	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
+	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
 
-	logicStructName := gstr.TrimLeftStr(table, myGenThis.option.RemovePrefixCommon, 1)
-	moduleDirCaseKebab := gstr.CaseKebab(logicStructName)
+	logicStructName := gstr.TrimLeftStr(table, tpl.RemovePrefixCommon, 1)
 	moduleDirCaseCamel := gstr.CaseCamel(logicStructName)
-	if removePrefixAlone != `` {
-		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(removePrefixAlone, `_`))
-		moduleDirCaseCamel = gstr.CaseCamel(removePrefixAlone)
+	moduleDirCaseKebab := gstr.CaseKebab(logicStructName)
+	if tpl.RemovePrefixAlone != `` {
+		moduleDirCaseCamel = gstr.CaseCamel(tpl.RemovePrefixAlone)
+		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(tpl.RemovePrefixAlone, `_`))
 	}
-	if myGenThis.option.DbGroup != `default` {
-		logicStructName = myGenThis.option.DbGroup + `_` + logicStructName
-		moduleDirCaseKebab = gstr.CaseKebab(myGenThis.option.DbGroup) + `/` + moduleDirCaseKebab
-		moduleDirCaseCamel = gstr.CaseCamel(myGenThis.option.DbGroup) + moduleDirCaseCamel
+	if option.DbGroup != `default` {
+		logicStructName = option.DbGroup + `_` + logicStructName
+		moduleDirCaseCamel = gstr.CaseCamel(option.DbGroup) + moduleDirCaseCamel
+		moduleDirCaseKebab = gstr.CaseKebab(option.DbGroup) + `/` + moduleDirCaseKebab
 	}
 	tpl.LogicStructName = gstr.CaseCamel(logicStructName)
 	tpl.ModuleDirCaseKebab = moduleDirCaseKebab
@@ -590,7 +595,6 @@ func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGe
 	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
 
 	fieldList := make([]myGenField, len(tpl.TableColumnList))
-
 	fieldArr := make([]string, len(tpl.TableColumnList))
 	fieldCaseCamelArr := make([]string, len(tpl.TableColumnList))
 	for k, v := range tpl.TableColumnList {
@@ -812,8 +816,6 @@ func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGe
 		fieldCaseCamelArr[k] = fieldTmp.FieldCaseCamel
 	}
 
-	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
-
 	// TODO 可优化Phone，Account等为后缀也算
 	// label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID  + Name > Name > Title > Phone > Email > Account > Nickname
 	labelList := []string{tpl.TableCaseCamel + `Name`}
@@ -823,6 +825,7 @@ func (myGenThis *myGenHandler) setTpl(table, removePrefixAlone string) (tpl myGe
 	}
 	labelList = append(labelList, `Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`)
 	tpl.HandelLabelList = []string{}
+	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
 	for _, v := range labelList {
 		if index := fieldCaseCamelArrG.Search(v); index != -1 {
 			tpl.HandelLabelList = append(tpl.HandelLabelList, fieldArr[index])
@@ -859,7 +862,7 @@ func (myGenThis *myGenHandler) genDao() {
 		`gf`, `gen`, `dao`,
 		`--link`, myGenThis.dbLink,
 		`--group`, myGenThis.option.DbGroup,
-		`--removePrefix`, myGenThis.option.RemovePrefixCommon+myGenThis.option.RemovePrefixAlone,
+		`--removePrefix`, myGenThis.tpl.RemovePrefix,
 		`--daoPath`, `dao/`+myGenThis.tpl.ModuleDirCaseKebab,
 		`--doPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
 		`--entityPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
@@ -4020,7 +4023,8 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 	if dir != `` {
 		command.Dir = dir
 	}
-	fmt.Println(title + ` 开始`)
+	fmt.Println()
+	fmt.Println(`================` + title + ` 开始================`)
 	fmt.Println(`执行命令：` + command.String())
 	stdout, _ := command.StdoutPipe()
 	command.Start()
@@ -4039,7 +4043,7 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 		fmt.Println(`请稍等，命令正在执行中...`)
 	}
 	command.Wait()
-	fmt.Println(title + ` 结束`)
+	fmt.Println(`================` + title + ` 结束================`)
 }
 
 // status字段注释解析
@@ -4126,7 +4130,7 @@ func (myGenThis *myGenHandler) genRelTable(tpl myGenTpl, field string, fieldName
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
 				tableListSame = append(tableListSame, v)
 			}
-		} else if gstr.Replace(v, myGenThis.option.RemovePrefixCommon, ``, 1) == relTableItem.RelTableCaseSnake { //表名完全一致
+		} else if gstr.Replace(v, tpl.RemovePrefixCommon, ``, 1) == relTableItem.RelTableCaseSnake { //表名完全一致
 			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
 			primaryKey := tableIndexList[0][`Column_name`].String()
 			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
@@ -4183,14 +4187,22 @@ func (myGenThis *myGenHandler) genRelTable(tpl myGenTpl, field string, fieldName
 	}
 	/*--------确定关联表 结束--------*/
 
+	//TODO
 	if relTableItem.TableRaw != `` {
 		if relTableItem.IsSameDir {
+			relTableItem.RemovePrefixCommon = tpl.RemovePrefixCommon
+			relTableItem.RemovePrefixAlone = tpl.RemovePrefixAlone
 			relTableItem.RemovePrefix = tpl.RemovePrefix
 			relTableItem.RelDaoDir = tpl.ModuleDirCaseKebab
 		} else {
 			relTableItem.RemovePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableCaseSnake, 1)
+			relTableItem.RemovePrefixAlone = relTableItem.RemovePrefix
+			if tpl.RemovePrefixCommon != `` && gstr.Pos(relTableItem.RemovePrefix, tpl.RemovePrefixCommon) == 0 {
+				relTableItem.RemovePrefixCommon = tpl.RemovePrefixCommon
+				relTableItem.RemovePrefixAlone = gstr.TrimLeftStr(relTableItem.RemovePrefix, tpl.RemovePrefixCommon)
+			}
 			relDaoDir := gstr.Trim(relTableItem.RemovePrefix, `_`)
-			relDaoDir = gstr.TrimLeftStr(relDaoDir, myGenThis.option.RemovePrefixCommon, 1)
+			relDaoDir = gstr.TrimLeftStr(relDaoDir, tpl.RemovePrefixCommon, 1)
 			if relDaoDir == `` {
 				relDaoDir = relTableItem.RelTableCaseSnake
 			}
