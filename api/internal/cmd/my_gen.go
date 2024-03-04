@@ -173,7 +173,7 @@ const (
 	//用于结构体中，需从1开始，否则结构体会默认0，即Int
 	TypeInt       myGenFieldType = iota + 1 // `int等类型`
 	TypeIntU                                // `int等类型（unsigned）`
-	TypeFloat                               // `float等类型（unsigned）`
+	TypeFloat                               // `float等类型`
 	TypeFloatU                              // `float等类型（unsigned）`
 	TypeVarchar                             // `varchar类型`
 	TypeChar                                // `char类型`
@@ -572,9 +572,10 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	tpl.ModuleDirCaseKebabReplace = gstr.Replace(moduleDirCaseKebab, `/`, `.`)
 	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
 
-	fieldList := make([]myGenField, len(tpl.FieldListRaw))
-	fieldArr := make([]string, len(tpl.FieldListRaw))
-	fieldCaseCamelArr := make([]string, len(tpl.FieldListRaw))
+	fieldCount := len(tpl.FieldListRaw)
+	fieldList := make([]myGenField, fieldCount)
+	fieldArr := make([]string, fieldCount)
+	fieldCaseCamelArr := make([]string, fieldCount)
 	for k, v := range tpl.FieldListRaw {
 		fieldTmp := myGenField{
 			FieldRaw:     v[`Field`].String(),
@@ -764,35 +765,6 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 		}
 		/*--------确定字段命名类型（部分命名类型需做二次确定） 结束--------*/
 
-		/* switch fieldTmp.FieldTypeName {
-		case TypeNameDeleted: // 软删除字段
-		case TypeNameUpdated: // 更新时间字段
-		case TypeNameCreated: // 创建时间字段
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
-		case TypeNamePid: // pid；	类型：int等类型；
-		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-		case TypeNameNameSuffix: // name后缀；	类型：varchar；
-		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
-		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-		} */
-
 		fieldList[k] = fieldTmp
 		fieldArr[k] = fieldTmp.FieldRaw
 		fieldCaseCamelArr[k] = fieldTmp.FieldCaseCamel
@@ -835,9 +807,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	/*--------部分命名类型需要二次确认 开始--------*/
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
-		case TypeNameLevel, TypeNameIdPath:
-			// level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			// idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case TypeNameLevel, TypeNameIdPath: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；	// idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = ``
 			}
@@ -881,116 +851,138 @@ func (myGenThis *myGenHandler) genDao() {
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
 
-	daoParseInsert := ``
-	daoParseInsertBefore := ``
-	daoHookInsert := ``
-	daoParseUpdate := ``
-	daoHookUpdateBefore := ``
-	daoHookUpdateAfter := ``
-	daoParseField := ``
-	daoHookSelect := ``
-	daoParseFilter := ``
-	daoParseOrder := ``
-	daoParseJoin := ``
-	daoFunc := ``
-	daoImportOtherDao := ``
+	type dao struct {
+		insert struct {
+			point       string
+			parse       string
+			parseBefore string
+			hook        string
+		}
+		update struct {
+			point      string
+			parse      string
+			hookBefore string
+			hookAfter  string
+		}
+		field struct {
+			point string
+			parse string
+			hook  string
+		}
+		filter struct {
+			parse string
+		}
+		order struct {
+			parse string
+		}
+		join struct {
+			parse string
+		}
+		importDao string
+	}
+	daoObj := dao{}
 
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 0 {
-		daoParseFieldTmp := `
+		fieldParseStr := `
 			case ` + "`label`" + `:
 				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)`
-		daoParseFilterTmp := `
+		filterParseStr := `
 			case ` + "`label`" + `:
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
 		if labelListLen > 1 {
-			parseFieldStr := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `"
+			fieldParseStrTmp := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `"
 			parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 			for i := labelListLen - 2; i >= 0; i-- {
-				parseFieldStr = "IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + parseFieldStr + ")"
+				fieldParseStrTmp = "IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + fieldParseStrTmp + ")"
 				if i == 0 {
 					parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 				} else {
 					parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 				}
 			}
-			daoParseFieldTmp = `
+			fieldParseStr = `
 			case ` + "`label`" + `:
-				m = m.Fields(` + "`" + parseFieldStr + " AS ` + v)"
-			daoParseFilterTmp = `
+				m = m.Fields(` + "`" + fieldParseStrTmp + " AS ` + v)"
+			filterParseStr = `
 			case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
 		}
-		if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-			daoParseField += daoParseFieldTmp
+		if gstr.Pos(tplDao, fieldParseStr) == -1 {
+			daoObj.field.parse += fieldParseStr
 		}
-		if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-			daoParseFilter += daoParseFilterTmp
+		if gstr.Pos(tplDao, filterParseStr) == -1 {
+			daoObj.filter.parse += filterParseStr
 		}
 	}
 
 	for _, v := range tpl.FieldList {
+		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNameDeleted: // 软删除字段
+			// goto skipFieldTypeOfDao
 		case TypeNameUpdated: // 更新时间字段
+			// goto skipFieldTypeOfDao
 		case TypeNameCreated: // 创建时间字段
-			daoParseFilterTmp := `
+			filterParseStr := `
 			case ` + "`timeRangeStart`" + `:
 				m = m.WhereGTE(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `, v)
 			case ` + "`timeRangeEnd`" + `:
 				m = m.WhereLTE(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `, v)`
-			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-				daoParseFilter += daoParseFilterTmp
+			if gstr.Pos(tplDao, filterParseStr) == -1 {
+				daoObj.filter.parse += filterParseStr
 			}
+			// goto skipFieldTypeOfDao
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
+			goto skipFieldTypeOfDao
 		case TypeNamePid: // pid；	类型：int等类型；
 			if len(tpl.Handle.LabelList) > 0 {
-				daoParseFieldTmp := `
+				fieldParseStr := `
 			case ` + "`p" + gstr.CaseCamel(tpl.Handle.LabelList[0]) + "`" + `:
 				tableP := ` + "`p_`" + ` + daoModel.DbTable
 				m = m.Fields(tableP + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))`
-				if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-					daoParseField += daoParseFieldTmp
+				if gstr.Pos(tplDao, fieldParseStr) == -1 {
+					daoObj.field.parse += fieldParseStr
 				}
 			}
-			daoParseFieldTmp := `
+			fieldParseStr := `
 			case ` + "`tree`" + `:
 				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())
 				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + v.FieldCaseCamel + `)
 				m = m.Handler(daoThis.ParseOrder([]string{` + "`tree`" + `}, daoModel))`
-			if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
-				daoParseField += daoParseFieldTmp
+			if gstr.Pos(tplDao, fieldParseStr) == -1 {
+				daoObj.field.parse += fieldParseStr
 			}
-			daoParseOrderTmp := `
+			orderParseStr := `
 			case ` + "`tree`" + `:
 				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + v.FieldCaseCamel + `)`
 			if tpl.Handle.Pid.Sort != `` {
-				daoParseOrderTmp += `
+				orderParseStr += `
 				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Sort) + `)`
 			}
-			daoParseOrderTmp += `
+			orderParseStr += `
 				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())`
-			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
-				daoParseOrder += daoParseOrderTmp
+			if gstr.Pos(tplDao, orderParseStr) == -1 {
+				daoObj.order.parse += orderParseStr
 			}
-			daoParseJoinTmp := `
+			joinParseStr := `
 		case ` + "`p_`" + ` + daoModel.DbTable:
 			m = m.LeftJoin(daoModel.DbTable+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+daoThis.PrimaryKey()+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `)`
-			if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
-				daoParseJoin += daoParseJoinTmp
+			if gstr.Pos(tplDao, joinParseStr) == -1 {
+				daoObj.join.parse += joinParseStr
 			}
 
 			if tpl.Handle.Pid.IsCoexist {
-				daoParseInsertBeforeTmp := `
+				insertParseBeforeStr := `
 		if _, ok := insert[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]; !ok {
 			insert[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `] = 0
 		}`
-				if gstr.Pos(tplDao, daoParseInsertBeforeTmp) == -1 {
-					daoParseInsertBefore += daoParseInsertBeforeTmp
+				if gstr.Pos(tplDao, insertParseBeforeStr) == -1 {
+					daoObj.insert.parseBefore += insertParseBeforeStr
 				}
-				daoParseInsertTmp := `
+				insertParseStr := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
@@ -1001,10 +993,10 @@ func (myGenThis *myGenHandler) genDao() {
 					daoModel.AfterInsert[` + "`pIdPath`" + `] = ` + "`0`" + `
 					daoModel.AfterInsert[` + "`pLevel`" + `] = 0
 				}`
-				if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
-					daoParseInsert += daoParseInsertTmp
+				if gstr.Pos(tplDao, insertParseStr) == -1 {
+					daoObj.insert.parse += insertParseStr
 				}
-				daoHookInsertTmp := `
+				insertHookStr := `
 
 			updateSelfData := map[string]interface{}{}
 			for k, v := range daoModel.AfterInsert {
@@ -1018,10 +1010,10 @@ func (myGenThis *myGenHandler) genDao() {
 			if len(updateSelfData) > 0 {
 				daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(updateSelfData).Update()
 			}`
-				if gstr.Pos(tplDao, daoHookInsertTmp) == -1 {
-					daoHookInsert += daoHookInsertTmp
+				if gstr.Pos(tplDao, insertHookStr) == -1 {
+					daoObj.insert.hook += insertHookStr
 				}
-				daoParseUpdateTmp := `
+				updateParseStr := `
 			case daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+k] = v
 				pIdPath := ` + "`0`" + `
@@ -1062,10 +1054,10 @@ func (myGenThis *myGenHandler) genDao() {
 				if pLevelOfNew < pLevelOfOld {
 					updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Level) + `] = gdb.Raw(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Level) + ` + ` + "` - `" + ` + gconv.String(pLevelOfOld-pLevelOfNew))
 				}`
-				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
-					daoParseUpdate += daoParseUpdateTmp
+				if gstr.Pos(tplDao, updateParseStr) == -1 {
+					daoObj.update.parse += updateParseStr
 				}
-				daoHookUpdateAfterTmp := `
+				updateHookAfterStr := `
 
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
@@ -1085,34 +1077,35 @@ func (myGenThis *myGenHandler) genDao() {
 					}
 				}
 			}`
-				if gstr.Pos(tplDao, daoHookUpdateAfterTmp) == -1 {
-					daoHookUpdateAfter += daoHookUpdateAfterTmp
+				if gstr.Pos(tplDao, updateHookAfterStr) == -1 {
+					daoObj.update.hookAfter += updateHookAfterStr
 				}
-				daoParseFilterTmp := `
+				filterParseStr := `
 			case ` + "`pIdPathOfOld`" + `: //父级IdPath（旧）
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `, gconv.String(v)+` + "`-%`" + `)`
-				if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-					daoParseFilter += daoParseFilterTmp
+				if gstr.Pos(tplDao, filterParseStr) == -1 {
+					daoObj.filter.parse += filterParseStr
 				}
 			}
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			daoParseOrderTmp := `
+			orderParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
 				m = m.OrderDesc(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
-			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
-				daoParseOrder += daoParseOrderTmp
+			if gstr.Pos(tplDao, orderParseStr) == -1 {
+				daoObj.order.parse += orderParseStr
 			}
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			goto skipFieldTypeOfDao
 		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-			daoParseInsertTmp := `
+			insertParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				password := gconv.String(v)
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}`
-			daoParseUpdateTmp := `
+			updateParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -1120,34 +1113,35 @@ func (myGenThis *myGenHandler) genDao() {
 				}`
 			passwordMapKey := myGenThis.getHandlePasswordMapKey(v.FieldRaw)
 			if tpl.Handle.PasswordMap[passwordMapKey].IsCoexist {
-				daoParseInsertTmp += `
+				insertParseStr += `
 				salt := grand.S(` + tpl.Handle.PasswordMap[passwordMapKey].SaltLength + `)
 				insertData[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.PasswordMap[passwordMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
-				daoParseUpdateTmp += `
+				updateParseStr += `
 				salt := grand.S(` + tpl.Handle.PasswordMap[passwordMapKey].SaltLength + `)
 				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.PasswordMap[passwordMapKey].SaltField) + `] = salt
 				password = gmd5.MustEncrypt(password + salt)`
 			}
-			daoParseInsertTmp += `
+			insertParseStr += `
 				insertData[k] = password`
-			daoParseUpdateTmp += `
+			updateParseStr += `
 				updateData[daoModel.DbTable+` + "`.`" + `+k] = password`
-			if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
-				daoParseInsert += daoParseInsertTmp
+			if gstr.Pos(tplDao, insertParseStr) == -1 {
+				daoObj.insert.parse += insertParseStr
 			}
-			if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
-				daoParseUpdate += daoParseUpdateTmp
+			if gstr.Pos(tplDao, updateParseStr) == -1 {
+				daoObj.update.parse += updateParseStr
 			}
+			goto skipFieldTypeOfDao
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			goto skipFieldTypeOfDao
 		case TypeNameNameSuffix: // name后缀；	类型：varchar；
-			daoParseFilterTmp := `
+			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+k, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-				daoParseFilter += daoParseFilterTmp
+			if gstr.Pos(tplDao, filterParseStr) == -1 {
+				daoObj.filter.parse += filterParseStr
 			}
-			goto gotoFieldType
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
@@ -1158,160 +1152,162 @@ func (myGenThis *myGenHandler) genDao() {
 				daoPath := relTable.RelTableCaseCamel
 				if !relTable.IsSameDir {
 					daoPath = `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
-					daoImportOtherDaoTmp := `
+					importDaoStr := `
 	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
-					if gstr.Pos(tplDao, daoImportOtherDaoTmp) == -1 {
-						daoImportOtherDao += daoImportOtherDaoTmp
+					if gstr.Pos(tplDao, importDaoStr) == -1 {
+						daoObj.importDao += importDaoStr
 					}
 				}
 				if !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-					daoParseFieldTmp := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelTableField + relTable.RelSuffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
-					if gstr.Pos(tplDao, daoParseFieldTmp) == -1 {
+					fieldParseStr := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelTableField + relTable.RelSuffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
+					if gstr.Pos(tplDao, fieldParseStr) == -1 {
 						if relTable.RelSuffix != `` {
-							daoParseFieldTmp = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + " + `" + relTable.RelSuffix + "`: " + daoParseFieldTmp + `
+							fieldParseStr = `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + " + `" + relTable.RelSuffix + "`: " + fieldParseStr + `
 				table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
 				m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + ` + ` + "` AS `" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + `, daoModel))`
 						} else {
-							daoParseFieldTmp = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + `: ` + daoParseFieldTmp + `
+							fieldParseStr = `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + `: ` + fieldParseStr + `
 				table` + relTable.RelTableCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
 				m = m.Fields(table` + relTable.RelTableCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableCaseCamel + `, daoModel))`
 						}
-						daoParseField += daoParseFieldTmp
+						daoObj.field.parse += fieldParseStr
 					}
 				}
-				daoParseJoinTmp := `
+				joinParseStr := `
 		case ` + daoPath + `.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `)`
 				if relTable.RelSuffix != `` {
-					daoParseJoinTmp = `
+					joinParseStr = `
 		case ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `:
 			m = m.LeftJoin(` + daoPath + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `)`
 				}
-				if gstr.Pos(tplDao, daoParseJoinTmp) == -1 {
-					daoParseJoin += daoParseJoinTmp
+				if gstr.Pos(tplDao, joinParseStr) == -1 {
+					daoObj.join.parse += joinParseStr
 				}
 			}
 		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
-			daoParseOrderTmp := `
+			orderParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
 				m = m.OrderDesc(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
-			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
-				daoParseOrder += daoParseOrderTmp
+			if gstr.Pos(tplDao, orderParseStr) == -1 {
+				daoObj.order.parse += orderParseStr
 			}
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-			daoParseFilterTmp := `
+			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.WhereLTE(daoModel.DbTable+` + "`.`" + `+k, v)`
 			if !v.IsNull && v.Default == `` {
-				daoParseFilterTmp = `
+				filterParseStr = `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Where(m.Builder().WhereLTE(daoModel.DbTable+` + "`.`" + `+k, v).WhereOrNull(daoModel.DbTable + ` + "`.`" + ` + k))`
 			}
-			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-				daoParseFilter += daoParseFilterTmp
+			if gstr.Pos(tplDao, filterParseStr) == -1 {
+				daoObj.filter.parse += filterParseStr
 			}
-			goto gotoFieldType
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-			daoParseFilterTmp := `
+			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.WhereGTE(daoModel.DbTable+` + "`.`" + `+k, v)`
 			if !v.IsNull && v.Default == `` {
-				daoParseFilterTmp = `
+				filterParseStr = `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Where(m.Builder().WhereGTE(daoModel.DbTable+` + "`.`" + `+k, v).WhereOrNull(daoModel.DbTable + ` + "`.`" + ` + k))`
 			}
-			if gstr.Pos(tplDao, daoParseFilterTmp) == -1 {
-				daoParseFilter += daoParseFilterTmp
+			if gstr.Pos(tplDao, filterParseStr) == -1 {
+				daoObj.filter.parse += filterParseStr
 			}
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
 		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-		default:
-			goto gotoFieldType
 		}
-		continue
-	gotoFieldType:
+		/*--------根据字段命名类型处理 结束--------*/
+
+		/*--------根据字段数据类型处理（注意：这里的代码改动，会影响上面未调用goto skipFieldTypeOfDao的case） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型`
 		case TypeIntU: // `int等类型（unsigned）`
-		case TypeFloat: // `float等类型（unsigned）`
+		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型`	// `char类型`
 			if v.IndexRaw == `UNI` && v.IsNull {
-				daoParseInsertTmp := `
+				insertParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				insertData[k] = v
 				if gconv.String(v) == ` + "``" + ` {
 					insertData[k] = nil
 				}`
-				if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
-					daoParseInsert += daoParseInsertTmp
+				if gstr.Pos(tplDao, insertParseStr) == -1 {
+					daoObj.insert.parse += insertParseStr
 				}
-				daoParseUpdateTmp := `
+				updateParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+k] = v
 				if gconv.String(v) == ` + "``" + ` {
 					updateData[daoModel.DbTable+` + "`.`" + `+k] = nil
 				}`
-				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
-					daoParseUpdate += daoParseUpdateTmp
+				if gstr.Pos(tplDao, updateParseStr) == -1 {
+					daoObj.update.parse += updateParseStr
 				}
 			}
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 			if v.IsNull {
-				daoParseInsertTmp := `
+				insertParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				insertData[k] = v
 				if gconv.String(v) == ` + "``" + ` {
 					insertData[k] = nil
 				}`
-				if gstr.Pos(tplDao, daoParseInsertTmp) == -1 {
-					daoParseInsert += daoParseInsertTmp
+				if gstr.Pos(tplDao, insertParseStr) == -1 {
+					daoObj.insert.parse += insertParseStr
 				}
-				daoParseUpdateTmp := `
+				updateParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+k] = gvar.New(v)
 				if gconv.String(v) == ` + "``" + ` {
 					updateData[daoModel.DbTable+` + "`.`" + `+k] = nil
 				}`
-				if gstr.Pos(tplDao, daoParseUpdateTmp) == -1 {
-					daoParseUpdate += daoParseUpdateTmp
+				if gstr.Pos(tplDao, updateParseStr) == -1 {
+					daoObj.update.parse += updateParseStr
 				}
 			}
 		case TypeTimestamp: // `timestamp类型`
-		case TypeDatetime, TypeDate: // `datetime类型`	// `date类型`
-			daoParseOrderTmp := `
+		case TypeDatetime: // `datetime类型`
+		case TypeDate: // `date类型`
+			orderParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
 				m = m.OrderDesc(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())` //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
-			if gstr.Pos(tplDao, daoParseOrderTmp) == -1 {
-				daoParseOrder += daoParseOrderTmp
+			if gstr.Pos(tplDao, orderParseStr) == -1 {
+				daoObj.order.parse += orderParseStr
 			}
 		default:
 		}
+		/*--------根据字段数据类型处理（注意：这里的代码改动，会影响上面未调用goto skipFieldTypeOfDao的case） 结束--------*/
+
+	skipFieldTypeOfDao: //跳过字段数据类型处理标签
 	}
 
-	if daoParseInsertBefore != `` {
-		daoParseInsertBeforePoint := `
+	if daoObj.insert.parseBefore != `` {
+		pointOfInsertParseBefore := `
 		insertData := map[string]interface{}{}`
-		tplDao = gstr.Replace(tplDao, daoParseInsertBeforePoint, daoParseInsertBefore+daoParseInsertBeforePoint, 1)
+		tplDao = gstr.Replace(tplDao, pointOfInsertParseBefore, daoObj.insert.parseBefore+pointOfInsertParseBefore, 1)
 	}
-	if daoParseInsert != `` {
-		daoParseInsertPoint := `case ` + "`id`" + `:
+	if daoObj.insert.parse != `` {
+		pointOfInsertParse := `case ` + "`id`" + `:
 				insertData[daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, daoParseInsertPoint, daoParseInsertPoint+daoParseInsert, 1)
+		tplDao = gstr.Replace(tplDao, pointOfInsertParse, pointOfInsertParse+daoObj.insert.parse, 1)
 	}
-	if daoHookInsert != `` {
-		daoHookInsertPoint := `// id, _ := result.LastInsertId()
+	if daoObj.insert.hook != `` {
+		pointOfInsertHook := `// id, _ := result.LastInsertId()
 
 			/* for k, v := range daoModel.AfterInsert {
 				switch k {
@@ -1319,15 +1315,15 @@ func (myGenThis *myGenHandler) genDao() {
 					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
 				}
 			} */`
-		tplDao = gstr.Replace(tplDao, daoHookInsertPoint, `id, _ := result.LastInsertId()`+daoHookInsert, 1)
+		tplDao = gstr.Replace(tplDao, pointOfInsertHook, `id, _ := result.LastInsertId()`+daoObj.insert.hook, 1)
 	}
-	if daoParseUpdate != `` {
-		daoParseUpdatePoint := `case ` + "`id`" + `:
+	if daoObj.update.parse != `` {
+		pointOfUpdateParse := `case ` + "`id`" + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, daoParseUpdatePoint, daoParseUpdatePoint+daoParseUpdate, 1)
+		tplDao = gstr.Replace(tplDao, pointOfUpdateParse, pointOfUpdateParse+daoObj.update.parse, 1)
 	}
-	if daoHookUpdateBefore != `` || daoHookUpdateAfter != `` {
-		daoHookUpdatePoint := `
+	if daoObj.update.hookBefore != `` || daoObj.update.hookAfter != `` {
+		pointOfUpdateHook := `
 
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
@@ -1342,52 +1338,49 @@ func (myGenThis *myGenHandler) genDao() {
 					}
 				}
 			} */`
-		if daoHookUpdateBefore != `` {
-			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, daoHookUpdateBefore+daoHookUpdatePoint, 1)
+		if daoObj.update.hookBefore != `` {
+			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, daoObj.update.hookBefore+pointOfUpdateHook, 1)
 		}
-		if daoHookUpdateAfter != `` {
-			tplDao = gstr.Replace(tplDao, daoHookUpdatePoint, `
+		if daoObj.update.hookAfter != `` {
+			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, `
 
 			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			}`+daoHookUpdateAfter, 1)
+			}`+daoObj.update.hookAfter, 1)
 		}
 	}
-	if daoParseField != `` {
-		daoParseFieldPoint := `case ` + "`id`" + `:
+	if daoObj.field.parse != `` {
+		pointOfFieldParse := `case ` + "`id`" + `:
 				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey() + ` + "` AS `" + ` + v)`
-		tplDao = gstr.Replace(tplDao, daoParseFieldPoint, daoParseFieldPoint+daoParseField, 1)
+		tplDao = gstr.Replace(tplDao, pointOfFieldParse, pointOfFieldParse+daoObj.field.parse, 1)
 	}
-	if daoHookSelect != `` {
-		daoHookSelectPoint := `
+	if daoObj.field.hook != `` {
+		pointOfFieldHook := `
 					default:
 						record[v] = gvar.New(nil)`
-		tplDao = gstr.Replace(tplDao, daoHookSelectPoint, daoHookSelect+daoHookSelectPoint, 1)
+		tplDao = gstr.Replace(tplDao, pointOfFieldHook, daoObj.field.hook+pointOfFieldHook, 1)
 	}
-	if daoParseFilter != `` {
-		daoParseFilterPoint := `case ` + "`id`, `idArr`" + `:
+	if daoObj.filter.parse != `` {
+		pointOfFilterParse := `case ` + "`id`, `idArr`" + `:
 				m = m.Where(daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey(), v)`
-		tplDao = gstr.Replace(tplDao, daoParseFilterPoint, daoParseFilterPoint+daoParseFilter, 1)
+		tplDao = gstr.Replace(tplDao, pointOfFilterParse, pointOfFilterParse+daoObj.filter.parse, 1)
 	}
-	if daoParseOrder != `` {
-		daoParseOrderPoint := `case ` + "`id`" + `:
+	if daoObj.order.parse != `` {
+		pointOfOrderParse := `case ` + "`id`" + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`
-		tplDao = gstr.Replace(tplDao, daoParseOrderPoint, daoParseOrderPoint+daoParseOrder, 1)
+		tplDao = gstr.Replace(tplDao, pointOfOrderParse, pointOfOrderParse+daoObj.order.parse, 1)
 	}
-	if daoParseJoin != `` {
-		daoParseJoinPoint := `
+	if daoObj.join.parse != `` {
+		pointOfJoinParse := `
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey())
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()) */`
-		tplDao = gstr.Replace(tplDao, daoParseJoinPoint, daoParseJoinPoint+daoParseJoin, 1)
+		tplDao = gstr.Replace(tplDao, pointOfJoinParse, pointOfJoinParse+daoObj.join.parse, 1)
 	}
-	if daoFunc != `` {
-		tplDao = tplDao + daoFunc
-	}
-	if daoImportOtherDao != `` {
-		daoImportOtherDaoPoint := `"api/internal/dao/` + tpl.ModuleDirCaseKebab + `/internal"`
-		tplDao = gstr.Replace(tplDao, daoImportOtherDaoPoint, daoImportOtherDaoPoint+daoImportOtherDao, 1)
+	if daoObj.importDao != `` {
+		pointOfImportDao := `"api/internal/dao/` + tpl.ModuleDirCaseKebab + `/internal"`
+		tplDao = gstr.Replace(tplDao, pointOfImportDao, pointOfImportDao+daoObj.importDao, 1)
 	}
 
 	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
@@ -1563,278 +1556,334 @@ func (myGenThis *myGenHandler) genApi() {
 		return
 	}
 
-	apiReqFilterColumn := ``
-	apiReqCreateColumn := ``
-	apiReqUpdateColumn := ``
-	apiResColumn := ``
-	apiResColumnAlloweFieldList := ``
-	if len(tpl.Handle.LabelList) > 0 {
-		apiReqFilterColumn += `Label          string      ` + "`" + `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"` + "`\n"
-		apiResColumn += `Label       *string     ` + "`" + `json:"label,omitempty" dc:"标签。常用于前端组件"` + "`\n"
+	type api struct {
+		filter     []string
+		create     []string
+		update     []string
+		res        []string
+		resOfAllow []string
 	}
-	for _, column := range tpl.FieldListRaw {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnake(field)
-		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
-		fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", ` `,
-			"\r", ` `,
-			`"`, `\"`,
-		}))
-		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
+	apiObj := api{
+		filter:     []string{},
+		create:     []string{},
+		update:     []string{},
+		res:        []string{},
+		resOfAllow: []string{},
+	}
+	if len(tpl.Handle.LabelList) > 0 {
+		apiObj.filter = append(apiObj.filter, `Label    string    `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`)
+		apiObj.res = append(apiObj.res, `Label    *string    `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`)
+	}
 
-		typeReqFilter := ``
-		typeReqCreate := ``
-		typeReqUpdate := ``
-		typeRes := ``
-		ruleReqFilter := ``
-		ruleReqCreate := ``
-		ruleReqUpdate := ``
-		isRequired := false
+	type apiItem struct {
+		isSkip     bool //字段命名类型处理后，不再需要根据字段数据类型对filter,create,update,res四个属性再做处理时，设置为true
+		isSkipType bool //字段命名类型处理后，不再需要根据字段数据类型对filterType,createType,updateType,resType四个属性再做处理时，设置为true
+		filter     bool
+		filterType string
+		filterRule []string
+		create     bool
+		createType string
+		createRule []string
+		update     bool
+		updateType string
+		updateRule []string
+		res        bool
+		resType    string
+	}
 
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
-			continue
-		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
-			typeRes = `*gtime.Time`
-		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
-			apiReqFilterColumn += `TimeRangeStart *gtime.Time ` + "`" + `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"` + "`\n"
-			apiReqFilterColumn += `TimeRangeEnd   *gtime.Time ` + "`" + `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"` + "`\n"
-			typeRes = `*gtime.Time`
-		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-			if field == `id` {
-				continue
-			}
-			typeReqFilter = `*uint`
-			typeRes = `*uint`
-			ruleReqFilter = `min:1`
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.Handle.Pid.IsCoexist { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
-			typeRes = `*string`
-		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
-			typeReqFilter = `string`
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
-			isStr := true
-			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
-				typeReqFilter = `*int`
-				typeReqCreate = `*int`
-				typeReqUpdate = `*int`
-				typeRes = `*int`
-				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-					typeReqFilter = `*uint`
-					typeReqCreate = `*uint`
-					typeReqUpdate = `*uint`
-					typeRes = `*uint`
-				}
-				isStr = false
-			}
-
-			statusList := myGenThis.genStatusList(comment, isStr)
-			statusArr := make([]string, len(statusList))
-			for index, status := range statusList {
-				statusArr[index] = status[0]
-			}
-			statusStr := gstr.Join(statusArr, `,`)
-			ruleReqFilter += `in:` + statusStr
-			ruleReqCreate += `in:` + statusStr
-			ruleReqUpdate += `in:` + statusStr
-		} else if (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr` || garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
-			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				typeReqCreate = `*string`
-				typeReqUpdate = `*string`
-				typeRes = `*string`
-				ruleReqCreate = `max-length:` + resultStr[1] + `|url`
-				ruleReqUpdate = `max-length:` + resultStr[1] + `|url`
-			} else {
-				if !column[`Null`].Bool() {
-					isRequired = true
-				}
-				typeReqCreate = `*[]string`
-				typeReqUpdate = `*[]string`
-				typeRes = `[]string`
-				ruleReqCreate = `distinct|foreach|url|foreach|min-length:1`
-				ruleReqUpdate = `distinct|foreach|url|foreach|min-length:1`
-			}
-		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-			if !column[`Null`].Bool() {
-				isRequired = true
-			}
-			typeReqCreate = `*[]interface{}`
-			typeReqUpdate = `*[]interface{}`
-			typeRes = `[]interface{}`
-			ruleReqCreate = `distinct`
-			ruleReqUpdate = `distinct`
-		} else if garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
-			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				ruleReqCreate = `max-length:` + resultStr[1]
-				ruleReqUpdate = `max-length:` + resultStr[1]
-			}
-		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			typeReqFilter = `string`
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
-			ruleReqFilter = `max-length:` + resultStr[1]
-			ruleReqCreate = `max-length:` + resultStr[1]
-			ruleReqUpdate = `max-length:` + resultStr[1]
-			if column[`Key`].String() == `UNI` && !column[`Null`].Bool() {
-				isRequired = true
-			}
-
-			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
-				if gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2)+`Name` == fieldCaseCamel {
-					isRequired = true
-				}
-				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-				ruleReqCreate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-				ruleReqUpdate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-			} else if garray.NewStrArrayFrom([]string{`code`}).Contains(fieldSuffix) { //code后缀
-				ruleReqFilter += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-				ruleReqCreate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-				ruleReqUpdate += `|regex:^[\\p{L}\\p{M}\\p{N}_-]+$`
-			} else if garray.NewStrArrayFrom([]string{`phone`, `mobile`}).Contains(fieldSuffix) { //phone,mobile后缀
-				ruleReqFilter += `|phone`
-				ruleReqCreate += `|phone`
-				ruleReqUpdate += `|phone`
-			} else if garray.NewStrArrayFrom([]string{`url`, `link`}).Contains(fieldSuffix) { //url,link后缀
-				ruleReqFilter += `|url`
-				ruleReqCreate += `|url`
-				ruleReqUpdate += `|url`
-			} else if garray.NewStrArrayFrom([]string{`ip`}).Contains(fieldSuffix) { //IP后缀
-				ruleReqFilter += `|ip`
-				ruleReqCreate += `|ip`
-				ruleReqUpdate += `|ip`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			typeReqFilter = `string`
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
-			ruleReqFilter = `max-length:` + resultStr[1]
-			ruleReqCreate = `size:` + resultStr[1]
-			ruleReqUpdate = `size:` + resultStr[1]
-			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-				typeReqFilter = ``
-				typeRes = ``
-				ruleReqFilter = ``
-				isRequired = true
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.Handle.PasswordMap[myGenThis.getHandlePasswordMapKey(field)].IsCoexist { //salt后缀，且对应的password,passwd后缀存在时（才）有效
-				continue
-			} else {
-				if column[`Key`].String() == `UNI` && !column[`Null`].Bool() {
-					isRequired = true
-				}
-			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			typeReqFilter = `*int`
-			typeReqCreate = `*int`
-			typeReqUpdate = `*int`
-			typeRes = `*int`
-			ruleReqFilter = ``
-			ruleReqCreate = ``
-			ruleReqUpdate = ``
-			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-				typeReqFilter = `*uint`
-				typeReqCreate = `*uint`
-				typeReqUpdate = `*uint`
-				typeRes = `*uint`
-			}
-
-			if field == `pid` { //pid
-				if len(tpl.Handle.LabelList) > 0 {
-					apiResColumnAlloweFieldList += `P` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` *string ` + "`" + `json:"p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `,omitempty" dc:"父级"` + "`\n"
-				}
-			} else if field == `level` && tpl.Handle.Pid.IsCoexist { //level，且pid,level,idPath|id_path同时存在时（才）有效
-				typeReqCreate = ``
-				typeReqUpdate = ``
-				ruleReqFilter += `min:1`
-			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-				typeReqFilter = ``
-				ruleReqCreate += `between:0,100`
-				ruleReqUpdate += `between:0,100`
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
-					relTable := tpl.RelTableMap[field]
-					apiResColumnAlloweFieldList += gstr.CaseCamel(relTable.RelTableField) + relTable.RelSuffixCaseCamel + ` *string ` + "`" + `json:"` + relTable.RelTableField + relTable.RelSuffix + `,omitempty" dc:"` + relTable.RelTableFieldName + `"` + "`\n"
-				}
-				ruleReqFilter += `min:1`
-				ruleReqCreate += `min:1`
-				ruleReqUpdate += `min:1`
-			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				ruleReqFilter += `in:0,1`
-				ruleReqCreate += `in:0,1`
-				ruleReqUpdate += `in:0,1`
-			} else { //默认处理（int等类型）
-				typeReqFilter = ``
-			}
-		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
-			typeReqFilter = `*float64`
-			typeReqCreate = `*float64`
-			typeReqUpdate = `*float64`
-			typeRes = `*float64`
-			ruleReqFilter = ``
-			ruleReqCreate = ``
-			ruleReqUpdate = ``
-			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-				ruleReqFilter += `min:0`
-				ruleReqCreate += `min:0`
-				ruleReqUpdate += `min:0`
-			}
-
-			//默认处理（float类型）
-			typeReqFilter = ``
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			typeReqFilter = ``
-			typeReqCreate = `*gtime.Time`
-			typeReqUpdate = `*gtime.Time`
-			typeRes = `*gtime.Time`
-			ruleReqFilter = `date-format:Y-m-d H:i:s`
-			ruleReqCreate = `date-format:Y-m-d H:i:s`
-			ruleReqUpdate = `date-format:Y-m-d H:i:s`
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
-				typeReqFilter = `*gtime.Time`
-				typeRes = `*string`
-				ruleReqFilter = `date-format:Y-m-d`
-				ruleReqCreate = `date-format:Y-m-d`
-				ruleReqUpdate = `date-format:Y-m-d`
-			}
-			if !column[`Null`].Bool() && column[`Default`].String() == `` {
-				isRequired = true
-			}
-
-			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) || garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //start_前缀 //end_前缀
-				typeReqFilter = `*gtime.Time`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
-			if !column[`Null`].Bool() {
-				isRequired = true
-			}
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
-			ruleReqCreate = `json`
-			ruleReqUpdate = `json`
-		} else if gstr.Pos(column[`Type`].String(), `text`) != -1 { //text类型
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
-		} else { //默认处理
-			typeReqFilter = `string`
-			typeReqCreate = `*string`
-			typeReqUpdate = `*string`
-			typeRes = `*string`
+	for _, v := range tpl.FieldList {
+		apiItemObj := apiItem{
+			filterRule: []string{},
+			createRule: []string{},
+			updateRule: []string{},
 		}
 
-		if typeReqFilter != `` {
-			apiReqFilterColumn += fieldCaseCamel + ` ` + typeReqFilter + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqFilter + `" dc:"` + comment + `"` + "`\n"
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
+			continue
+		case TypeNameUpdated: // 更新时间字段
+			apiItemObj.isSkip = true
+			apiItemObj.res = true
+		case TypeNameCreated: // 创建时间字段
+			apiObj.filter = append(apiObj.filter,
+				`TimeRangeStart *gtime.Time `+"`"+`json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`,
+				`TimeRangeEnd   *gtime.Time `+"`"+`json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`,
+			)
+			apiItemObj.isSkip = true
+			apiItemObj.res = true
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			if v.FieldRaw == `id` {
+				continue
+			}
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.res = true
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
+		case TypeNamePid: // pid；	类型：int等类型；
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			apiItemObj.isSkip = true
+			apiItemObj.res = true
+		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+
+			statusArr := make([]string, len(v.StatusList))
+			for index, item := range v.StatusList {
+				statusArr[index] = item[0]
+			}
+			statusStr := gstr.Join(statusArr, `,`)
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `in:`+statusStr)
+			apiItemObj.createRule = append(apiItemObj.createRule, `in:`+statusStr)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:`+statusStr)
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+			apiItemObj.isSkip = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			apiItemObj.isSkip = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+			if v.FieldType == TypeVarchar {
+				apiItemObj.createRule = append(apiItemObj.createRule, `url`)
+				apiItemObj.updateRule = append(apiItemObj.updateRule, `url`)
+			} else {
+				apiItemObj.createType = `*[]string`
+				apiItemObj.updateType = `*[]string`
+				apiItemObj.resType = `[]string`
+				apiItemObj.createRule = append(apiItemObj.createRule, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
+				apiItemObj.updateRule = append(apiItemObj.updateRule, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
+				if !v.IsNull {
+					apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				}
+			}
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+			apiItemObj.isSkip = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+			apiItemObj.createType = `*[]interface{}`
+			apiItemObj.updateType = `*[]interface{}`
+			apiItemObj.resType = `[]interface{}`
+			apiItemObj.createRule = append(apiItemObj.createRule, `distinct`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `distinct`)
+			if !v.IsNull {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+			}
+		}
+		/*--------根据字段命名类型处理 结束--------*/
+
+		/*--------根据字段数据类型处理 开始--------*/
+		// TODO
+		switch v.FieldType {
+		case TypeInt: // `int等类型`
+			if !apiItemObj.isSkip {
+				apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `*int`
+				apiItemObj.createType = `*int`
+				apiItemObj.updateType = `*int`
+				apiItemObj.resType = `*int`
+			}
+		case TypeIntU: // `int等类型（unsigned）`
+			if !apiItemObj.isSkip {
+				apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `*uint`
+				apiItemObj.createType = `*uint`
+				apiItemObj.updateType = `*uint`
+				apiItemObj.resType = `*uint`
+			}
+		case TypeFloat: // `float等类型`
+			if !apiItemObj.isSkip {
+				// apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `*float64`
+				apiItemObj.createType = `*float64`
+				apiItemObj.updateType = `*float64`
+				apiItemObj.resType = `*float64`
+			}
+		case TypeFloatU: // // `float等类型（unsigned）`
+			if !apiItemObj.isSkip {
+				// apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `*float64`
+				apiItemObj.createType = `*float64`
+				apiItemObj.updateType = `*float64`
+				apiItemObj.resType = `*float64`
+			}
+
+			apiItemObj.filterRule = append([]string{`min:0`}, apiItemObj.filterRule...)
+			apiItemObj.createRule = append([]string{`min:0`}, apiItemObj.createRule...)
+			apiItemObj.updateRule = append([]string{`min:0`}, apiItemObj.updateRule...)
+		case TypeVarchar: // `varchar类型`
+			if !apiItemObj.isSkip {
+				apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `string`
+				apiItemObj.createType = `*string`
+				apiItemObj.updateType = `*string`
+				apiItemObj.resType = `*string`
+			}
+
+			apiItemObj.filterRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.filterRule...)
+			apiItemObj.createRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.createRule...)
+			apiItemObj.updateRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.updateRule...)
+			if v.IndexRaw == `UNI` && !v.IsNull {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+			}
+		case TypeChar: // `char类型`
+			if !apiItemObj.isSkip {
+				apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `string`
+				apiItemObj.createType = `*string`
+				apiItemObj.updateType = `*string`
+				apiItemObj.resType = `*string`
+			}
+
+			apiItemObj.filterRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.filterRule...)
+			apiItemObj.createRule = append([]string{`size:` + v.FieldLimitStr}, apiItemObj.createRule...)
+			apiItemObj.updateRule = append([]string{`size:` + v.FieldLimitStr}, apiItemObj.updateRule...)
+			if v.IndexRaw == `UNI` && !v.IsNull {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+			}
+		case TypeText: // `text类型`
+			if !apiItemObj.isSkip {
+				// apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `string`
+				apiItemObj.createType = `*string`
+				apiItemObj.updateType = `*string`
+				apiItemObj.resType = `*string`
+			}
+		case TypeJson: // `json类型`
+			if !apiItemObj.isSkip {
+				// apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `string`
+				apiItemObj.createType = `*string`
+				apiItemObj.updateType = `*string`
+				apiItemObj.resType = `*string`
+			}
+
+			apiItemObj.filterRule = append([]string{`json`}, apiItemObj.filterRule...)
+			apiItemObj.createRule = append([]string{`json`}, apiItemObj.createRule...)
+			apiItemObj.updateRule = append([]string{`json`}, apiItemObj.updateRule...)
+			if !v.IsNull {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+			}
+		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
+			if !apiItemObj.isSkip {
+				// apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `*gtime.Time`
+				apiItemObj.createType = `*gtime.Time`
+				apiItemObj.updateType = `*gtime.Time`
+				apiItemObj.resType = `*gtime.Time`
+			}
+
+			apiItemObj.filterRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.filterRule...)
+			apiItemObj.createRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.createRule...)
+			apiItemObj.updateRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.updateRule...)
+			if !v.IsNull && v.Default == `` {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+			}
+		case TypeDate: // `date类型`
+			if !apiItemObj.isSkip {
+				apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `*gtime.Time`
+				apiItemObj.createType = `*gtime.Time`
+				apiItemObj.updateType = `*gtime.Time`
+				apiItemObj.resType = `*string`
+			}
+
+			apiItemObj.filterRule = append([]string{`date-format:Y-m-d`}, apiItemObj.filterRule...)
+			apiItemObj.createRule = append([]string{`date-format:Y-m-d`}, apiItemObj.createRule...)
+			apiItemObj.updateRule = append([]string{`date-format:Y-m-d`}, apiItemObj.updateRule...)
+			if !v.IsNull && v.Default == `` {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+			}
+		default:
+			if !apiItemObj.isSkip {
+				apiItemObj.filter = true
+				apiItemObj.create = true
+				apiItemObj.update = true
+				apiItemObj.res = true
+			}
+			if !apiItemObj.isSkipType {
+				apiItemObj.filterType = `string`
+				apiItemObj.createType = `*string`
+				apiItemObj.updateType = `*string`
+				apiItemObj.resType = `*string`
+			}
+		}
+		/*--------根据字段数据类型处理 结束--------*/
+
+	skipFieldTypeOfApi: //跳过字段数据类型处理标签
+		if apiItemObj.filter {
+			apiReqFilterColumn += v.FieldCaseCamel + ` ` + typeReqFilter + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqFilter + `" dc:"` + comment + `"` + "`\n"
 		}
 		if typeReqCreate != `` {
 			if isRequired {
@@ -1844,13 +1893,13 @@ func (myGenThis *myGenHandler) genApi() {
 					ruleReqCreate = `required|` + ruleReqCreate
 				}
 			}
-			apiReqCreateColumn += fieldCaseCamel + ` ` + typeReqCreate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqCreate + `" dc:"` + comment + `"` + "`\n"
+			apiReqCreateColumn += v.FieldCaseCamel + ` ` + typeReqCreate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqCreate + `" dc:"` + comment + `"` + "`\n"
 		}
 		if typeReqUpdate != `` {
-			apiReqUpdateColumn += fieldCaseCamel + ` ` + typeReqUpdate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqUpdate + `" dc:"` + comment + `"` + "`\n"
+			apiReqUpdateColumn += v.FieldCaseCamel + ` ` + typeReqUpdate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqUpdate + `" dc:"` + comment + `"` + "`\n"
 		}
 		if typeRes != `` {
-			apiResColumn += fieldCaseCamel + ` ` + typeRes + ` ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
+			apiResColumn += v.FieldCaseCamel + ` ` + typeRes + ` ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
 		}
 	}
 
