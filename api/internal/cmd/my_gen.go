@@ -852,7 +852,8 @@ func (myGenThis *myGenHandler) genDao() {
 	tplDao := gfile.GetContents(saveFile)
 
 	type dao struct {
-		insert struct {
+		importDao string
+		insert    struct {
 			point       string
 			parse       string
 			parseBefore string
@@ -878,7 +879,6 @@ func (myGenThis *myGenHandler) genDao() {
 		join struct {
 			parse string
 		}
-		importDao string
 	}
 	daoObj := dao{}
 
@@ -920,9 +920,7 @@ func (myGenThis *myGenHandler) genDao() {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNameDeleted: // 软删除字段
-			// continue
 		case TypeNameUpdated: // 更新时间字段
-			// continue
 		case TypeNameCreated: // 创建时间字段
 			filterParseStr := `
 			case ` + "`timeRangeStart`" + `:
@@ -932,10 +930,8 @@ func (myGenThis *myGenHandler) genDao() {
 			if gstr.Pos(tplDao, filterParseStr) == -1 {
 				daoObj.filter.parse += filterParseStr
 			}
-			// continue
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
-			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			if len(tpl.Handle.LabelList) > 0 {
 				fieldParseStr := `
@@ -1096,8 +1092,8 @@ func (myGenThis *myGenHandler) genDao() {
 				daoObj.order.parse += orderParseStr
 			}
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			// goto skipFieldTypeOfDao
 			continue
-		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			insertParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
@@ -1132,8 +1128,10 @@ func (myGenThis *myGenHandler) genDao() {
 			if gstr.Pos(tplDao, updateParseStr) == -1 {
 				daoObj.update.parse += updateParseStr
 			}
+			// goto skipFieldTypeOfDao
 			continue
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			// goto skipFieldTypeOfDao
 			continue
 		case TypeNameNameSuffix: // name后缀；	类型：varchar；
 			filterParseStr := `
@@ -1189,7 +1187,7 @@ func (myGenThis *myGenHandler) genDao() {
 					daoObj.join.parse += joinParseStr
 				}
 			}
-		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			orderParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
@@ -1289,7 +1287,6 @@ func (myGenThis *myGenHandler) genDao() {
 			if gstr.Pos(tplDao, orderParseStr) == -1 {
 				daoObj.order.parse += orderParseStr
 			}
-		default:
 		}
 		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
 
@@ -1644,9 +1641,6 @@ func (myGenThis *myGenHandler) genApi() {
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 			apiItemObj.isSkip = true
 			apiItemObj.res = true
-		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `between:0,100`)
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			apiItemObj.isSkip = true
 			apiItemObj.create = true
@@ -1694,7 +1688,7 @@ func (myGenThis *myGenHandler) genApi() {
 				relTable := tpl.RelTableMap[v.FieldRaw]
 				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relTable.RelTableField)+relTable.RelSuffixCaseCamel+` *string `+"`"+`json:"`+relTable.RelTableField+relTable.RelSuffix+`,omitempty" dc:"`+relTable.RelTableFieldName+`"`+"`")
 			}
-		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
 			apiItemObj.updateRule = append(apiItemObj.updateRule, `between:0,100`)
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
@@ -2133,76 +2127,90 @@ func (myGenThis *myGenHandler) genController() {
 		return
 	}
 
-	controllerAlloweFieldList := "`id`, "
-	controllerAlloweFieldInfo := "`id`, "
-	controllerAlloweFieldTree := "`id`, "
-	controllerAlloweFieldNoAuth := "`id`, "
-	// controllerAlloweFieldDiff := `` // 可以不要。数据返回时，会根据API文件中的结构体做过滤
-	daoImportOtherDao := ``
-	if len(tpl.Handle.LabelList) > 0 {
-		controllerAlloweFieldList += "`label`, "
-		controllerAlloweFieldInfo += "`label`, "
-		controllerAlloweFieldTree += "`label`, "
-		if tpl.Handle.Pid.Pid != `` {
-			controllerAlloweFieldList += "`p" + gstr.CaseCamel(tpl.Handle.LabelList[0]) + "`, "
-			// controllerAlloweFieldInfo += "`p" + gstr.CaseCamel(tpl.Handle.LabelList[0]) + "`, "
-		}
-		controllerAlloweFieldNoAuth += "`label`, "
-		//TODO 可去掉
-		// controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, `
-		for _, v := range tpl.Handle.LabelList {
-			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(v) + `, `
-		}
+	type controller struct {
+		importDao string
+		list      []string
+		info      []string
+		tree      []string
+		noAuth    []string
+		// diff      []string // 可以不要。数据返回时，会根据API文件中的结构体做过滤
 	}
-	for _, column := range tpl.FieldListRaw {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnake(field)
-		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
-		// fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+	controllerObj := controller{
+		list:   []string{"`id`"},
+		info:   []string{"`id`"},
+		tree:   []string{"`id`"},
+		noAuth: []string{"`id`"},
+	}
 
-		if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-			if field != `id` {
-				controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-			}
-		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.Handle.PasswordMap[myGenThis.getHandlePasswordMapKey(field)].IsCoexist { //salt后缀，且对应的password,passwd后缀存在时（才）有效
-				// controllerAlloweFieldDiff += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + fieldCaseCamel + `, `
-			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
-					relTable := tpl.RelTableMap[field]
-					// controllerAlloweFieldList += "`" + relTable.RelNameField + "`, "
-					daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
-					daoImportOtherDao += `
-	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
-					controllerAlloweFieldList += daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField)
-					if relTable.RelSuffix != `` {
-						controllerAlloweFieldList += "+`" + relTable.RelSuffix + "`"
-					}
-					controllerAlloweFieldList += ", "
-				}
-			}
+	if len(tpl.Handle.LabelList) > 0 {
+		controllerObj.list = append(controllerObj.list, "`label`")
+		controllerObj.info = append(controllerObj.info, "`label`")
+		controllerObj.tree = append(controllerObj.tree, "`label`")
+		if tpl.Handle.Pid.Pid != `` {
+			controllerObj.list = append(controllerObj.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
+			// controllerObj.info = append(controllerObj.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
+		}
+		controllerObj.noAuth = append(controllerObj.noAuth, "`label`")
+		// controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
+		for _, v := range tpl.Handle.LabelList {
+			controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
 		}
 	}
-	controllerAlloweFieldList = gstr.SubStr(controllerAlloweFieldList, 0, -len(`, `))
-	controllerAlloweFieldInfo = gstr.SubStr(controllerAlloweFieldInfo, 0, -len(`, `))
-	controllerAlloweFieldTree = gstr.SubStr(controllerAlloweFieldTree, 0, -len(`, `))
-	controllerAlloweFieldNoAuth = gstr.SubStr(controllerAlloweFieldNoAuth, 0, -len(`, `))
-	// controllerAlloweFieldDiff = gstr.SubStr(controllerAlloweFieldDiff, 0, -len(`, `))
+
+	for _, v := range tpl.FieldList {
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
+		case TypeNameUpdated: // 更新时间字段
+		case TypeNameCreated: // 创建时间字段
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			if v.FieldRaw != `id` {
+				controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+			}
+		case TypeNamePid: // pid；	类型：int等类型；
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			// controllerObj.diff = append(controllerObj.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			// controllerObj.diff = append(controllerObj.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
+				relTable := tpl.RelTableMap[v.FieldRaw]
+				daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
+				controllerObj.importDao += `
+dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
+				fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField)
+				if relTable.RelSuffix != `` {
+					fieldTmp += "+`" + relTable.RelSuffix + "`"
+				}
+				controllerObj.list = append(controllerObj.list, fieldTmp)
+			}
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		}
+		/*--------根据字段命名类型处理 结束--------*/
+	}
 
 	tplController := `package controller
 
 import (
 	"api/api"
 	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"
-	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseKebab + `"` + daoImportOtherDao + `
+	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseKebab + `"` + controllerObj.importDao + `
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -2229,11 +2237,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 `
 		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
-	allowField = append(allowField, ` + controllerAlloweFieldList + `)`
-		/* if controllerAlloweFieldDiff != `` {
-				tplController += `
-		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
-			} */
+	allowField = append(allowField, ` + gstr.Join(controllerObj.list, `, `) + `)`
+		/* if len(controllerObj.diff) > 0 {
+			tplController += `
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controllerObj.diff, `, `) + `})).Slice() //移除敏感字段`
+		} */
 		tplController += `
 	field := allowField
 	if len(req.Field) > 0 {
@@ -2252,7 +2260,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
-		field = []string{` + controllerAlloweFieldNoAuth + `}
+		field = []string{` + gstr.Join(controllerObj.noAuth, `, `) + `}
 	}
 	/**--------权限验证 结束--------**/
 `
@@ -2288,11 +2296,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
-	allowField = append(allowField, ` + controllerAlloweFieldInfo + `)`
-		/* if controllerAlloweFieldDiff != `` {
-				tplController += `
-		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
-			} */
+	allowField = append(allowField, ` + gstr.Join(controllerObj.info, `, `) + `)`
+		/* if len(controllerObj.diff) > 0 {
+			tplController += `
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controllerObj.diff, `, `) + `})).Slice() //移除敏感字段`
+		} */
 		tplController += `
 	field := allowField
 	if len(req.Field) > 0 {
@@ -2438,11 +2446,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	}
 
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
-	allowField = append(allowField, ` + controllerAlloweFieldTree + `)`
-		/* if controllerAlloweFieldDiff != `` {
-				tplController += `
-		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + controllerAlloweFieldDiff + `})).Slice() //移除敏感字段`
-			} */
+	allowField = append(allowField, ` + gstr.Join(controllerObj.tree, `, `) + `)`
+		/* if len(controllerObj.diff) > 0 {
+			tplController += `
+		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controllerObj.diff, `, `) + `})).Slice() //移除敏感字段`
+		} */
 		tplController += `
 	field := allowField
 	if len(req.Field) > 0 {
@@ -2461,7 +2469,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
 	if !isAuth {
-		field = []string{` + controllerAlloweFieldNoAuth + `}
+		field = []string{` + gstr.Join(controllerObj.noAuth, `, `) + `}
 	}
 	/**--------权限验证 结束--------**/
 `
@@ -2595,66 +2603,178 @@ func (myGenThis *myGenHandler) genViewList() {
 		return
 	}
 
-	tableRowHeight := 50
-	viewListColumn := ``
-	for _, column := range tpl.FieldListRaw {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnake(field)
-		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
-		fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+	type viewList struct {
+		rowHeight uint
+		columnStr string
+	}
+	viewListObj := viewList{
+		rowHeight: 50,
+	}
+	type column struct {
+		dataKey      string
+		title        string
+		key          string
+		align        string
+		width        string
+		sortable     string
+		hidden       string
+		cellRenderer string
+	}
+	for _, v := range tpl.FieldList {
+		columnObj := column{
+			dataKey: `'` + v.FieldRaw + `'`,
+			title:   `t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')`,
+			key:     `'` + v.FieldRaw + `'`,
+			align:   `'center'`,
+			width:   `150`,
+		}
 
-		dataKeyOfColumn := `dataKey: '` + field + `',`
-		titleOfColumn := `title: t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `'),`
-		keyOfColumn := `key: '` + field + `',`
-		alignOfColumn := `align: 'center',`
-		widthOfColumn := `width: 150,`
-		sortableOfColumn := ``
-		hiddenOfColumn := ``
-		cellRendererOfColumn := ``
-
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
 			continue
-		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
-			titleOfColumn = `title: t('common.name.updatedAt'),`
-			sortableOfColumn = `sortable: true,`
-		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
-			titleOfColumn = `title: t('common.name.createdAt'),`
-			sortableOfColumn = `sortable: true,`
-		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
+		case TypeNameUpdated: // 更新时间字段
+			columnObj.title = `t('common.name.updatedAt')`
+		case TypeNameCreated: // 创建时间字段
+			columnObj.title = `t('common.name.createdAt')`
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
 			continue
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.Handle.Pid.IsCoexist { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
-			hiddenOfColumn = `hidden: true,`
-		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
-			widthOfColumn = `width: 100,`
-			cellRendererOfColumn = `cellRenderer: (props: any): any => {
+		case TypeNamePid: // pid；	类型：int等类型；
+			if len(tpl.Handle.LabelList) > 0 {
+				columnObj.dataKey = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
+			}
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+			columnObj.sortable = `true`
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			columnObj.hidden = `true`
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			continue
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			continue
+		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
+				columnObj.dataKey = `'` + tpl.RelTableMap[v.FieldRaw].RelTableField + tpl.RelTableMap[v.FieldRaw].RelSuffix + `'`
+			}
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			columnObj.sortable = `true`
+			if option.IsUpdate {
+				columnObj.cellRenderer = `(props: any): any => {
+                if (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `) {
+                    let currentRef: any
+                    let currentVal = props.rowData.` + v.FieldRaw + `
+                    return [
+                        <el-input-number
+                            ref={(el: any) => {
+                                currentRef = el
+                                el?.focus()
+                            }}
+                            model-value={currentVal}
+                            placeholder={t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + v.FieldRaw + `')}
+                            precision={0}
+                            min={0}
+                            max={100}
+                            step={1}
+                            step-strictly={true}
+                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + v.FieldRaw + `是0或100时，只一个按钮可点击
+                            controls-position="right"
+                            onChange={(val: number) => (currentVal = val)}
+                            onBlur={() => {
+                                props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = false
+                                if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + v.FieldRaw + `) {
+                                    handleUpdate({
+                                        idArr: [props.rowData.id],
+                                        ` + v.FieldRaw + `: currentVal,
+                                    })
+                                        .then((res) => {
+                                            props.rowData.` + v.FieldRaw + ` = currentVal
+                                        })
+                                        .catch((error) => {})
+                                }
+                            }}
+                            onKeydown={(event: any) => {
+                                switch (event.keyCode) {
+                                    // case 27:    //Esc键：Escape
+                                    // case 32:    //空格键：" "
+                                    case 13: //Enter键：Enter
+                                        // props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = false    //也会触发onBlur事件
+                                        currentRef?.blur()
+                                        break
+                                }
+                            }}
+                        />,
+                    ]
+                }
+                return [
+                    <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = true)}>
+                        {props.rowData.` + v.FieldRaw + `}
+                    </div>,
+                ]
+            }`
+			}
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			columnObj.cellRenderer = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + field + `') as { value: any, label: string }[]
-                let index = obj.findIndex((item) => { return item.value == props.rowData.` + field + ` })
+                let obj = tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
+                let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
-            },`
-		} else if (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
-			widthOfColumn = `width: 100,`
-			cellRendererOfColumn = `cellRenderer: (props: any): any => {
-                if (!props.rowData.` + field + `) {
+            }`
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			columnObj.cellRenderer = `(props: any): any => {
+                return [
+                    <el-switch
+                        model-value={props.rowData.` + v.FieldRaw + `}
+                        // disabled={true}
+                        active-value={1}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
+			if option.IsUpdate {
+				columnObj.cellRenderer += `
+                        onChange={(val: number) => {
+                            handleUpdate({
+                                idArr: [props.rowData.id],
+                                ` + v.FieldRaw + `: val,
+                            })
+                                .then((res) => {
+                                    props.rowData.` + v.FieldRaw + ` = val
+                                })
+                                .catch((error) => {})
+                        }}`
+			}
+			columnObj.cellRenderer += `
+                    />,
+                ]
+            }`
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+			columnObj.width = `100`
+			columnObj.cellRenderer = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
                     return
                 }`
-			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				cellRendererOfColumn += `
-                const imageList = [props.rowData.` + field + `]`
+			if v.FieldType == TypeVarchar {
+				columnObj.cellRenderer += `
+                const imageList = [props.rowData.` + v.FieldRaw + `]`
 			} else {
-				cellRendererOfColumn += `
+				columnObj.cellRenderer += `
                 let imageList: string[]
-                if (Array.isArray(props.rowData.` + field + `)) {
-                    imageList = props.rowData.` + field + `
+                if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
+                    imageList = props.rowData.` + v.FieldRaw + `
                 } else {
-                    imageList = JSON.parse(props.rowData.` + field + `)
+                    imageList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 			}
-			cellRendererOfColumn += `
+			columnObj.cellRenderer += `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {imageList.map((item) => {
@@ -2663,28 +2783,29 @@ func (myGenThis *myGenHandler) genViewList() {
                         })}
                     </el-scrollbar>
                 ]
-            },`
-		} else if (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
-			if tableRowHeight < 100 {
-				tableRowHeight = 100
+            }`
+			goto skipFieldTypeOfViewList
+		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			if viewListObj.rowHeight < 100 {
+				viewListObj.rowHeight = 100
 			}
-			cellRendererOfColumn = `cellRenderer: (props: any): any => {
-                if (!props.rowData.` + field + `) {
+			columnObj.cellRenderer = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
                     return
                 }`
-			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				cellRendererOfColumn += `
-                const videoList = [props.rowData.` + field + `]`
+			if v.FieldType == TypeVarchar {
+				columnObj.cellRenderer += `
+                const videoList = [props.rowData.` + v.FieldRaw + `]`
 			} else {
-				cellRendererOfColumn += `
+				columnObj.cellRenderer += `
                 let videoList: string[]
-                if (Array.isArray(props.rowData.` + field + `)) {
-                    videoList = props.rowData.` + field + `
+                if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
+                    videoList = props.rowData.` + v.FieldRaw + `
                 } else {
-                    videoList = JSON.parse(props.rowData.` + field + `)
+                    videoList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 			}
-			cellRendererOfColumn += `
+			columnObj.cellRenderer += `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {videoList.map((item) => {
@@ -2693,19 +2814,20 @@ func (myGenThis *myGenHandler) genViewList() {
                         })}
                     </el-scrollbar>,
                 ]
-            },`
-		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-			widthOfColumn = `width: 100,`
-			cellRendererOfColumn = `cellRenderer: (props: any): any => {
-                if (!props.rowData.` + field + `) {
+            }`
+			goto skipFieldTypeOfViewList
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+			columnObj.width = `100`
+			columnObj.cellRenderer = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
                     return
                 }`
-			cellRendererOfColumn += `
+			columnObj.cellRenderer += `
                 let arrList: any[]
-                if (Array.isArray(props.rowData.` + field + `)) {
-                    arrList = props.rowData.` + field + `
+                if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
+                    arrList = props.rowData.` + v.FieldRaw + `
                 } else {
-                    arrList = JSON.parse(props.rowData.` + field + `)
+                    arrList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }
                 let tagType = tm('config.const.tagType') as string[]
                 return [
@@ -2719,147 +2841,56 @@ func (myGenThis *myGenHandler) genViewList() {
                         })}
                     </el-scrollbar>,
                 ]
-            },`
-		} else if garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
-			hiddenOfColumn = `hidden: true,`
-		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			if garray.NewStrArrayFrom([]string{`url`, `link`}).Contains(fieldSuffix) { //url,link后缀
-				widthOfColumn = `width: 200,`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-				continue
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.Handle.PasswordMap[myGenThis.getHandlePasswordMapKey(field)].IsCoexist { //salt后缀，且对应的password,passwd后缀存在时（才）有效
-				continue
-			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			if field == `pid` { //pid
-				dataKeyOfColumn = `dataKey: 'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `',`
-			} else if field == `level` && tpl.Handle.Pid.IsCoexist { //level，且pid,level,idPath|id_path同时存在时（才）有效
-				widthOfColumn = `width: 100,`
-				sortableOfColumn = `sortable: true,`
-			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-				widthOfColumn = `width: 100,`
-				sortableOfColumn = `sortable: true,`
-				if option.IsUpdate {
-					cellRendererOfColumn = `cellRenderer: (props: any): any => {
-                if (props.rowData.edit` + gstr.CaseCamel(field) + `) {
-                    let currentRef: any
-                    let currentVal = props.rowData.` + field + `
-                    return [
-                        <el-input-number
-                            ref={(el: any) => {
-                                currentRef = el
-                                el?.focus()
-                            }}
-                            model-value={currentVal}
-                            placeholder={t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + field + `')}
-                            precision={0}
-                            min={0}
-                            max={100}
-                            step={1}
-                            step-strictly={true}
-                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + field + `是0或100时，只一个按钮可点击
-                            controls-position="right"
-                            onChange={(val: number) => (currentVal = val)}
-                            onBlur={() => {
-                                props.rowData.edit` + gstr.CaseCamel(field) + ` = false
-                                if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + field + `) {
-                                    handleUpdate({
-                                        idArr: [props.rowData.id],
-                                        ` + field + `: currentVal,
-                                    })
-                                        .then((res) => {
-                                            props.rowData.` + field + ` = currentVal
-                                        })
-                                        .catch((error) => {})
-                                }
-                            }}
-                            onKeydown={(event: any) => {
-                                switch (event.keyCode) {
-                                    // case 27:    //Esc键：Escape
-                                    // case 32:    //空格键：" "
-                                    case 13: //Enter键：Enter
-                                        // props.rowData.edit` + gstr.CaseCamel(field) + ` = false    //也会触发onBlur事件
-                                        currentRef?.blur()
-                                        break
-                                }
-                            }}
-                        />,
-                    ]
-                }
-                return [
-                    <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(field) + ` = true)}>
-                        {props.rowData.` + field + `}
-                    </div>,
-                ]
-            },`
-				}
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
-					dataKeyOfColumn = `dataKey: '` + tpl.RelTableMap[field].RelTableField + tpl.RelTableMap[field].RelSuffix + `',`
-				}
-			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				widthOfColumn = `width: 100,`
-				cellRendererOfColumn = `cellRenderer: (props: any): any => {
-                return [
-                    <el-switch
-                        model-value={props.rowData.` + field + `}
-                        // disabled={true}
-                        active-value={1}
-                        inactive-value={0}
-                        inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
-				if option.IsUpdate {
-					cellRendererOfColumn += `
-                        onChange={(val: number) => {
-                            handleUpdate({
-                                idArr: [props.rowData.id],
-                                ` + field + `: val,
-                            })
-                                .then((res) => {
-                                    props.rowData.` + field + ` = val
-                                })
-                                .catch((error) => {})
-                        }}`
-				}
-				cellRendererOfColumn += `
-                    />,
-                ]
-            },`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			sortableOfColumn = `sortable: true,`
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
-				widthOfColumn = `width: 100,`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
-			widthOfColumn = `width: 200,`
-			hiddenOfColumn = `hidden: true,`
+            }`
+			goto skipFieldTypeOfViewList
 		}
+		/*--------根据字段命名类型处理 结束--------*/
 
-		viewListColumn += `
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
+		switch v.FieldType {
+		case TypeInt, TypeIntU: // `int等类型` // `int等类型（unsigned）`
+			if gstr.Pos(v.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(v.FieldTypeRaw, `smallint`) != -1 {
+				columnObj.width = `100`
+			}
+		case TypeFloat: // `float等类型`
+		case TypeFloatU: // `float等类型（unsigned）`
+		case TypeVarchar, TypeChar: // `varchar类型` // `char类型`
+			if gconv.Uint(v.FieldLimitStr) >= 120 {
+				columnObj.width = `200`
+				columnObj.hidden = `true`
+			}
+		case TypeText, TypeJson: // `text类型` // `json类型`
+			columnObj.width = `200`
+			columnObj.hidden = `true`
+		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
+			columnObj.sortable = `true`
+		case TypeDate: // `date类型`
+			columnObj.width = `100`
+			columnObj.sortable = `true`
+		}
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
+
+	skipFieldTypeOfViewList: //跳过字段数据类型处理标签
+		viewListObj.columnStr += `
         {
-            ` + dataKeyOfColumn + `
-            ` + titleOfColumn + `
-            ` + keyOfColumn + `
-            ` + alignOfColumn + `
-            ` + widthOfColumn
-		if sortableOfColumn != `` {
-			viewListColumn += `
-            ` + sortableOfColumn
+            dataKey: ` + columnObj.dataKey + `,
+            title: ` + columnObj.title + `,
+            key: ` + columnObj.key + `,
+            align: ` + columnObj.align + `,
+            width: ` + columnObj.width + `,`
+		if columnObj.sortable != `` {
+			viewListObj.columnStr += `
+            sortable: ` + columnObj.sortable + `,`
 		}
-		if hiddenOfColumn != `` {
-			viewListColumn += `
-            ` + hiddenOfColumn
+		if columnObj.hidden != `` {
+			viewListObj.columnStr += `
+            hidden: ` + columnObj.hidden + `,`
 		}
-		if cellRendererOfColumn != `` {
-			viewListColumn += `
-            ` + cellRendererOfColumn
+		if columnObj.cellRenderer != `` {
+			viewListObj.columnStr += `
+            cellRenderer: ` + columnObj.cellRenderer + `,`
 		}
-		viewListColumn += `
+		viewListObj.columnStr += `
         },`
 	}
 
@@ -2902,7 +2933,7 @@ const table = reactive({
             },`
 	}
 	tplView += `
-        },` + viewListColumn
+        },` + viewListObj.columnStr
 	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
         {
@@ -3117,7 +3148,7 @@ defineExpose({
     <el-main>
         <el-auto-resizer>
             <template #default="{ height, width }">
-                <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(tableRowHeight) + `">
+                <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(viewListObj.rowHeight) + `">
                     <template v-if="table.loading" #overlay>
                         <el-icon class="is-loading" color="var(--el-color-primary)" :size="25">
                             <autoicon-ep-loading />
