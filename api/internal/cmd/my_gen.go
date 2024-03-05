@@ -644,7 +644,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 
 		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `timestamp`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 { //timestamp或datetime或date类型
 			fieldTmp.FieldType = TypeTimestamp
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `datetime`) == -1 {
+			if gstr.Pos(fieldTmp.FieldTypeRaw, `datetime`) != -1 {
 				fieldTmp.FieldType = TypeDatetime
 			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 {
 				fieldTmp.FieldType = TypeDate
@@ -1557,38 +1557,41 @@ func (myGenThis *myGenHandler) genApi() {
 	}
 
 	type api struct {
-		filter     []string
-		create     []string
-		update     []string
-		res        []string
-		resOfAllow []string
+		filter   []string
+		create   []string
+		update   []string
+		res      []string
+		resOfAdd []string
 	}
 	apiObj := api{
-		filter:     []string{},
-		create:     []string{},
-		update:     []string{},
-		res:        []string{},
-		resOfAllow: []string{},
+		filter:   []string{},
+		create:   []string{},
+		update:   []string{},
+		res:      []string{},
+		resOfAdd: []string{},
 	}
 	if len(tpl.Handle.LabelList) > 0 {
-		apiObj.filter = append(apiObj.filter, `Label    string    `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`)
-		apiObj.res = append(apiObj.res, `Label    *string    `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`)
+		apiObj.filter = append(apiObj.filter, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
+		apiObj.res = append(apiObj.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	}
 
 	type apiItem struct {
-		isSkip     bool //字段命名类型处理后，不再需要根据字段数据类型对filter,create,update,res四个属性再做处理时，设置为true
+		isSkip bool //字段命名类型处理后，不再需要根据字段数据类型对filter,create,update,res四个属性再做处理时，设置为true
+		filter bool
+		create bool
+		update bool
+		res    bool
+
 		isSkipType bool //字段命名类型处理后，不再需要根据字段数据类型对filterType,createType,updateType,resType四个属性再做处理时，设置为true
-		filter     bool
 		filterType string
-		filterRule []string
-		create     bool
 		createType string
-		createRule []string
-		update     bool
 		updateType string
-		updateRule []string
-		res        bool
 		resType    string
+
+		filterRule []string
+		createRule []string
+		updateRule []string
+		isRequired bool //用于方便将required规则放首位
 	}
 
 	for _, v := range tpl.FieldList {
@@ -1607,8 +1610,8 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.res = true
 		case TypeNameCreated: // 创建时间字段
 			apiObj.filter = append(apiObj.filter,
-				`TimeRangeStart *gtime.Time `+"`"+`json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`,
-				`TimeRangeEnd   *gtime.Time `+"`"+`json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`,
+				`TimeRangeStart *gtime.Time `+"`"+`json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
+				`TimeRangeEnd   *gtime.Time `+"`"+`json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
 			)
 			apiItemObj.isSkip = true
 			apiItemObj.res = true
@@ -1620,22 +1623,80 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.isSkip = true
 			apiItemObj.filter = true
 			apiItemObj.res = true
+
 			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
 		case TypeNamePid: // pid；	类型：int等类型；
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+
+			if len(tpl.Handle.LabelList) > 0 {
+				apiObj.resOfAdd = append(apiObj.resOfAdd, `P`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` *string `+"`"+`json:"p`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`,omitempty" dc:"父级"`+"`")
+			}
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.res = true
+
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 			apiItemObj.isSkip = true
 			apiItemObj.res = true
 		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `between:0,100`)
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			apiItemObj.isSkip = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+
+			apiItemObj.isRequired = true
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			continue
 		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+			// 去掉该验证规则。确实有时会用到特殊符合
+			// apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			// apiItemObj.createRule = append(apiItemObj.createRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			// apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
+				apiItemObj.isRequired = true
+			}
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `phone`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `phone`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `phone`)
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `url`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `url`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `url`)
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `ip`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `ip`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `ip`)
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `min:1`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `min:1`)
+
+			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
+				relTable := tpl.RelTableMap[v.FieldRaw]
+				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relTable.RelTableField)+relTable.RelSuffixCaseCamel+` *string `+"`"+`json:"`+relTable.RelTableField+relTable.RelSuffix+`,omitempty" dc:"`+relTable.RelTableFieldName+`"`+"`")
+			}
 		case TypeNameSortSuffix: // sort,weight等后缀；	类型：int等类型；
+			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `between:0,100`)
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			apiItemObj.isSkip = true
 			apiItemObj.filter = true
@@ -1652,8 +1713,36 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append(apiItemObj.createRule, `in:`+statusStr)
 			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:`+statusStr)
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
+
+			/* TODO 可以和状态一样处理。可能也得改前端开关组件属性
+			statusArr := make([]string, len(v.StatusList))
+			for index, item := range v.StatusList {
+				statusArr[index] = item[0]
+			}
+			statusStr := gstr.Join(statusArr, `,`)
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `in:`+statusStr)
+			apiItemObj.createRule = append(apiItemObj.createRule, `in:`+statusStr)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:`+statusStr) */
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `in:0,1`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `in:0,1`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:0,1`)
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+			apiItemObj.isSkip = true
+			apiItemObj.filter = true
+			apiItemObj.create = true
+			apiItemObj.update = true
+			apiItemObj.res = true
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			apiItemObj.isSkip = true
 			apiItemObj.create = true
@@ -1668,13 +1757,15 @@ func (myGenThis *myGenHandler) genApi() {
 				apiItemObj.createRule = append(apiItemObj.createRule, `url`)
 				apiItemObj.updateRule = append(apiItemObj.updateRule, `url`)
 			} else {
+				apiItemObj.isSkipType = true
 				apiItemObj.createType = `*[]string`
 				apiItemObj.updateType = `*[]string`
 				apiItemObj.resType = `[]string`
+
 				apiItemObj.createRule = append(apiItemObj.createRule, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
 				apiItemObj.updateRule = append(apiItemObj.updateRule, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
 				if !v.IsNull {
-					apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+					apiItemObj.isRequired = true
 				}
 			}
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
@@ -1682,13 +1773,16 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.create = true
 			apiItemObj.update = true
 			apiItemObj.res = true
+
+			apiItemObj.isSkipType = true
 			apiItemObj.createType = `*[]interface{}`
 			apiItemObj.updateType = `*[]interface{}`
 			apiItemObj.resType = `[]interface{}`
+
 			apiItemObj.createRule = append(apiItemObj.createRule, `distinct`)
 			apiItemObj.updateRule = append(apiItemObj.updateRule, `distinct`)
 			if !v.IsNull {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				apiItemObj.isRequired = true
 			}
 		}
 		/*--------根据字段命名类型处理 结束--------*/
@@ -1698,7 +1792,7 @@ func (myGenThis *myGenHandler) genApi() {
 		switch v.FieldType {
 		case TypeInt: // `int等类型`
 			if !apiItemObj.isSkip {
-				apiItemObj.filter = true
+				// apiItemObj.filter = true
 				apiItemObj.create = true
 				apiItemObj.update = true
 				apiItemObj.res = true
@@ -1711,7 +1805,7 @@ func (myGenThis *myGenHandler) genApi() {
 			}
 		case TypeIntU: // `int等类型（unsigned）`
 			if !apiItemObj.isSkip {
-				apiItemObj.filter = true
+				// apiItemObj.filter = true
 				apiItemObj.create = true
 				apiItemObj.update = true
 				apiItemObj.res = true
@@ -1770,7 +1864,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.updateRule...)
 			if v.IndexRaw == `UNI` && !v.IsNull {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				apiItemObj.isRequired = true
 			}
 		case TypeChar: // `char类型`
 			if !apiItemObj.isSkip {
@@ -1790,7 +1884,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append([]string{`size:` + v.FieldLimitStr}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`size:` + v.FieldLimitStr}, apiItemObj.updateRule...)
 			if v.IndexRaw == `UNI` && !v.IsNull {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				apiItemObj.isRequired = true
 			}
 		case TypeText: // `text类型`
 			if !apiItemObj.isSkip {
@@ -1823,7 +1917,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append([]string{`json`}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`json`}, apiItemObj.updateRule...)
 			if !v.IsNull {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				apiItemObj.isRequired = true
 			}
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			if !apiItemObj.isSkip {
@@ -1843,7 +1937,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.updateRule...)
 			if !v.IsNull && v.Default == `` {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				apiItemObj.isRequired = true
 			}
 		case TypeDate: // `date类型`
 			if !apiItemObj.isSkip {
@@ -1863,7 +1957,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append([]string{`date-format:Y-m-d`}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`date-format:Y-m-d`}, apiItemObj.updateRule...)
 			if !v.IsNull && v.Default == `` {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
+				apiItemObj.isRequired = true
 			}
 		default:
 			if !apiItemObj.isSkip {
@@ -1881,32 +1975,23 @@ func (myGenThis *myGenHandler) genApi() {
 		}
 		/*--------根据字段数据类型处理 结束--------*/
 
-	skipFieldTypeOfApi: //跳过字段数据类型处理标签
+		// skipFieldTypeOfApi: //跳过字段数据类型处理标签
 		if apiItemObj.filter {
-			apiReqFilterColumn += v.FieldCaseCamel + ` ` + typeReqFilter + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqFilter + `" dc:"` + comment + `"` + "`\n"
+			apiObj.filter = append(apiObj.filter, v.FieldCaseCamel+` `+apiItemObj.filterType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.filterRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
-		if typeReqCreate != `` {
-			if isRequired {
-				if ruleReqCreate == `` {
-					ruleReqCreate = `required`
-				} else {
-					ruleReqCreate = `required|` + ruleReqCreate
-				}
+		if apiItemObj.create {
+			if apiItemObj.isRequired {
+				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
 			}
-			apiReqCreateColumn += v.FieldCaseCamel + ` ` + typeReqCreate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqCreate + `" dc:"` + comment + `"` + "`\n"
+			apiObj.create = append(apiObj.create, v.FieldCaseCamel+` `+apiItemObj.createType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.createRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
-		if typeReqUpdate != `` {
-			apiReqUpdateColumn += v.FieldCaseCamel + ` ` + typeReqUpdate + ` ` + "`" + `json:"` + field + `,omitempty" v:"` + ruleReqUpdate + `" dc:"` + comment + `"` + "`\n"
+		if apiItemObj.update {
+			apiObj.update = append(apiObj.update, v.FieldCaseCamel+` `+apiItemObj.updateType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.updateRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
-		if typeRes != `` {
-			apiResColumn += v.FieldCaseCamel + ` ` + typeRes + ` ` + "`" + `json:"` + field + `,omitempty" dc:"` + comment + `"` + "`\n"
+		if apiItemObj.res {
+			apiObj.res = append(apiObj.res, v.FieldCaseCamel+` `+apiItemObj.resType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" dc:"`+v.FieldDesc+`"`+"`")
 		}
 	}
-
-	apiReqFilterColumn = gstr.SubStr(apiReqFilterColumn, 0, -len("\n"))
-	apiReqCreateColumn = gstr.SubStr(apiReqCreateColumn, 0, -len("\n"))
-	apiReqUpdateColumn = gstr.SubStr(apiReqUpdateColumn, 0, -len("\n"))
-	apiResColumn = gstr.SubStr(apiResColumn, 0, -len("\n"))
 
 	tplApi := `package api
 
@@ -1933,7 +2018,7 @@ type ` + tpl.TableCaseCamel + `ListFilter struct {
 	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
 	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + `
-	` + apiReqFilterColumn + `
+	` + gstr.Join(apiObj.filter, "\n") + `
 }
 
 type ` + tpl.TableCaseCamel + `ListRes struct {`
@@ -1947,8 +2032,8 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 
 type ` + tpl.TableCaseCamel + `ListItem struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	` + apiResColumn + `
-	` + apiResColumnAlloweFieldList + `
+	` + gstr.Join(apiObj.res, "\n") + `
+	` + gstr.Join(apiObj.resOfAdd, "\n") + `
 }
 
 /*--------列表 结束--------*/
@@ -1969,7 +2054,7 @@ type ` + tpl.TableCaseCamel + `InfoRes struct {
 
 type ` + tpl.TableCaseCamel + `Info struct {
 	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	` + apiResColumn + `
+	` + gstr.Join(apiObj.res, "\n") + `
 }
 
 /*--------详情 结束--------*/
@@ -1980,7 +2065,7 @@ type ` + tpl.TableCaseCamel + `Info struct {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + `
-	` + apiReqCreateColumn + `
+	` + gstr.Join(apiObj.create, "\n") + `
 }
 
 /*--------新增 结束--------*/
@@ -1993,7 +2078,7 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
 	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
-	` + apiReqUpdateColumn + `
+	` + gstr.Join(apiObj.update, "\n") + `
 }
 
 /*--------修改 结束--------*/
@@ -2027,7 +2112,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 
 type ` + tpl.TableCaseCamel + `TreeItem struct {
 	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	` + apiResColumn + `
+	` + gstr.Join(apiObj.res, "\n") + `
 	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 }
 
