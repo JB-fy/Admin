@@ -3189,27 +3189,20 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		return
 	}
 
-	viewQueryDataInit := ``
-	viewQueryField := ``
-	for _, column := range tpl.FieldListRaw {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnake(field)
-		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
-		fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
-		/* resultFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, column[`Type`].String())
-		if len(resultFloat) < 3 {
-			resultFloat = []string{``, `10`, `2`}
-		} */
-
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
-		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
-		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
-			viewQueryDataInit += `
+	type viewQuery struct {
+		dataInit string
+		form     string
+	}
+	viewQueryObj := viewQuery{}
+	for _, v := range tpl.FieldList {
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
+			continue
+		case TypeNameUpdated: // 更新时间字段
+			continue
+		case TypeNameCreated: // 创建时间字段
+			viewQueryObj.dataInit += `
     timeRange: (() => {
         return undefined
         /* const date = new Date()
@@ -3230,127 +3223,150 @@ func (myGenThis *myGenHandler) genViewQuery() {
         }
         return ''
     }),`
-			viewQueryField += `
+			viewQueryObj.form += `
         <el-form-item prop="timeRange">
             <el-date-picker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
         </el-form-item>`
-		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.Handle.Pid.IsCoexist { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
-		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
-			viewQueryField += `
-        <el-form-item prop="` + field + `" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :clearable="true" />
+			continue
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			continue
+		case TypeNamePid: // pid；	类型：int等类型；
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
         </el-form-item>`
-		} else if (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr` || garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀 //video,video_list,videoList,video_arr,videoArr等后缀
-		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-		} else if garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
-		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :clearable="true" />
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="1" :controls="false" />
         </el-form-item>`
-		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.Handle.PasswordMap[myGenThis.getHandlePasswordMapKey(field)].IsCoexist { //salt后缀，且对应的password,passwd后缀存在时（才）有效
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			continue
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			continue
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			continue
+		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseCamelLower(gstr.SubStr(v.FieldRaw, 0, -2))
+			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` {
+				relTable := tpl.RelTableMap[v.FieldRaw]
+				apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
+			}
+			if tpl.RelTableMap[v.FieldRaw].RelTableIsExistPidField {
+				viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
+        </el-form-item>`
 			} else {
-				viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :clearable="true" />
+				viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
         </el-form-item>`
 			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			if field == `pid` { //pid
-				viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			continue
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `" style="width: 120px">
+            <el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />
         </el-form-item>`
-			} else if field == `level` && tpl.Handle.Pid.IsCoexist { //level，且pid,level,idPath|id_path同时存在时（才）有效
-				viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :min="1" :controls="false" />
+			continue
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `" style="width: 120px">
+            <el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />
         </el-form-item>`
-			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
-				if tpl.RelTableMap[field].TableRaw != `` {
-					relTable := tpl.RelTableMap[field]
-					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
-				}
-				if tpl.RelTableMap[field].RelTableIsExistPidField {
-					viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <my-cascader v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
-        </el-form-item>`
-				} else {
-					viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <my-select v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
-        </el-form-item>`
-				}
-			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				viewQueryField += `
-        <el-form-item prop="` + field + `" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.` + field + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :clearable="true" />
-        </el-form-item>`
-			} else { //默认处理（int等类型）
-				/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-				               viewQueryField += `
-				   <el-form-item prop="` + field + `">
-				       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :min="0" :controls="false" />
-				   </el-form-item>`
-				           } else {
-				               viewQueryField += `
-				   <el-form-item prop="` + field + `">
-				       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :controls="false" />
-				   </el-form-item>`
-				           } */
-			}
-		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
-			/* if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-			           viewQueryField += `
-			   <el-form-item prop="` + field + `">
-			       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" />
-			   </el-form-item>`
-			       } else {
-			           viewQueryField += `
-			   <el-form-item prop="` + field + `">
-			       <el-input-number v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" />
-			   </el-form-item>`
-			       } */
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			typeDatePicker := ``
-			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
-			defaultTimeDatePicker := ``
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
-				typeDatePicker = `date`
-				formatDatePicker = `YYYY-MM-DD`
-			}
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+			continue
+		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+			continue
+		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			continue
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+			continue
+		}
+		/*--------根据字段命名类型处理 结束--------*/
 
-			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
-				typeDatePicker = `datetime`
-				if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
-					defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-				}
-			} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀
-				typeDatePicker = `datetime`
-				if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
-					defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
-				}
-			}
-
-			if typeDatePicker != `` {
-				viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <el-date-picker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
+		switch v.FieldType {
+		case TypeInt: // `int等类型`
+			/* viewQueryObj.form += `
+			<el-form-item prop="` + v.FieldRaw + `">
+				<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :controls="false" />
+			</el-form-item>` */
+		case TypeIntU: // `int等类型（unsigned）`
+			/* viewQueryObj.form += `
+			<el-form-item prop="` + v.FieldRaw + `">
+				<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="0" :controls="false" />
+			</el-form-item>` */
+		case TypeFloat: // `float等类型`
+			/* viewQueryObj.form += `
+			<el-form-item prop="` + v.FieldRaw + `">
+				<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />
+			</el-form-item>` */
+		case TypeFloatU: // `float等类型（unsigned）`
+			/* viewQueryObj.form += `
+			<el-form-item prop="` + v.FieldRaw + `">
+				<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />
+			</el-form-item>` */
+		case TypeVarchar: // `varchar类型`
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />
         </el-form-item>`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1 { //json类型 //text类型
-		} else { //默认处理
-			viewQueryField += `
-        <el-form-item prop="` + field + `">
-            <el-input v-model="queryCommon.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :clearable="true" />
+		case TypeChar: // `char类型`
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />
+        </el-form-item>`
+		case TypeText: // `text类型`
+		case TypeJson: // `json类型`
+		case TypeTimestamp: // `timestamp类型`
+		case TypeDatetime: // `datetime类型`
+		case TypeDate: // `date类型`
+			/* typeDatePicker := ``
+						formatDatePicker := `YYYY-MM-DD HH:mm:ss`
+						defaultTimeDatePicker := ``
+						if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
+							typeDatePicker = `date`
+							formatDatePicker = `YYYY-MM-DD`
+						}
+
+						if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
+							typeDatePicker = `datetime`
+							if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
+								defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
+							}
+						} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀
+							typeDatePicker = `datetime`
+							if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
+								defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+							}
+						}
+
+						if typeDatePicker != `` {
+							viewQueryField += `
+			        <el-form-item prop="` + field + `">
+			            <el-date-picker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
+			        </el-form-item>`
+						} */
+		default:
+			viewQueryObj.form += `
+        <el-form-item prop="` + v.FieldRaw + `">
+            <el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />
         </el-form-item>`
 		}
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
+
+		// skipFieldTypeOfViewQuery: //跳过字段数据类型处理标签
 	}
 
 	tplView := `<script setup lang="tsx">
