@@ -141,7 +141,7 @@ type myGenTpl struct {
 	TableCaseSnake            string       //表名（蛇形，已去除前缀）
 	TableCaseCamel            string       //表名（大驼峰，已去除前缀）
 	TableCaseKebab            string       //表名（横线，已去除前缀）
-	FieldListRaw              gdb.Result   //字段列表（原始）。SHOW FULL COLUMNS FROM xxTable的查询数据
+	FieldListRaw              gdb.Result   //TODO字段列表（原始）。SHOW FULL COLUMNS FROM xxTable的查询数据
 	FieldList                 []myGenField //字段列表
 	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseKebab        string       //模块目录（横线，/会被保留）
@@ -920,9 +920,9 @@ func (myGenThis *myGenHandler) genDao() {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNameDeleted: // 软删除字段
-			// goto skipFieldTypeOfDao
+			// continue
 		case TypeNameUpdated: // 更新时间字段
-			// goto skipFieldTypeOfDao
+			// continue
 		case TypeNameCreated: // 创建时间字段
 			filterParseStr := `
 			case ` + "`timeRangeStart`" + `:
@@ -932,10 +932,10 @@ func (myGenThis *myGenHandler) genDao() {
 			if gstr.Pos(tplDao, filterParseStr) == -1 {
 				daoObj.filter.parse += filterParseStr
 			}
-			// goto skipFieldTypeOfDao
+			// continue
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
-			goto skipFieldTypeOfDao
+			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			if len(tpl.Handle.LabelList) > 0 {
 				fieldParseStr := `
@@ -1096,7 +1096,7 @@ func (myGenThis *myGenHandler) genDao() {
 				daoObj.order.parse += orderParseStr
 			}
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			goto skipFieldTypeOfDao
+			continue
 		case TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			insertParseStr := `
@@ -1132,9 +1132,9 @@ func (myGenThis *myGenHandler) genDao() {
 			if gstr.Pos(tplDao, updateParseStr) == -1 {
 				daoObj.update.parse += updateParseStr
 			}
-			goto skipFieldTypeOfDao
+			continue
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			goto skipFieldTypeOfDao
+			continue
 		case TypeNameNameSuffix: // name后缀；	类型：varchar；
 			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
@@ -1230,7 +1230,7 @@ func (myGenThis *myGenHandler) genDao() {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		/*--------根据字段数据类型处理（注意：这里的代码改动，会影响上面未调用goto skipFieldTypeOfDao的case） 开始--------*/
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型`
 		case TypeIntU: // `int等类型（unsigned）`
@@ -1291,9 +1291,9 @@ func (myGenThis *myGenHandler) genDao() {
 			}
 		default:
 		}
-		/*--------根据字段数据类型处理（注意：这里的代码改动，会影响上面未调用goto skipFieldTypeOfDao的case） 结束--------*/
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
 
-	skipFieldTypeOfDao: //跳过字段数据类型处理标签
+		// skipFieldTypeOfDao: //跳过字段数据类型处理标签
 	}
 
 	if daoObj.insert.parseBefore != `` {
@@ -1787,8 +1787,7 @@ func (myGenThis *myGenHandler) genApi() {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		/*--------根据字段数据类型处理 开始--------*/
-		// TODO
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型`
 			if !apiItemObj.isSkip {
@@ -1973,7 +1972,7 @@ func (myGenThis *myGenHandler) genApi() {
 				apiItemObj.resType = `*string`
 			}
 		}
-		/*--------根据字段数据类型处理 结束--------*/
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
 
 		// skipFieldTypeOfApi: //跳过字段数据类型处理标签
 		if apiItemObj.filter {
@@ -2150,14 +2149,10 @@ func (myGenThis *myGenHandler) genController() {
 		}
 		controllerAlloweFieldNoAuth += "`label`, "
 		//TODO 可去掉
+		// controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, `
 		for _, v := range tpl.Handle.LabelList {
 			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(v) + `, `
 		}
-		/* if tpl.LabelHandle.IsCoexist {
-			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().Phone, ` + `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().Account, `
-		} else {
-			controllerAlloweFieldNoAuth += `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, `
-		} */
 	}
 	for _, column := range tpl.FieldListRaw {
 		field := column[`Field`].String()
