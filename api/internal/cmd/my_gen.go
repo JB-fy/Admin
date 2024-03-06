@@ -43,7 +43,16 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 表字段名统一使用小驼峰或蛇形命名（建议：小驼峰）
 	主键必须在第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
 
-	尽量根据表名设置xxxxId主键和xxxxName名称两个字段（作用1：常用于前端部分组件，如MySelect.vue组件；作用2：当其它表存在与该表主键同名的关联字段时，会自动生成联表查询代码）
+	尽量根据表名设置以下两个字段（作用1：常用于前端部分组件，如my-select或my-cascader等组件；作用2：用于关联表查询）
+		xxId主键字段。示例：good表命名goodId, good_category表命名categoryId
+		xxName或xxTitle字段。示例：good表命名goodName, article表命名articleTitle
+			如果不存在xxName或xxTitle字段，按以下优先级
+				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
+				表名去掉前缀 + Title > 主键去掉ID + Title > Title >
+				表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
+				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
+				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
+				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
 
 	字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
@@ -57,7 +66,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
 			密码		命名：password,passwd后缀；		类型：char(32)；
 			加密盐 		命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			名称		命名：name后缀；				类型：varchar；
+			名称		命名：name,title后缀；			类型：varchar；
 			标识		命名：code后缀；				类型：varchar；
 			手机		命名：phone,mobile后缀；		类型：varchar；
 			链接		命名：url,link后缀；			类型：varchar；
@@ -141,7 +150,7 @@ type myGenTpl struct {
 	TableCaseSnake            string       //表名（蛇形，已去除前缀）
 	TableCaseCamel            string       //表名（大驼峰，已去除前缀）
 	TableCaseKebab            string       //表名（横线，已去除前缀）
-	FieldListRaw              gdb.Result   //TODO字段列表（原始）。SHOW FULL COLUMNS FROM xxTable的查询数据
+	FieldListRaw              gdb.Result   //字段列表（原始）。SHOW FULL COLUMNS FROM xxTable的查询数据
 	FieldList                 []myGenField //字段列表
 	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseKebab        string       //模块目录（横线，/会被保留）
@@ -149,7 +158,14 @@ type myGenTpl struct {
 	LogicStructName           string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	FieldPrimary              string       //主键字段
 	Handle                    struct {     //该属性记录需做特殊处理字段
-		LabelList   []string                  //label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID + Name > Name > Title > Phone > Email > Account > Nickname
+		// label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
+		// 表名去掉前缀 + Name > 主键去掉ID + Name > Name >
+		// 表名去掉前缀 + Title > 主键去掉ID + Title > Title >
+		// 表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
+		// 表名去掉前缀 + Email > 主键去掉ID + Email > Email >
+		// 表名去掉前缀 + Account > 主键去掉ID + Account > Account >
+		// 表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
 		Pid         struct {                  //pid,level,idPath|id_path同时存在时，需特殊处理
 			IsCoexist bool   //是否同时存在pid,level,idPath|id_path
@@ -158,10 +174,8 @@ type myGenTpl struct {
 			IdPath    string //层级路径字段
 			Sort      string //排序字段
 		}
+		RelIdMap map[string]myGenTpl //id后缀字段关联表信息
 	}
-	// 以下属性用于对字段做特殊处理
-	HandleIdRelTableMap map[string]myGenTpl //id后缀字段关联表信息
-
 	// TODO 以下字段用于对某些表字段做特殊处理
 	RelTableMap map[string]relTableItem //一对一关联表。id后缀字段，能确定关联表时，会自动生成联表查询代码
 }
@@ -194,7 +208,7 @@ const (
 	TypeNameSort           myGenFieldTypeName = `命名：sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；`
 	TypeNamePasswordSuffix myGenFieldTypeName = `命名：password,passwd后缀；		类型：char(32)；`
 	TypeNameSaltSuffix     myGenFieldTypeName = `命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；`
-	TypeNameNameSuffix     myGenFieldTypeName = `命名：name后缀；	类型：varchar；`
+	TypeNameNameSuffix     myGenFieldTypeName = `命名：name,title后缀；	类型：varchar；`
 	TypeNameCodeSuffix     myGenFieldTypeName = `命名：code后缀；	类型：varchar；`
 	TypeNamePhoneSuffix    myGenFieldTypeName = `命名：phone,mobile后缀；	类型：varchar；`
 	TypeNameUrlSuffix      myGenFieldTypeName = `命名：url,link后缀；	类型：varchar；`
@@ -572,10 +586,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	tpl.ModuleDirCaseKebabReplace = gstr.Replace(moduleDirCaseKebab, `/`, `.`)
 	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
 
-	fieldCount := len(tpl.FieldListRaw)
-	fieldList := make([]myGenField, fieldCount)
-	fieldArr := make([]string, fieldCount)
-	fieldCaseCamelArr := make([]string, fieldCount)
+	fieldList := make([]myGenField, len(tpl.FieldListRaw))
 	for k, v := range tpl.FieldListRaw {
 		fieldTmp := myGenField{
 			FieldRaw:     v[`Field`].String(),
@@ -690,7 +701,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) { //remark,desc,msg,message,intro,content后缀
 			fieldTmp.FieldTypeName = TypeNameRemarkSuffix
 		} else if fieldTmp.FieldType == TypeVarchar { //varchar类型
-			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
+			if garray.NewStrArrayFrom([]string{`name`, `title`}).Contains(fieldSuffix) { //name,title后缀
 				fieldTmp.FieldTypeName = TypeNameNameSuffix
 			} else if garray.NewStrArrayFrom([]string{`code`}).Contains(fieldSuffix) { //code后缀
 				fieldTmp.FieldTypeName = TypeNameCodeSuffix
@@ -766,30 +777,43 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 		/*--------确定字段命名类型（部分命名类型需做二次确定） 结束--------*/
 
 		fieldList[k] = fieldTmp
-		fieldArr[k] = fieldTmp.FieldRaw
-		fieldCaseCamelArr[k] = fieldTmp.FieldCaseCamel
 	}
 
-	// TODO 可优化Phone，Account等为后缀也算
-	// label列表,sql查询时可别名为label的字段（常用于前端my-select或my-cascader等组件，也用户关联表查询时获取）。字段存入按以下优先级：表名去掉前缀 + Name > 主键去掉ID  + Name > Name > Title > Phone > Email > Account > Nickname
-	labelList := []string{tpl.TableCaseCamel + `Name`}
-	tmpLabel := gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2) + `Name`
-	if tmpLabel != labelList[0] && tmpLabel != `Name` {
-		labelList = append(labelList, tpl.TableCaseCamel+`Name`)
+	/*--------需做特殊处理字段解析 开始--------*/
+	// label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
+	// 表名去掉前缀 + Name > 主键去掉ID + Name > Name >
+	// 表名去掉前缀 + Title > 主键去掉ID + Title > Title >
+	// 表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
+	// 表名去掉前缀 + Email > 主键去掉ID + Email > Email >
+	// 表名去掉前缀 + Account > 主键去掉ID + Account > Account >
+	// 表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+	labelList := []string{}
+	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
+		labelTmp := tpl.TableCaseCamel + v
+		labelList = append(labelList, labelTmp)
+		labelTmp1 := gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2) + v
+		if labelTmp1 != labelTmp && labelTmp1 != v {
+			labelList = append(labelList, labelTmp1)
+		}
+		labelList = append(labelList, v)
 	}
-	labelList = append(labelList, `Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`)
 	tpl.Handle.LabelList = []string{}
-	fieldCaseCamelArrG := garray.NewStrArrayFrom(fieldCaseCamelArr)
 	for _, v := range labelList {
-		if index := fieldCaseCamelArrG.Search(v); index != -1 {
-			tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldArr[index])
+		for _, item := range fieldList {
+			if v == item.FieldCaseCamel {
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item.FieldRaw)
+				break
+			}
 		}
 	}
 
 	for k, v := range tpl.RelTableMap {
-		if garray.NewStrArrayFrom(fieldArr).Contains(v.RelTableField + v.RelSuffix) {
-			v.IsRedundRelNameField = true
-			tpl.RelTableMap[k] = v
+		for _, item := range fieldList {
+			if item.FieldRaw == v.RelTableField+v.RelSuffix {
+				v.IsRedundRelNameField = true
+				tpl.RelTableMap[k] = v
+				break
+			}
 		}
 	}
 
@@ -803,6 +827,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
 		tpl.Handle.Pid.IsCoexist = true
 	}
+	/*--------需做特殊处理字段解析 结束--------*/
 
 	/*--------部分命名类型需要二次确认 开始--------*/
 	for k, v := range fieldList {
@@ -1092,7 +1117,6 @@ func (myGenThis *myGenHandler) genDao() {
 				daoObj.order.parse += orderParseStr
 			}
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			// goto skipFieldTypeOfDao
 			continue
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			insertParseStr := `
@@ -1128,12 +1152,10 @@ func (myGenThis *myGenHandler) genDao() {
 			if gstr.Pos(tplDao, updateParseStr) == -1 {
 				daoObj.update.parse += updateParseStr
 			}
-			// goto skipFieldTypeOfDao
 			continue
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			// goto skipFieldTypeOfDao
 			continue
-		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+k, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
@@ -1201,7 +1223,7 @@ func (myGenThis *myGenHandler) genDao() {
 			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.WhereLTE(daoModel.DbTable+` + "`.`" + `+k, v)`
-			if !v.IsNull && v.Default == `` {
+			if !v.IsNull && gconv.String(v.Default) == `` {
 				filterParseStr = `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Where(m.Builder().WhereLTE(daoModel.DbTable+` + "`.`" + `+k, v).WhereOrNull(daoModel.DbTable + ` + "`.`" + ` + k))`
@@ -1213,7 +1235,7 @@ func (myGenThis *myGenHandler) genDao() {
 			filterParseStr := `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.WhereGTE(daoModel.DbTable+` + "`.`" + `+k, v)`
-			if !v.IsNull && v.Default == `` {
+			if !v.IsNull && gconv.String(v.Default) == `` {
 				filterParseStr = `
 			case daoThis.Columns().` + v.FieldCaseCamel + `:
 				m = m.Where(m.Builder().WhereGTE(daoModel.DbTable+` + "`.`" + `+k, v).WhereOrNull(daoModel.DbTable + ` + "`.`" + ` + k))`
@@ -1289,8 +1311,6 @@ func (myGenThis *myGenHandler) genDao() {
 			}
 		}
 		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
-
-		// skipFieldTypeOfDao: //跳过字段数据类型处理标签
 	}
 
 	if daoObj.insert.parseBefore != `` {
@@ -1649,8 +1669,8 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.isRequired = true
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			continue
-		case TypeNameNameSuffix: // name后缀；	类型：varchar；
-			// 去掉该验证规则。确实有时会用到特殊符合
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+			// 去掉该验证规则。有时会用到特殊符号
 			// apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
 			// apiItemObj.createRule = append(apiItemObj.createRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
 			// apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
@@ -1929,7 +1949,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.filterRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.filterRule...)
 			apiItemObj.createRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.updateRule...)
-			if !v.IsNull && v.Default == `` {
+			if !v.IsNull && gconv.String(v.Default) == `` {
 				apiItemObj.isRequired = true
 			}
 		case TypeDate: // `date类型`
@@ -1949,7 +1969,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.filterRule = append([]string{`date-format:Y-m-d`}, apiItemObj.filterRule...)
 			apiItemObj.createRule = append([]string{`date-format:Y-m-d`}, apiItemObj.createRule...)
 			apiItemObj.updateRule = append([]string{`date-format:Y-m-d`}, apiItemObj.updateRule...)
-			if !v.IsNull && v.Default == `` {
+			if !v.IsNull && gconv.String(v.Default) == `` {
 				apiItemObj.isRequired = true
 			}
 		default:
@@ -1968,7 +1988,6 @@ func (myGenThis *myGenHandler) genApi() {
 		}
 		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
 
-		// skipFieldTypeOfApi: //跳过字段数据类型处理标签
 		if apiItemObj.filter {
 			apiObj.filter = append(apiObj.filter, v.FieldCaseCamel+` `+apiItemObj.filterType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.filterRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
@@ -2010,8 +2029,8 @@ type ` + tpl.TableCaseCamel + `ListFilter struct {
 	Id             *uint       ` + "`" + `json:"id,omitempty" v:"min:1" dc:"ID"` + "`" + `
 	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
-	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + `
-	` + gstr.Join(apiObj.filter, "\n") + `
+	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.filter...), `
+	`) + `
 }
 
 type ` + tpl.TableCaseCamel + `ListRes struct {`
@@ -2024,9 +2043,9 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 }
 
 type ` + tpl.TableCaseCamel + `ListItem struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	` + gstr.Join(apiObj.res, "\n") + `
-	` + gstr.Join(apiObj.resOfAdd, "\n") + `
+	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
+	`) + gstr.Join(append([]string{``}, apiObj.resOfAdd...), `
+	`) + `
 }
 
 /*--------列表 结束--------*/
@@ -2046,8 +2065,8 @@ type ` + tpl.TableCaseCamel + `InfoRes struct {
 }
 
 type ` + tpl.TableCaseCamel + `Info struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	` + gstr.Join(apiObj.res, "\n") + `
+	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
+	`) + `
 }
 
 /*--------详情 结束--------*/
@@ -2057,8 +2076,8 @@ type ` + tpl.TableCaseCamel + `Info struct {
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + `
-	` + gstr.Join(apiObj.create, "\n") + `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, apiObj.create...), `
+	`) + `
 }
 
 /*--------新增 结束--------*/
@@ -2070,8 +2089,8 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
-	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
-	` + gstr.Join(apiObj.update, "\n") + `
+	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.update...), `
+	`) + `
 }
 
 /*--------修改 结束--------*/
@@ -2104,8 +2123,8 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 }
 
 type ` + tpl.TableCaseCamel + `TreeItem struct {
-	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + `
-	` + gstr.Join(apiObj.res, "\n") + `
+	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
+	`) + `
 	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 }
 
@@ -2151,10 +2170,13 @@ func (myGenThis *myGenHandler) genController() {
 			// controllerObj.info = append(controllerObj.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
 		}
 		controllerObj.noAuth = append(controllerObj.noAuth, "`label`")
-		// controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
-		for _, v := range tpl.Handle.LabelList {
-			controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
+		if tpl.FieldPrimary != `` && tpl.FieldPrimary != `id` {
+			controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.FieldPrimary))
 		}
+		controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
+		/* for _, v := range tpl.Handle.LabelList {
+			controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
+		} */
 	}
 
 	for _, v := range tpl.FieldList {
@@ -2165,9 +2187,6 @@ func (myGenThis *myGenHandler) genController() {
 		case TypeNameCreated: // 创建时间字段
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
-			if v.FieldRaw != `id` {
-				controllerObj.noAuth = append(controllerObj.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
-			}
 		case TypeNamePid: // pid；	类型：int等类型；
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
@@ -2175,7 +2194,7 @@ func (myGenThis *myGenHandler) genController() {
 			// controllerObj.diff = append(controllerObj.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			// controllerObj.diff = append(controllerObj.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
-		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
@@ -2237,7 +2256,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 `
 		tplController += `
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
-	allowField = append(allowField, ` + gstr.Join(controllerObj.list, `, `) + `)`
+	allowField = append(allowField` + gstr.Join(append([]string{``}, controllerObj.list...), `, `) + `)`
 		/* if len(controllerObj.diff) > 0 {
 			tplController += `
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controllerObj.diff, `, `) + `})).Slice() //移除敏感字段`
@@ -2296,7 +2315,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
-	allowField = append(allowField, ` + gstr.Join(controllerObj.info, `, `) + `)`
+	allowField = append(allowField` + gstr.Join(append([]string{``}, controllerObj.info...), `, `) + `)`
 		/* if len(controllerObj.diff) > 0 {
 			tplController += `
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controllerObj.diff, `, `) + `})).Slice() //移除敏感字段`
@@ -2446,7 +2465,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	}
 
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
-	allowField = append(allowField, ` + gstr.Join(controllerObj.tree, `, `) + `)`
+	allowField = append(allowField` + gstr.Join(append([]string{``}, controllerObj.tree...), `, `) + `)`
 		/* if len(controllerObj.diff) > 0 {
 			tplController += `
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controllerObj.diff, `, `) + `})).Slice() //移除敏感字段`
@@ -2605,12 +2624,13 @@ func (myGenThis *myGenHandler) genViewList() {
 
 	type viewList struct {
 		rowHeight uint
-		columnStr string
+		columns   []string
 	}
 	viewListObj := viewList{
 		rowHeight: 50,
+		columns:   []string{},
 	}
-	type column struct {
+	type columnAttr struct {
 		dataKey      string
 		title        string
 		key          string
@@ -2621,7 +2641,7 @@ func (myGenThis *myGenHandler) genViewList() {
 		cellRenderer string
 	}
 	for _, v := range tpl.FieldList {
-		columnObj := column{
+		columnAttrObj := columnAttr{
 			dataKey: `'` + v.FieldRaw + `'`,
 			title:   `t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')`,
 			key:     `'` + v.FieldRaw + `'`,
@@ -2634,37 +2654,37 @@ func (myGenThis *myGenHandler) genViewList() {
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段
-			columnObj.title = `t('common.name.updatedAt')`
+			columnAttrObj.title = `t('common.name.updatedAt')`
 		case TypeNameCreated: // 创建时间字段
-			columnObj.title = `t('common.name.createdAt')`
+			columnAttrObj.title = `t('common.name.createdAt')`
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
 			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			if len(tpl.Handle.LabelList) > 0 {
-				columnObj.dataKey = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
+				columnAttrObj.dataKey = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
 			}
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			columnObj.sortable = `true`
+			columnAttrObj.sortable = `true`
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			columnObj.hidden = `true`
+			columnAttrObj.hidden = `true`
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			continue
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			continue
-		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-				columnObj.dataKey = `'` + tpl.RelTableMap[v.FieldRaw].RelTableField + tpl.RelTableMap[v.FieldRaw].RelSuffix + `'`
+				columnAttrObj.dataKey = `'` + tpl.RelTableMap[v.FieldRaw].RelTableField + tpl.RelTableMap[v.FieldRaw].RelSuffix + `'`
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			columnObj.sortable = `true`
+			columnAttrObj.sortable = `true`
 			if option.IsUpdate {
-				columnObj.cellRenderer = `(props: any): any => {
+				columnAttrObj.cellRenderer = `(props: any): any => {
                 if (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `) {
                     let currentRef: any
                     let currentVal = props.rowData.` + v.FieldRaw + `
@@ -2718,14 +2738,14 @@ func (myGenThis *myGenHandler) genViewList() {
             }`
 			}
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			columnObj.cellRenderer = `(props: any): any => {
+			columnAttrObj.cellRenderer = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
                 let obj = tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			columnObj.cellRenderer = `(props: any): any => {
+			columnAttrObj.cellRenderer = `(props: any): any => {
                 return [
                     <el-switch
                         model-value={props.rowData.` + v.FieldRaw + `}
@@ -2737,7 +2757,7 @@ func (myGenThis *myGenHandler) genViewList() {
                         inactive-text={t('common.no')}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
 			if option.IsUpdate {
-				columnObj.cellRenderer += `
+				columnAttrObj.cellRenderer += `
                         onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
@@ -2749,7 +2769,7 @@ func (myGenThis *myGenHandler) genViewList() {
                                 .catch((error) => {})
                         }}`
 			}
-			columnObj.cellRenderer += `
+			columnAttrObj.cellRenderer += `
                     />,
                 ]
             }`
@@ -2757,16 +2777,16 @@ func (myGenThis *myGenHandler) genViewList() {
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-			columnObj.width = `100`
-			columnObj.cellRenderer = `(props: any): any => {
+			columnAttrObj.width = `100`
+			columnAttrObj.cellRenderer = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
                 }`
 			if v.FieldType == TypeVarchar {
-				columnObj.cellRenderer += `
+				columnAttrObj.cellRenderer += `
                 const imageList = [props.rowData.` + v.FieldRaw + `]`
 			} else {
-				columnObj.cellRenderer += `
+				columnAttrObj.cellRenderer += `
                 let imageList: string[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
                     imageList = props.rowData.` + v.FieldRaw + `
@@ -2774,7 +2794,7 @@ func (myGenThis *myGenHandler) genViewList() {
                     imageList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 			}
-			columnObj.cellRenderer += `
+			columnAttrObj.cellRenderer += `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {imageList.map((item) => {
@@ -2789,15 +2809,15 @@ func (myGenThis *myGenHandler) genViewList() {
 			if viewListObj.rowHeight < 100 {
 				viewListObj.rowHeight = 100
 			}
-			columnObj.cellRenderer = `(props: any): any => {
+			columnAttrObj.cellRenderer = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
                 }`
 			if v.FieldType == TypeVarchar {
-				columnObj.cellRenderer += `
+				columnAttrObj.cellRenderer += `
                 const videoList = [props.rowData.` + v.FieldRaw + `]`
 			} else {
-				columnObj.cellRenderer += `
+				columnAttrObj.cellRenderer += `
                 let videoList: string[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
                     videoList = props.rowData.` + v.FieldRaw + `
@@ -2805,7 +2825,7 @@ func (myGenThis *myGenHandler) genViewList() {
                     videoList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 			}
-			columnObj.cellRenderer += `
+			columnAttrObj.cellRenderer += `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {videoList.map((item) => {
@@ -2817,12 +2837,12 @@ func (myGenThis *myGenHandler) genViewList() {
             }`
 			goto skipFieldTypeOfViewList
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-			columnObj.width = `100`
-			columnObj.cellRenderer = `(props: any): any => {
+			columnAttrObj.width = `100`
+			columnAttrObj.cellRenderer = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
                 }`
-			columnObj.cellRenderer += `
+			columnAttrObj.cellRenderer += `
                 let arrList: any[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
                     arrList = props.rowData.` + v.FieldRaw + `
@@ -2850,48 +2870,46 @@ func (myGenThis *myGenHandler) genViewList() {
 		switch v.FieldType {
 		case TypeInt, TypeIntU: // `int等类型` // `int等类型（unsigned）`
 			if gstr.Pos(v.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(v.FieldTypeRaw, `smallint`) != -1 {
-				columnObj.width = `100`
+				columnAttrObj.width = `100`
 			}
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型` // `char类型`
 			if gconv.Uint(v.FieldLimitStr) >= 120 {
-				columnObj.width = `200`
-				columnObj.hidden = `true`
+				columnAttrObj.width = `200`
+				columnAttrObj.hidden = `true`
 			}
 		case TypeText, TypeJson: // `text类型` // `json类型`
-			columnObj.width = `200`
-			columnObj.hidden = `true`
+			columnAttrObj.width = `200`
+			columnAttrObj.hidden = `true`
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
-			columnObj.sortable = `true`
+			columnAttrObj.sortable = `true`
 		case TypeDate: // `date类型`
-			columnObj.width = `100`
-			columnObj.sortable = `true`
+			columnAttrObj.width = `100`
+			columnAttrObj.sortable = `true`
 		}
 		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
 
 	skipFieldTypeOfViewList: //跳过字段数据类型处理标签
-		viewListObj.columnStr += `
-        {
-            dataKey: ` + columnObj.dataKey + `,
-            title: ` + columnObj.title + `,
-            key: ` + columnObj.key + `,
-            align: ` + columnObj.align + `,
-            width: ` + columnObj.width + `,`
-		if columnObj.sortable != `` {
-			viewListObj.columnStr += `
-            sortable: ` + columnObj.sortable + `,`
+		columnAttrStr := []string{
+			`dataKey: ` + columnAttrObj.dataKey + `,`,
+			`title: ` + columnAttrObj.title + `,`,
+			`key: ` + columnAttrObj.key + `,`,
+			`align: ` + columnAttrObj.align + `,`,
+			`width: ` + columnAttrObj.width + `,`,
 		}
-		if columnObj.hidden != `` {
-			viewListObj.columnStr += `
-            hidden: ` + columnObj.hidden + `,`
+		if columnAttrObj.sortable != `` {
+			columnAttrStr = append(columnAttrStr, `sortable: `+columnAttrObj.sortable+`,`)
 		}
-		if columnObj.cellRenderer != `` {
-			viewListObj.columnStr += `
-            cellRenderer: ` + columnObj.cellRenderer + `,`
+		if columnAttrObj.hidden != `` {
+			columnAttrStr = append(columnAttrStr, `hidden: `+columnAttrObj.hidden+`,`)
 		}
-		viewListObj.columnStr += `
-        },`
+		if columnAttrObj.cellRenderer != `` {
+			columnAttrStr = append(columnAttrStr, `cellRenderer: `+columnAttrObj.cellRenderer+`,`)
+		}
+		viewListObj.columns = append(viewListObj.columns, `{`+gstr.Join(append([]string{``}, columnAttrStr...), `
+            `)+`
+        },`)
 	}
 
 	tplView := `<script setup lang="tsx">
@@ -2933,7 +2951,8 @@ const table = reactive({
             },`
 	}
 	tplView += `
-        },` + viewListObj.columnStr
+        },` + gstr.Join(append([]string{``}, viewListObj.columns...), `
+        `)
 	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
         {
@@ -3190,10 +3209,13 @@ func (myGenThis *myGenHandler) genViewQuery() {
 	}
 
 	type viewQuery struct {
-		dataInit string
-		form     string
+		dataInit []string
+		form     []string
 	}
-	viewQueryObj := viewQuery{}
+	viewQueryObj := viewQuery{
+		dataInit: []string{},
+		form:     []string{},
+	}
 	for _, v := range tpl.FieldList {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
@@ -3202,52 +3224,50 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		case TypeNameUpdated: // 更新时间字段
 			continue
 		case TypeNameCreated: // 创建时间字段
-			viewQueryObj.dataInit += `
-    timeRange: (() => {
+			viewQueryObj.dataInit = append(viewQueryObj.dataInit,
+				`timeRange: (() => {
         return undefined
         /* const date = new Date()
         return [
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
         ] */
-    })(),
-    timeRangeStart: computed(() => {
+    })(),`,
+				`timeRangeStart: computed(() => {
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
-    }),
-    timeRangeEnd: computed(() => {
+    }),`,
+				`timeRangeEnd: computed(() => {
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
-    }),`
-			viewQueryObj.form += `
-        <el-form-item prop="timeRange">
+    }),`,
+			)
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="timeRange">
             <el-date-picker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />
-        </el-form-item>`
+        </el-form-item>`)
 			continue
 		case TypeNamePri: // 主键
 		case TypeNamePriAutoInc: // 主键（自增）
 			continue
 		case TypeNamePid: // pid；	类型：int等类型；
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <my-cascader v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+tpl.ModuleDirCaseKebab+`/`+tpl.TableCaseKebab+`/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />
+        </el-form-item>`)
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="1" :controls="false" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-input-number v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :min="1" :controls="false" />
+        </el-form-item>`)
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 			continue
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			continue
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			continue
-		case TypeNameNameSuffix: // name后缀；	类型：varchar；
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
@@ -3259,31 +3279,35 @@ func (myGenThis *myGenHandler) genViewQuery() {
 				apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
 			}
 			if tpl.RelTableMap[v.FieldRaw].RelTableIsExistPidField {
-				viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
-        </el-form-item>`
+				viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <my-cascader v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+apiUrl+`/tree' }" :props="{ emitPath: false }" />
+        </el-form-item>`)
 			} else {
-				viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
-        </el-form-item>`
+				viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <my-select v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+apiUrl+`/list' }" />
+        </el-form-item>`)
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			continue
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`" style="width: 120px">
+            <el-select-v2 v-model="queryCommon.data.`+v.FieldRaw+`" :options="tm('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.status.`+v.FieldRaw+`')" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :clearable="true" />
+        </el-form-item>`)
 			continue
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`" style="width: 120px">
+            <el-select-v2 v-model="queryCommon.data.`+v.FieldRaw+`" :options="tm('common.status.whether')" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :clearable="true" />
+        </el-form-item>`)
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :default-time="new Date(2000, 0, 1, 0, 0, 0)" />
+        </el-form-item>`)
+			continue
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />
+        </el-form-item>`)
+			continue
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			continue
 		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
@@ -3318,55 +3342,29 @@ func (myGenThis *myGenHandler) genViewQuery() {
 				<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />
 			</el-form-item>` */
 		case TypeVarchar: // `varchar类型`
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-input v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" maxlength="`+v.FieldLimitStr+`" :clearable="true" />
+        </el-form-item>`)
 		case TypeChar: // `char类型`
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-input v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" minlength="`+v.FieldLimitStr+`" maxlength="`+v.FieldLimitStr+`" :clearable="true" />
+        </el-form-item>`)
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
-		case TypeTimestamp: // `timestamp类型`
-		case TypeDatetime: // `datetime类型`
+		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="datetime" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+        </el-form-item>`)
 		case TypeDate: // `date类型`
-			/* typeDatePicker := ``
-						formatDatePicker := `YYYY-MM-DD HH:mm:ss`
-						defaultTimeDatePicker := ``
-						if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
-							typeDatePicker = `date`
-							formatDatePicker = `YYYY-MM-DD`
-						}
-
-						if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
-							typeDatePicker = `datetime`
-							if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
-								defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-							}
-						} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀
-							typeDatePicker = `datetime`
-							if formatDatePicker == `YYYY-MM-DD HH:mm:ss` {
-								defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
-							}
-						}
-
-						if typeDatePicker != `` {
-							viewQueryField += `
-			        <el-form-item prop="` + field + `">
-			            <el-date-picker v-model="queryCommon.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
-			        </el-form-item>`
-						} */
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+        </el-form-item>`)
 		default:
-			viewQueryObj.form += `
-        <el-form-item prop="` + v.FieldRaw + `">
-            <el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />
-        </el-form-item>`
+			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
+            <el-input v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :clearable="true" />
+        </el-form-item>`)
 		}
 		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
-
-		// skipFieldTypeOfViewQuery: //跳过字段数据类型处理标签
 	}
 
 	tplView := `<script setup lang="tsx">
@@ -3376,7 +3374,8 @@ const { t, tm } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
-    ...queryCommon.data,` + viewQueryDataInit + `
+    ...queryCommon.data,` + gstr.Join(append([]string{``}, viewQueryObj.dataInit...), `
+    `) + `
 }
 const listCommon = inject('listCommon') as { ref: any }
 const queryForm = reactive({
@@ -3399,7 +3398,8 @@ const queryForm = reactive({
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
-        </el-form-item>` + viewQueryField + `
+        </el-form-item>` + gstr.Join(append([]string{``}, viewQueryObj.form...), `
+        `) + `
         <el-form-item>
             <el-button type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <autoicon-ep-search />{{ t('common.query') }} </el-button>
             <el-button type="info" @click="queryForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
@@ -3424,437 +3424,366 @@ func (myGenThis *myGenHandler) genViewSave() {
 		return
 	}
 
-	viewSaveImport := ``
-	viewSaveParamHandle := ``
-	viewSaveDataInitBefore := ``
-	viewSaveDataInitAfter := ``
-	viewSaveRule := ``
-	viewSaveField := ``
-	viewFieldHandle := ``
-	for _, column := range tpl.FieldListRaw {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnake(field)
-		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
-		fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", ` `,
-			"\r", ` `,
-			`"`, `\"`,
-		}))
-		resultStr, _ := gregex.MatchString(`.*\((\d*)\)`, column[`Type`].String())
-		resultFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, column[`Type`].String())
-		if len(resultFloat) < 3 {
-			resultFloat = []string{``, `10`, `2`}
+	type viewSave struct {
+		importModule   []string
+		paramHandle    []string
+		dataInitBefore []string
+		dataInitAfter  []string
+		rule           []string
+		form           []string
+		formHandle     []string
+	}
+	viewSaveObj := viewSave{
+		importModule:   []string{},
+		paramHandle:    []string{},
+		dataInitBefore: []string{},
+		dataInitAfter:  []string{},
+		rule:           []string{},
+		form:           []string{},
+		formHandle:     []string{},
+	}
+
+	type viewSaveItem struct {
+		rule       []string
+		isRequired bool
+	}
+	for _, v := range tpl.FieldList {
+		viewSaveItemObj := viewSaveItem{
+			rule: []string{},
 		}
 
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
-		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
-		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
-		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-		} else if fieldCaseCamel == `IdPath` && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) && tpl.Handle.Pid.IsCoexist { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
-		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
-			isStr := true
-			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
-				isStr = false
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
+			continue
+		case TypeNameUpdated: // 更新时间字段
+			continue
+		case TypeNameCreated: // 创建时间字段
+			continue
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			continue
+		case TypeNamePid: // pid；	类型：int等类型；
+			viewSaveObj.paramHandle = append(viewSaveObj.paramHandle, `param.`+v.FieldRaw+` === undefined ? param.`+v.FieldRaw+` = 0 : null`)
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
+        ],`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <my-cascader v-model="saveForm.data.`+v.FieldRaw+`" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+tpl.ModuleDirCaseKebab+`/`+tpl.TableCaseKebab+`/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
+                </el-form-item>`)
+			continue
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+			continue
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			continue
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			if !garray.NewStrArrayFrom(viewSaveObj.importModule).Contains(`import md5 from 'js-md5'`) {
+				viewSaveObj.importModule = append(viewSaveObj.importModule, `import md5 from 'js-md5'`)
 			}
-			statusList := myGenThis.genStatusList(comment, isStr)
-			defaultVal := column[`Default`].String()
+			viewSaveObj.paramHandle = append(viewSaveObj.paramHandle, `param.`+v.FieldRaw+` ? param.`+v.FieldRaw+` = md5(param.`+v.FieldRaw+`) : delete param.`+v.FieldRaw)
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
+        ],`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                    <label v-if="saveForm.data.idArr?.length">
+                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </el-form-item>`)
+			continue
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			continue
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+			if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
+				viewSaveItemObj.isRequired = true
+			}
+			// 去掉该验证规则。有时会用到特殊符号
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `// { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`)
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'url', trigger: 'change', message: t('validation.url') },`)
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseCamelLower(gstr.SubStr(v.FieldRaw, 0, -2))
+			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` {
+				relTable := tpl.RelTableMap[v.FieldRaw]
+				apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
+			}
+			viewSaveObj.paramHandle = append(viewSaveObj.paramHandle, `param.`+v.FieldRaw+` === undefined ? param.`+v.FieldRaw+` = 0 : null`)
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'integer', /* required: true, */ min: 1, trigger: 'change', message: t('validation.select') },
+        ],`)
+			if tpl.RelTableMap[v.FieldRaw].RelTableIsExistPidField {
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <my-cascader v-model="saveForm.data.`+v.FieldRaw+`" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+apiUrl+`/tree' }" :props="{ emitPath: false }" />
+                </el-form-item>`)
+			} else {
+				viewSaveObj.dataInitAfter = append(viewSaveObj.dataInitAfter, v.FieldRaw+`: saveCommon.data.`+v.FieldRaw+` ? saveCommon.data.`+v.FieldRaw+` : undefined,`)
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <my-select v-model="saveForm.data.`+v.FieldRaw+`" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+apiUrl+`/list' }" />
+                </el-form-item>`)
+			}
+			continue
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			defaultVal := gconv.Int(v.Default)
+			if defaultVal != 0 {
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+gconv.String(defaultVal)+`,`)
+			}
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
+        ],`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input-number v-model="saveForm.data.`+v.FieldRaw+`" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="`+gconv.String(defaultVal)+`" />
+                    <label>
+                        <el-alert :title="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.tip.`+v.FieldRaw+`')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </el-form-item>`)
+			continue
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			defaultVal := gconv.String(v.Default)
 			if defaultVal == `` {
-				defaultVal = statusList[0][0]
+				defaultVal = v.StatusList[0][0]
 			}
-			if isStr {
-				viewSaveDataInitBefore += `
-        ` + field + `: '` + defaultVal + `',`
+			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(v.FieldType) {
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: '`+defaultVal+`',`)
 			} else {
-				viewSaveDataInitBefore += `
-        ` + field + `: ` + defaultVal + `,`
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+defaultVal+`,`)
 			}
-			viewSaveRule += `
-        ` + field + `: [
-            { type: 'enum', enum: (tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + field + `') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
-        ],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">`
+
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'enum', enum: (tm('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.status.`+v.FieldRaw+`') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
+        ],`)
+
 			//超过5个状态用select组件，小于5个用radio组件
-			if len(statusList) > 5 {
-				viewSaveField += `
-                    <el-select-v2 v-model="saveForm.data.` + field + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + field + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :clearable="false" />`
+			if len(v.StatusList) > 5 {
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-select-v2 v-model="saveForm.data.`+v.FieldRaw+`" :options="tm('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.status.`+v.FieldRaw+`')" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :clearable="false" />
+                </el-form-item>`)
 			} else {
-				viewSaveField += `
-                    <el-radio-group v-model="saveForm.data.` + field + `">
-                        <el-radio v-for="(item, index) in (tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + field + `') as any)" :key="index" :label="item.value">
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-radio-group v-model="saveForm.data.`+v.FieldRaw+`">
+                        <el-radio v-for="(item, index) in (tm('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.status.`+v.FieldRaw+`') as any)" :key="index" :label="item.value">
                             {{ item.label }}
                         </el-radio>
-                    </el-radio-group>`
+                    </el-radio-group>
+                </el-form-item>`)
 			}
-			viewSaveField += `
-                </el-form-item>`
-		} else if (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -7) == `ImgList` || gstr.SubStr(fieldCaseCamelOfRemove, -6) == `ImgArr` || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `ImageList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `ImageArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+			continue
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			defaultVal := gconv.Int(v.Default)
+			if defaultVal != 0 {
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+gconv.String(defaultVal)+`,`)
+			}
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
+        ],`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-switch v-model="saveForm.data.`+v.FieldRaw+`" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
+                </el-form-item>`)
+			continue
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		//TODO
+		/* if !v.IsNull && gconv.String(v.Default) == `` {
+						viewSaveItemObj.isRequired = true
+					}
+					if viewSaveItemObj.isRequired {
+						viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
+					} else {
+						viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
+					}
+					viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+		                    <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+		                </el-form-item>`)
+					if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //start_前缀
+						defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
+					} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //end_前缀
+						defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+					} */
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+			if v.FieldType == TypeVarchar {
+				viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'string', max: `+v.FieldLimitStr+`, trigger: 'blur', message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },
+        ],`)
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" type="textarea" :autosize="{ minRows: 3 }" maxlength="`+v.FieldLimitStr+`" :show-word-limit="true" />
+                </el-form-item>`)
+				continue
+			}
+		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
 			multipleStr := ``
-			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
+			if v.FieldType == TypeVarchar {
+				viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'string', max: `+v.FieldLimitStr+`, trigger: 'blur', message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
-        ],`
+        ],`)
 			} else {
 				multipleStr = ` :multiple="true"`
 				requiredStr := ``
-				if !column[`Null`].Bool() {
+				if !v.IsNull {
 					requiredStr = ` required: true,`
 				}
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-            // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
-        ],`
+				viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'array',`+requiredStr+` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
+            // { type: 'array',`+requiredStr+` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
+        ],`)
 			}
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-upload v-model="saveForm.data.` + field + `" accept="image/*"` + multipleStr + ` />
-                </el-form-item>`
-		} else if (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldCaseCamelOfRemove, -9) == `VideoList` || gstr.SubStr(fieldCaseCamelOfRemove, -8) == `VideoArr`) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //video,video_list,videoList,video_arr,videoArr等后缀
-			multipleStr := ``
-			if gstr.Pos(column[`Type`].String(), `varchar`) != -1 {
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
-        ],`
-			} else {
-				multipleStr = ` :multiple="true"`
-				requiredStr := ``
-				if !column[`Null`].Bool() {
-					requiredStr = ` required: true,`
-				}
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },
-            // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },
-        ],`
+
+			acceptStr := ` accept="image/*"`
+			if v.FieldTypeName == TypeNameVideoSuffix {
+				acceptStr = ` accept="video/*" :isImage="false"`
 			}
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-upload v-model="saveForm.data.` + field + `" accept="video/*" :isImage="false"` + multipleStr + ` />
-                </el-form-item>`
-		} else if garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `json`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //list,arr等后缀
-			viewSaveDataInitBefore += `
-        ` + field + `: [],`
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <my-upload v-model="saveForm.data.`+v.FieldRaw+`"`+multipleStr+acceptStr+` />
+                </el-form-item>`)
+			continue
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+			viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: [],`)
 			requiredStr := ``
-			if !column[`Null`].Bool() {
+			if !v.IsNull {
 				requiredStr = ` required: true,`
 			}
-			viewSaveRule += `
-        ` + field + `: [
-            { type: 'array',` + requiredStr + ` trigger: 'change', message: t('validation.required') },
-            // { type: 'array',` + requiredStr + ` max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
-        ],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-tag v-for="(item, index) in saveForm.data.` + field + `" :type="` + field + `Handle.tagType[index % ` + field + `Handle.tagType.length]" @close="` + field + `Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
+            { type: 'array',`+requiredStr+` trigger: 'change', message: t('validation.required') },
+            // { type: 'array',`+requiredStr+` max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
+        ],`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-tag v-for="(item, index) in saveForm.data.`+v.FieldRaw+`" :type="`+v.FieldRaw+`Handle.tagType[index % `+v.FieldRaw+`Handle.tagType.length]" @close="`+v.FieldRaw+`Handle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                         {{ item }}
                     </el-tag>
-                    <!-- <el-input-number v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
-                    <el-input v-if="` + field + `Handle.visible" :ref="(el: any) => ` + field + `Handle.ref = el" v-model="` + field + `Handle.value" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" @keyup.enter="` + field + `Handle.addValue" @blur="` + field + `Handle.addValue" size="small" style="width: 100px;" />
-                    <el-button v-else type="primary" size="small" @click="` + field + `Handle.visibleChange">
+                    <!-- <el-input-number v-if="`+v.FieldRaw+`Handle.visible" :ref="(el: any) => `+v.FieldRaw+`Handle.ref = el" v-model="`+v.FieldRaw+`Handle.value" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" @keyup.enter="`+v.FieldRaw+`Handle.addValue" @blur="`+v.FieldRaw+`Handle.addValue" size="small" style="width: 100px;" :controls="false" /> -->
+                    <el-input v-if="`+v.FieldRaw+`Handle.visible" :ref="(el: any) => `+v.FieldRaw+`Handle.ref = el" v-model="`+v.FieldRaw+`Handle.value" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" @keyup.enter="`+v.FieldRaw+`Handle.addValue" @blur="`+v.FieldRaw+`Handle.addValue" size="small" style="width: 100px;" />
+                    <el-button v-else type="primary" size="small" @click="`+v.FieldRaw+`Handle.visibleChange">
                         <autoicon-ep-plus />{{ t('common.add') }}
                     </el-button>
-                </el-form-item>`
-			viewFieldHandle += `
-
-const ` + field + `Handle = reactive({
+                </el-form-item>`)
+			viewSaveObj.formHandle = append(viewSaveObj.formHandle, `const `+v.FieldRaw+`Handle = reactive({
     ref: null as any,
     visible: false,
     value: undefined,
     tagType: tm('config.const.tagType') as string[],
     visibleChange: () => {
-        ` + field + `Handle.visible = true
+        `+v.FieldRaw+`Handle.visible = true
         nextTick(() => {
-            ` + field + `Handle.ref?.focus()
+            `+v.FieldRaw+`Handle.ref?.focus()
         })
     },
     addValue: () => {
-        if (` + field + `Handle.value) {
-            saveForm.data.` + field + `.push(` + field + `Handle.value)
+        if (`+v.FieldRaw+`Handle.value) {
+            saveForm.data.`+v.FieldRaw+`.push(`+v.FieldRaw+`Handle.value)
         }
-        ` + field + `Handle.visible = false
-        ` + field + `Handle.value = undefined
+        `+v.FieldRaw+`Handle.visible = false
+        `+v.FieldRaw+`Handle.value = undefined
     },
     delValue: (item: any) => {
-        saveForm.data.` + field + `.splice(saveForm.data.` + field + `.indexOf(item), 1)
+        saveForm.data.`+v.FieldRaw+`.splice(saveForm.data.`+v.FieldRaw+`.indexOf(item), 1)
     },
-})`
-		} else if garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) && (gstr.Pos(column[`Type`].String(), `varchar`) != -1 || gstr.Pos(column[`Type`].String(), `text`) != -1) { //remark,desc,msg,message,intro,content后缀
-			if gstr.Pos(column[`Type`].String(), `text`) != -1 {
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-editor v-model="saveForm.data.` + field + `" />
-                </el-form-item>`
-			} else {
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'string', max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + resultStr[1] + `" :show-word-limit="true" />
-                </el-form-item>`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `varchar`) != -1 { //varchar类型
-			ruleStr := ``
-			requiredStr := ``
-			viewSaveFieldTip := ` />`
-			if column[`Key`].String() == `UNI` {
-				if !column[`Null`].Bool() {
-					requiredStr = ` required: true,`
-				}
-				viewSaveFieldTip = ` style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>`
-			}
-			if garray.NewStrArrayFrom([]string{`name`}).Contains(fieldSuffix) { //name后缀
-				if gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2)+`Name` == fieldCaseCamel {
-					requiredStr = ` required: true,`
-				}
-				ruleStr += `
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
-			} else if garray.NewStrArrayFrom([]string{`code`}).Contains(fieldSuffix) { //code后缀
-				ruleStr += `
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`
-			} else if garray.NewStrArrayFrom([]string{`phone`, `mobile`}).Contains(fieldSuffix) { //phone,mobile后缀
-				ruleStr += `
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`
-			} else if garray.NewStrArrayFrom([]string{`url`, `link`}).Contains(fieldSuffix) { //url,link后缀
-				ruleStr += `
-            { type: 'url', trigger: 'change', message: t('validation.url') },`
-			}
-			viewSaveRule += `
-        ` + field + `: [
-            { type: 'string',` + requiredStr + ` max: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.max.string', { max: ` + resultStr[1] + ` }) },` + ruleStr + `
-        ],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
-                </el-form-item>`
-		} else if gstr.Pos(column[`Type`].String(), `char`) != -1 { //char类型
-			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && column[`Type`].String() == `char(32)` { //password,passwd后缀
-				viewSaveImportTmp := `
-import md5 from 'js-md5'`
-				if gstr.Pos(viewSaveImport, viewSaveImportTmp) == -1 {
-					viewSaveImport += viewSaveImportTmp
-				}
-				viewSaveParamHandle += `
-            param.` + field + ` ? param.` + field + ` = md5(param.` + field + `) : delete param.` + field
+})`)
+			continue
+		}
+		/*--------根据字段命名类型处理 结束--------*/
 
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <label v-if="saveForm.data.idArr?.length">
-                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                    </label>
-                </el-form-item>`
-			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.Handle.PasswordMap[myGenThis.getHandlePasswordMapKey(field)].IsCoexist { //salt后缀，且对应的password,passwd后缀存在时（才）有效
-			} else {
-				ruleStr := ``
-				requiredStr := ``
-				viewSaveFieldTip := ` />`
-				if column[`Key`].String() == `UNI` {
-					if !column[`Null`].Bool() {
-						requiredStr = ` required: true,`
-					}
-					viewSaveFieldTip = ` style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>`
-				}
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'string',` + requiredStr + ` len: ` + resultStr[1] + `, trigger: 'blur', message: t('validation.size.string', { size: ` + resultStr[1] + ` }) },` + ruleStr + `
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" minlength="` + resultStr[1] + `" maxlength="` + resultStr[1] + `" :show-word-limit="true" :clearable="true"` + viewSaveFieldTip + `
-                </el-form-item>`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			if field == `pid` { //pid
-				viewSaveParamHandle += `
-            if (param.` + field + ` === undefined) {
-                param.` + field + ` = 0
-            }`
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />
-                </el-form-item>`
-			} else if field == `level` && tpl.Handle.Pid.IsCoexist { //level，且pid,level,idPath|id_path同时存在时（才）有效
-			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-				defaultVal := column[`Default`].Int()
-				if defaultVal != 0 {
-					viewSaveDataInitBefore += `
-        ` + field + `: ` + gconv.String(defaultVal) + `,`
-				}
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(defaultVal) + `" />
-                    <label>
-                        <el-alert :title="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
-                    </label>
-                </el-form-item>`
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseCamelLower(gstr.SubStr(field, 0, -2))
-				if tpl.RelTableMap[field].TableRaw != `` {
-					relTable := tpl.RelTableMap[field]
-					apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
-				}
-				viewSaveParamHandle += `
-            if (param.` + field + ` === undefined) {
-                param.` + field + ` = 0
-            }`
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
-        ],`
-				if tpl.RelTableMap[field].RelTableIsExistPidField {
-					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-cascader v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />
-                </el-form-item>`
-				} else {
-					viewSaveDataInitAfter += `
-        ` + field + `: saveCommon.data.` + field + ` ? saveCommon.data.` + field + ` : undefined,`
-					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-select v-model="saveForm.data.` + field + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />
-                </el-form-item>`
-				}
-			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				defaultVal := column[`Default`].Int()
-				if defaultVal != 0 {
-					viewSaveDataInitBefore += `
-        ` + field + `: ` + gconv.String(defaultVal) + `,`
-				}
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') },
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-switch v-model="saveForm.data.` + field + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />
-                </el-form-item>`
-			} else { //默认处理（int等类型）
-				if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-					defaultVal := column[`Default`].Uint()
-					if defaultVal != 0 {
-						viewSaveDataInitBefore += `
-        ` + field + `: ` + gconv.String(defaultVal) + `,`
-					}
-					viewSaveRule += `
-        ` + field + `: [
-            { type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },
-        ],`
-					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
-                </el-form-item>`
-				} else {
-					defaultVal := column[`Default`].Int()
-					if defaultVal != 0 {
-						viewSaveDataInitBefore += `
-        ` + field + `: ` + gconv.String(defaultVal) + `,`
-					}
-					viewSaveRule += `
-        ` + field + `: [
-            { type: 'integer', trigger: 'change', message: t('validation.input') },
-        ],`
-					viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
-                </el-form-item>`
-				}
-			}
-		} else if gstr.Pos(column[`Type`].String(), `decimal`) != -1 || gstr.Pos(column[`Type`].String(), `double`) != -1 || gstr.Pos(column[`Type`].String(), `float`) != -1 { //float类型
-			defaultVal := column[`Default`].Float64()
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
+		switch v.FieldType {
+		case TypeInt: // `int等类型`
+			defaultVal := gconv.Int(v.Default)
 			if defaultVal != 0 {
-				viewSaveDataInitBefore += `
-        ` + field + `: ` + gconv.String(defaultVal) + `,`
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+gconv.String(defaultVal)+`,`)
 			}
-			if gstr.Pos(column[`Type`].String(), `unsigned`) != -1 {
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },    // 类型float值为0时验证不能通过
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :min="0" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
-                </el-form-item>`
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'integer', trigger: 'change', message: t('validation.input') },`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input-number v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :controls="false" :value-on-clear="`+gconv.String(defaultVal)+`" />
+                </el-form-item>`)
+		case TypeIntU: // `int等类型（unsigned）`
+			defaultVal := gconv.Uint(v.Default)
+			if defaultVal != 0 {
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+gconv.String(defaultVal)+`,`)
+			}
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input-number v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :min="0" :controls="false" :value-on-clear="`+gconv.String(defaultVal)+`" />
+                </el-form-item>`)
+		case TypeFloat: // `float等类型`
+			defaultVal := gconv.Float64(v.Default)
+			if defaultVal != 0 {
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+gconv.String(defaultVal)+`,`)
+			}
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') },    // 类型float值为0时验证不能通过`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input-number v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :precision="`+v.FieldLimitFloat[1]+`" :controls="false" :value-on-clear="`+gconv.String(defaultVal)+`" />
+                </el-form-item>`)
+		case TypeFloatU: // `float等类型（unsigned）`
+			defaultVal := gconv.Float64(v.Default)
+			if defaultVal != 0 {
+				viewSaveObj.dataInitBefore = append(viewSaveObj.dataInitBefore, v.FieldRaw+`: `+gconv.String(defaultVal)+`,`)
+			}
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'number'/* 'float' */, min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) },    // 类型float值为0时验证不能通过`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input-number v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :min="0" :precision="`+v.FieldLimitFloat[1]+`" :controls="false" :value-on-clear="`+gconv.String(defaultVal)+`" />
+                </el-form-item>`)
+		case TypeVarchar: // `varchar类型`
+			if v.IndexRaw == `UNI` && !v.IsNull {
+				viewSaveItemObj.isRequired = true
+			}
+			if viewSaveItemObj.isRequired {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, max: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
 			} else {
-				viewSaveRule += `
-        ` + field + `: [
-            { type: 'number'/* 'float' */, trigger: 'change', message: t('validation.input') },    // 类型float值为0时验证不能通过
-        ],`
-				viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input-number v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :precision="` + resultFloat[2] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />
-                </el-form-item>`
-			}
-		} else if gstr.Pos(column[`Type`].String(), `timestamp`) != -1 || gstr.Pos(column[`Type`].String(), `date`) != -1 { //timestamp或datetime或date类型
-			typeDatePicker := `datetime`
-			formatDatePicker := `YYYY-MM-DD HH:mm:ss`
-			defaultTimeDatePicker := ``
-			if gstr.Pos(column[`Type`].String(), `date`) != -1 && gstr.Pos(column[`Type`].String(), `datetime`) == -1 {
-				typeDatePicker = `date`
-				formatDatePicker = `YYYY-MM-DD`
-			}
-			requiredStr := ``
-			if !column[`Null`].Bool() && column[`Default`].String() == `` {
-				requiredStr = ` required: true,`
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', max: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
 			}
 
-			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //start_前缀
-				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-			} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //end_前缀
-				defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+			if v.IndexRaw == `UNI` {
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" maxlength="`+v.FieldLimitStr+`" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <label>
+                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </el-form-item>`)
+			} else {
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" maxlength="`+v.FieldLimitStr+`" :show-word-limit="true" :clearable="true" />
+                </el-form-item>`)
+			}
+		case TypeChar: // `char类型`
+			if v.IndexRaw == `UNI` && !v.IsNull {
+				viewSaveItemObj.isRequired = true
+			}
+			if viewSaveItemObj.isRequired {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, len: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
+			} else {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', len: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
 			}
 
-			viewSaveRule += `
-        ` + field + `: [
-            { type: 'string',` + requiredStr + ` trigger: 'change', message: t('validation.select') },
-        ],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-date-picker v-model="saveForm.data.` + field + `" type="` + typeDatePicker + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" format="` + formatDatePicker + `" value-format="` + formatDatePicker + `"` + defaultTimeDatePicker + ` />
-                </el-form-item>`
-		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
+			if v.IndexRaw == `UNI` {
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" minlength="`+v.FieldLimitStr+`" maxlength="`+v.FieldLimitStr+`" :show-word-limit="true" :clearable="true" />
+                </el-form-item>`)
+			} else {
+				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" minlength="`+v.FieldLimitStr+`" maxlength="`+v.FieldLimitStr+`" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <label>
+                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                    </label>
+                </el-form-item>`)
+			}
+		case TypeText: // `text类型`
+			viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'blur', message: t('validation.input') },`}, viewSaveItemObj.rule...)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <my-editor v-model="saveForm.data.`+v.FieldRaw+`" />
+                </el-form-item>`)
+		case TypeJson: // `json类型`
+			if !v.IsNull {
+				viewSaveItemObj.isRequired = true
+			}
 			requiredStr := ``
-			if !column[`Null`].Bool() {
+			if viewSaveItemObj.isRequired {
 				requiredStr = `
                 required: true,`
 			}
-			viewSaveRule += `
-        ` + field + `: [
-            {
-                type: 'object',` + requiredStr + `
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{
+                type: 'object',`+requiredStr+`
                 /* fields: {
                     xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
                     xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
@@ -3871,31 +3800,53 @@ import md5 from 'js-md5'`
                 },
                 trigger: 'blur',
                 message: t('validation.json'),
-            },
-        ],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-alert :title="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + field + `')" type="info" :show-icon="true" :closable="false" />
-                    <el-input v-model="saveForm.data.` + field + `" type="textarea" :autosize="{ minRows: 3 }" />
-                </el-form-item>`
-		} else if gstr.Pos(column[`Type`].String(), `text`) != -1 { //text类型
-			viewSaveRule += `
-        ` + field + `: [],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <my-editor v-model="saveForm.data.` + field + `" />
-                </el-form-item>`
-		} else { //默认处理
-			viewSaveRule += `
-        ` + field + `: [],`
-			viewSaveField += `
-                <el-form-item :label="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" prop="` + field + `">
-                    <el-input v-model="saveForm.data.` + field + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + field + `')" :clearable="true" />
-                </el-form-item>`
+            },`)
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-alert :title="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.tip.`+v.FieldRaw+`')" type="info" :show-icon="true" :closable="false" />
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" type="textarea" :autosize="{ minRows: 3 }" />
+                </el-form-item>`)
+		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
+			if !v.IsNull && gconv.String(v.Default) == `` {
+				viewSaveItemObj.isRequired = true
+			}
+			if viewSaveItemObj.isRequired {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
+			} else {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
+			}
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="datetime" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+                </el-form-item>`)
+		case TypeDate: // `date类型`
+			if !v.IsNull && gconv.String(v.Default) == `` {
+				viewSaveItemObj.isRequired = true
+			}
+			if viewSaveItemObj.isRequired {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
+			} else {
+				viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
+			}
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+                </el-form-item>`)
+		default:
+			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
+                    <el-input v-model="saveForm.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :clearable="true" />
+                </el-form-item>`)
+		}
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
+
+		if len(viewSaveItemObj.rule) > 0 {
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, viewSaveItemObj.rule...), `
+			`)+`
+        ],`)
+		} else {
+			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [],`)
 		}
 	}
 
-	tplView := `<script setup lang="tsx">` + viewSaveImport + `
+	tplView := `<script setup lang="tsx">` + gstr.Join(append([]string{``}, viewSaveObj.importModule...), `
+`) + `
 const { t, tm } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
@@ -3904,10 +3855,13 @@ const listCommon = inject('listCommon') as { ref: any }
 const saveForm = reactive({
     ref: null as any,
     loading: false,
-    data: {` + viewSaveDataInitBefore + `
-        ...saveCommon.data,` + viewSaveDataInitAfter + `
+    data: {` + gstr.Join(append([]string{``}, viewSaveObj.dataInitBefore...), `
+        `) + `
+        ...saveCommon.data,` + gstr.Join(append([]string{``}, viewSaveObj.dataInitAfter...), `
+        `) + `
     } as { [propName: string]: any },
-    rules: {` + viewSaveRule + `
+    rules: {` + gstr.Join(append([]string{``}, viewSaveObj.rule...), `
+        `) + `
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -3915,7 +3869,8 @@ const saveForm = reactive({
                 return false
             }
             saveForm.loading = true
-            const param = removeEmptyOfObj(saveForm.data)` + viewSaveParamHandle + `
+            const param = removeEmptyOfObj(saveForm.data)` + gstr.Join(append([]string{``}, viewSaveObj.paramHandle...), `
+            `) + `
             try {
                 if (param?.idArr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/update', param, true)
@@ -3953,13 +3908,16 @@ const saveDrawer = reactive({
         //saveCommon.visible = false
         saveDrawer.ref.handleClose() //会触发beforeClose
     },
-})` + viewFieldHandle + `
+})` + gstr.Join(append([]string{``}, viewSaveObj.formHandle...), `
+
+`) + `
 </script>
 
 <template>
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
-            <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + viewSaveField + `
+            <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">` + gstr.Join(append([]string{``}, viewSaveObj.form...), `
+                `) + `
             </el-form>
         </el-scrollbar>
         <template #footer>
@@ -3985,93 +3943,101 @@ func (myGenThis *myGenHandler) genViewI18n() {
 		return
 	}
 
-	viewI18nName := ``
-	viewI18nStatus := ``
-	viewI18nTip := ``
-	for _, column := range tpl.FieldListRaw {
-		field := column[`Field`].String()
-		fieldCaseCamel := gstr.CaseCamel(field)
-		fieldCaseSnake := gstr.CaseSnake(field)
-		fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		// fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-		fieldSplitArr := gstr.Split(fieldCaseSnakeOfRemove, `_`)
-		// fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		tmp, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, column[`Comment`].String())
-		fieldName := gstr.Trim(tmp[0])
-		comment := gstr.Trim(gstr.ReplaceByArray(column[`Comment`].String(), g.SliceStr{
-			"\n", ` `,
-			"\r", ` `,
-			`"`, `\"`,
-		}))
-		tip := gstr.Replace(comment, fieldName, ``, 1)
-		tmp, _ = gregex.MatchString(`\n\r\.。:：\(（`, column[`Comment`].String())
-		if len(tmp) > 0 {
-			gstr.TrimLeft(tip, tmp[0])
-		}
-		for _, v := range []string{"\n", "\r", `.`, `。`, `:`, `：`, `(`, `（`, `)`, `）`, ` `, `,`, `，`, `;`, `；`} {
-			tip = gstr.Trim(tip, v)
-		}
-		tip = gstr.ReplaceByArray(tip, g.SliceStr{
-			`\"`, `"`,
-			`}`, `' + "{'}'}" + '`,
-			`{"`, `' + "{'{'}" + '"`,
-		})
-
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldCaseCamel) {
-			continue
-		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldCaseCamel) {
-			continue
-		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldCaseCamel) {
-			continue
-		} else if column[`Key`].String() == `PRI` && column[`Extra`].String() == `auto_increment` { //主键
-			continue
-		} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) && tpl.Handle.PasswordMap[myGenThis.getHandlePasswordMapKey(field)].IsCoexist { //salt后缀，且对应的password,passwd后缀存在时（才）有效
-			continue
-		} else if garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) && ((gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1) || gstr.Pos(column[`Type`].String(), `char`) != -1) { //status,type,method,pos,position,gender等后缀
-			isStr := true
-			if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 {
-				isStr = false
-			}
-			statusList := myGenThis.genStatusList(comment, isStr)
-			viewI18nStatus += `
-        ` + field + `: [`
-			for _, status := range statusList {
-				if isStr {
-					viewI18nStatus += `
-            { value: '` + status[0] + `', label: '` + status[1] + `' },`
-				} else {
-					viewI18nStatus += `
-            { value: ` + status[0] + `, label: '` + status[1] + `' },`
-				}
-			}
-			viewI18nStatus += `
-        ],`
-		} else if gstr.Pos(column[`Type`].String(), `int`) != -1 && gstr.Pos(column[`Type`].String(), `point`) == -1 { //int等类型
-			if field == `pid` { //pid
-				fieldName = `父级`
-			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`}).Contains(fieldSuffix) { //sort,weight等后缀
-				viewI18nTip += `
-        ` + field + `: '` + tip + `',`
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if tpl.RelTableMap[field].TableRaw != `` && !tpl.RelTableMap[field].IsRedundRelNameField {
-					fieldName = tpl.RelTableMap[field].RelTableFieldName
-				}
-			}
-		} else if gstr.Pos(column[`Type`].String(), `json`) != -1 { //json类型
-			viewI18nTip += `
-        ` + field + `: '` + tip + `',`
-		}
-
-		viewI18nName += `
-        ` + field + `: '` + fieldName + `',`
+	type viewI18n struct {
+		name   []string
+		status []string
+		tip    []string
 	}
+	viewI18nObj := viewI18n{
+		name:   []string{},
+		status: []string{},
+		tip:    []string{},
+	}
+	for _, v := range tpl.FieldList {
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted: // 软删除字段
+			continue
+		case TypeNameUpdated: // 更新时间字段
+			continue
+		case TypeNameCreated: // 创建时间字段
+			continue
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			continue
+		case TypeNamePid: // pid；	类型：int等类型；
+			viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '父级',`)
+			continue
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			continue
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
+				viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '`+tpl.RelTableMap[v.FieldRaw].RelTableFieldName+`',`)
+				continue
+			}
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			viewI18nObj.tip = append(viewI18nObj.tip, v.FieldRaw+`: '`+v.FieldTip+`',`)
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			statusItem := []string{}
+			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(v.FieldType) {
+				for _, status := range v.StatusList {
+					statusItem = append(statusItem, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
+				}
+			} else {
+				for _, status := range v.StatusList {
+					statusItem = append(statusItem, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
+				}
+			}
+			viewI18nObj.status = append(viewI18nObj.status, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, statusItem...), `
+            `)+`
+        ],`)
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		}
+		/*--------根据字段命名类型处理 结束--------*/
+
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
+		switch v.FieldType {
+		case TypeInt: // `int等类型`
+		case TypeIntU: // `int等类型（unsigned）`
+		case TypeFloat: // `float等类型`
+		case TypeFloatU: // `float等类型（unsigned）`
+		case TypeVarchar: // `varchar类型`
+		case TypeChar: // `char类型`
+		case TypeText: // `text类型`
+		case TypeJson: // `json类型`
+			viewI18nObj.tip = append(viewI18nObj.tip, v.FieldRaw+`: '`+v.FieldTip+`',`)
+		case TypeTimestamp: // `timestamp类型`
+		case TypeDatetime: // `datetime类型`
+		case TypeDate: // `date类型`
+		default:
+		}
+		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
+		viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '`+v.FieldName+`',`)
+	}
+
 	tplView := `export default {
-    name: {` + viewI18nName + `
+    name: {` + gstr.Join(append([]string{``}, viewI18nObj.name...), `
+        `) + `
     },
-    status: {` + viewI18nStatus + `
+    status: {` + gstr.Join(append([]string{``}, viewI18nObj.status...), `
+        `) + `
     },
-    tip: {` + viewI18nTip + `
+    tip: {` + gstr.Join(append([]string{``}, viewI18nObj.tip...), `
+        `) + `
     },
 }
 `
