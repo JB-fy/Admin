@@ -2745,20 +2745,9 @@ func (myGenThis *myGenHandler) genViewList() {
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			columnAttrObj.cellRenderer = `(props: any): any => {
-                return [
-                    <el-switch
-                        model-value={props.rowData.` + v.FieldRaw + `}
-                        // disabled={true}
-                        active-value={1}
-                        inactive-value={0}
-                        inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"`
+			cellRendererTmp := `disabled={true}`
 			if option.IsUpdate {
-				columnAttrObj.cellRenderer += `
-                        onChange={(val: number) => {
+				cellRendererTmp = `onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
                                 ` + v.FieldRaw + `: val,
@@ -2769,7 +2758,17 @@ func (myGenThis *myGenHandler) genViewList() {
                                 .catch((error) => {})
                         }}`
 			}
-			columnAttrObj.cellRenderer += `
+			columnAttrObj.cellRenderer = `(props: any): any => {
+                return [
+                    <el-switch
+                        model-value={props.rowData.` + v.FieldRaw + `}
+                        active-value={1}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
+                        ` + cellRendererTmp + `
                     />,
                 ]
             }`
@@ -2778,15 +2777,10 @@ func (myGenThis *myGenHandler) genViewList() {
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
 			columnAttrObj.width = `100`
-			columnAttrObj.cellRenderer = `(props: any): any => {
-                if (!props.rowData.` + v.FieldRaw + `) {
-                    return
-                }`
-			if v.FieldType == TypeVarchar {
-				columnAttrObj.cellRenderer += `
+			cellRendererTmp := `
                 const imageList = [props.rowData.` + v.FieldRaw + `]`
-			} else {
-				columnAttrObj.cellRenderer += `
+			if v.FieldType != TypeVarchar {
+				cellRendererTmp = `
                 let imageList: string[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
                     imageList = props.rowData.` + v.FieldRaw + `
@@ -2794,7 +2788,10 @@ func (myGenThis *myGenHandler) genViewList() {
                     imageList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 			}
-			columnAttrObj.cellRenderer += `
+			columnAttrObj.cellRenderer = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
+                    return
+                }` + cellRendererTmp + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {imageList.map((item) => {
@@ -2809,15 +2806,10 @@ func (myGenThis *myGenHandler) genViewList() {
 			if viewListObj.rowHeight < 100 {
 				viewListObj.rowHeight = 100
 			}
-			columnAttrObj.cellRenderer = `(props: any): any => {
-                if (!props.rowData.` + v.FieldRaw + `) {
-                    return
-                }`
-			if v.FieldType == TypeVarchar {
-				columnAttrObj.cellRenderer += `
+			cellRendererTmp := `
                 const videoList = [props.rowData.` + v.FieldRaw + `]`
-			} else {
-				columnAttrObj.cellRenderer += `
+			if v.FieldType != TypeVarchar {
+				cellRendererTmp = `
                 let videoList: string[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
                     videoList = props.rowData.` + v.FieldRaw + `
@@ -2825,7 +2817,10 @@ func (myGenThis *myGenHandler) genViewList() {
                     videoList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 			}
-			columnAttrObj.cellRenderer += `
+			columnAttrObj.cellRenderer = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
+                    return
+                }` + cellRendererTmp + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         {videoList.map((item) => {
@@ -2841,8 +2836,7 @@ func (myGenThis *myGenHandler) genViewList() {
 			columnAttrObj.cellRenderer = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
-                }`
-			columnAttrObj.cellRenderer += `
+                }
                 let arrList: any[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
                     arrList = props.rowData.` + v.FieldRaw + `
@@ -3216,7 +3210,14 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		dataInit: []string{},
 		form:     []string{},
 	}
+
+	type viewQueryItem struct {
+		elDatePicker struct {
+			defaultTime string
+		}
+	}
 	for _, v := range tpl.FieldList {
+		viewQueryItemObj := viewQueryItem{}
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNameDeleted: // 软删除字段
@@ -3299,15 +3300,10 @@ func (myGenThis *myGenHandler) genViewQuery() {
             <el-select-v2 v-model="queryCommon.data.`+v.FieldRaw+`" :options="tm('common.status.whether')" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :clearable="true" />
         </el-form-item>`)
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
-            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :default-time="new Date(2000, 0, 1, 0, 0, 0)" />
-        </el-form-item>`)
-			continue
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
-            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />
-        </el-form-item>`)
-			continue
+			if v.FieldType != TypeDate {
+				viewQueryItemObj.elDatePicker.defaultTime = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+			}
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			continue
 		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
@@ -3353,7 +3349,7 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		case TypeJson: // `json类型`
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
-            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="datetime" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+            <el-date-picker v-model="queryCommon.data.`+v.FieldRaw+`" type="datetime" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"`+viewQueryItemObj.elDatePicker.defaultTime+` />
         </el-form-item>`)
 		case TypeDate: // `date类型`
 			viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
@@ -3444,8 +3440,11 @@ func (myGenThis *myGenHandler) genViewSave() {
 	}
 
 	type viewSaveItem struct {
-		rule       []string
-		isRequired bool
+		rule         []string
+		required     string
+		elDatePicker struct {
+			defaultTime string
+		}
 	}
 	for _, v := range tpl.FieldList {
 		viewSaveItemObj := viewSaveItem{
@@ -3495,10 +3494,10 @@ func (myGenThis *myGenHandler) genViewSave() {
 			continue
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 			if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
-				viewSaveItemObj.isRequired = true
+				viewSaveItemObj.required = ` required: true,`
 			}
 			// 去掉该验证规则。有时会用到特殊符号
-			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `// { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
+			// viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
@@ -3585,24 +3584,10 @@ func (myGenThis *myGenHandler) genViewSave() {
                 </el-form-item>`)
 			continue
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-		//TODO
-		/* if !v.IsNull && gconv.String(v.Default) == `` {
-						viewSaveItemObj.isRequired = true
-					}
-					if viewSaveItemObj.isRequired {
-						viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
-					} else {
-						viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
-					}
-					viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
-		                    <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
-		                </el-form-item>`)
-					if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //start_前缀
-						defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 0, 0, 0)"`
-					} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) && formatDatePicker == `YYYY-MM-DD HH:mm:ss` { //end_前缀
-						defaultTimeDatePicker = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
-					} */
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+			if v.FieldType != TypeDate {
+				viewSaveItemObj.elDatePicker.defaultTime = ` :default-time="new Date(2000, 0, 1, 23, 59, 59)"`
+			}
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			if v.FieldType == TypeVarchar {
 				viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
@@ -3726,13 +3711,9 @@ func (myGenThis *myGenHandler) genViewSave() {
                 </el-form-item>`)
 		case TypeVarchar: // `varchar类型`
 			if v.IndexRaw == `UNI` && !v.IsNull {
-				viewSaveItemObj.isRequired = true
+				viewSaveItemObj.required = ` required: true,`
 			}
-			if viewSaveItemObj.isRequired {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, max: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
-			} else {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', max: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
-			}
+			viewSaveItemObj.rule = append([]string{`{ type: 'string',` + viewSaveItemObj.required + ` max: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
 
 			if v.IndexRaw == `UNI` {
 				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
@@ -3748,13 +3729,9 @@ func (myGenThis *myGenHandler) genViewSave() {
 			}
 		case TypeChar: // `char类型`
 			if v.IndexRaw == `UNI` && !v.IsNull {
-				viewSaveItemObj.isRequired = true
+				viewSaveItemObj.required = ` required: true,`
 			}
-			if viewSaveItemObj.isRequired {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, len: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
-			} else {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', len: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
-			}
+			viewSaveItemObj.rule = append([]string{`{ type: 'string',` + viewSaveItemObj.required + ` len: ` + v.FieldLimitStr + `, trigger: 'blur', message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`}, viewSaveItemObj.rule...)
 
 			if v.IndexRaw == `UNI` {
 				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
@@ -3775,15 +3752,11 @@ func (myGenThis *myGenHandler) genViewSave() {
                 </el-form-item>`)
 		case TypeJson: // `json类型`
 			if !v.IsNull {
-				viewSaveItemObj.isRequired = true
-			}
-			requiredStr := ``
-			if viewSaveItemObj.isRequired {
-				requiredStr = `
+				viewSaveItemObj.required = `
                 required: true,`
 			}
 			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{
-                type: 'object',`+requiredStr+`
+                type: 'object',`+viewSaveItemObj.required+`
                 /* fields: {
                     xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
                     xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
@@ -3807,25 +3780,17 @@ func (myGenThis *myGenHandler) genViewSave() {
                 </el-form-item>`)
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			if !v.IsNull && gconv.String(v.Default) == `` {
-				viewSaveItemObj.isRequired = true
+				viewSaveItemObj.required = ` required: true,`
 			}
-			if viewSaveItemObj.isRequired {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
-			} else {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
-			}
+			viewSaveItemObj.rule = append([]string{`{ type: 'string',` + viewSaveItemObj.required + ` trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
 			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
-                    <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="datetime" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+                    <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="datetime" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"`+viewSaveItemObj.elDatePicker.defaultTime+` />
                 </el-form-item>`)
 		case TypeDate: // `date类型`
 			if !v.IsNull && gconv.String(v.Default) == `` {
-				viewSaveItemObj.isRequired = true
+				viewSaveItemObj.required = ` required: true,`
 			}
-			if viewSaveItemObj.isRequired {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', required: true, trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
-			} else {
-				viewSaveItemObj.rule = append([]string{`{ type: 'string', trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
-			}
+			viewSaveItemObj.rule = append([]string{`{ type: 'string',` + viewSaveItemObj.required + ` trigger: 'change', message: t('validation.select') },`}, viewSaveItemObj.rule...)
 			viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
                     <el-date-picker v-model="saveForm.data.`+v.FieldRaw+`" type="date" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
                 </el-form-item>`)
