@@ -46,7 +46,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 	尽量根据表名设置以下两个字段（作用1：常用于前端部分组件，如my-select或my-cascader等组件；作用2：用于关联表查询）
 		xxId主键字段。示例：good表命名goodId, good_category表命名categoryId
 		xxName或xxTitle字段。示例：good表命名goodName, article表命名articleTitle
-			如果不存在xxName或xxTitle字段，按以下优先级
+			如果不存在xxName或xxTitle字段，按以下优先级默认一个
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
 				表名去掉前缀 + Title > 主键去掉ID + Title > Title >
 				表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
@@ -128,18 +128,17 @@ type myGenOption struct {
 	DbTable            string `json:"dbTable"`            //db表。示例：auth_test
 	RemovePrefixCommon string `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
 	RemovePrefixAlone  string `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	// ModuleDir    string `json:"moduleDir"`    //模块目录，支持多目录。必须和hack/config.yaml内daoPath的后面部分保持一致，示例：auth，xxxx/user
-	CommonName   string `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
-	IsList       bool   `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
-	IsCount      bool   `json:"isCount" `     //列表接口是否返回总数
-	IsInfo       bool   `json:"isInfo" `      //是否生成详情接口
-	IsCreate     bool   `json:"isCreate"`     //是否生成创建接口
-	IsUpdate     bool   `json:"isUpdate"`     //是否生成更新接口
-	IsDelete     bool   `json:"isDelete"`     //是否生成删除接口
-	IsApi        bool   `json:"isApi"`        //是否生成后端接口文件
-	IsAuthAction bool   `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
-	IsView       bool   `json:"isView"`       //是否生成前端视图文件
-	IsCover      bool   `json:"isCover"`      //是否覆盖原文件(设置为true时，建议与git一起使用，防止代码覆盖风险)
+	CommonName         string `json:"commonName"`         //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
+	IsList             bool   `json:"isList" `            //是否生成列表接口(0和no为false，1和yes为true)
+	IsCount            bool   `json:"isCount" `           //列表接口是否返回总数
+	IsInfo             bool   `json:"isInfo" `            //是否生成详情接口
+	IsCreate           bool   `json:"isCreate"`           //是否生成创建接口
+	IsUpdate           bool   `json:"isUpdate"`           //是否生成更新接口
+	IsDelete           bool   `json:"isDelete"`           //是否生成删除接口
+	IsApi              bool   `json:"isApi"`              //是否生成后端接口文件
+	IsAuthAction       bool   `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
+	IsView             bool   `json:"isView"`             //是否生成前端视图文件
+	IsCover            bool   `json:"isCover"`            //是否覆盖原文件(设置为true时，建议与git一起使用，防止代码覆盖风险)
 }
 
 type myGenTpl struct {
@@ -158,13 +157,15 @@ type myGenTpl struct {
 	LogicStructName           string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	FieldPrimary              string       //主键字段
 	Handle                    struct {     //该属性记录需做特殊处理字段
-		// label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
-		// 表名去掉前缀 + Name > 主键去掉ID + Name > Name >
-		// 表名去掉前缀 + Title > 主键去掉ID + Title > Title >
-		// 表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
-		// 表名去掉前缀 + Email > 主键去掉ID + Email > Email >
-		// 表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-		// 表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+		/*
+			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
+				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
+				表名去掉前缀 + Title > 主键去掉ID + Title > Title >
+				表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
+				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
+				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
+				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+		*/
 		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
 		Pid         struct {                  //pid,level,idPath|id_path同时存在时，需特殊处理
@@ -174,10 +175,8 @@ type myGenTpl struct {
 			IdPath    string //层级路径字段
 			Sort      string //排序字段
 		}
-		RelIdMap map[string]myGenTpl //id后缀字段关联表信息
+		RelIdMap map[string]handleRelId //TODO id后缀字段关联表信息
 	}
-	// TODO 以下字段用于对某些表字段做特殊处理
-	RelTableMap map[string]relTableItem //一对一关联表。id后缀字段，能确定关联表时，会自动生成联表查询代码
 }
 
 type myGenFieldType = uint
@@ -257,6 +256,13 @@ type handlePassword struct {
 	SaltLength     string //加密盐字段长度
 }
 
+type handleRelId struct {
+	tpl          myGenTpl
+	IsRedundName bool   //是否冗余过关联表名称字段
+	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+}
+
+// TODO 删除
 type relTableItem struct {
 	RemovePrefixCommon      string     //要删除的共有前缀
 	RemovePrefixAlone       string     //要删除的独有前缀
@@ -561,9 +567,9 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 		RemovePrefixAlone:  removePrefixAlone,
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
 		TableRaw:           table,
-		RelTableMap:        map[string]relTableItem{},
 	}
 	tpl.Handle.PasswordMap = map[string]handlePassword{}
+	tpl.Handle.RelIdMap = map[string]handleRelId{}
 	tpl.FieldListRaw, _ = db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.TableRaw, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
@@ -762,8 +768,16 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				fieldTmp.FieldTypeName = TypeNameIdSuffix
-
-				tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.getRelTable(tpl, fieldTmp.FieldRaw, fieldTmp.FieldName)
+				handleRelIdObj := handleRelId{
+					tpl: myGenThis.getRelIdTpl(tpl, fieldTmp.FieldRaw),
+				}
+				if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
+					handleRelIdObj.Suffix = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
+					if fieldTmp.FieldRaw != fieldTmp.FieldCaseSnake {
+						handleRelIdObj.Suffix = gstr.CaseCamel(handleRelIdObj.Suffix)
+					}
+				}
+				tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
 			}
@@ -780,13 +794,15 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	}
 
 	/*--------需做特殊处理字段解析 开始--------*/
-	// label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
-	// 表名去掉前缀 + Name > 主键去掉ID + Name > Name >
-	// 表名去掉前缀 + Title > 主键去掉ID + Title > Title >
-	// 表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
-	// 表名去掉前缀 + Email > 主键去掉ID + Email > Email >
-	// 表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-	// 表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+	/*
+		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
+			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
+			表名去掉前缀 + Title > 主键去掉ID + Title > Title >
+			表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
+			表名去掉前缀 + Email > 主键去掉ID + Email > Email >
+			表名去掉前缀 + Account > 主键去掉ID + Account > Account >
+			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+	*/
 	labelList := []string{}
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
 		labelTmp := tpl.TableCaseCamel + v
@@ -807,12 +823,14 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 		}
 	}
 
-	for k, v := range tpl.RelTableMap {
-		for _, item := range fieldList {
-			if item.FieldRaw == v.RelTableField+v.RelSuffix {
-				v.IsRedundRelNameField = true
-				tpl.RelTableMap[k] = v
-				break
+	for k, v := range tpl.Handle.RelIdMap {
+		if len(v.tpl.Handle.LabelList) > 0 {
+			for _, item := range fieldList {
+				if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
+					v.IsRedundName = true
+					tpl.Handle.RelIdMap[k] = v
+					break
+				}
 			}
 		}
 	}
@@ -1167,32 +1185,32 @@ func (myGenThis *myGenHandler) genDao() {
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` {
-				relTable := tpl.RelTableMap[v.FieldRaw]
-				daoPath := relTable.RelTableCaseCamel
-				if !relTable.IsSameDir {
-					daoPath = `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.TableRaw != `` {
+				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+				daoPath := relIdObj.tpl.TableCaseCamel
+				if relIdObj.tpl.RemovePrefixAlone != tpl.RemovePrefixAlone {
+					daoPath = `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 					importDaoStr := `
-	dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
+	dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
 					if gstr.Pos(tplDao, importDaoStr) == -1 {
 						daoObj.importDao += importDaoStr
 					}
 				}
-				if !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-					fieldParseStr := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relTable.RelTableField + relTable.RelSuffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
+				if !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
+					fieldParseStr := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
 					if gstr.Pos(tplDao, fieldParseStr) == -1 {
-						if relTable.RelSuffix != `` {
+						if relIdObj.Suffix != `` {
 							fieldParseStr = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + " + `" + relTable.RelSuffix + "`: " + fieldParseStr + `
-				table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `
-				m = m.Fields(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + ` + ` + "` AS `" + ` + v)
-				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableCaseCamel + relTable.RelSuffixCaseCamel + `, daoModel))`
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + " + `" + relIdObj.Suffix + "`: " + fieldParseStr + `
+				table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + gstr.CaseSnake(relIdObj.Suffix) + "`" + `
+				m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + `, daoModel))`
 						} else {
 							fieldParseStr = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField) + `: ` + fieldParseStr + `
-				table` + relTable.RelTableCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
-				m = m.Fields(table` + relTable.RelTableCaseCamel + ` + ` + "`.`" + ` + v)
-				m = m.Handler(daoThis.ParseJoin(table` + relTable.RelTableCaseCamel + `, daoModel))`
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `: ` + fieldParseStr + `
+				table` + relIdObj.tpl.TableCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
+				m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + ` + ` + "`.`" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(table` + relIdObj.tpl.TableCaseCamel + `, daoModel))`
 						}
 						daoObj.field.parse += fieldParseStr
 					}
@@ -1200,9 +1218,9 @@ func (myGenThis *myGenHandler) genDao() {
 				joinParseStr := `
 		case ` + daoPath + `.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `)`
-				if relTable.RelSuffix != `` {
+				if relIdObj.Suffix != `` {
 					joinParseStr = `
-		case ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + relTable.RelSuffixCaseSnake + "`" + `:
+		case ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + gstr.CaseSnake(relIdObj.Suffix) + "`" + `:
 			m = m.LeftJoin(` + daoPath + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPath + `.PrimaryKey()+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + v.FieldCaseCamel + `)`
 				}
 				if gstr.Pos(tplDao, joinParseStr) == -1 {
@@ -1706,7 +1724,7 @@ func (myGenThis *myGenHandler) genApi() {
 
 			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
 				relTable := tpl.RelTableMap[v.FieldRaw]
-				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relTable.RelTableField)+relTable.RelSuffixCaseCamel+` *string `+"`"+`json:"`+relTable.RelTableField+relTable.RelSuffix+`,omitempty" dc:"`+relTable.RelTableFieldName+`"`+"`")
+				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+gstr.CaseCamel(relIdObj.Suffix)+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relTable.RelTableFieldName+`"`+"`")
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
@@ -2202,12 +2220,12 @@ func (myGenThis *myGenHandler) genController() {
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
 				relTable := tpl.RelTableMap[v.FieldRaw]
-				daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relTable.RelTableCaseCamel
+				daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 				controllerObj.importDao += `
 dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
-				fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relTable.RelTableField)
-				if relTable.RelSuffix != `` {
-					fieldTmp += "+`" + relTable.RelSuffix + "`"
+				fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])
+				if relIdObj.Suffix != `` {
+					fieldTmp += "+`" + relIdObj.Suffix + "`"
 				}
 				controllerObj.list = append(controllerObj.list, fieldTmp)
 			}
@@ -4179,171 +4197,121 @@ func (myGenThis *myGenHandler) getHandlePasswordMapKey(passwordOrsalt string) (p
 }
 
 // 获取id后缀字段关联的表信息
-func (myGenThis *myGenHandler) getRelTable(tpl myGenTpl, field string, fieldName string) relTableItem {
+func (myGenThis *myGenHandler) getRelIdTpl(tpl myGenTpl, field string) (relTpl myGenTpl) {
 	fieldCaseSnake := gstr.CaseSnake(field)
 	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-	fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
-
-	relTableCaseCamel := gstr.SubStr(fieldCaseCamelOfRemove, 0, -2)
-	relTableItem := relTableItem{
-		RelTableCaseSnake:      gstr.CaseSnake(relTableCaseCamel),
-		RelTableCaseCamel:      relTableCaseCamel,
-		RelTableCaseCamelLower: gstr.CaseCamelLower(relTableCaseCamel),
-		RelTableFieldName:      fieldName,
-	}
-	fieldCaseSnakeArr := gstr.Split(fieldCaseSnake, `_of_`)
-	if len(fieldCaseSnakeArr) > 1 {
-		relTableItem.RelSuffixCaseSnake = `_of_` + gstr.Join(fieldCaseSnakeArr[1:], `_of_`)
-		relTableItem.RelSuffixCaseCamel = gstr.CaseCamel(relTableItem.RelSuffixCaseSnake)
-		relTableItem.RelSuffix = relTableItem.RelSuffixCaseCamel //默认：小驼峰
-	}
-	relTableItem.RelTableField = relTableItem.RelTableCaseCamelLower + `Name` //默认：小驼峰
-	if gstr.CaseCamelLower(field) != field {                                  //判断字段是不是蛇形
-		relTableItem.RelTableField = relTableItem.RelTableCaseSnake + `_name`
-		if len(fieldCaseSnakeArr) > 1 {
-			relTableItem.RelSuffix = relTableItem.RelSuffixCaseSnake
-		}
-	}
-	if gstr.ToUpper(gstr.SubStr(relTableItem.RelTableFieldName, -2)) == `ID` {
-		relTableItem.RelTableFieldName = gstr.SubStr(relTableItem.RelTableFieldName, 0, -2)
-	}
-
+	tableSuffix := gstr.TrimRightStr(fieldCaseSnakeOfRemove, `_id`, 1)
 	/*--------确定关联表 开始--------*/
-	tableListSame := []string{} //关联表在同模块目录下，但表后缀一致
-	tableSame := ``             //表名完全一致的表
-	tableList := []string{}     //表后缀一致的表列表
+	// 按以下优先级确定关联表
+	type mayBe struct {
+		table1 string   // 同模块，全部前缀 + 表后缀一致。规则：tpl.RemovePrefix + tableSuffix
+		table2 []string // 同模块，全部前缀 + 任意字符_ + 表后缀一致。规则：tpl.RemovePrefix + xx_ + tableSuffix。同时存在多个放弃匹配
+		table3 string   // 不同模块，公共前缀 + 表后缀一致。规则：tpl.RemovePrefixCommon + tableSuffix
+		table4 string   // 不同模块，表后缀一致。规则：tableSuffix
+		table5 []string // 不同模块，任意字符_ + 表后缀一致。规则：xx_ + tableSuffix。同时存在多个放弃匹配
+	}
+	mayBeObj := mayBe{
+		table2: []string{},
+		table5: []string{},
+	}
+	isSamePrimaryFunc := func(table string) bool {
+		tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+table+` WHERE Key_name = 'PRIMARY'`)
+		return len(tableIndexList) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(tableIndexList[0][`Column_name`].String()))
+	}
 	for _, v := range myGenThis.tableArr {
 		if v == tpl.TableRaw { //自身跳过
 			continue
 		}
-		if v == tpl.RemovePrefix+relTableItem.RelTableCaseSnake { //关联表在同模块目录下，且表名一致
-			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
-			primaryKey := tableIndexList[0][`Column_name`].String()
-			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
-				relTableItem.TableRaw = v
-				relTableItem.IsSameDir = true
+		if v == tpl.RemovePrefix+tableSuffix { //关联表在同模块目录下，且表名一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table1 = v
 				break
 			}
-		} else if gstr.Pos(v, `_`+tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake)+len(`_`+relTableItem.RelTableCaseSnake) { //关联表在同模块目录下，但表后缀一致
-			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
-			primaryKey := tableIndexList[0][`Column_name`].String()
-			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
-				tableListSame = append(tableListSame, v)
+		} else if gstr.Pos(v, tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //关联表在同模块目录下，但表后缀一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table2 = append(mayBeObj.table2, v)
 			}
-		} else if gstr.Replace(v, tpl.RemovePrefixCommon, ``, 1) == relTableItem.RelTableCaseSnake { //表名完全一致
-			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
-			primaryKey := tableIndexList[0][`Column_name`].String()
-			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
-				tableSame = v
+		} else if v == tpl.RemovePrefixCommon+tableSuffix { //公共前缀+表名完全一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table3 = v
 			}
-		} else if len(v) == gstr.PosR(v, `_`+relTableItem.RelTableCaseSnake)+len(`_`+relTableItem.RelTableCaseSnake) { //表后缀一致
-			tableIndexList, _ := myGenThis.db.GetAll(myGenThis.ctx, `SHOW Index FROM `+v+` WHERE Key_name = 'PRIMARY'`)
-			primaryKey := tableIndexList[0][`Column_name`].String()
-			if len(tableIndexList) == 1 && (primaryKey == `id` || primaryKey == field) {
-				tableList = append(tableList, v)
+		} else if v == tableSuffix { //表名完全一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table4 = v
+			}
+		} else if len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //表后缀一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table5 = append(mayBeObj.table5, v)
 			}
 		}
 	}
-	if relTableItem.TableRaw == `` {
-		if len(tableListSame) > 0 {
-			if len(tableListSame) == 1 {
-				relTableItem.TableRaw = tableListSame[0]
-				relTableItem.IsSameDir = true
-			} else {
-				// TODO
-				count := 0 //关联表在同模块目录下，但表后缀一致
-				tableSameDir := ``
-				for _, v := range tableList {
-					if gstr.Count(v, `_`) == gstr.Count(tpl.TableRaw, `_`) {
-						count++
-						tableSameDir = v
-					}
-				}
-				if count == 1 { //当只存在一个表后缀一致的表时，直接使用该表
-					relTableItem.TableRaw = tableSameDir
-					relTableItem.IsSameDir = true
-				}
+
+	table := mayBeObj.table1
+	if table == `` {
+		if len(mayBeObj.table2) > 0 {
+			if len(mayBeObj.table2) == 1 {
+				table = mayBeObj.table2[0]
 			}
-		} else if tableSame != `` {
-			relTableItem.TableRaw = tableSame
 		} else {
-			if len(tableList) == 1 {
-				relTableItem.TableRaw = tableList[0]
-			} else {
-				// TODO
-				count := 0 //与当前模块同层的其它模块存在多少表后缀一致的表
-				tableSameDir := ``
-				for _, v := range tableList {
-					if gstr.Count(v, `_`) == gstr.Count(tpl.TableRaw, `_`) {
-						count++
-						tableSameDir = v
-					}
-				}
-				if count == 1 { //当只存在一个表后缀一致的表时，直接使用该表
-					relTableItem.TableRaw = tableSameDir
-				}
+			if mayBeObj.table3 != `` {
+				table = mayBeObj.table3
+			} else if mayBeObj.table4 != `` {
+				table = mayBeObj.table4
+			} else if len(mayBeObj.table5) > 0 && len(mayBeObj.table5) == 1 {
+				table = mayBeObj.table5[0]
 			}
 		}
 	}
 	/*--------确定关联表 结束--------*/
 
-	//TODO
-	if relTableItem.TableRaw != `` {
-		if relTableItem.IsSameDir {
-			relTableItem.RemovePrefixCommon = tpl.RemovePrefixCommon
-			relTableItem.RemovePrefixAlone = tpl.RemovePrefixAlone
-			relTableItem.RemovePrefix = tpl.RemovePrefix
-			relTableItem.RelDaoDir = tpl.ModuleDirCaseKebab
-		} else {
-			relTableItem.RemovePrefix = gstr.TrimRightStr(relTableItem.TableRaw, relTableItem.RelTableCaseSnake, 1)
-			relTableItem.RemovePrefixAlone = relTableItem.RemovePrefix
-			if tpl.RemovePrefixCommon != `` && gstr.Pos(relTableItem.RemovePrefix, tpl.RemovePrefixCommon) == 0 {
-				relTableItem.RemovePrefixCommon = tpl.RemovePrefixCommon
-				relTableItem.RemovePrefixAlone = gstr.TrimLeftStr(relTableItem.RemovePrefix, tpl.RemovePrefixCommon)
-			}
-			relDaoDir := gstr.Trim(relTableItem.RemovePrefix, `_`)
-			relDaoDir = gstr.TrimLeftStr(relDaoDir, tpl.RemovePrefixCommon, 1)
-			if relDaoDir == `` {
-				relDaoDir = relTableItem.RelTableCaseSnake
-			}
-			if myGenThis.option.DbGroup != `default` {
-				relDaoDir = gstr.CaseKebab(myGenThis.option.DbGroup) + `/` + gstr.CaseKebab(relDaoDir)
-			}
-			relTableItem.RelDaoDir = relDaoDir
+	removePrefixCommon := ``
+	removePrefixAlone := ``
+	if table != `` {
+		if gstr.Pos(table, tpl.RemovePrefixCommon) == 0 {
+			removePrefixCommon = tpl.RemovePrefixCommon
 		}
+		if gstr.Pos(table, tpl.RemovePrefix) == 0 {
+			removePrefixAlone = tpl.RemovePrefixAlone
+		}
+		if removePrefixAlone == `` {
+			// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
+			tableRemove := gstr.TrimLeftStr(table, removePrefixCommon, 1)
+			if gstr.Pos(tableRemove, `_`) != -1 {
+				removePrefixAlone = gstr.Split(tableRemove, `_`)[0] + `_`
+			}
+			if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
+				removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
+			}
+		}
+
+		relTpl = myGenThis.createTpl(table, removePrefixCommon, removePrefixAlone)
+
 		// 判断dao文件是否存在，不存在则生成
-		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTableItem.RelDaoDir + `/` + relTableItem.RelTableCaseSnake + `.go`) {
-			myGenThis.command(`关联表（`+relTableItem.TableRaw+`）dao生成`, true, ``,
+		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTpl.ModuleDirCaseKebab + `/` + relTpl.TableCaseSnake + `.go`) {
+			myGenThis.command(`关联表（`+relTpl.TableRaw+`）dao生成`, true, ``,
 				`gf`, `gen`, `dao`,
 				`--link`, myGenThis.dbLink,
 				`--group`, myGenThis.option.DbGroup,
-				`--removePrefix`, relTableItem.RemovePrefix,
-				`--daoPath`, `dao/`+relTableItem.RelDaoDir,
-				`--doPath`, `model/entity/`+relTableItem.RelDaoDir,
-				`--entityPath`, `model/entity/`+relTableItem.RelDaoDir,
-				`--tables`, relTableItem.TableRaw,
+				`--removePrefix`, relTpl.RemovePrefix,
+				`--daoPath`, `dao/`+relTpl.ModuleDirCaseKebab,
+				`--doPath`, `model/entity/`+relTpl.ModuleDirCaseKebab,
+				`--entityPath`, `model/entity/`+relTpl.ModuleDirCaseKebab,
+				`--tables`, relTpl.TableRaw,
 				`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 				`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
 				`--overwriteDao`, `false`)
 		}
-		//判断关联表是否存在pid字段
-		relTableItem.TableColumnList, _ = myGenThis.db.GetAll(myGenThis.ctx, `SHOW FULL COLUMNS FROM `+relTableItem.TableRaw)
-		for _, v := range relTableItem.TableColumnList {
-			if v[`Field`].String() == `pid` {
-				relTableItem.RelTableIsExistPidField = true
-				break
-			}
-		}
 	}
-
-	relDaoDirArr := gstr.Split(relTableItem.RelDaoDir, `/`)
-	relDaoDirCaseCamelArr := []string{}
-	relDaoDirCaseCamelLowerArr := []string{}
-	for _, v := range relDaoDirArr {
-		relDaoDirCaseCamelArr = append(relDaoDirCaseCamelArr, gstr.CaseCamel(v))
-		relDaoDirCaseCamelLowerArr = append(relDaoDirCaseCamelLowerArr, gstr.CaseCamelLower(v))
-	}
-	relTableItem.RelDaoDirCaseCamel = gstr.Join(relDaoDirCaseCamelArr, ``)
-	relTableItem.RelDaoDirCaseCamelLower = gstr.Join(relDaoDirCaseCamelLowerArr, `/`)
-	return relTableItem
+	return
+	// TODO
+	/* type relTableItem struct {
+		IsSameDir               bool       //关联表dao层是否与当前生成dao层在相同目录下
+		RelTableField           string     //关联表字段
+		RelTableFieldName       string     //关联表字段名称
+		IsRedundRelNameField    bool       //当前表是否冗余关联表字段
+		RelSuffix               string     //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+		RelSuffixCaseCamel      string     //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
+		RelSuffixCaseSnake      string     //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
+		RelTableIsExistPidField bool       //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
+	} */
 }
