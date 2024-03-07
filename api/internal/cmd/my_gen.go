@@ -691,7 +691,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) {
 				isStr = true
 			}
-			fieldTmp.StatusList = myGenThis.genStatusList(fieldTmp.FieldDesc, isStr)
+			fieldTmp.StatusList = myGenThis.getStatusList(fieldTmp.FieldDesc, isStr)
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = TypeNameImageSuffix
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -763,7 +763,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				fieldTmp.FieldTypeName = TypeNameIdSuffix
 
-				tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.genRelTable(tpl, fieldTmp.FieldRaw, fieldTmp.FieldName)
+				tpl.RelTableMap[fieldTmp.FieldRaw] = myGenThis.getRelTable(tpl, fieldTmp.FieldRaw, fieldTmp.FieldName)
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
 			}
@@ -4147,7 +4147,7 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 }
 
 // status字段注释解析
-func (myGenThis *myGenHandler) genStatusList(comment string, isStr bool) (statusList [][2]string) {
+func (myGenThis *myGenHandler) getStatusList(comment string, isStr bool) (statusList [][2]string) {
 	var tmp [][]string
 	if isStr {
 		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；)）]+)`, comment)
@@ -4179,7 +4179,7 @@ func (myGenThis *myGenHandler) getHandlePasswordMapKey(passwordOrsalt string) (p
 }
 
 // 获取id后缀字段关联的表信息
-func (myGenThis *myGenHandler) genRelTable(tpl myGenTpl, field string, fieldName string) relTableItem {
+func (myGenThis *myGenHandler) getRelTable(tpl myGenTpl, field string, fieldName string) relTableItem {
 	fieldCaseSnake := gstr.CaseSnake(field)
 	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
 	fieldCaseCamelOfRemove := gstr.CaseCamel(fieldCaseSnakeOfRemove)
