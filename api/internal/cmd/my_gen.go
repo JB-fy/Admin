@@ -92,8 +92,8 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	myGenHandlerObj.init(parser)
 	myGenHandlerObj.tpl = myGenHandlerObj.createTpl(myGenHandlerObj.option.DbTable, myGenHandlerObj.option.RemovePrefixCommon, myGenHandlerObj.option.RemovePrefixAlone)
 
-	myGenHandlerObj.genDao()   // dao层存在时，增加或修改部分字段的解析代码
-	myGenHandlerObj.genLogic() // logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+	myGenHandlerObj.genDao()   // dao模板生成
+	myGenHandlerObj.genLogic() // logic模板生成
 
 	if myGenHandlerObj.option.IsApi {
 		myGenHandlerObj.genApi()        // api模板生成
@@ -862,28 +862,32 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	return
 }
 
-// dao层存在时，增加或修改部分字段的解析代码
+// dao模板生成
 func (myGenThis *myGenHandler) genDao() {
+	tpl := myGenThis.tpl
+
 	commandArg := []string{
 		`gen`, `dao`,
 		`--link`, myGenThis.dbLink,
 		`--group`, myGenThis.option.DbGroup,
-		`--removePrefix`, myGenThis.tpl.RemovePrefix,
-		`--daoPath`, `dao/` + myGenThis.tpl.ModuleDirCaseKebab,
-		`--doPath`, `model/entity/` + myGenThis.tpl.ModuleDirCaseKebab,
-		`--entityPath`, `model/entity/` + myGenThis.tpl.ModuleDirCaseKebab,
-		`--tables`, myGenThis.option.DbTable,
+		`--removePrefix`, tpl.RemovePrefix,
+		`--daoPath`, `dao/` + tpl.ModuleDirCaseKebab,
+		`--doPath`, `model/entity/` + tpl.ModuleDirCaseKebab,
+		`--entityPath`, `model/entity/` + tpl.ModuleDirCaseKebab,
+		`--tables`, tpl.TableRaw,
 		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
 	}
-	if myGenThis.option.IsCover {
-		commandArg = append(commandArg, `--overwriteDao`)
-	}
-	myGenThis.command(`当前表dao生成`, true, ``, `gf`, commandArg...)
-
-	tpl := myGenThis.tpl
-
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
+	if !gfile.IsFile(saveFile) {
+		myGenThis.command(`当前表dao生成`, true, ``, `gf`, commandArg...)
+	} else {
+		if myGenThis.option.IsCover {
+			commandArg = append(commandArg, `--overwriteDao`)
+		}
+		myGenThis.command(`当前表dao生成`, true, ``, `gf`, commandArg...)
+	}
+
 	tplDao := gfile.GetContents(saveFile)
 
 	type dao struct {
@@ -1389,7 +1393,7 @@ func (myGenThis *myGenHandler) genDao() {
 	utils.GoFileFmt(saveFile)
 }
 
-// logic模板生成（文件不存在时增删改查全部生成，已存在不处理不覆盖）
+// logic模板生成
 func (myGenThis *myGenHandler) genLogic() {
 	option := myGenThis.option
 	tpl := myGenThis.tpl
