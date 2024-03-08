@@ -4289,9 +4289,6 @@ func (myGenThis *myGenHandler) getRelIdTpl(tpl myGenTpl, field string) (relTpl m
 		if removePrefixAlone == `` {
 			// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
 			tableRemove := gstr.TrimLeftStr(table, removePrefixCommon, 1)
-			if gstr.Pos(tableRemove, `_`) != -1 {
-				removePrefixAlone = gstr.Split(tableRemove, `_`)[0] + `_`
-			}
 			if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
 				removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
 			}
