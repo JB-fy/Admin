@@ -258,31 +258,9 @@ type handlePassword struct {
 
 type handleRelId struct {
 	tpl          myGenTpl
+	FieldName    string //字段名称
 	IsRedundName bool   //是否冗余过关联表名称字段
 	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-}
-
-// TODO 删除
-type relTableItem struct {
-	RemovePrefixCommon      string     //要删除的共有前缀
-	RemovePrefixAlone       string     //要删除的独有前缀
-	RemovePrefix            string     //要删除的前缀
-	TableRaw                string     //表名（原始，包含前缀）
-	RelTableCaseSnake       string     //表名（蛇形，已去除前缀）
-	RelTableCaseCamel       string     //表名（大驼峰，已去除前缀）
-	RelTableCaseCamelLower  string     //表名（小驼峰，已去除前缀）
-	TableColumnList         gdb.Result //表字段详情
-	RelDaoDir               string     //关联表dao层目录
-	RelDaoDirCaseCamel      string     //关联表dao层目录（大驼峰，/会被去除）
-	RelDaoDirCaseCamelLower string     //关联表dao层目录（小驼峰，/会被保留）
-	IsSameDir               bool       //关联表dao层是否与当前生成dao层在相同目录下
-	RelTableField           string     //关联表字段
-	RelTableFieldName       string     //关联表字段名称
-	IsRedundRelNameField    bool       //当前表是否冗余关联表字段
-	RelSuffix               string     //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-	RelSuffixCaseCamel      string     //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
-	RelSuffixCaseSnake      string     //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
-	RelTableIsExistPidField bool       //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
 }
 
 // 参数处理
@@ -769,7 +747,11 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				fieldTmp.FieldTypeName = TypeNameIdSuffix
 				handleRelIdObj := handleRelId{
-					tpl: myGenThis.getRelIdTpl(tpl, fieldTmp.FieldRaw),
+					tpl:       myGenThis.getRelIdTpl(tpl, fieldTmp.FieldRaw),
+					FieldName: fieldTmp.FieldName,
+				}
+				if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
+					handleRelIdObj.FieldName = gstr.SubStr(handleRelIdObj.FieldName, 0, -2)
 				}
 				if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
 					handleRelIdObj.Suffix = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
@@ -1722,9 +1704,9 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.createRule = append(apiItemObj.createRule, `min:1`)
 			apiItemObj.updateRule = append(apiItemObj.updateRule, `min:1`)
 
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-				relTable := tpl.RelTableMap[v.FieldRaw]
-				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+gstr.CaseCamel(relIdObj.Suffix)+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relTable.RelTableFieldName+`"`+"`")
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.TableRaw != `` && !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
+				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+gstr.CaseCamel(relIdObj.Suffix)+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
@@ -2218,11 +2200,11 @@ func (myGenThis *myGenHandler) genController() {
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-				relTable := tpl.RelTableMap[v.FieldRaw]
-				daoPath := `dao` + relTable.RelDaoDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
+			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+			if relIdObj.tpl.TableRaw != `` && !relIdObj.IsRedundName {
+				daoPath := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 				controllerObj.importDao += `
-dao` + relTable.RelDaoDirCaseCamel + ` "api/internal/dao/` + relTable.RelDaoDir + `"`
+dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
 				fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])
 				if relIdObj.Suffix != `` {
 					fieldTmp += "+`" + relIdObj.Suffix + "`"
@@ -2696,8 +2678,8 @@ func (myGenThis *myGenHandler) genViewList() {
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-				columnAttrObj.dataKey = `'` + tpl.RelTableMap[v.FieldRaw].RelTableField + tpl.RelTableMap[v.FieldRaw].RelSuffix + `'`
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.TableRaw != `` && !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
+				columnAttrObj.dataKey = `'` + tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.LabelList[0] + tpl.Handle.RelIdMap[v.FieldRaw].Suffix + `'`
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			columnAttrObj.sortable = `true`
@@ -3292,12 +3274,12 @@ func (myGenThis *myGenHandler) genViewQuery() {
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseCamelLower(gstr.SubStr(v.FieldRaw, 0, -2))
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` {
-				relTable := tpl.RelTableMap[v.FieldRaw]
-				apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
+			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.TableRaw != `` {
+				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+				apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			}
-			if tpl.RelTableMap[v.FieldRaw].RelTableIsExistPidField {
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
 				viewQueryObj.form = append(viewQueryObj.form, `<el-form-item prop="`+v.FieldRaw+`">
             <my-cascader v-model="queryCommon.data.`+v.FieldRaw+`" :placeholder="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+apiUrl+`/tree' }" :props="{ emitPath: false }" />
         </el-form-item>`)
@@ -3524,16 +3506,16 @@ func (myGenThis *myGenHandler) genViewSave() {
 			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'url', trigger: 'change', message: t('validation.url') },`)
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseCamelLower(gstr.SubStr(v.FieldRaw, 0, -2))
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` {
-				relTable := tpl.RelTableMap[v.FieldRaw]
-				apiUrl = relTable.RelDaoDirCaseCamelLower + `/` + relTable.RelTableCaseCamelLower
+			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.TableRaw != `` {
+				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+				apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			}
 			viewSaveObj.paramHandle = append(viewSaveObj.paramHandle, `param.`+v.FieldRaw+` === undefined ? param.`+v.FieldRaw+` = 0 : null`)
 			viewSaveObj.rule = append(viewSaveObj.rule, v.FieldRaw+`: [
             { type: 'integer', /* required: true, */ min: 1, trigger: 'change', message: t('validation.select') },
         ],`)
-			if tpl.RelTableMap[v.FieldRaw].RelTableIsExistPidField {
+			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
 				viewSaveObj.form = append(viewSaveObj.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
                     <my-cascader v-model="saveForm.data.`+v.FieldRaw+`" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/`+apiUrl+`/tree' }" :props="{ emitPath: false }" />
                 </el-form-item>`)
@@ -3962,8 +3944,9 @@ func (myGenThis *myGenHandler) genViewI18n() {
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			if tpl.RelTableMap[v.FieldRaw].TableRaw != `` && !tpl.RelTableMap[v.FieldRaw].IsRedundRelNameField {
-				viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '`+tpl.RelTableMap[v.FieldRaw].RelTableFieldName+`',`)
+			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+			if relIdObj.tpl.TableRaw != `` && !relIdObj.IsRedundName {
+				viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '`+relIdObj.FieldName+`',`)
 				continue
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
