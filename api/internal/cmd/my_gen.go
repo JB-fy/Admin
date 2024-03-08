@@ -61,6 +61,8 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 			父级		命名：pid；	类型：int等类型；
 			层级		命名：level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 			层级路径	命名：idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+				建议直接使用text，当level层级大时，不用考虑字符长度问题。
+				当level层级不大时，可使用varchar，但必须设置足够的字段长度，否则会丢失路径后面的部分字符。
 			排序		命名：sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 
 		常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
@@ -105,8 +107,7 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		myGenHandlerObj.genViewI18n()   // 视图模板I18n生成
 		myGenHandlerObj.genViewRouter() // 前端路由生成
 		// 前端代码格式化
-		myGenHandlerObj.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandlerObj.option.SceneCode,
-			`npm`, `run`, `format`)
+		myGenHandlerObj.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandlerObj.option.SceneCode, `npm`, `run`, `format`)
 	}
 	return
 }
@@ -175,7 +176,7 @@ type myGenTpl struct {
 			IdPath    string //层级路径字段
 			Sort      string //排序字段
 		}
-		RelIdMap map[string]handleRelId //TODO id后缀字段关联表信息
+		RelIdMap map[string]handleRelId //id后缀字段，需特殊处理
 	}
 }
 
@@ -235,7 +236,6 @@ type myGenField struct {
 	FieldType            myGenFieldType     // 字段类型（数据类型）
 	FieldTypeName        myGenFieldTypeName // 字段类型（命名类型）
 	IndexRaw             string             // 索引类型（原始）。PRI, MUL
-	Index                string             // 索引类型
 	IsNull               bool               // 字段是否可为NULL
 	Default              interface{}        // 默认值
 	Extra                string             // 扩展信息： auto_increment自动递增
@@ -798,7 +798,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	tpl.Handle.LabelList = []string{}
 	for _, v := range labelList {
 		for _, item := range fieldList {
-			if v == item.FieldCaseCamel {
+			if v == item.FieldCaseCamel && garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(item.FieldType) {
 				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item.FieldRaw)
 				break
 			}
@@ -854,22 +854,22 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 
 // dao层存在时，增加或修改部分字段的解析代码
 func (myGenThis *myGenHandler) genDao() {
-	overwriteDao := `false`
-	if myGenThis.option.IsCover {
-		overwriteDao = `true`
-	}
-	myGenThis.command(`当前表dao生成`, true, ``,
-		`gf`, `gen`, `dao`,
+	commandArg := []string{
+		`gen`, `dao`,
 		`--link`, myGenThis.dbLink,
 		`--group`, myGenThis.option.DbGroup,
 		`--removePrefix`, myGenThis.tpl.RemovePrefix,
-		`--daoPath`, `dao/`+myGenThis.tpl.ModuleDirCaseKebab,
-		`--doPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
-		`--entityPath`, `model/entity/`+myGenThis.tpl.ModuleDirCaseKebab,
+		`--daoPath`, `dao/` + myGenThis.tpl.ModuleDirCaseKebab,
+		`--doPath`, `model/entity/` + myGenThis.tpl.ModuleDirCaseKebab,
+		`--entityPath`, `model/entity/` + myGenThis.tpl.ModuleDirCaseKebab,
 		`--tables`, myGenThis.option.DbTable,
 		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
-		`--overwriteDao`, overwriteDao)
+	}
+	if myGenThis.option.IsCover {
+		commandArg = append(commandArg, `--overwriteDao`)
+	}
+	myGenThis.command(`当前表dao生成`, true, ``, `gf`, commandArg...)
 
 	tpl := myGenThis.tpl
 
@@ -919,7 +919,7 @@ func (myGenThis *myGenHandler) genDao() {
 			fieldParseStrTmp := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `"
 			parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 			for i := labelListLen - 2; i >= 0; i-- {
-				fieldParseStrTmp = "IF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + fieldParseStrTmp + ")"
+				fieldParseStrTmp = "IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + fieldParseStrTmp + ")"
 				if i == 0 {
 					parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 				} else {
@@ -1179,21 +1179,19 @@ func (myGenThis *myGenHandler) genDao() {
 					}
 				}
 				if !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
-					fieldParseStr := `//因前端页面已用该字段名显示，故不存在时改成` + "`" + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + "`" + `（控制器也要改）。同时下面Fields方法改成m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().Xxxx + ` + "` AS `" + ` + v)`
-					if gstr.Pos(tplDao, fieldParseStr) == -1 {
-						if relIdObj.Suffix != `` {
-							fieldParseStr = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + " + `" + relIdObj.Suffix + "`: " + fieldParseStr + `
-				table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + gstr.CaseSnake(relIdObj.Suffix) + "`" + `
-				m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)
-				m = m.Handler(daoThis.ParseJoin(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + `, daoModel))`
-						} else {
-							fieldParseStr = `
-			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `: ` + fieldParseStr + `
+					fieldParseStr := `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `:` + `
 				table` + relIdObj.tpl.TableCaseCamel + ` := ` + daoPath + `.ParseDbTable(m.GetCtx())
 				m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + ` + ` + "`.`" + ` + v)
 				m = m.Handler(daoThis.ParseJoin(table` + relIdObj.tpl.TableCaseCamel + `, daoModel))`
-						}
+					if relIdObj.Suffix != `` {
+						fieldParseStr = `
+			case ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + " + `" + relIdObj.Suffix + "`:" + `
+				table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` := ` + daoPath + `.ParseDbTable(m.GetCtx()) + ` + "`" + gstr.CaseSnake(relIdObj.Suffix) + "`" + `
+				m = m.Fields(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)
+				m = m.Handler(daoThis.ParseJoin(table` + relIdObj.tpl.TableCaseCamel + gstr.CaseCamel(relIdObj.Suffix) + `, daoModel))`
+					}
+					if gstr.Pos(tplDao, fieldParseStr) == -1 {
 						daoObj.field.parse += fieldParseStr
 					}
 				}
@@ -1559,8 +1557,7 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Cont
 
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
-	myGenThis.command(`service生成`, true, ``,
-		`gf`, `gen`, `service`)
+	myGenThis.command(`service生成`, true, ``, `gf`, `gen`, `service`)
 }
 
 // api模板生成
@@ -4271,30 +4268,20 @@ func (myGenThis *myGenHandler) getRelIdTpl(tpl myGenTpl, field string) (relTpl m
 
 		// 判断dao文件是否存在，不存在则生成
 		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTpl.ModuleDirCaseKebab + `/` + relTpl.TableCaseSnake + `.go`) {
-			myGenThis.command(`关联表（`+relTpl.TableRaw+`）dao生成`, true, ``,
-				`gf`, `gen`, `dao`,
+			commandArg := []string{
+				`gen`, `dao`,
 				`--link`, myGenThis.dbLink,
 				`--group`, myGenThis.option.DbGroup,
 				`--removePrefix`, relTpl.RemovePrefix,
-				`--daoPath`, `dao/`+relTpl.ModuleDirCaseKebab,
-				`--doPath`, `model/entity/`+relTpl.ModuleDirCaseKebab,
-				`--entityPath`, `model/entity/`+relTpl.ModuleDirCaseKebab,
+				`--daoPath`, `dao/` + relTpl.ModuleDirCaseKebab,
+				`--doPath`, `model/entity/` + relTpl.ModuleDirCaseKebab,
+				`--entityPath`, `model/entity/` + relTpl.ModuleDirCaseKebab,
 				`--tables`, relTpl.TableRaw,
 				`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
 				`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
-				`--overwriteDao`, `false`)
+			}
+			myGenThis.command(`关联表（`+relTpl.TableRaw+`）dao生成`, true, ``, `gf`, commandArg...)
 		}
 	}
 	return
-	// TODO
-	/* type relTableItem struct {
-		IsSameDir               bool       //关联表dao层是否与当前生成dao层在相同目录下
-		RelTableField           string     //关联表字段
-		RelTableFieldName       string     //关联表字段名称
-		IsRedundRelNameField    bool       //当前表是否冗余关联表字段
-		RelSuffix               string     //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
-		RelSuffixCaseCamel      string     //关联表字段后缀（大驼峰）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应OfSend
-		RelSuffixCaseSnake      string     //关联表字段后缀（蛇形）。字段含[_of_]时，_of_及其之后的部分。示例：userIdOfSend和user_id_of_send都对应_of_send
-		RelTableIsExistPidField bool       //关联表是否pid字段。前端Query和Save视图组件则使用my-cascader组件，否则使用my-select组件
-	} */
 }

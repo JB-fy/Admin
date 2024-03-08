@@ -3,6 +3,7 @@ CASE 字段 WHEN 匹配 THEN 值 ELSE 默认值 END                             
 IF(条件, 值1, 值2)                                                             // 当条件为真，返回值1,否则返回值2
 IFNULL(值1, 值2)                                                               // 当值1为null时，返回值2
 NULLIF(值1, 值2)                                                               // 当值1等于值2，返回null，否则返回值1
+COALESCE(值,...)                                                               // 返回第一个非NULL参数
 
 AVG([DISTINCT] 字段)                                                           // 平均值
 ROUND(值, 2)                                                                   // 保留两位小数
