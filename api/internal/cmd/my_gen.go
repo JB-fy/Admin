@@ -70,7 +70,9 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 			加密盐 		命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			名称		命名：name,title后缀；			类型：varchar；
 			标识		命名：code后缀；				类型：varchar；
+			账号		命名：account后缀；				类型：varchar；
 			手机		命名：phone,mobile后缀；		类型：varchar；
+			邮箱		命名：email后缀；				类型：varchar；
 			链接		命名：url,link后缀；			类型：varchar；
 			IP			命名：IP后缀；					类型：varchar；
 			关联ID		命名：id后缀；					类型：int等类型；
@@ -210,7 +212,9 @@ const (
 	TypeNameSaltSuffix     myGenFieldTypeName = `命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；`
 	TypeNameNameSuffix     myGenFieldTypeName = `命名：name,title后缀；	类型：varchar；`
 	TypeNameCodeSuffix     myGenFieldTypeName = `命名：code后缀；	类型：varchar；`
+	TypeNameAccountSuffix  myGenFieldTypeName = `命名：account后缀；	类型：varchar；`
 	TypeNamePhoneSuffix    myGenFieldTypeName = `命名：phone,mobile后缀；	类型：varchar；`
+	TypeNameEmailSuffix    myGenFieldTypeName = `命名：email后缀；	类型：varchar；`
 	TypeNameUrlSuffix      myGenFieldTypeName = `命名：url,link后缀；	类型：varchar；`
 	TypeNameIpSuffix       myGenFieldTypeName = `命名：IP后缀；	类型：varchar；`
 	TypeNameIdSuffix       myGenFieldTypeName = `命名：id后缀；	类型：int等类型；`
@@ -689,8 +693,12 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 				fieldTmp.FieldTypeName = TypeNameNameSuffix
 			} else if garray.NewStrArrayFrom([]string{`code`}).Contains(fieldSuffix) { //code后缀
 				fieldTmp.FieldTypeName = TypeNameCodeSuffix
+			} else if garray.NewStrArrayFrom([]string{`account`}).Contains(fieldSuffix) { //account后缀
+				fieldTmp.FieldTypeName = TypeNameAccountSuffix
 			} else if garray.NewStrArrayFrom([]string{`phone`, `mobile`}).Contains(fieldSuffix) { //phone,mobile后缀
 				fieldTmp.FieldTypeName = TypeNamePhoneSuffix
+			} else if garray.NewStrArrayFrom([]string{`email`}).Contains(fieldSuffix) { //email后缀
+				fieldTmp.FieldTypeName = TypeNameEmailSuffix
 			} else if garray.NewStrArrayFrom([]string{`url`, `link`}).Contains(fieldSuffix) { //url,link后缀
 				fieldTmp.FieldTypeName = TypeNameUrlSuffix
 			} else if garray.NewStrArrayFrom([]string{`ip`}).Contains(fieldSuffix) { //IP后缀
@@ -1163,7 +1171,9 @@ func (myGenThis *myGenHandler) genDao() {
 				daoObj.filter.parse += filterParseStr
 			}
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
@@ -1678,10 +1688,21 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
 			apiItemObj.createRule = append(apiItemObj.createRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
 			apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
+			// apiItemObj.filterRule = append(apiItemObj.filterRule, `passport`)
+			// apiItemObj.createRule = append(apiItemObj.createRule, `passport`)
+			// apiItemObj.updateRule = append(apiItemObj.updateRule, `passport`)
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			apiItemObj.filterRule = append(apiItemObj.filterRule, `phone`)
 			apiItemObj.createRule = append(apiItemObj.createRule, `phone`)
 			apiItemObj.updateRule = append(apiItemObj.updateRule, `phone`)
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
+			apiItemObj.filterRule = append(apiItemObj.filterRule, `email`)
+			apiItemObj.createRule = append(apiItemObj.createRule, `email`)
+			apiItemObj.updateRule = append(apiItemObj.updateRule, `email`)
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 			apiItemObj.filterRule = append(apiItemObj.filterRule, `url`)
 			apiItemObj.createRule = append(apiItemObj.createRule, `url`)
@@ -1730,7 +1751,7 @@ func (myGenThis *myGenHandler) genApi() {
 			apiItemObj.update = true
 			apiItemObj.res = true
 
-			/* TODO 可以和状态一样处理。可能也得改前端开关组件属性
+			/* TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
 			statusArr := make([]string, len(v.StatusList))
 			for index, item := range v.StatusList {
 				statusArr[index] = item[0]
@@ -2193,7 +2214,9 @@ func (myGenThis *myGenHandler) genController() {
 			// controllerObj.diff = append(controllerObj.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
@@ -2671,7 +2694,9 @@ func (myGenThis *myGenHandler) genViewList() {
 			continue
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
@@ -3267,7 +3292,9 @@ func (myGenThis *myGenHandler) genViewQuery() {
 			continue
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
@@ -3497,10 +3524,14 @@ func (myGenThis *myGenHandler) genViewSave() {
 			// viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`)
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'email', trigger: 'blur', message: t('validation.email') },`)
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'url', trigger: 'change', message: t('validation.url') },`)
+			viewSaveItemObj.rule = append(viewSaveItemObj.rule, `{ type: 'url', trigger: 'blur', message: t('validation.url') },`)
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
@@ -3937,7 +3968,9 @@ func (myGenThis *myGenHandler) genViewI18n() {
 			continue
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
