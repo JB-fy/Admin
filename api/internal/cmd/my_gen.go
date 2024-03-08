@@ -246,7 +246,7 @@ type myGenField struct {
 	Comment              string             // 注释（原始）。
 	FieldName            string             // 字段名称。由注释解析出来，前端显示用。符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用）
 	FieldDesc            string             // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
-	FieldTip             string             // 字段提示。由注释解析出来，前端提示用。符号[\n\r]换成` `，"增加转义换成\"
+	FieldTip             string             // 字段提示。由注释解析出来，前端提示用。
 	StatusList           [][2]string        // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 	FieldLimitStr        string             // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitFloat      [2]string          // 浮点数字段限制。第1个表示整数位，第2个表示小数位
@@ -598,12 +598,14 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 			`"`, `\"`,
 		}))
 		tmpFieldTip := gstr.Replace(fieldTmp.FieldDesc, fieldTmp.FieldName, ``, 1)
-		tmp, _ := gregex.MatchString(`\n\r\.。:：\(（`, fieldTmp.Comment)
-		if len(tmp) > 0 {
-			gstr.TrimLeft(tmpFieldTip, tmp[0])
-		}
-		for _, v := range []string{"\n", "\r", `.`, `。`, `:`, `：`, `(`, `（`, `)`, `）`, ` `, `,`, `，`, `;`, `；`} {
+		for _, v := range []string{`.`, `。`, `:`, `：`, ` `, `,`, `，`, `;`, `；`} {
 			tmpFieldTip = gstr.Trim(tmpFieldTip, v)
+		}
+		if gstr.Pos(tmpFieldTip, `(`) == 0 {
+			tmpFieldTip = gstr.TrimRightStr(gstr.TrimLeftStr(tmpFieldTip, `(`, 1), `)`, 1)
+		}
+		if gstr.Pos(tmpFieldTip, `（`) == 0 {
+			tmpFieldTip = gstr.TrimRightStr(gstr.TrimLeftStr(tmpFieldTip, `（`, 1), `）`, 1)
 		}
 		fieldTmp.FieldTip = gstr.ReplaceByArray(tmpFieldTip, g.SliceStr{
 			`\"`, `"`,
@@ -679,7 +681,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) {
 				isStr = true
 			}
-			fieldTmp.StatusList = myGenThis.getStatusList(fieldTmp.FieldDesc, isStr)
+			fieldTmp.StatusList = myGenThis.getStatusList(fieldTmp.FieldTip, isStr)
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = TypeNameImageSuffix
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -4153,10 +4155,10 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 func (myGenThis *myGenHandler) getStatusList(comment string, isStr bool) (statusList [][2]string) {
 	var tmp [][]string
 	if isStr {
-		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；)）]+)`, comment)
+		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；]+)`, comment)
 	} else {
-		// tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；)）]+)`, comment)
-		tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\s,，;；)）]+)`, comment)
+		// tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；]+)`, comment)
+		tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\s,，;；]+)`, comment)
 	}
 
 	if len(tmp) == 0 {
