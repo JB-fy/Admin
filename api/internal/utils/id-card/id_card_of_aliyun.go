@@ -1,4 +1,4 @@
-package idCard
+package id_card
 
 import (
 	"context"

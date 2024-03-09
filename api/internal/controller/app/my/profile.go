@@ -8,7 +8,7 @@ import (
 	daoUser "api/internal/dao/user"
 	"api/internal/service"
 	"api/internal/utils"
-	"api/internal/utils/idCard"
+	idCard "api/internal/utils/id-card"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
