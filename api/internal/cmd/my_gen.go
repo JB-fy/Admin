@@ -540,10 +540,6 @@ isCoverEnd:
 
 // 模板参数处理
 func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, removePrefixAlone string) (tpl myGenTpl) {
-	ctx := myGenThis.ctx
-	db := myGenThis.db
-	option := myGenThis.option
-
 	tpl = myGenTpl{
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
@@ -552,7 +548,7 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 	}
 	tpl.Handle.PasswordMap = map[string]handlePassword{}
 	tpl.Handle.RelIdMap = map[string]handleRelId{}
-	tpl.FieldListRaw, _ = db.GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
+	tpl.FieldListRaw, _ = myGenThis.db.GetAll(myGenThis.ctx, `SHOW FULL COLUMNS FROM `+table)
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.TableRaw, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
 	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
@@ -564,10 +560,10 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 		moduleDirCaseCamel = gstr.CaseCamel(tpl.RemovePrefixAlone)
 		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(tpl.RemovePrefixAlone, `_`))
 	}
-	if option.DbGroup != `default` {
-		logicStructName = option.DbGroup + `_` + logicStructName
-		moduleDirCaseCamel = gstr.CaseCamel(option.DbGroup) + moduleDirCaseCamel
-		moduleDirCaseKebab = gstr.CaseKebab(option.DbGroup) + `/` + moduleDirCaseKebab
+	if myGenThis.option.DbGroup != `default` {
+		logicStructName = myGenThis.option.DbGroup + `_` + logicStructName
+		moduleDirCaseCamel = gstr.CaseCamel(myGenThis.option.DbGroup) + moduleDirCaseCamel
+		moduleDirCaseKebab = gstr.CaseKebab(myGenThis.option.DbGroup) + `/` + moduleDirCaseKebab
 	}
 	tpl.LogicStructName = gstr.CaseCamel(logicStructName)
 	tpl.ModuleDirCaseKebab = moduleDirCaseKebab
@@ -1395,11 +1391,10 @@ func (myGenThis *myGenHandler) genDao() {
 
 // logic模板生成
 func (myGenThis *myGenHandler) genLogic() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -1547,11 +1542,10 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Cont
 
 // api模板生成
 func (myGenThis *myGenHandler) genApi() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/api/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -2006,11 +2000,11 @@ import (
 )
 
 `
-	if option.IsList {
+	if myGenThis.option.IsList {
 		tplApi += `
 /*--------列表 开始--------*/
 type ` + tpl.TableCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"列表"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + myGenThis.sceneName + `/` + myGenThis.option.CommonName + `" sm:"列表"` + "`" + `
 	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
@@ -2027,7 +2021,7 @@ type ` + tpl.TableCaseCamel + `ListFilter struct {
 }
 
 type ` + tpl.TableCaseCamel + `ListRes struct {`
-		if option.IsCount {
+		if myGenThis.option.IsCount {
 			tplApi += `
 	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
 		}
@@ -2045,10 +2039,10 @@ type ` + tpl.TableCaseCamel + `ListItem struct {
 
 `
 	}
-	if option.IsInfo {
+	if myGenThis.option.IsInfo {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"详情"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + myGenThis.sceneName + `/` + myGenThis.option.CommonName + `" sm:"详情"` + "`" + `
 	Id     uint     ` + "`" + `json:"id" v:"required|min:1" dc:"ID"` + "`" + `
 	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
 }
@@ -2066,10 +2060,10 @@ type ` + tpl.TableCaseCamel + `Info struct {
 
 `
 	}
-	if option.IsCreate {
+	if myGenThis.option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, apiObj.create...), `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + myGenThis.sceneName + `/` + myGenThis.option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, apiObj.create...), `
 	`) + `
 }
 
@@ -2078,10 +2072,10 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 `
 	}
 
-	if option.IsUpdate {
+	if myGenThis.option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"修改"` + "`" + `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + myGenThis.sceneName + `/` + myGenThis.option.CommonName + `" sm:"修改"` + "`" + `
 	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.update...), `
 	`) + `
 }
@@ -2091,10 +2085,10 @@ type ` + tpl.TableCaseCamel + `UpdateReq struct {
 `
 	}
 
-	if option.IsDelete {
+	if myGenThis.option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"删除"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + myGenThis.sceneName + `/` + myGenThis.option.CommonName + `" sm:"删除"` + "`" + `
 	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 }
 
@@ -2102,11 +2096,11 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 `
 	}
 
-	if option.IsList && tpl.Handle.Pid.Pid != `` {
+	if myGenThis.option.IsList && tpl.Handle.Pid.Pid != `` {
 		tplApi += `
 /*--------列表（树状） 开始--------*/
 type ` + tpl.TableCaseCamel + `TreeReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + myGenThis.sceneName + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + myGenThis.sceneName + `/` + myGenThis.option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
 	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
@@ -2131,11 +2125,10 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {
 
 // controller模板生成
 func (myGenThis *myGenHandler) genController() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/internal/controller/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -2225,7 +2218,7 @@ func (myGenThis *myGenHandler) genController() {
 
 import (
 	"api/api"
-	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"
+	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseKebab + `"` + gstr.Join(append([]string{``}, controllerObj.importDao...), `
 	`) + `
 	"api/internal/service"
@@ -2242,7 +2235,7 @@ func New` + tpl.TableCaseCamel + `() *` + tpl.TableCaseCamel + ` {
 	return &` + tpl.TableCaseCamel + `{}
 }
 `
-	if option.IsList {
+	if myGenThis.option.IsList {
 		tplController += `
 // 列表
 func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListRes, err error) {
@@ -2269,9 +2262,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	}
 	/**--------参数处理 结束--------**/
 `
-		if option.IsAuthAction {
+		if myGenThis.option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Look`
-			actionName := option.CommonName + `-查看`
+			actionName := myGenThis.option.CommonName + `-查看`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
@@ -2284,7 +2277,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 		}
 		tplController += `
 	daoModelThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter)`
-		if option.IsCount {
+		if myGenThis.option.IsCount {
 			tplController += `
 	count, err := daoModelThis.CountPri()
 	if err != nil {
@@ -2298,7 +2291,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	}
 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListRes{`
-		if option.IsCount {
+		if myGenThis.option.IsCount {
 			tplController += `Count: count, `
 		}
 		tplController += `List:  []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListItem{}}
@@ -2307,7 +2300,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 }
 `
 	}
-	if option.IsInfo {
+	if myGenThis.option.IsInfo {
 		tplController += `
 // 详情
 func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes, err error) {
@@ -2329,9 +2322,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	filter := map[string]interface{}{` + "`id`" + `: req.Id}
 	/**--------参数处理 结束--------**/
 `
-		if option.IsAuthAction {
+		if myGenThis.option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Look`
-			actionName := option.CommonName + `-查看`
+			actionName := myGenThis.option.CommonName + `-查看`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
@@ -2358,7 +2351,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 }
 `
 	}
-	if option.IsCreate {
+	if myGenThis.option.IsCreate {
 		tplController += `
 // 新增
 func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
@@ -2366,9 +2359,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 `
-		if option.IsAuthAction {
+		if myGenThis.option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Create`
-			actionName := option.CommonName + `-新增`
+			actionName := myGenThis.option.CommonName + `-新增`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
@@ -2390,7 +2383,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 `
 	}
 
-	if option.IsUpdate {
+	if myGenThis.option.IsUpdate {
 		tplController += `
 // 修改
 func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
@@ -2404,9 +2397,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
 `
-		if option.IsAuthAction {
+		if myGenThis.option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Update`
-			actionName := option.CommonName + `-编辑`
+			actionName := myGenThis.option.CommonName + `-编辑`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
@@ -2424,7 +2417,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 `
 	}
 
-	if option.IsDelete {
+	if myGenThis.option.IsDelete {
 		tplController += `
 // 删除
 func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
@@ -2432,9 +2425,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
 `
-		if option.IsAuthAction {
+		if myGenThis.option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Delete`
-			actionName := option.CommonName + `-删除`
+			actionName := myGenThis.option.CommonName + `-删除`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
@@ -2452,7 +2445,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 `
 	}
 
-	if option.IsList && tpl.Handle.Pid.Pid != `` {
+	if myGenThis.option.IsList && tpl.Handle.Pid.Pid != `` {
 		tplController += `
 // 列表（树状）
 func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeRes, err error) {
@@ -2478,9 +2471,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	}
 	/**--------参数处理 结束--------**/
 `
-		if option.IsAuthAction {
+		if myGenThis.option.IsAuthAction {
 			actionCode := gstr.CaseCamelLower(myGenThis.tpl.LogicStructName) + `Look`
-			actionName := option.CommonName + `-查看`
+			actionName := myGenThis.option.CommonName + `-查看`
 			myGenThis.genAction(myGenThis.sceneId, actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
@@ -2513,15 +2506,14 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 
 // 后端路由生成
 func (myGenThis *myGenHandler) genRouter() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
+	saveFile := gfile.SelfDir() + `/internal/router/` + myGenThis.option.SceneCode + `.go`
 
 	tplRouter := gfile.GetContents(saveFile)
 
 	//控制器不存在时导入
-	importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"`
+	importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"`
 	if gstr.Pos(tplRouter, importControllerStr) == -1 {
 		tplRouter = gstr.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
 	"api/internal/middleware"`, 1)
@@ -2547,18 +2539,17 @@ func (myGenThis *myGenHandler) genRouter() {
 
 // 视图模板Index生成
 func (myGenThis *myGenHandler) genViewIndex() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
 	tplView := `<script setup lang="tsx">
 import List from './List.vue'
 import Query from './Query.vue'`
-	if option.IsCreate || option.IsUpdate {
+	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
 		tplView += `
 import Save from './Save.vue'`
 	}
@@ -2575,7 +2566,7 @@ const listCommon = reactive({
     ref: null as any,
 })
 provide('listCommon', listCommon)`
-	if option.IsCreate || option.IsUpdate {
+	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
 		tplView += `
 
 //保存
@@ -2596,7 +2587,7 @@ provide('saveCommon', saveCommon)`
         </el-header>
 
         <list :ref="(el: any) => listCommon.ref = el" />`
-	if option.IsCreate || option.IsUpdate {
+	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
 		tplView += `
 
         <!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
@@ -2612,11 +2603,10 @@ provide('saveCommon', saveCommon)`
 
 // 视图模板List生成
 func (myGenThis *myGenHandler) genViewList() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -2683,7 +2673,7 @@ func (myGenThis *myGenHandler) genViewList() {
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			columnAttrObj.sortable = `true`
-			if option.IsUpdate {
+			if myGenThis.option.IsUpdate {
 				columnAttrObj.cellRenderer = `(props: any): any => {
                 if (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `) {
                     let currentRef: any
@@ -2746,7 +2736,7 @@ func (myGenThis *myGenHandler) genViewList() {
             }`
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			cellRendererTmp := `disabled={true}`
-			if option.IsUpdate {
+			if myGenThis.option.IsUpdate {
 				cellRendererTmp = `onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
@@ -2919,7 +2909,7 @@ const table = reactive({
             width: 200,
             fixed: 'left',
             sortable: true,`
-	if option.IsUpdate || option.IsDelete {
+	if myGenThis.option.IsUpdate || myGenThis.option.IsDelete {
 		tplView += `
             headerCellRenderer: () => {
                 const allChecked = table.data.every((item: any) => item.checked)
@@ -2947,7 +2937,7 @@ const table = reactive({
 	tplView += `
         },` + gstr.Join(append([]string{``}, viewListObj.columns...), `
         `)
-	if option.IsCreate || option.IsUpdate || option.IsDelete {
+	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate || myGenThis.option.IsDelete {
 		tplView += `
         {
             title: t('common.name.action'),
@@ -2957,21 +2947,21 @@ const table = reactive({
             fixed: 'right',
             cellRenderer: (props: any): any => {
                 return [`
-		if option.IsUpdate {
+		if myGenThis.option.IsUpdate {
 			tplView += `
                     <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
                         <autoicon-ep-edit />
                         {t('common.edit')}
                     </el-button>,`
 		}
-		if option.IsDelete {
+		if myGenThis.option.IsDelete {
 			tplView += `
                     <el-button type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
                         <autoicon-ep-delete />
                         {t('common.delete')}
                     </el-button>,`
 		}
-		if option.IsCreate {
+		if myGenThis.option.IsCreate {
 			tplView += `
                     <el-button type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
                         <autoicon-ep-document-copy />
@@ -2994,12 +2984,12 @@ const table = reactive({
         getList()
     },
 })`
-	if option.IsCreate || option.IsUpdate {
+	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
 		tplView += `
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }`
 	}
-	if option.IsCreate {
+	if myGenThis.option.IsCreate {
 		tplView += `
 //新增
 const handleAdd = () => {
@@ -3008,7 +2998,7 @@ const handleAdd = () => {
     saveCommon.visible = true
 }`
 	}
-	if option.IsDelete {
+	if myGenThis.option.IsDelete {
 		tplView += `
 //批量删除
 const handleBatchDelete = () => {
@@ -3025,7 +3015,7 @@ const handleBatchDelete = () => {
     }
 }`
 	}
-	if option.IsCreate || option.IsUpdate {
+	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
@@ -3048,7 +3038,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         .catch(() => {})
 }`
 	}
-	if option.IsDelete {
+	if myGenThis.option.IsDelete {
 		tplView += `
 //删除
 const handleDelete = (idArr: number[]) => {
@@ -3068,7 +3058,7 @@ const handleDelete = (idArr: number[]) => {
         .catch(() => {})
 }`
 	}
-	if option.IsUpdate {
+	if myGenThis.option.IsUpdate {
 		tplView += `
 //更新
 const handleUpdate = async (param: { idArr: number[]; [propName: string]: any }) => {
@@ -3126,11 +3116,11 @@ defineExpose({
     <el-row class="main-table-tool">
         <el-col :span="16">
             <el-space :size="10" style="height: 100%; margin-left: 10px">`
-	if option.IsCreate {
+	if myGenThis.option.IsCreate {
 		tplView += `
                 <el-button type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }} </el-button>`
 	}
-	if option.IsDelete {
+	if myGenThis.option.IsDelete {
 		tplView += `
                 <el-button type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }} </el-button>`
 	}
@@ -3194,11 +3184,10 @@ defineExpose({
 
 // 视图模板Query生成
 func (myGenThis *myGenHandler) genViewQuery() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Query.vue`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Query.vue`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -3411,14 +3400,13 @@ const queryForm = reactive({
 
 // 视图模板Save生成
 func (myGenThis *myGenHandler) genViewSave() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	if !(option.IsCreate || option.IsUpdate) {
+	if !(myGenThis.option.IsCreate || myGenThis.option.IsUpdate) {
 		return
 	}
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -3906,11 +3894,10 @@ const saveDrawer = reactive({
 
 // 视图模板I18n生成
 func (myGenThis *myGenHandler) genViewI18n() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
-	if !option.IsCover && gfile.IsFile(saveFile) {
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
+	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -4021,10 +4008,9 @@ func (myGenThis *myGenHandler) genViewI18n() {
 
 // 前端路由生成
 func (myGenThis *myGenHandler) genViewRouter() {
-	option := myGenThis.option
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/router/index.ts`
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/router/index.ts`
 
 	tplViewRouter := gfile.GetContents(saveFile)
 
@@ -4049,7 +4035,7 @@ func (myGenThis *myGenHandler) genViewRouter() {
 	}
 	gfile.PutContents(saveFile, tplViewRouter)
 
-	myGenThis.genMenu(myGenThis.sceneId, path, option.CommonName, tpl.TableCaseCamel) // 数据库权限菜单处理
+	myGenThis.genMenu(myGenThis.sceneId, path, myGenThis.option.CommonName, tpl.TableCaseCamel) // 数据库权限菜单处理
 }
 
 // 自动生成操作权限
