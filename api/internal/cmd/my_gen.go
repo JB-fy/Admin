@@ -109,8 +109,8 @@ func MyGenFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		myGenHandlerObj.genViewSave()   // 视图模板Save生成
 		myGenHandlerObj.genViewI18n()   // 视图模板I18n生成
 		myGenHandlerObj.genViewRouter() // 前端路由生成
-		// 前端代码格式化
-		myGenHandlerObj.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandlerObj.option.SceneCode, `npm`, `run`, `format`)
+
+		myGenHandlerObj.command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenHandlerObj.option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
 	return
 }
@@ -230,7 +230,6 @@ const (
 )
 
 type myGenField struct {
-	// gdb.TableField
 	FieldRaw             string             // 字段（原始）
 	FieldCaseSnake       string             // 字段（蛇形）
 	FieldCaseCamel       string             // 字段（大驼峰）
