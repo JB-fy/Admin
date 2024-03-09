@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os/exec"
 
+	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -18,8 +19,8 @@ import (
 )
 
 /*
-后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isCover=0
-APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefixCommon= -removePrefixAlone= -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isCover=0
+后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1
+APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefixCommon= -removePrefixAlone= -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0
 
 强烈建议搭配Git使用
 
@@ -141,7 +142,6 @@ type myGenOption struct {
 	IsApi              bool   `json:"isApi"`              //是否生成后端接口文件
 	IsAuthAction       bool   `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
 	IsView             bool   `json:"isView"`             //是否生成前端视图文件
-	IsCover            bool   `json:"isCover"`            //是否覆盖原文件(设置为true时，建议与git一起使用，防止代码覆盖风险)
 }
 
 type myGenTpl struct {
@@ -276,9 +276,16 @@ func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
 		myGenThis.option = option
 	}()
 
+	// 命令执行前提示搭配Git使用
+	gcmd.Scan(
+		color.HiYellowString(`重要提示：强烈建议搭配Git使用，防止代码覆盖风险。`)+"\n",
+		color.HiYellowString(`    Git库已创建或忽略风险，请按`)+color.HiGreenString(`[Enter]`)+color.HiYellowString(`继续执行`)+"\n",
+		color.HiYellowString(`    Git库未创建，请按`)+color.HiRedString(`[Ctrl + C]`)+color.HiYellowString(`中断执行`)+"\n",
+	)
+
 	// 场景标识
 	if option.SceneCode == `` {
-		option.SceneCode = gcmd.Scan("> 请输入场景标识:\n")
+		option.SceneCode = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
 	}
 	for {
 		if option.SceneCode != `` {
@@ -289,11 +296,11 @@ func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
 				break
 			}
 		}
-		option.SceneCode = gcmd.Scan("> 场景标识不存在，请重新输入:\n")
+		option.SceneCode = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
 	}
 	// db分组
 	if option.DbGroup == `` {
-		option.DbGroup = gcmd.Scan("> 请输入db分组，默认(default):\n")
+		option.DbGroup = gcmd.Scan(color.BlueString(`> 请输入db分组，默认(default)：`))
 		if option.DbGroup == `` {
 			option.DbGroup = `default`
 		}
@@ -306,7 +313,7 @@ func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
 		if err == nil {
 			break
 		}
-		option.DbGroup = gcmd.Scan("> db分组不存在，请重新输入，默认(default):\n")
+		option.DbGroup = gcmd.Scan(color.RedString(`    db分组不存在，请重新输入，默认(default)：`))
 		if option.DbGroup == `` {
 			option.DbGroup = `default`
 		}
@@ -314,46 +321,46 @@ func (myGenThis *myGenHandler) init(parser *gcmd.Parser) {
 	// db表
 	myGenThis.tableArr, _ = myGenThis.db.Tables(myGenThis.ctx)
 	if option.DbTable == `` {
-		option.DbTable = gcmd.Scan("> 请输入db表:\n")
+		option.DbTable = gcmd.Scan(color.BlueString(`> 请输入db表：`))
 	}
 	for {
 		if option.DbTable != `` && garray.NewStrArrayFrom(myGenThis.tableArr).Contains(option.DbTable) {
 			break
 		}
-		option.DbTable = gcmd.Scan("> db表不存在，请重新输入:\n")
+		option.DbTable = gcmd.Scan(color.RedString(`    db表不存在，请重新输入：`))
 	}
 	// 要删除的共有前缀
 	if _, ok := optionMap[`removePrefixCommon`]; !ok {
-		option.RemovePrefixCommon = gcmd.Scan("> 请输入要删除的共有前缀，默认(空):\n")
+		option.RemovePrefixCommon = gcmd.Scan(color.BlueString(`> 请输入要删除的共有前缀，默认(空)：`))
 	}
 	for {
 		if option.RemovePrefixCommon == `` || gstr.Pos(option.DbTable, option.RemovePrefixCommon) == 0 {
 			break
 		}
-		option.RemovePrefixCommon = gcmd.Scan("> 要删除的共有前缀不存在，请重新输入，默认(空):\n")
+		option.RemovePrefixCommon = gcmd.Scan(color.RedString(`    要删除的共有前缀不存在，请重新输入，默认(空)：`))
 	}
 	// 要删除的独有前缀
 	if _, ok := optionMap[`removePrefixAlone`]; !ok {
-		option.RemovePrefixAlone = gcmd.Scan("> 请输入要删除的独有前缀，默认(空):\n")
+		option.RemovePrefixAlone = gcmd.Scan(color.BlueString(`> 请输入要删除的独有前缀，默认(空)：`))
 	}
 	for {
 		if option.RemovePrefixAlone == `` || gstr.Pos(option.DbTable, option.RemovePrefixCommon+option.RemovePrefixAlone) == 0 {
 			break
 		}
-		option.RemovePrefixAlone = gcmd.Scan("> 要删除的独有前缀不存在，请重新输入，默认(空):\n")
+		option.RemovePrefixAlone = gcmd.Scan(color.RedString(`    要删除的独有前缀不存在，请重新输入，默认(空)：`))
 	}
 	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
 	for {
 		if option.CommonName != `` {
 			break
 		}
-		option.CommonName = gcmd.Scan("> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用:\n")
+		option.CommonName = gcmd.Scan(color.BlueString(`> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用：`))
 	}
 noAllRestart:
 	// 是否生成列表接口
 	isList, ok := optionMap[`isList`]
 	if !ok {
-		isList = gcmd.Scan("> 是否生成列表接口，默认(yes):\n")
+		isList = gcmd.Scan(color.BlueString(`> 是否生成列表接口，默认(yes)：`))
 	}
 isListEnd:
 	for {
@@ -365,13 +372,13 @@ isListEnd:
 			option.IsList = false
 			break isListEnd
 		default:
-			isList = gcmd.Scan("> 输入错误，请重新输入，是否生成列表接口，默认(yes):\n")
+			isList = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成列表接口，默认(yes)：`))
 		}
 	}
 	// 列表接口是否返回总数
 	isCount, ok := optionMap[`isCount`]
 	if !ok {
-		isCount = gcmd.Scan("> 列表接口是否返回总数，默认(yes):\n")
+		isCount = gcmd.Scan(color.BlueString(`> 列表接口是否返回总数，默认(yes)：`))
 	}
 isCountEnd:
 	for {
@@ -383,13 +390,13 @@ isCountEnd:
 			option.IsCount = false
 			break isCountEnd
 		default:
-			isCount = gcmd.Scan("> 输入错误，请重新输入，列表接口是否返回总数，默认(yes):\n")
+			isCount = gcmd.Scan(color.RedString(`    输入错误，请重新输入，列表接口是否返回总数，默认(yes)：`))
 		}
 	}
 	// 是否生成详情接口
 	isInfo, ok := optionMap[`isInfo`]
 	if !ok {
-		isInfo = gcmd.Scan("> 是否生成详情接口，默认(yes):\n")
+		isInfo = gcmd.Scan(color.BlueString(`> 是否生成详情接口，默认(yes)：`))
 	}
 isInfoEnd:
 	for {
@@ -401,13 +408,13 @@ isInfoEnd:
 			option.IsInfo = false
 			break isInfoEnd
 		default:
-			isInfo = gcmd.Scan("> 输入错误，请重新输入，是否生成详情接口，默认(yes):\n")
+			isInfo = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成详情接口，默认(yes)：`))
 		}
 	}
 	// 是否生成创建接口
 	isCreate, ok := optionMap[`isCreate`]
 	if !ok {
-		isCreate = gcmd.Scan("> 是否生成创建接口，默认(yes):\n")
+		isCreate = gcmd.Scan(color.BlueString(`> 是否生成创建接口，默认(yes)：`))
 	}
 isCreateEnd:
 	for {
@@ -419,13 +426,13 @@ isCreateEnd:
 			option.IsCreate = false
 			break isCreateEnd
 		default:
-			isCreate = gcmd.Scan("> 输入错误，请重新输入，是否生成创建接口，默认(yes):\n")
+			isCreate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成创建接口，默认(yes)：`))
 		}
 	}
 	// 是否生成更新接口
 	isUpdate, ok := optionMap[`isUpdate`]
 	if !ok {
-		isUpdate = gcmd.Scan("> 是否生成更新接口，默认(yes):\n")
+		isUpdate = gcmd.Scan(color.BlueString(`> 是否生成更新接口，默认(yes)：`))
 	}
 isUpdateEnd:
 	for {
@@ -437,13 +444,13 @@ isUpdateEnd:
 			option.IsUpdate = false
 			break isUpdateEnd
 		default:
-			isUpdate = gcmd.Scan("> 输入错误，请重新输入，是否生成更新接口，默认(yes):\n")
+			isUpdate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成更新接口，默认(yes)：`))
 		}
 	}
 	// 是否生成删除接口
 	isDelete, ok := optionMap[`isDelete`]
 	if !ok {
-		isDelete = gcmd.Scan("> 是否生成删除接口，默认(yes):\n")
+		isDelete = gcmd.Scan(color.BlueString(`> 是否生成删除接口，默认(yes)：`))
 	}
 isDeleteEnd:
 	for {
@@ -455,7 +462,7 @@ isDeleteEnd:
 			option.IsDelete = false
 			break isDeleteEnd
 		default:
-			isDelete = gcmd.Scan("> 输入错误，请重新输入，是否生成删除接口，默认(yes):\n")
+			isDelete = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成删除接口，默认(yes)：`))
 		}
 	}
 	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
@@ -465,7 +472,7 @@ isDeleteEnd:
 	// 是否生成后端接口文件
 	isApi, ok := optionMap[`isApi`]
 	if !ok {
-		isApi = gcmd.Scan("> 是否生成后端接口文件，默认(yes):\n")
+		isApi = gcmd.Scan(color.BlueString(`> 是否生成后端接口文件，默认(yes)：`))
 	}
 isApiEnd:
 	for {
@@ -477,14 +484,14 @@ isApiEnd:
 			option.IsApi = false
 			break isApiEnd
 		default:
-			isApi = gcmd.Scan("> 输入错误，请重新输入，是否生成后端接口文件，默认(yes):\n")
+			isApi = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成后端接口文件，默认(yes)：`))
 		}
 	}
 	if option.IsApi {
 		// 是否判断操作权限，如是，则同时会生成操作权限
 		isAuthAction, ok := optionMap[`isAuthAction`]
 		if !ok {
-			isAuthAction = gcmd.Scan("> 是否判断操作权限，如是，则同时会生成操作权限，默认(yes):\n")
+			isAuthAction = gcmd.Scan(color.BlueString(`> 是否判断操作权限，如是，则同时会生成操作权限，默认(yes)：`))
 		}
 	isAuthActionEnd:
 		for {
@@ -496,14 +503,14 @@ isApiEnd:
 				option.IsAuthAction = false
 				break isAuthActionEnd
 			default:
-				isAuthAction = gcmd.Scan("> 输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes):\n")
+				isAuthAction = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes)：`))
 			}
 		}
 	}
 	// 是否生成前端视图文件
 	isView, ok := optionMap[`isView`]
 	if !ok {
-		isView = gcmd.Scan("> 是否生成前端视图文件，默认(yes):\n")
+		isView = gcmd.Scan(color.BlueString(`> 是否生成前端视图文件，默认(yes)：`))
 	}
 isViewEnd:
 	for {
@@ -515,25 +522,7 @@ isViewEnd:
 			option.IsView = false
 			break isViewEnd
 		default:
-			isView = gcmd.Scan("> 输入错误，请重新输入，是否生成前端视图文件，默认(yes):\n")
-		}
-	}
-	// 是否覆盖原文件
-	isCover, ok := optionMap[`isCover`]
-	if !ok {
-		isCover = gcmd.Scan("> 是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
-	}
-isCoverEnd:
-	for {
-		switch isCover {
-		case `1`, `yes`:
-			option.IsCover = true
-			break isCoverEnd
-		case ``, `0`, `no`:
-			option.IsCover = false
-			break isCoverEnd
-		default:
-			isCover = gcmd.Scan("> 输入错误，请重新输入，是否覆盖原文件(设置为yes时，建议与git一起使用，防止代码覆盖风险)，默认(no):\n")
+			isView = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成前端视图文件，默认(yes)：`))
 		}
 	}
 }
@@ -862,28 +851,8 @@ func (myGenThis *myGenHandler) createTpl(table, removePrefixCommon string, remov
 func (myGenThis *myGenHandler) genDao() {
 	tpl := myGenThis.tpl
 
-	commandArg := []string{
-		`gen`, `dao`,
-		`--link`, myGenThis.dbLink,
-		`--group`, myGenThis.option.DbGroup,
-		`--removePrefix`, tpl.RemovePrefix,
-		`--daoPath`, `dao/` + tpl.ModuleDirCaseKebab,
-		`--doPath`, `model/entity/` + tpl.ModuleDirCaseKebab,
-		`--entityPath`, `model/entity/` + tpl.ModuleDirCaseKebab,
-		`--tables`, tpl.TableRaw,
-		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
-		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
-	}
+	myGenThis.commandOfGfGenDao(tpl, true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	if !gfile.IsFile(saveFile) {
-		myGenThis.command(`当前表dao生成`, true, ``, `gf`, commandArg...)
-	} else {
-		if myGenThis.option.IsCover {
-			commandArg = append(commandArg, `--overwriteDao`)
-		}
-		myGenThis.command(`当前表dao生成`, true, ``, `gf`, commandArg...)
-	}
-
 	tplDao := gfile.GetContents(saveFile)
 
 	type dao struct {
@@ -1393,11 +1362,6 @@ func (myGenThis *myGenHandler) genDao() {
 func (myGenThis *myGenHandler) genLogic() {
 	tpl := myGenThis.tpl
 
-	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
-
 	tplLogic := `package logic
 
 import (
@@ -1535,6 +1499,7 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Cont
 }
 `
 
+	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
 	myGenThis.command(`service生成`, true, ``, `gf`, `gen`, `service`)
@@ -1543,11 +1508,6 @@ func (logicThis *s` + myGenThis.tpl.LogicStructName + `) Delete(ctx context.Cont
 // api模板生成
 func (myGenThis *myGenHandler) genApi() {
 	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/api/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
 
 	type api struct {
 		filter   []string
@@ -2119,6 +2079,7 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {
 `
 	}
 
+	saveFile := gfile.SelfDir() + `/api/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplApi)
 	utils.GoFileFmt(saveFile)
 }
@@ -2126,11 +2087,6 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {
 // controller模板生成
 func (myGenThis *myGenHandler) genController() {
 	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/internal/controller/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
 
 	type controller struct {
 		importDao []string
@@ -2500,6 +2456,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 `
 	}
 
+	saveFile := gfile.SelfDir() + `/internal/controller/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplController)
 	utils.GoFileFmt(saveFile)
 }
@@ -2509,7 +2466,6 @@ func (myGenThis *myGenHandler) genRouter() {
 	tpl := myGenThis.tpl
 
 	saveFile := gfile.SelfDir() + `/internal/router/` + myGenThis.option.SceneCode + `.go`
-
 	tplRouter := gfile.GetContents(saveFile)
 
 	//控制器不存在时导入
@@ -2540,11 +2496,6 @@ func (myGenThis *myGenHandler) genRouter() {
 // 视图模板Index生成
 func (myGenThis *myGenHandler) genViewIndex() {
 	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
 
 	tplView := `<script setup lang="tsx">
 import List from './List.vue'
@@ -2598,17 +2549,13 @@ provide('saveCommon', saveCommon)`
 </template>
 `
 
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 
 // 视图模板List生成
 func (myGenThis *myGenHandler) genViewList() {
 	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
 
 	type viewList struct {
 		rowHeight uint
@@ -3179,17 +3126,13 @@ defineExpose({
 </template>
 `
 
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 
 // 视图模板Query生成
 func (myGenThis *myGenHandler) genViewQuery() {
 	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Query.vue`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
 
 	type viewQuery struct {
 		dataInit []string
@@ -3395,6 +3338,7 @@ const queryForm = reactive({
 </template>
 `
 
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Query.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 
@@ -3403,10 +3347,6 @@ func (myGenThis *myGenHandler) genViewSave() {
 	tpl := myGenThis.tpl
 
 	if !(myGenThis.option.IsCreate || myGenThis.option.IsUpdate) {
-		return
-	}
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
 		return
 	}
 
@@ -3889,17 +3829,13 @@ const saveDrawer = reactive({
 </template>
 `
 
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 
 // 视图模板I18n生成
 func (myGenThis *myGenHandler) genViewI18n() {
 	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
-	if !myGenThis.option.IsCover && gfile.IsFile(saveFile) {
-		return
-	}
 
 	type viewI18n struct {
 		name   []string
@@ -4003,6 +3939,7 @@ func (myGenThis *myGenHandler) genViewI18n() {
 }
 `
 
+	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
 	gfile.PutContents(saveFile, tplView)
 }
 
@@ -4011,7 +3948,6 @@ func (myGenThis *myGenHandler) genViewRouter() {
 	tpl := myGenThis.tpl
 
 	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/router/index.ts`
-
 	tplViewRouter := gfile.GetContents(saveFile)
 
 	path := `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab
@@ -4112,6 +4048,26 @@ func (myGenThis *myGenHandler) genMenu(sceneId uint, menuUrl string, menuName st
 	}
 }
 
+// 执行gf gen dao命令生成dao文件
+func (myGenThis *myGenHandler) commandOfGfGenDao(tpl myGenTpl, isOverwriteDao bool) {
+	commandArg := []string{
+		`gen`, `dao`,
+		`--link`, myGenThis.dbLink,
+		`--group`, myGenThis.option.DbGroup,
+		`--removePrefix`, tpl.RemovePrefix,
+		`--daoPath`, `dao/` + tpl.ModuleDirCaseKebab,
+		`--doPath`, `model/entity/` + tpl.ModuleDirCaseKebab,
+		`--entityPath`, `model/entity/` + tpl.ModuleDirCaseKebab,
+		`--tables`, tpl.TableRaw,
+		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
+		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+	}
+	if isOverwriteDao {
+		commandArg = append(commandArg, `--overwriteDao=true`)
+	}
+	myGenThis.command(`表（`+tpl.TableRaw+`）dao生成`, true, ``, `gf`, commandArg...)
+}
+
 // 执行命令
 func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, name string, arg ...string) {
 	command := exec.Command(name, arg...)
@@ -4119,7 +4075,7 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 		command.Dir = dir
 	}
 	fmt.Println()
-	fmt.Println(`================` + title + ` 开始================`)
+	fmt.Println(color.GreenString(`================` + title + ` 开始================`))
 	fmt.Println(`执行命令：` + command.String())
 	stdout, _ := command.StdoutPipe()
 	command.Start()
@@ -4138,7 +4094,7 @@ func (myGenThis *myGenHandler) command(title string, isOut bool, dir string, nam
 		fmt.Println(`请稍等，命令正在执行中...`)
 	}
 	command.Wait()
-	fmt.Println(`================` + title + ` 结束================`)
+	fmt.Println(color.GreenString(`================` + title + ` 结束================`))
 }
 
 // status字段注释解析
@@ -4259,23 +4215,7 @@ func (myGenThis *myGenHandler) getRelIdTpl(tpl myGenTpl, field string) (relTpl m
 		}
 
 		relTpl = myGenThis.createTpl(table, removePrefixCommon, removePrefixAlone)
-
-		// 判断dao文件是否存在，不存在则生成
-		if !gfile.IsFile(gfile.SelfDir() + `/internal/dao/` + relTpl.ModuleDirCaseKebab + `/` + relTpl.TableCaseSnake + `.go`) {
-			commandArg := []string{
-				`gen`, `dao`,
-				`--link`, myGenThis.dbLink,
-				`--group`, myGenThis.option.DbGroup,
-				`--removePrefix`, relTpl.RemovePrefix,
-				`--daoPath`, `dao/` + relTpl.ModuleDirCaseKebab,
-				`--doPath`, `model/entity/` + relTpl.ModuleDirCaseKebab,
-				`--entityPath`, `model/entity/` + relTpl.ModuleDirCaseKebab,
-				`--tables`, relTpl.TableRaw,
-				`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
-				`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
-			}
-			myGenThis.command(`关联表（`+relTpl.TableRaw+`）dao生成`, true, ``, `gf`, commandArg...)
-		}
+		myGenThis.commandOfGfGenDao(relTpl, false) //dao文件生成
 	}
 	return
 }
