@@ -8,13 +8,17 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type myGenTpl struct {
+	Link                      string       //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr                  []string     //当前数据库全部数据表（获取关联表，扩展表等需要）
+	Group                     string       //数据库分组
 	RemovePrefixCommon        string       //要删除的共有前缀
 	RemovePrefixAlone         string       //要删除的独有前缀
 	RemovePrefix              string       //要删除的前缀
-	TableRaw                  string       //表名（原始，包含前缀）
+	Table                     string       //表名（原始，包含前缀）
 	TableCaseSnake            string       //表名（蛇形，已去除前缀）
 	TableCaseCamel            string       //表名（大驼峰，已去除前缀）
 	TableCaseKebab            string       //表名（横线，已去除前缀）
@@ -133,31 +137,34 @@ type handleRelId struct {
 }
 
 // 模板参数处理
-func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbTable, removePrefixCommon, removePrefixAlone string) (tpl myGenTpl) {
+func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string) (tpl myGenTpl) {
 	tpl = myGenTpl{
+		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
-		TableRaw:           dbTable,
+		Table:              table,
 	}
-	tpl.Handle.PasswordMap = map[string]handlePassword{}
-	tpl.Handle.RelIdMap = map[string]handleRelId{}
-	tpl.FieldListRaw, _ = g.DB(dbGroup).GetAll(ctx, `SHOW FULL COLUMNS FROM `+dbTable)
-	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.TableRaw, tpl.RemovePrefix, ``, 1))
+	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[tpl.Group])[0][`link`])
+	tpl.TableArr, _ = g.DB(tpl.Group).Tables(ctx)
+	tpl.FieldListRaw, _ = g.DB(tpl.Group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+tpl.Table)
+	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
 	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
+	tpl.Handle.PasswordMap = map[string]handlePassword{}
+	tpl.Handle.RelIdMap = map[string]handleRelId{}
 
-	logicStructName := gstr.TrimLeftStr(dbTable, tpl.RemovePrefixCommon, 1)
+	logicStructName := gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1)
 	moduleDirCaseCamel := gstr.CaseCamel(logicStructName)
 	moduleDirCaseKebab := gstr.CaseKebab(logicStructName)
 	if tpl.RemovePrefixAlone != `` {
 		moduleDirCaseCamel = gstr.CaseCamel(tpl.RemovePrefixAlone)
 		moduleDirCaseKebab = gstr.CaseKebab(gstr.Trim(tpl.RemovePrefixAlone, `_`))
 	}
-	if dbGroup != `default` {
-		logicStructName = dbGroup + `_` + logicStructName
-		moduleDirCaseCamel = gstr.CaseCamel(dbGroup) + moduleDirCaseCamel
-		moduleDirCaseKebab = gstr.CaseKebab(dbGroup) + `/` + moduleDirCaseKebab
+	if tpl.Group != `default` {
+		logicStructName = tpl.Group + `_` + logicStructName
+		moduleDirCaseCamel = gstr.CaseCamel(tpl.Group) + moduleDirCaseCamel
+		moduleDirCaseKebab = gstr.CaseKebab(tpl.Group) + `/` + moduleDirCaseKebab
 	}
 	tpl.LogicStructName = gstr.CaseCamel(logicStructName)
 	tpl.ModuleDirCaseKebab = moduleDirCaseKebab
@@ -271,7 +278,7 @@ func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbT
 			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) {
 				isStr = true
 			}
-			fieldTmp.StatusList = myGenThis.getStatusList(fieldTmp.FieldTip, isStr)
+			fieldTmp.StatusList = tpl.getStatusList(fieldTmp.FieldTip, isStr)
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = TypeNameImageSuffix
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -300,7 +307,7 @@ func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbT
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && fieldTmp.FieldTypeRaw == `char(32)` { //password,passwd后缀
 				fieldTmp.FieldTypeName = TypeNamePasswordSuffix
 
-				passwordMapKey := myGenThis.getHandlePasswordMapKey(fieldTmp.FieldRaw)
+				passwordMapKey := tpl.getHandlePasswordMapKey(fieldTmp.FieldRaw)
 				handlePasswordObj, ok := tpl.Handle.PasswordMap[passwordMapKey]
 				if ok {
 					handlePasswordObj.PasswordField = fieldTmp.FieldRaw
@@ -315,7 +322,7 @@ func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbT
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) { //salt后缀，且对应的password,passwd后缀存在时（才）有效。该命名类型需做二次确定
 				fieldTmp.FieldTypeName = TypeNameSaltSuffix
 
-				passwordMapKey := myGenThis.getHandlePasswordMapKey(fieldTmp.FieldRaw)
+				passwordMapKey := tpl.getHandlePasswordMapKey(fieldTmp.FieldRaw)
 				handlePasswordObj, ok := tpl.Handle.PasswordMap[passwordMapKey]
 				if ok {
 					handlePasswordObj.SaltField = fieldTmp.FieldRaw
@@ -347,7 +354,7 @@ func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbT
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				fieldTmp.FieldTypeName = TypeNameIdSuffix
 				handleRelIdObj := handleRelId{
-					tpl:       myGenThis.getRelIdTpl(tpl, fieldTmp.FieldRaw),
+					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldRaw),
 					FieldName: fieldTmp.FieldName,
 				}
 				if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
@@ -441,7 +448,7 @@ func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbT
 				fieldList[k].FieldTypeName = TypeNameSortSuffix
 			}
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			passwordMapKey := getHandlePasswordMapKey(v.FieldRaw)
+			passwordMapKey := tpl.getHandlePasswordMapKey(v.FieldRaw)
 			if !tpl.Handle.PasswordMap[passwordMapKey].IsCoexist {
 				fieldList[k].FieldTypeName = ``
 			}
@@ -452,8 +459,29 @@ func /* (myGenThis *myGenHandler) */ createTpl(ctx context.Context, dbGroup, dbT
 	return
 }
 
+// status字段注释解析
+func (myGenTplThis *myGenTpl) getStatusList(comment string, isStr bool) (statusList [][2]string) {
+	var tmp [][]string
+	if isStr {
+		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；]+)`, comment)
+	} else {
+		// tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；]+)`, comment)
+		tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\s,，;；]+)`, comment)
+	}
+
+	if len(tmp) == 0 {
+		statusList = [][2]string{{`0`, `请设置表字段注释后，再生成代码`}}
+		return
+	}
+	statusList = make([][2]string, len(tmp))
+	for k, v := range tmp {
+		statusList[k] = [2]string{v[1], v[2]}
+	}
+	return
+}
+
 // 获取Handle.PasswordMap的Key（以Password为主）
-func getHandlePasswordMapKey(passwordOrsalt string) (passwordMapKey string) {
+func (myGenTplThis *myGenTpl) getHandlePasswordMapKey(passwordOrsalt string) (passwordMapKey string) {
 	passwordOrsalt = gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`, 1) //替换salt
 	passwordOrsalt = gstr.Replace(passwordOrsalt, `Passwd`, `Password`, 1)               //替换passwd
 	passwordMapKey = gstr.CaseCamelLower(passwordOrsalt)                                 //默认：小驼峰
@@ -461,4 +489,115 @@ func getHandlePasswordMapKey(passwordOrsalt string) (passwordMapKey string) {
 		passwordMapKey = gstr.CaseSnake(passwordMapKey)
 	}
 	return
+}
+
+// 获取id后缀字段关联的表信息
+func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, field string) (relTpl myGenTpl) {
+	fieldCaseSnake := gstr.CaseSnake(field)
+	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+	tableSuffix := gstr.TrimRightStr(fieldCaseSnakeOfRemove, `_id`, 1)
+	/*--------确定关联表 开始--------*/
+	// 按以下优先级确定关联表
+	type mayBe struct {
+		table1 string   // 同模块，全部前缀 + 表后缀一致。规则：tpl.RemovePrefix + tableSuffix
+		table2 []string // 同模块，全部前缀 + 任意字符_ + 表后缀一致。规则：tpl.RemovePrefix + xx_ + tableSuffix。同时存在多个放弃匹配
+		table3 string   // 不同模块，公共前缀 + 表后缀一致。规则：tpl.RemovePrefixCommon + tableSuffix
+		table4 string   // 不同模块，表后缀一致。规则：tableSuffix
+		table5 []string // 不同模块，任意字符_ + 表后缀一致。规则：xx_ + tableSuffix。同时存在多个放弃匹配
+	}
+	mayBeObj := mayBe{
+		table2: []string{},
+		table5: []string{},
+	}
+	isSamePrimaryFunc := func(table string) bool {
+		tableIndexList, _ := g.DB(tpl.Group).GetAll(ctx, `SHOW Index FROM `+table+` WHERE Key_name = 'PRIMARY'`)
+		return len(tableIndexList) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(tableIndexList[0][`Column_name`].String()))
+	}
+	for _, v := range tpl.TableArr {
+		if v == tpl.Table { //自身跳过
+			continue
+		}
+		if v == tpl.RemovePrefix+tableSuffix { //关联表在同模块目录下，且表名一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table1 = v
+				break
+			}
+		} else if gstr.Pos(v, tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //关联表在同模块目录下，但表后缀一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table2 = append(mayBeObj.table2, v)
+			}
+		} else if v == tpl.RemovePrefixCommon+tableSuffix { //公共前缀+表名完全一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table3 = v
+			}
+		} else if v == tableSuffix { //表名完全一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table4 = v
+			}
+		} else if len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //表后缀一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table5 = append(mayBeObj.table5, v)
+			}
+		}
+	}
+
+	table := mayBeObj.table1
+	if table == `` {
+		if len(mayBeObj.table2) > 0 {
+			if len(mayBeObj.table2) == 1 {
+				table = mayBeObj.table2[0]
+			}
+		} else {
+			if mayBeObj.table3 != `` {
+				table = mayBeObj.table3
+			} else if mayBeObj.table4 != `` {
+				table = mayBeObj.table4
+			} else if len(mayBeObj.table5) > 0 && len(mayBeObj.table5) == 1 {
+				table = mayBeObj.table5[0]
+			}
+		}
+	}
+	/*--------确定关联表 结束--------*/
+
+	removePrefixCommon := ``
+	removePrefixAlone := ``
+	if table != `` {
+		if gstr.Pos(table, tpl.RemovePrefixCommon) == 0 {
+			removePrefixCommon = tpl.RemovePrefixCommon
+		}
+		if gstr.Pos(table, tpl.RemovePrefix) == 0 {
+			removePrefixAlone = tpl.RemovePrefixAlone
+		}
+		if removePrefixAlone == `` {
+			// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
+			tableRemove := gstr.TrimLeftStr(table, removePrefixCommon, 1)
+			if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
+				removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
+			}
+		}
+
+		relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone)
+		relTpl.gfGenDao(false) //dao文件生成
+	}
+	return
+}
+
+// 执行gf gen dao命令生成dao文件
+func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
+	commandArg := []string{
+		`gen`, `dao`,
+		`--link`, myGenTplThis.Link,
+		`--group`, myGenTplThis.Group,
+		`--removePrefix`, myGenTplThis.RemovePrefix,
+		`--daoPath`, `dao/` + myGenTplThis.ModuleDirCaseKebab,
+		`--doPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
+		`--entityPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
+		`--tables`, myGenTplThis.Table,
+		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
+		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+	}
+	if isOverwriteDao {
+		commandArg = append(commandArg, `--overwriteDao=true`)
+	}
+	command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
 }
