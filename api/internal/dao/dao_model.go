@@ -472,11 +472,11 @@ func (daoModelThis *DaoModel) Array(fieldsAndWhere ...interface{}) ([]gdb.Value,
 
 // 封装常用方法
 func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...interface{}) ([]string, error) {
-	arr, err := daoModelThis.Array(fieldsAndWhere...)
+	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
-	return gconv.SliceStr(arr), nil
+	return gconv.SliceStr(result), nil
 }
 
 // 封装常用方法
@@ -563,6 +563,33 @@ func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.
 
 func (daoModelThis *DaoModel) Value(fieldsAndWhere ...interface{}) (gdb.Value, error) {
 	return daoModelThis.model.Value(fieldsAndWhere...)
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...interface{}) (string, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return ``, err
+	}
+	return result.String(), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...interface{}) (int, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return 0, err
+	}
+	return result.Int(), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...interface{}) (uint, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return 0, err
+	}
+	return result.Uint(), nil
 }
 
 func (daoModelThis *DaoModel) HasField(field string) (bool, error) {
