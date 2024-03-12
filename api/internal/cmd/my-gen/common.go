@@ -10,28 +10,47 @@ import (
 type myGenDataHandleMethod = uint
 
 const (
-	ReturnNil      myGenDataHandleMethod = 0  //默认返回空
+	ReturnEmpty    myGenDataHandleMethod = 0  //默认返回空
 	ReturnType     myGenDataHandleMethod = 1  //返回根据字段数据类型解析的数据
 	ReturnTypeName myGenDataHandleMethod = 2  //返回根据字段命名类型解析的数据
 	ReturnUnion    myGenDataHandleMethod = 10 //返回两种类型解析的数据
 )
 
-type myGenDataHandler struct {
+type myGenDataSliceHandler struct {
 	Method       myGenDataHandleMethod //根据该字段返回解析的数据
 	DataType     []string              //根据字段数据类型解析的数据
 	DataTypeName []string              //根据字段命名类型解析的数据
 }
 
-func (myGenDataHandlerThis *myGenDataHandler) getData() []string {
-	switch myGenDataHandlerThis.Method {
+func (myGenDataSliceHandlerThis *myGenDataSliceHandler) getData() []string {
+	switch myGenDataSliceHandlerThis.Method {
 	case ReturnType:
-		return myGenDataHandlerThis.DataType
+		return myGenDataSliceHandlerThis.DataType
 	case ReturnTypeName:
-		return myGenDataHandlerThis.DataTypeName
+		return myGenDataSliceHandlerThis.DataTypeName
 	case ReturnUnion:
-		return append(myGenDataHandlerThis.DataType, myGenDataHandlerThis.DataTypeName...)
+		return append(myGenDataSliceHandlerThis.DataType, myGenDataSliceHandlerThis.DataTypeName...)
 	default:
 		return nil
+	}
+}
+
+type myGenDataStrHandler struct {
+	Method       myGenDataHandleMethod //根据该字段返回解析的数据
+	DataType     string                //根据字段数据类型解析的数据
+	DataTypeName string                //根据字段命名类型解析的数据
+}
+
+func (myGenDataStrHandlerThis *myGenDataStrHandler) getData() string {
+	switch myGenDataStrHandlerThis.Method {
+	case ReturnType:
+		return myGenDataStrHandlerThis.DataType
+	case ReturnTypeName:
+		return myGenDataStrHandlerThis.DataTypeName
+	case ReturnUnion:
+		return myGenDataStrHandlerThis.DataType + myGenDataStrHandlerThis.DataTypeName
+	default:
+		return ``
 	}
 }
 

@@ -33,22 +33,22 @@ type myGenDao struct {
 type myGenDaoField struct {
 	importDao []string
 
-	insertParseBefore myGenDataHandler
-	insertParse       myGenDataHandler
-	insertHook        myGenDataHandler
+	insertParseBefore myGenDataSliceHandler
+	insertParse       myGenDataSliceHandler
+	insertHook        myGenDataSliceHandler
 
-	updateParse      myGenDataHandler
-	updateHookBefore myGenDataHandler
-	updateHookAfter  myGenDataHandler
+	updateParse      myGenDataSliceHandler
+	updateHookBefore myGenDataSliceHandler
+	updateHookAfter  myGenDataSliceHandler
 
-	fieldParse myGenDataHandler
-	fieldHook  myGenDataHandler
+	fieldParse myGenDataSliceHandler
+	fieldHook  myGenDataSliceHandler
 
-	filterParse myGenDataHandler
+	filterParse myGenDataSliceHandler
 
-	orderParse myGenDataHandler
+	orderParse myGenDataSliceHandler
 
-	joinParse myGenDataHandler
+	joinParse myGenDataSliceHandler
 }
 
 func genDao(tpl myGenTpl) {
@@ -56,28 +56,7 @@ func genDao(tpl myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
 
-	dao := myGenDao{}
-	daoFieldList := getDaoFieldList(tpl)
-	for _, v := range daoFieldList {
-		dao.importDao = garray.NewStrArrayFrom(append(dao.importDao, v.importDao...)).Unique().Slice()
-
-		dao.insertParseBefore = garray.NewStrArrayFrom(append(dao.insertParseBefore, v.insertParseBefore.getData()...)).Unique().Slice()
-		dao.insertParse = garray.NewStrArrayFrom(append(dao.insertParse, v.insertParse.getData()...)).Unique().Slice()
-		dao.insertHook = garray.NewStrArrayFrom(append(dao.insertHook, v.insertHook.getData()...)).Unique().Slice()
-
-		dao.updateParse = garray.NewStrArrayFrom(append(dao.updateParse, v.updateParse.getData()...)).Unique().Slice()
-		dao.updateHookBefore = garray.NewStrArrayFrom(append(dao.updateHookBefore, v.updateHookBefore.getData()...)).Unique().Slice()
-		dao.updateHookAfter = garray.NewStrArrayFrom(append(dao.updateHookAfter, v.updateHookAfter.getData()...)).Unique().Slice()
-
-		dao.fieldParse = garray.NewStrArrayFrom(append(dao.fieldParse, v.fieldParse.getData()...)).Unique().Slice()
-		dao.fieldHook = garray.NewStrArrayFrom(append(dao.fieldHook, v.fieldHook.getData()...)).Unique().Slice()
-
-		dao.filterParse = garray.NewStrArrayFrom(append(dao.filterParse, v.filterParse.getData()...)).Unique().Slice()
-
-		dao.orderParse = garray.NewStrArrayFrom(append(dao.orderParse, v.orderParse.getData()...)).Unique().Slice()
-
-		dao.joinParse = garray.NewStrArrayFrom(append(dao.joinParse, v.joinParse.getData()...)).Unique().Slice()
-	}
+	dao := getDaoFieldList(tpl)
 
 	if len(dao.insertParseBefore) > 0 {
 		pointOfinsertParseBefore := `insertData := map[string]interface{}{}`
@@ -184,7 +163,7 @@ func genDao(tpl myGenTpl) {
 	utils.GoFileFmt(saveFile)
 }
 
-func getDaoFieldList(tpl myGenTpl) (daoFieldList []myGenDaoField) {
+func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 0 {
 		fieldParseStr := `case ` + "`label`" + `:
@@ -207,14 +186,8 @@ func getDaoFieldList(tpl myGenTpl) (daoFieldList []myGenDaoField) {
 			filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
 		}
-
-		daoField := myGenDaoField{}
-		daoField.fieldParse.Method = ReturnTypeName
-		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, fieldParseStr)
-		daoField.filterParse.Method = ReturnTypeName
-		daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, filterParseStr)
-
-		daoFieldList = append(daoFieldList, daoField)
+		dao.fieldParse = append(dao.fieldParse, fieldParseStr)
+		dao.filterParse = append(dao.filterParse, filterParseStr)
 	}
 
 	for _, v := range tpl.FieldList {
@@ -521,7 +494,32 @@ func getDaoFieldList(tpl myGenTpl) (daoFieldList []myGenDaoField) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		daoFieldList = append(daoFieldList, daoField)
+		dao.importDao = append(dao.importDao, daoField.importDao...)
+		dao.insertParseBefore = append(dao.insertParseBefore, daoField.insertParseBefore.getData()...)
+		dao.insertParse = append(dao.insertParse, daoField.insertParse.getData()...)
+		dao.insertHook = append(dao.insertHook, daoField.insertHook.getData()...)
+		dao.updateParse = append(dao.updateParse, daoField.updateParse.getData()...)
+		dao.updateHookBefore = append(dao.updateHookBefore, daoField.updateHookBefore.getData()...)
+		dao.updateHookAfter = append(dao.updateHookAfter, daoField.updateHookAfter.getData()...)
+		dao.fieldParse = append(dao.fieldParse, daoField.fieldParse.getData()...)
+		dao.fieldHook = append(dao.fieldHook, daoField.fieldHook.getData()...)
+		dao.filterParse = append(dao.filterParse, daoField.filterParse.getData()...)
+		dao.orderParse = append(dao.orderParse, daoField.orderParse.getData()...)
+		dao.joinParse = append(dao.joinParse, daoField.joinParse.getData()...)
 	}
+
+	// 做一次去重
+	dao.importDao = garray.NewStrArrayFrom(dao.importDao).Unique().Slice()
+	dao.insertParseBefore = garray.NewStrArrayFrom(dao.insertParseBefore).Unique().Slice()
+	dao.insertParse = garray.NewStrArrayFrom(dao.insertParse).Unique().Slice()
+	dao.insertHook = garray.NewStrArrayFrom(dao.insertHook).Unique().Slice()
+	dao.updateParse = garray.NewStrArrayFrom(dao.updateParse).Unique().Slice()
+	dao.updateHookBefore = garray.NewStrArrayFrom(dao.updateHookBefore).Unique().Slice()
+	dao.updateHookAfter = garray.NewStrArrayFrom(dao.updateHookAfter).Unique().Slice()
+	dao.fieldParse = garray.NewStrArrayFrom(dao.fieldParse).Unique().Slice()
+	dao.fieldHook = garray.NewStrArrayFrom(dao.fieldHook).Unique().Slice()
+	dao.filterParse = garray.NewStrArrayFrom(dao.filterParse).Unique().Slice()
+	dao.orderParse = garray.NewStrArrayFrom(dao.orderParse).Unique().Slice()
+	dao.joinParse = garray.NewStrArrayFrom(dao.joinParse).Unique().Slice()
 	return
 }

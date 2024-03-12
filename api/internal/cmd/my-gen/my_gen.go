@@ -26,31 +26,34 @@ type myGen struct {
 
 // 命令参数解析后的数据
 type myGenOption struct {
-	SceneCode          string `json:"sceneCode"`          //场景标识，必须在数据库表auth_scene已存在。示例：platform
-	DbGroup            string `json:"dbGroup"`            //db分组。示例：default
-	DbTable            string `json:"dbTable"`            //db表。示例：auth_test
-	RemovePrefixCommon string `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
-	RemovePrefixAlone  string `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	CommonName         string `json:"commonName"`         //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
-	IsList             bool   `json:"isList" `            //是否生成列表接口(0和no为false，1和yes为true)
-	IsCount            bool   `json:"isCount" `           //列表接口是否返回总数
-	IsInfo             bool   `json:"isInfo" `            //是否生成详情接口
-	IsCreate           bool   `json:"isCreate"`           //是否生成创建接口
-	IsUpdate           bool   `json:"isUpdate"`           //是否生成更新接口
-	IsDelete           bool   `json:"isDelete"`           //是否生成删除接口
-	IsApi              bool   `json:"isApi"`              //是否生成后端接口文件
-	IsAuthAction       bool   `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
-	IsView             bool   `json:"isView"`             //是否生成前端视图文件
+	SceneCode          string     `json:"sceneCode"`          //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	DbGroup            string     `json:"dbGroup"`            //db分组。示例：default
+	DbTable            string     `json:"dbTable"`            //db表。示例：auth_test
+	RemovePrefixCommon string     `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
+	RemovePrefixAlone  string     `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
+	CommonName         string     `json:"commonName"`         //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
+	IsList             bool       `json:"isList" `            //是否生成列表接口(0和no为false，1和yes为true)
+	IsCount            bool       `json:"isCount" `           //列表接口是否返回总数
+	IsInfo             bool       `json:"isInfo" `            //是否生成详情接口
+	IsCreate           bool       `json:"isCreate"`           //是否生成创建接口
+	IsUpdate           bool       `json:"isUpdate"`           //是否生成更新接口
+	IsDelete           bool       `json:"isDelete"`           //是否生成删除接口
+	IsApi              bool       `json:"isApi"`              //是否生成后端接口文件
+	IsAuthAction       bool       `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
+	IsView             bool       `json:"isView"`             //是否生成前端视图文件
+	SceneInfo          gdb.Record //场景信息
 }
 
 func NewMyGen(ctx context.Context, parser *gcmd.Parser) (myGenObj myGen) {
+	option := myGenOption{}
 	defer func() {
-		myGenObj.tpl = createTpl(ctx, myGenObj.option.DbGroup, myGenObj.option.DbTable, myGenObj.option.RemovePrefixCommon, myGenObj.option.RemovePrefixAlone)
+		myGenObj.option = option
+		myGenObj.sceneInfo = option.SceneInfo
+		myGenObj.tpl = createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone)
 	}()
 
-	myGenObj.ctx = ctx
 	optionMap := parser.GetOptAll()
-	gconv.Struct(optionMap, &myGenObj.option)
+	gconv.Struct(optionMap, &option)
 
 	// 命令执行前提示搭配Git使用
 	gcmd.Scan(
@@ -60,80 +63,80 @@ func NewMyGen(ctx context.Context, parser *gcmd.Parser) (myGenObj myGen) {
 	)
 
 	// 场景标识
-	if myGenObj.option.SceneCode == `` {
-		myGenObj.option.SceneCode = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
+	if option.SceneCode == `` {
+		option.SceneCode = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
 	}
 	for {
-		if myGenObj.option.SceneCode != `` {
-			myGenObj.sceneInfo, _ = daoAuth.Scene.CtxDaoModel(myGenObj.ctx).Filter(daoAuth.Scene.Columns().SceneCode, myGenObj.option.SceneCode).One()
-			if !myGenObj.sceneInfo.IsEmpty() {
+		if option.SceneCode != `` {
+			option.SceneInfo, _ = daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
+			if !option.SceneInfo.IsEmpty() {
 				break
 			}
 		}
-		myGenObj.option.SceneCode = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
+		option.SceneCode = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
 	}
 	// db分组
-	if myGenObj.option.DbGroup == `` {
-		myGenObj.option.DbGroup = gcmd.Scan(color.BlueString(`> 请输入db分组，默认(default)：`))
-		if myGenObj.option.DbGroup == `` {
-			myGenObj.option.DbGroup = `default`
+	if option.DbGroup == `` {
+		option.DbGroup = gcmd.Scan(color.BlueString(`> 请输入db分组，默认(default)：`))
+		if option.DbGroup == `` {
+			option.DbGroup = `default`
 		}
 	}
 	for {
-		/* err := g.Try(myGenObj.ctx, func(ctx context.Context) {
-			myGenObj.dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(myGenObj.ctx, `database`).MapStrAny()[myGenObj.option.DbGroup])[0][`link`])
+		/* err := g.Try(ctx, func(ctx context.Context) {
+			dbLink = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[option.DbGroup])[0][`link`])
 		})
 		if err == nil {
 			break
 		} */
 		err := g.Try(ctx, func(ctx context.Context) {
-			g.DB(myGenObj.option.DbGroup)
+			g.DB(option.DbGroup)
 		})
 		if err == nil {
 			break
 		}
-		myGenObj.option.DbGroup = gcmd.Scan(color.RedString(`    db分组不存在，请重新输入，默认(default)：`))
-		if myGenObj.option.DbGroup == `` {
-			myGenObj.option.DbGroup = `default`
+		option.DbGroup = gcmd.Scan(color.RedString(`    db分组不存在，请重新输入，默认(default)：`))
+		if option.DbGroup == `` {
+			option.DbGroup = `default`
 		}
 	}
 	// db表
-	tableArr, _ := g.DB(myGenObj.option.DbGroup).Tables(myGenObj.ctx)
-	if myGenObj.option.DbTable == `` {
-		myGenObj.option.DbTable = gcmd.Scan(color.BlueString(`> 请输入db表：`))
+	tableArr, _ := g.DB(option.DbGroup).Tables(ctx)
+	if option.DbTable == `` {
+		option.DbTable = gcmd.Scan(color.BlueString(`> 请输入db表：`))
 	}
 	for {
-		if myGenObj.option.DbTable != `` && garray.NewStrArrayFrom(tableArr).Contains(myGenObj.option.DbTable) {
+		if option.DbTable != `` && garray.NewStrArrayFrom(tableArr).Contains(option.DbTable) {
 			break
 		}
-		myGenObj.option.DbTable = gcmd.Scan(color.RedString(`    db表不存在，请重新输入：`))
+		option.DbTable = gcmd.Scan(color.RedString(`    db表不存在，请重新输入：`))
 	}
 	// 要删除的共有前缀
 	if _, ok := optionMap[`removePrefixCommon`]; !ok {
-		myGenObj.option.RemovePrefixCommon = gcmd.Scan(color.BlueString(`> 请输入要删除的共有前缀，默认(空)：`))
+		option.RemovePrefixCommon = gcmd.Scan(color.BlueString(`> 请输入要删除的共有前缀，默认(空)：`))
 	}
 	for {
-		if myGenObj.option.RemovePrefixCommon == `` || gstr.Pos(myGenObj.option.DbTable, myGenObj.option.RemovePrefixCommon) == 0 {
+		if option.RemovePrefixCommon == `` || gstr.Pos(option.DbTable, option.RemovePrefixCommon) == 0 {
 			break
 		}
-		myGenObj.option.RemovePrefixCommon = gcmd.Scan(color.RedString(`    要删除的共有前缀不存在，请重新输入，默认(空)：`))
+		option.RemovePrefixCommon = gcmd.Scan(color.RedString(`    要删除的共有前缀不存在，请重新输入，默认(空)：`))
 	}
 	// 要删除的独有前缀
 	if _, ok := optionMap[`removePrefixAlone`]; !ok {
-		myGenObj.option.RemovePrefixAlone = gcmd.Scan(color.BlueString(`> 请输入要删除的独有前缀，默认(空)：`))
+		option.RemovePrefixAlone = gcmd.Scan(color.BlueString(`> 请输入要删除的独有前缀，默认(空)：`))
 	}
 	for {
-		if myGenObj.option.RemovePrefixAlone == `` || gstr.Pos(myGenObj.option.DbTable, myGenObj.option.RemovePrefixCommon+myGenObj.option.RemovePrefixAlone) == 0 {
+		if option.RemovePrefixAlone == `` || gstr.Pos(option.DbTable, option.RemovePrefixCommon+option.RemovePrefixAlone) == 0 {
 			break
 		}
-		myGenObj.option.RemovePrefixAlone = gcmd.Scan(color.RedString(`    要删除的独有前缀不存在，请重新输入，默认(空)：`))
+		option.RemovePrefixAlone = gcmd.Scan(color.RedString(`    要删除的独有前缀不存在，请重新输入，默认(空)：`))
 	}
 	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
 	for {
-		if myGenObj.option.CommonName != `` {
+		if option.CommonName != `` {
 			break
 		}
-		myGenObj.option.CommonName = gcmd.Scan(color.BlueString(`> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用：`))
+		option.CommonName = gcmd.Scan(color.BlueString(`> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用：`))
 	}
 noAllRestart:
 	// 是否生成列表接口
@@ -145,10 +148,10 @@ isListEnd:
 	for {
 		switch isList {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsList = true
+			option.IsList = true
 			break isListEnd
 		case `0`, `no`:
-			myGenObj.option.IsList = false
+			option.IsList = false
 			break isListEnd
 		default:
 			isList = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成列表接口，默认(yes)：`))
@@ -163,10 +166,10 @@ isCountEnd:
 	for {
 		switch isCount {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsCount = true
+			option.IsCount = true
 			break isCountEnd
 		case `0`, `no`:
-			myGenObj.option.IsCount = false
+			option.IsCount = false
 			break isCountEnd
 		default:
 			isCount = gcmd.Scan(color.RedString(`    输入错误，请重新输入，列表接口是否返回总数，默认(yes)：`))
@@ -181,10 +184,10 @@ isInfoEnd:
 	for {
 		switch isInfo {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsInfo = true
+			option.IsInfo = true
 			break isInfoEnd
 		case `0`, `no`:
-			myGenObj.option.IsInfo = false
+			option.IsInfo = false
 			break isInfoEnd
 		default:
 			isInfo = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成详情接口，默认(yes)：`))
@@ -199,10 +202,10 @@ isCreateEnd:
 	for {
 		switch isCreate {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsCreate = true
+			option.IsCreate = true
 			break isCreateEnd
 		case `0`, `no`:
-			myGenObj.option.IsCreate = false
+			option.IsCreate = false
 			break isCreateEnd
 		default:
 			isCreate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成创建接口，默认(yes)：`))
@@ -217,10 +220,10 @@ isUpdateEnd:
 	for {
 		switch isUpdate {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsUpdate = true
+			option.IsUpdate = true
 			break isUpdateEnd
 		case `0`, `no`:
-			myGenObj.option.IsUpdate = false
+			option.IsUpdate = false
 			break isUpdateEnd
 		default:
 			isUpdate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成更新接口，默认(yes)：`))
@@ -235,16 +238,16 @@ isDeleteEnd:
 	for {
 		switch isDelete {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsDelete = true
+			option.IsDelete = true
 			break isDeleteEnd
 		case `0`, `no`:
-			myGenObj.option.IsDelete = false
+			option.IsDelete = false
 			break isDeleteEnd
 		default:
 			isDelete = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成删除接口，默认(yes)：`))
 		}
 	}
-	if !(myGenObj.option.IsList || myGenObj.option.IsInfo || myGenObj.option.IsCreate || myGenObj.option.IsUpdate || myGenObj.option.IsDelete) {
+	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
 		fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
 		goto noAllRestart
 	}
@@ -257,16 +260,16 @@ isApiEnd:
 	for {
 		switch isApi {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsApi = true
+			option.IsApi = true
 			break isApiEnd
 		case `0`, `no`:
-			myGenObj.option.IsApi = false
+			option.IsApi = false
 			break isApiEnd
 		default:
 			isApi = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成后端接口文件，默认(yes)：`))
 		}
 	}
-	if myGenObj.option.IsApi {
+	if option.IsApi {
 		// 是否判断操作权限，如是，则同时会生成操作权限
 		isAuthAction, ok := optionMap[`isAuthAction`]
 		if !ok {
@@ -276,10 +279,10 @@ isApiEnd:
 		for {
 			switch isAuthAction {
 			case ``, `1`, `yes`:
-				myGenObj.option.IsAuthAction = true
+				option.IsAuthAction = true
 				break isAuthActionEnd
 			case `0`, `no`:
-				myGenObj.option.IsAuthAction = false
+				option.IsAuthAction = false
 				break isAuthActionEnd
 			default:
 				isAuthAction = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes)：`))
@@ -295,17 +298,17 @@ isViewEnd:
 	for {
 		switch isView {
 		case ``, `1`, `yes`:
-			myGenObj.option.IsView = true
+			option.IsView = true
 			break isViewEnd
 		case `0`, `no`:
-			myGenObj.option.IsView = false
+			option.IsView = false
 			break isViewEnd
 		default:
 			isView = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成前端视图文件，默认(yes)：`))
 		}
 	}
 
-	return myGenObj
+	return
 }
 
 // 生成代码
@@ -314,9 +317,9 @@ func (myGenThis *myGen) Handle() {
 	genLogic(myGenThis.tpl) // logic模板生成
 
 	if myGenThis.option.IsApi {
-		myGenThis.genApi()        // api模板生成
-		myGenThis.genController() // controller模板生成
-		myGenThis.genRouter()     // 后端路由生成
+		genApi(myGenThis.option, myGenThis.tpl) // api模板生成
+		myGenThis.genController()               // controller模板生成
+		myGenThis.genRouter()                   // 后端路由生成
 	}
 
 	if myGenThis.option.IsView {
@@ -329,585 +332,6 @@ func (myGenThis *myGen) Handle() {
 
 		command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
-}
-
-// api模板生成
-func (myGenThis *myGen) genApi() {
-	tpl := myGenThis.tpl
-
-	type api struct {
-		filter   []string
-		create   []string
-		update   []string
-		res      []string
-		resOfAdd []string
-	}
-	apiObj := api{
-		filter:   []string{},
-		create:   []string{},
-		update:   []string{},
-		res:      []string{},
-		resOfAdd: []string{},
-	}
-	if len(tpl.Handle.LabelList) > 0 {
-		apiObj.filter = append(apiObj.filter, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
-		apiObj.res = append(apiObj.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
-	}
-
-	type apiItem struct {
-		isSkip bool //字段命名类型处理后，不再需要根据字段数据类型对filter,create,update,res四个属性再做处理时，设置为true
-		filter bool
-		create bool
-		update bool
-		res    bool
-
-		isSkipType bool //字段命名类型处理后，不再需要根据字段数据类型对filterType,createType,updateType,resType四个属性再做处理时，设置为true
-		filterType string
-		createType string
-		updateType string
-		resType    string
-
-		filterRule []string
-		createRule []string
-		updateRule []string
-		isRequired bool //用于方便将required规则放首位
-	}
-
-	for _, v := range tpl.FieldList {
-		apiItemObj := apiItem{
-			filterRule: []string{},
-			createRule: []string{},
-			updateRule: []string{},
-		}
-
-		/*--------根据字段命名类型处理 开始--------*/
-		switch v.FieldTypeName {
-		case TypeNameDeleted: // 软删除字段
-			continue
-		case TypeNameUpdated: // 更新时间字段
-			apiItemObj.isSkip = true
-			apiItemObj.res = true
-		case TypeNameCreated: // 创建时间字段
-			apiObj.filter = append(apiObj.filter,
-				`TimeRangeStart *gtime.Time `+"`"+`json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
-				`TimeRangeEnd   *gtime.Time `+"`"+`json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
-			)
-			apiItemObj.isSkip = true
-			apiItemObj.res = true
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
-			if v.FieldRaw == `id` {
-				continue
-			}
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.res = true
-
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
-		case TypeNamePid: // pid；	类型：int等类型；
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-
-			if len(tpl.Handle.LabelList) > 0 {
-				apiObj.resOfAdd = append(apiObj.resOfAdd, `P`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` *string `+"`"+`json:"p`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`,omitempty" dc:"父级"`+"`")
-			}
-		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.res = true
-
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
-		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			apiItemObj.isSkip = true
-			apiItemObj.res = true
-		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-			apiItemObj.isSkip = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-
-			apiItemObj.isRequired = true
-		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			continue
-		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-			// 去掉该验证规则。有时会用到特殊符号
-			// apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			// apiItemObj.createRule = append(apiItemObj.createRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			// apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
-				apiItemObj.isRequired = true
-			}
-		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-			// apiItemObj.filterRule = append(apiItemObj.filterRule, `passport`)
-			// apiItemObj.createRule = append(apiItemObj.createRule, `passport`)
-			// apiItemObj.updateRule = append(apiItemObj.updateRule, `passport`)
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
-		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `phone`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `phone`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `phone`)
-		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `email`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `email`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `email`)
-		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `url`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `url`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `url`)
-		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `ip`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `ip`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `ip`)
-		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `min:1`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `min:1`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `min:1`)
-
-			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` && !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
-				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-				apiObj.resOfAdd = append(apiObj.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+gstr.CaseCamel(relIdObj.Suffix)+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
-			}
-		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			apiItemObj.createRule = append(apiItemObj.createRule, `between:0,100`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `between:0,100`)
-		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-
-			statusArr := make([]string, len(v.StatusList))
-			for index, item := range v.StatusList {
-				statusArr[index] = item[0]
-			}
-			statusStr := gstr.Join(statusArr, `,`)
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `in:`+statusStr)
-			apiItemObj.createRule = append(apiItemObj.createRule, `in:`+statusStr)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:`+statusStr)
-		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-
-			/* TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
-			statusArr := make([]string, len(v.StatusList))
-			for index, item := range v.StatusList {
-				statusArr[index] = item[0]
-			}
-			statusStr := gstr.Join(statusArr, `,`)
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `in:`+statusStr)
-			apiItemObj.createRule = append(apiItemObj.createRule, `in:`+statusStr)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:`+statusStr) */
-			apiItemObj.filterRule = append(apiItemObj.filterRule, `in:0,1`)
-			apiItemObj.createRule = append(apiItemObj.createRule, `in:0,1`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `in:0,1`)
-		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-			apiItemObj.isSkip = true
-			apiItemObj.filter = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-			apiItemObj.isSkip = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-			apiItemObj.isSkip = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-			if v.FieldType == TypeVarchar {
-				apiItemObj.createRule = append(apiItemObj.createRule, `url`)
-				apiItemObj.updateRule = append(apiItemObj.updateRule, `url`)
-			} else {
-				apiItemObj.isSkipType = true
-				apiItemObj.createType = `*[]string`
-				apiItemObj.updateType = `*[]string`
-				apiItemObj.resType = `[]string`
-
-				apiItemObj.createRule = append(apiItemObj.createRule, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
-				apiItemObj.updateRule = append(apiItemObj.updateRule, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
-				if !v.IsNull {
-					apiItemObj.isRequired = true
-				}
-			}
-		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-			apiItemObj.isSkip = true
-			apiItemObj.create = true
-			apiItemObj.update = true
-			apiItemObj.res = true
-
-			apiItemObj.isSkipType = true
-			apiItemObj.createType = `*[]interface{}`
-			apiItemObj.updateType = `*[]interface{}`
-			apiItemObj.resType = `[]interface{}`
-
-			apiItemObj.createRule = append(apiItemObj.createRule, `distinct`)
-			apiItemObj.updateRule = append(apiItemObj.updateRule, `distinct`)
-			if !v.IsNull {
-				apiItemObj.isRequired = true
-			}
-		}
-		/*--------根据字段命名类型处理 结束--------*/
-
-		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 开始--------*/
-		switch v.FieldType {
-		case TypeInt: // `int等类型`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `*int`
-				apiItemObj.createType = `*int`
-				apiItemObj.updateType = `*int`
-				apiItemObj.resType = `*int`
-			}
-		case TypeIntU: // `int等类型（unsigned）`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `*uint`
-				apiItemObj.createType = `*uint`
-				apiItemObj.updateType = `*uint`
-				apiItemObj.resType = `*uint`
-			}
-		case TypeFloat: // `float等类型`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `*float64`
-				apiItemObj.createType = `*float64`
-				apiItemObj.updateType = `*float64`
-				apiItemObj.resType = `*float64`
-			}
-		case TypeFloatU: // // `float等类型（unsigned）`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `*float64`
-				apiItemObj.createType = `*float64`
-				apiItemObj.updateType = `*float64`
-				apiItemObj.resType = `*float64`
-			}
-
-			apiItemObj.filterRule = append([]string{`min:0`}, apiItemObj.filterRule...)
-			apiItemObj.createRule = append([]string{`min:0`}, apiItemObj.createRule...)
-			apiItemObj.updateRule = append([]string{`min:0`}, apiItemObj.updateRule...)
-		case TypeVarchar: // `varchar类型`
-			if !apiItemObj.isSkip {
-				apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `string`
-				apiItemObj.createType = `*string`
-				apiItemObj.updateType = `*string`
-				apiItemObj.resType = `*string`
-			}
-
-			apiItemObj.filterRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.filterRule...)
-			apiItemObj.createRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.createRule...)
-			apiItemObj.updateRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.updateRule...)
-			if v.IndexRaw == `UNI` && !v.IsNull {
-				apiItemObj.isRequired = true
-			}
-		case TypeChar: // `char类型`
-			if !apiItemObj.isSkip {
-				apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `string`
-				apiItemObj.createType = `*string`
-				apiItemObj.updateType = `*string`
-				apiItemObj.resType = `*string`
-			}
-
-			apiItemObj.filterRule = append([]string{`max-length:` + v.FieldLimitStr}, apiItemObj.filterRule...)
-			apiItemObj.createRule = append([]string{`size:` + v.FieldLimitStr}, apiItemObj.createRule...)
-			apiItemObj.updateRule = append([]string{`size:` + v.FieldLimitStr}, apiItemObj.updateRule...)
-			if v.IndexRaw == `UNI` && !v.IsNull {
-				apiItemObj.isRequired = true
-			}
-		case TypeText: // `text类型`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `string`
-				apiItemObj.createType = `*string`
-				apiItemObj.updateType = `*string`
-				apiItemObj.resType = `*string`
-			}
-		case TypeJson: // `json类型`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `string`
-				apiItemObj.createType = `*string`
-				apiItemObj.updateType = `*string`
-				apiItemObj.resType = `*string`
-			}
-
-			apiItemObj.filterRule = append([]string{`json`}, apiItemObj.filterRule...)
-			apiItemObj.createRule = append([]string{`json`}, apiItemObj.createRule...)
-			apiItemObj.updateRule = append([]string{`json`}, apiItemObj.updateRule...)
-			if !v.IsNull {
-				apiItemObj.isRequired = true
-			}
-		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
-			if !apiItemObj.isSkip {
-				// apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `*gtime.Time`
-				apiItemObj.createType = `*gtime.Time`
-				apiItemObj.updateType = `*gtime.Time`
-				apiItemObj.resType = `*gtime.Time`
-			}
-
-			apiItemObj.filterRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.filterRule...)
-			apiItemObj.createRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.createRule...)
-			apiItemObj.updateRule = append([]string{`date-format:Y-m-d H:i:s`}, apiItemObj.updateRule...)
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				apiItemObj.isRequired = true
-			}
-		case TypeDate: // `date类型`
-			if !apiItemObj.isSkip {
-				apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `*gtime.Time`
-				apiItemObj.createType = `*gtime.Time`
-				apiItemObj.updateType = `*gtime.Time`
-				apiItemObj.resType = `*string`
-			}
-
-			apiItemObj.filterRule = append([]string{`date-format:Y-m-d`}, apiItemObj.filterRule...)
-			apiItemObj.createRule = append([]string{`date-format:Y-m-d`}, apiItemObj.createRule...)
-			apiItemObj.updateRule = append([]string{`date-format:Y-m-d`}, apiItemObj.updateRule...)
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				apiItemObj.isRequired = true
-			}
-		default:
-			if !apiItemObj.isSkip {
-				apiItemObj.filter = true
-				apiItemObj.create = true
-				apiItemObj.update = true
-				apiItemObj.res = true
-			}
-			if !apiItemObj.isSkipType {
-				apiItemObj.filterType = `string`
-				apiItemObj.createType = `*string`
-				apiItemObj.updateType = `*string`
-				apiItemObj.resType = `*string`
-			}
-		}
-		/*--------根据字段数据类型处理（注意：这里是字段命名类型处理的后续操作，改动需考虑兼容） 结束--------*/
-
-		if apiItemObj.filter {
-			apiObj.filter = append(apiObj.filter, v.FieldCaseCamel+` `+apiItemObj.filterType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.filterRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-		}
-		if apiItemObj.create {
-			if apiItemObj.isRequired {
-				apiItemObj.createRule = append([]string{`required`}, apiItemObj.createRule...)
-			}
-			apiObj.create = append(apiObj.create, v.FieldCaseCamel+` `+apiItemObj.createType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.createRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-		}
-		if apiItemObj.update {
-			apiObj.update = append(apiObj.update, v.FieldCaseCamel+` `+apiItemObj.updateType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiItemObj.updateRule, `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-		}
-		if apiItemObj.res {
-			apiObj.res = append(apiObj.res, v.FieldCaseCamel+` `+apiItemObj.resType+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" dc:"`+v.FieldDesc+`"`+"`")
-		}
-	}
-
-	tplApi := `package api
-
-import (
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-)
-
-`
-	if myGenThis.option.IsList {
-		tplApi += `
-/*--------列表 开始--------*/
-type ` + tpl.TableCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + myGenThis.option.CommonName + `" sm:"列表"` + "`" + `
-	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
-	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
-	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
-	Page   int             ` + "`" + `json:"page" v:"min:1" default:"1" dc:"页码"` + "`" + `
-	Limit  int             ` + "`" + `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `ListFilter struct {
-	Id             *uint       ` + "`" + `json:"id,omitempty" v:"min:1" dc:"ID"` + "`" + `
-	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
-	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
-	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.filter...), `
-	`) + `
-}
-
-type ` + tpl.TableCaseCamel + `ListRes struct {`
-		if myGenThis.option.IsCount {
-			tplApi += `
-	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
-		}
-		tplApi += `
-	List  []` + tpl.TableCaseCamel + `ListItem ` + "`" + `json:"list" dc:"列表"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `ListItem struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
-	`) + gstr.Join(append([]string{``}, apiObj.resOfAdd...), `
-	`) + `
-}
-
-/*--------列表 结束--------*/
-
-`
-	}
-	if myGenThis.option.IsInfo {
-		tplApi += `/*--------详情 开始--------*/
-type ` + tpl.TableCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + myGenThis.option.CommonName + `" sm:"详情"` + "`" + `
-	Id     uint     ` + "`" + `json:"id" v:"required|min:1" dc:"ID"` + "`" + `
-	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `InfoRes struct {
-	Info ` + tpl.TableCaseCamel + `Info ` + "`" + `json:"info" dc:"详情"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `Info struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
-	`) + `
-}
-
-/*--------详情 结束--------*/
-
-`
-	}
-	if myGenThis.option.IsCreate {
-		tplApi += `/*--------新增 开始--------*/
-type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + myGenThis.option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, apiObj.create...), `
-	`) + `
-}
-
-/*--------新增 结束--------*/
-
-`
-	}
-
-	if myGenThis.option.IsUpdate {
-		tplApi += `/*--------修改 开始--------*/
-type ` + tpl.TableCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + myGenThis.option.CommonName + `" sm:"修改"` + "`" + `
-	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.update...), `
-	`) + `
-}
-
-/*--------修改 结束--------*/
-
-`
-	}
-
-	if myGenThis.option.IsDelete {
-		tplApi += `/*--------删除 开始--------*/
-type ` + tpl.TableCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + myGenThis.option.CommonName + `" sm:"删除"` + "`" + `
-	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
-}
-
-/*--------删除 结束--------*/
-`
-	}
-
-	if myGenThis.option.IsList && tpl.Handle.Pid.Pid != `` {
-		tplApi += `
-/*--------列表（树状） 开始--------*/
-type ` + tpl.TableCaseCamel + `TreeReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + myGenThis.option.CommonName + `" sm:"列表（树状）"` + "`" + `
-	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
-	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `TreeRes struct {
-	Tree []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `TreeItem struct {
-	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
-	`) + `
-	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
-}
-
-/*--------列表（树状） 结束--------*/
-`
-	}
-
-	saveFile := gfile.SelfDir() + `/api/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
-	gfile.PutContents(saveFile, tplApi)
-	utils.GoFileFmt(saveFile)
 }
 
 // controller模板生成

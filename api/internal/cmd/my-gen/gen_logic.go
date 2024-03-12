@@ -9,7 +9,7 @@ import (
 
 func genLogic(tpl myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
-	// TODO logic层每次生成变化不大，故不建议重新生成。且随项目进度，经常会向该层添加自定义方法（如希望每次都重新生成logic层，可注释下面判断）
+	// TODO 重新生成logic层（logic层经常会被添加一些逻辑验证和自定义方法，且在表无大改变时，生成不会有任何变化，故建议取消下方注释，不重新生成logic层）
 	/* if gfile.IsFile(saveFile) {
 		return
 	} */
