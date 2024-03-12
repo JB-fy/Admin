@@ -340,93 +340,61 @@ func (myGenThis *myGen) genDao() {
 	tplDao := gfile.GetContents(saveFile)
 
 	type dao struct {
-		importDao []string
-		insert    struct {
-			parse       []string
-			parseBefore []string
-			hook        []string
-		}
-		update struct {
-			parse      []string
-			hookBefore []string
-			hookAfter  []string
-		}
-		field struct {
-			parse []string
-			hook  []string
-		}
-		filter struct {
-			parse []string
-		}
-		order struct {
-			parse []string
-		}
-		join struct {
-			parse []string
-		}
+		ImportDao []string
+
+		InsertParseBefore []string
+		InsertParse       []string
+		InsertHook        []string
+
+		UpdateParse      []string
+		UpdateHookBefore []string
+		UpdateHookAfter  []string
+
+		FieldParse []string
+		FieldHook  []string
+
+		FilterParse []string
+
+		OrderParse []string
+
+		JoinParse []string
 	}
 	daoObj := dao{}
 
-	labelListLen := len(tpl.Handle.LabelList)
-	if labelListLen > 0 {
-		fieldParseStr := `case ` + "`label`" + `:
-				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)`
-		filterParseStr := `case ` + "`label`" + `:
-				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-		if labelListLen > 1 {
-			fieldParseStrTmp := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `"
-			parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
-			for i := labelListLen - 2; i >= 0; i-- {
-				fieldParseStrTmp = "IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + fieldParseStrTmp + ")"
-				if i == 0 {
-					parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
-				} else {
-					parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
-				}
-			}
-			fieldParseStr = `case ` + "`label`" + `:
-				m = m.Fields(` + "`" + fieldParseStrTmp + " AS ` + v)"
-			filterParseStr = `case ` + "`label`" + `:
-				m = m.Where(m.Builder().` + parseFilterStr + `)`
-		}
-		daoObj.field.parse = append(daoObj.field.parse, fieldParseStr)
-		daoObj.filter.parse = append(daoObj.filter.parse, filterParseStr)
-	}
-
 	daoFieldList := getDaoFieldList(tpl)
 	for _, v := range daoFieldList {
-		daoObj.importDao = garray.NewStrArrayFrom(append(daoObj.importDao, v.ImportDao...)).Unique().Slice()
+		daoObj.ImportDao = garray.NewStrArrayFrom(append(daoObj.ImportDao, v.ImportDao...)).Unique().Slice()
 
-		daoObj.insert.parse = garray.NewStrArrayFrom(append(daoObj.insert.parse, v.Insert.Parse.getData()...)).Unique().Slice()
-		daoObj.insert.parseBefore = garray.NewStrArrayFrom(append(daoObj.insert.parseBefore, v.Insert.ParseBefore.getData()...)).Unique().Slice()
-		daoObj.insert.hook = garray.NewStrArrayFrom(append(daoObj.insert.hook, v.Insert.Hook.getData()...)).Unique().Slice()
+		daoObj.InsertParseBefore = garray.NewStrArrayFrom(append(daoObj.InsertParseBefore, v.InsertParseBefore.getData()...)).Unique().Slice()
+		daoObj.InsertParse = garray.NewStrArrayFrom(append(daoObj.InsertParse, v.InsertParse.getData()...)).Unique().Slice()
+		daoObj.InsertHook = garray.NewStrArrayFrom(append(daoObj.InsertHook, v.InsertHook.getData()...)).Unique().Slice()
 
-		daoObj.update.parse = garray.NewStrArrayFrom(append(daoObj.update.parse, v.Update.Parse.getData()...)).Unique().Slice()
-		daoObj.update.hookBefore = garray.NewStrArrayFrom(append(daoObj.update.hookBefore, v.Update.HookBefore.getData()...)).Unique().Slice()
-		daoObj.update.hookAfter = garray.NewStrArrayFrom(append(daoObj.update.hookAfter, v.Update.HookAfter.getData()...)).Unique().Slice()
+		daoObj.UpdateParse = garray.NewStrArrayFrom(append(daoObj.UpdateParse, v.UpdateParse.getData()...)).Unique().Slice()
+		daoObj.UpdateHookBefore = garray.NewStrArrayFrom(append(daoObj.UpdateHookBefore, v.UpdateHookBefore.getData()...)).Unique().Slice()
+		daoObj.UpdateHookAfter = garray.NewStrArrayFrom(append(daoObj.UpdateHookAfter, v.UpdateHookAfter.getData()...)).Unique().Slice()
 
-		daoObj.field.parse = garray.NewStrArrayFrom(append(daoObj.field.parse, v.Field.Parse.getData()...)).Unique().Slice()
-		daoObj.field.hook = garray.NewStrArrayFrom(append(daoObj.field.hook, v.Field.Hook.getData()...)).Unique().Slice()
+		daoObj.FieldParse = garray.NewStrArrayFrom(append(daoObj.FieldParse, v.FieldParse.getData()...)).Unique().Slice()
+		daoObj.FieldHook = garray.NewStrArrayFrom(append(daoObj.FieldHook, v.FieldHook.getData()...)).Unique().Slice()
 
-		daoObj.filter.parse = garray.NewStrArrayFrom(append(daoObj.filter.parse, v.Filter.Parse.getData()...)).Unique().Slice()
+		daoObj.FilterParse = garray.NewStrArrayFrom(append(daoObj.FilterParse, v.FilterParse.getData()...)).Unique().Slice()
 
-		daoObj.order.parse = garray.NewStrArrayFrom(append(daoObj.order.parse, v.Order.Parse.getData()...)).Unique().Slice()
+		daoObj.OrderParse = garray.NewStrArrayFrom(append(daoObj.OrderParse, v.OrderParse.getData()...)).Unique().Slice()
 
-		daoObj.join.parse = garray.NewStrArrayFrom(append(daoObj.join.parse, v.Join.Parse.getData()...)).Unique().Slice()
+		daoObj.JoinParse = garray.NewStrArrayFrom(append(daoObj.JoinParse, v.JoinParse.getData()...)).Unique().Slice()
 	}
 
-	if len(daoObj.insert.parseBefore) > 0 {
+	if len(daoObj.InsertParseBefore) > 0 {
 		pointOfInsertParseBefore := `insertData := map[string]interface{}{}`
-		tplDao = gstr.Replace(tplDao, pointOfInsertParseBefore, gstr.Join(append(daoObj.insert.parseBefore, ``), `
+		tplDao = gstr.Replace(tplDao, pointOfInsertParseBefore, gstr.Join(append(daoObj.InsertParseBefore, ``), `
 		`)+pointOfInsertParseBefore, 1)
 	}
-	if len(daoObj.insert.parse) > 0 {
+	if len(daoObj.InsertParse) > 0 {
 		pointOfInsertParse := `case ` + "`id`" + `:
 				insertData[daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, pointOfInsertParse, pointOfInsertParse+gstr.Join(append([]string{``}, daoObj.insert.parse...), `
+		tplDao = gstr.Replace(tplDao, pointOfInsertParse, pointOfInsertParse+gstr.Join(append([]string{``}, daoObj.InsertParse...), `
 			`), 1)
 	}
-	if len(daoObj.insert.hook) > 0 {
+	if len(daoObj.InsertHook) > 0 {
 		pointOfInsertHook := `// id, _ := result.LastInsertId()
 
 			/* for k, v := range daoModel.AfterInsert {
@@ -435,17 +403,17 @@ func (myGenThis *myGen) genDao() {
 					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
 				}
 			} */`
-		tplDao = gstr.Replace(tplDao, pointOfInsertHook, `id, _ := result.LastInsertId()`+gstr.Join(append([]string{``}, daoObj.insert.hook...), `
+		tplDao = gstr.Replace(tplDao, pointOfInsertHook, `id, _ := result.LastInsertId()`+gstr.Join(append([]string{``}, daoObj.InsertHook...), `
 
 			`), 1)
 	}
-	if len(daoObj.update.parse) > 0 {
+	if len(daoObj.UpdateParse) > 0 {
 		pointOfUpdateParse := `case ` + "`id`" + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, pointOfUpdateParse, pointOfUpdateParse+gstr.Join(append([]string{``}, daoObj.update.parse...), `
+		tplDao = gstr.Replace(tplDao, pointOfUpdateParse, pointOfUpdateParse+gstr.Join(append([]string{``}, daoObj.UpdateParse...), `
 			`), 1)
 	}
-	if len(daoObj.update.hookBefore) > 0 || len(daoObj.update.hookAfter) > 0 {
+	if len(daoObj.UpdateHookBefore) > 0 || len(daoObj.UpdateHookAfter) > 0 {
 		pointOfUpdateHook := `/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
@@ -459,54 +427,54 @@ func (myGenThis *myGen) genDao() {
 					}
 				}
 			} */`
-		if len(daoObj.update.hookBefore) > 0 {
-			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, gstr.Join(append(daoObj.update.hookBefore, ``), `
+		if len(daoObj.UpdateHookBefore) > 0 {
+			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, gstr.Join(append(daoObj.UpdateHookBefore, ``), `
 
 			`)+pointOfUpdateHook, 1)
 		}
-		if len(daoObj.update.hookAfter) > 0 {
+		if len(daoObj.UpdateHookAfter) > 0 {
 			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, `row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			}`+gstr.Join(append([]string{``}, daoObj.update.hookAfter...), `
+			}`+gstr.Join(append([]string{``}, daoObj.UpdateHookAfter...), `
 
 			`), 1)
 		}
 	}
-	if len(daoObj.field.parse) > 0 {
+	if len(daoObj.FieldParse) > 0 {
 		pointOfFieldParse := `case ` + "`id`" + `:
 				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey() + ` + "` AS `" + ` + v)`
-		tplDao = gstr.Replace(tplDao, pointOfFieldParse, pointOfFieldParse+gstr.Join(append([]string{``}, daoObj.field.parse...), `
+		tplDao = gstr.Replace(tplDao, pointOfFieldParse, pointOfFieldParse+gstr.Join(append([]string{``}, daoObj.FieldParse...), `
 			`), 1)
 	}
-	if len(daoObj.field.hook) > 0 {
+	if len(daoObj.FieldHook) > 0 {
 		pointOfFieldHook := `default:
 						record[v] = gvar.New(nil)`
-		tplDao = gstr.Replace(tplDao, pointOfFieldHook, gstr.Join(append(daoObj.field.hook, ``), `
+		tplDao = gstr.Replace(tplDao, pointOfFieldHook, gstr.Join(append(daoObj.FieldHook, ``), `
 					`)+pointOfFieldHook, 1)
 	}
-	if len(daoObj.filter.parse) > 0 {
+	if len(daoObj.FilterParse) > 0 {
 		pointOfFilterParse := `case ` + "`id`, `idArr`" + `:
 				m = m.Where(daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey(), v)`
-		tplDao = gstr.Replace(tplDao, pointOfFilterParse, pointOfFilterParse+gstr.Join(append([]string{``}, daoObj.filter.parse...), `
+		tplDao = gstr.Replace(tplDao, pointOfFilterParse, pointOfFilterParse+gstr.Join(append([]string{``}, daoObj.FilterParse...), `
 			`), 1)
 	}
-	if len(daoObj.order.parse) > 0 {
+	if len(daoObj.OrderParse) > 0 {
 		pointOfOrderParse := `case ` + "`id`" + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`
-		tplDao = gstr.Replace(tplDao, pointOfOrderParse, pointOfOrderParse+gstr.Join(append([]string{``}, daoObj.order.parse...), `
+		tplDao = gstr.Replace(tplDao, pointOfOrderParse, pointOfOrderParse+gstr.Join(append([]string{``}, daoObj.OrderParse...), `
 			`), 1)
 	}
-	if len(daoObj.join.parse) > 0 {
+	if len(daoObj.JoinParse) > 0 {
 		pointOfJoinParse := `/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey())
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()) */`
-		tplDao = gstr.Replace(tplDao, pointOfJoinParse, pointOfJoinParse+gstr.Join(append([]string{``}, daoObj.join.parse...), `
+		tplDao = gstr.Replace(tplDao, pointOfJoinParse, pointOfJoinParse+gstr.Join(append([]string{``}, daoObj.JoinParse...), `
 		`), 1)
 	}
-	if len(daoObj.importDao) > 0 {
+	if len(daoObj.ImportDao) > 0 {
 		pointOfImportDao := `"api/internal/dao/` + tpl.ModuleDirCaseKebab + `/internal"`
-		tplDao = gstr.Replace(tplDao, pointOfImportDao, pointOfImportDao+gstr.Join(append([]string{``}, daoObj.importDao...), `
+		tplDao = gstr.Replace(tplDao, pointOfImportDao, pointOfImportDao+gstr.Join(append([]string{``}, daoObj.ImportDao...), `
 	`), 1)
 	}
 
