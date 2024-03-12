@@ -2,7 +2,6 @@ package my_gen
 
 import (
 	daoAuth "api/internal/dao/auth"
-	"api/internal/utils"
 	"context"
 	"fmt"
 
@@ -319,111 +318,19 @@ func (myGenThis *myGen) Handle() {
 	if myGenThis.option.IsApi {
 		genApi(myGenThis.ctx, myGenThis.option, myGenThis.tpl)        // api模板生成
 		genController(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // controller模板生成
-		myGenThis.genRouter()                                         // 后端路由生成
+		genRouter(myGenThis.ctx, myGenThis.option, myGenThis.tpl)     // 后端路由生成
 	}
 
 	if myGenThis.option.IsView {
-		myGenThis.genViewIndex()  // 视图模板Index生成
-		myGenThis.genViewList()   // 视图模板List生成
-		myGenThis.genViewQuery()  // 视图模板Query生成
-		myGenThis.genViewSave()   // 视图模板Save生成
-		myGenThis.genViewI18n()   // 视图模板I18n生成
-		myGenThis.genViewRouter() // 前端路由生成
+		genViewIndex(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // 视图模板Index生成
+		myGenThis.genViewList()                                      // 视图模板List生成
+		myGenThis.genViewQuery()                                     // 视图模板Query生成
+		myGenThis.genViewSave()                                      // 视图模板Save生成
+		myGenThis.genViewI18n()                                      // 视图模板I18n生成
+		myGenThis.genViewRouter()                                    // 前端路由生成
 
 		command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
-}
-
-// 后端路由生成
-func (myGenThis *myGen) genRouter() {
-	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/internal/router/` + myGenThis.option.SceneCode + `.go`
-	tplRouter := gfile.GetContents(saveFile)
-
-	//控制器不存在时导入
-	importControllerStr := `controller` + tpl.ModuleDirCaseCamel + ` "api/internal/controller/` + myGenThis.option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"`
-	if gstr.Pos(tplRouter, importControllerStr) == -1 {
-		tplRouter = gstr.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
-	"api/internal/middleware"`, 1)
-		//路由生成
-		tplRouter = gstr.Replace(tplRouter, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {
-				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableCaseCamel+`())
-			})
-
-			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
-		gfile.PutContents(saveFile, tplRouter)
-	} else {
-		//路由不存在时需生成
-		if gstr.Pos(tplRouter, `group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableCaseCamel+`())`) == -1 {
-			//路由生成
-			tplRouter = gstr.Replace(tplRouter, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {
-				group.Bind(controller`+tpl.ModuleDirCaseCamel+`.New`+tpl.TableCaseCamel+`())`, 1)
-			gfile.PutContents(saveFile, tplRouter)
-		}
-	}
-
-	utils.GoFileFmt(saveFile)
-}
-
-// 视图模板Index生成
-func (myGenThis *myGen) genViewIndex() {
-	tpl := myGenThis.tpl
-
-	tplView := `<script setup lang="tsx">
-import List from './List.vue'
-import Query from './Query.vue'`
-	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
-		tplView += `
-import Save from './Save.vue'`
-	}
-	tplView += `
-
-//搜索
-const queryCommon = reactive({
-    data: {},
-})
-provide('queryCommon', queryCommon)
-
-//列表
-const listCommon = reactive({
-    ref: null as any,
-})
-provide('listCommon', listCommon)`
-	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
-		tplView += `
-
-//保存
-const saveCommon = reactive({
-    visible: false,
-    title: '', //新增|编辑|复制
-    data: {},
-})
-provide('saveCommon', saveCommon)`
-	}
-	tplView += `
-</script>
-
-<template>
-    <el-container class="main-table-container">
-        <el-header>
-            <query />
-        </el-header>
-
-        <list :ref="(el: any) => listCommon.ref = el" />`
-	if myGenThis.option.IsCreate || myGenThis.option.IsUpdate {
-		tplView += `
-
-        <!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
-        <save v-if="saveCommon.visible" />`
-	}
-	tplView += `
-    </el-container>
-</template>
-`
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
-	gfile.PutContents(saveFile, tplView)
 }
 
 // 视图模板List生成

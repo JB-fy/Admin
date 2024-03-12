@@ -52,6 +52,7 @@ type myGenDaoField struct {
 	joinParse myGenDataSliceHandler
 }
 
+// dao生成
 func genDao(ctx context.Context, tpl myGenTpl) {
 	tpl.gfGenDao(true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`

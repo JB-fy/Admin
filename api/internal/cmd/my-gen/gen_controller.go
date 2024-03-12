@@ -19,6 +19,7 @@ type myGenController struct {
 	// diff      []string // 可以不要。数据返回时，会根据API文件中的结构体做过滤
 }
 
+// controller生成
 func genController(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	controller := getControllerFieldList(tpl)
 

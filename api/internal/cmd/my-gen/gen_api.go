@@ -30,6 +30,7 @@ type myGenApiField struct {
 	isRequired bool
 }
 
+// api生成
 func genApi(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	api := getApiFieldList(tpl)
 

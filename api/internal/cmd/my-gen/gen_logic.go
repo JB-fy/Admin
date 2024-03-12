@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
+// logic生成
 func genLogic(ctx context.Context, tpl myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
 	// TODO 重新生成logic层（logic层经常会被添加一些逻辑验证和自定义方法，且在表无大改变时，生成不会有任何变化，故建议取消下方注释，不重新生成logic层）
