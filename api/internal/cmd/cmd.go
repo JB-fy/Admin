@@ -42,8 +42,7 @@ var (
 		Usage: `myGen`,
 		Brief: `代码自动生成`,
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			myGenObj := myGen.NewMyGen(ctx, parser)
-			myGenObj.Handle()
+			myGen.Run(ctx, parser)
 			return
 		},
 	}
