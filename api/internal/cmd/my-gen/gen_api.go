@@ -3,7 +3,6 @@ package my_gen
 import (
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
-	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -31,7 +30,7 @@ type myGenApiField struct {
 }
 
 // api生成
-func genApi(ctx context.Context, option myGenOption, tpl myGenTpl) {
+func genApi(option myGenOption, tpl myGenTpl) {
 	api := getApiFieldList(tpl)
 
 	tplApi := `package api

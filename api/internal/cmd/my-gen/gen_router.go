@@ -2,14 +2,13 @@ package my_gen
 
 import (
 	"api/internal/utils"
-	"context"
 
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
 // 后端路由生成
-func genRouter(ctx context.Context, option myGenOption, tpl myGenTpl) {
+func genRouter(option myGenOption, tpl myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
 	tplRouter := gfile.GetContents(saveFile)
 

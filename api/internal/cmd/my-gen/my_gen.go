@@ -312,22 +312,23 @@ isViewEnd:
 
 // 生成代码
 func (myGenThis *myGen) Handle() {
-	genDao(myGenThis.ctx, myGenThis.tpl)   // dao模板生成
-	genLogic(myGenThis.ctx, myGenThis.tpl) // logic模板生成
+	genDao(myGenThis.tpl)   // dao模板生成
+	genLogic(myGenThis.tpl) // logic模板生成
 
 	if myGenThis.option.IsApi {
-		genApi(myGenThis.ctx, myGenThis.option, myGenThis.tpl)        // api模板生成
-		genController(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // controller模板生成
-		genRouter(myGenThis.ctx, myGenThis.option, myGenThis.tpl)     // 后端路由生成
+		genApi(myGenThis.option, myGenThis.tpl)                   // api模板生成
+		genController(myGenThis.option, myGenThis.tpl)            // controller模板生成
+		genAction(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // 操作权限生成
+		genRouter(myGenThis.option, myGenThis.tpl)                // 后端路由生成
 	}
 
 	if myGenThis.option.IsView {
-		genViewIndex(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // 视图模板Index生成
-		myGenThis.genViewList()                                      // 视图模板List生成
-		myGenThis.genViewQuery()                                     // 视图模板Query生成
-		myGenThis.genViewSave()                                      // 视图模板Save生成
-		myGenThis.genViewI18n()                                      // 视图模板I18n生成
-		myGenThis.genViewRouter()                                    // 前端路由生成
+		genViewIndex(myGenThis.option, myGenThis.tpl) // 视图模板Index生成
+		myGenThis.genViewList()                       // 视图模板List生成
+		myGenThis.genViewQuery()                      // 视图模板Query生成
+		myGenThis.genViewSave()                       // 视图模板Save生成
+		myGenThis.genViewI18n()                       // 视图模板I18n生成
+		myGenThis.genViewRouter()                     // 前端路由生成
 
 		command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}

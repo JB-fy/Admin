@@ -1,9 +1,7 @@
 package my_gen
 
 import (
-	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
-	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -20,7 +18,7 @@ type myGenController struct {
 }
 
 // controller生成
-func genController(ctx context.Context, option myGenOption, tpl myGenTpl) {
+func genController(option myGenOption, tpl myGenTpl) {
 	controller := getControllerFieldList(tpl)
 
 	tplController := `package controller
@@ -72,12 +70,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
-			actionName := option.CommonName + `-查看`
-			genAction(ctx, option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Look` + "`" + `)
 	if !isAuth {
 		field = []string{` + gstr.Join(controller.noAuth, `, `) + `}
 	}
@@ -132,12 +127,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
-			actionName := option.CommonName + `-查看`
-			genAction(ctx, option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Look` + "`" + `)
 	if err != nil {
 		return
 	}
@@ -169,12 +161,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Create`
-			actionName := option.CommonName + `-新增`
-			genAction(ctx, option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Create` + "`" + `)
 	if err != nil {
 		return
 	}
@@ -207,12 +196,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Update`
-			actionName := option.CommonName + `-编辑`
-			genAction(ctx, option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Update` + "`" + `)
 	if err != nil {
 		return
 	}
@@ -235,12 +221,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, re
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Delete`
-			actionName := option.CommonName + `-删除`
-			genAction(ctx, option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete` + "`" + `)
 	if err != nil {
 		return
 	}
@@ -281,12 +264,9 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
-			actionCode := gstr.CaseCamelLower(tpl.LogicStructName) + `Look`
-			actionName := option.CommonName + `-查看`
-			genAction(ctx, option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), actionCode, actionName) // 数据库权限操作处理
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + actionCode + "`" + `)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Look` + "`" + `)
 	if !isAuth {
 		field = []string{` + gstr.Join(controller.noAuth, `, `) + `}
 	}

@@ -2,7 +2,6 @@ package my_gen
 
 import (
 	"api/internal/utils"
-	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -53,7 +52,7 @@ type myGenDaoField struct {
 }
 
 // dao生成
-func genDao(ctx context.Context, tpl myGenTpl) {
+func genDao(tpl myGenTpl) {
 	tpl.gfGenDao(true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
