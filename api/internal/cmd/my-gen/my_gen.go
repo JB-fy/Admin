@@ -327,7 +327,7 @@ func (myGenThis *myGen) Handle() {
 		genViewList(myGenThis.option, myGenThis.tpl)  // 视图模板List生成
 		genViewQuery(myGenThis.option, myGenThis.tpl) // 视图模板Query生成
 		myGenThis.genViewSave()                       // 视图模板Save生成
-		myGenThis.genViewI18n()                       // 视图模板I18n生成
+		genViewI18n(myGenThis.option, myGenThis.tpl)  // 视图模板I18n生成
 		myGenThis.genViewRouter()                     // 前端路由生成
 
 		command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
@@ -822,116 +822,6 @@ const saveDrawer = reactive({
 `
 
 	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
-	gfile.PutContents(saveFile, tplView)
-}
-
-// 视图模板I18n生成
-func (myGenThis *myGen) genViewI18n() {
-	tpl := myGenThis.tpl
-
-	type viewI18n struct {
-		name   []string
-		status []string
-		tip    []string
-	}
-	viewI18nObj := viewI18n{
-		name:   []string{},
-		status: []string{},
-		tip:    []string{},
-	}
-	for _, v := range tpl.FieldList {
-		/*--------根据字段命名类型处理 开始--------*/
-		switch v.FieldTypeName {
-		case TypeNameDeleted: // 软删除字段
-			continue
-		case TypeNameUpdated: // 更新时间字段
-			continue
-		case TypeNameCreated: // 创建时间字段
-			continue
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
-			continue
-		case TypeNamePid: // pid；	类型：int等类型；
-			viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '父级',`)
-			continue
-		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			continue
-		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-			if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
-				viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '`+relIdObj.FieldName+`',`)
-				continue
-			}
-		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			viewI18nObj.tip = append(viewI18nObj.tip, v.FieldRaw+`: '`+v.FieldTip+`',`)
-		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			statusItem := []string{}
-			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(v.FieldType) {
-				for _, status := range v.StatusList {
-					statusItem = append(statusItem, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
-				}
-			} else {
-				for _, status := range v.StatusList {
-					statusItem = append(statusItem, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
-				}
-			}
-			viewI18nObj.status = append(viewI18nObj.status, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, statusItem...), `
-            `)+`
-        ],`)
-		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-		}
-		/*--------根据字段命名类型处理 结束--------*/
-
-		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
-		switch v.FieldType {
-		case TypeInt: // `int等类型`
-		case TypeIntU: // `int等类型（unsigned）`
-		case TypeFloat: // `float等类型`
-		case TypeFloatU: // `float等类型（unsigned）`
-		case TypeVarchar: // `varchar类型`
-		case TypeChar: // `char类型`
-		case TypeText: // `text类型`
-		case TypeJson: // `json类型`
-			viewI18nObj.tip = append(viewI18nObj.tip, v.FieldRaw+`: '`+v.FieldTip+`',`)
-		case TypeTimestamp: // `timestamp类型`
-		case TypeDatetime: // `datetime类型`
-		case TypeDate: // `date类型`
-		default:
-		}
-		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
-		viewI18nObj.name = append(viewI18nObj.name, v.FieldRaw+`: '`+v.FieldName+`',`)
-	}
-
-	tplView := `export default {
-    name: {` + gstr.Join(append([]string{``}, viewI18nObj.name...), `
-        `) + `
-    },
-    status: {` + gstr.Join(append([]string{``}, viewI18nObj.status...), `
-        `) + `
-    },
-    tip: {` + gstr.Join(append([]string{``}, viewI18nObj.tip...), `
-        `) + `
-    },
-}
-`
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
 	gfile.PutContents(saveFile, tplView)
 }
 
