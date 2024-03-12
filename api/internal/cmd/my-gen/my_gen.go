@@ -11,7 +11,6 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -318,17 +317,18 @@ func (myGenThis *myGen) Handle() {
 	if myGenThis.option.IsApi {
 		genApi(myGenThis.option, myGenThis.tpl)                   // api模板生成
 		genController(myGenThis.option, myGenThis.tpl)            // controller模板生成
-		genAction(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // 操作权限生成
 		genRouter(myGenThis.option, myGenThis.tpl)                // 后端路由生成
+		genAction(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // 操作权限生成
 	}
 
 	if myGenThis.option.IsView {
-		genViewIndex(myGenThis.option, myGenThis.tpl) // 视图模板Index生成
-		genViewList(myGenThis.option, myGenThis.tpl)  // 视图模板List生成
-		genViewQuery(myGenThis.option, myGenThis.tpl) // 视图模板Query生成
-		myGenThis.genViewSave()                       // 视图模板Save生成
-		genViewI18n(myGenThis.option, myGenThis.tpl)  // 视图模板I18n生成
-		myGenThis.genViewRouter()                     // 前端路由生成
+		genViewIndex(myGenThis.option, myGenThis.tpl)           // 视图模板Index生成
+		genViewList(myGenThis.option, myGenThis.tpl)            // 视图模板List生成
+		genViewQuery(myGenThis.option, myGenThis.tpl)           // 视图模板Query生成
+		myGenThis.genViewSave()                                 // 视图模板Save生成
+		genViewI18n(myGenThis.option, myGenThis.tpl)            // 视图模板I18n生成
+		genViewRouter(myGenThis.option, myGenThis.tpl)          // 前端路由生成
+		genMenu(myGenThis.ctx, myGenThis.option, myGenThis.tpl) // 菜单生成
 
 		command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+myGenThis.option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
@@ -823,87 +823,4 @@ const saveDrawer = reactive({
 
 	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
 	gfile.PutContents(saveFile, tplView)
-}
-
-// 前端路由生成
-func (myGenThis *myGen) genViewRouter() {
-	tpl := myGenThis.tpl
-
-	saveFile := gfile.SelfDir() + `/../view/` + myGenThis.option.SceneCode + `/src/router/index.ts`
-	tplViewRouter := gfile.GetContents(saveFile)
-
-	path := `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab
-	replaceStr := `{
-                path: '` + path + `',
-                component: async () => {
-                    const component = await import('@/views` + path + `/Index.vue')
-                    component.default.name = '` + path + `'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '` + path + `' }
-            },`
-
-	if gstr.Pos(tplViewRouter, `'`+path+`'`) == -1 { //路由不存在时新增
-		tplViewRouter = gstr.Replace(tplViewRouter, `/*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, replaceStr+`
-            /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
-	} else { //路由已存在则替换
-		tplViewRouter, _ = gregex.ReplaceString(`\{
-                path: '`+path+`',[\s\S]*'`+path+`' \}
-            \},`, replaceStr, tplViewRouter)
-	}
-	gfile.PutContents(saveFile, tplViewRouter)
-
-	myGenThis.genMenu(myGenThis.sceneInfo[daoAuth.Scene.Columns().SceneId].Uint(), path, myGenThis.option.CommonName, tpl.TableCaseCamel) // 数据库权限菜单处理
-}
-
-// 自动生成菜单
-func (myGenThis *myGen) genMenu(sceneId uint, menuUrl string, menuName string, menuNameOfEn string) {
-	ctx := myGenThis.ctx
-
-	menuNameArr := gstr.Split(menuName, `/`)
-
-	var pid int64 = 0
-	for _, v := range menuNameArr[:len(menuNameArr)-1] {
-		pidVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
-			daoAuth.Menu.Columns().SceneId:  sceneId,
-			daoAuth.Menu.Columns().MenuName: v,
-		}).Value(daoAuth.Menu.PrimaryKey())
-		if pidVar.Uint() == 0 {
-			pid, _ = daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
-				daoAuth.Menu.Columns().SceneId:   sceneId,
-				daoAuth.Menu.Columns().Pid:       pid,
-				daoAuth.Menu.Columns().MenuName:  v,
-				daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
-				daoAuth.Menu.Columns().MenuUrl:   ``,
-				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "", "zh-cn": "` + v + `"}}}`,
-			}).InsertAndGetId()
-		} else {
-			pid = pidVar.Int64()
-		}
-	}
-
-	menuName = menuNameArr[len(menuNameArr)-1]
-	idVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
-		daoAuth.Menu.Columns().SceneId: sceneId,
-		daoAuth.Menu.Columns().MenuUrl: menuUrl,
-	}).Value(daoAuth.Menu.PrimaryKey())
-	id := idVar.Uint()
-	if id == 0 {
-		daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
-			daoAuth.Menu.Columns().SceneId:   sceneId,
-			daoAuth.Menu.Columns().Pid:       pid,
-			daoAuth.Menu.Columns().MenuName:  menuName,
-			daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
-			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
-			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		}).Insert()
-	} else {
-		daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).
-			SetIdArr().
-			HookUpdate(g.Map{
-				daoAuth.Menu.Columns().MenuName:  menuName,
-				daoAuth.Menu.Columns().Pid:       pid,
-				daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-			}).Update()
-	}
 }
