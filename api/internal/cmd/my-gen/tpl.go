@@ -136,7 +136,7 @@ type handleRelId struct {
 	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
 }
 
-// 模板参数处理
+// 创建模板参数
 func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string) (tpl myGenTpl) {
 	tpl = myGenTpl{
 		Group:              group,

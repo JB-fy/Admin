@@ -108,7 +108,8 @@ type myGenOption struct {
 
 // 生成代码
 func Run(ctx context.Context, parser *gcmd.Parser) {
-	option, tpl := parse(ctx, parser)
+	option := createOption(ctx, parser)
+	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone)
 
 	genDao(tpl)   // dao模板生成
 	genLogic(tpl) // logic模板生成
@@ -133,12 +134,8 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 	}
 }
 
-// 数据解析
-func parse(ctx context.Context, parser *gcmd.Parser) (option myGenOption, tpl myGenTpl) {
-	defer func() {
-		tpl = createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone)
-	}()
-
+// 创建命令选项
+func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption) {
 	optionMap := parser.GetOptAll()
 	gconv.Struct(optionMap, &option)
 
