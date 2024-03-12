@@ -3,6 +3,7 @@ package my_gen
 import (
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
+	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -29,8 +30,8 @@ type myGenApiField struct {
 	isRequired bool
 }
 
-func genApi(option myGenOption, tpl myGenTpl) {
-	apiObj := getApiFieldList(tpl)
+func genApi(ctx context.Context, option myGenOption, tpl myGenTpl) {
+	api := getApiFieldList(tpl)
 
 	tplApi := `package api
 
@@ -56,7 +57,7 @@ type ` + tpl.TableCaseCamel + `ListFilter struct {
 	Id             *uint       ` + "`" + `json:"id,omitempty" v:"min:1" dc:"ID"` + "`" + `
 	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
 	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
-	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.filter...), `
+	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + gstr.Join(append([]string{``}, api.filter...), `
 	`) + `
 }
 
@@ -70,8 +71,8 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 }
 
 type ` + tpl.TableCaseCamel + `ListItem struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
-	`) + gstr.Join(append([]string{``}, apiObj.resOfAdd...), `
+	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, api.res...), `
+	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
 	`) + `
 }
 
@@ -92,7 +93,7 @@ type ` + tpl.TableCaseCamel + `InfoRes struct {
 }
 
 type ` + tpl.TableCaseCamel + `Info struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
+	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, api.res...), `
 	`) + `
 }
 
@@ -103,7 +104,7 @@ type ` + tpl.TableCaseCamel + `Info struct {
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, apiObj.create...), `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, api.create...), `
 	`) + `
 }
 
@@ -116,7 +117,7 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + `
-	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + gstr.Join(append([]string{``}, apiObj.update...), `
+	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + gstr.Join(append([]string{``}, api.update...), `
 	`) + `
 }
 
@@ -150,7 +151,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 }
 
 type ` + tpl.TableCaseCamel + `TreeItem struct {
-	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, apiObj.res...), `
+	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, api.res...), `
 	`) + `
 	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 }
