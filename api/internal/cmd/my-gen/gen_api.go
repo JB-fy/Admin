@@ -176,7 +176,7 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型` // `int等类型（unsigned）`
-			// apiField.filterType.Method = ReturnEmpty
+			// apiField.filterType.Method = ReturnType
 			apiField.filterType.DataType = `*int`
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*int`
@@ -347,6 +347,7 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			if v.FieldRaw == `id` {
 				continue
 			}
+			apiField.filterType.Method = ReturnType
 			apiField.createType.Method = ReturnEmpty
 			apiField.updateType.Method = ReturnEmpty
 
