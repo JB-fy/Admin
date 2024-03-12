@@ -94,7 +94,6 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 			if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 				viewI18nField.name.Method = ReturnTypeName
 				viewI18nField.name.DataTypeName = v.FieldRaw + `: '` + relIdObj.FieldName + `',`
-				continue
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			viewI18nField.tip.Method = ReturnTypeName
