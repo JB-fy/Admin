@@ -320,7 +320,10 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 				apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			}
 			viewSaveField.rule.Method = ReturnTypeName
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', /* required: true, */ min: 1, trigger: 'change', message: t('validation.select') },`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
+				`// { required: true, message: t('validation.required') },`,
+				`{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },`,
+			)
 			viewSaveField.form.Method = ReturnTypeName
 			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
 				viewSaveField.form.DataTypeName = `<my-cascader v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
