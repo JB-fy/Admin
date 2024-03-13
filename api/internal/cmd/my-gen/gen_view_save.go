@@ -358,7 +358,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
                         </el-radio>
                     </el-radio-group>`
 			if len(v.StatusList) > 5 { //超过5个状态用select组件，小于5个用radio组件
-				viewSaveField.form.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="false" style="width: 214px" />`
+				viewSaveField.form.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="false" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 			}
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			viewSaveField.rule.Method = ReturnTypeName

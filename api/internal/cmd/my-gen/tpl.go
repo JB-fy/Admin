@@ -2,6 +2,7 @@ package my_gen
 
 import (
 	"context"
+	"math"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -117,9 +118,9 @@ type myGenField struct {
 	FieldDesc            string             // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
 	FieldTip             string             // 字段提示。由注释解析出来，前端提示用。
 	StatusList           [][2]string        // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-	StatusLenRuneMax     int                // 状态列表中状态说明最大长度
 	FieldLimitStr        string             // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitFloat      [2]string          // 浮点数字段限制。第1个表示整数位，第2个表示小数位
+	FieldShowLenMax      int                // 显示长度。公式：汉字个数 + (其它字符个数 / 2)。前端el-select-v2等部分组件生成时，根据该值设置宽度
 }
 
 type handlePassword struct {
@@ -221,6 +222,8 @@ func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table,
 		}
 		fieldTmp.FieldLimitFloat = [2]string{tmpFieldLimitFloat[1], tmpFieldLimitFloat[2]}
 
+		fieldTmp.FieldShowLenMax = tpl.getShowLen(fieldTmp.FieldName)
+
 		/*--------确定字段数据类型 开始--------*/
 		if gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1 { //int等类型
 			fieldTmp.FieldType = TypeInt
@@ -281,11 +284,10 @@ func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table,
 			}
 			fieldTmp.StatusList = tpl.getStatusList(fieldTmp.FieldTip, isStr)
 
-			fieldTmp.StatusLenRuneMax = gstr.LenRune(fieldTmp.FieldName)
 			for _, status := range fieldTmp.StatusList {
-				lenRune := gstr.LenRune(status[1])
-				if lenRune > fieldTmp.StatusLenRuneMax {
-					fieldTmp.StatusLenRuneMax = lenRune
+				showLen := tpl.getShowLen(status[1])
+				if showLen > fieldTmp.FieldShowLenMax {
+					fieldTmp.FieldShowLenMax = showLen
 				}
 			}
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
@@ -379,7 +381,6 @@ func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table,
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
 				/* TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）*/
-				fieldTmp.StatusLenRuneMax = gstr.LenRune(fieldTmp.FieldName)
 			}
 		} else if garray.NewFrom([]interface{}{TypeTimestamp, TypeDatetime, TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
 			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
@@ -591,6 +592,15 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		relTpl.gfGenDao(false) //dao文件生成
 	}
 	return
+}
+
+// 获取显示长度。汉字个数 + (其它字符个数 / 2) 后的值
+func (myGenTplThis *myGenTpl) getShowLen(str string) int {
+	len := len(str)
+	lenRune := gstr.LenRune(str)
+	countHan := (len - lenRune) / 2
+	countOther := gconv.Int(math.Ceil(float64(len-countHan*3) / 2))
+	return countHan + countOther
 }
 
 // 执行gf gen dao命令生成dao文件
