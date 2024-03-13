@@ -254,9 +254,7 @@ defineExpose({
 </script>
 
 <template>
-    <!-- multiple设置为true时，必须设置样式width，否则显示时宽度很小 -->
     <el-select-v2
-        v-if="multiple"
         :ref="(el: any) => select.ref = el"
         v-model="select.value"
         :placeholder="placeholder"
@@ -272,7 +270,6 @@ defineExpose({
         :multiple-limit="multipleLimit"
         :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip"
-        style="min-width: 225px"
     >
         <template v-if="slots.default" #default="{ item }">
             <slot name="default" :item="item"></slot>
@@ -287,32 +284,16 @@ defineExpose({
             <slot name="tag"></slot>
         </template>
     </el-select-v2>
-
-    <el-select-v2
-        v-else
-        :ref="(el: any) => select.ref = el"
-        v-model="select.value"
-        :placeholder="placeholder"
-        :options="select.options"
-        :clearable="clearable"
-        :filterable="filterable"
-        @visible-change="select.visibleChange"
-        :remote="remote"
-        :remote-method="select.remoteMethod"
-        :loading="select.loading"
-        :disabled="disabled"
-    >
-        <template v-if="slots.default" #default="{ item }">
-            <slot :item="item"></slot>
-        </template>
-        <template v-if="slots.empty" #empty>
-            <slot name="empty"></slot>
-        </template>
-        <template v-if="slots.prefix" #prefix>
-            <slot name="prefix"></slot>
-        </template>
-        <template v-if="slots.tag" #tag>
-            <slot name="tag"></slot>
-        </template>
-    </el-select-v2>
 </template>
+
+<style scoped>
+.el-select.el-select--default {
+    /* 
+    multiple设置为true时，显示时宽度很小（11px）
+    更新到element-2.5.0版本以上后，el-select-v2组件在el-form组件内使用时，当el-form组件设置:inline="true"时，显示时宽度很小（11px），当:inline="false"时，显示时宽度很大（100%）
+     */
+    width: 214px;
+    min-width: 214px;
+    /* max-width: 214px; */
+}
+</style>

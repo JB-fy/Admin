@@ -379,6 +379,7 @@ func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table,
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
 				/* TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）*/
+				fieldTmp.StatusLenRuneMax = gstr.LenRune(fieldTmp.FieldName)
 			}
 		} else if garray.NewFrom([]interface{}{TypeTimestamp, TypeDatetime, TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
 			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀

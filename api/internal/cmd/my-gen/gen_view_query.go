@@ -177,17 +177,23 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			continue
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			/* attrOfAdd := ` style="min-width: 120px"`
+			attrOfAdd := ` style="width: 120px"`
 			if v.StatusLenRuneMax < 4 {
-				attrOfAdd = ` style="min-width: 100px"`
+				attrOfAdd = ` style="width: 100px"`
 			} else if v.StatusLenRuneMax > 8 {
-				attrOfAdd = ` style="min-width: 150px"`
-			} */
+				attrOfAdd = ` style="width: 150px"`
+			}
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />`
+			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true"` + attrOfAdd + ` />`
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			attrOfAdd := ` style="width: 120px"`
+			if v.StatusLenRuneMax < 4 {
+				attrOfAdd = ` style="width: 100px"`
+			} else if v.StatusLenRuneMax > 8 {
+				attrOfAdd = ` style="width: 150px"`
+			}
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" style="width: 120px" />`
+			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true"` + attrOfAdd + ` />`
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 			if v.FieldType != TypeDate {
