@@ -12,17 +12,18 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         sceneName: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            { required: true, message: t('validation.required') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
         ],
         sceneCode: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
+            { required: true, message: t('validation.required') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         sceneConfig: [
+            { required: true, message: t('validation.required') },
             {
                 type: 'object',
-                required: true,
                 /* fields: {
                     xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
                     xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },

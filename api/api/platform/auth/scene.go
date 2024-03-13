@@ -22,7 +22,7 @@ type SceneListFilter struct {
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
-	SceneName      string      `json:"sceneName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	SceneName      string      `json:"sceneName,omitempty" v:"max-length:30" dc:"名称"`
 	SceneCode      string      `json:"sceneCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
@@ -78,7 +78,7 @@ type SceneInfo struct {
 /*--------新增 开始--------*/
 type SceneCreateReq struct {
 	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"新增"`
-	SceneName   *string `json:"sceneName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	SceneName   *string `json:"sceneName,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
 	SceneConfig *string `json:"sceneConfig,omitempty" v:"required|json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
@@ -91,7 +91,7 @@ type SceneCreateReq struct {
 type SceneUpdateReq struct {
 	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"修改"`
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	SceneName   *string `json:"sceneName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	SceneName   *string `json:"sceneName,omitempty" v:"max-length:30" dc:"名称"`
 	SceneCode   *string `json:"sceneCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
 	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`

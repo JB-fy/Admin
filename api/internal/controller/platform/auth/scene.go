@@ -40,7 +40,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authSceneLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, daoAuth.Scene.Columns().SceneId}
+		field = []string{`id`, `label`, daoAuth.Scene.Columns().SceneId, daoAuth.Scene.Columns().SceneName}
 	}
 	/**--------权限验证 结束--------**/
 
