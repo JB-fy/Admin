@@ -13,6 +13,7 @@ type myGenViewQuery struct {
 }
 
 type myGenViewQueryField struct {
+	dataInit myGenDataStrHandler
 	formProp myGenDataStrHandler
 	form     myGenDataStrHandler
 }
@@ -114,28 +115,27 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		case TypeNameUpdated: // 更新时间字段
 			continue
 		case TypeNameCreated: // 创建时间字段
-			viewQuery.dataInit = append(viewQuery.dataInit,
-				`timeRange: (() => {
+			viewQueryField.dataInit.Method = ReturnTypeName
+			viewQueryField.dataInit.DataTypeName = `timeRange: (() => {
         return undefined
         /* const date = new Date()
         return [
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
         ] */
-    })(),`,
-				`timeRangeStart: computed(() => {
+    })(),
+    timeRangeStart: computed(() => {
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
-    }),`,
-				`timeRangeEnd: computed(() => {
+    }),
+    timeRangeEnd: computed(() => {
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
-    }),`,
-			)
+    }),`
 
 			viewQueryField.formProp.Method = ReturnTypeName
 			viewQueryField.formProp.DataTypeName = `timeRange`
@@ -200,6 +200,9 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
+		if viewQueryField.dataInit.getData() != `` {
+			viewQuery.dataInit = append(viewQuery.dataInit, viewQueryField.dataInit.getData())
+		}
 		if viewQueryField.form.getData() != `` {
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="`+viewQueryField.formProp.getData()+`">
             `+viewQueryField.form.getData()+`
@@ -208,6 +211,7 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	}
 
 	// 做一次去重
+	viewQuery.dataInit = garray.NewStrArrayFrom(viewQuery.dataInit).Unique().Slice()
 	viewQuery.form = garray.NewStrArrayFrom(viewQuery.form).Unique().Slice()
 	return
 }
