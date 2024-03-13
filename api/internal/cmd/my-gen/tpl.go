@@ -117,6 +117,7 @@ type myGenField struct {
 	FieldDesc            string             // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
 	FieldTip             string             // 字段提示。由注释解析出来，前端提示用。
 	StatusList           [][2]string        // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+	StatusLenRuneMax     int                // 状态列表中状态说明最大长度
 	FieldLimitStr        string             // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitFloat      [2]string          // 浮点数字段限制。第1个表示整数位，第2个表示小数位
 }
@@ -279,6 +280,14 @@ func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table,
 				isStr = true
 			}
 			fieldTmp.StatusList = tpl.getStatusList(fieldTmp.FieldTip, isStr)
+
+			fieldTmp.StatusLenRuneMax = gstr.LenRune(fieldTmp.FieldName)
+			for _, status := range fieldTmp.StatusList {
+				lenRune := gstr.LenRune(status[1])
+				if lenRune > fieldTmp.StatusLenRuneMax {
+					fieldTmp.StatusLenRuneMax = lenRune
+				}
+			}
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = TypeNameImageSuffix
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -369,6 +378,7 @@ func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table,
 				tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
+				/* TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）*/
 			}
 		} else if garray.NewFrom([]interface{}{TypeTimestamp, TypeDatetime, TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
 			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀

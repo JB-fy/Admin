@@ -446,7 +446,6 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			apiField.filterType.Method = ReturnType
 
-			/* TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）*/
 			apiField.filterRule.Method = ReturnUnion
 			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `in:0,1`)
 			apiField.saveRule.Method = ReturnUnion

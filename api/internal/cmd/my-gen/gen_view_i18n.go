@@ -14,7 +14,7 @@ type myGenViewI18n struct {
 
 type myGenViewI18nField struct {
 	name   myGenDataStrHandler
-	status myGenDataStrHandler
+	status myGenDataSliceHandler
 	tip    myGenDataStrHandler
 }
 
@@ -43,7 +43,7 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 	for _, v := range tpl.FieldList {
 		viewI18nField := myGenViewI18nField{}
 		viewI18nField.name.Method = ReturnType
-		viewI18nField.name.DataType = v.FieldRaw + `: '` + v.FieldName + `',`
+		viewI18nField.name.DataType = `'` + v.FieldName + `'`
 
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
@@ -56,7 +56,7 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 			viewI18nField.tip.Method = ReturnType
-			viewI18nField.tip.DataType = v.FieldRaw + `: '` + v.FieldTip + `',`
+			viewI18nField.tip.DataType = `'` + v.FieldTip + `'`
 		case TypeTimestamp: // `timestamp类型`
 		case TypeDatetime: // `datetime类型`
 		case TypeDate: // `date类型`
@@ -76,7 +76,7 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			viewI18nField.name.Method = ReturnTypeName
-			viewI18nField.name.DataTypeName = v.FieldRaw + `: '父级',`
+			viewI18nField.name.DataTypeName = `'父级'`
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
@@ -93,26 +93,22 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 				viewI18nField.name.Method = ReturnTypeName
-				viewI18nField.name.DataTypeName = v.FieldRaw + `: '` + relIdObj.FieldName + `',`
+				viewI18nField.name.DataTypeName = `'` + relIdObj.FieldName + `'`
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			viewI18nField.tip.Method = ReturnTypeName
-			viewI18nField.tip.DataTypeName = v.FieldRaw + `: '` + v.FieldTip + `',`
+			viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			statusItem := []string{}
+			viewI18nField.status.Method = ReturnTypeName
 			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(v.FieldType) {
 				for _, status := range v.StatusList {
-					statusItem = append(statusItem, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
+					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 				}
 			} else {
 				for _, status := range v.StatusList {
-					statusItem = append(statusItem, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
+					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 				}
 			}
-			viewI18nField.status.Method = ReturnTypeName
-			viewI18nField.status.DataTypeName = v.FieldRaw + `: [` + gstr.Join(append([]string{``}, statusItem...), `
-            `) + `
-        ],`
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
@@ -124,13 +120,17 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 		/*--------根据字段命名类型处理 结束--------*/
 
 		if viewI18nField.name.getData() != `` {
-			viewI18n.name = append(viewI18n.name, viewI18nField.name.getData())
+			viewI18n.name = append(viewI18n.name, v.FieldRaw+`: `+viewI18nField.name.getData()+`,`)
 		}
-		if viewI18nField.status.getData() != `` {
-			viewI18n.status = append(viewI18n.status, viewI18nField.status.getData())
+		if len(viewI18nField.status.getData()) > 0 {
+			viewI18n.status = append(viewI18n.status, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, viewI18nField.status.getData()...), `
+            `)+`
+        ],`)
+		} else {
+			viewI18n.status = append(viewI18n.status, v.FieldRaw+`: [],`)
 		}
 		if viewI18nField.tip.getData() != `` {
-			viewI18n.tip = append(viewI18n.tip, viewI18nField.tip.getData())
+			viewI18n.tip = append(viewI18n.tip, v.FieldRaw+`: `+viewI18nField.tip.getData()+`,`)
 		}
 	}
 
