@@ -56,7 +56,7 @@ const queryForm = reactive({
             <el-input v-model="queryCommon.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.isStop')" :clearable="true" style="width: 120px" />
+            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.isStop')" :clearable="true" style="width: 100px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker

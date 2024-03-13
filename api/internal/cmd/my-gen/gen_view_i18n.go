@@ -126,8 +126,6 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 			viewI18n.status = append(viewI18n.status, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, viewI18nField.status.getData()...), `
             `)+`
         ],`)
-		} else {
-			viewI18n.status = append(viewI18n.status, v.FieldRaw+`: [],`)
 		}
 		if viewI18nField.tip.getData() != `` {
 			viewI18n.tip = append(viewI18n.tip, v.FieldRaw+`: `+viewI18nField.tip.getData()+`,`)
