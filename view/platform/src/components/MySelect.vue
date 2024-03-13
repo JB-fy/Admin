@@ -289,11 +289,10 @@ defineExpose({
 <style scoped>
 .el-select.el-select--default {
     /* 
-    multiple设置为true时，显示时宽度很小（11px）
-    更新到element-2.5.0版本以上后，el-select-v2组件在el-form组件内使用时，当el-form组件设置:inline="true"时，显示时宽度很小（11px），当:inline="false"时，显示时宽度很大（100%）
-     */
+        width设置原因：（外部可设置同属性覆盖）
+            1、multiple设置为true时，显示时宽度很小（11px）
+            2、更新到element-2.5.0版本以上后，el-select-v2组件在el-form组件内使用时，当el-form组件设置:inline="true"时，显示时宽度很小（11px），当:inline="false"时，显示时宽度很大（100%）
+    */
     width: 214px;
-    min-width: 214px;
-    /* max-width: 214px; */
 }
 </style>
