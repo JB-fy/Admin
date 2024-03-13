@@ -62,7 +62,7 @@ const queryForm = reactive({
             <el-select-v2 v-model="queryCommon.data.gender" :options="tm('user.user.status.gender')" :placeholder="t('user.user.name.gender')" :clearable="true" style="width: 100px" />
         </el-form-item>
         <el-form-item prop="birthday">
-            <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+            <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 150px" />
         </el-form-item>
         <!-- <el-form-item prop="address">
             <el-input v-model="queryCommon.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :clearable="true" />

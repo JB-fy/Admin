@@ -129,7 +129,7 @@ const saveDrawer = reactive({
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.birthday')" prop="birthday">
-                    <el-date-picker v-model="saveForm.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+                    <el-date-picker v-model="saveForm.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.address')" prop="address">
                     <el-input v-model="saveForm.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :show-word-limit="true" :clearable="true" />
