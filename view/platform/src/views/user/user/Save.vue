@@ -17,7 +17,10 @@ const saveForm = reactive({
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
         ],
-        account: [{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
+        account: [
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
+            { pattern: /^[\p{L}][\p{L}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },
+        ],
         password: [
             {
                 type: 'string',
@@ -38,10 +41,7 @@ const saveForm = reactive({
         gender: [{ type: 'enum', enum: (tm('user.user.status.gender') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
         birthday: [{ type: 'string', trigger: 'change', message: t('validation.select') }],
         address: [{ type: 'string', max: 60, trigger: 'blur', message: t('validation.max.string', { max: 60 }) }],
-        idCardName: [
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
-        ],
+        idCardName: [{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
         idCardNo: [{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
     } as any,
