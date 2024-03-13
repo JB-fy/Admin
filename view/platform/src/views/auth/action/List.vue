@@ -53,7 +53,7 @@ const table = reactive({
             title: t('auth.action.name.remark'),
             key: 'remark',
             align: 'center',
-            width: 150,
+            width: 200,
             hidden: true,
         },
         {
@@ -66,7 +66,6 @@ const table = reactive({
                 return [
                     <el-switch
                         model-value={props.rowData.isStop}
-                        // disabled={true}
                         active-value={1}
                         inactive-value={0}
                         inline-prompt={true}

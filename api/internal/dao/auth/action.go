@@ -160,6 +160,15 @@ func (daoThis *actionDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			if row == 0 {
 				return
 			} */
+
+			/* for k, v := range daoModel.AfterUpdate {
+				switch k {
+				case `xxxx`:
+					for _, id := range daoModel.IdArr {
+						daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
+					}
+				}
+			} */
 			return
 		},
 	}

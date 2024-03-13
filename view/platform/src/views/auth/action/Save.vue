@@ -12,16 +12,17 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         actionName: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            { required: true, message: t('validation.required') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
         ],
         actionCode: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
+            { required: true, message: t('validation.required') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
+        sceneIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
         remark: [{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }],
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        sceneIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {

@@ -22,7 +22,7 @@ type RoleListFilter struct {
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	RoleId         *uint       `json:"roleId,omitempty" v:"min:1" dc:"角色ID"`
-	RoleName       string      `json:"roleName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	RoleName       string      `json:"roleName,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 	TableId        *uint       `json:"tableId,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -82,9 +82,10 @@ type RoleInfo struct {
 
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
-	g.Meta      `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
-	RoleName    *string `json:"roleName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
-	SceneId     *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
+	g.Meta   `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
+	RoleName *string `json:"roleName,omitempty" v:"required|max-length:30" dc:"名称"`
+	SceneId  *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
+	// TableId  *uint   `json:"tableId,omitempty" v:"min:1" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
@@ -94,10 +95,11 @@ type RoleCreateReq struct {
 
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
-	g.Meta      `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
-	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	RoleName    *string `json:"roleName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
-	SceneId     *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
+	g.Meta   `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
+	IdArr    []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	RoleName *string `json:"roleName,omitempty" v:"max-length:30" dc:"名称"`
+	SceneId  *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
+	// TableId  *uint   `json:"tableId,omitempty" v:"min:1" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`

@@ -9,14 +9,22 @@ const saveForm = reactive({
     loading: false,
     data: {
         ...saveCommon.data,
+        sceneId: saveCommon.data.sceneId ? saveCommon.data.sceneId : undefined,
+        // tableId: saveCommon.data.tableId ? saveCommon.data.tableId : undefined,
     } as { [propName: string]: any },
     rules: {
         roleName: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            { required: true, message: t('validation.required') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
         ],
-        sceneId: [{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }],
-        /* tableId: [{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }], */
+        sceneId: [
+            { required: true, message: t('validation.required') },
+            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+        ],
+        /* tableId: [
+            // { required: true, message: t('validation.required') },
+            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+        ], */
         isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
         menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
         actionIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
@@ -28,12 +36,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            if (param.sceneId === undefined) {
-                param.sceneId = 0
-            }
-            /* if (param.tableId === undefined) {
-				param.tableId = 0
-			} */
+            param.sceneId === undefined ? (param.sceneId = 0) : null
+            // param.tableId === undefined ? (param.tableId = 0) : null
             if (param.menuIdArr === undefined) {
                 param.menuIdArr = []
             } else {
