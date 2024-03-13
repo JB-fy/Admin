@@ -23,7 +23,7 @@ type AdminListFilter struct {
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	AdminId        *uint       `json:"adminId,omitempty" v:"min:1" dc:"管理员ID"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]+$" dc:"账号"`
+	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
@@ -82,7 +82,7 @@ type AdminInfo struct {
 type AdminCreateReq struct {
 	g.Meta    `path:"/admin/create" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"新增"`
 	Phone     *string `json:"phone,omitempty" v:"required-without:Account|max-length:30|phone" dc:"手机"`
-	Account   *string `json:"account,omitempty" v:"required-without:Phone|max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]+$" dc:"账号"`
+	Account   *string `json:"account,omitempty" v:"required-without:Phone|max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
@@ -97,7 +97,7 @@ type AdminUpdateReq struct {
 	g.Meta    `path:"/admin/update" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"修改"`
 	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	Phone     *string `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account   *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]+$" dc:"账号"`
+	Account   *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`

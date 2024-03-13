@@ -19,7 +19,7 @@ const saveForm = reactive({
         ],
         account: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}][\p{L}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },
+            { pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },
         ],
         password: [
             {

@@ -23,7 +23,7 @@ type UserListFilter struct {
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	UserId         *uint       `json:"userId,omitempty" v:"min:1" dc:"用户ID"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]+$" dc:"账号"`
+	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
@@ -96,7 +96,7 @@ type UserUpdateReq struct {
 	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"修改"`
 	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	/* Phone      *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account    *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]+$" dc:"账号"`
+	Account    *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password   *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	Nickname   *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar     *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`

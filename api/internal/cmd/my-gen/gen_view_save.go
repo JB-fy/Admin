@@ -299,7 +299,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
 		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 			viewSaveField.rule.Method = ReturnUnion
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}][\p{L}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			viewSaveField.rule.Method = ReturnUnion
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`)

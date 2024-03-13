@@ -393,9 +393,9 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.saveRule.Method = ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `passport`) */
 			apiField.filterRule.Method = ReturnUnion
-			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]+$`)
+			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`)
 			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]+$`)
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			apiField.filterRule.Method = ReturnUnion
 			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `phone`)

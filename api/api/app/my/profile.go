@@ -33,7 +33,7 @@ type ProfileInfo struct {
 type ProfileUpdateReq struct {
 	g.Meta               `path:"/profile/update" method:"post" tags:"APP/我的" sm:"修改个人信息"`
 	Phone                *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account              *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]+$" dc:"账号"`
+	Account              *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname             *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar               *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Gender               *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
