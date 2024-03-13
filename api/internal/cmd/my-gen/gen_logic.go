@@ -10,10 +10,11 @@ import (
 // logic生成
 func genLogic(tpl myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
-	// TODO 重新生成logic层（logic层经常会被添加一些逻辑验证和自定义方法，且在表无大改变时，生成不会有任何变化，故建议取消下方注释，不重新生成logic层）
-	/* if gfile.IsFile(saveFile) {
+	// TODO 当下方logic模板有大改动，且需大量更新logic层时，可注释下方判断，重新生成logic层。
+	// logic层经常会被添加一些逻辑验证和自定义方法，且在表无大改变时，生成基本不会有任何变化。故不重新生成logic层
+	if gfile.IsFile(saveFile) {
 		return
-	} */
+	}
 
 	tplLogic := `package logic
 
