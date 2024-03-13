@@ -59,7 +59,7 @@ const queryForm = reactive({
             <my-select v-model="queryCommon.data.tableId" :placeholder="t('auth.role.name.tableId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
         </el-form-item> -->
         <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.role.name.isStop')" :clearable="true" style="width: 100px" />
+            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.role.name.isStop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker

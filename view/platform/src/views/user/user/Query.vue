@@ -74,7 +74,7 @@ const queryForm = reactive({
             <el-input v-model="queryCommon.data.idCardNo" :placeholder="t('user.user.name.idCardNo')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('user.user.name.isStop')" :clearable="true" style="width: 100px" />
+            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('user.user.name.isStop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker
