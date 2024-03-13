@@ -14,16 +14,22 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         menuName: [
-            { type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            { required: true, message: t('validation.required') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
         ],
-        sceneId: [{ type: 'integer', required: true, min: 1, trigger: 'change', message: t('validation.select') }],
+        sceneId: [
+            { required: true, message: t('validation.required') },
+            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+        ],
         pid: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }],
         menuIcon: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            // { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
-        menuUrl: [{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }],
+        menuUrl: [
+            { type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) },
+            // { type: 'url', trigger: 'blur', message: t('validation.url') },
+        ],
         extraData: [
             {
                 type: 'object',
@@ -55,12 +61,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            if (param.sceneId === undefined) {
-                param.sceneId = 0
-            }
-            if (param.pid === undefined) {
-                param.pid = 0
-            }
+            param.sceneId === undefined ? (param.sceneId = 0) : null
+            param.pid === undefined ? (param.pid = 0) : null
             try {
                 if (param?.idArr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/update', param, true)

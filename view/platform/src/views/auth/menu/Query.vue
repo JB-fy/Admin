@@ -70,8 +70,8 @@ const queryForm = reactive({
         <el-form-item prop="menuUrl">
             <el-input v-model="queryCommon.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="isStop" style="width: 120px">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.isStop')" :clearable="true" />
+        <el-form-item prop="isStop">
+            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.isStop')" :clearable="true" style="width: 120px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker

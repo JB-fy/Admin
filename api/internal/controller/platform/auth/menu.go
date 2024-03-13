@@ -40,7 +40,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuName, daoAuth.Menu.Columns().MenuId}
+		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuId, daoAuth.Menu.Columns().MenuName}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -178,7 +178,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuName, daoAuth.Menu.Columns().MenuId}
+		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuId, daoAuth.Menu.Columns().MenuName}
 	}
 	/**--------权限验证 结束--------**/
 

@@ -380,7 +380,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 				viewSaveField.form.DataTypeName = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" />`
 			}
 		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-			if v.FieldType != TypeVarchar {
+			if v.FieldType == TypeVarchar {
 				viewSaveField.rule.Method = ReturnUnion
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'url', trigger: 'change', message: t('validation.upload') },`)
 			} else {

@@ -22,7 +22,7 @@ type MenuListFilter struct {
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	MenuId         *uint       `json:"menuId,omitempty" v:"min:1" dc:"菜单ID"`
-	MenuName       string      `json:"menuName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	MenuName       string      `json:"menuName,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 	Pid            *uint       `json:"pid,omitempty" v:"" dc:"父ID"`
 	Level          *uint       `json:"level,omitempty" v:"min:1" dc:"层级"`
@@ -46,7 +46,7 @@ type MenuListItem struct {
 	Pid       *uint       `json:"pid,omitempty" dc:"父ID"`
 	Level     *uint       `json:"level,omitempty" dc:"层级"`
 	IdPath    *string     `json:"idPath,omitempty" dc:"层级路径"`
-	MenuIcon  *string     `json:"menuIcon,omitempty" dc:"图标"`
+	MenuIcon  *string     `json:"menuIcon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string     `json:"menuUrl,omitempty" dc:"链接"`
 	ExtraData *string     `json:"extraData,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从小到大排序，默认50，范围0-100"`
@@ -79,7 +79,7 @@ type MenuInfo struct {
 	Pid       *uint       `json:"pid,omitempty" dc:"父ID"`
 	Level     *uint       `json:"level,omitempty" dc:"层级"`
 	IdPath    *string     `json:"idPath,omitempty" dc:"层级路径"`
-	MenuIcon  *string     `json:"menuIcon,omitempty" dc:"图标"`
+	MenuIcon  *string     `json:"menuIcon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string     `json:"menuUrl,omitempty" dc:"链接"`
 	ExtraData *string     `json:"extraData,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从小到大排序，默认50，范围0-100"`
@@ -93,10 +93,10 @@ type MenuInfo struct {
 /*--------新增 开始--------*/
 type MenuCreateReq struct {
 	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"新增"`
-	MenuName  *string `json:"menuName,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	MenuName  *string `json:"menuName,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
-	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"图标"`
+	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30" dc:"图标"`
 	MenuUrl   *string `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extraData,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" v:"between:0,100" dc:"排序值。从小到大排序，默认50，范围0-100"`
@@ -109,10 +109,10 @@ type MenuCreateReq struct {
 type MenuUpdateReq struct {
 	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"修改"`
 	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	MenuName  *string `json:"menuName,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"名称"`
+	MenuName  *string `json:"menuName,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
-	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"图标"`
+	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extraData,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" v:"between:0,100" dc:"排序值。从小到大排序，默认50，范围0-100"`
@@ -141,12 +141,21 @@ type MenuTreeRes struct {
 }
 
 type MenuTreeItem struct {
-	Id       *uint          `json:"id,omitempty" dc:"ID"`
-	Label    *string        `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	MenuId   *uint          `json:"menuId,omitempty" dc:"菜单ID"`
-	MenuName *string        `json:"menuName,omitempty" dc:"名称"`
-	SceneId  *uint          `json:"sceneId,omitempty" dc:"场景ID"`
-	Pid      *uint          `json:"pid,omitempty" dc:"父ID"`
+	Id       *uint   `json:"id,omitempty" dc:"ID"`
+	Label    *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	MenuId   *uint   `json:"menuId,omitempty" dc:"菜单ID"`
+	MenuName *string `json:"menuName,omitempty" dc:"名称"`
+	SceneId  *uint   `json:"sceneId,omitempty" dc:"场景ID"`
+	Pid      *uint   `json:"pid,omitempty" dc:"父ID"`
+	/* Level     *uint          `json:"level,omitempty" dc:"层级"`
+	IdPath    *string        `json:"idPath,omitempty" dc:"层级路径"`
+	MenuIcon  *string        `json:"menuIcon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
+	MenuUrl   *string        `json:"menuUrl,omitempty" dc:"链接"`
+	ExtraData *string        `json:"extraData,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
+	Sort      *uint          `json:"sort,omitempty" dc:"排序值。从小到大排序，默认50，范围0-100"`
+	IsStop    *uint          `json:"isStop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt *gtime.Time    `json:"updatedAt,omitempty" dc:"更新时间"`
+	CreatedAt *gtime.Time    `json:"createdAt,omitempty" dc:"创建时间"` */
 	Children []MenuTreeItem `json:"children" dc:"子级列表"`
 }
 

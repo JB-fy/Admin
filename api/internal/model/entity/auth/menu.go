@@ -16,7 +16,7 @@ type Menu struct {
 	Pid       uint        `json:"pid"       ` // 父ID
 	Level     uint        `json:"level"     ` // 层级
 	IdPath    string      `json:"idPath"    ` // 层级路径
-	MenuIcon  string      `json:"menuIcon"  ` // 图标
+	MenuIcon  string      `json:"menuIcon"  ` // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
 	MenuUrl   string      `json:"menuUrl"   ` // 链接
 	ExtraData string      `json:"extraData" ` // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      uint        `json:"sort"      ` // 排序值。从小到大排序，默认50，范围0-100
