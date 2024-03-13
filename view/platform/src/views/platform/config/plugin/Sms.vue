@@ -15,8 +15,8 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         smsType: [{ type: 'enum', enum: [`smsOfAliyun`], trigger: 'change', message: t('validation.select') }],
-        smsOfAliyunAccessKeyId: [{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
-        smsOfAliyunAccessKeySecret: [{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
+        smsOfAliyunAccessKeyId: [{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
+        smsOfAliyunAccessKeySecret: [{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
         smsOfAliyunEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         smsOfAliyunSignName: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         smsOfAliyunTemplateCode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],

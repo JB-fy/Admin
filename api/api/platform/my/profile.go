@@ -27,7 +27,7 @@ type ProfileInfo struct {
 type ProfileUpdateReq struct {
 	g.Meta          `path:"/profile/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
 	Phone           *string `json:"phone,omitempty" v:"phone" dc:"手机"`
-	Account         *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"账号"`
+	Account         *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"账号"`
 	Nickname        *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar          *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Password        *string `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`

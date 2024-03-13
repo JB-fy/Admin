@@ -294,15 +294,12 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
 				viewSaveField.isRequired = true
 			}
-			// 去掉该验证规则。有时会用到特殊符号
-			// viewSaveField.rule.Method = ReturnUnion
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 			viewSaveField.rule.Method = ReturnUnion
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
 		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 			viewSaveField.rule.Method = ReturnUnion
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}][\p{L}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			viewSaveField.rule.Method = ReturnUnion
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`)

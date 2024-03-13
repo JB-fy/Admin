@@ -167,7 +167,7 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {
 
 func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 	if len(tpl.Handle.LabelList) > 0 {
-		api.filter = append(api.filter, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
+		api.filter = append(api.filter, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
 		api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	}
 
@@ -379,30 +379,23 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			continue
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-			/* // 不验证该规则。有时会用到特殊符号
-			apiField.filterRule.Method = ReturnUnion
-			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			apiField.createRule.Method = ReturnUnion
-			apiField.createRule.DataTypeName = append(apiField.createRule.DataTypeName, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
-			apiField.updateRule.Method = ReturnUnion
-			apiField.updateRule.DataTypeName = append(apiField.updateRule.DataTypeName, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`) */
 			if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
 				apiField.isRequired = true
 			}
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 			apiField.filterRule.Method = ReturnUnion
-			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}\\p{N}_-]+$`)
 			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}\\p{M}\\p{N}_-]+$`)
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}\\p{N}_-]+$`)
 		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 			/* apiField.filterRule.Method = ReturnUnion
 			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `passport`)
 			apiField.saveRule.Method = ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `passport`) */
 			apiField.filterRule.Method = ReturnUnion
-			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
+			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]+$`)
 			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^(?!\\d*$)[\\p{L}\\p{M}\\p{N}_]+$`)
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]+$`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			apiField.filterRule.Method = ReturnUnion
 			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `phone`)

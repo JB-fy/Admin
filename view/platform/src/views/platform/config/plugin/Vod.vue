@@ -14,8 +14,8 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         vodType: [{ type: 'enum', enum: [`vodOfAliyun`], trigger: 'change', message: t('validation.select') }],
-        vodOfAliyunAccessKeyId: [{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
-        vodOfAliyunAccessKeySecret: [{ pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
+        vodOfAliyunAccessKeyId: [{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
+        vodOfAliyunAccessKeySecret: [{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
         vodOfAliyunEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         vodOfAliyunRoleArn: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as any,

@@ -42,7 +42,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoPlatform.Admin.Columns().Phone, daoPlatform.Admin.Columns().Account, daoPlatform.Admin.Columns().AdminId}
+		field = []string{`id`, `label`, daoPlatform.Admin.Columns().AdminId, daoPlatform.Admin.Columns().Phone}
 	}
 	/**--------权限验证 结束--------**/
 

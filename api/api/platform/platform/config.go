@@ -124,8 +124,8 @@ type ConfigSaveReq struct {
 	UploadOfLocalFileUrlPrefix       *string `json:"uploadOfLocalFileUrlPrefix,omitempty" v:"url" dc:"本地-文件地址前缀"`
 	UploadOfAliyunOssHost            *string `json:"uploadOfAliyunOssHost,omitempty" v:"url" dc:"阿里云OSS-域名"`
 	UploadOfAliyunOssBucket          *string `json:"uploadOfAliyunOssBucket,omitempty" v:"" dc:"阿里云OSS-Bucket"`
-	UploadOfAliyunOssAccessKeyId     *string `json:"uploadOfAliyunOssAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeyId"`
-	UploadOfAliyunOssAccessKeySecret *string `json:"uploadOfAliyunOssAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeySecret"`
+	UploadOfAliyunOssAccessKeyId     *string `json:"uploadOfAliyunOssAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeyId"`
+	UploadOfAliyunOssAccessKeySecret *string `json:"uploadOfAliyunOssAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云OSS-AccessKeySecret"`
 	UploadOfAliyunOssCallbackUrl     *string `json:"uploadOfAliyunOssCallbackUrl,omitempty" v:"url" dc:"阿里云OSS-回调地址"`
 	UploadOfAliyunOssEndpoint        *string `json:"uploadOfAliyunOssEndpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
 	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
@@ -144,8 +144,8 @@ type ConfigSaveReq struct {
 	PayOfWxNotifyUrl  *string `json:"payOfWxNotifyUrl,omitempty" v:"url" dc:"异步回调地址"`
 
 	SmsType                    *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
-	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
-	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeySecret"`
+	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
+	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeySecret"`
 	SmsOfAliyunEndpoint        *string `json:"smsOfAliyunEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
 	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
 	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
@@ -165,8 +165,8 @@ type ConfigSaveReq struct {
 	PushOfTxMacOSSecretKey   *string `json:"pushOfTxMacOSSecretKey,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 
 	VodType                    *string `json:"vodType,omitempty" v:"in:vodOfAliyun" dc:"视频点播方式"`
-	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
-	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
+	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
+	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
 	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" v:"" dc:"阿里云VOD-Endpoint"`
 	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" v:"" dc:"阿里云VOD-RoleArn"`
 }

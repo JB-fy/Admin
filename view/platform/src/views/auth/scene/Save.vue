@@ -18,7 +18,7 @@ const saveForm = reactive({
         sceneCode: [
             { required: true, message: t('validation.required') },
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            { pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
         ],
         sceneConfig: [
             { required: true, message: t('validation.required') },

@@ -19,7 +19,7 @@ const saveForm = reactive({
     rules: {
         account: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
+            { pattern: /^[\p{L}][\p{L}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },
         ],
         phone: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },

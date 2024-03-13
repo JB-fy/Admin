@@ -14,27 +14,23 @@ const saveForm = reactive({
     rules: {
         phone: [
             {
-                type: 'string',
                 required: computed((): boolean => {
                     return saveForm.data.account ? false : true
                 }),
-                max: 30,
-                trigger: 'blur',
-                message: t('validation.max.string', { max: 30 }),
+                message: t('validation.required'),
             },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
         ],
         account: [
             {
-                type: 'string',
                 required: computed((): boolean => {
                     return saveForm.data.phone ? false : true
                 }),
-                max: 30,
-                trigger: 'blur',
-                message: t('validation.max.string', { max: 30 }),
+                message: t('validation.required'),
             },
-            { pattern: /^(?!\d*$)[\p{L}\p{M}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.account') },
+            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
+            { pattern: /^[\p{L}][\p{L}\p{N}_]+$/u, trigger: 'blur', message: t('validation.account') },
         ],
         password: [
             {

@@ -86,7 +86,6 @@ const table = reactive({
                 return [
                     <el-switch
                         model-value={props.rowData.isStop}
-                        // disabled={true}
                         active-value={1}
                         inactive-value={0}
                         inline-prompt={true}

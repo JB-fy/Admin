@@ -20,10 +20,10 @@ type ActionListFilter struct {
 	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
 	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
-	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	ActionId       *uint       `json:"actionId,omitempty" v:"min:1" dc:"操作ID"`
 	ActionName     string      `json:"actionName,omitempty" v:"max-length:30" dc:"名称"`
-	ActionCode     string      `json:"actionCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
+	ActionCode     string      `json:"actionCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
@@ -79,7 +79,7 @@ type ActionInfo struct {
 type ActionCreateReq struct {
 	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"新增"`
 	ActionName *string `json:"actionName,omitempty" v:"required|max-length:30" dc:"名称"`
-	ActionCode *string `json:"actionCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
+	ActionCode *string `json:"actionCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop     *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	SceneIdArr *[]uint `json:"sceneIdArr,omitempty" v:"required|distinct|foreach|min:1" dc:"场景ID列表"`
@@ -92,7 +92,7 @@ type ActionUpdateReq struct {
 	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
 	IdArr      []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	ActionName *string `json:"actionName,omitempty" v:"max-length:30" dc:"名称"`
-	ActionCode *string `json:"actionCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{M}\\p{N}_-]+$" dc:"标识"`
+	ActionCode *string `json:"actionCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop     *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	SceneIdArr *[]uint `json:"sceneIdArr,omitempty" v:"distinct|foreach|min:1" dc:"场景ID列表"`

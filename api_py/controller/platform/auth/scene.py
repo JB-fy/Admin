@@ -23,7 +23,7 @@ class Filter(BaseModel):
     label: str = Field(
         default=None,
         max_length=30,
-        pattern="^[\\p{L}\\p{M}\\p{N}_-]+$",
+        pattern="^[\\p{L}\\p{N}_-]+$",
         description="标签。常用于前端组件",
     )
     sceneId: int = Field(default=None, gt=0, description="场景ID")
