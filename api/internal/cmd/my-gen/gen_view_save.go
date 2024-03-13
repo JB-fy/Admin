@@ -376,26 +376,22 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			}
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			if v.FieldType == TypeVarchar {
-				viewSaveField.rule.Method = ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', max: `+v.FieldLimitStr+`, trigger: 'blur', message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
 				viewSaveField.form.Method = ReturnTypeName
 				viewSaveField.form.DataTypeName = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" />`
 			}
 		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-			viewSaveField.rule.Method = ReturnTypeName
-			if v.FieldType == TypeVarchar {
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
-					`{ type: 'string', max: `+v.FieldLimitStr+`, trigger: 'blur', message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`,
-					`{ type: 'url', trigger: 'change', message: t('validation.upload') },`,
-				)
+			if v.FieldType != TypeVarchar {
+				viewSaveField.rule.Method = ReturnUnion
+				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'url', trigger: 'change', message: t('validation.upload') },`)
 			} else {
-				if !v.IsNull {
-					viewSaveField.isRequired = true
-				}
+				viewSaveField.rule.Method = ReturnTypeName
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
 					`{ type: 'array', trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },`,
 					`// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },`,
 				)
+				if !v.IsNull {
+					viewSaveField.isRequired = true
+				}
 			}
 			attrOfAdd := ``
 			if v.FieldType != TypeVarchar {
