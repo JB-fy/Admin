@@ -70,13 +70,11 @@ saveForm.initData()
         <template v-if="saveForm.data.pushType == 'pushOfTx'">
             <el-form-item :label="t('platform.config.plugin.name.pushOfTxHost')" prop="pushOfTxHost">
                 <el-input v-model="saveForm.data.pushOfTxHost" :placeholder="t('platform.config.plugin.name.pushOfTxHost')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert type="info" :show-icon="true" :closable="false">
-                        <template #title>
-                            <span v-html="t('platform.config.plugin.tip.pushOfTxHost')"></span>
-                        </template>
-                    </el-alert>
-                </label>
+                <el-alert type="info" :show-icon="true" :closable="false">
+                    <template #title>
+                        <span v-html="t('platform.config.plugin.tip.pushOfTxHost')"></span>
+                    </template>
+                </el-alert>
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.pushOfTxAndroidAccessID')" prop="pushOfTxAndroidAccessID">
                 <el-input v-model="saveForm.data.pushOfTxAndroidAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxAndroidAccessID')" :clearable="true" />

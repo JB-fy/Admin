@@ -182,9 +182,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
 			if v.IndexRaw == `UNI` {
 				viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>`
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeChar: // `char类型`
 			if v.IndexRaw == `UNI` && !v.IsNull {
@@ -196,9 +194,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
 			if v.IndexRaw == `UNI` {
 				viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>`
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeText: // `text类型`
 			viewSaveField.rule.Method = ReturnType
@@ -231,7 +227,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
                 message: t('validation.json'),
             },`)
 			viewSaveField.form.Method = ReturnType
-			viewSaveField.form.DataType = `<el-alert :title="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + v.FieldRaw + `')" type="info" :show-icon="true" :closable="false" />
+			viewSaveField.form.DataType = `<el-alert :title="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + v.FieldRaw + `')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
                     <el-input v-model="saveForm.data.` + v.FieldRaw + `" type="textarea" :autosize="{ minRows: 3 }" />`
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			if !v.IsNull && gconv.String(v.Default) == `` {
@@ -283,9 +279,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },`)
 			viewSaveField.form.Method = ReturnTypeName
 			viewSaveField.form.DataTypeName = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <label v-if="saveForm.data.idArr?.length">
-                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                    </label>`
+                    <el-alert v-if="saveForm.data.idArr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />`
 			viewSaveField.paramHandle.Method = ReturnTypeName
 			viewSaveField.paramHandle.DataTypeName = `param.` + v.FieldRaw + ` ? param.` + v.FieldRaw + ` = md5(param.` + v.FieldRaw + `) : delete param.` + v.FieldRaw
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
@@ -336,9 +330,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', min: 0, max: 100, trigger: 'change', message: t('validation.between.number', { min: 0, max: 100 }) },`)
 			viewSaveField.form.Method = ReturnTypeName
 			viewSaveField.form.DataTypeName = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />
-                    <label>
-                        <el-alert :title="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + v.FieldRaw + `')" type="info" :show-icon="true" :closable="false" />
-                    </label>`
+                    <el-alert :title="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + v.FieldRaw + `')" type="info" :show-icon="true" :closable="false" />`
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			defaultVal := gconv.String(v.Default)
 			if defaultVal == `` {

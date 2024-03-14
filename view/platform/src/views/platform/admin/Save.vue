@@ -106,21 +106,15 @@ const saveDrawer = reactive({
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <el-form-item :label="t('platform.admin.name.phone')" prop="phone">
                     <el-input v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.account')" prop="account">
                     <el-input v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <label v-if="saveForm.data.idArr?.length">
-                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert v-if="saveForm.data.idArr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('platform.admin.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />

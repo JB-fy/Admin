@@ -80,9 +80,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('auth.action.name.actionCode')" prop="actionCode">
                     <el-input v-model="saveForm.data.actionCode" :placeholder="t('auth.action.name.actionCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.action.name.sceneId')" prop="sceneIdArr">
                     <my-transfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />

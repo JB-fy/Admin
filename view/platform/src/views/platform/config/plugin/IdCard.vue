@@ -62,13 +62,11 @@ saveForm.initData()
         <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
             <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
                 <el-input v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.plugin.name.idCardOfAliyunHost')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert type="info" :show-icon="true" :closable="false">
-                        <template #title>
-                            <span v-html="t('platform.config.plugin.tip.idCardOfAliyunHost')"></span>
-                        </template>
-                    </el-alert>
-                </label>
+                <el-alert type="info" :show-icon="true" :closable="false">
+                    <template #title>
+                        <span v-html="t('platform.config.plugin.tip.idCardOfAliyunHost')"></span>
+                    </template>
+                </el-alert>
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
                 <el-input v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.plugin.name.idCardOfAliyunPath')" :clearable="true" />

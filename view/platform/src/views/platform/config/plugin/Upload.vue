@@ -84,24 +84,18 @@ saveForm.initData()
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.uploadOfLocalFileSaveDir')" prop="uploadOfLocalFileSaveDir">
                 <el-input v-model="saveForm.data.uploadOfLocalFileSaveDir" :placeholder="t('platform.config.plugin.name.uploadOfLocalFileSaveDir')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert :title="t('platform.config.plugin.tip.uploadOfLocalFileSaveDir')" type="info" :show-icon="true" :closable="false" />
-                </label>
+                <el-alert :title="t('platform.config.plugin.tip.uploadOfLocalFileSaveDir')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.uploadOfLocalFileUrlPrefix')" prop="uploadOfLocalFileUrlPrefix">
                 <el-input v-model="saveForm.data.uploadOfLocalFileUrlPrefix" :placeholder="t('platform.config.plugin.name.uploadOfLocalFileUrlPrefix')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert :title="t('platform.config.plugin.tip.uploadOfLocalFileUrlPrefix')" type="info" :show-icon="true" :closable="false" />
-                </label>
+                <el-alert :title="t('platform.config.plugin.tip.uploadOfLocalFileUrlPrefix')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
 
         <template v-if="saveForm.data.uploadType == 'uploadOfAliyunOss'">
             <el-form-item :label="t('platform.config.plugin.name.uploadOfAliyunOssHost')" prop="uploadOfAliyunOssHost">
                 <el-input v-model="saveForm.data.uploadOfAliyunOssHost" :placeholder="t('platform.config.plugin.name.uploadOfAliyunOssHost')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssHost')" type="info" :show-icon="true" :closable="false" />
-                </label>
+                <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssHost')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.uploadOfAliyunOssBucket')" prop="uploadOfAliyunOssBucket">
                 <el-input v-model="saveForm.data.uploadOfAliyunOssBucket" :placeholder="t('platform.config.plugin.name.uploadOfAliyunOssBucket')" :clearable="true" />
@@ -114,25 +108,19 @@ saveForm.initData()
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.uploadOfAliyunOssCallbackUrl')" prop="uploadOfAliyunOssCallbackUrl">
                 <el-input v-model="saveForm.data.uploadOfAliyunOssCallbackUrl" :placeholder="t('platform.config.plugin.name.uploadOfAliyunOssCallbackUrl')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssCallbackUrl')" type="info" :show-icon="true" :closable="false" />
-                </label>
+                <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssCallbackUrl')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.uploadOfAliyunOssEndpoint')" prop="uploadOfAliyunOssEndpoint">
                 <el-input v-model="saveForm.data.uploadOfAliyunOssEndpoint" :placeholder="t('platform.config.plugin.name.uploadOfAliyunOssEndpoint')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert type="info" :show-icon="true" :closable="false">
-                        <template #title>
-                            <span v-html="t('platform.config.plugin.tip.uploadOfAliyunOssEndpoint')"></span>
-                        </template>
-                    </el-alert>
-                </label>
+                <el-alert type="info" :show-icon="true" :closable="false">
+                    <template #title>
+                        <span v-html="t('platform.config.plugin.tip.uploadOfAliyunOssEndpoint')"></span>
+                    </template>
+                </el-alert>
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.uploadOfAliyunOssRoleArn')" prop="uploadOfAliyunOssRoleArn">
                 <el-input v-model="saveForm.data.uploadOfAliyunOssRoleArn" :placeholder="t('platform.config.plugin.name.uploadOfAliyunOssRoleArn')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssRoleArn')" type="info" :show-icon="true" :closable="false" />
-                </label>
+                <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssRoleArn')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
 

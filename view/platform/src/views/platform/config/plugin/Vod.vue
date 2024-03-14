@@ -70,19 +70,15 @@ saveForm.initData()
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
                 <el-input v-model="saveForm.data.vodOfAliyunEndpoint" :placeholder="t('platform.config.plugin.name.vodOfAliyunEndpoint')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert type="info" :show-icon="true" :closable="false">
-                        <template #title>
-                            <span v-html="t('platform.config.plugin.tip.vodOfAliyunEndpoint')"></span>
-                        </template>
-                    </el-alert>
-                </label>
+                <el-alert type="info" :show-icon="true" :closable="false">
+                    <template #title>
+                        <span v-html="t('platform.config.plugin.tip.vodOfAliyunEndpoint')"></span>
+                    </template>
+                </el-alert>
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
                 <el-input v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.plugin.name.vodOfAliyunRoleArn')" :clearable="true" style="max-width: 500px" />
-                <label>
-                    <el-alert :title="t('platform.config.plugin.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
-                </label>
+                <el-alert :title="t('platform.config.plugin.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
 

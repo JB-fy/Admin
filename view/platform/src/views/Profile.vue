@@ -101,15 +101,11 @@ const saveForm = reactive({
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
                 <el-form-item :label="t('profile.name.account')" prop="account">
                     <el-input v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.phone')" prop="phone">
                     <el-input v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('profile.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
@@ -119,21 +115,15 @@ const saveForm = reactive({
                 </el-form-item>
                 <el-form-item :label="t('profile.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.repeatPassword')" prop="repeatPassword">
                     <el-input v-model="saveForm.data.repeatPassword" :placeholder="t('profile.name.repeatPassword')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.passwordToCheck')" prop="passwordToCheck">
                     <el-input v-model="saveForm.data.passwordToCheck" :placeholder="t('profile.name.passwordToCheck')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>

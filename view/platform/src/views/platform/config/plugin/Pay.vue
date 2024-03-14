@@ -83,9 +83,7 @@ saveForm.initData()
                 </el-form-item>
                 <el-form-item :label="t('platform.config.plugin.name.payOfAliOpAppId')" prop="payOfAliOpAppId">
                     <el-input v-model="saveForm.data.payOfAliOpAppId" :placeholder="t('platform.config.plugin.name.payOfAliOpAppId')" :clearable="true" style="max-width: 500px" />
-                    <label>
-                        <el-alert :title="t('platform.config.plugin.tip.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('platform.config.plugin.tip.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
             </el-tab-pane>
 

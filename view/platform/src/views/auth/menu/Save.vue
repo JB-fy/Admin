@@ -122,22 +122,18 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menuIcon')" prop="menuIcon">
                     <el-input v-model="saveForm.data.menuIcon" :placeholder="t('auth.menu.name.menuIcon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('auth.menu.tip.menuIcon')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menuUrl')" prop="menuUrl">
                     <el-input v-model="saveForm.data.menuUrl" :placeholder="t('auth.menu.name.menuUrl')" maxlength="120" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.extraData')" prop="extraData">
-                    <el-alert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert :title="t('auth.menu.tip.extraData')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
                     <el-input v-model="saveForm.data.extraData" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.sort')" prop="sort">
                     <el-input-number v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="50" />
-                    <label>
-                        <el-alert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.isStop')" prop="isStop">
                     <el-switch

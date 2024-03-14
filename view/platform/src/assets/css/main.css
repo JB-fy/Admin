@@ -150,5 +150,10 @@ body {
 }
 
 .el-form .el-alert {
+    width: auto;
     padding: 0 0.5rem;
+}
+
+.el-form .el-alert__content {
+    display: block;
 }

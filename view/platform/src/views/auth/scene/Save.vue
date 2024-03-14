@@ -101,12 +101,10 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('auth.scene.name.sceneCode')" prop="sceneCode">
                     <el-input v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <label>
-                        <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                    </label>
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.scene.name.sceneConfig')" prop="sceneConfig">
-                    <el-alert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
                     <el-input v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.scene.name.remark')" prop="remark">
