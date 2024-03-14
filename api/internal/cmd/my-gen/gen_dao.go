@@ -434,7 +434,7 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` {
 				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 				daoPath := relIdObj.tpl.TableCaseCamel
-				if relIdObj.tpl.RemovePrefixAlone != tpl.RemovePrefixAlone {
+				if relIdObj.tpl.ModuleDirCaseKebab != tpl.ModuleDirCaseKebab {
 					daoPath = `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 					daoField.importDao = append(daoField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 				}
