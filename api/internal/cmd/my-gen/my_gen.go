@@ -1,6 +1,6 @@
 /*
-后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1
-APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefixCommon= -removePrefixAlone= -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0
+后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 isResetLogic=0
+APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefixCommon= -removePrefixAlone= -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 isResetLogic=0
 
 强烈建议搭配Git使用
 
@@ -88,22 +88,28 @@ import (
 
 // 命令参数解析后的数据
 type myGenOption struct {
-	SceneCode          string     `json:"sceneCode"`          //场景标识，必须在数据库表auth_scene已存在。示例：platform
-	DbGroup            string     `json:"dbGroup"`            //db分组。示例：default
-	DbTable            string     `json:"dbTable"`            //db表。示例：auth_test
-	RemovePrefixCommon string     `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
-	RemovePrefixAlone  string     `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	CommonName         string     `json:"commonName"`         //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
-	IsList             bool       `json:"isList" `            //是否生成列表接口(0和no为false，1和yes为true)
-	IsCount            bool       `json:"isCount" `           //列表接口是否返回总数
-	IsInfo             bool       `json:"isInfo" `            //是否生成详情接口
-	IsCreate           bool       `json:"isCreate"`           //是否生成创建接口
-	IsUpdate           bool       `json:"isUpdate"`           //是否生成更新接口
-	IsDelete           bool       `json:"isDelete"`           //是否生成删除接口
-	IsApi              bool       `json:"isApi"`              //是否生成后端接口文件
-	IsAuthAction       bool       `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
-	IsView             bool       `json:"isView"`             //是否生成前端视图文件
-	SceneInfo          gdb.Record //场景信息
+	SceneCode          string `json:"sceneCode"`          //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	DbGroup            string `json:"dbGroup"`            //db分组。示例：default
+	DbTable            string `json:"dbTable"`            //db表。示例：auth_test
+	RemovePrefixCommon string `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
+	RemovePrefixAlone  string `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
+	CommonName         string `json:"commonName"`         //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
+	IsList             bool   `json:"isList" `            //是否生成列表接口(0和no为false，1和yes为true)
+	IsCount            bool   `json:"isCount" `           //列表接口是否返回总数
+	IsInfo             bool   `json:"isInfo" `            //是否生成详情接口
+	IsCreate           bool   `json:"isCreate"`           //是否生成创建接口
+	IsUpdate           bool   `json:"isUpdate"`           //是否生成更新接口
+	IsDelete           bool   `json:"isDelete"`           //是否生成删除接口
+	IsApi              bool   `json:"isApi"`              //是否生成后端接口文件
+	IsAuthAction       bool   `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
+	IsView             bool   `json:"isView"`             //是否生成前端视图文件
+	/*
+		是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
+			1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改
+			2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码
+	*/
+	IsResetLogic bool       `json:"isResetLogic"`
+	SceneInfo    gdb.Record //场景信息
 }
 
 // 生成代码
@@ -111,8 +117,8 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
 	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone)
 
-	genDao(tpl)   // dao模板生成
-	genLogic(tpl) // logic模板生成
+	genDao(tpl)           // dao模板生成
+	genLogic(option, tpl) // logic模板生成
 
 	if option.IsApi {
 		genApi(option, tpl)         // api模板生成
@@ -385,6 +391,32 @@ isViewEnd:
 			isView = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成前端视图文件，默认(yes)：`))
 		}
 	}
-
+	/*
+		是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
+			1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改
+			2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码
+	*/
+	isResetLogic, ok := optionMap[`isResetLogic`]
+	if !ok {
+		isResetLogic = gcmd.Scan(
+			color.HiYellowString(`提示：是否重置logic层，一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：`)+"\n",
+			color.HiYellowString(`    1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改`)+"\n",
+			color.HiYellowString(`    2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码`)+"\n",
+			color.BlueString(`> 是否重置logic层，默认(no)：`),
+		)
+	}
+isResetLogicEnd:
+	for {
+		switch isResetLogic {
+		case `1`, `yes`:
+			option.IsResetLogic = true
+			break isResetLogicEnd
+		case ``, `0`, `no`:
+			option.IsResetLogic = false
+			break isResetLogicEnd
+		default:
+			isResetLogic = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否重置logic层，默认(no)：`))
+		}
+	}
 	return
 }
