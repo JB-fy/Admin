@@ -4,14 +4,12 @@ import (
 	"context"
 	"math"
 
-	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/gutil"
 )
 
 type myGenTpl struct {
@@ -751,9 +749,6 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
-
-			gutil.Dump(color.HiMagentaString(`================================`))
-			gutil.Dump(key.Field)
 			if garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) && !key.IsUnion {
 				if key.IsPrimary {
 					if extendTpl.FieldPrimary == `` { //非自增主键
