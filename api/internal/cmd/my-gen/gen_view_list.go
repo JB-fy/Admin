@@ -360,6 +360,9 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段
@@ -368,9 +371,6 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 		case TypeNameCreated: // 创建时间字段
 			viewListField.title.Method = ReturnTypeName
 			viewListField.title.DataTypeName = `t('common.name.createdAt')`
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
-			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			if len(tpl.Handle.LabelList) > 0 {
 				viewListField.dataKey.Method = ReturnTypeName

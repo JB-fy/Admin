@@ -321,11 +321,11 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 	for _, v := range tpl.FieldList {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
 		case TypeNameDeleted: // 软删除字段
 		case TypeNameUpdated: // 更新时间字段
 		case TypeNameCreated: // 创建时间字段
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
 		case TypeNamePid: // pid；	类型：int等类型；
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；

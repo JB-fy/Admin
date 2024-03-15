@@ -200,7 +200,7 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型`	// `char类型`
-			if v.IndexRaw == `UNI` && v.IsNull {
+			if v.IsUnique && v.IsNull {
 				daoField.insertParse.Method = ReturnType
 				daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case daoThis.Columns().`+v.FieldCaseCamel+`:
 				insertData[k] = v
@@ -244,6 +244,8 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
 		case TypeNameDeleted: // 软删除字段
 		case TypeNameUpdated: // 更新时间字段
 		case TypeNameCreated: // 创建时间字段
@@ -252,8 +254,6 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 				m = m.WhereGTE(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+v.FieldCaseCamel+`, v)
 			case `+"`timeRangeEnd`"+`:
 				m = m.WhereLTE(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+v.FieldCaseCamel+`, v)`)
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
 		case TypeNamePid: // pid；	类型：int等类型；
 			daoField.fieldParse.Method = ReturnTypeName
 			if len(tpl.Handle.LabelList) > 0 {

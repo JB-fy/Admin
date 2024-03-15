@@ -4,33 +4,37 @@ import (
 	"context"
 	"math"
 
+	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gutil"
 )
 
 type myGenTpl struct {
-	Link                      string       //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr                  []string     //当前数据库全部数据表（获取关联表，扩展表等需要）
-	Group                     string       //数据库分组
-	RemovePrefixCommon        string       //要删除的共有前缀
-	RemovePrefixAlone         string       //要删除的独有前缀
-	RemovePrefix              string       //要删除的前缀
-	Table                     string       //表名（原始，包含前缀）
-	TableCaseSnake            string       //表名（蛇形，已去除前缀）
-	TableCaseCamel            string       //表名（大驼峰，已去除前缀）
-	TableCaseKebab            string       //表名（横线，已去除前缀）
-	FieldListRaw              gdb.Result   //字段列表（原始）。SHOW FULL COLUMNS FROM xxTable的查询数据
-	FieldList                 []myGenField //字段列表
-	ModuleDirCaseCamel        string       //模块目录（大驼峰，/会被去除）
-	ModuleDirCaseKebab        string       //模块目录（横线，/会被保留）
-	ModuleDirCaseKebabReplace string       //模块目录（横线，/被替换成.）
-	LogicStructName           string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	FieldPrimary              string       //主键字段
-	Handle                    struct {     //该属性记录需做特殊处理字段
+	Link                      string                     //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr                  []string                   //当前数据库全部数据表（获取关联表，扩展表等需要）
+	Group                     string                     //数据库分组
+	RemovePrefixCommon        string                     //要删除的共有前缀
+	RemovePrefixAlone         string                     //要删除的独有前缀
+	RemovePrefix              string                     //要删除的前缀
+	TableType                 myGenTableType             //表类型。按该字段区分哪种功能表
+	Table                     string                     //表名（原始，包含前缀）
+	TableCaseSnake            string                     //表名（蛇形，已去除前缀）
+	TableCaseCamel            string                     //表名（大驼峰，已去除前缀）
+	TableCaseKebab            string                     //表名（横线，已去除前缀）
+	KeyList                   []myGenKey                 //索引列表
+	FieldListRaw              map[string]*gdb.TableField //字段列表（原始）
+	FieldList                 []myGenField               //字段列表
+	ModuleDirCaseCamel        string                     //模块目录（大驼峰，/会被去除）
+	ModuleDirCaseKebab        string                     //模块目录（横线，/会被保留）
+	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
+	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	FieldPrimary              string                     //自增主键字段
+	Handle                    struct {                   //该属性记录需做特殊处理字段
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -49,14 +53,24 @@ type myGenTpl struct {
 			IdPath    string //层级路径字段
 			Sort      string //排序字段
 		}
-		RelIdMap map[string]handleRelId //id后缀字段，需特殊处理
+		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
+		ExtendTableOneList  []myGenTpl             //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为不递增主键或唯一索引
+		ExtendTableManyList []myGenTpl             //扩展表（一对多）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为普通索引
+		RelTableOneList     []myGenTpl             //关联表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
+		RelTableManyList    []myGenTpl             //关联表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
 	}
 }
 
+type myGenTableType = int
 type myGenFieldType = uint
 type myGenFieldTypeName = string
 
 const (
+	TableTypeMaster myGenTableType = 0  //主表
+	TableTypeExtend myGenTableType = 1  //扩展表
+	TableTypeRel    myGenTableType = 2  //关联表
+	TableTypeRelId  myGenTableType = 10 //id后缀关联表
+
 	//用于结构体中，需从1开始，否则结构体会默认0，即Int
 	TypeInt       myGenFieldType = iota + 1 // `int等类型`
 	TypeIntU                                // `int等类型（unsigned）`
@@ -70,11 +84,11 @@ const (
 	TypeDatetime                            // `datetime类型`
 	TypeDate                                // `date类型`
 
+	TypeNamePri            myGenFieldTypeName = `主键`
+	TypeNamePriAutoInc     myGenFieldTypeName = `主键（自增）`
 	TypeNameDeleted        myGenFieldTypeName = `软删除字段`
 	TypeNameUpdated        myGenFieldTypeName = `更新时间字段`
 	TypeNameCreated        myGenFieldTypeName = `创建时间字段`
-	TypeNamePri            myGenFieldTypeName = `主键`
-	TypeNamePriAutoInc     myGenFieldTypeName = `主键（自增）`
 	TypeNamePid            myGenFieldTypeName = `命名：pid；	类型：int等类型；`
 	TypeNameLevel          myGenFieldTypeName = `命名：level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；`
 	TypeNameIdPath         myGenFieldTypeName = `命名：idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；`
@@ -109,7 +123,9 @@ type myGenField struct {
 	FieldTypeRaw         string             // 字段类型（原始）
 	FieldType            myGenFieldType     // 字段类型（数据类型）
 	FieldTypeName        myGenFieldTypeName // 字段类型（命名类型）
-	IndexRaw             string             // 索引类型（原始）。PRI, MUL
+	KeyRaw               string             // 索引类型（原始）。PRI, MUL
+	KeyList              []myGenKey         // 索引。可能有多个索引
+	IsUnique             bool               // 是否独立的唯一索引
 	IsNull               bool               // 字段是否可为NULL
 	Default              interface{}        // 默认值
 	Extra                string             // 扩展信息： auto_increment自动递增
@@ -121,6 +137,15 @@ type myGenField struct {
 	FieldLimitStr        string             // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitFloat      [2]string          // 浮点数字段限制。第1个表示整数位，第2个表示小数位
 	FieldShowLenMax      int                // 显示长度。公式：汉字个数 + (其它字符个数 / 2)。前端el-select-v2等部分组件生成时，根据该值设置宽度
+}
+
+type myGenKey struct {
+	Name      string // 索引。主键：PRIMARY；其它：定义
+	Field     string // 字段（原始）
+	IsAutoInc bool   // 是否自增
+	IsPrimary bool   // 是否主键
+	IsUnique  bool   // 是否唯一索引
+	IsUnion   bool   // 是否联合主键或联合索引
 }
 
 type handlePassword struct {
@@ -139,7 +164,7 @@ type handleRelId struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string) (tpl myGenTpl) {
+func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, tableTypeOpt ...myGenTableType) (tpl myGenTpl) {
 	tpl = myGenTpl{
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
@@ -147,15 +172,18 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
 		Table:              table,
 	}
+	if len(tableTypeOpt) > 0 {
+		tpl.TableType = tableTypeOpt[0]
+	}
 	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[tpl.Group])[0][`link`])
-	tpl.TableArr, _ = g.DB(tpl.Group).Tables(ctx)
-	tpl.FieldListRaw, _ = g.DB(tpl.Group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+tpl.Table)
+	tpl.TableArr = tpl.getTable(ctx, tpl.Group)
+	tpl.KeyList = tpl.getTableKey(ctx, tpl.Group, tpl.Table)
+	tpl.FieldListRaw = tpl.getTableField(ctx, tpl.Group, tpl.Table)
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
 	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
 	tpl.Handle.PasswordMap = map[string]handlePassword{}
 	tpl.Handle.RelIdMap = map[string]handleRelId{}
-
 	logicStructName := gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1)
 	moduleDirCaseCamel := gstr.CaseCamel(logicStructName)
 	moduleDirCaseKebab := gstr.CaseKebab(logicStructName)
@@ -174,15 +202,15 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
 
 	fieldList := make([]myGenField, len(tpl.FieldListRaw))
-	for k, v := range tpl.FieldListRaw {
+	for _, v := range tpl.FieldListRaw {
 		fieldTmp := myGenField{
-			FieldRaw:     v[`Field`].String(),
-			FieldTypeRaw: v[`Type`].String(),
-			IndexRaw:     v[`Key`].String(),
-			IsNull:       v[`Null`].Bool(),
-			Default:      v[`Default`].Val(),
-			Extra:        v[`Extra`].String(),
-			Comment:      v[`Comment`].String(),
+			FieldRaw:     v.Name,
+			FieldTypeRaw: v.Type,
+			KeyRaw:       v.Key,
+			IsNull:       v.Null,
+			Default:      v.Default,
+			Extra:        v.Extra,
+			Comment:      v.Comment,
 		}
 		fieldTmp.FieldCaseSnake = gstr.CaseSnake(fieldTmp.FieldRaw)
 		fieldTmp.FieldCaseCamel = gstr.CaseCamel(fieldTmp.FieldRaw)
@@ -258,19 +286,29 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
 		fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldTmp.FieldCaseCamel) {
+		//先确定是否主键
+		for _, key := range tpl.KeyList {
+			if fieldTmp.FieldRaw == key.Field {
+				if key.IsUnique && !key.IsUnion {
+					fieldTmp.IsUnique = true
+				}
+				fieldTmp.KeyList = append(fieldTmp.KeyList, key)
+				if key.IsPrimary && !key.IsUnion {
+					fieldTmp.FieldTypeName = TypeNamePri
+					if key.IsAutoInc {
+						fieldTmp.FieldTypeName = TypeNamePriAutoInc
+						tpl.FieldPrimary = fieldTmp.FieldRaw
+					}
+				}
+			}
+		}
+		if garray.NewStrArrayFrom([]string{TypeNamePriAutoInc, TypeNamePri}).Contains(fieldTmp.FieldTypeName) {
+		} else if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = TypeNameDeleted
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = TypeNameUpdated
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = TypeNameCreated
-		} else if fieldTmp.IndexRaw == `PRI` {
-			fieldTmp.FieldTypeName = TypeNamePri
-			if fieldTmp.Extra == `auto_increment` {
-				fieldTmp.FieldTypeName = TypeNamePriAutoInc
-
-				tpl.FieldPrimary = fieldTmp.FieldRaw
-			}
 		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
 			fieldTmp.FieldTypeName = TypeNameIdPath
 
@@ -391,7 +429,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 		/*--------确定字段命名类型（部分命名类型需做二次确定） 结束--------*/
 
-		fieldList[k] = fieldTmp
+		fieldList[v.Index] = fieldTmp
 	}
 
 	/*--------需做特殊处理字段解析 开始--------*/
@@ -424,6 +462,22 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
+	//password|passwd,salt同时存在时，需特殊处理
+	for k, v := range tpl.Handle.PasswordMap {
+		if v.PasswordField != `` && v.SaltField != `` {
+			v.IsCoexist = true
+			tpl.Handle.PasswordMap[k] = v
+		}
+	}
+
+	//pid,level,idPath|id_path同时存在时，需特殊处理
+	if garray.NewIntArrayFrom([]int{TableTypeMaster}).Contains(tpl.TableType) {
+		if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
+			tpl.Handle.Pid.IsCoexist = true
+		}
+	}
+
+	//id后缀字段
 	for k, v := range tpl.Handle.RelIdMap {
 		if len(v.tpl.Handle.LabelList) > 0 {
 			for _, item := range fieldList {
@@ -436,15 +490,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
-	for k, v := range tpl.Handle.PasswordMap {
-		if v.PasswordField != `` && v.SaltField != `` {
-			v.IsCoexist = true
-			tpl.Handle.PasswordMap[k] = v
-		}
-	}
-
-	if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
-		tpl.Handle.Pid.IsCoexist = true
+	//扩展表
+	if garray.NewIntArrayFrom([]int{TableTypeMaster}).Contains(tpl.TableType) {
+		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl)
 	}
 	/*--------需做特殊处理字段解析 结束--------*/
 
@@ -471,6 +519,83 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	return
 }
 
+// 获取表
+func (myGenTplThis *myGenTpl) getTable(ctx context.Context, group string) (tableArr []string) {
+	tableArr, _ = g.DB(group).Tables(ctx) //框架只带的。应该兼容多种数据库吧
+	return
+}
+
+// 获取表字段
+func (myGenTplThis *myGenTpl) getTableField(ctx context.Context, group, table string) (fieldList map[string]*gdb.TableField) {
+	// fieldList, _ = g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)	// 除mysql外，其它数据库不兼容该sql语句
+	fieldList, _ = g.DB(group).TableFields(ctx, table) //框架只带的。应该兼容多种数据库吧
+	return
+}
+
+// TODO 获取表索引（目前只支持mysql解析，故其它sql数据库，不支持扩展表和中间表关联生成）
+func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table string) (keyList []myGenKey) {
+	switch g.DB(group).GetConfig().Type {
+	case `mysql`:
+		keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW Index FROM `+table)
+		keyList = make([]myGenKey, len(keyListTmp))
+		countMap := map[string]uint{}
+		for k, v := range keyListTmp {
+			key := myGenKey{
+				Name:     v[`Key_name`].String(),
+				Field:    v[`Column_name`].String(),
+				IsUnique: !v[`Non_unique`].Bool(),
+			}
+			if key.Name == `PRIMARY` {
+				key.IsPrimary = true
+				fieldList := myGenTplThis.getTableField(ctx, group, table)
+				for _, field := range fieldList {
+					if key.Field == field.Name && field.Extra == `auto_increment` {
+						key.IsAutoInc = true
+						break
+					}
+				}
+			}
+			keyList[k] = key
+
+			if _, ok := countMap[key.Name]; !ok {
+				countMap[key.Name] = 0
+			}
+			countMap[key.Name]++
+		}
+		for k, v := range keyList {
+			if countMap[v.Name] > 1 {
+				v.IsUnique = true
+				keyList[k] = v
+			}
+		}
+	case `sqlite`:
+	case `mssql`:
+	case `pgsql`:
+	case `oracle`:
+	}
+	return
+}
+
+// 执行gf gen dao命令生成dao文件
+func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
+	commandArg := []string{
+		`gen`, `dao`,
+		`--link`, myGenTplThis.Link,
+		`--group`, myGenTplThis.Group,
+		`--removePrefix`, myGenTplThis.RemovePrefix,
+		`--daoPath`, `dao/` + myGenTplThis.ModuleDirCaseKebab,
+		`--doPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
+		`--entityPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
+		`--tables`, myGenTplThis.Table,
+		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
+		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+	}
+	if isOverwriteDao {
+		commandArg = append(commandArg, `--overwriteDao=true`)
+	}
+	command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
+}
+
 // status字段注释解析
 func (myGenTplThis *myGenTpl) getStatusList(comment string, isStr bool) (statusList [][2]string) {
 	var tmp [][]string
@@ -490,6 +615,15 @@ func (myGenTplThis *myGenTpl) getStatusList(comment string, isStr bool) (statusL
 		statusList[k] = [2]string{v[1], v[2]}
 	}
 	return
+}
+
+// 获取显示长度。汉字个数 + (其它字符个数 / 2) 后的值
+func (myGenTplThis *myGenTpl) getShowLen(str string) int {
+	len := len(str)
+	lenRune := gstr.LenRune(str)
+	countHan := (len - lenRune) / 2
+	countOther := gconv.Int(math.Ceil(float64(len-countHan*3) / 2))
+	return countHan + countOther
 }
 
 // 获取Handle.PasswordMap的Key（以Password为主）
@@ -522,8 +656,9 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		table5: []string{},
 	}
 	isSamePrimaryFunc := func(table string) bool {
-		tableIndexList, _ := g.DB(tpl.Group).GetAll(ctx, `SHOW Index FROM `+table+` WHERE Key_name = 'PRIMARY'`)
-		return len(tableIndexList) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(tableIndexList[0][`Column_name`].String()))
+		//TODO tpl.getTableKey()
+		tableKeyList, _ := g.DB(tpl.Group).GetAll(ctx, `SHOW Index FROM `+table+` WHERE Key_name = 'PRIMARY'`)
+		return len(tableKeyList) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(tableKeyList[0][`Column_name`].String()))
 	}
 	for _, v := range tpl.TableArr {
 		if v == tpl.Table { //自身跳过
@@ -588,37 +723,49 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 			}
 		}
 
-		relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone)
+		relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, TableTypeRelId)
 		relTpl.gfGenDao(false) //dao文件生成
 	}
 	return
 }
 
-// 获取显示长度。汉字个数 + (其它字符个数 / 2) 后的值
-func (myGenTplThis *myGenTpl) getShowLen(str string) int {
-	len := len(str)
-	lenRune := gstr.LenRune(str)
-	countHan := (len - lenRune) / 2
-	countOther := gconv.Int(math.Ceil(float64(len-countHan*3) / 2))
-	return countHan + countOther
-}
+// TODO 获取扩展表（一对一）
+func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []myGenTpl, extendTableManyList []myGenTpl) {
+	removePrefixCommon := tpl.RemovePrefixCommon
+	removePrefixAlone := tpl.RemovePrefixAlone
+	if removePrefixAlone == `` {
+		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+	}
 
-// 执行gf gen dao命令生成dao文件
-func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
-	commandArg := []string{
-		`gen`, `dao`,
-		`--link`, myGenTplThis.Link,
-		`--group`, myGenTplThis.Group,
-		`--removePrefix`, myGenTplThis.RemovePrefix,
-		`--daoPath`, `dao/` + myGenTplThis.ModuleDirCaseKebab,
-		`--doPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
-		`--entityPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
-		`--tables`, myGenTplThis.Table,
-		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
-		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+	fieldPrimaryArr := []string{tpl.FieldPrimary}
+	if tpl.FieldPrimary == `id` {
+		fieldPrimaryArr = append(fieldPrimaryArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
 	}
-	if isOverwriteDao {
-		commandArg = append(commandArg, `--overwriteDao=true`)
+
+	for _, v := range tpl.TableArr {
+		if v == tpl.Table { //自身跳过
+			continue
+		}
+		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合表命名（主表名_xxxx）的跳过
+			continue
+		}
+		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
+		for _, key := range extendTpl.KeyList {
+
+			gutil.Dump(color.HiMagentaString(`================================`))
+			gutil.Dump(key.Field)
+			if garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) && !key.IsUnion {
+				if key.IsPrimary {
+					if extendTpl.FieldPrimary == `` { //非自增主键
+						extendTableOneList = append(extendTableOneList, extendTpl)
+					}
+				} else if key.IsUnique {
+					extendTableOneList = append(extendTableOneList, extendTpl)
+				} else {
+					extendTableManyList = append(tpl.Handle.ExtendTableOneList, extendTpl)
+				}
+			}
+		}
 	}
-	command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
+	return
 }

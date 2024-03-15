@@ -173,26 +173,26 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 		case TypeVarchar: // `varchar类型`
-			if v.IndexRaw == `UNI` && !v.IsNull {
+			if v.IsUnique && !v.IsNull {
 				viewSaveField.isRequired = true
 			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', max: `+v.FieldLimitStr+`, trigger: 'blur', message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
-			if v.IndexRaw == `UNI` {
+			if v.IsUnique {
 				viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeChar: // `char类型`
-			if v.IndexRaw == `UNI` && !v.IsNull {
+			if v.IsUnique && !v.IsNull {
 				viewSaveField.isRequired = true
 			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', len: `+v.FieldLimitStr+`, trigger: 'blur', message: t('validation.size.string', { size: `+v.FieldLimitStr+` }) },`)
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
-			if v.IndexRaw == `UNI` {
+			if v.IsUnique {
 				viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
@@ -256,14 +256,14 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段
 			continue
 		case TypeNameCreated: // 创建时间字段
-			continue
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
 			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			viewSaveField.rule.Method = ReturnTypeName

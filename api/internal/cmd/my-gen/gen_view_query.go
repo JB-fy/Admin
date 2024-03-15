@@ -110,6 +110,9 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段
@@ -141,9 +144,6 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 			viewQueryField.formProp.DataTypeName = `timeRange`
 			viewQueryField.form.Method = ReturnTypeName
 			viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />`
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
-			continue
 		case TypeNamePid: // pid；	类型：int等类型；
 			viewQueryField.form.Method = ReturnTypeName
 			viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />`

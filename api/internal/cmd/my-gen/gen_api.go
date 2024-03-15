@@ -227,7 +227,7 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if v.IndexRaw == `UNI` && !v.IsNull {
+			if v.IsUnique && !v.IsNull {
 				apiField.isRequired = true
 			}
 			apiField.filterRule.Method = ReturnType
@@ -244,7 +244,7 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if v.IndexRaw == `UNI` && !v.IsNull {
+			if v.IsUnique && !v.IsNull {
 				apiField.isRequired = true
 			}
 			apiField.filterRule.Method = ReturnType
@@ -318,6 +318,17 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
+		case TypeNamePri: // 主键
+		case TypeNamePriAutoInc: // 主键（自增）
+			if v.FieldRaw == `id` {
+				continue
+			}
+			apiField.filterType.Method = ReturnType
+			apiField.createType.Method = ReturnEmpty
+			apiField.updateType.Method = ReturnEmpty
+
+			apiField.filterRule.Method = ReturnUnion
+			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段
@@ -333,17 +344,6 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 				`TimeRangeStart *gtime.Time `+"`"+`json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
 				`TimeRangeEnd   *gtime.Time `+"`"+`json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
 			)
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
-			if v.FieldRaw == `id` {
-				continue
-			}
-			apiField.filterType.Method = ReturnType
-			apiField.createType.Method = ReturnEmpty
-			apiField.updateType.Method = ReturnEmpty
-
-			apiField.filterRule.Method = ReturnUnion
-			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 		case TypeNamePid: // pid；	类型：int等类型；
 			apiField.filterType.Method = ReturnType
 
