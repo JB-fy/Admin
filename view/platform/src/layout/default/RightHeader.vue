@@ -73,7 +73,7 @@ const menuTab = reactive({
             </el-space>
         </el-col>
         <el-col :span="12" style="text-align: right">
-            <el-space :size="20" style="height: 100%">
+            <el-space :size="20" style="height: 100%; margin-right: 20px">
                 <el-link :underline="false" @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
                     <autoicon-ep-refresh />
                 </el-link>
