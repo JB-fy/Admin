@@ -24,9 +24,9 @@ type myGenApiField struct {
 	updateType myGenDataStrHandler
 	resType    myGenDataStrHandler
 
+	isRequired bool
 	filterRule myGenDataSliceHandler
 	saveRule   myGenDataSliceHandler
-	isRequired bool
 }
 
 // api生成
@@ -227,13 +227,13 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
+			if v.IndexRaw == `UNI` && !v.IsNull {
+				apiField.isRequired = true
+			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
 			apiField.saveRule.Method = ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max-length:`+v.FieldLimitStr)
-			if v.IndexRaw == `UNI` && !v.IsNull {
-				apiField.isRequired = true
-			}
 		case TypeChar: // `char类型`
 			apiField.filterType.Method = ReturnType
 			apiField.filterType.DataType = `string`
@@ -244,26 +244,14 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
+			if v.IndexRaw == `UNI` && !v.IsNull {
+				apiField.isRequired = true
+			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
 			apiField.saveRule.Method = ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `size:`+v.FieldLimitStr)
-			if v.IndexRaw == `UNI` && !v.IsNull {
-				apiField.isRequired = true
-			}
-		case TypeText: // `text类型`
-			// apiField.filterType.Method = ReturnType
-			apiField.filterType.DataType = `string`
-			apiField.createType.Method = ReturnType
-			apiField.createType.DataType = `*string`
-			apiField.updateType.Method = ReturnType
-			apiField.updateType.DataType = `*string`
-			apiField.resType.Method = ReturnType
-			apiField.resType.DataType = `*string`
-			/* if !v.IsNull {
-				apiField.isRequired = true
-			} */
-		case TypeJson: // `json类型`
+		case TypeText, TypeJson: // `text类型` // `json类型`
 			// apiField.filterType.Method = ReturnType
 			apiField.filterType.DataType = `string`
 			apiField.createType.Method = ReturnType
@@ -273,12 +261,14 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			apiField.filterRule.Method = ReturnType
-			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `json`)
-			apiField.saveRule.Method = ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `json`)
 			if !v.IsNull {
 				apiField.isRequired = true
+			}
+			if v.FieldType == TypeJson {
+				apiField.filterRule.Method = ReturnType
+				apiField.filterRule.DataType = append(apiField.filterRule.DataType, `json`)
+				apiField.saveRule.Method = ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `json`)
 			}
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			// apiField.filterType.Method = ReturnType
@@ -290,13 +280,13 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*gtime.Time`
 
+			if !v.IsNull && gconv.String(v.Default) == `` {
+				apiField.isRequired = true
+			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d H:i:s`)
 			apiField.saveRule.Method = ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d H:i:s`)
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				apiField.isRequired = true
-			}
 		case TypeDate: // `date类型`
 			apiField.filterType.Method = ReturnType
 			apiField.filterType.DataType = `*gtime.Time`
@@ -307,13 +297,13 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
+			if !v.IsNull && gconv.String(v.Default) == `` {
+				apiField.isRequired = true
+			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d`)
 			apiField.saveRule.Method = ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`)
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				apiField.isRequired = true
-			}
 		default:
 			apiField.filterType.Method = ReturnType
 			apiField.filterType.DataType = `string`
@@ -472,9 +462,6 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 
 				apiField.saveRule.Method = ReturnUnion
 				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
-				if !v.IsNull {
-					apiField.isRequired = true
-				}
 			}
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 			apiField.createType.Method = ReturnTypeName
@@ -486,9 +473,6 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 
 			apiField.saveRule.Method = ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `distinct`)
-			if !v.IsNull {
-				apiField.isRequired = true
-			}
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 

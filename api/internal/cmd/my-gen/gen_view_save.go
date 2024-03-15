@@ -21,8 +21,8 @@ type myGenViewSaveField struct {
 	importModule   []string
 	dataInitBefore myGenDataStrHandler
 	dataInitAfter  myGenDataStrHandler
-	rule           myGenDataSliceHandler
 	isRequired     bool
+	rule           myGenDataSliceHandler
 	form           myGenDataStrHandler
 	formHandle     myGenDataStrHandler
 	paramHandle    myGenDataStrHandler
@@ -197,6 +197,9 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeText: // `text类型`
+			if !v.IsNull {
+				viewSaveField.isRequired = true
+			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', message: t('validation.input') },`)
 
@@ -378,9 +381,6 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 					`{ type: 'array', trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },`,
 					`// { type: 'array', max: 10, trigger: 'change', message: t('validation.max.upload', { max: 10 }), defaultField: { type: 'url', message: t('validation.url') } },`,
 				)
-				if !v.IsNull {
-					viewSaveField.isRequired = true
-				}
 			}
 			attrOfAdd := ``
 			if v.FieldType != TypeVarchar {
@@ -394,9 +394,6 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			viewSaveField.form.Method = ReturnTypeName
 			viewSaveField.form.DataTypeName = `<my-upload v-model="saveForm.data.` + v.FieldRaw + `"` + attrOfAdd + ` />`
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-			if !v.IsNull {
-				viewSaveField.isRequired = true
-			}
 			viewSaveField.dataInitBefore.Method = ReturnTypeName
 			viewSaveField.dataInitBefore.DataTypeName = `[]`
 			viewSaveField.rule.Method = ReturnTypeName

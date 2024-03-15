@@ -139,7 +139,7 @@ type handleRelId struct {
 }
 
 // 创建模板参数
-func /* (myGenTplThis *myGenTpl) */ createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string) (tpl myGenTpl) {
+func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string) (tpl myGenTpl) {
 	tpl = myGenTpl{
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
