@@ -654,9 +654,13 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		table5: []string{},
 	}
 	isSamePrimaryFunc := func(table string) bool {
-		//TODO tpl.getTableKey()
-		tableKeyList, _ := g.DB(tpl.Group).GetAll(ctx, `SHOW Index FROM `+table+` WHERE Key_name = 'PRIMARY'`)
-		return len(tableKeyList) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(tableKeyList[0][`Column_name`].String()))
+		tableKeyList := tpl.getTableKey(ctx, tpl.Group, table)
+		for _, v := range tableKeyList {
+			if v.IsPrimary && !v.IsUnion && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.Field)) {
+				return true
+			}
+		}
+		return false
 	}
 	for _, v := range tpl.TableArr {
 		if v == tpl.Table { //自身跳过
