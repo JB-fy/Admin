@@ -31,7 +31,7 @@ type myGenTpl struct {
 	ModuleDirCaseKebab        string                     //模块目录（横线，/会被保留）
 	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	FieldPrimary              string                     //自增主键字段
+	FieldPrimary              string                     //TODO自增主键字段
 	Handle                    struct {                   //该属性记录需做特殊处理字段
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
