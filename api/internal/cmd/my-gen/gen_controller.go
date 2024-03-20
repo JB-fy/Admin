@@ -53,8 +53,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	}
 `
 		tplController += `
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`
+		if len(controller.list) > 0 {
+			tplController += `
 	allowField = append(allowField` + gstr.Join(append([]string{``}, controller.list...), `, `) + `)`
+		}
 		/* if len(controller.diff) > 0 {
 			tplController += `
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`
@@ -109,8 +112,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 // 详情
 func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`
+		if len(controller.info) > 0 {
+			tplController += `
 	allowField = append(allowField` + gstr.Join(append([]string{``}, controller.info...), `, `) + `)`
+		}
 		/* if len(controller.diff) > 0 {
 			tplController += `
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`
@@ -247,8 +253,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 		filter = map[string]interface{}{}
 	}
 
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()
+	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`
+		if len(controller.tree) > 0 {
+			tplController += `
 	allowField = append(allowField` + gstr.Join(append([]string{``}, controller.tree...), `, `) + `)`
+		}
 		/* if len(controller.diff) > 0 {
 			tplController += `
 		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`
@@ -295,9 +304,11 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 }
 
 func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
-	controller.list = []string{"`id`"}
-	controller.info = []string{"`id`"}
-	controller.tree = []string{"`id`"}
+	if tpl.FieldPrimary != `` && tpl.FieldPrimary != `id` {
+		controller.list = []string{"`id`"}
+		controller.info = []string{"`id`"}
+		controller.tree = []string{"`id`"}
+	}
 	controller.noAuth = []string{"`id`"}
 
 	if len(tpl.Handle.LabelList) > 0 {
