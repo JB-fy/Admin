@@ -34,7 +34,12 @@ func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCa
 		return
 	}
 	defer res.Close()
-	resData := gjson.New(res.ReadAllString())
+	resStr := res.ReadAllString()
+	resData := gjson.New(resStr)
+	if !resData.Contains(`resp.code`) {
+		err = errors.New(resStr)
+		return
+	}
 	if resData.Get(`resp.code`).Int() != 0 {
 		err = errors.New(resData.Get(`resp.desc`).String())
 		return

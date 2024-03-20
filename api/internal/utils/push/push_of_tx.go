@@ -90,7 +90,12 @@ func (pushThis *PushOfTx) Push(param PushParam) (err error) {
 		return
 	}
 	defer res.Close()
-	resData := gjson.New(res.ReadAllString())
+	resStr := res.ReadAllString()
+	resData := gjson.New(resStr)
+	if !resData.Contains(`ret_code`) {
+		err = errors.New(resStr)
+		return
+	}
 	if resData.Get(`ret_code`).Int() != 0 {
 		err = errors.New(resData.Get(`err_msg`).String())
 		return
@@ -136,7 +141,12 @@ func (pushThis *PushOfTx) TagHandle(param TagParam) (err error) {
 		return
 	}
 	defer res.Close()
-	resData := gjson.New(res.ReadAllString())
+	resStr := res.ReadAllString()
+	resData := gjson.New(resStr)
+	if !resData.Contains(`ret_code`) {
+		err = errors.New(resStr)
+		return
+	}
 	if resData.Get(`ret_code`).Int() != 0 {
 		err = errors.New(resData.Get(`err_msg`).String())
 		return
