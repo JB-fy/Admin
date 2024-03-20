@@ -83,8 +83,8 @@ const (
 	TypeDatetime                            // `datetime类型`
 	TypeDate                                // `date类型`
 
-	TypeNamePri            myGenFieldTypeName = `主键`
-	TypeNamePriAutoInc     myGenFieldTypeName = `主键（自增）`
+	TypeNamePri            myGenFieldTypeName = `主键（非联合索引）`
+	TypeNamePriAutoInc     myGenFieldTypeName = `自增主键（非联合索引）`
 	TypeNameDeleted        myGenFieldTypeName = `软删除字段`
 	TypeNameUpdated        myGenFieldTypeName = `更新时间字段`
 	TypeNameCreated        myGenFieldTypeName = `创建时间字段`
@@ -139,12 +139,13 @@ type myGenField struct {
 }
 
 type myGenKey struct {
-	Name      string // 索引。主键：PRIMARY；其它：定义
-	Field     string // 字段（原始）
-	IsAutoInc bool   // 是否自增
-	IsPrimary bool   // 是否主键
-	IsUnique  bool   // 是否唯一索引
-	IsUnion   bool   // 是否联合主键或联合索引
+	Name      string   // 索引名称。主键：PRIMARY；其它：定义
+	Index     uint     // 索引顺序。从1开始，单索引都是1，联合索引按字段数量顺序递增
+	Field     string   // 字段（原始）
+	FieldArr  []string // 字段列表。当前索引建立在哪些字段上，可用该字段判断是否联合主键或联合索引
+	IsPrimary bool     // 是否主键
+	IsUnique  bool     // 是否唯一
+	IsAutoInc bool     // 是否自增
 }
 
 type handlePassword struct {
@@ -288,11 +289,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		//先确定是否主键
 		for _, key := range tpl.KeyList {
 			if fieldTmp.FieldRaw == key.Field {
-				if key.IsUnique && !key.IsUnion {
+				if key.IsUnique && len(key.FieldArr) == 1 {
 					fieldTmp.IsUnique = true
 				}
 				fieldTmp.KeyList = append(fieldTmp.KeyList, key)
-				if key.IsPrimary && !key.IsUnion {
+				if key.IsPrimary && len(key.FieldArr) == 1 {
 					fieldTmp.FieldTypeName = TypeNamePri
 					if key.IsAutoInc {
 						fieldTmp.FieldTypeName = TypeNamePriAutoInc
@@ -535,18 +536,19 @@ func (myGenTplThis *myGenTpl) getTableField(ctx context.Context, group, table st
 func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table string) (keyList []myGenKey) {
 	switch g.DB(group).GetConfig().Type {
 	case `mysql`:
-		keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW Index FROM `+table)
+		keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW KEYS FROM `+table)
 		keyList = make([]myGenKey, len(keyListTmp))
-		countMap := map[string]uint{}
+		fieldList := myGenTplThis.getTableField(ctx, group, table)
+		fieldArrMap := map[string][]string{}
 		for k, v := range keyListTmp {
 			key := myGenKey{
 				Name:     v[`Key_name`].String(),
+				Index:    v[`Seq_in_index`].Uint(),
 				Field:    v[`Column_name`].String(),
 				IsUnique: !v[`Non_unique`].Bool(),
 			}
 			if key.Name == `PRIMARY` {
 				key.IsPrimary = true
-				fieldList := myGenTplThis.getTableField(ctx, group, table)
 				for _, field := range fieldList {
 					if key.Field == field.Name && field.Extra == `auto_increment` {
 						key.IsAutoInc = true
@@ -556,16 +558,13 @@ func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table stri
 			}
 			keyList[k] = key
 
-			if _, ok := countMap[key.Name]; !ok {
-				countMap[key.Name] = 0
+			if _, ok := fieldArrMap[key.Name]; !ok {
+				fieldArrMap[key.Name] = append(fieldArrMap[key.Name], key.Field)
 			}
-			countMap[key.Name]++
 		}
 		for k, v := range keyList {
-			if countMap[v.Name] > 1 {
-				v.IsUnique = true
-				keyList[k] = v
-			}
+			v.FieldArr = fieldArrMap[v.Name]
+			keyList[k] = v
 		}
 	case `sqlite`:
 	case `mssql`:
@@ -657,7 +656,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	isSamePrimaryFunc := func(table string) bool {
 		tableKeyList := tpl.getTableKey(ctx, tpl.Group, table)
 		for _, v := range tableKeyList {
-			if v.IsPrimary && !v.IsUnion && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.Field)) {
+			if v.IsPrimary && len(v.FieldArr) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.Field)) {
 				return true
 			}
 		}
@@ -754,7 +753,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
-			if garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) && !key.IsUnion {
+			if garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) && len(key.FieldArr) == 1 {
 				if key.IsPrimary {
 					if extendTpl.FieldPrimary == `` { //非自增主键
 						extendTableOneList = append(extendTableOneList, extendTpl)
