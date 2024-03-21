@@ -32,7 +32,7 @@ type myGenTpl struct {
 	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	Handle                    struct {                   //该属性记录需做特殊处理字段
-		IdList []string //主键列表。联合主键有多字段，需按顺序存入
+		IdList []myGenField //主键列表。联合主键有多字段，需按顺序存入
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -64,7 +64,7 @@ type myGenFieldType = uint
 type myGenFieldTypeName = string
 
 const (
-	TableTypeMaster myGenTableType = 0  //主表
+	TableTypeGen    myGenTableType = 0  //生成表
 	TableTypeExtend myGenTableType = 1  //扩展表
 	TableTypeMiddle myGenTableType = 2  //中间表
 	TableTypeRelId  myGenTableType = 10 //id后缀关联表
@@ -425,48 +425,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldList[v.Index] = fieldTmp
 	}
 
-	/*--------需做特殊处理字段解析 开始--------*/
-	//主键列表。联合主键有多字段，需按顺序存入
-	for _, v := range tpl.KeyList {
-		if v.IsPrimary {
-			tpl.Handle.IdList = append(tpl.Handle.IdList, v.FieldArr...)
-			break
-		}
-	}
-	/*
-		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
-			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
-			表名去掉前缀 + Title > 主键去掉ID + Title > Title >
-			表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
-			表名去掉前缀 + Email > 主键去掉ID + Email > Email >
-			表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
-	*/
-	labelList := []string{}
-	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
-		labelTmp := tpl.TableCaseCamel + v
-		labelList = append(labelList, labelTmp)
-		if len(tpl.Handle.IdList) == 1 {
-			fieldSplitArr := gstr.Split(gstr.CaseSnake(tpl.Handle.IdList[0]), `_`)
-			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-			if fieldSuffix == `id` {
-				labelTmp1 := gstr.SubStr(gstr.CaseCamel(tpl.Handle.IdList[0]), 0, -2) + v
-				if labelTmp1 != labelTmp && labelTmp1 != v {
-					labelList = append(labelList, labelTmp1)
-				}
-			}
-		}
-		labelList = append(labelList, v)
-	}
-	for _, v := range labelList {
-		for _, item := range fieldList {
-			if v == item.FieldCaseCamel && garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(item.FieldType) {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item.FieldRaw)
-				break
-			}
-		}
-	}
-
+	/*--------解析影响命名类型二次确认，且需做特殊处理的字段 开始--------*/
 	//password|passwd,salt同时存在时，需特殊处理
 	for k, v := range tpl.Handle.PasswordMap {
 		if v.PasswordField != `` && v.SaltField != `` {
@@ -476,32 +435,14 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 
 	//pid,level,idPath|id_path同时存在时，需特殊处理
-	if garray.NewIntArrayFrom([]int{TableTypeMaster}).Contains(tpl.TableType) {
+	if garray.NewIntArrayFrom([]int{TableTypeGen}).Contains(tpl.TableType) {
 		if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
 			tpl.Handle.Pid.IsCoexist = true
 		}
 	}
+	/*--------解析影响命名类型二次确认，且需做特殊处理的字段 结束--------*/
 
-	//id后缀字段
-	for k, v := range tpl.Handle.RelIdMap {
-		if len(v.tpl.Handle.LabelList) > 0 {
-			for _, item := range fieldList {
-				if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
-					v.IsRedundName = true
-					tpl.Handle.RelIdMap[k] = v
-					break
-				}
-			}
-		}
-	}
-
-	//扩展表
-	if garray.NewIntArrayFrom([]int{TableTypeMaster}).Contains(tpl.TableType) {
-		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl)
-	}
-	/*--------需做特殊处理字段解析 结束--------*/
-
-	/*--------部分命名类型需要二次确认 开始--------*/
+	/*--------命名类型二次确认的字段 开始--------*/
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
 		case TypeNameLevel, TypeNameIdPath: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；	// idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
@@ -519,7 +460,76 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			}
 		}
 	}
-	/*--------部分命名类型需要二次确认 结束--------*/
+	/*--------命名类型二次确认的字段 结束--------*/
+
+	/*--------需做特殊处理字段解析 开始--------*/
+	//主键列表。联合主键有多字段，需按顺序存入
+	for _, key := range tpl.KeyList {
+		if !key.IsPrimary {
+			continue
+		}
+		for _, field := range key.FieldArr {
+			for _, v := range fieldList {
+				if v.FieldRaw == field {
+					tpl.Handle.IdList = append(tpl.Handle.IdList, v)
+					break
+				}
+			}
+		}
+		break
+	}
+	/*
+		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
+			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
+			表名去掉前缀 + Title > 主键去掉ID + Title > Title >
+			表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
+			表名去掉前缀 + Email > 主键去掉ID + Email > Email >
+			表名去掉前缀 + Account > 主键去掉ID + Account > Account >
+			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+	*/
+	labelList := []string{}
+	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
+		labelTmp := tpl.TableCaseCamel + v
+		labelList = append(labelList, labelTmp)
+		if len(tpl.Handle.IdList) == 1 {
+			fieldSplitArr := gstr.Split(tpl.Handle.IdList[0].FieldCaseSnake, `_`)
+			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+			if fieldSuffix == `id` {
+				labelTmp1 := gstr.SubStr(tpl.Handle.IdList[0].FieldCaseCamel, 0, -2) + v
+				if labelTmp1 != labelTmp && labelTmp1 != v {
+					labelList = append(labelList, labelTmp1)
+				}
+			}
+		}
+		labelList = append(labelList, v)
+	}
+	for _, v := range labelList {
+		for _, item := range fieldList {
+			if v == item.FieldCaseCamel && garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(item.FieldType) {
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item.FieldRaw)
+				break
+			}
+		}
+	}
+
+	//id后缀字段
+	for k, v := range tpl.Handle.RelIdMap {
+		if len(v.tpl.Handle.LabelList) > 0 {
+			for _, item := range fieldList {
+				if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
+					v.IsRedundName = true
+					tpl.Handle.RelIdMap[k] = v
+					break
+				}
+			}
+		}
+	}
+
+	//扩展表
+	if garray.NewIntArrayFrom([]int{TableTypeGen}).Contains(tpl.TableType) {
+		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl)
+	}
+	/*--------需做特殊处理字段解析 结束--------*/
 
 	tpl.FieldList = fieldList
 	return
@@ -753,7 +763,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 	}
 
-	fieldPrimaryArr := []string{gstr.CaseSnake(tpl.Handle.IdList[0])}
+	fieldPrimaryArr := []string{tpl.Handle.IdList[0].FieldCaseSnake}
 	if fieldPrimaryArr[0] == `id` {
 		fieldPrimaryArr = append(fieldPrimaryArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
 	}
