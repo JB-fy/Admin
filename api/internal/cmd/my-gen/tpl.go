@@ -558,9 +558,7 @@ func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table stri
 			}
 			keyList[k] = key
 
-			if _, ok := fieldArrMap[key.Name]; !ok {
-				fieldArrMap[key.Name] = append(fieldArrMap[key.Name], key.Field)
-			}
+			fieldArrMap[key.Name] = append(fieldArrMap[key.Name], key.Field)
 		}
 		for k, v := range keyList {
 			v.FieldArr = fieldArrMap[v.Name]
@@ -653,6 +651,10 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		table2: []string{},
 		table5: []string{},
 	}
+	removePrefixAloneTmp := tpl.RemovePrefixAlone //moduleDir
+	if removePrefixAloneTmp == `` {               //同模块当主表是user,good等无下划线时，找同模块关联表时，表前缀为：当前主表 + `_`
+		removePrefixAloneTmp = gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1) + `_`
+	}
 	isSamePrimaryFunc := func(table string) bool {
 		tableKeyList := tpl.getTableKey(ctx, tpl.Group, table)
 		for _, v := range tableKeyList {
@@ -666,12 +668,15 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		if v == tpl.Table { //自身跳过
 			continue
 		}
-		if v == tpl.RemovePrefix+tableSuffix { //关联表在同模块目录下，且表名一致
+		if gstr.Pos(v, `_rel_to_`) != -1 || gstr.Pos(v, `_rel_of_`) != -1 { //中间表跳过
+			continue
+		}
+		if v == tpl.RemovePrefixCommon+removePrefixAloneTmp+tableSuffix { //关联表在同模块目录下，且表名一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table1 = v
 				break
 			}
-		} else if gstr.Pos(v, tpl.RemovePrefix) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //关联表在同模块目录下，但表后缀一致
+		} else if gstr.Pos(v, tpl.RemovePrefixCommon+removePrefixAloneTmp) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //关联表在同模块目录下，但表后缀一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table2 = append(mayBeObj.table2, v)
 			}
