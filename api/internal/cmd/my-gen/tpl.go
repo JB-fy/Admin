@@ -31,9 +31,8 @@ type myGenTpl struct {
 	ModuleDirCaseKebab        string                     //模块目录（横线，/会被保留）
 	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	FieldPrimary              string                     //TODO自增主键字段
 	Handle                    struct {                   //该属性记录需做特殊处理字段
-		PrimaryList []myGenField //主键字段列表。联合主键会有多个字段
+		IdList []string //主键列表。联合主键有多字段，需按顺序存入
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -83,8 +82,8 @@ const (
 	TypeDatetime                            // `datetime类型`
 	TypeDate                                // `date类型`
 
-	TypeNamePri            myGenFieldTypeName = `主键（非联合索引）`
-	TypeNamePriAutoInc     myGenFieldTypeName = `自增主键（非联合索引）`
+	TypeNamePri            myGenFieldTypeName = `主键（非联合）`
+	TypeNamePriAutoInc     myGenFieldTypeName = `自增主键（非联合）`
 	TypeNameDeleted        myGenFieldTypeName = `软删除字段`
 	TypeNameUpdated        myGenFieldTypeName = `更新时间字段`
 	TypeNameCreated        myGenFieldTypeName = `创建时间字段`
@@ -139,7 +138,7 @@ type myGenKey struct {
 	Name      string   // 索引名称。主键：PRIMARY；其它：定义
 	Index     uint     // 索引顺序。从1开始，单索引都是1，联合索引按字段数量顺序递增
 	Field     string   // 字段（原始）
-	FieldArr  []string // 字段列表。当前索引建立在哪些字段上，可用该字段判断是否联合主键或联合索引
+	FieldArr  []string // 字段列表。联合索引有多字段，需按顺序存入
 	IsPrimary bool     // 是否主键
 	IsUnique  bool     // 是否唯一
 	IsAutoInc bool     // 是否自增
@@ -281,7 +280,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
 		fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		//先确定主键
+		//先确定主键（非联合主键）
 		for _, key := range tpl.KeyList {
 			if fieldTmp.FieldRaw != key.Field {
 				continue
@@ -293,7 +292,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = TypeNamePri
 				if key.IsAutoInc {
 					fieldTmp.FieldTypeName = TypeNamePriAutoInc
-					tpl.FieldPrimary = fieldTmp.FieldRaw
 				}
 			}
 		}
@@ -428,6 +426,13 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 
 	/*--------需做特殊处理字段解析 开始--------*/
+	//主键列表。联合主键有多字段，需按顺序存入
+	for _, v := range tpl.KeyList {
+		if v.IsPrimary {
+			tpl.Handle.IdList = append(tpl.Handle.IdList, v.FieldArr...)
+			break
+		}
+	}
 	/*
 		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -441,13 +446,18 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
 		labelTmp := tpl.TableCaseCamel + v
 		labelList = append(labelList, labelTmp)
-		labelTmp1 := gstr.SubStr(gstr.CaseCamel(tpl.FieldPrimary), 0, -2) + v
-		if labelTmp1 != labelTmp && labelTmp1 != v {
-			labelList = append(labelList, labelTmp1)
+		if len(tpl.Handle.IdList) == 1 {
+			fieldSplitArr := gstr.Split(gstr.CaseSnake(tpl.Handle.IdList[0]), `_`)
+			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+			if fieldSuffix == `id` {
+				labelTmp1 := gstr.SubStr(gstr.CaseCamel(tpl.Handle.IdList[0]), 0, -2) + v
+				if labelTmp1 != labelTmp && labelTmp1 != v {
+					labelList = append(labelList, labelTmp1)
+				}
+			}
 		}
 		labelList = append(labelList, v)
 	}
-	tpl.Handle.LabelList = []string{}
 	for _, v := range labelList {
 		for _, item := range fieldList {
 			if v == item.FieldCaseCamel && garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(item.FieldType) {
@@ -734,15 +744,18 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 
 // TODO 获取扩展表
 func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []myGenTpl, extendTableManyList []myGenTpl) {
+	if len(tpl.Handle.IdList) != 1 {
+		return
+	}
 	removePrefixCommon := tpl.RemovePrefixCommon
 	removePrefixAlone := tpl.RemovePrefixAlone
 	if removePrefixAlone == `` {
 		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 	}
 
-	fieldPrimaryArr := []string{tpl.FieldPrimary}
-	if tpl.FieldPrimary == `id` {
-		fieldPrimaryArr = append(fieldPrimaryArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
+	fieldPrimaryArr := []string{gstr.CaseSnake(tpl.Handle.IdList[0])}
+	if fieldPrimaryArr[0] == `id` {
+		fieldPrimaryArr = append(fieldPrimaryArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
 	}
 
 	for _, v := range tpl.TableArr {
