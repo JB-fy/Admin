@@ -17,10 +17,10 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 			user_config		说明：存放user主表用户的配置信息
 			good_content	说明：存放good主表商品的详情
 			good_image		说明：存放good主表商品的图片
-	关联表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
-	关联表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
+	中间表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
+	中间表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
 		参考以下示例
-			auth_role_rel_of_platform_admin	说明：auth_role和platform_admin属不同模块，关联表命名使用两表全名
+			auth_role_rel_of_platform_admin	说明：auth_role和platform_admin属不同模块，中间表命名使用两关联表全名
 			good_rel_to_category			说明：good和good_category属同模块，故good_category可省略good_前缀
 
 表字段名统一使用小驼峰或蛇形命名（建议：小驼峰）

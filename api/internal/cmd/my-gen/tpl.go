@@ -14,7 +14,7 @@ import (
 
 type myGenTpl struct {
 	Link                      string                     //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr                  []string                   //当前数据库全部数据表（获取关联表，扩展表等需要）
+	TableArr                  []string                   //当前数据库全部数据表（获取扩展表，中间表等需要）
 	Group                     string                     //数据库分组
 	RemovePrefixCommon        string                     //要删除的共有前缀
 	RemovePrefixAlone         string                     //要删除的独有前缀
@@ -33,7 +33,7 @@ type myGenTpl struct {
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	FieldPrimary              string                     //TODO自增主键字段
 	Handle                    struct {                   //该属性记录需做特殊处理字段
-		// PrimaryList []myGenField  //主键字段列表。联合主键会有多个字段
+		PrimaryList []myGenField //主键字段列表。联合主键会有多个字段
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -55,8 +55,8 @@ type myGenTpl struct {
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
 		ExtendTableOneList  []myGenTpl             //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为不递增主键或唯一索引
 		ExtendTableManyList []myGenTpl             //扩展表（一对多）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为普通索引
-		RelTableOneList     []myGenTpl             //关联表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
-		RelTableManyList    []myGenTpl             //关联表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
+		MiddleTableOneList  []myGenTpl             //中间表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
+		MiddleTableManyList []myGenTpl             //中间表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
 	}
 }
 
@@ -67,7 +67,7 @@ type myGenFieldTypeName = string
 const (
 	TableTypeMaster myGenTableType = 0  //主表
 	TableTypeExtend myGenTableType = 1  //扩展表
-	TableTypeRel    myGenTableType = 2  //关联表
+	TableTypeMiddle myGenTableType = 2  //中间表
 	TableTypeRelId  myGenTableType = 10 //id后缀关联表
 
 	//用于结构体中，需从1开始，否则结构体会默认0，即Int
@@ -122,12 +122,9 @@ type myGenField struct {
 	FieldTypeRaw         string             // 字段类型（原始）
 	FieldType            myGenFieldType     // 字段类型（数据类型）
 	FieldTypeName        myGenFieldTypeName // 字段类型（命名类型）
-	KeyRaw               string             // 索引类型（原始）。PRI, MUL
-	KeyList              []myGenKey         // 索引。可能有多个索引
 	IsUnique             bool               // 是否独立的唯一索引
 	IsNull               bool               // 字段是否可为NULL
 	Default              interface{}        // 默认值
-	Extra                string             // 扩展信息： auto_increment自动递增
 	Comment              string             // 注释（原始）。
 	FieldName            string             // 字段名称。由注释解析出来，前端显示用。符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用）
 	FieldDesc            string             // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
@@ -206,10 +203,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldTmp := myGenField{
 			FieldRaw:     v.Name,
 			FieldTypeRaw: v.Type,
-			KeyRaw:       v.Key,
 			IsNull:       v.Null,
 			Default:      v.Default,
-			Extra:        v.Extra,
 			Comment:      v.Comment,
 		}
 		fieldTmp.FieldCaseSnake = gstr.CaseSnake(fieldTmp.FieldRaw)
@@ -286,19 +281,19 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
 		fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		//先确定是否主键
+		//先确定主键
 		for _, key := range tpl.KeyList {
-			if fieldTmp.FieldRaw == key.Field {
-				if key.IsUnique && len(key.FieldArr) == 1 {
-					fieldTmp.IsUnique = true
-				}
-				fieldTmp.KeyList = append(fieldTmp.KeyList, key)
-				if key.IsPrimary && len(key.FieldArr) == 1 {
-					fieldTmp.FieldTypeName = TypeNamePri
-					if key.IsAutoInc {
-						fieldTmp.FieldTypeName = TypeNamePriAutoInc
-						tpl.FieldPrimary = fieldTmp.FieldRaw
-					}
+			if fieldTmp.FieldRaw != key.Field {
+				continue
+			}
+			if key.IsUnique && len(key.FieldArr) == 1 {
+				fieldTmp.IsUnique = true
+			}
+			if key.IsPrimary && len(key.FieldArr) == 1 {
+				fieldTmp.FieldTypeName = TypeNamePri
+				if key.IsAutoInc {
+					fieldTmp.FieldTypeName = TypeNamePriAutoInc
+					tpl.FieldPrimary = fieldTmp.FieldRaw
 				}
 			}
 		}
@@ -515,6 +510,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 	/*--------部分命名类型需要二次确认 结束--------*/
+
 	tpl.FieldList = fieldList
 	return
 }
@@ -736,7 +732,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	return
 }
 
-// TODO 获取扩展表（一对一）
+// TODO 获取扩展表
 func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []myGenTpl, extendTableManyList []myGenTpl) {
 	removePrefixCommon := tpl.RemovePrefixCommon
 	removePrefixAlone := tpl.RemovePrefixAlone
@@ -753,14 +749,17 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		if v == tpl.Table { //自身跳过
 			continue
 		}
+		if gstr.Pos(v, `_rel_to_`) != -1 || gstr.Pos(v, `_rel_of_`) != -1 { //中间表跳过
+			continue
+		}
 		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合表命名（主表名_xxxx）的跳过
 			continue
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
-			if garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) && len(key.FieldArr) == 1 {
+			if len(key.FieldArr) == 1 && garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) {
 				if key.IsPrimary {
-					if extendTpl.FieldPrimary == `` { //非自增主键
+					if !key.IsAutoInc { //非自增主键
 						extendTableOneList = append(extendTableOneList, extendTpl)
 					}
 				} else if key.IsUnique {
