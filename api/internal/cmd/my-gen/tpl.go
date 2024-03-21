@@ -31,7 +31,7 @@ type myGenTpl struct {
 	ModuleDirCaseKebab        string                     //模块目录（横线，/会被保留）
 	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	Handle                    struct {                   //该属性记录需做特殊处理字段
+	Handle                    struct {                   //需特殊处理的字段
 		IdList []myGenField //主键列表。联合主键有多字段，需按顺序存入
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
@@ -425,7 +425,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldList[v.Index] = fieldTmp
 	}
 
-	/*--------解析影响命名类型二次确认，且需做特殊处理的字段 开始--------*/
+	/*--------解析影响命名类型二次确认，且需特殊处理的字段 开始--------*/
 	//password|passwd,salt同时存在时，需特殊处理
 	for k, v := range tpl.Handle.PasswordMap {
 		if v.PasswordField != `` && v.SaltField != `` {
@@ -440,7 +440,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			tpl.Handle.Pid.IsCoexist = true
 		}
 	}
-	/*--------解析影响命名类型二次确认，且需做特殊处理的字段 结束--------*/
+	/*--------解析影响命名类型二次确认，且需特殊处理的字段 结束--------*/
 
 	/*--------命名类型二次确认的字段 开始--------*/
 	for k, v := range fieldList {
@@ -462,7 +462,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 	/*--------命名类型二次确认的字段 结束--------*/
 
-	/*--------需做特殊处理字段解析 开始--------*/
+	/*--------需特殊处理的字段解析 开始--------*/
 	//主键列表。联合主键有多字段，需按顺序存入
 	for _, key := range tpl.KeyList {
 		if !key.IsPrimary {
@@ -529,7 +529,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	if garray.NewIntArrayFrom([]int{TableTypeGen}).Contains(tpl.TableType) {
 		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl)
 	}
-	/*--------需做特殊处理字段解析 结束--------*/
+	/*--------需特殊处理的字段解析 结束--------*/
 
 	tpl.FieldList = fieldList
 	return
