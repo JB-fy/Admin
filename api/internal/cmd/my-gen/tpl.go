@@ -32,7 +32,11 @@ type myGenTpl struct {
 	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	Handle                    struct {                   //需特殊处理的字段
-		IdList []myGenField //主键列表。联合主键有多字段，需按顺序存入
+		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
+			IsPrimary bool //是否主键
+			List      []myGenField
+			Type      myGenFieldType
+		}
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -59,8 +63,8 @@ type myGenTpl struct {
 	}
 }
 
-type myGenTableType = int
-type myGenFieldType = uint
+type myGenTableType = uint
+type myGenFieldType = int
 type myGenFieldTypeName = string
 
 const (
@@ -69,7 +73,7 @@ const (
 	TableTypeMiddle myGenTableType = 2  //中间表
 	TableTypeRelId  myGenTableType = 10 //id后缀关联表
 
-	//用于结构体中，需从1开始，否则结构体会默认0，即Int
+	//用于结构体中，需从1开始，否则结构体会默认0
 	TypeInt       myGenFieldType = iota + 1 // `int等类型`
 	TypeIntU                                // `int等类型（unsigned）`
 	TypeFloat                               // `float等类型`
@@ -302,15 +306,15 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = TypeNameUpdated
 		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = TypeNameCreated
-		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
+		} else if garray.NewIntArrayFrom([]int{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
 			fieldTmp.FieldTypeName = TypeNameIdPath
 
 			tpl.Handle.Pid.IdPath = fieldTmp.FieldRaw
-		} else if garray.NewFrom([]interface{}{TypeInt, TypeIntU, TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) { //status,type,method,pos,position,gender等后缀
+		} else if garray.NewIntArrayFrom([]int{TypeInt, TypeIntU, TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`status`, `type`, `method`, `pos`, `position`, `gender`}).Contains(fieldSuffix) { //status,type,method,pos,position,gender等后缀
 			fieldTmp.FieldTypeName = TypeNameStatusSuffix
 
 			isStr := false
-			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) {
+			if garray.NewIntArrayFrom([]int{TypeVarchar, TypeChar}).Contains(fieldTmp.FieldType) {
 				isStr = true
 			}
 			fieldTmp.StatusList = tpl.getStatusList(fieldTmp.FieldTip, isStr)
@@ -321,13 +325,13 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 					fieldTmp.FieldShowLenMax = showLen
 				}
 			}
-		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
+		} else if garray.NewIntArrayFrom([]int{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = TypeNameImageSuffix
-		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
+		} else if garray.NewIntArrayFrom([]int{TypeVarchar, TypeText, TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
 			fieldTmp.FieldTypeName = TypeNameVideoSuffix
-		} else if garray.NewFrom([]interface{}{TypeText, TypeJson}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) { //list,arr等后缀
+		} else if garray.NewIntArrayFrom([]int{TypeText, TypeJson}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) { //list,arr等后缀
 			fieldTmp.FieldTypeName = TypeNameArrSuffix
-		} else if garray.NewFrom([]interface{}{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) { //remark,desc,msg,message,intro,content后缀
+		} else if garray.NewIntArrayFrom([]int{TypeVarchar, TypeText}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}).Contains(fieldSuffix) { //remark,desc,msg,message,intro,content后缀
 			fieldTmp.FieldTypeName = TypeNameRemarkSuffix
 		} else if fieldTmp.FieldType == TypeVarchar { //varchar类型
 			if garray.NewStrArrayFrom([]string{`name`, `title`}).Contains(fieldSuffix) { //name,title后缀
@@ -377,7 +381,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				}
 				tpl.Handle.PasswordMap[passwordMapKey] = handlePasswordObj
 			}
-		} else if garray.NewFrom([]interface{}{TypeInt, TypeIntU}).Contains(fieldTmp.FieldType) { //int等类型
+		} else if garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(fieldTmp.FieldType) { //int等类型
 			if fieldTmp.FieldRaw == `pid` { //pid
 				fieldTmp.FieldTypeName = TypeNamePid
 
@@ -413,7 +417,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
 				// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
 			}
-		} else if garray.NewFrom([]interface{}{TypeTimestamp, TypeDatetime, TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
+		} else if garray.NewIntArrayFrom([]int{TypeTimestamp, TypeDatetime, TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
 			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
 				fieldTmp.FieldTypeName = TypeNameStartPrefix
 			} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀
@@ -435,7 +439,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 
 	//pid,level,idPath|id_path同时存在时，需特殊处理
-	if garray.NewIntArrayFrom([]int{TableTypeGen}).Contains(tpl.TableType) {
+	if garray.NewFrom([]interface{}{TableTypeGen}).Contains(tpl.TableType) {
 		if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
 			tpl.Handle.Pid.IsCoexist = true
 		}
@@ -463,20 +467,27 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	/*--------命名类型二次确认的字段 结束--------*/
 
 	/*--------需特殊处理的字段解析 开始--------*/
-	//主键列表。联合主键有多字段，需按顺序存入
+	//主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
 	for _, key := range tpl.KeyList {
 		if !key.IsPrimary {
 			continue
 		}
+		tpl.Handle.Id.IsPrimary = true
 		for _, field := range key.FieldArr {
 			for _, v := range fieldList {
 				if v.FieldRaw == field {
-					tpl.Handle.IdList = append(tpl.Handle.IdList, v)
+					tpl.Handle.Id.List = append(tpl.Handle.Id.List, v)
 					break
 				}
 			}
 		}
 		break
+	}
+	if len(tpl.Handle.Id.List) == 0 {
+		tpl.Handle.Id.List = append(tpl.Handle.Id.List, fieldList[0])
+	}
+	if len(tpl.Handle.Id.List) == 1 {
+		tpl.Handle.Id.Type = tpl.Handle.Id.List[0].FieldType
 	}
 	/*
 		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
@@ -491,11 +502,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
 		labelTmp := tpl.TableCaseCamel + v
 		labelList = append(labelList, labelTmp)
-		if len(tpl.Handle.IdList) == 1 {
-			fieldSplitArr := gstr.Split(tpl.Handle.IdList[0].FieldCaseSnake, `_`)
+		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.IsPrimary {
+			fieldSplitArr := gstr.Split(tpl.Handle.Id.List[0].FieldCaseSnake, `_`)
 			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
 			if fieldSuffix == `id` {
-				labelTmp1 := gstr.SubStr(tpl.Handle.IdList[0].FieldCaseCamel, 0, -2) + v
+				labelTmp1 := gstr.SubStr(tpl.Handle.Id.List[0].FieldCaseCamel, 0, -2) + v
 				if labelTmp1 != labelTmp && labelTmp1 != v {
 					labelList = append(labelList, labelTmp1)
 				}
@@ -505,7 +516,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 	for _, v := range labelList {
 		for _, item := range fieldList {
-			if v == item.FieldCaseCamel && garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(item.FieldType) {
+			if v == item.FieldCaseCamel && garray.NewIntArrayFrom([]int{TypeVarchar, TypeChar}).Contains(item.FieldType) {
 				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item.FieldRaw)
 				break
 			}
@@ -514,19 +525,20 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 	//id后缀字段
 	for k, v := range tpl.Handle.RelIdMap {
-		if len(v.tpl.Handle.LabelList) > 0 {
-			for _, item := range fieldList {
-				if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
-					v.IsRedundName = true
-					tpl.Handle.RelIdMap[k] = v
-					break
-				}
+		if len(v.tpl.Handle.LabelList) == 0 {
+			continue
+		}
+		for _, item := range fieldList {
+			if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
+				v.IsRedundName = true
+				tpl.Handle.RelIdMap[k] = v
+				break
 			}
 		}
 	}
 
 	//扩展表
-	if garray.NewIntArrayFrom([]int{TableTypeGen}).Contains(tpl.TableType) {
+	if garray.NewFrom([]interface{}{TableTypeGen}).Contains(tpl.TableType) {
 		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl)
 	}
 	/*--------需特殊处理的字段解析 结束--------*/
@@ -754,7 +766,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 
 // TODO 获取扩展表
 func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []myGenTpl, extendTableManyList []myGenTpl) {
-	if len(tpl.Handle.IdList) != 1 {
+	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
 		return
 	}
 	removePrefixCommon := tpl.RemovePrefixCommon
@@ -763,7 +775,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 	}
 
-	fieldPrimaryArr := []string{tpl.Handle.IdList[0].FieldCaseSnake}
+	fieldPrimaryArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
 	if fieldPrimaryArr[0] == `id` {
 		fieldPrimaryArr = append(fieldPrimaryArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
 	}
@@ -783,11 +795,14 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			if len(key.FieldArr) == 1 && garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) {
 				if key.IsPrimary {
 					if !key.IsAutoInc { //非自增主键
+						extendTpl.gfGenDao(false) //dao文件生成
 						extendTableOneList = append(extendTableOneList, extendTpl)
 					}
 				} else if key.IsUnique {
+					extendTpl.gfGenDao(false) //dao文件生成
 					extendTableOneList = append(extendTableOneList, extendTpl)
 				} else {
+					extendTpl.gfGenDao(false) //dao文件生成
 					extendTableManyList = append(tpl.Handle.ExtendTableOneList, extendTpl)
 				}
 			}

@@ -289,7 +289,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	if err != nil {
 		return
 	}
-	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + tpl.Handle.IdList[0].FieldCaseCamel + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `)
+	tree := utils.Tree(list.List(), 0, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `, dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `)
 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `TreeRes{}
 	gconv.Structs(tree, &res.Tree)
@@ -304,7 +304,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 }
 
 func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
-	if len(tpl.Handle.IdList) == 1 && tpl.Handle.IdList[0].FieldRaw != `id` {
+	if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.list = []string{"`id`"}
 		controller.info = []string{"`id`"}
 		controller.tree = []string{"`id`"}
@@ -320,8 +320,8 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 			// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
 		}
 		controller.noAuth = append(controller.noAuth, "`label`")
-		if len(tpl.Handle.IdList) == 1 && tpl.Handle.IdList[0].FieldRaw != `id` {
-			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.IdList[0].FieldCaseCamel)
+		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
+			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
 		}
 		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
 		/* for _, v := range tpl.Handle.LabelList {
@@ -332,8 +332,8 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 	for _, v := range tpl.FieldList {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
+		case TypeNamePri: // 主键（非联合）
+		case TypeNamePriAutoInc: // 自增主键（非联合）
 		case TypeNameDeleted: // 软删除字段
 		case TypeNameUpdated: // 更新时间字段
 		case TypeNameCreated: // 创建时间字段

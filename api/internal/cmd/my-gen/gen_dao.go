@@ -244,8 +244,8 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
+		case TypeNamePri: // 主键（非联合）
+		case TypeNamePriAutoInc: // 自增主键（非联合）
 		case TypeNameDeleted: // 软删除字段
 		case TypeNameUpdated: // 更新时间字段
 		case TypeNameCreated: // 创建时间字段

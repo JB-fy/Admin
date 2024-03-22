@@ -256,8 +256,8 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
+		case TypeNamePri: // 主键（非联合）
+		case TypeNamePriAutoInc: // 自增主键（非联合）
 			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
@@ -341,7 +341,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 			}
 			viewSaveField.dataInitBefore.Method = ReturnTypeName
 			viewSaveField.dataInitBefore.DataTypeName = defaultVal
-			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(v.FieldType) {
+			if garray.NewIntArrayFrom([]int{TypeVarchar, TypeChar}).Contains(v.FieldType) {
 				viewSaveField.dataInitBefore.DataTypeName = `'` + defaultVal + `'`
 			}
 			viewSaveField.rule.Method = ReturnTypeName

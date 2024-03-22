@@ -12,8 +12,10 @@ import (
 
 type myGenApi struct {
 	filter   []string
+	info     []string
 	create   []string
 	update   []string
+	delete   []string
 	res      []string
 	resOfAdd []string
 }
@@ -53,11 +55,7 @@ type ` + tpl.TableCaseCamel + `ListReq struct {
 	Limit  int             ` + "`" + `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
 }
 
-type ` + tpl.TableCaseCamel + `ListFilter struct {
-	Id             *uint       ` + "`" + `json:"id,omitempty" v:"min:1" dc:"ID"` + "`" + `
-	IdArr          []uint      ` + "`" + `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"` + "`" + `
-	ExcId          *uint       ` + "`" + `json:"excId,omitempty" v:"min:1" dc:"排除ID"` + "`" + `
-	ExcIdArr       []uint      ` + "`" + `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"` + "`" + gstr.Join(append([]string{``}, api.filter...), `
+type ` + tpl.TableCaseCamel + `ListFilter struct {` + gstr.Join(append([]string{``}, api.filter...), `
 	`) + `
 }
 
@@ -70,8 +68,7 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 	List  []` + tpl.TableCaseCamel + `ListItem ` + "`" + `json:"list" dc:"列表"` + "`" + `
 }
 
-type ` + tpl.TableCaseCamel + `ListItem struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, api.res...), `
+type ` + tpl.TableCaseCamel + `ListItem struct {` + gstr.Join(append([]string{``}, api.res...), `
 	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
 	`) + `
 }
@@ -84,16 +81,15 @@ type ` + tpl.TableCaseCamel + `ListItem struct {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableCaseCamel + `InfoReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"详情"` + "`" + `
-	Id     uint     ` + "`" + `json:"id" v:"required|min:1" dc:"ID"` + "`" + `
-	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + `
+	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"` + "`" + gstr.Join(append([]string{``}, api.info...), `
+	`) + `
 }
 
 type ` + tpl.TableCaseCamel + `InfoRes struct {
 	Info ` + tpl.TableCaseCamel + `Info ` + "`" + `json:"info" dc:"详情"` + "`" + `
 }
 
-type ` + tpl.TableCaseCamel + `Info struct {
-	Id          *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, api.res...), `
+type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, api.res...), `
 	`) + `
 }
 
@@ -116,8 +112,7 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + `
-	IdArr       []uint  ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + gstr.Join(append([]string{``}, api.update...), `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + gstr.Join(append([]string{``}, api.update...), `
 	`) + `
 }
 
@@ -129,8 +124,8 @@ type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"删除"` + "`" + `
-	IdArr  []uint ` + "`" + `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"` + "`" + `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"删除"` + "`" + gstr.Join(append([]string{``}, api.delete...), `
+	`) + `
 }
 
 /*--------删除 结束--------*/
@@ -150,8 +145,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 	Tree []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
 }
 
-type ` + tpl.TableCaseCamel + `TreeItem struct {
-	Id       *uint       ` + "`" + `json:"id,omitempty" dc:"ID"` + "`" + gstr.Join(append([]string{``}, api.res...), `
+type ` + tpl.TableCaseCamel + `TreeItem struct {` + gstr.Join(append([]string{``}, api.res...), `
 	`) + `
 	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
 }
@@ -166,6 +160,42 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {
 }
 
 func getApiFieldList(tpl myGenTpl) (api myGenApi) {
+	switch tpl.Handle.Id.Type {
+	case TypeInt:
+		api.filter = append(api.filter,
+			`Id *int `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
+			`IdArr []int `+"`"+`json:"idArr,omitempty" v:"distinct" dc:"ID数组"`+"`",
+			`ExcId *int `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
+			`ExcIdArr []int `+"`"+`json:"excIdArr,omitempty" v:"distinct" dc:"排除ID数组"`+"`",
+		)
+		api.info = append(api.info, `Id int `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
+		api.update = append(api.update, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+		api.delete = append(api.delete, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+		api.res = append(api.res, `Id *int `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
+	case TypeIntU:
+		api.filter = append(api.filter,
+			`Id *uint `+"`"+`json:"id,omitempty" v:"min:1" dc:"ID"`+"`",
+			`IdArr []uint `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`+"`",
+			`ExcId *uint `+"`"+`json:"excId,omitempty" v:"min:1" dc:"排除ID"`+"`",
+			`ExcIdArr []uint `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`+"`",
+		)
+		api.info = append(api.info, `Id uint `+"`"+`json:"id" v:"required|min:1" dc:"ID"`+"`")
+		api.update = append(api.update, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
+		api.delete = append(api.delete, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
+		api.res = append(api.res, `Id *uint `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
+	default:
+		api.filter = append(api.filter,
+			`Id string `+"`"+`json:"id,omitempty" v:"min-length:1" dc:"ID"`+"`",
+			`IdArr []string `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min-length:1" dc:"ID数组"`+"`",
+			`ExcId string `+"`"+`json:"excId,omitempty" v:"min-length:1" dc:"排除ID"`+"`",
+			`ExcIdArr []string `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min-length:1" dc:"排除ID数组"`+"`",
+		)
+		api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
+		api.update = append(api.update, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
+	}
+
 	if len(tpl.Handle.LabelList) > 0 {
 		api.filter = append(api.filter, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
 		api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
@@ -318,8 +348,14 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
+		case TypeNamePri: // 主键（非联合）
+			if v.FieldRaw == `id` {
+				continue
+			}
+			apiField.filterType.Method = ReturnType
+			apiField.createType.Method = ReturnEmpty
+			apiField.updateType.Method = ReturnEmpty
+		case TypeNamePriAutoInc: // 自增主键（非联合）
 			if v.FieldRaw == `id` {
 				continue
 			}

@@ -65,8 +65,8 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键
-		case TypeNamePriAutoInc: // 主键（自增）
+		case TypeNamePri: // 主键（非联合）
+		case TypeNamePriAutoInc: // 自增主键（非联合）
 			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
@@ -100,7 +100,7 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 			viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewI18nField.status.Method = ReturnTypeName
-			if garray.NewFrom([]interface{}{TypeVarchar, TypeChar}).Contains(v.FieldType) {
+			if garray.NewIntArrayFrom([]int{TypeVarchar, TypeChar}).Contains(v.FieldType) {
 				for _, status := range v.StatusList {
 					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 				}
