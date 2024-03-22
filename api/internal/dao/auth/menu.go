@@ -344,6 +344,10 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Where(tableXxxx+`.`+k, v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
 			case `excId`, `excIdArr`:
 				if gvar.New(v).IsSlice() {
 					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)

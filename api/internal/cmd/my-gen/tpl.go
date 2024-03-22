@@ -33,9 +33,10 @@ type myGenTpl struct {
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	Handle                    struct {                   //需特殊处理的字段
 		Id struct { //TODO 主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
-			IsPrimary bool //是否主键
 			List      []myGenField
 			Type      myGenFieldType
+			IsPrimary bool //是否主键
+			IsFirst   bool //是否第一个字段
 		}
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
@@ -125,6 +126,7 @@ type myGenField struct {
 	FieldTypeRaw         string             // 字段类型（原始）
 	FieldType            myGenFieldType     // 字段类型（数据类型）
 	FieldTypeName        myGenFieldTypeName // 字段类型（命名类型）
+	IsAutoInc            bool               // 是否自增
 	IsUnique             bool               // 是否独立的唯一索引
 	IsNull               bool               // 字段是否可为NULL
 	Default              interface{}        // 默认值
@@ -284,10 +286,13 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
 		fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		//先确定主键（非联合主键）
+		//先确定TypeNamePri：主键（非联合）； TypeNamePriAutoInc：自增主键（非联合）
 		for _, key := range tpl.KeyList {
 			if fieldTmp.FieldRaw != key.Field {
 				continue
+			}
+			if key.IsAutoInc {
+				fieldTmp.IsAutoInc = true
 			}
 			if key.IsUnique && len(key.FieldArr) == 1 {
 				fieldTmp.IsUnique = true
@@ -489,6 +494,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	if len(tpl.Handle.Id.List) == 1 {
 		tpl.Handle.Id.Type = tpl.Handle.Id.List[0].FieldType
 	}
+	if tpl.Handle.Id.List[0].FieldRaw == fieldList[0].FieldRaw {
+		tpl.Handle.Id.IsFirst = true
+	}
 	/*
 		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -502,7 +510,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
 		labelTmp := tpl.TableCaseCamel + v
 		labelList = append(labelList, labelTmp)
-		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.IsPrimary {
+		if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 {
 			fieldSplitArr := gstr.Split(tpl.Handle.Id.List[0].FieldCaseSnake, `_`)
 			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
 			if fieldSuffix == `id` {

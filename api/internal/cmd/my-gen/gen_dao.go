@@ -10,7 +10,13 @@ import (
 )
 
 type myGenDao struct {
-	importDao []string
+	importDao          []string
+	primaryKeyFunction string
+
+	filterParse []string
+
+	fieldParse []string
+	fieldHook  []string
 
 	insertParseBefore []string
 	insertParse       []string
@@ -20,11 +26,6 @@ type myGenDao struct {
 	updateHookBefore []string
 	updateHookAfter  []string
 
-	fieldParse []string
-	fieldHook  []string
-
-	filterParse []string
-
 	orderParse []string
 
 	joinParse []string
@@ -33,6 +34,11 @@ type myGenDao struct {
 type myGenDaoField struct {
 	importDao []string
 
+	filterParse myGenDataSliceHandler
+
+	fieldParse myGenDataSliceHandler
+	fieldHook  myGenDataSliceHandler
+
 	insertParseBefore myGenDataSliceHandler
 	insertParse       myGenDataSliceHandler
 	insertHook        myGenDataSliceHandler
@@ -40,11 +46,6 @@ type myGenDaoField struct {
 	updateParse      myGenDataSliceHandler
 	updateHookBefore myGenDataSliceHandler
 	updateHookAfter  myGenDataSliceHandler
-
-	fieldParse myGenDataSliceHandler
-	fieldHook  myGenDataSliceHandler
-
-	filterParse myGenDataSliceHandler
 
 	orderParse myGenDataSliceHandler
 
@@ -59,19 +60,65 @@ func genDao(tpl myGenTpl) {
 
 	dao := getDaoFieldList(tpl)
 
+	if len(dao.importDao) > 0 {
+		importDaoPoint := `"api/internal/dao/` + tpl.ModuleDirCaseKebab + `/internal"`
+		tplDao = gstr.Replace(tplDao, importDaoPoint, importDaoPoint+gstr.Join(append([]string{``}, dao.importDao...), `
+	`), 1)
+	}
+	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/grand"`, 1)
+
+	if dao.primaryKeyFunction != `` {
+		primaryKeyFunctionPoint := `// 解析filter`
+		tplDao = gstr.Replace(tplDao, primaryKeyFunctionPoint, dao.primaryKeyFunction+`
+
+`+primaryKeyFunctionPoint, 1)
+	}
+
+	// 解析filter
+	if len(dao.filterParse) > 0 {
+		filterParsePoint := `/* case ` + "`xxxx`" + `:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Where(tableXxxx+` + "`.`" + `+k, v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */`
+		tplDao = gstr.Replace(tplDao, filterParsePoint, filterParsePoint+gstr.Join(append([]string{``}, dao.filterParse...), `
+			`), 1)
+	}
+
+	// 解析field
+	if len(dao.fieldParse) > 0 {
+		fieldParsePoint := `/* case ` + "`xxxx`" + `:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Fields(tableXxxx + ` + "`.`" + ` + v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
+			daoModel.AfterField.Add(v) */`
+		tplDao = gstr.Replace(tplDao, fieldParsePoint, fieldParsePoint+gstr.Join(append([]string{``}, dao.fieldParse...), `
+			`), 1)
+	}
+	if len(dao.fieldHook) > 0 {
+		fieldHookPoint := `default:
+						record[v] = gvar.New(nil)`
+		tplDao = gstr.Replace(tplDao, fieldHookPoint, gstr.Join(append(dao.fieldHook, ``), `
+					`)+fieldHookPoint, 1)
+	}
+
+	// 解析insert
 	if len(dao.insertParseBefore) > 0 {
-		pointOfinsertParseBefore := `insertData := map[string]interface{}{}`
-		tplDao = gstr.Replace(tplDao, pointOfinsertParseBefore, gstr.Join(append(dao.insertParseBefore, ``), `
-		`)+pointOfinsertParseBefore, 1)
+		insertParseBeforePoint := `insertData := map[string]interface{}{}`
+		tplDao = gstr.Replace(tplDao, insertParseBeforePoint, gstr.Join(append(dao.insertParseBefore, ``), `
+		`)+insertParseBeforePoint, 1)
 	}
 	if len(dao.insertParse) > 0 {
-		pointOfinsertParse := `case ` + "`id`" + `:
+		insertParsePoint := `case ` + "`id`" + `:
 				insertData[daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, pointOfinsertParse, pointOfinsertParse+gstr.Join(append([]string{``}, dao.insertParse...), `
+		tplDao = gstr.Replace(tplDao, insertParsePoint, insertParsePoint+gstr.Join(append([]string{``}, dao.insertParse...), `
 			`), 1)
 	}
 	if len(dao.insertHook) > 0 {
-		pointOfinsertHook := `// id, _ := result.LastInsertId()
+		insertHookPoint := `// id, _ := result.LastInsertId()
 
 			/* for k, v := range daoModel.AfterInsert {
 				switch k {
@@ -79,18 +126,20 @@ func genDao(tpl myGenTpl) {
 					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(g.Map{k: v}).Update()
 				}
 			} */`
-		tplDao = gstr.Replace(tplDao, pointOfinsertHook, `id, _ := result.LastInsertId()`+gstr.Join(append([]string{``}, dao.insertHook...), `
+		tplDao = gstr.Replace(tplDao, insertHookPoint, `id, _ := result.LastInsertId()`+gstr.Join(append([]string{``}, dao.insertHook...), `
 
 			`), 1)
 	}
+
+	// 解析update
 	if len(dao.updateParse) > 0 {
-		pointOfupdateParse := `case ` + "`id`" + `:
+		updateParsePoint := `case ` + "`id`" + `:
 				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, pointOfupdateParse, pointOfupdateParse+gstr.Join(append([]string{``}, dao.updateParse...), `
+		tplDao = gstr.Replace(tplDao, updateParsePoint, updateParsePoint+gstr.Join(append([]string{``}, dao.updateParse...), `
 			`), 1)
 	}
 	if len(dao.updateHookBefore) > 0 || len(dao.updateHookAfter) > 0 {
-		pointOfUpdateHook := `/* row, _ := result.RowsAffected()
+		updateHookPoint := `/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */
@@ -104,12 +153,12 @@ func genDao(tpl myGenTpl) {
 				}
 			} */`
 		if len(dao.updateHookBefore) > 0 {
-			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, gstr.Join(append(dao.updateHookBefore, ``), `
+			tplDao = gstr.Replace(tplDao, updateHookPoint, gstr.Join(append(dao.updateHookBefore, ``), `
 
-			`)+pointOfUpdateHook, 1)
+			`)+updateHookPoint, 1)
 		}
 		if len(dao.updateHookAfter) > 0 {
-			tplDao = gstr.Replace(tplDao, pointOfUpdateHook, `row, _ := result.RowsAffected()
+			tplDao = gstr.Replace(tplDao, updateHookPoint, `row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			}`+gstr.Join(append([]string{``}, dao.updateHookAfter...), `
@@ -117,54 +166,82 @@ func genDao(tpl myGenTpl) {
 			`), 1)
 		}
 	}
-	if len(dao.fieldParse) > 0 {
-		pointOffieldParse := `case ` + "`id`" + `:
-				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey() + ` + "` AS `" + ` + v)`
-		tplDao = gstr.Replace(tplDao, pointOffieldParse, pointOffieldParse+gstr.Join(append([]string{``}, dao.fieldParse...), `
-			`), 1)
-	}
-	if len(dao.fieldHook) > 0 {
-		pointOffieldHook := `default:
-						record[v] = gvar.New(nil)`
-		tplDao = gstr.Replace(tplDao, pointOffieldHook, gstr.Join(append(dao.fieldHook, ``), `
-					`)+pointOffieldHook, 1)
-	}
-	if len(dao.filterParse) > 0 {
-		pointOffilterParse := `case ` + "`id`, `idArr`" + `:
-				m = m.Where(daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey(), v)`
-		tplDao = gstr.Replace(tplDao, pointOffilterParse, pointOffilterParse+gstr.Join(append([]string{``}, dao.filterParse...), `
-			`), 1)
-	}
+
+	// 解析order
 	if len(dao.orderParse) > 0 {
-		pointOforderParse := `case ` + "`id`" + `:
+		orderParsePoint := `case ` + "`id`" + `:
 				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`
-		tplDao = gstr.Replace(tplDao, pointOforderParse, pointOforderParse+gstr.Join(append([]string{``}, dao.orderParse...), `
+		tplDao = gstr.Replace(tplDao, orderParsePoint, orderParsePoint+gstr.Join(append([]string{``}, dao.orderParse...), `
 			`), 1)
-	}
-	if len(dao.joinParse) > 0 {
-		pointOfjoinParse := `/* case Xxxx.ParseDbTable(m.GetCtx()):
-		m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()) */`
-		tplDao = gstr.Replace(tplDao, pointOfjoinParse, pointOfjoinParse+gstr.Join(append([]string{``}, dao.joinParse...), `
-		`), 1)
-	}
-	if len(dao.importDao) > 0 {
-		pointOfImportDao := `"api/internal/dao/` + tpl.ModuleDirCaseKebab + `/internal"`
-		tplDao = gstr.Replace(tplDao, pointOfImportDao, pointOfImportDao+gstr.Join(append([]string{``}, dao.importDao...), `
-	`), 1)
 	}
 
-	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/container/garray"
-	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/util/grand"`, 1)
+	// 解析join
+	if len(dao.joinParse) > 0 {
+		joinParsePoint := `/* case Xxxx.ParseDbTable(m.GetCtx()):
+		m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey())
+		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()) */`
+		tplDao = gstr.Replace(tplDao, joinParsePoint, joinParsePoint+gstr.Join(append([]string{``}, dao.joinParse...), `
+		`), 1)
+	}
 
 	gfile.PutContents(saveFile, tplDao)
 	utils.GoFileFmt(saveFile)
 }
 
 func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
+	dao.primaryKeyFunction = `// 主键ID
+func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() string {
+	return ` + "`" + tpl.Handle.Id.List[0].FieldRaw + "`" + `
+}`
+	if len(tpl.Handle.Id.List) == 1 {
+		dao.filterParse = append(dao.filterParse, `case `+"`id`, `idArr`"+`:
+				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)`)
+		dao.filterParse = append(dao.filterParse, `case `+"`excId`, `excIdArr`"+`:
+				if gvar.New(v).IsSlice() {
+					m = m.WhereNotIn(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)
+				} else {
+					m = m.WhereNot(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)
+				}`)
+		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
+				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey() + `+"` AS `"+` + v)`)
+	} else {
+		filterParseStrArr := []string{}
+		fieldParseStrArr := []string{}
+		for _, v := range tpl.Handle.Id.List {
+			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
+			fieldParseStrArr = append(fieldParseStrArr, "IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `, '')")
+		}
+		dao.filterParse = append(dao.filterParse, `case `+"`id`, `idArr`"+`:
+				idArr := []string{gconv.String(v)}
+				if gvar.New(v).IsSlice() {
+					idArr = gconv.SliceStr(v)
+				}
+				inStrArr := []string{}
+				for _, id := range idArr {
+					gstr.Replace(gconv.String(id), `+"`|`, `', '`)"+`
+					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(gconv.String(id), `|`, `', '`)+`')`)"+`
+				}
+				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) IN (` + gstr.Join(inStrArr, `, `) + `)`)")
+		dao.filterParse = append(dao.filterParse, `case `+"`excId`, `excIdArr`"+`:
+				idArr := []string{gconv.String(v)}
+				if gvar.New(v).IsSlice() {
+					idArr = gconv.SliceStr(v)
+				}
+				inStrArr := []string{}
+				for _, id := range idArr {
+					gstr.Replace(gconv.String(id), `+"`|`, `', '`)"+`
+					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(gconv.String(id), `|`, `', '`)+`')`)"+`
+				}
+				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)")
+		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
+				m = m.Fields(`+"`"+`CONCAT_WS('|', `+gstr.Join(fieldParseStrArr, `, `)+")` + ` AS ` + v)")
+	}
+	/* switch tpl.Handle.Id.Type {
+	case TypeInt:
+	case TypeIntU:
+	default:
+	} */
+
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 0 {
 		fieldParseStr := `case ` + "`label`" + `:

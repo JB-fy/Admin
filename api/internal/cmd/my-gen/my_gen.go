@@ -24,8 +24,6 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 			good_rel_to_category			说明：good和good_category属同模块，故good_category可省略good_前缀
 
 表字段名统一使用小驼峰或蛇形命名（建议：小驼峰）
-	主键必须在第一个字段。否则需要在dao层重写PrimaryKey方法返回主键字段
-
 	尽量根据表名设置以下两个字段（作用1：常用于前端部分组件，如my-select或my-cascader等组件；作用2：用于关联表查询）
 		xxId主键字段。示例：good表命名goodId, good_category表命名categoryId
 		xxName或xxTitle字段。示例：good表命名goodName, article表命名articleTitle

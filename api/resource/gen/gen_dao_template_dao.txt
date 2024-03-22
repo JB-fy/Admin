@@ -55,6 +55,82 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseDbTable(ctx context.Context
 	return table
 }
 
+// 解析filter
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+	return func(m *gdb.Model) *gdb.Model {
+		for k, v := range filter {
+			switch k {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Where(tableXxxx+`.`+k, v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
+			default:
+				if daoThis.ColumnArr().Contains(k) {
+					m = m.Where(daoModel.DbTable+`.`+k, v)
+				} else {
+					m = m.Where(k, v)
+				}
+			}
+		}
+		return m
+	}
+}
+
+// 解析field
+func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+	return func(m *gdb.Model) *gdb.Model {
+		for _, v := range field {
+			switch v {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Fields(tableXxxx + `.` + v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
+			daoModel.AfterField.Add(v) */
+			default:
+				if daoThis.ColumnArr().Contains(v) {
+					m = m.Fields(daoModel.DbTable + `.` + v)
+				} else {
+					m = m.Fields(v)
+				}
+			}
+		}
+		for k, v := range fieldWithParam {
+			switch k {
+			default:
+				daoModel.AfterFieldWithParam[k] = v
+			}
+		}
+		return m
+	}
+}
+
+// hook select
+func (daoThis *{TplTableNameCamelLowerCase}Dao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for _, record := range result {
+				for _, v := range daoModel.AfterField.Slice() {
+					switch v {
+					default:
+						record[v] = gvar.New(nil)
+					}
+				}
+				/* for k, v := range daoModel.AfterFieldWithParam {
+					switch k {
+					case `xxxx`:
+						record[k] = gvar.New(v)
+					}
+				} */
+			}
+			return
+		},
+	}
+}
+
 // 解析insert
 func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -172,86 +248,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) HookDelete(daoModel *daoIndex.Da
 			} */
 			return
 		},
-	}
-}
-
-// 解析field
-func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
-	return func(m *gdb.Model) *gdb.Model {
-		for _, v := range field {
-			switch v {
-			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField.Add(v) */
-			case `id`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			default:
-				if daoThis.ColumnArr().Contains(v) {
-					m = m.Fields(daoModel.DbTable + `.` + v)
-				} else {
-					m = m.Fields(v)
-				}
-			}
-		}
-		for k, v := range fieldWithParam {
-			switch k {
-			default:
-				daoModel.AfterFieldWithParam[k] = v
-			}
-		}
-		return m
-	}
-}
-
-// hook select
-func (daoThis *{TplTableNameCamelLowerCase}Dao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for _, record := range result {
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
-			return
-		},
-	}
-}
-
-// 解析filter
-func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
-	return func(m *gdb.Model) *gdb.Model {
-		for k, v := range filter {
-			switch k {
-			case `excId`, `excIdArr`:
-				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-				}
-			case `id`, `idArr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-			default:
-				if daoThis.ColumnArr().Contains(k) {
-					m = m.Where(daoModel.DbTable+`.`+k, v)
-				} else {
-					m = m.Where(k, v)
-				}
-			}
-		}
-		return m
 	}
 }
 
