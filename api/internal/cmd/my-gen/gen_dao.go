@@ -26,6 +26,8 @@ type myGenDao struct {
 	updateHookBefore []string
 	updateHookAfter  []string
 
+	groupParse []string
+
 	orderParse []string
 
 	joinParse []string
@@ -112,10 +114,12 @@ func genDao(tpl myGenTpl) {
 		`)+insertParseBeforePoint, 1)
 	}
 	if len(dao.insertParse) > 0 {
-		insertParsePoint := `case ` + "`id`" + `:
-				insertData[daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, insertParsePoint, insertParsePoint+gstr.Join(append([]string{``}, dao.insertParse...), `
-			`), 1)
+		insertParsePoint := `default:
+				if daoThis.ColumnArr().Contains(k) {
+					insertData[k] = v
+				}`
+		tplDao = gstr.Replace(tplDao, insertParsePoint, gstr.Join(append(dao.insertParse, ``), `
+			`)+insertParsePoint, 1)
 	}
 	if len(dao.insertHook) > 0 {
 		insertHookPoint := `// id, _ := result.LastInsertId()
@@ -133,10 +137,12 @@ func genDao(tpl myGenTpl) {
 
 	// 解析update
 	if len(dao.updateParse) > 0 {
-		updateParsePoint := `case ` + "`id`" + `:
-				updateData[daoModel.DbTable+` + "`.`" + `+daoThis.PrimaryKey()] = v`
-		tplDao = gstr.Replace(tplDao, updateParsePoint, updateParsePoint+gstr.Join(append([]string{``}, dao.updateParse...), `
-			`), 1)
+		updateParsePoint := `default:
+				if daoThis.ColumnArr().Contains(k) {
+					updateData[daoModel.DbTable+` + "`.`" + `+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+				}`
+		tplDao = gstr.Replace(tplDao, updateParsePoint, gstr.Join(append(dao.updateParse, ``), `
+			`)+updateParsePoint, 1)
 	}
 	if len(dao.updateHookBefore) > 0 || len(dao.updateHookAfter) > 0 {
 		updateHookPoint := `/* row, _ := result.RowsAffected()
@@ -168,11 +174,27 @@ func genDao(tpl myGenTpl) {
 	}
 
 	// 解析order
+	if len(dao.groupParse) > 0 {
+		groupParsePoint := `default:
+				if daoThis.ColumnArr().Contains(v) {
+					m = m.Group(daoModel.DbTable + ` + "`.`" + ` + v)
+				} else {
+					m = m.Group(v)
+				}`
+		tplDao = gstr.Replace(tplDao, groupParsePoint, gstr.Join(append(dao.groupParse, ``), `
+			`)+groupParsePoint, 1)
+	}
+
+	// 解析order
 	if len(dao.orderParse) > 0 {
-		orderParsePoint := `case ` + "`id`" + `:
-				m = m.Order(daoModel.DbTable + ` + "`.`" + ` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`
-		tplDao = gstr.Replace(tplDao, orderParsePoint, orderParsePoint+gstr.Join(append([]string{``}, dao.orderParse...), `
-			`), 1)
+		orderParsePoint := `default:
+				if daoThis.ColumnArr().Contains(k) {
+					m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
+				} else {
+					m = m.Order(v)
+				}`
+		tplDao = gstr.Replace(tplDao, orderParsePoint, gstr.Join(append(dao.orderParse, ``), `
+			`)+orderParsePoint, 1)
 	}
 
 	// 解析join
@@ -204,12 +226,26 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 				}`)
 		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
 				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey() + `+"` AS `"+` + v)`)
+		if !tpl.Handle.Id.List[0].IsAutoInc {
+			dao.insertParse = append(dao.insertParse, `case `+"`id`"+`:
+					insertData[daoThis.PrimaryKey()] = v`)
+			dao.updateParse = append(dao.updateParse, `case `+"`id`"+`:
+					updateData[daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey()] = v`)
+		}
+		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:
+				m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())`)
+		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
+				m = m.Order(daoModel.DbTable + `+"`.`"+` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`)
 	} else {
 		filterParseStrArr := []string{}
 		fieldParseStrArr := []string{}
+		groupParseStrArr := []string{}
+		orderParseStrArr := []string{}
 		for _, v := range tpl.Handle.Id.List {
 			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
 			fieldParseStrArr = append(fieldParseStrArr, "IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `, '')")
+			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
+			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `idArr`"+`:
 				idArr := []string{gconv.String(v)}
@@ -235,6 +271,15 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)")
 		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
 				m = m.Fields(`+"`"+`CONCAT_WS('|', `+gstr.Join(fieldParseStrArr, `, `)+")` + ` AS ` + v)")
+		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:`+gstr.Join(append([]string{``}, groupParseStrArr...), `
+				`))
+		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
+				suffix := gstr.TrimLeftStr(kArr[0], k, 1)
+				`+gstr.Join(append(orderParseStrArr, ``), `
+				`)+`remain := gstr.TrimLeftStr(gstr.TrimLeftStr(v, k+suffix, 1), `+"`,`"+`, 1)
+				if remain != `+"``"+` {
+					m = m.Order(remain)
+				}`)
 	}
 	/* switch tpl.Handle.Id.Type {
 	case TypeInt:

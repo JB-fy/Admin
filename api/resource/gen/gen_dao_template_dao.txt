@@ -137,8 +137,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert map[string]in
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
-			case `id`:
-				insertData[daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -180,8 +178,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseUpdate(update map[string]in
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
-			case `id`:
-				updateData[daoModel.DbTable+`.`+daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
@@ -256,8 +252,6 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseGroup(group []string, daoMo
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
-			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -275,13 +269,12 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseOrder(order []string, daoMo
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
-			k := gstr.Split(v, ` `)[0]
+			kArr := gstr.Split(v, `,`)
+			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
-			case `id`:
-				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					m = m.Order(daoModel.DbTable+`.`+v)
+					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)
 				}
