@@ -211,10 +211,12 @@ func genDao(tpl myGenTpl) {
 }
 
 func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
-	dao.primaryKeyFunction = `// 主键ID
+	if !tpl.Handle.Id.IsFirst {
+		dao.primaryKeyFunction = `// 主键ID
 func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() string {
 	return ` + "`" + tpl.Handle.Id.List[0].FieldRaw + "`" + `
 }`
+	}
 	if len(tpl.Handle.Id.List) == 1 {
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `idArr`"+`:
 				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)`)
