@@ -9,6 +9,7 @@ import (
 
 type myGenViewList struct {
 	rowHeight uint
+	idType    string
 	columns   []string
 }
 
@@ -133,7 +134,7 @@ const handleAdd = () => {
 		tplView += `
 //批量删除
 const handleBatchDelete = () => {
-    const idArr: number[] = []
+    const idArr: ` + viewList.idType + `[] = []
     table.data.forEach((item: any) => {
         if (item.checked) {
             idArr.push(item.id)
@@ -149,7 +150,7 @@ const handleBatchDelete = () => {
 	if option.IsCreate || option.IsUpdate {
 		tplView += `
 //编辑|复制
-const handleEditCopy = (id: number, type: string = 'edit') => {
+const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
     request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/info', { id: id })
         .then((res) => {
             saveCommon.data = { ...res.data.info }
@@ -172,7 +173,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
 	if option.IsDelete {
 		tplView += `
 //删除
-const handleDelete = (idArr: number[]) => {
+const handleDelete = (idArr: ` + viewList.idType + `[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
@@ -192,7 +193,7 @@ const handleDelete = (idArr: number[]) => {
 	if option.IsUpdate {
 		tplView += `
 //更新
-const handleUpdate = async (param: { idArr: number[]; [propName: string]: any }) => {
+const handleUpdate = async (param: { idArr: ` + viewList.idType + `[]; [propName: string]: any }) => {
     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/update', param, true)
 }`
 	}
@@ -316,6 +317,10 @@ defineExpose({
 
 func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewList) {
 	viewList.rowHeight = 50
+	viewList.idType = `number`
+	if !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.Type) {
+		viewList.idType = `string`
+	}
 
 	for _, v := range tpl.FieldList {
 		viewListField := myGenViewListField{}
@@ -361,6 +366,7 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNamePri: // 主键（非联合）
+			continue
 		case TypeNamePriAutoInc: // 自增主键（非联合）
 			continue
 		case TypeNameDeleted: // 软删除字段

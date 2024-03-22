@@ -32,7 +32,7 @@ type myGenTpl struct {
 	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
 	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	Handle                    struct {                   //需特殊处理的字段
-		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
+		Id struct { //TODO 主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
 			IsPrimary bool //是否主键
 			List      []myGenField
 			Type      myGenFieldType

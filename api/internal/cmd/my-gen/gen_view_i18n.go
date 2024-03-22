@@ -66,6 +66,7 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNamePri: // 主键（非联合）
+			continue
 		case TypeNamePriAutoInc: // 自增主键（非联合）
 			continue
 		case TypeNameDeleted: // 软删除字段

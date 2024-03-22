@@ -50,10 +50,7 @@ const queryForm = reactive({
 </script>
 
 <template>
-    <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
-        <el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
-        </el-form-item>` + gstr.Join(append([]string{``}, viewQuery.form...), `
+    <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">` + gstr.Join(append([]string{``}, viewQuery.form...), `
         `) + `
         <el-form-item>
             <el-button type="primary" @click="queryForm.submit" :loading="queryForm.loading"> <autoicon-ep-search />{{ t('common.query') }} </el-button>
@@ -68,6 +65,26 @@ const queryForm = reactive({
 }
 
 func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
+	switch tpl.Handle.Id.Type {
+	case TypeInt:
+		viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :controls="false" />
+        </el-form-item>`)
+	case TypeIntU:
+		viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
+        </el-form-item>`)
+	default:
+		if len(tpl.Handle.Id.List) == 1 {
+			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="`+tpl.Handle.Id.List[0].FieldLimitStr+`" :clearable="true" />
+        </el-form-item>`)
+		} else {
+			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :clearable="true" />
+        </el-form-item>`)
+		}
+	}
 
 	for _, v := range tpl.FieldList {
 		viewQueryField := myGenViewQueryField{}
@@ -111,6 +128,7 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNamePri: // 主键（非联合）
+			continue
 		case TypeNamePriAutoInc: // 自增主键（非联合）
 			continue
 		case TypeNameDeleted: // 软删除字段
