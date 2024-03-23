@@ -318,7 +318,7 @@ defineExpose({
 func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewList) {
 	viewList.rowHeight = 50
 	viewList.idType = `number`
-	if !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.Type) {
+	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
 		viewList.idType = `string`
 	}
 
@@ -363,12 +363,21 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
+		/*--------根据字段主键类型处理 开始--------*/
+		switch v.FieldTypePrimary {
+		case TypePrimary: // 独立主键
+			if v.FieldRaw == `id` {
+				continue
+			}
+		case TypePrimaryAutoInc: // 独立主键（自增）
+			continue
+		case TypePrimaryMany: // 联合主键
+		case TypePrimaryManyAutoInc: // 联合主键（自增）
+		}
+		/*--------根据字段主键类型处理 结束--------*/
+
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键（非联合）
-			continue
-		case TypeNamePriAutoInc: // 自增主键（非联合）
-			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段

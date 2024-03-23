@@ -211,7 +211,7 @@ func genDao(tpl myGenTpl) {
 }
 
 func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
-	if !tpl.Handle.Id.IsFirst {
+	if tpl.Handle.Id.List[0].FieldRaw != tpl.FieldList[0].FieldRaw {
 		dao.primaryKeyFunction = `// 主键ID
 func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() string {
 	return ` + "`" + tpl.Handle.Id.List[0].FieldRaw + "`" + `
@@ -284,11 +284,6 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 					m = m.Order(remain)
 				}`)
 	}
-	/* switch tpl.Handle.Id.Type {
-	case TypeInt:
-	case TypeIntU:
-	default:
-	} */
 
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 0 {
@@ -367,10 +362,19 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
+		/*--------根据字段主键类型处理 开始--------*/
+		switch v.FieldTypePrimary {
+		case TypePrimary: // 独立主键
+		case TypePrimaryAutoInc: // 独立主键（自增）
+			continue
+		case TypePrimaryMany: // 联合主键
+		case TypePrimaryManyAutoInc: // 联合主键（自增）
+			continue
+		}
+		/*--------根据字段主键类型处理 结束--------*/
+
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键（非联合）
-		case TypeNamePriAutoInc: // 自增主键（非联合）
 		case TypeNameDeleted: // 软删除字段
 		case TypeNameUpdated: // 更新时间字段
 		case TypeNameCreated: // 创建时间字段

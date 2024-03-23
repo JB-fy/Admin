@@ -65,25 +65,25 @@ const queryForm = reactive({
 }
 
 func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
-	switch tpl.Handle.Id.Type {
-	case TypeInt:
-		viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+	if len(tpl.Handle.Id.List) == 1 {
+		switch tpl.Handle.Id.List[0].FieldType {
+		case TypeInt:
+			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :controls="false" />
         </el-form-item>`)
-	case TypeIntU:
-		viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+		case TypeIntU:
+			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </el-form-item>`)
-	default:
-		if len(tpl.Handle.Id.List) == 1 {
+		default:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
             <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="`+tpl.Handle.Id.List[0].FieldLimitStr+`" :clearable="true" />
         </el-form-item>`)
-		} else {
-			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
+		}
+	} else {
+		viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
             <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :clearable="true" />
         </el-form-item>`)
-		}
 	}
 
 	for _, v := range tpl.FieldList {
@@ -125,12 +125,21 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
+		/*--------根据字段主键类型处理 开始--------*/
+		switch v.FieldTypePrimary {
+		case TypePrimary: // 独立主键
+			if v.FieldRaw == `id` {
+				continue
+			}
+		case TypePrimaryAutoInc: // 独立主键（自增）
+			continue
+		case TypePrimaryMany: // 联合主键
+		case TypePrimaryManyAutoInc: // 联合主键（自增）
+		}
+		/*--------根据字段主键类型处理 结束--------*/
+
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键（非联合）
-			continue
-		case TypeNamePriAutoInc: // 自增主键（非联合）
-			continue
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段

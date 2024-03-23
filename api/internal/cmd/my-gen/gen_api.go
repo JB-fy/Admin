@@ -160,31 +160,31 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {` + gstr.Join(append([]string{``
 }
 
 func getApiFieldList(tpl myGenTpl) (api myGenApi) {
-	switch tpl.Handle.Id.Type {
-	case TypeInt:
-		api.filter = append(api.filter,
-			`Id *int `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
-			`IdArr []int `+"`"+`json:"idArr,omitempty" v:"distinct" dc:"ID数组"`+"`",
-			`ExcId *int `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
-			`ExcIdArr []int `+"`"+`json:"excIdArr,omitempty" v:"distinct" dc:"排除ID数组"`+"`",
-		)
-		api.info = append(api.info, `Id int `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
-		api.update = append(api.update, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
-		api.delete = append(api.delete, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
-		api.res = append(api.res, `Id *int `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
-	case TypeIntU:
-		api.filter = append(api.filter,
-			`Id *uint `+"`"+`json:"id,omitempty" v:"min:1" dc:"ID"`+"`",
-			`IdArr []uint `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`+"`",
-			`ExcId *uint `+"`"+`json:"excId,omitempty" v:"min:1" dc:"排除ID"`+"`",
-			`ExcIdArr []uint `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`+"`",
-		)
-		api.info = append(api.info, `Id uint `+"`"+`json:"id" v:"required|min:1" dc:"ID"`+"`")
-		api.update = append(api.update, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
-		api.delete = append(api.delete, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
-		api.res = append(api.res, `Id *uint `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
-	default:
-		if len(tpl.Handle.Id.List) == 1 {
+	if len(tpl.Handle.Id.List) == 1 {
+		switch tpl.Handle.Id.List[0].FieldType {
+		case TypeInt:
+			api.filter = append(api.filter,
+				`Id *int `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
+				`IdArr []int `+"`"+`json:"idArr,omitempty" v:"distinct" dc:"ID数组"`+"`",
+				`ExcId *int `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
+				`ExcIdArr []int `+"`"+`json:"excIdArr,omitempty" v:"distinct" dc:"排除ID数组"`+"`",
+			)
+			api.info = append(api.info, `Id int `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
+			api.update = append(api.update, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+			api.res = append(api.res, `Id *int `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
+		case TypeIntU:
+			api.filter = append(api.filter,
+				`Id *uint `+"`"+`json:"id,omitempty" v:"min:1" dc:"ID"`+"`",
+				`IdArr []uint `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`+"`",
+				`ExcId *uint `+"`"+`json:"excId,omitempty" v:"min:1" dc:"排除ID"`+"`",
+				`ExcIdArr []uint `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`+"`",
+			)
+			api.info = append(api.info, `Id uint `+"`"+`json:"id" v:"required|min:1" dc:"ID"`+"`")
+			api.update = append(api.update, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
+			api.res = append(api.res, `Id *uint `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
+		default:
 			api.filter = append(api.filter,
 				`Id string `+"`"+`json:"id,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`",
 				`IdArr []string `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`",
@@ -194,17 +194,18 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 			api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required|max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
 			api.update = append(api.update, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
 			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
-		} else {
-			api.filter = append(api.filter,
-				`Id string `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
-				`IdArr []string `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min-length:1" dc:"ID数组"`+"`",
-				`ExcId string `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
-				`ExcIdArr []string `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min-length:1" dc:"排除ID数组"`+"`",
-			)
-			api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+			api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		}
+	} else {
+		api.filter = append(api.filter,
+			`Id string `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
+			`IdArr []string `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min-length:1" dc:"ID数组"`+"`",
+			`ExcId string `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
+			`ExcIdArr []string `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min-length:1" dc:"排除ID数组"`+"`",
+		)
+		api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
+		api.update = append(api.update, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 
@@ -358,16 +359,15 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
-		/*--------根据字段命名类型处理 开始--------*/
-		switch v.FieldTypeName {
-		case TypeNamePri: // 主键（非联合）
+		/*--------根据字段主键类型处理 开始--------*/
+		switch v.FieldTypePrimary {
+		case TypePrimary: // 独立主键
 			if v.FieldRaw == `id` {
 				continue
 			}
 			apiField.filterType.Method = ReturnType
-			apiField.createType.Method = ReturnEmpty
-			apiField.updateType.Method = ReturnEmpty
-		case TypeNamePriAutoInc: // 自增主键（非联合）
+			// 创建和更新按数据类型和命名类型处理。但一般都是程序内封装ID生成逻辑（代码生成后可自行修改）
+		case TypePrimaryAutoInc: // 独立主键（自增）
 			if v.FieldRaw == `id` {
 				continue
 			}
@@ -377,6 +377,25 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 
 			apiField.filterRule.Method = ReturnUnion
 			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
+			// 跳过命名类型处理
+			goto finalHandle
+		case TypePrimaryMany: // 联合主键
+			apiField.filterType.Method = ReturnType
+			// 创建和更新按数据类型和命名类型处理
+		case TypePrimaryManyAutoInc: // 联合主键（自增）
+			apiField.filterType.Method = ReturnType
+			apiField.createType.Method = ReturnEmpty
+			apiField.updateType.Method = ReturnEmpty
+
+			apiField.filterRule.Method = ReturnUnion
+			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
+			// 跳过命名类型处理
+			goto finalHandle
+		}
+		/*--------根据字段主键类型处理 结束--------*/
+
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
 		case TypeNameDeleted: // 软删除字段
 			continue
 		case TypeNameUpdated: // 更新时间字段
@@ -524,6 +543,7 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
+	finalHandle:
 		if apiField.filterType.getData() != `` {
 			api.filter = append(api.filter, v.FieldCaseCamel+` `+apiField.filterType.getData()+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}

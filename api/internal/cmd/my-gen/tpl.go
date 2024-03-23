@@ -5,7 +5,6 @@ import (
 	"math"
 
 	"github.com/gogf/gf/v2/container/garray"
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -13,30 +12,27 @@ import (
 )
 
 type myGenTpl struct {
-	Link                      string                     //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr                  []string                   //当前数据库全部数据表（获取扩展表，中间表等需要）
-	Group                     string                     //数据库分组
-	RemovePrefixCommon        string                     //要删除的共有前缀
-	RemovePrefixAlone         string                     //要删除的独有前缀
-	RemovePrefix              string                     //要删除的前缀
-	TableType                 myGenTableType             //表类型。按该字段区分哪种功能表
-	Table                     string                     //表名（原始，包含前缀）
-	TableCaseSnake            string                     //表名（蛇形，已去除前缀）
-	TableCaseCamel            string                     //表名（大驼峰，已去除前缀）
-	TableCaseKebab            string                     //表名（横线，已去除前缀）
-	KeyList                   []myGenKey                 //索引列表
-	FieldListRaw              map[string]*gdb.TableField //字段列表（原始）
-	FieldList                 []myGenField               //字段列表
-	ModuleDirCaseCamel        string                     //模块目录（大驼峰，/会被去除）
-	ModuleDirCaseKebab        string                     //模块目录（横线，/会被保留）
-	ModuleDirCaseKebabReplace string                     //模块目录（横线，/被替换成.）
-	LogicStructName           string                     //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	Handle                    struct {                   //需特殊处理的字段
-		Id struct { //TODO 主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
+	Link                      string         //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr                  []string       //当前数据库全部数据表（获取扩展表，中间表等需要）
+	Group                     string         //数据库分组
+	RemovePrefixCommon        string         //要删除的共有前缀
+	RemovePrefixAlone         string         //要删除的独有前缀
+	RemovePrefix              string         //要删除的前缀
+	TableType                 myGenTableType //表类型。按该字段区分哪种功能表
+	Table                     string         //表名（原始，包含前缀）
+	TableCaseSnake            string         //表名（蛇形，已去除前缀）
+	TableCaseCamel            string         //表名（大驼峰，已去除前缀）
+	TableCaseKebab            string         //表名（横线，已去除前缀）
+	KeyList                   []myGenKey     //索引列表
+	FieldList                 []myGenField   //字段列表
+	ModuleDirCaseCamel        string         //模块目录（大驼峰，/会被去除）
+	ModuleDirCaseKebab        string         //模块目录（横线，/会被保留）
+	ModuleDirCaseKebabReplace string         //模块目录（横线，/被替换成.）
+	LogicStructName           string         //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	Handle                    struct {       //需特殊处理的字段
+		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
 			List      []myGenField
-			Type      myGenFieldType
 			IsPrimary bool //是否主键
-			IsFirst   bool //是否第一个字段
 		}
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
@@ -65,6 +61,7 @@ type myGenTpl struct {
 }
 
 type myGenTableType = uint
+type myGenFieldTypePrimary = string
 type myGenFieldType = int
 type myGenFieldTypeName = string
 
@@ -87,8 +84,11 @@ const (
 	TypeDatetime                            // `datetime类型`
 	TypeDate                                // `date类型`
 
-	TypeNamePri            myGenFieldTypeName = `主键（非联合）`
-	TypeNamePriAutoInc     myGenFieldTypeName = `自增主键（非联合）`
+	TypePrimary            myGenFieldTypeName = `独立主键`
+	TypePrimaryAutoInc     myGenFieldTypeName = `独立主键（自增）`
+	TypePrimaryMany        myGenFieldTypeName = `联合主键`
+	TypePrimaryManyAutoInc myGenFieldTypeName = `联合主键（自增）`
+
 	TypeNameDeleted        myGenFieldTypeName = `软删除字段`
 	TypeNameUpdated        myGenFieldTypeName = `更新时间字段`
 	TypeNameCreated        myGenFieldTypeName = `创建时间字段`
@@ -118,26 +118,31 @@ const (
 )
 
 type myGenField struct {
-	FieldRaw             string             // 字段（原始）
-	FieldCaseSnake       string             // 字段（蛇形）
-	FieldCaseCamel       string             // 字段（大驼峰）
-	FieldCaseSnakeRemove string             // 字段（蛇形。去除_of_后）
-	FieldCaseCamelRemove string             // 字段（大驼峰。去除_of_后）
-	FieldTypeRaw         string             // 字段类型（原始）
-	FieldType            myGenFieldType     // 字段类型（数据类型）
-	FieldTypeName        myGenFieldTypeName // 字段类型（命名类型）
-	IsAutoInc            bool               // 是否自增
-	IsUnique             bool               // 是否独立的唯一索引
-	IsNull               bool               // 字段是否可为NULL
-	Default              interface{}        // 默认值
-	Comment              string             // 注释（原始）。
-	FieldName            string             // 字段名称。由注释解析出来，前端显示用。符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用）
-	FieldDesc            string             // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
-	FieldTip             string             // 字段提示。由注释解析出来，前端提示用。
-	StatusList           [][2]string        // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-	FieldLimitStr        string             // 字符串字段限制。varchar表示最大长度；char表示长度；
-	FieldLimitFloat      [2]string          // 浮点数字段限制。第1个表示整数位，第2个表示小数位
-	FieldShowLenMax      int                // 显示长度。公式：汉字个数 + (其它字符个数 / 2)。前端el-select-v2等部分组件生成时，根据该值设置宽度
+	myGenFieldTmp
+	IsUnique             bool                  // 是否独立的唯一索引
+	FieldType            myGenFieldType        // 字段类型（数据类型）
+	FieldTypePrimary     myGenFieldTypePrimary // 字段类型（主键类型）
+	FieldTypeName        myGenFieldTypeName    // 字段类型（命名类型）
+	FieldCaseSnake       string                // 字段（蛇形）
+	FieldCaseCamel       string                // 字段（大驼峰）
+	FieldCaseSnakeRemove string                // 字段（蛇形。去除_of_后）
+	FieldCaseCamelRemove string                // 字段（大驼峰。去除_of_后）
+	FieldName            string                // 字段名称。由注释解析出来，前端显示用。符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用）
+	FieldDesc            string                // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
+	FieldTip             string                // 字段提示。由注释解析出来，前端提示用。
+	StatusList           [][2]string           // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+	FieldLimitStr        string                // 字符串字段限制。varchar表示最大长度；char表示长度；
+	FieldLimitFloat      [2]string             // 浮点数字段限制。第1个表示整数位，第2个表示小数位
+	FieldShowLenMax      int                   // 显示长度。公式：汉字个数 + (其它字符个数 / 2)。前端el-select-v2等部分组件生成时，根据该值设置宽度
+}
+
+type myGenFieldTmp struct {
+	FieldRaw     string      // 字段（原始）
+	FieldTypeRaw string      // 字段类型（原始）
+	IsNull       bool        // 字段是否可为NULL
+	Default      interface{} // 默认值
+	Comment      string      // 注释（原始）。
+	IsAutoInc    bool        // 是否自增
 }
 
 type myGenKey struct {
@@ -180,7 +185,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[tpl.Group])[0][`link`])
 	tpl.TableArr = tpl.getTable(ctx, tpl.Group)
 	tpl.KeyList = tpl.getTableKey(ctx, tpl.Group, tpl.Table)
-	tpl.FieldListRaw = tpl.getTableField(ctx, tpl.Group, tpl.Table)
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
 	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
@@ -203,15 +207,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.ModuleDirCaseKebabReplace = gstr.Replace(moduleDirCaseKebab, `/`, `.`)
 	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
 
-	fieldList := make([]myGenField, len(tpl.FieldListRaw))
-	for _, v := range tpl.FieldListRaw {
-		fieldTmp := myGenField{
-			FieldRaw:     v.Name,
-			FieldTypeRaw: v.Type,
-			IsNull:       v.Null,
-			Default:      v.Default,
-			Comment:      v.Comment,
-		}
+	fieldListTmp := tpl.getTableField(ctx, tpl.Group, tpl.Table)
+	fieldList := make([]myGenField, len(fieldListTmp))
+	for k, v := range fieldListTmp {
+		fieldTmp := myGenField{myGenFieldTmp: v}
 		fieldTmp.FieldCaseSnake = gstr.CaseSnake(fieldTmp.FieldRaw)
 		fieldTmp.FieldCaseCamel = gstr.CaseCamel(fieldTmp.FieldRaw)
 		fieldTmp.FieldCaseSnakeRemove = gstr.Split(fieldTmp.FieldCaseSnake, `_of_`)[0]
@@ -282,30 +281,37 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 		/*--------确定字段数据类型 结束--------*/
 
-		/*--------确定字段命名类型（部分命名类型需做二次确定） 开始--------*/
-		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
-		fieldPrefix := fieldSplitArr[0]
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		//先确定TypeNamePri：主键（非联合）； TypeNamePriAutoInc：自增主键（非联合）
+		/*--------确定字段主键类型 开始--------*/
 		for _, key := range tpl.KeyList {
 			if fieldTmp.FieldRaw != key.Field {
 				continue
 			}
-			if key.IsAutoInc {
-				fieldTmp.IsAutoInc = true
-			}
 			if key.IsUnique && len(key.FieldArr) == 1 {
 				fieldTmp.IsUnique = true
 			}
-			if key.IsPrimary && len(key.FieldArr) == 1 {
-				fieldTmp.FieldTypeName = TypeNamePri
+			if !key.IsPrimary {
+				continue
+			}
+			if len(key.FieldArr) == 1 {
+				fieldTmp.FieldTypePrimary = TypePrimary
 				if key.IsAutoInc {
-					fieldTmp.FieldTypeName = TypeNamePriAutoInc
+					fieldTmp.FieldTypePrimary = TypePrimaryAutoInc
+				}
+			} else {
+				fieldTmp.FieldTypePrimary = TypePrimaryMany
+				if key.IsAutoInc {
+					fieldTmp.FieldTypePrimary = TypePrimaryManyAutoInc
 				}
 			}
 		}
-		if garray.NewStrArrayFrom([]string{TypeNamePriAutoInc, TypeNamePri}).Contains(fieldTmp.FieldTypeName) {
-		} else if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldTmp.FieldCaseCamel) {
+		/*--------确定字段主键类型 结束--------*/
+
+		/*--------确定字段命名类型（部分命名类型需做二次确定） 开始--------*/
+		fieldSplitArr := gstr.Split(fieldTmp.FieldCaseSnakeRemove, `_`)
+		fieldPrefix := fieldSplitArr[0]
+		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+
+		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = TypeNameDeleted
 		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = TypeNameUpdated
@@ -402,7 +408,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 					tpl.Handle.Pid.Sort = fieldTmp.FieldRaw
 				}
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
+			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) && fieldTmp.FieldRaw != `id` { //id后缀
 				fieldTmp.FieldTypeName = TypeNameIdSuffix
 				handleRelIdObj := handleRelId{
 					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldRaw),
@@ -431,7 +437,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 		/*--------确定字段命名类型（部分命名类型需做二次确定） 结束--------*/
 
-		fieldList[v.Index] = fieldTmp
+		fieldList[k] = fieldTmp
 	}
 
 	/*--------解析影响命名类型二次确认，且需特殊处理的字段 开始--------*/
@@ -490,12 +496,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 	if len(tpl.Handle.Id.List) == 0 {
 		tpl.Handle.Id.List = append(tpl.Handle.Id.List, fieldList[0])
-	}
-	if len(tpl.Handle.Id.List) == 1 {
-		tpl.Handle.Id.Type = tpl.Handle.Id.List[0].FieldType
-	}
-	if tpl.Handle.Id.List[0].FieldRaw == fieldList[0].FieldRaw {
-		tpl.Handle.Id.IsFirst = true
 	}
 	/*
 		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
@@ -560,14 +560,35 @@ func (myGenTplThis *myGenTpl) getTable(ctx context.Context, group string) (table
 	return
 }
 
-// 获取表字段
-func (myGenTplThis *myGenTpl) getTableField(ctx context.Context, group, table string) (fieldList map[string]*gdb.TableField) {
-	// fieldList, _ = g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)	// 除mysql外，其它数据库不兼容该sql语句
-	fieldList, _ = g.DB(group).TableFields(ctx, table) //框架只带的。应该兼容多种数据库吧
+// TODO 获取表字段（当前仅对mysql做处理）
+func (myGenTplThis *myGenTpl) getTableField(ctx context.Context, group, table string) (fieldList []myGenFieldTmp) {
+	switch g.DB(group).GetConfig().Type {
+	case `mysql`:
+		// fieldListTmp, _ := g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)	// 除mysql外，其它数据库不兼容该sql语句
+		fieldListTmp, _ := g.DB(group).TableFields(ctx, table)
+		fieldList = make([]myGenFieldTmp, len(fieldListTmp))
+		for _, v := range fieldListTmp {
+			field := myGenFieldTmp{
+				FieldRaw:     v.Name,
+				FieldTypeRaw: v.Type,
+				IsNull:       v.Null,
+				Default:      v.Default,
+				Comment:      v.Comment,
+			}
+			if v.Extra == `auto_increment` {
+				field.IsAutoInc = true
+			}
+			fieldList[v.Index] = field
+		}
+	case `sqlite`:
+	case `mssql`:
+	case `pgsql`:
+	case `oracle`:
+	}
 	return
 }
 
-// TODO 获取表索引（目前只支持mysql解析，故其它sql数据库，不支持扩展表和中间表关联生成）
+// TODO 获取表索引（当前仅对mysql做处理）
 func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table string) (keyList []myGenKey) {
 	switch g.DB(group).GetConfig().Type {
 	case `mysql`:
@@ -585,7 +606,7 @@ func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table stri
 			if key.Name == `PRIMARY` {
 				key.IsPrimary = true
 				for _, field := range fieldList {
-					if key.Field == field.Name && field.Extra == `auto_increment` {
+					if key.Field == field.FieldRaw && field.IsAutoInc {
 						key.IsAutoInc = true
 						break
 					}

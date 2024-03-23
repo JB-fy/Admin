@@ -330,10 +330,19 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 	}
 
 	for _, v := range tpl.FieldList {
+		/*--------根据字段主键类型处理 开始--------*/
+		switch v.FieldTypePrimary {
+		case TypePrimary: // 独立主键
+		case TypePrimaryAutoInc: // 独立主键（自增）
+			continue
+		case TypePrimaryMany: // 联合主键
+		case TypePrimaryManyAutoInc: // 联合主键（自增）
+			continue
+		}
+		/*--------根据字段主键类型处理 结束--------*/
+
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNamePri: // 主键（非联合）
-		case TypeNamePriAutoInc: // 自增主键（非联合）
 		case TypeNameDeleted: // 软删除字段
 		case TypeNameUpdated: // 更新时间字段
 		case TypeNameCreated: // 创建时间字段
