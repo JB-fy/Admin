@@ -562,29 +562,45 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 // 获取表
 func (myGenTplThis *myGenTpl) getTable(ctx context.Context, group string) (tableArr []string) {
-	tableArr, _ = g.DB(group).Tables(ctx) //框架只带的。应该兼容多种数据库吧
+	tableArr, _ = g.DB(group).Tables(ctx) //框架自带。大概率兼容多种数据库
 	return
 }
 
 // TODO 获取表字段（当前仅对mysql做处理）
 func (myGenTplThis *myGenTpl) getTableField(ctx context.Context, group, table string) (fieldList []myGenFieldTmp) {
+	fieldListTmp, _ := g.DB(group).TableFields(ctx, table) //框架自带。大概率兼容多种数据库
+	fieldList = make([]myGenFieldTmp, len(fieldListTmp))
+	for _, v := range fieldListTmp {
+		field := myGenFieldTmp{
+			FieldRaw:     v.Name,
+			FieldTypeRaw: v.Type,
+			IsNull:       v.Null,
+			Default:      v.Default,
+			Comment:      v.Comment,
+		}
+		fieldList[v.Index] = field
+	}
 	switch g.DB(group).GetConfig().Type {
 	case `mysql`:
-		// fieldListTmp, _ := g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)	// 除mysql外，其它数据库不兼容该sql语句
-		fieldListTmp, _ := g.DB(group).TableFields(ctx, table)
+		/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
 		fieldList = make([]myGenFieldTmp, len(fieldListTmp))
+		for k, v := range fieldListTmp {
+			fieldList[k] = myGenFieldTmp{
+				// KeyRaw:       v[`Key`].String(),
+				FieldRaw:     v[`Field`].String(),
+				FieldTypeRaw: v[`Type`].String(),
+				IsNull:       v[`Null`].Bool(),
+				Default:      v[`Default`].String(),
+				Comment:      v[`Comment`].String(),
+			}
+			if v[`Extra`].String() == `auto_increment` {
+				fieldList[k].IsAutoInc = true
+			}
+		} */
 		for _, v := range fieldListTmp {
-			field := myGenFieldTmp{
-				FieldRaw:     v.Name,
-				FieldTypeRaw: v.Type,
-				IsNull:       v.Null,
-				Default:      v.Default,
-				Comment:      v.Comment,
-			}
 			if v.Extra == `auto_increment` {
-				field.IsAutoInc = true
+				fieldList[v.Index].IsAutoInc = true
 			}
-			fieldList[v.Index] = field
 		}
 	case `sqlite`:
 	case `mssql`:
