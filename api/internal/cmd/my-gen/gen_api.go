@@ -366,7 +366,7 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 				continue
 			}
 			apiField.filterType.Method = ReturnType
-			// 创建和更新按数据类型和命名类型处理。但一般都是程序内封装ID生成逻辑（代码生成后可自行修改）
+			// 创建和更新按数据类型和命名类型处理。但这种主键一般会在程序内封装ID生成逻辑（可在代码生成后修改）
 		case TypePrimaryAutoInc: // 独立主键（自增）
 			if v.FieldRaw == `id` {
 				continue
