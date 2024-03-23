@@ -239,6 +239,7 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
 				m = m.Order(daoModel.DbTable + `+"`.`"+` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`)
 	} else {
+		concatStr := `|`
 		filterParseStrArr := []string{}
 		fieldParseStrArr := []string{}
 		groupParseStrArr := []string{}
@@ -256,8 +257,8 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 				}
 				inStrArr := []string{}
 				for _, id := range idArr {
-					gstr.Replace(gconv.String(id), `+"`|`, `', '`)"+`
-					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(gconv.String(id), `|`, `', '`)+`')`)"+`
+					gstr.Replace(gconv.String(id), `+"`"+concatStr+"`, `', '`)"+`
+					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(gconv.String(id), `"+concatStr+"`, `', '`)+`')`)"+`
 				}
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) IN (` + gstr.Join(inStrArr, `, `) + `)`)")
 		dao.filterParse = append(dao.filterParse, `case `+"`excId`, `excIdArr`"+`:
@@ -267,12 +268,12 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 				}
 				inStrArr := []string{}
 				for _, id := range idArr {
-					gstr.Replace(gconv.String(id), `+"`|`, `', '`)"+`
-					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(gconv.String(id), `|`, `', '`)+`')`)"+`
+					gstr.Replace(gconv.String(id), `+"`"+concatStr+"`, `', '`)"+`
+					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(gconv.String(id), `"+concatStr+"`, `', '`)+`')`)"+`
 				}
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)")
 		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
-				m = m.Fields(`+"`"+`CONCAT_WS('|', `+gstr.Join(fieldParseStrArr, `, `)+")` + ` AS ` + v)")
+				m = m.Fields(`+"`"+`CONCAT_WS('`+concatStr+`', `+gstr.Join(fieldParseStrArr, `, `)+")` + ` AS ` + v)")
 		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:`+gstr.Join(append([]string{``}, groupParseStrArr...), `
 				`))
 		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
