@@ -63,7 +63,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) (res *apiAuth.RoleInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Role.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `menuIdArr`, `actionIdArr`)
+	allowField = append(allowField, `id`, `label`, `menuIdArr`, `actionIdArr`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

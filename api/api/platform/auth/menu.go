@@ -62,8 +62,8 @@ type MenuListItem struct {
 /*--------详情 开始--------*/
 type MenuInfoReq struct {
 	g.Meta `path:"/menu/info" method:"post" tags:"平台后台/权限管理/菜单" sm:"详情"`
-	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 }
 
 type MenuInfoRes struct {
@@ -96,7 +96,7 @@ type MenuCreateReq struct {
 	MenuName  *string `json:"menuName,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneId   *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
-	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30" dc:"图标"`
+	MenuIcon  *string `json:"menuIcon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extraData,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" v:"between:0,100" dc:"排序值。从小到大排序，默认50，范围0-100"`

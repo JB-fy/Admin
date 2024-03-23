@@ -46,7 +46,6 @@ type RoleListItem struct {
 	UpdatedAt *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
 	SceneName *string     `json:"sceneName,omitempty" dc:"场景"`
-	SceneCode *string     `json:"sceneCode,omitempty" dc:"场景标识"`
 	TableName *string     `json:"tableName,omitempty" dc:"关联名称"`
 }
 
@@ -55,8 +54,8 @@ type RoleListItem struct {
 /*--------详情 开始--------*/
 type RoleInfoReq struct {
 	g.Meta `path:"/role/info" method:"post" tags:"平台后台/权限管理/角色" sm:"详情"`
-	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 }
 
 type RoleInfoRes struct {
@@ -73,7 +72,6 @@ type RoleInfo struct {
 	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
-	SceneName   *string     `json:"sceneName,omitempty" dc:"场景名称"`
 	MenuIdArr   []uint      `json:"menuIdArr,omitempty" dc:"菜单ID列表"`
 	ActionIdArr []uint      `json:"actionIdArr,omitempty" dc:"操作ID列表"`
 }

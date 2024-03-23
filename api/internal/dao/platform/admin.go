@@ -60,14 +60,122 @@ func (daoThis *adminDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[str
 	return table
 }
 
+// 解析filter
+func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+	return func(m *gdb.Model) *gdb.Model {
+		for k, v := range filter {
+			switch k {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Where(tableXxxx+`.`+k, v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
+			case `id`, `idArr`:
+				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+			case `excId`, `excIdArr`:
+				if gvar.New(v).IsSlice() {
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+				} else {
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+				}
+			case `label`:
+				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
+			case `timeRangeStart`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `timeRangeEnd`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:
+				tableRoleRelOfPlatformAdmin := daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
+				m = m.Where(tableRoleRelOfPlatformAdmin+`.`+k, v)
+				m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
+			case `loginName`:
+				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
+				} else {
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Account, v)
+				}
+			default:
+				if daoThis.ColumnArr().Contains(k) {
+					m = m.Where(daoModel.DbTable+`.`+k, v)
+				} else {
+					m = m.Where(k, v)
+				}
+			}
+		}
+		return m
+	}
+}
+
+// 解析field
+func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+	return func(m *gdb.Model) *gdb.Model {
+		for _, v := range field {
+			switch v {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Fields(tableXxxx + `.` + v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
+			daoModel.AfterField.Add(v) */
+			case `id`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+			case `label`:
+				m = m.Fields(`IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `)) AS ` + v)
+			case `roleIdArr`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				daoModel.AfterField.Add(v)
+			default:
+				if daoThis.ColumnArr().Contains(v) {
+					m = m.Fields(daoModel.DbTable + `.` + v)
+				} else {
+					m = m.Fields(v)
+				}
+			}
+		}
+		for k, v := range fieldWithParam {
+			switch k {
+			default:
+				daoModel.AfterFieldWithParam[k] = v
+			}
+		}
+		return m
+	}
+}
+
+// hook select
+func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for _, record := range result {
+				for _, v := range daoModel.AfterField.Slice() {
+					switch v {
+					case `roleIdArr`:
+						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
+						record[v] = gvar.New(idArr)
+					default:
+						record[v] = gvar.New(nil)
+					}
+				}
+				/* for k, v := range daoModel.AfterFieldWithParam {
+					switch k {
+					case `xxxx`:
+						record[k] = gvar.New(v)
+					}
+				} */
+			}
+			return
+		},
+	}
+}
+
 // 解析insert
 func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
-			case `id`:
-				insertData[daoThis.PrimaryKey()] = v
 			case daoThis.Columns().Phone:
 				insertData[k] = v
 				if gconv.String(v) == `` {
@@ -130,8 +238,6 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoModel *da
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
-			case `id`:
-				updateData[daoModel.DbTable+`.`+daoThis.PrimaryKey()] = v
 			case daoThis.Columns().Phone:
 				updateData[daoModel.DbTable+`.`+k] = v
 				if gconv.String(v) == `` {
@@ -234,110 +340,6 @@ func (daoThis *adminDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 	}
 }
 
-// 解析field
-func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
-	return func(m *gdb.Model) *gdb.Model {
-		for _, v := range field {
-			switch v {
-			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField.Add(v) */
-			case `id`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			case `label`:
-				m = m.Fields(`IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `)) AS ` + v)
-			case `roleIdArr`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
-				daoModel.AfterField.Add(v)
-			default:
-				if daoThis.ColumnArr().Contains(v) {
-					m = m.Fields(daoModel.DbTable + `.` + v)
-				} else {
-					m = m.Fields(v)
-				}
-			}
-		}
-		for k, v := range fieldWithParam {
-			switch k {
-			default:
-				daoModel.AfterFieldWithParam[k] = v
-			}
-		}
-		return m
-	}
-}
-
-// hook select
-func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for _, record := range result {
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					case `roleIdArr`:
-						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
-						record[v] = gvar.New(idArr)
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
-			return
-		},
-	}
-}
-
-// 解析filter
-func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
-	return func(m *gdb.Model) *gdb.Model {
-		for k, v := range filter {
-			switch k {
-			case `excId`, `excIdArr`:
-				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-				}
-			case `id`, `idArr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-			case `label`:
-				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `loginName`:
-				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
-				} else {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Account, v)
-				}
-			case daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:
-				tableRoleRelOfPlatformAdmin := daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
-				m = m.Where(tableRoleRelOfPlatformAdmin+`.`+k, v)
-				m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
-			default:
-				if daoThis.ColumnArr().Contains(k) {
-					m = m.Where(daoModel.DbTable+`.`+k, v)
-				} else {
-					m = m.Where(k, v)
-				}
-			}
-		}
-		return m
-	}
-}
-
 // 解析group
 func (daoThis *adminDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -362,7 +364,8 @@ func (daoThis *adminDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
-			k := gstr.Split(v, ` `)[0]
+			kArr := gstr.Split(v, `,`)
+			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
