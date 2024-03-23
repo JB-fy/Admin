@@ -304,7 +304,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 }
 
 func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
-	if tpl.Handle.Id.List[0].FieldRaw != `id` /* && len(tpl.Handle.Id.List) == 1 */ {
+	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.list = []string{"`id`"}
 		controller.info = []string{"`id`"}
 		controller.tree = []string{"`id`"}
@@ -320,7 +320,7 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 			// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
 		}
 		controller.noAuth = append(controller.noAuth, "`label`")
-		if tpl.Handle.Id.List[0].FieldRaw != `id` /* && len(tpl.Handle.Id.List) == 1 */ {
+		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
 			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
 		}
 		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))

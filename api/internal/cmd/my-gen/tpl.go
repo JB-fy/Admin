@@ -510,10 +510,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
 		labelTmp := tpl.TableCaseCamel + v
 		labelList = append(labelList, labelTmp)
-		if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 {
+		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.IsPrimary {
 			fieldSplitArr := gstr.Split(tpl.Handle.Id.List[0].FieldCaseSnake, `_`)
-			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-			if fieldSuffix == `id` {
+			if fieldSplitArr[len(fieldSplitArr)-1] == `id` {
 				labelTmp1 := gstr.SubStr(tpl.Handle.Id.List[0].FieldCaseCamel, 0, -2) + v
 				if labelTmp1 != labelTmp && labelTmp1 != v {
 					labelList = append(labelList, labelTmp1)
@@ -783,9 +782,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 	}
 
-	fieldPrimaryArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
-	if fieldPrimaryArr[0] == `id` {
-		fieldPrimaryArr = append(fieldPrimaryArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
+	primaryKeyArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
+	if primaryKeyArr[0] == `id` {
+		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
 	}
 
 	for _, v := range tpl.TableArr {
@@ -800,7 +799,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
-			if len(key.FieldArr) == 1 && garray.NewStrArrayFrom(fieldPrimaryArr).Contains(gstr.CaseSnake(key.Field)) {
+			if len(key.FieldArr) == 1 && garray.NewStrArrayFrom(primaryKeyArr).Contains(gstr.CaseSnake(key.Field)) {
 				if key.IsPrimary {
 					if !key.IsAutoInc { //非自增主键
 						extendTpl.gfGenDao(false) //dao文件生成
