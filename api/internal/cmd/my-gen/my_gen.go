@@ -41,6 +41,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		限制命名：
 			ID			命名：id；		只允许用于独立主键，表其它字段禁用；表是联合主键则全表禁用
 			Label		命名：label；	全表禁用
+
 		固定命名：
 			父级		命名：pid；	类型：int等类型；
 			层级		命名：level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
