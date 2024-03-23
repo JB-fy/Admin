@@ -408,22 +408,28 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 					tpl.Handle.Pid.Sort = fieldTmp.FieldRaw
 				}
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) && fieldTmp.FieldRaw != `id` { //id后缀
-				fieldTmp.FieldTypeName = TypeNameIdSuffix
-				handleRelIdObj := handleRelId{
-					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldRaw),
-					FieldName: fieldTmp.FieldName,
+			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
+				primaryKeyArr := []string{gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1) + `_id`}
+				if primaryKeyArr[0] != `id` {
+					primaryKeyArr = append(primaryKeyArr, `id`)
 				}
-				if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
-					handleRelIdObj.FieldName = gstr.SubStr(handleRelIdObj.FieldName, 0, -2)
-				}
-				if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
-					handleRelIdObj.Suffix = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
-					if fieldTmp.FieldRaw != fieldTmp.FieldCaseSnake {
-						handleRelIdObj.Suffix = gstr.CaseCamel(handleRelIdObj.Suffix)
+				if !garray.NewStrArrayFrom(primaryKeyArr).Contains(fieldTmp.FieldCaseSnake) { // 本表id字段不算
+					fieldTmp.FieldTypeName = TypeNameIdSuffix
+					handleRelIdObj := handleRelId{
+						tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldRaw),
+						FieldName: fieldTmp.FieldName,
 					}
+					if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
+						handleRelIdObj.FieldName = gstr.SubStr(handleRelIdObj.FieldName, 0, -2)
+					}
+					if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
+						handleRelIdObj.Suffix = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
+						if fieldTmp.FieldRaw != fieldTmp.FieldCaseSnake {
+							handleRelIdObj.Suffix = gstr.CaseCamel(handleRelIdObj.Suffix)
+						}
+					}
+					tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
 				}
-				tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = TypeNameIsPrefix
 				// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
@@ -648,6 +654,14 @@ func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 	command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
 }
 
+func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, field string) bool {
+	primaryKeyArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
+	if primaryKeyArr[0] == `id` {
+		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
+	}
+	return garray.NewStrArrayFrom(primaryKeyArr).Contains(gstr.CaseSnake(field))
+}
+
 // status字段注释解析
 func (myGenTplThis *myGenTpl) getStatusList(comment string, isStr bool) (statusList [][2]string) {
 	var tmp [][]string
@@ -803,11 +817,6 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 	}
 
-	primaryKeyArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
-	if primaryKeyArr[0] == `id` {
-		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
-	}
-
 	for _, v := range tpl.TableArr {
 		if v == tpl.Table { //自身跳过
 			continue
@@ -820,7 +829,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
-			if len(key.FieldArr) == 1 && garray.NewStrArrayFrom(primaryKeyArr).Contains(gstr.CaseSnake(key.Field)) {
+			if len(key.FieldArr) == 1 && myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				if key.IsPrimary {
 					if !key.IsAutoInc { //非自增主键
 						extendTpl.gfGenDao(false) //dao文件生成

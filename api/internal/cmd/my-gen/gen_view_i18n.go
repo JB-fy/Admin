@@ -66,9 +66,6 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 		/*--------根据字段主键类型处理 开始--------*/
 		switch v.FieldTypePrimary {
 		case TypePrimary: // 独立主键
-			if v.FieldRaw == `id` {
-				continue
-			}
 		case TypePrimaryAutoInc: // 独立主键（自增）
 			continue
 		case TypePrimaryMany: // 联合主键
