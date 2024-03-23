@@ -63,8 +63,8 @@ type UserListItem struct {
 /*--------详情 开始--------*/
 type UserInfoReq struct {
 	g.Meta `path:"/user/info" method:"post" tags:"平台后台/用户管理/用户" sm:"详情"`
-	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
 }
 
 type UserInfoRes struct {
