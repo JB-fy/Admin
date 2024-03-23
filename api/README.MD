@@ -18,7 +18,6 @@ gf gen service
 1.新建数据库表。如：auth_test
 ```
 表名统一使用蛇形命名。不同功能表按以下表规则命名
-
 	主表：正常命名即可。参考以下示例
 		platform_admin
 		user
@@ -39,8 +38,9 @@ gf gen service
 表字段名统一使用小驼峰或蛇形命名（建议：小驼峰）
 	尽量根据表名设置以下两个字段（作用1：常用于前端部分组件，如my-select或my-cascader等组件；作用2：用于关联表查询）
 		xxId主键字段。示例：good表命名goodId, good_category表命名categoryId
+			注意：考虑兼容旧数据库，主键可命名为id（id命名只允许用于独立主键，表其它字段禁用；表是联合主键则全表禁用）
 		xxName或xxTitle字段。示例：good表命名goodName, article表命名articleTitle
-			如果不存在xxName或xxTitle字段，按以下优先级默认一个
+			注意：如果不存在xxName或xxTitle字段，按以下优先级使用
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
 				表名去掉前缀 + Title > 主键去掉ID + Title > Title >
 				表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
@@ -51,6 +51,9 @@ gf gen service
 	字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
 	字段按以下规则命名时，会做特殊处理，其它情况根据字段类型做默认处理
+		限制命名：
+			ID			命名：id；		只允许用于独立主键，表其它字段禁用；表是联合主键则全表禁用
+			Label		命名：label；	全表禁用
 		固定命名：
 			父级		命名：pid；	类型：int等类型；
 			层级		命名：level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
