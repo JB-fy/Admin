@@ -10,8 +10,9 @@ import (
 )
 
 type myGenDao struct {
-	importDao          []string
 	primaryKeyFunction string
+
+	importDao []string
 
 	filterParse []string
 
@@ -54,13 +55,61 @@ type myGenDaoField struct {
 	joinParse myGenDataSliceHandler
 }
 
+func (daoThis *myGenDao) Add(daoField myGenDaoField) {
+	daoThis.importDao = append(daoThis.importDao, daoField.importDao...)
+	daoThis.insertParseBefore = append(daoThis.insertParseBefore, daoField.insertParseBefore.getData()...)
+	daoThis.insertParse = append(daoThis.insertParse, daoField.insertParse.getData()...)
+	daoThis.insertHook = append(daoThis.insertHook, daoField.insertHook.getData()...)
+	daoThis.updateParse = append(daoThis.updateParse, daoField.updateParse.getData()...)
+	daoThis.updateHookBefore = append(daoThis.updateHookBefore, daoField.updateHookBefore.getData()...)
+	daoThis.updateHookAfter = append(daoThis.updateHookAfter, daoField.updateHookAfter.getData()...)
+	daoThis.fieldParse = append(daoThis.fieldParse, daoField.fieldParse.getData()...)
+	daoThis.fieldHook = append(daoThis.fieldHook, daoField.fieldHook.getData()...)
+	daoThis.filterParse = append(daoThis.filterParse, daoField.filterParse.getData()...)
+	daoThis.orderParse = append(daoThis.orderParse, daoField.orderParse.getData()...)
+	daoThis.joinParse = append(daoThis.joinParse, daoField.joinParse.getData()...)
+}
+
+func (daoThis *myGenDao) Merge(daoOther myGenDao) {
+	daoThis.importDao = append(daoThis.importDao, daoOther.importDao...)
+	daoThis.filterParse = append(daoThis.filterParse, daoOther.filterParse...)
+	daoThis.fieldParse = append(daoThis.fieldParse, daoOther.fieldParse...)
+	daoThis.fieldHook = append(daoThis.fieldHook, daoOther.fieldHook...)
+	daoThis.insertParseBefore = append(daoThis.insertParseBefore, daoOther.insertParseBefore...)
+	daoThis.insertParse = append(daoThis.insertParse, daoOther.insertParse...)
+	daoThis.insertHook = append(daoThis.insertHook, daoOther.insertHook...)
+	daoThis.updateParse = append(daoThis.updateParse, daoOther.updateParse...)
+	daoThis.updateHookBefore = append(daoThis.updateHookBefore, daoOther.updateHookBefore...)
+	daoThis.updateHookAfter = append(daoThis.updateHookAfter, daoOther.updateHookAfter...)
+	daoThis.groupParse = append(daoThis.groupParse, daoOther.groupParse...)
+	daoThis.orderParse = append(daoThis.orderParse, daoOther.orderParse...)
+	daoThis.joinParse = append(daoThis.joinParse, daoOther.joinParse...)
+}
+
+func (daoThis *myGenDao) Unique() {
+	daoThis.importDao = garray.NewStrArrayFrom(daoThis.importDao).Unique().Slice()
+	daoThis.insertParseBefore = garray.NewStrArrayFrom(daoThis.insertParseBefore).Unique().Slice()
+	daoThis.insertParse = garray.NewStrArrayFrom(daoThis.insertParse).Unique().Slice()
+	daoThis.insertHook = garray.NewStrArrayFrom(daoThis.insertHook).Unique().Slice()
+	daoThis.updateParse = garray.NewStrArrayFrom(daoThis.updateParse).Unique().Slice()
+	daoThis.updateHookBefore = garray.NewStrArrayFrom(daoThis.updateHookBefore).Unique().Slice()
+	daoThis.updateHookAfter = garray.NewStrArrayFrom(daoThis.updateHookAfter).Unique().Slice()
+	daoThis.fieldParse = garray.NewStrArrayFrom(daoThis.fieldParse).Unique().Slice()
+	daoThis.fieldHook = garray.NewStrArrayFrom(daoThis.fieldHook).Unique().Slice()
+	daoThis.filterParse = garray.NewStrArrayFrom(daoThis.filterParse).Unique().Slice()
+	daoThis.orderParse = garray.NewStrArrayFrom(daoThis.orderParse).Unique().Slice()
+	daoThis.joinParse = garray.NewStrArrayFrom(daoThis.joinParse).Unique().Slice()
+}
+
 // dao生成
 func genDao(tpl myGenTpl) {
 	tpl.gfGenDao(true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
 
-	dao := getDaoFieldList(tpl)
+	dao := getDaoIdAndLabel(tpl)
+	dao.Merge(getDaoFieldList(tpl))
+	dao.Unique()
 
 	if len(dao.importDao) > 0 {
 		importDaoPoint := `"api/internal/dao/` + tpl.ModuleDirCaseKebab + `/internal"`
@@ -210,7 +259,7 @@ func genDao(tpl myGenTpl) {
 	utils.GoFileFmt(saveFile)
 }
 
-func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
+func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 	if tpl.Handle.Id.List[0].FieldRaw != tpl.FieldList[0].FieldRaw {
 		dao.primaryKeyFunction = `// 主键ID
 func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() string {
@@ -310,7 +359,10 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 		dao.fieldParse = append(dao.fieldParse, fieldParseStr)
 		dao.filterParse = append(dao.filterParse, filterParseStr)
 	}
+	return
+}
 
+func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 	for _, v := range tpl.FieldList {
 		daoField := myGenDaoField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
@@ -624,32 +676,7 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		dao.importDao = append(dao.importDao, daoField.importDao...)
-		dao.insertParseBefore = append(dao.insertParseBefore, daoField.insertParseBefore.getData()...)
-		dao.insertParse = append(dao.insertParse, daoField.insertParse.getData()...)
-		dao.insertHook = append(dao.insertHook, daoField.insertHook.getData()...)
-		dao.updateParse = append(dao.updateParse, daoField.updateParse.getData()...)
-		dao.updateHookBefore = append(dao.updateHookBefore, daoField.updateHookBefore.getData()...)
-		dao.updateHookAfter = append(dao.updateHookAfter, daoField.updateHookAfter.getData()...)
-		dao.fieldParse = append(dao.fieldParse, daoField.fieldParse.getData()...)
-		dao.fieldHook = append(dao.fieldHook, daoField.fieldHook.getData()...)
-		dao.filterParse = append(dao.filterParse, daoField.filterParse.getData()...)
-		dao.orderParse = append(dao.orderParse, daoField.orderParse.getData()...)
-		dao.joinParse = append(dao.joinParse, daoField.joinParse.getData()...)
+		dao.Add(daoField)
 	}
-
-	// 做一次去重
-	dao.importDao = garray.NewStrArrayFrom(dao.importDao).Unique().Slice()
-	dao.insertParseBefore = garray.NewStrArrayFrom(dao.insertParseBefore).Unique().Slice()
-	dao.insertParse = garray.NewStrArrayFrom(dao.insertParse).Unique().Slice()
-	dao.insertHook = garray.NewStrArrayFrom(dao.insertHook).Unique().Slice()
-	dao.updateParse = garray.NewStrArrayFrom(dao.updateParse).Unique().Slice()
-	dao.updateHookBefore = garray.NewStrArrayFrom(dao.updateHookBefore).Unique().Slice()
-	dao.updateHookAfter = garray.NewStrArrayFrom(dao.updateHookAfter).Unique().Slice()
-	dao.fieldParse = garray.NewStrArrayFrom(dao.fieldParse).Unique().Slice()
-	dao.fieldHook = garray.NewStrArrayFrom(dao.fieldHook).Unique().Slice()
-	dao.filterParse = garray.NewStrArrayFrom(dao.filterParse).Unique().Slice()
-	dao.orderParse = garray.NewStrArrayFrom(dao.orderParse).Unique().Slice()
-	dao.joinParse = garray.NewStrArrayFrom(dao.joinParse).Unique().Slice()
 	return
 }

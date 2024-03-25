@@ -53,10 +53,10 @@ type myGenTpl struct {
 			Sort      string //排序字段
 		}
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
-		ExtendTableOneList  []myGenTpl             //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为不递增主键或唯一索引
-		ExtendTableManyList []myGenTpl             //扩展表（一对多）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为普通索引
-		MiddleTableOneList  []myGenTpl             //中间表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
-		MiddleTableManyList []myGenTpl             //中间表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
+		ExtendTableOneList  []handleExtendMiddle   //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为不递增主键或唯一索引
+		ExtendTableManyList []handleExtendMiddle   //扩展表（一对多）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为普通索引
+		MiddleTableOneList  []handleExtendMiddle   //中间表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
+		MiddleTableManyList []handleExtendMiddle   //中间表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
 	}
 }
 
@@ -84,10 +84,10 @@ const (
 	TypeDatetime                            // `datetime类型`
 	TypeDate                                // `date类型`
 
-	TypePrimary            myGenFieldTypeName = `独立主键`
-	TypePrimaryAutoInc     myGenFieldTypeName = `独立主键（自增）`
-	TypePrimaryMany        myGenFieldTypeName = `联合主键`
-	TypePrimaryManyAutoInc myGenFieldTypeName = `联合主键（自增）`
+	TypePrimary            myGenFieldTypePrimary = `独立主键`
+	TypePrimaryAutoInc     myGenFieldTypePrimary = `独立主键（自增）`
+	TypePrimaryMany        myGenFieldTypePrimary = `联合主键`
+	TypePrimaryManyAutoInc myGenFieldTypePrimary = `联合主键（自增）`
 
 	TypeNameDeleted        myGenFieldTypeName = `软删除字段`
 	TypeNameUpdated        myGenFieldTypeName = `更新时间字段`
@@ -149,7 +149,7 @@ type myGenKey struct {
 	Name      string   // 索引名称。主键：PRIMARY；其它：定义
 	Index     uint     // 索引顺序。从1开始，单索引都是1，联合索引按字段数量顺序递增
 	Field     string   // 字段（原始）
-	FieldArr  []string // 字段列表。联合索引有多字段，需按顺序存入
+	FieldArr  []string // 字段数组。联合索引有多字段，需按顺序存入
 	IsPrimary bool     // 是否主键
 	IsUnique  bool     // 是否唯一
 	IsAutoInc bool     // 是否自增
@@ -168,6 +168,11 @@ type handleRelId struct {
 	FieldName    string //字段名称
 	IsRedundName bool   //是否冗余过关联表名称字段
 	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+}
+
+type handleExtendMiddle struct {
+	tpl              myGenTpl
+	FieldArrOfIgnore []string //忽略字段数组
 }
 
 // 创建模板参数
@@ -824,7 +829,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 }
 
 // TODO 获取扩展表
-func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []myGenTpl, extendTableManyList []myGenTpl) {
+func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []handleExtendMiddle, extendTableManyList []handleExtendMiddle) {
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
 		return
 	}
@@ -847,17 +852,26 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldArr) == 1 && myGenTplThis.IsSamePrimary(tpl, key.Field) {
-				if key.IsPrimary {
-					if !key.IsAutoInc { //非自增主键
-						extendTpl.gfGenDao(false) //dao文件生成
-						extendTableOneList = append(extendTableOneList, extendTpl)
+				extendTpl.gfGenDao(false) //dao文件生成
+				handleExtendMiddleObj := handleExtendMiddle{
+					tpl:              extendTpl,
+					FieldArrOfIgnore: []string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field},
+				}
+				for _, item := range extendTpl.FieldList {
+					if garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(item.FieldTypeName)) {
+						handleExtendMiddleObj.FieldArrOfIgnore = append(handleExtendMiddleObj.FieldArrOfIgnore, item.FieldRaw)
 					}
-				} else if key.IsUnique {
-					extendTpl.gfGenDao(false) //dao文件生成
-					extendTableOneList = append(extendTableOneList, extendTpl)
+				}
+				if key.IsPrimary { //主键
+					if !key.IsAutoInc { //不自增
+						extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
+					}
 				} else {
-					extendTpl.gfGenDao(false) //dao文件生成
-					extendTableManyList = append(tpl.Handle.ExtendTableOneList, extendTpl)
+					if key.IsUnique { //唯一索引
+						extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
+					} else { //普通索引
+						extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
+					}
 				}
 			}
 		}

@@ -24,9 +24,50 @@ type myGenViewListField struct {
 	cellRenderer myGenDataStrHandler
 }
 
+func (viewListThis *myGenViewList) Add(viewListField myGenViewListField) {
+	columnAttrStr := []string{
+		`dataKey: ` + viewListField.dataKey.getData() + `,`,
+		`title: ` + viewListField.title.getData() + `,`,
+		`key: ` + viewListField.key.getData() + `,`,
+		`align: ` + viewListField.align.getData() + `,`,
+		`width: ` + viewListField.width.getData() + `,`,
+	}
+	if viewListField.sortable.getData() != `` {
+		columnAttrStr = append(columnAttrStr, `sortable: `+viewListField.sortable.getData()+`,`)
+	}
+	if viewListField.hidden.getData() != `` {
+		columnAttrStr = append(columnAttrStr, `hidden: `+viewListField.hidden.getData()+`,`)
+	}
+	if viewListField.cellRenderer.getData() != `` {
+		columnAttrStr = append(columnAttrStr, `cellRenderer: `+viewListField.cellRenderer.getData()+`,`)
+	}
+	viewListThis.columns = append(viewListThis.columns, `{`+gstr.Join(append([]string{``}, columnAttrStr...), `
+            `)+`
+        },`)
+}
+
+func (viewListThis *myGenViewList) Merge(viewListOther myGenViewList) {
+	if viewListThis.rowHeight < viewListOther.rowHeight {
+		viewListThis.rowHeight = viewListOther.rowHeight
+	}
+	viewListThis.columns = append(viewListThis.columns, viewListOther.columns...)
+}
+
+func (viewListThis *myGenViewList) Unique() {
+	viewListThis.columns = garray.NewStrArrayFrom(viewListThis.columns).Unique().Slice()
+}
+
 // 视图模板List生成
 func genViewList(option myGenOption, tpl myGenTpl) {
-	viewList := getViewListFieldList(option, tpl)
+	viewList := myGenViewList{
+		rowHeight: 50,
+		idType:    `number`,
+	}
+	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
+		viewList.idType = `string`
+	}
+	viewList.Merge(getViewListFieldList(option, tpl))
+	viewList.Unique()
 
 	tplView := `<script setup lang="tsx">
 const { t, tm } = useI18n()
@@ -316,12 +357,6 @@ defineExpose({
 }
 
 func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewList) {
-	viewList.rowHeight = 50
-	viewList.idType = `number`
-	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
-		viewList.idType = `string`
-	}
-
 	for _, v := range tpl.FieldList {
 		viewListField := myGenViewListField{}
 		viewListField.dataKey.Method = ReturnType
@@ -601,28 +636,7 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		columnAttrStr := []string{
-			`dataKey: ` + viewListField.dataKey.getData() + `,`,
-			`title: ` + viewListField.title.getData() + `,`,
-			`key: ` + viewListField.key.getData() + `,`,
-			`align: ` + viewListField.align.getData() + `,`,
-			`width: ` + viewListField.width.getData() + `,`,
-		}
-		if viewListField.sortable.getData() != `` {
-			columnAttrStr = append(columnAttrStr, `sortable: `+viewListField.sortable.getData()+`,`)
-		}
-		if viewListField.hidden.getData() != `` {
-			columnAttrStr = append(columnAttrStr, `hidden: `+viewListField.hidden.getData()+`,`)
-		}
-		if viewListField.cellRenderer.getData() != `` {
-			columnAttrStr = append(columnAttrStr, `cellRenderer: `+viewListField.cellRenderer.getData()+`,`)
-		}
-		viewList.columns = append(viewList.columns, `{`+gstr.Join(append([]string{``}, columnAttrStr...), `
-            `)+`
-        },`)
+		viewList.Add(viewListField)
 	}
-
-	// 做一次去重
-	viewList.columns = garray.NewStrArrayFrom(viewList.columns).Unique().Slice()
 	return
 }

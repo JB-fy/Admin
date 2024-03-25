@@ -17,9 +17,27 @@ type myGenController struct {
 	// diff      []string // 可以不要。数据返回时，会根据API文件中的结构体做过滤
 }
 
+func (controllerThis *myGenController) Merge(controllerOther myGenController) {
+	controllerThis.importDao = append(controllerThis.importDao, controllerOther.importDao...)
+	controllerThis.list = append(controllerThis.list, controllerOther.list...)
+	controllerThis.info = append(controllerThis.info, controllerOther.info...)
+	controllerThis.tree = append(controllerThis.tree, controllerOther.tree...)
+	controllerThis.noAuth = append(controllerThis.noAuth, controllerOther.noAuth...)
+}
+
+func (controllerThis *myGenController) Unique() {
+	controllerThis.importDao = garray.NewStrArrayFrom(controllerThis.importDao).Unique().Slice()
+	controllerThis.list = garray.NewStrArrayFrom(controllerThis.list).Unique().Slice()
+	controllerThis.info = garray.NewStrArrayFrom(controllerThis.info).Unique().Slice()
+	controllerThis.tree = garray.NewStrArrayFrom(controllerThis.tree).Unique().Slice()
+	controllerThis.noAuth = garray.NewStrArrayFrom(controllerThis.noAuth).Unique().Slice()
+}
+
 // controller生成
 func genController(option myGenOption, tpl myGenTpl) {
-	controller := getControllerFieldList(tpl)
+	controller := getControllerIdAndLabel(tpl)
+	controller.Merge(getControllerFieldList(tpl))
+	controller.Unique()
 
 	tplController := `package controller
 
@@ -303,6 +321,34 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	utils.GoFileFmt(saveFile)
 }
 
+func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
+	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
+		controller.list = []string{"`id`"}
+		controller.info = []string{"`id`"}
+		controller.tree = []string{"`id`"}
+	}
+	controller.noAuth = []string{"`id`"}
+
+	if len(tpl.Handle.LabelList) > 0 {
+		controller.list = append(controller.list, "`label`")
+		controller.info = append(controller.info, "`label`")
+		controller.tree = append(controller.tree, "`label`")
+		if tpl.Handle.Pid.Pid != `` {
+			controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
+			// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
+		}
+		controller.noAuth = append(controller.noAuth, "`label`")
+		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
+			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
+		}
+		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
+		/* for _, v := range tpl.Handle.LabelList {
+			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
+		} */
+	}
+	return
+}
+
 func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.list = []string{"`id`"}
@@ -386,12 +432,5 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 	}
-
-	// 做一次去重
-	controller.importDao = garray.NewStrArrayFrom(controller.importDao).Unique().Slice()
-	controller.list = garray.NewStrArrayFrom(controller.list).Unique().Slice()
-	controller.info = garray.NewStrArrayFrom(controller.info).Unique().Slice()
-	controller.tree = garray.NewStrArrayFrom(controller.tree).Unique().Slice()
-	controller.noAuth = garray.NewStrArrayFrom(controller.noAuth).Unique().Slice()
 	return
 }

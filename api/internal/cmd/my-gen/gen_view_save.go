@@ -28,6 +28,58 @@ type myGenViewSaveField struct {
 	paramHandle    myGenDataStrHandler
 }
 
+func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field myGenField, tPath string) {
+	viewSaveThis.importModule = append(viewSaveThis.importModule, viewSaveField.importModule...)
+	if viewSaveField.dataInitBefore.getData() != `` {
+		viewSaveThis.dataInitBefore = append(viewSaveThis.dataInitBefore, field.FieldRaw+`: `+viewSaveField.dataInitBefore.getData()+`,`)
+	}
+	if viewSaveField.dataInitAfter.getData() != `` {
+		viewSaveThis.dataInitAfter = append(viewSaveThis.dataInitAfter, field.FieldRaw+`: `+viewSaveField.dataInitAfter.getData()+`,`)
+	}
+	rule := viewSaveField.rule.getData()
+	if viewSaveField.isRequired {
+		rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
+	}
+	if len(rule) > 0 {
+		viewSaveThis.rule = append(viewSaveThis.rule, field.FieldRaw+`: [`+gstr.Join(append([]string{``}, rule...), `
+            `)+`
+        ],`)
+	} else {
+		viewSaveThis.rule = append(viewSaveThis.rule, field.FieldRaw+`: [],`)
+	}
+	if viewSaveField.form.getData() != `` {
+		viewSaveThis.form = append(viewSaveThis.form, `<el-form-item :label="t('`+tPath+`.name.`+field.FieldRaw+`')" prop="`+field.FieldRaw+`">
+                    `+viewSaveField.form.getData()+`
+                </el-form-item>`)
+	}
+	if viewSaveField.formHandle.getData() != `` {
+		viewSaveThis.formHandle = append(viewSaveThis.formHandle, viewSaveField.formHandle.getData())
+	}
+	if viewSaveField.paramHandle.getData() != `` {
+		viewSaveThis.paramHandle = append(viewSaveThis.paramHandle, viewSaveField.paramHandle.getData())
+	}
+}
+
+func (viewSaveThis *myGenViewSave) Merge(viewSaveOther myGenViewSave) {
+	viewSaveThis.importModule = append(viewSaveThis.importModule, viewSaveOther.importModule...)
+	viewSaveThis.dataInitBefore = append(viewSaveThis.dataInitBefore, viewSaveOther.dataInitBefore...)
+	viewSaveThis.dataInitAfter = append(viewSaveThis.dataInitAfter, viewSaveOther.dataInitAfter...)
+	viewSaveThis.rule = append(viewSaveThis.rule, viewSaveOther.rule...)
+	viewSaveThis.form = append(viewSaveThis.form, viewSaveOther.form...)
+	viewSaveThis.formHandle = append(viewSaveThis.formHandle, viewSaveOther.formHandle...)
+	viewSaveThis.paramHandle = append(viewSaveThis.paramHandle, viewSaveOther.paramHandle...)
+}
+
+func (viewSaveThis *myGenViewSave) Unique() {
+	viewSaveThis.importModule = garray.NewStrArrayFrom(viewSaveThis.importModule).Unique().Slice()
+	viewSaveThis.dataInitBefore = garray.NewStrArrayFrom(viewSaveThis.dataInitBefore).Unique().Slice()
+	viewSaveThis.dataInitAfter = garray.NewStrArrayFrom(viewSaveThis.dataInitAfter).Unique().Slice()
+	viewSaveThis.rule = garray.NewStrArrayFrom(viewSaveThis.rule).Unique().Slice()
+	viewSaveThis.form = garray.NewStrArrayFrom(viewSaveThis.form).Unique().Slice()
+	viewSaveThis.formHandle = garray.NewStrArrayFrom(viewSaveThis.formHandle).Unique().Slice()
+	viewSaveThis.paramHandle = garray.NewStrArrayFrom(viewSaveThis.paramHandle).Unique().Slice()
+}
+
 // 视图模板Query生成
 func genViewSave(option myGenOption, tpl myGenTpl) {
 	if !(option.IsCreate || option.IsUpdate) {
@@ -35,6 +87,7 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 	}
 
 	viewSave := getViewSaveFieldList(tpl)
+	viewSave.Unique()
 
 	tplView := `<script setup lang="tsx">` + gstr.Join(append([]string{``}, viewSave.importModule...), `
 `) + `
@@ -442,44 +495,7 @@ func getViewSaveFieldList(tpl myGenTpl) (viewSave myGenViewSave) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		viewSave.importModule = append(viewSave.importModule, viewSaveField.importModule...)
-		if viewSaveField.dataInitBefore.getData() != `` {
-			viewSave.dataInitBefore = append(viewSave.dataInitBefore, v.FieldRaw+`: `+viewSaveField.dataInitBefore.getData()+`,`)
-		}
-		if viewSaveField.dataInitAfter.getData() != `` {
-			viewSave.dataInitAfter = append(viewSave.dataInitAfter, v.FieldRaw+`: `+viewSaveField.dataInitAfter.getData()+`,`)
-		}
-		rule := viewSaveField.rule.getData()
-		if viewSaveField.isRequired {
-			rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
-		}
-		if len(rule) > 0 {
-			viewSave.rule = append(viewSave.rule, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, rule...), `
-            `)+`
-        ],`)
-		} else {
-			viewSave.rule = append(viewSave.rule, v.FieldRaw+`: [],`)
-		}
-		if viewSaveField.form.getData() != `` {
-			viewSave.form = append(viewSave.form, `<el-form-item :label="t('`+tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab+`.name.`+v.FieldRaw+`')" prop="`+v.FieldRaw+`">
-                    `+viewSaveField.form.getData()+`
-                </el-form-item>`)
-		}
-		if viewSaveField.formHandle.getData() != `` {
-			viewSave.formHandle = append(viewSave.formHandle, viewSaveField.formHandle.getData())
-		}
-		if viewSaveField.paramHandle.getData() != `` {
-			viewSave.paramHandle = append(viewSave.paramHandle, viewSaveField.paramHandle.getData())
-		}
+		viewSave.Add(viewSaveField, v, tpl.ModuleDirCaseKebabReplace+`.`+tpl.TableCaseKebab)
 	}
-
-	// 做一次去重
-	viewSave.importModule = garray.NewStrArrayFrom(viewSave.importModule).Unique().Slice()
-	viewSave.dataInitBefore = garray.NewStrArrayFrom(viewSave.dataInitBefore).Unique().Slice()
-	viewSave.dataInitAfter = garray.NewStrArrayFrom(viewSave.dataInitAfter).Unique().Slice()
-	viewSave.rule = garray.NewStrArrayFrom(viewSave.rule).Unique().Slice()
-	viewSave.form = garray.NewStrArrayFrom(viewSave.form).Unique().Slice()
-	viewSave.formHandle = garray.NewStrArrayFrom(viewSave.formHandle).Unique().Slice()
-	viewSave.paramHandle = garray.NewStrArrayFrom(viewSave.paramHandle).Unique().Slice()
 	return
 }

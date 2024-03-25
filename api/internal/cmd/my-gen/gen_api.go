@@ -31,9 +31,50 @@ type myGenApiField struct {
 	saveRule   myGenDataSliceHandler
 }
 
+func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField) {
+	if apiField.filterType.getData() != `` {
+		apiThis.filter = append(apiThis.filter, field.FieldCaseCamel+` `+apiField.filterType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+	}
+	if apiField.createType.getData() != `` {
+		if apiField.isRequired {
+			apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, apiField.saveRule.getData()...), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+		} else {
+			apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+		}
+	}
+	if apiField.updateType.getData() != `` {
+		apiThis.update = append(apiThis.update, field.FieldCaseCamel+` `+apiField.updateType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+	}
+	if apiField.resType.getData() != `` {
+		apiThis.res = append(apiThis.res, field.FieldCaseCamel+` `+apiField.resType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" dc:"`+field.FieldDesc+`"`+"`")
+	}
+}
+
+func (apiThis *myGenApi) Merge(apiOther myGenApi) {
+	apiThis.filter = append(apiThis.filter, apiOther.filter...)
+	apiThis.info = append(apiThis.info, apiOther.info...)
+	apiThis.create = append(apiThis.create, apiOther.create...)
+	apiThis.update = append(apiThis.update, apiOther.update...)
+	apiThis.delete = append(apiThis.delete, apiOther.delete...)
+	apiThis.res = append(apiThis.res, apiOther.res...)
+	apiThis.resOfAdd = append(apiThis.resOfAdd, apiOther.resOfAdd...)
+}
+
+func (apiThis *myGenApi) Unique() {
+	apiThis.filter = garray.NewStrArrayFrom(apiThis.filter).Unique().Slice()
+	apiThis.info = garray.NewStrArrayFrom(apiThis.info).Unique().Slice()
+	apiThis.create = garray.NewStrArrayFrom(apiThis.create).Unique().Slice()
+	apiThis.update = garray.NewStrArrayFrom(apiThis.update).Unique().Slice()
+	apiThis.delete = garray.NewStrArrayFrom(apiThis.delete).Unique().Slice()
+	apiThis.res = garray.NewStrArrayFrom(apiThis.res).Unique().Slice()
+	apiThis.resOfAdd = garray.NewStrArrayFrom(apiThis.resOfAdd).Unique().Slice()
+}
+
 // api生成
 func genApi(option myGenOption, tpl myGenTpl) {
-	api := getApiFieldList(tpl)
+	api := getApiIdAndLabel(tpl)
+	api.Merge(getApiFieldList(tpl))
+	api.Unique()
 
 	tplApi := `package api
 
@@ -159,7 +200,7 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {` + gstr.Join(append([]string{``
 	utils.GoFileFmt(saveFile)
 }
 
-func getApiFieldList(tpl myGenTpl) (api myGenApi) {
+func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case TypeInt:
@@ -213,10 +254,16 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		api.filter = append(api.filter, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
 		api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	}
+	return
+}
 
+func getApiFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (api myGenApi) {
 	for _, v := range tpl.FieldList {
-		apiField := myGenApiField{}
+		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) {
+			continue
+		}
 
+		apiField := myGenApiField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型` // `int等类型（unsigned）`
@@ -544,29 +591,12 @@ func getApiFieldList(tpl myGenTpl) (api myGenApi) {
 		/*--------根据字段命名类型处理 结束--------*/
 
 	finalHandle:
-		if apiField.filterType.getData() != `` {
-			api.filter = append(api.filter, v.FieldCaseCamel+` `+apiField.filterType.getData()+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-		}
-		if apiField.createType.getData() != `` {
-			if apiField.isRequired {
-				api.create = append(api.create, v.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, apiField.saveRule.getData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-			} else {
-				api.create = append(api.create, v.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-			}
-		}
-		if apiField.updateType.getData() != `` {
-			api.update = append(api.update, v.FieldCaseCamel+` `+apiField.updateType.getData()+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
-		}
-		if apiField.resType.getData() != `` {
-			api.res = append(api.res, v.FieldCaseCamel+` `+apiField.resType.getData()+` `+"`"+`json:"`+v.FieldRaw+`,omitempty" dc:"`+v.FieldDesc+`"`+"`")
-		}
+		api.Add(apiField, v)
 	}
 
-	// 做一次去重
-	api.filter = garray.NewStrArrayFrom(api.filter).Unique().Slice()
-	api.create = garray.NewStrArrayFrom(api.create).Unique().Slice()
-	api.update = garray.NewStrArrayFrom(api.update).Unique().Slice()
-	api.res = garray.NewStrArrayFrom(api.res).Unique().Slice()
-	api.resOfAdd = garray.NewStrArrayFrom(api.resOfAdd).Unique().Slice()
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
+	}
+
 	return
 }

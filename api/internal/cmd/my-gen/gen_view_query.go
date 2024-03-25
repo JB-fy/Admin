@@ -18,9 +18,32 @@ type myGenViewQueryField struct {
 	form     myGenDataStrHandler
 }
 
+func (viewQueryThis *myGenViewQuery) Add(viewQueryField myGenViewQueryField) {
+	if viewQueryField.dataInit.getData() != `` {
+		viewQueryThis.dataInit = append(viewQueryThis.dataInit, viewQueryField.dataInit.getData())
+	}
+	if viewQueryField.form.getData() != `` {
+		viewQueryThis.form = append(viewQueryThis.form, `<el-form-item prop="`+viewQueryField.formProp.getData()+`">
+            `+viewQueryField.form.getData()+`
+        </el-form-item>`)
+	}
+}
+
+func (viewQueryThis *myGenViewQuery) Merge(viewQueryOther myGenViewQuery) {
+	viewQueryThis.dataInit = append(viewQueryThis.dataInit, viewQueryOther.dataInit...)
+	viewQueryThis.form = append(viewQueryThis.form, viewQueryOther.form...)
+}
+
+func (viewQueryThis *myGenViewQuery) Unique() {
+	viewQueryThis.dataInit = garray.NewStrArrayFrom(viewQueryThis.dataInit).Unique().Slice()
+	viewQueryThis.form = garray.NewStrArrayFrom(viewQueryThis.form).Unique().Slice()
+}
+
 // 视图模板Query生成
 func genViewQuery(option myGenOption, tpl myGenTpl) {
-	viewQuery := getViewQueryFieldList(tpl)
+	viewQuery := getViewQueryIdAndLabel(tpl)
+	viewQuery.Merge(getViewQueryFieldList(tpl))
+	viewQuery.Unique()
 
 	tplView := `<script setup lang="tsx">
 import dayjs from 'dayjs'
@@ -64,7 +87,7 @@ const queryForm = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
+func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case TypeInt:
@@ -85,7 +108,10 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
             <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :clearable="true" />
         </el-form-item>`)
 	}
+	return
+}
 
+func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	for _, v := range tpl.FieldList {
 		viewQueryField := myGenViewQueryField{}
 		viewQueryField.formProp.Method = ReturnType
@@ -227,18 +253,7 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		if viewQueryField.dataInit.getData() != `` {
-			viewQuery.dataInit = append(viewQuery.dataInit, viewQueryField.dataInit.getData())
-		}
-		if viewQueryField.form.getData() != `` {
-			viewQuery.form = append(viewQuery.form, `<el-form-item prop="`+viewQueryField.formProp.getData()+`">
-            `+viewQueryField.form.getData()+`
-        </el-form-item>`)
-		}
+		viewQuery.Add(viewQueryField)
 	}
-
-	// 做一次去重
-	viewQuery.dataInit = garray.NewStrArrayFrom(viewQuery.dataInit).Unique().Slice()
-	viewQuery.form = garray.NewStrArrayFrom(viewQuery.form).Unique().Slice()
 	return
 }

@@ -18,9 +18,36 @@ type myGenViewI18nField struct {
 	tip    myGenDataStrHandler
 }
 
+func (viewI18nThis *myGenViewI18n) Add(viewI18nField myGenViewI18nField, field myGenField) {
+	if viewI18nField.name.getData() != `` {
+		viewI18nThis.name = append(viewI18nThis.name, field.FieldRaw+`: `+viewI18nField.name.getData()+`,`)
+	}
+	if len(viewI18nField.status.getData()) > 0 {
+		viewI18nThis.status = append(viewI18nThis.status, field.FieldRaw+`: [`+gstr.Join(append([]string{``}, viewI18nField.status.getData()...), `
+		`)+`
+	],`)
+	}
+	if viewI18nField.tip.getData() != `` {
+		viewI18nThis.tip = append(viewI18nThis.tip, field.FieldRaw+`: `+viewI18nField.tip.getData()+`,`)
+	}
+}
+
+func (viewI18nThis *myGenViewI18n) Merge(viewI18nOther myGenViewI18n) {
+	viewI18nThis.name = append(viewI18nThis.name, viewI18nOther.name...)
+	viewI18nThis.status = append(viewI18nThis.status, viewI18nOther.status...)
+	viewI18nThis.tip = append(viewI18nThis.tip, viewI18nOther.tip...)
+}
+
+func (viewI18nThis *myGenViewI18n) Unique() {
+	viewI18nThis.name = garray.NewStrArrayFrom(viewI18nThis.name).Unique().Slice()
+	viewI18nThis.status = garray.NewStrArrayFrom(viewI18nThis.status).Unique().Slice()
+	viewI18nThis.tip = garray.NewStrArrayFrom(viewI18nThis.tip).Unique().Slice()
+}
+
 // 视图模板Query生成
 func genViewI18n(option myGenOption, tpl myGenTpl) {
 	viewI18n := getViewI18nFieldList(tpl)
+	viewI18n.Unique()
 
 	tplView := `export default {
     name: {` + gstr.Join(append([]string{``}, viewI18n.name...), `
@@ -126,22 +153,7 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		if viewI18nField.name.getData() != `` {
-			viewI18n.name = append(viewI18n.name, v.FieldRaw+`: `+viewI18nField.name.getData()+`,`)
-		}
-		if len(viewI18nField.status.getData()) > 0 {
-			viewI18n.status = append(viewI18n.status, v.FieldRaw+`: [`+gstr.Join(append([]string{``}, viewI18nField.status.getData()...), `
-            `)+`
-        ],`)
-		}
-		if viewI18nField.tip.getData() != `` {
-			viewI18n.tip = append(viewI18n.tip, v.FieldRaw+`: `+viewI18nField.tip.getData()+`,`)
-		}
+		viewI18n.Add(viewI18nField, v)
 	}
-
-	// 做一次去重
-	viewI18n.name = garray.NewStrArrayFrom(viewI18n.name).Unique().Slice()
-	viewI18n.status = garray.NewStrArrayFrom(viewI18n.status).Unique().Slice()
-	viewI18n.tip = garray.NewStrArrayFrom(viewI18n.tip).Unique().Slice()
 	return
 }
