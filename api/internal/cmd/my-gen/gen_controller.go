@@ -350,31 +350,6 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 }
 
 func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
-	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
-		controller.list = []string{"`id`"}
-		controller.info = []string{"`id`"}
-		controller.tree = []string{"`id`"}
-	}
-	controller.noAuth = []string{"`id`"}
-
-	if len(tpl.Handle.LabelList) > 0 {
-		controller.list = append(controller.list, "`label`")
-		controller.info = append(controller.info, "`label`")
-		controller.tree = append(controller.tree, "`label`")
-		if tpl.Handle.Pid.Pid != `` {
-			controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-			// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-		}
-		controller.noAuth = append(controller.noAuth, "`label`")
-		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
-			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
-		}
-		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
-		/* for _, v := range tpl.Handle.LabelList {
-			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
-		} */
-	}
-
 	for _, v := range tpl.FieldList {
 		/*--------根据字段主键类型处理 开始--------*/
 		switch v.FieldTypePrimary {
