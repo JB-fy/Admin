@@ -66,7 +66,7 @@ type myGenFieldType = int
 type myGenFieldTypeName = string
 
 const (
-	TableTypeGen    myGenTableType = 0  //生成表
+	TableTypeGen    myGenTableType = 0  //生成表（当前操作的表）
 	TableTypeExtend myGenTableType = 1  //扩展表
 	TableTypeMiddle myGenTableType = 2  //中间表
 	TableTypeRelId  myGenTableType = 10 //id后缀关联表
@@ -670,6 +670,7 @@ func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 	command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
 }
 
+// 判断字段是否与表主键一致
 func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, field string) bool {
 	primaryKeyArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
 	if primaryKeyArr[0] == `id` {
