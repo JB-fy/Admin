@@ -597,6 +597,5 @@ func getApiFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (api myGenApi) {
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
 	}
-
 	return
 }

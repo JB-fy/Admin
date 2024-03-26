@@ -66,10 +66,14 @@ type myGenFieldType = int
 type myGenFieldTypeName = string
 
 const (
-	TableTypeGen    myGenTableType = 0  //生成表（当前操作的表）
-	TableTypeExtend myGenTableType = 1  //扩展表
-	TableTypeMiddle myGenTableType = 2  //中间表
-	TableTypeRelId  myGenTableType = 10 //id后缀关联表
+	TableTypeGen        myGenTableType = 0  //生成表（当前操作的表）
+	TableTypeRelId      myGenTableType = 1  //id后缀关联表
+	TableTypeExtend     myGenTableType = 10 //扩展表
+	TableTypeExtendOne  myGenTableType = 11 //扩展表（一对一）
+	TableTypeExtendMany myGenTableType = 12 //扩展表（一对多）
+	TableTypeMiddle     myGenTableType = 20 //中间表
+	TableTypeMiddleOne  myGenTableType = 21 //中间表（一对一）
+	TableTypeMiddleMany myGenTableType = 22 //中间表（一对多）
 
 	//用于结构体中，需从1开始，否则结构体会默认0
 	TypeInt       myGenFieldType = iota + 1 // `int等类型`
@@ -171,7 +175,9 @@ type handleRelId struct {
 }
 
 type handleExtendMiddle struct {
+	tplOfGen         myGenTpl
 	tpl              myGenTpl
+	RelId            string   //关联字段
 	FieldArrOfIgnore []string //忽略字段数组
 }
 
@@ -854,7 +860,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			if len(key.FieldArr) == 1 && myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				extendTpl.gfGenDao(false) //dao文件生成
 				handleExtendMiddleObj := handleExtendMiddle{
+					tplOfGen:         tpl,
 					tpl:              extendTpl,
+					RelId:            key.Field,
 					FieldArrOfIgnore: []string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field},
 				}
 				for _, item := range extendTpl.FieldList {
@@ -864,12 +872,15 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 				}
 				if key.IsPrimary { //主键
 					if !key.IsAutoInc { //不自增
+						handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
 						extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 					}
 				} else {
 					if key.IsUnique { //唯一索引
+						handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
 						extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 					} else { //普通索引
+						handleExtendMiddleObj.tpl.TableType = TableTypeExtendMany
 						extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 					}
 				}

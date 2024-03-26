@@ -349,8 +349,12 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	return
 }
 
-func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
+func getControllerFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (controller myGenController) {
 	for _, v := range tpl.FieldList {
+		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) {
+			continue
+		}
+
 		/*--------根据字段主键类型处理 开始--------*/
 		switch v.FieldTypePrimary {
 		case TypePrimary: // 独立主键
@@ -406,6 +410,10 @@ func getControllerFieldList(tpl myGenTpl) (controller myGenController) {
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		}
 		/*--------根据字段命名类型处理 结束--------*/
+	}
+
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		controller.Merge(getControllerFieldList(v.tpl, v.FieldArrOfIgnore...))
 	}
 	return
 }
