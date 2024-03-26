@@ -75,10 +75,10 @@ func genApi(option myGenOption, tpl myGenTpl) {
 	api := getApiIdAndLabel(tpl)
 	api.Merge(getApiFieldList(tpl))
 	for _, v := range tpl.Handle.ExtendTableOneList {
-		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
+		api.Merge(getApiFieldList(v.tpl, v.FieldArr...))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
-		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
+		api.Merge(getApiFieldList(v.tpl, v.FieldArr...))
 	}
 	api.Unique()
 
@@ -263,9 +263,9 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 	return
 }
 
-func getApiFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (api myGenApi) {
+func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 	for _, v := range tpl.FieldList {
-		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) {
+		if !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 

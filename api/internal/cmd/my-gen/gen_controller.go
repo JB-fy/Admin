@@ -38,7 +38,7 @@ func genController(option myGenOption, tpl myGenTpl) {
 	controller := getControllerIdAndLabel(tpl)
 	controller.Merge(getControllerFieldList(tpl))
 	for _, v := range tpl.Handle.ExtendTableOneList {
-		controller.Merge(getControllerFieldList(v.tpl, v.FieldArrOfIgnore...))
+		controller.Merge(getControllerFieldList(v.tpl, v.FieldArr...))
 	}
 	controller.Unique()
 
@@ -352,9 +352,9 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	return
 }
 
-func getControllerFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (controller myGenController) {
+func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenController) {
 	for _, v := range tpl.FieldList {
-		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) {
+		if !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 

@@ -175,10 +175,10 @@ type handleRelId struct {
 }
 
 type handleExtendMiddle struct {
-	tplOfGen         myGenTpl
-	tpl              myGenTpl
-	RelId            string   //关联字段
-	FieldArrOfIgnore []string //忽略字段数组
+	tplOfGen myGenTpl
+	tpl      myGenTpl
+	RelId    string   //关联字段
+	FieldArr []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
 }
 
 // 创建模板参数
@@ -865,15 +865,15 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			}
 			extendTpl.gfGenDao(false) //dao文件生成
 			handleExtendMiddleObj := handleExtendMiddle{
-				tplOfGen:         tpl,
-				tpl:              extendTpl,
-				RelId:            key.Field,
-				FieldArrOfIgnore: []string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field},
+				tplOfGen: tpl,
+				tpl:      extendTpl,
+				RelId:    key.Field,
 			}
-			for _, item := range extendTpl.FieldList {
-				if garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(item.FieldTypeName)) {
-					handleExtendMiddleObj.FieldArrOfIgnore = append(handleExtendMiddleObj.FieldArrOfIgnore, item.FieldRaw)
+			for _, v := range extendTpl.FieldList {
+				if garray.NewStrArrayFrom([]string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field}).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(v.FieldTypeName)) {
+					continue
 				}
+				handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
 			}
 			if key.IsPrimary { //主键
 				if !key.IsAutoInc { //不自增
@@ -935,15 +935,15 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			}
 			middleTpl.gfGenDao(false) //dao文件生成
 			handleExtendMiddleObj := handleExtendMiddle{
-				tplOfGen:         tpl,
-				tpl:              middleTpl,
-				RelId:            key.Field,
-				FieldArrOfIgnore: []string{middleTpl.Handle.Id.List[0].FieldRaw, key.Field},
+				tplOfGen: tpl,
+				tpl:      middleTpl,
+				RelId:    key.Field,
 			}
-			for _, item := range middleTpl.FieldList {
-				if garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(item.FieldTypeName)) {
-					handleExtendMiddleObj.FieldArrOfIgnore = append(handleExtendMiddleObj.FieldArrOfIgnore, item.FieldRaw)
+			for _, v := range middleTpl.FieldList {
+				if garray.NewStrArrayFrom([]string{middleTpl.Handle.Id.List[0].FieldRaw, key.Field}).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(v.FieldTypeName)) {
+					continue
 				}
+				handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
 			}
 			if len(key.FieldArr) == 1 {
 				if key.IsPrimary { //主键

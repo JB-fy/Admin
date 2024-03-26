@@ -762,7 +762,7 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 
 	fieldArr := []string{}
 	for _, v := range tpl.FieldList {
-		if garray.NewStrArrayFrom(tplExtendOne.FieldArrOfIgnore).Contains(v.FieldRaw) {
+		if !garray.NewStrArrayFrom(tplExtendOne.FieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 		fieldArr = append(fieldArr, daoTmpObj.path+`.Columns().`+v.FieldCaseCamel)
@@ -799,7 +799,7 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplExtendOne.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey())`)
 
 	for _, v := range tpl.FieldList {
-		if garray.NewStrArrayFrom(tplExtendOne.FieldArrOfIgnore).Contains(v.FieldRaw) {
+		if !garray.NewStrArrayFrom(tplExtendOne.FieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 
