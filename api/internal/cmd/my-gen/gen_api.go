@@ -265,7 +265,7 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 
 func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 	for _, v := range tpl.FieldList {
-		if !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
+		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 

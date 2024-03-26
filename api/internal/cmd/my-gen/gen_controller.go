@@ -357,7 +357,7 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 
 func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenController) {
 	for _, v := range tpl.FieldList {
-		if !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
+		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 
@@ -422,11 +422,8 @@ func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenC
 
 func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenController) {
 	tpl := tplEM.tpl
-	daoPath := tpl.TableCaseCamel
-	if tpl.ModuleDirCaseKebab != tplEM.tplOfGen.ModuleDirCaseKebab {
-		daoPath = `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
-		controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
-	}
+	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
+	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
 
 	for _, v := range tplEM.FieldArr {
 		field := daoPath + `.Columns().` + gstr.CaseCamel(v)

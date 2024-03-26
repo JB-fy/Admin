@@ -875,6 +875,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 				}
 				handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
 			}
+			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
+				continue
+			}
 			if key.IsPrimary { //主键
 				if !key.IsAutoInc { //不自增
 					handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
@@ -944,6 +947,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 					continue
 				}
 				handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
+			}
+			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
+				continue
 			}
 			if len(key.FieldArr) == 1 {
 				if key.IsPrimary { //主键
