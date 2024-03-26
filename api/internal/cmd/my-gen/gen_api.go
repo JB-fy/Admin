@@ -74,6 +74,12 @@ func (apiThis *myGenApi) Unique() {
 func genApi(option myGenOption, tpl myGenTpl) {
 	api := getApiIdAndLabel(tpl)
 	api.Merge(getApiFieldList(tpl))
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
+	}
 	api.Unique()
 
 	tplApi := `package api
@@ -592,10 +598,6 @@ func getApiFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (api myGenApi) {
 
 	finalHandle:
 		api.Add(apiField, v)
-	}
-
-	for _, v := range tpl.Handle.ExtendTableOneList {
-		api.Merge(getApiFieldList(v.tpl, v.FieldArrOfIgnore...))
 	}
 	return
 }

@@ -37,6 +37,9 @@ func (controllerThis *myGenController) Unique() {
 func genController(option myGenOption, tpl myGenTpl) {
 	controller := getControllerIdAndLabel(tpl)
 	controller.Merge(getControllerFieldList(tpl))
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		controller.Merge(getControllerFieldList(v.tpl, v.FieldArrOfIgnore...))
+	}
 	controller.Unique()
 
 	tplController := `package controller
@@ -410,10 +413,6 @@ func getControllerFieldList(tpl myGenTpl, fieldArrOfIgnore ...string) (controlle
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		}
 		/*--------根据字段命名类型处理 结束--------*/
-	}
-
-	for _, v := range tpl.Handle.ExtendTableOneList {
-		controller.Merge(getControllerFieldList(v.tpl, v.FieldArrOfIgnore...))
 	}
 	return
 }

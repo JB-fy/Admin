@@ -57,7 +57,7 @@ saveForm.initData()
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <el-form-item :label="t('platform.config.plugin.name.smsType')" prop="smsType">
             <el-radio-group v-model="saveForm.data.smsType">
-                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.smsType') as any" :key="index" :label="item.value">
+                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.smsType') as any" :key="index" :value="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>

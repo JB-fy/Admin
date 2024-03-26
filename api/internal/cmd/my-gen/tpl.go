@@ -561,9 +561,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
-	//扩展表
 	if garray.NewFrom([]interface{}{TableTypeGen}).Contains(tpl.TableType) {
-		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl)
+		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl) //扩展表
+		tpl.Handle.MiddleTableOneList, tpl.Handle.MiddleTableManyList = tpl.getMiddleTable(ctx, tpl) //中间表
 	}
 	/*--------需特殊处理的字段解析 结束--------*/
 
@@ -834,7 +834,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	return
 }
 
-// TODO 获取扩展表
+// 获取扩展表
 func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []handleExtendMiddle, extendTableManyList []handleExtendMiddle) {
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
 		return
@@ -852,37 +852,122 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		if gstr.Pos(v, `_rel_to_`) != -1 || gstr.Pos(v, `_rel_of_`) != -1 { //中间表跳过
 			continue
 		}
-		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合表命名（主表名_xxxx）的跳过
+		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
 		for _, key := range extendTpl.KeyList {
-			if len(key.FieldArr) == 1 && myGenTplThis.IsSamePrimary(tpl, key.Field) {
-				extendTpl.gfGenDao(false) //dao文件生成
-				handleExtendMiddleObj := handleExtendMiddle{
-					tplOfGen:         tpl,
-					tpl:              extendTpl,
-					RelId:            key.Field,
-					FieldArrOfIgnore: []string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field},
+			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
+				continue
+			}
+			if len(key.FieldArr) != 1 {
+				continue
+			}
+			extendTpl.gfGenDao(false) //dao文件生成
+			handleExtendMiddleObj := handleExtendMiddle{
+				tplOfGen:         tpl,
+				tpl:              extendTpl,
+				RelId:            key.Field,
+				FieldArrOfIgnore: []string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field},
+			}
+			for _, item := range extendTpl.FieldList {
+				if garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(item.FieldTypeName)) {
+					handleExtendMiddleObj.FieldArrOfIgnore = append(handleExtendMiddleObj.FieldArrOfIgnore, item.FieldRaw)
 				}
-				for _, item := range extendTpl.FieldList {
-					if garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(item.FieldTypeName)) {
-						handleExtendMiddleObj.FieldArrOfIgnore = append(handleExtendMiddleObj.FieldArrOfIgnore, item.FieldRaw)
-					}
+			}
+			if key.IsPrimary { //主键
+				if !key.IsAutoInc { //不自增
+					handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
+					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				}
+			} else {
+				if key.IsUnique { //唯一索引
+					handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
+					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
+				} else { //普通索引
+					handleExtendMiddleObj.tpl.TableType = TableTypeExtendMany
+					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
+				}
+			}
+		}
+	}
+	return
+}
+
+// 获取中间表
+func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) (middleTableOneList []handleExtendMiddle, middleTableManyList []handleExtendMiddle) {
+	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取中间表
+		return
+	}
+	removePrefixCommon := tpl.RemovePrefixCommon
+	removePrefixAlone := tpl.RemovePrefixAlone
+	if removePrefixAlone == `` {
+		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+	}
+
+	for _, v := range tpl.TableArr {
+		if v == tpl.Table { //自身跳过
+			continue
+		}
+		if gstr.Pos(v, `_rel_to_`) == -1 && gstr.Pos(v, `_rel_of_`) == -1 { //不是中间表跳过
+			continue
+		}
+		if gstr.Pos(v, `_rel_to_`) == -1 {
+			if gstr.Pos(v, tpl.Table+`_rel_to_`) != 0 { //不符合中间表_rel_to_命名的跳过
+				continue
+			}
+		} else {
+			if gstr.Pos(v, tpl.RemovePrefix) == 0 {
+				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1)) {
+					continue
+				}
+			} else {
+				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) {
+					continue
+				}
+			}
+		}
+
+		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
+		for _, key := range middleTpl.KeyList {
+			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
+				continue
+			}
+			middleTpl.gfGenDao(false) //dao文件生成
+			handleExtendMiddleObj := handleExtendMiddle{
+				tplOfGen:         tpl,
+				tpl:              middleTpl,
+				RelId:            key.Field,
+				FieldArrOfIgnore: []string{middleTpl.Handle.Id.List[0].FieldRaw, key.Field},
+			}
+			for _, item := range middleTpl.FieldList {
+				if garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(item.FieldTypeName)) {
+					handleExtendMiddleObj.FieldArrOfIgnore = append(handleExtendMiddleObj.FieldArrOfIgnore, item.FieldRaw)
+				}
+			}
+			if len(key.FieldArr) == 1 {
 				if key.IsPrimary { //主键
 					if !key.IsAutoInc { //不自增
 						handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
-						extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
+						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
 				} else {
 					if key.IsUnique { //唯一索引
 						handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
-						extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
-					} else { //普通索引
-						handleExtendMiddleObj.tpl.TableType = TableTypeExtendMany
-						extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
+						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
+				}
+			} else {
+				isAllId := true
+				for _, v := range key.FieldArr {
+					vArr := gstr.Split(gstr.CaseSnake(v), `_`)
+					if vArr[len(vArr)-1] != `id` {
+						isAllId = false
+					}
+				}
+				if isAllId {
+					handleExtendMiddleObj.tpl.TableType = TableTypeExtendMany
+					middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 				}
 			}
 		}

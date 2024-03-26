@@ -123,7 +123,11 @@ func genDao(tpl myGenTpl) {
 	dao.Merge(getDaoFieldList(tpl))
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		genDao(v.tpl)
-		dao.Merge(getDaoExtendOne(v))
+		dao.Merge(getDaoExtendMiddleOne(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		genDao(v.tpl)
+		dao.Merge(getDaoExtendMiddleOne(v))
 	}
 	dao.Unique()
 
@@ -732,7 +736,7 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 	return
 }
 
-func getDaoExtendOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
+func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 	tpl := tplExtendOne.tpl
 	type daoTmp struct {
 		path   string
@@ -795,12 +799,9 @@ func getDaoExtendOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplExtendOne.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey())`)
 
 	for _, v := range tpl.FieldList {
-		if v.FieldRaw == tplExtendOne.RelId {
+		if garray.NewStrArrayFrom(tplExtendOne.FieldArrOfIgnore).Contains(v.FieldRaw) {
 			continue
 		}
-		/* if garray.NewStrArrayFrom(tplExtendOne.FieldArrOfIgnore).Contains(v.FieldRaw) {
-			continue
-		} */
 
 		daoField := myGenDaoField{}
 
