@@ -736,8 +736,8 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 	return
 }
 
-func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
-	tpl := tplExtendOne.tpl
+func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
+	tpl := tplEM.tpl
 	type daoTmp struct {
 		path   string
 		table  string
@@ -750,7 +750,7 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 		table1: `table` + tpl.TableCaseCamel,
 		table2: tpl.TableCaseCamel,
 	}
-	if tpl.ModuleDirCaseKebab != tplExtendOne.tplOfGen.ModuleDirCaseKebab {
+	if tpl.ModuleDirCaseKebab != tplEM.tplOfGen.ModuleDirCaseKebab {
 		daoTmpObj = daoTmp{
 			path:   `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel,
 			table:  `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
@@ -761,11 +761,8 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 	}
 
 	fieldArr := []string{}
-	for _, v := range tpl.FieldList {
-		if !garray.NewStrArrayFrom(tplExtendOne.FieldArr).Contains(v.FieldRaw) {
-			continue
-		}
-		fieldArr = append(fieldArr, daoTmpObj.path+`.Columns().`+v.FieldCaseCamel)
+	for _, v := range tplEM.FieldArr {
+		fieldArr = append(fieldArr, daoTmpObj.path+`.Columns().`+gstr.CaseCamel(v))
 	}
 
 	dao.fieldParse = append(dao.fieldParse, `case `+gstr.Join(fieldArr, `, `)+`:
@@ -781,7 +778,7 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 				daoModel.AfterInsert[`+"`"+gstr.CaseCamelLower(daoTmpObj.table2)+"`"+`] = insertDataOf`+daoTmpObj.table2)
 	dao.insertHook = append(dao.insertHook, `case `+"`"+gstr.CaseCamelLower(daoTmpObj.table2)+"`"+`:
 					insertDataOf`+daoTmpObj.table2+`, _ := v.(map[string]interface{})
-					insertDataOf`+daoTmpObj.table2+`[`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplExtendOne.RelId)+`] = id
+					insertDataOf`+daoTmpObj.table2+`[`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
 					`+daoTmpObj.path+`.CtxDaoModel(ctx).HookInsert(insertDataOf`+daoTmpObj.table2+`).Insert()`)
 	dao.updateParse = append(dao.updateParse, `case `+gstr.Join(fieldArr, `, `)+`:
 				updateDataOf`+daoTmpObj.table2+`, ok := daoModel.AfterUpdate[`+"`"+gstr.CaseCamelLower(daoTmpObj.table2)+"`"+`].(map[string]interface{})
@@ -792,14 +789,14 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 	dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+gstr.CaseCamelLower(daoTmpObj.table2)+"`"+`:
 					for _, id := range daoModel.IdArr {
 						updateDataOf`+daoTmpObj.table2+`, _ := v.(map[string]interface{})
-						`+daoTmpObj.path+`.CtxDaoModel(ctx).Filter(daoThis.Columns().`+gstr.CaseCamel(tplExtendOne.RelId)+`, id).HookUpdate(updateDataOf`+daoTmpObj.table2+`).Update()
+						`+daoTmpObj.path+`.CtxDaoModel(ctx).Filter(daoThis.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, id).HookUpdate(updateDataOf`+daoTmpObj.table2+`).Update()
 					}`)
-	dao.deleteHook = append(dao.deleteHook, daoTmpObj.path+`.CtxDaoModel(ctx).Filter(`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplExtendOne.RelId)+`, daoModel.IdArr).Delete()`)
+	dao.deleteHook = append(dao.deleteHook, daoTmpObj.path+`.CtxDaoModel(ctx).Filter(`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr).Delete()`)
 	dao.joinParse = append(dao.joinParse, `case `+daoTmpObj.path+`.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplExtendOne.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey())`)
+			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+daoTmpObj.path+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey())`)
 
 	for _, v := range tpl.FieldList {
-		if !garray.NewStrArrayFrom(tplExtendOne.FieldArr).Contains(v.FieldRaw) {
+		if !garray.NewStrArrayFrom(tplEM.FieldArr).Contains(v.FieldRaw) {
 			continue
 		}
 
@@ -873,7 +870,7 @@ func getDaoExtendMiddleOne(tplExtendOne handleExtendMiddle) (dao myGenDao) {
 				daoPath := relIdObj.tpl.TableCaseCamel
 				daoTable := `table` + relIdObj.tpl.TableCaseCamel
 				// if relIdObj.tpl.ModuleDirCaseKebab != tpl.ModuleDirCaseKebab {
-				if relIdObj.tpl.ModuleDirCaseKebab != tplExtendOne.tplOfGen.ModuleDirCaseKebab {
+				if relIdObj.tpl.ModuleDirCaseKebab != tplEM.tplOfGen.ModuleDirCaseKebab {
 					daoField.importDao = append(daoField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 					daoPath = `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 					daoTable = `table` + relIdObj.tpl.ModuleDirCaseCamel + relIdObj.tpl.TableCaseCamel

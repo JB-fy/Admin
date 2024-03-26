@@ -38,7 +38,10 @@ func genController(option myGenOption, tpl myGenTpl) {
 	controller := getControllerIdAndLabel(tpl)
 	controller.Merge(getControllerFieldList(tpl))
 	for _, v := range tpl.Handle.ExtendTableOneList {
-		controller.Merge(getControllerFieldList(v.tpl, v.FieldArr...))
+		controller.Merge(getControllerExtendMiddleOne(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		controller.Merge(getControllerExtendMiddleOne(v))
 	}
 	controller.Unique()
 
@@ -414,5 +417,23 @@ func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenC
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 	}
+	return
+}
+
+func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenController) {
+	tpl := tplEM.tpl
+	daoPath := tpl.TableCaseCamel
+	if tpl.ModuleDirCaseKebab != tplEM.tplOfGen.ModuleDirCaseKebab {
+		daoPath = `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
+		controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
+	}
+
+	for _, v := range tplEM.FieldArr {
+		field := daoPath + `.Columns().` + gstr.CaseCamel(v)
+		controller.list = append(controller.list, field)
+		controller.info = append(controller.info, field)
+		controller.tree = append(controller.tree, field)
+	}
+	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
 	return
 }
