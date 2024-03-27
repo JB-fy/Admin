@@ -432,7 +432,9 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型`	// `char类型`
-			daoField.filterParse.Method = ReturnType
+			if gconv.Uint(v.FieldLimitStr) <= 30 {
+				daoField.filterParse.Method = ReturnType
+			}
 			if v.IsUnique && v.IsNull {
 				daoField.insertParse.Method = ReturnType
 				daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case `+daoTmpObj.path+`.Columns().`+v.FieldCaseCamel+`:
@@ -827,7 +829,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型`	// `char类型`
-			daoField.filterParse.Method = ReturnType
+			if gconv.Uint(v.FieldLimitStr) <= 30 {
+				daoField.filterParse.Method = ReturnType
+			}
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 		case TypeTimestamp: // `timestamp类型`

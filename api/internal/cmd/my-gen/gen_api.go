@@ -314,8 +314,10 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.saveRule.Method = ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `min:0`)
 		case TypeVarchar: // `varchar类型`
-			apiField.filterType.Method = ReturnType
-			apiField.filterType.DataType = `string`
+			if gconv.Uint(v.FieldLimitStr) <= 30 {
+				apiField.filterType.Method = ReturnType
+				apiField.filterType.DataType = `string`
+			}
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*string`
 			apiField.updateType.Method = ReturnType
@@ -331,8 +333,10 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.saveRule.Method = ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max-length:`+v.FieldLimitStr)
 		case TypeChar: // `char类型`
-			apiField.filterType.Method = ReturnType
-			apiField.filterType.DataType = `string`
+			if gconv.Uint(v.FieldLimitStr) <= 30 {
+				apiField.filterType.Method = ReturnType
+				apiField.filterType.DataType = `string`
+			}
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*string`
 			apiField.updateType.Method = ReturnType

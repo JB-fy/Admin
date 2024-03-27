@@ -142,11 +142,15 @@ func getViewQueryFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (v
 			// viewQueryField.form.Method = ReturnType
 			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
 		case TypeVarchar: // `varchar类型`
-			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			if gconv.Uint(v.FieldLimitStr) <= 30 {
+				viewQueryField.form.Method = ReturnType
+				viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			}
 		case TypeChar: // `char类型`
-			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			if gconv.Uint(v.FieldLimitStr) <= 30 {
+				viewQueryField.form.Method = ReturnType
+				viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			}
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
