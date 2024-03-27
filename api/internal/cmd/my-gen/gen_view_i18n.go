@@ -47,6 +47,12 @@ func (viewI18nThis *myGenViewI18n) Unique() {
 // 视图模板Query生成
 func genViewI18n(option myGenOption, tpl myGenTpl) {
 	viewI18n := getViewI18nFieldList(tpl)
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		viewI18n.Merge(getViewI18nExtendMiddleOne(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		viewI18n.Merge(getViewI18nExtendMiddleOne(v))
+	}
 	viewI18n.Unique()
 
 	tplView := `export default {
@@ -66,8 +72,12 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
+func getViewI18nFieldList(tpl myGenTpl, fieldArr ...string) (viewI18n myGenViewI18n) {
 	for _, v := range tpl.FieldList {
+		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
+			continue
+		}
+
 		viewI18nField := myGenViewI18nField{}
 		viewI18nField.name.Method = ReturnType
 		viewI18nField.name.DataType = `'` + v.FieldName + `'`
@@ -83,7 +93,9 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 			viewI18nField.tip.Method = ReturnType
-			viewI18nField.tip.DataType = `'` + v.FieldTip + `'`
+			if v.FieldTip != `` {
+				viewI18nField.tip.DataType = `'` + v.FieldTip + `'`
+			}
 		case TypeTimestamp: // `timestamp类型`
 		case TypeDatetime: // `datetime类型`
 		case TypeDate: // `date类型`
@@ -155,5 +167,10 @@ func getViewI18nFieldList(tpl myGenTpl) (viewI18n myGenViewI18n) {
 
 		viewI18n.Add(viewI18nField, v)
 	}
+	return
+}
+
+func getViewI18nExtendMiddleOne(tplEM handleExtendMiddle) (viewI18n myGenViewI18n) {
+	viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArr...))
 	return
 }

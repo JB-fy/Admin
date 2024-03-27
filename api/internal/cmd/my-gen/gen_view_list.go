@@ -66,7 +66,13 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
 		viewList.idType = `string`
 	}
-	viewList.Merge(getViewListFieldList(option, tpl))
+	viewList.Merge(getViewListFieldList(option, tpl, tpl.I18nPath))
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		viewList.Merge(getViewListExtendMiddleOne(option, v))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		viewList.Merge(getViewListExtendMiddleOne(option, v))
+	}
 	viewList.Unique()
 
 	tplView := `<script setup lang="tsx">
@@ -302,7 +308,7 @@ defineExpose({
         </el-col>
         <el-col :span="8" style="text-align: right">
             <el-space :size="10" style="height: 100%">
-                <my-export-button i18nPrefix="` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <my-export-button i18nPrefix="` + tpl.I18nPath + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <el-dropdown max-height="300" :hide-on-click="false">
                     <el-button type="info" :circle="true">
                         <autoicon-ep-hide />
@@ -356,13 +362,17 @@ defineExpose({
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewList) {
+func getViewListFieldList(option myGenOption, tpl myGenTpl, i18nPath string, fieldArr ...string) (viewList myGenViewList) {
 	for _, v := range tpl.FieldList {
+		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
+			continue
+		}
+
 		viewListField := myGenViewListField{}
 		viewListField.dataKey.Method = ReturnType
 		viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
 		viewListField.title.Method = ReturnType
-		viewListField.title.DataType = `t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')`
+		viewListField.title.DataType = `t('` + i18nPath + `.name.` + v.FieldRaw + `')`
 		viewListField.key.Method = ReturnType
 		viewListField.key.DataType = `'` + v.FieldRaw + `'`
 		viewListField.align.Method = ReturnType
@@ -464,7 +474,7 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
                                 el?.focus()
                             }}
                             model-value={currentVal}
-                            placeholder={t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.tip.` + v.FieldRaw + `')}
+                            placeholder={t('` + i18nPath + `.tip.` + v.FieldRaw + `')}
                             precision={0}
                             min={0}
                             max={100}
@@ -510,7 +520,7 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 			viewListField.cellRenderer.Method = ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
+                let obj = tm('` + i18nPath + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
@@ -638,5 +648,10 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl) (viewList myGenViewL
 
 		viewList.Add(viewListField)
 	}
+	return
+}
+
+func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
+	viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfGen.I18nPath, tplEM.FieldArr...))
 	return
 }

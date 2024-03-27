@@ -42,7 +42,13 @@ func (viewQueryThis *myGenViewQuery) Unique() {
 // 视图模板Query生成
 func genViewQuery(option myGenOption, tpl myGenTpl) {
 	viewQuery := getViewQueryIdAndLabel(tpl)
-	viewQuery.Merge(getViewQueryFieldList(tpl))
+	viewQuery.Merge(getViewQueryFieldList(tpl, tpl.I18nPath))
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		viewQuery.Merge(getViewQueryExtendMiddleOne(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		viewQuery.Merge(getViewQueryExtendMiddleOne(v))
+	}
 	viewQuery.Unique()
 
 	tplView := `<script setup lang="tsx">
@@ -111,8 +117,12 @@ func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	return
 }
 
-func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
+func getViewQueryFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (viewQuery myGenViewQuery) {
 	for _, v := range tpl.FieldList {
+		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
+			continue
+		}
+
 		viewQueryField := myGenViewQueryField{}
 		viewQueryField.formProp.Method = ReturnType
 		viewQueryField.formProp.DataType = v.FieldRaw
@@ -121,33 +131,33 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		switch v.FieldType {
 		case TypeInt: // `int等类型`
 			// viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :controls="false" />`
+			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :controls="false" />`
 		case TypeIntU: // `int等类型（unsigned）`
 			// viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="0" :controls="false" />`
+			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :controls="false" />`
 		case TypeFloat: // `float等类型`
 			// viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
+			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
 		case TypeFloatU: // `float等类型（unsigned）`
 			// viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
+			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
 		case TypeVarchar: // `varchar类型`
 			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
 		case TypeChar: // `char类型`
 			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
+			viewQueryField.form.DataType = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
 		case TypeDate: // `date类型`
 			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="date" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 150px" />`
+			viewQueryField.form.DataType = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="date" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 150px" />`
 		default:
 			viewQueryField.form.Method = ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" />`
+			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :clearable="true" />`
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
@@ -199,10 +209,10 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 			viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />`
 		case TypeNamePid: // pid；	类型：int等类型；
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />`
+			viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />`
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :min="1" :controls="false" />`
+			viewQueryField.form.DataTypeName = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="1" :controls="false" />`
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 			continue
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
@@ -224,23 +234,23 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 			}
 
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
+			viewQueryField.form.DataTypeName = `<my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
 			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
-				viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
+				viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
 			}
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			continue
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.status.` + v.FieldRaw + `')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
+			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + i18nPath + `.status.` + v.FieldRaw + `')" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			viewQueryField.form.Method = ReturnTypeName
-			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
+			viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 			if v.FieldType != TypeDate {
 				viewQueryField.form.Method = ReturnTypeName
-				viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + tpl.ModuleDirCaseKebabReplace + `.` + tpl.TableCaseKebab + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`
+				viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`
 			}
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			continue
@@ -255,5 +265,9 @@ func getViewQueryFieldList(tpl myGenTpl) (viewQuery myGenViewQuery) {
 
 		viewQuery.Add(viewQueryField)
 	}
+	return
+}
+func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQuery) {
+	viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfGen.I18nPath, tplEM.FieldArr...))
 	return
 }
