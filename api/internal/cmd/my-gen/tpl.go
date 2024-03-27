@@ -669,7 +669,7 @@ func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 		`--group`, myGenTplThis.Group,
 		`--removePrefix`, myGenTplThis.RemovePrefix,
 		`--daoPath`, `dao/` + myGenTplThis.ModuleDirCaseKebab,
-		`--doPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
+		`--doPath`, `model/do/` + myGenTplThis.ModuleDirCaseKebab,
 		`--entityPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
 		`--tables`, myGenTplThis.Table,
 		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
@@ -834,6 +834,21 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	return
 }
 
+// 获取扩展表和中间表要处理的字段数组
+func (myGenTplThis *myGenTpl) getExtendMiddleFieldArr(tpl myGenTpl, relId string) (fieldArr []string) {
+	fieldArrOfIgnore := []string{relId}
+	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != relId {
+		fieldArrOfIgnore = append(fieldArrOfIgnore, tpl.Handle.Id.List[0].FieldRaw)
+	}
+	for _, v := range tpl.FieldList {
+		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(v.FieldTypeName)) {
+			continue
+		}
+		fieldArr = append(fieldArr, v.FieldRaw)
+	}
+	return
+}
+
 // 获取扩展表
 func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []handleExtendMiddle, extendTableManyList []handleExtendMiddle) {
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
@@ -868,12 +883,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 				tplOfGen: tpl,
 				tpl:      extendTpl,
 				RelId:    key.Field,
-			}
-			for _, v := range extendTpl.FieldList {
-				if garray.NewStrArrayFrom([]string{extendTpl.Handle.Id.List[0].FieldRaw, key.Field}).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(v.FieldTypeName)) {
-					continue
-				}
-				handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
+				FieldArr: myGenTplThis.getExtendMiddleFieldArr(extendTpl, key.Field),
 			}
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
@@ -915,23 +925,28 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 		if gstr.Pos(v, `_rel_to_`) == -1 && gstr.Pos(v, `_rel_of_`) == -1 { //不是中间表跳过
 			continue
 		}
-		if gstr.Pos(v, `_rel_to_`) == -1 {
+		if gstr.Pos(v, `_rel_to_`) != -1 {
 			if gstr.Pos(v, tpl.Table+`_rel_to_`) != 0 { //不符合中间表_rel_to_命名的跳过
 				continue
 			}
 		} else {
-			if gstr.Pos(v, tpl.RemovePrefix) == 0 {
+			if gstr.Pos(v, tpl.RemovePrefix) == 0 { //不符合中间表_rel_of_命名的跳过（同模块）
 				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1)) {
 					continue
 				}
-			} else {
+			} else { //不符合中间表_rel_of_命名的跳过（不同模块）
 				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) {
 					continue
+				}
+				// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
+				tableRemove := gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1)
+				if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
+					removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
 				}
 			}
 		}
 
-		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
+		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeMiddle)
 		for _, key := range middleTpl.KeyList {
 			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				continue
@@ -941,12 +956,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				tplOfGen: tpl,
 				tpl:      middleTpl,
 				RelId:    key.Field,
-			}
-			for _, v := range middleTpl.FieldList {
-				if garray.NewStrArrayFrom([]string{middleTpl.Handle.Id.List[0].FieldRaw, key.Field}).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(v.FieldTypeName)) {
-					continue
-				}
-				handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
+				FieldArr: myGenTplThis.getExtendMiddleFieldArr(middleTpl, key.Field),
 			}
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
