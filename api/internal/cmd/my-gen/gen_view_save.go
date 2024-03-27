@@ -2,6 +2,7 @@ package my_gen
 
 import (
 	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -238,7 +239,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 		case TypeVarchar: // `varchar类型`
-			if v.IsUnique && !v.IsNull {
+			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
 				viewSaveField.isRequired = true
 			}
 			viewSaveField.rule.Method = ReturnType
@@ -250,7 +251,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeChar: // `char类型`
-			if v.IsUnique && !v.IsNull {
+			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
 				viewSaveField.isRequired = true
 			}
 			viewSaveField.rule.Method = ReturnType

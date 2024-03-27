@@ -92,6 +92,7 @@ func (daoThis *myGenDao) Merge(daoOther myGenDao) {
 	daoThis.updateParse = append(daoThis.updateParse, daoOther.updateParse...)
 	daoThis.updateHookBefore = append(daoThis.updateHookBefore, daoOther.updateHookBefore...)
 	daoThis.updateHookAfter = append(daoThis.updateHookAfter, daoOther.updateHookAfter...)
+	daoThis.deleteHook = append(daoThis.deleteHook, daoOther.deleteHook...)
 	daoThis.groupParse = append(daoThis.groupParse, daoOther.groupParse...)
 	daoThis.orderParse = append(daoThis.orderParse, daoOther.orderParse...)
 	daoThis.joinParse = append(daoThis.joinParse, daoOther.joinParse...)
@@ -272,6 +273,7 @@ func genDao(tpl myGenTpl) {
 			if row == 0 {
 				return
 			}
+
 			`+gstr.Join(append(dao.deleteHook, ``), `
 			`)+`return`, 1)
 	}

@@ -5,6 +5,7 @@ import (
 	"api/internal/utils"
 
 	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -328,7 +329,7 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if v.IsUnique && !v.IsNull {
+			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
 				apiField.isRequired = true
 			}
 			apiField.filterRule.Method = ReturnType
@@ -347,7 +348,7 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if v.IsUnique && !v.IsNull {
+			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
 				apiField.isRequired = true
 			}
 			apiField.filterRule.Method = ReturnType
@@ -539,7 +540,7 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.filterRule.Method = ReturnUnion
 			apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:1`)
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:0`)
 
 			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` && !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
 				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
