@@ -854,12 +854,12 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
 		return
 	}
+
 	removePrefixCommon := tpl.RemovePrefixCommon
 	removePrefixAlone := tpl.RemovePrefixAlone
 	if removePrefixAlone == `` {
 		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 	}
-
 	for _, v := range tpl.TableArr {
 		if v == tpl.Table { //自身跳过
 			continue
@@ -912,12 +912,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取中间表
 		return
 	}
-	removePrefixCommon := tpl.RemovePrefixCommon
-	removePrefixAlone := tpl.RemovePrefixAlone
-	if removePrefixAlone == `` {
-		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
-	}
 
+	removePrefixCommon := ``
+	removePrefixAlone := ``
 	for _, v := range tpl.TableArr {
 		if v == tpl.Table { //自身跳过
 			continue
@@ -929,20 +926,32 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if gstr.Pos(v, tpl.Table+`_rel_to_`) != 0 { //不符合中间表_rel_to_命名的跳过
 				continue
 			}
+			removePrefixCommon = tpl.RemovePrefixCommon
+			removePrefixAlone = tpl.RemovePrefixAlone
+			if removePrefixAlone == `` {
+				removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+			}
 		} else {
 			if gstr.Pos(v, tpl.RemovePrefix) == 0 { //不符合中间表_rel_of_命名的跳过（同模块）
 				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1)) {
 					continue
 				}
+				removePrefixCommon = tpl.RemovePrefixCommon
+				removePrefixAlone = tpl.RemovePrefixAlone
+				if removePrefixAlone == `` {
+					removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+				}
 			} else { //不符合中间表_rel_of_命名的跳过（不同模块）
 				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) {
 					continue
 				}
-				// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
-				tableRemove := gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1)
-				if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
-					removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
+				removePrefixCommon = tpl.RemovePrefixCommon
+				if gstr.Pos(v, tpl.RemovePrefixCommon) != 0 {
+					removePrefixCommon = ``
 				}
+				// 第一个分隔符之前的部分设置为removePrefixAlone
+				tableRemove := gstr.TrimLeftStr(v, removePrefixCommon, 1)
+				removePrefixAlone = gstr.SubStr(tableRemove, 0, gstr.Pos(tableRemove, `_`)+1)
 			}
 		}
 
