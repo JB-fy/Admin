@@ -68,14 +68,10 @@ type myGenFieldType = int
 type myGenFieldTypeName = string
 
 const (
-	TableTypeGen        myGenTableType = 0  //生成表（当前操作的表）
-	TableTypeRelId      myGenTableType = 1  //id后缀关联表
-	TableTypeExtend     myGenTableType = 10 //扩展表
-	TableTypeExtendOne  myGenTableType = 11 //扩展表（一对一）
-	TableTypeExtendMany myGenTableType = 12 //扩展表（一对多）
-	TableTypeMiddle     myGenTableType = 20 //中间表
-	TableTypeMiddleOne  myGenTableType = 21 //中间表（一对一）
-	TableTypeMiddleMany myGenTableType = 22 //中间表（一对多）
+	TableTypeExtendOne  myGenTableType = 1  //扩展表（一对一）
+	TableTypeExtendMany myGenTableType = 2  //扩展表（一对多）
+	TableTypeMiddleOne  myGenTableType = 11 //中间表（一对一）
+	TableTypeMiddleMany myGenTableType = 12 //中间表（一对多）
 
 	//用于结构体中，需从1开始，否则结构体会默认0
 	TypeInt       myGenFieldType = iota + 1 // `int等类型`
@@ -184,16 +180,13 @@ type handleExtendMiddle struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, tableTypeOpt ...myGenTableType) (tpl myGenTpl) {
+func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool) (tpl myGenTpl) {
 	tpl = myGenTpl{
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
 		Table:              table,
-	}
-	if len(tableTypeOpt) > 0 {
-		tpl.TableType = tableTypeOpt[0]
 	}
 	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[tpl.Group])[0][`link`])
 	tpl.TableArr = tpl.getTable(ctx, tpl.Group)
@@ -469,7 +462,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 
 	//pid,level,idPath|id_path同时存在时，需特殊处理
-	if garray.NewFrom([]interface{}{TableTypeGen}).Contains(tpl.TableType) {
+	if isTop {
 		if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
 			tpl.Handle.Pid.IsCoexist = true
 		}
@@ -563,7 +556,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
-	if garray.NewFrom([]interface{}{TableTypeGen}).Contains(tpl.TableType) {
+	if isTop {
 		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl) //扩展表
 		tpl.Handle.MiddleTableOneList, tpl.Handle.MiddleTableManyList = tpl.getMiddleTable(ctx, tpl) //中间表
 	}
@@ -857,7 +850,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 			}
 		}
 
-		relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, TableTypeRelId)
+		relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, false)
 		relTpl.gfGenDao(false) //dao文件生成
 	}
 	return
@@ -899,7 +892,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeExtend)
+		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range extendTpl.KeyList {
 			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				continue
@@ -984,7 +977,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			}
 		}
 
-		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, TableTypeMiddle)
+		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range middleTpl.KeyList {
 			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				continue
