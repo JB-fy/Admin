@@ -86,14 +86,16 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 		return
 	}
 
-	viewSave := getViewSaveFieldList(tpl, tpl.I18nPath)
+	viewSave := getViewSaveFieldList(tpl, tpl.I18nPath, tpl.FieldArr...)
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewSave.Merge(getViewSaveExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		viewSave.Merge(getViewSaveExtendMiddleOne(v))
 	}
-
+	for _, v := range tpl.FieldArrAfter {
+		viewSave.Merge(getViewSaveFieldList(tpl, tpl.I18nPath, v))
+	}
 	viewSave.Unique()
 
 	tplView := `<script setup lang="tsx">` + gstr.Join(append([]string{``}, viewSave.importModule...), `

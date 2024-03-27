@@ -46,7 +46,10 @@ func (viewI18nThis *myGenViewI18n) Unique() {
 
 // 视图模板Query生成
 func genViewI18n(option myGenOption, tpl myGenTpl) {
-	viewI18n := getViewI18nFieldList(tpl)
+	viewI18n := getViewI18nFieldList(tpl, tpl.FieldArr...)
+	for _, v := range tpl.FieldArrAfter {
+		viewI18n.Merge(getViewI18nFieldList(tpl, v))
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewI18n.Merge(getViewI18nExtendMiddleOne(v))
 	}

@@ -122,7 +122,10 @@ func genDao(tpl myGenTpl) {
 	tplDao := gfile.GetContents(saveFile)
 
 	dao := getDaoIdAndLabel(tpl)
-	dao.Merge(getDaoFieldList(tpl))
+	dao.Merge(getDaoFieldList(tpl, tpl.FieldArr...))
+	for _, v := range tpl.FieldArrAfter {
+		dao.Merge(getDaoFieldList(tpl, v))
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		genDao(v.tpl)
 		dao.Merge(getDaoExtendMiddleOne(v))
@@ -413,7 +416,7 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 	return
 }
 
-func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
+func getDaoFieldList(tpl myGenTpl, fieldArr ...string) (dao myGenDao) {
 	type daoTmp struct {
 		path  string
 		table string
@@ -424,6 +427,10 @@ func getDaoFieldList(tpl myGenTpl) (dao myGenDao) {
 	}
 
 	for _, v := range tpl.FieldList {
+		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
+			continue
+		}
+
 		daoField := myGenDaoField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {

@@ -66,12 +66,15 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
 		viewList.idType = `string`
 	}
-	viewList.Merge(getViewListFieldList(option, tpl, tpl.I18nPath))
+	viewList.Merge(getViewListFieldList(option, tpl, tpl.I18nPath, tpl.FieldArr...))
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewList.Merge(getViewListExtendMiddleOne(option, v))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		viewList.Merge(getViewListExtendMiddleOne(option, v))
+	}
+	for _, v := range tpl.FieldArrAfter {
+		viewList.Merge(getViewListFieldList(option, tpl, tpl.I18nPath, v))
 	}
 	viewList.Unique()
 

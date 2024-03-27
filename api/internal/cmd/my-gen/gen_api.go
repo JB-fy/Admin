@@ -73,7 +73,10 @@ func (apiThis *myGenApi) Unique() {
 // api生成
 func genApi(option myGenOption, tpl myGenTpl) {
 	api := getApiIdAndLabel(tpl)
-	api.Merge(getApiFieldList(tpl))
+	api.Merge(getApiFieldList(tpl, tpl.FieldArr...))
+	for _, v := range tpl.FieldArrAfter {
+		api.Merge(getApiFieldList(tpl, v))
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		api.Merge(getApiExtendMiddleOne(v))
 	}

@@ -58,6 +58,8 @@ type myGenTpl struct {
 		MiddleTableOneList  []handleExtendMiddle   //中间表（一对一）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，用_rel_to_做关联时，第一个表的关联字段做主键或唯一索引，用_rel_of_做关联时，第二个表的关联字段做主键或唯一索引。
 		MiddleTableManyList []handleExtendMiddle   //中间表（一对多）：表命名使用_rel_to_或_rel_of_关联两表，不同模块两表必须全名，同模块第二个表可全名也可省略前缀。存在与两个关联表主键同名的字段，两关联字段做联合主键或联合唯一索引
 	}
+	FieldArr      []string //按表字段顺序处理的字段数组
+	FieldArrAfter []string //放在最后处理的字段数组。且需按该数组顺序处理
 }
 
 type myGenTableType = uint
@@ -568,6 +570,33 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	/*--------需特殊处理的字段解析 结束--------*/
 
 	tpl.FieldList = fieldList
+
+	/* for _, v := range tpl.FieldList {
+		if v.FieldTypeName == TypeNameIsPrefix && v.FieldCaseCamel != `IsStop` {
+			tpl.FieldArrAfter = append(tpl.FieldArrAfter, v.FieldRaw)
+			continue
+		}
+	} */
+	for _, v := range tpl.FieldList {
+		if v.FieldTypeName == TypeNameIsPrefix && v.FieldCaseCamel == `IsStop` {
+			tpl.FieldArrAfter = append(tpl.FieldArrAfter, v.FieldRaw)
+			break
+		}
+	}
+	fieldTypeNameArrAfter := []string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}
+	for _, fieldTypeName := range fieldTypeNameArrAfter {
+		for _, v := range tpl.FieldList {
+			if fieldTypeName == v.FieldTypeName {
+				tpl.FieldArrAfter = append(tpl.FieldArrAfter, v.FieldRaw)
+				break
+			}
+		}
+	}
+	for _, v := range tpl.FieldList {
+		if !garray.NewStrArrayFrom(tpl.FieldArrAfter).Contains(v.FieldRaw) {
+			tpl.FieldArr = append(tpl.FieldArr, v.FieldRaw)
+		}
+	}
 	return
 }
 
@@ -841,7 +870,7 @@ func (myGenTplThis *myGenTpl) getExtendMiddleFieldArr(tpl myGenTpl, relId string
 		fieldArrOfIgnore = append(fieldArrOfIgnore, tpl.Handle.Id.List[0].FieldRaw)
 	}
 	for _, v := range tpl.FieldList {
-		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(gstr.CaseSnake(v.FieldTypeName)) {
+		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(v.FieldTypeName) {
 			continue
 		}
 		fieldArr = append(fieldArr, v.FieldRaw)
@@ -973,12 +1002,12 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if len(key.FieldArr) == 1 {
 				if key.IsPrimary { //主键
 					if !key.IsAutoInc { //不自增
-						handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
+						handleExtendMiddleObj.tpl.TableType = TableTypeMiddleOne
 						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
 				} else {
 					if key.IsUnique { //唯一索引
-						handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
+						handleExtendMiddleObj.tpl.TableType = TableTypeMiddleOne
 						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
 				}
@@ -991,7 +1020,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 					}
 				}
 				if isAllId {
-					handleExtendMiddleObj.tpl.TableType = TableTypeExtendMany
+					handleExtendMiddleObj.tpl.TableType = TableTypeMiddleMany
 					middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 				}
 			}

@@ -42,12 +42,15 @@ func (viewQueryThis *myGenViewQuery) Unique() {
 // 视图模板Query生成
 func genViewQuery(option myGenOption, tpl myGenTpl) {
 	viewQuery := getViewQueryIdAndLabel(tpl)
-	viewQuery.Merge(getViewQueryFieldList(tpl, tpl.I18nPath))
+	viewQuery.Merge(getViewQueryFieldList(tpl, tpl.I18nPath, tpl.FieldArr...))
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewQuery.Merge(getViewQueryExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		viewQuery.Merge(getViewQueryExtendMiddleOne(v))
+	}
+	for _, v := range tpl.FieldArrAfter {
+		viewQuery.Merge(getViewQueryFieldList(tpl, tpl.I18nPath, v))
 	}
 	viewQuery.Unique()
 
