@@ -12,11 +12,11 @@ const saveForm = reactive({
         idCardOfAliyunAppcode: '',
     } as { [propName: string]: any },
     rules: {
-        idCardType: [{ type: 'enum', enum: [`idCardOfAliyun`], trigger: 'change', message: t('validation.select') }],
+        idCardType: [{ type: 'enum', trigger: 'change', enum: [`idCardOfAliyun`], message: t('validation.select') }],
         idCardOfAliyunHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         idCardOfAliyunPath: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         idCardOfAliyunAppcode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {

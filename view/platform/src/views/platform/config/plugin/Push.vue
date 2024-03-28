@@ -16,7 +16,7 @@ const saveForm = reactive({
         pushOfTxMacOSSecretKey: '',
     } as { [propName: string]: any },
     rules: {
-        pushType: [{ type: 'enum', enum: [`pushOfTx`], trigger: 'change', message: t('validation.select') }],
+        pushType: [{ type: 'enum', trigger: 'change', enum: [`pushOfTx`], message: t('validation.select') }],
         pushOfTxHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         pushOfTxAndroidAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         pushOfTxAndroidSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
@@ -24,7 +24,7 @@ const saveForm = reactive({
         pushOfTxIosSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         pushOfTxMacOSAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         pushOfTxMacOSSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {

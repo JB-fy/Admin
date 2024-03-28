@@ -20,19 +20,19 @@ const saveForm = reactive({
         uploadOfAliyunOssRoleArn: '',
     } as { [propName: string]: any },
     rules: {
-        uploadType: [{ type: 'enum', enum: [`uploadOfLocal`, `uploadOfAliyunOss`], trigger: 'change', message: t('validation.select') }],
+        uploadType: [{ type: 'enum', trigger: 'change', enum: [`uploadOfLocal`, `uploadOfAliyunOss`], message: t('validation.select') }],
         uploadOfLocalUrl: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         uploadOfLocalSignKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         uploadOfLocalFileSaveDir: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         uploadOfLocalFileUrlPrefix: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         uploadOfAliyunOssHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         uploadOfAliyunOssBucket: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        uploadOfAliyunOssAccessKeyId: [{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
-        uploadOfAliyunOssAccessKeySecret: [{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') }],
+        uploadOfAliyunOssAccessKeyId: [{ trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') }],
+        uploadOfAliyunOssAccessKeySecret: [{ trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') }],
         uploadOfAliyunOssCallbackUrl: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
         uploadOfAliyunOssEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         uploadOfAliyunOssRoleArn: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {

@@ -116,7 +116,7 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {` + gstr.Join(append([]string{``}, viewSave.rule...), `
         `) + `
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {

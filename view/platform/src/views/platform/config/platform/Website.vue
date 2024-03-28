@@ -11,13 +11,10 @@ const saveForm = reactive({
         privacyAgreement: '',
     } as { [propName: string]: any },
     rules: {
-        hotSearch: [
-            // { type: 'array', trigger: 'change', message: t('validation.required') },
-            { type: 'array', max: 10, trigger: 'change', message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },
-        ],
+        hotSearch: [{ type: 'array', trigger: 'change', max: 10, message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } }],
         userAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         privacyAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {

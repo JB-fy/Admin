@@ -25,22 +25,22 @@ const saveForm = reactive({
     } as { [propName: string]: any },
     rules: {
         packageUrlOfAndroid: [{ type: 'url', trigger: 'change', message: t('validation.upload') }],
-        packageSizeOfAndroid: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }],
+        packageSizeOfAndroid: [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
         packageNameOfAndroid: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        isForceUpdateOfAndroid: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        versionNumberOfAndroid: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }],
+        isForceUpdateOfAndroid: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        versionNumberOfAndroid: [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
         versionNameOfAndroid: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         versionIntroOfAndroid: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
 
         packageUrlOfIos: [{ type: 'url', trigger: 'change', message: t('validation.upload') }],
-        packageSizeOfIos: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }],
+        packageSizeOfIos: [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
         packageNameOfIos: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        isForceUpdateOfIos: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        versionNumberOfIos: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.min.number', { min: 0 }) }],
+        isForceUpdateOfIos: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        versionNumberOfIos: [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
         versionNameOfIos: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         versionIntroOfIos: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         plistUrlOfIos: [{ type: 'url', trigger: 'change', message: t('validation.upload') }],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {

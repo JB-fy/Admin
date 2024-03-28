@@ -32,7 +32,7 @@ const saveForm = reactive({
         payOfWxApiV3Key: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         payOfWxPrivateKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         payOfWxNotifyUrl: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { configKeyArr: Object.keys(saveForm.data) }
         try {

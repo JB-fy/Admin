@@ -5,14 +5,17 @@ const { t } = useI18n()
 
 const loginForm = reactive({
     ref: null as any,
-    data: {
-        loginName: '',
-        password: '',
-    },
+    data: {} as { [propName: string]: any },
     rules: {
-        loginName: [{ type: 'string', required: true, max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
-        password: [{ type: 'string', required: true, min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) }],
-    } as any,
+        loginName: [
+            { required: true, message: t('validation.required') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+        ],
+        password: [
+            { required: true, message: t('validation.required') },
+            { type: 'string', trigger: 'blur', min: 6, max: 30, message: t('validation.between.string', { min: 6, max: 30 }) },
+        ],
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     loading: false,
     submit: () => {
         loginForm.ref.validate(async (valid: boolean) => {

@@ -26,7 +26,7 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'array', trigger: 'change', min: 1, message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },
         ],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {

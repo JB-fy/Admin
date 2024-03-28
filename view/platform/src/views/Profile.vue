@@ -8,66 +8,53 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        account: '',
-        phone: '',
         nickname: adminStore.info.nickname,
         avatar: adminStore.info.avatar,
-        password: '',
-        repeatPassword: '',
-        passwordToCheck: '',
     } as { [propName: string]: any },
     rules: {
         account: [
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         phone: [
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
-        nickname: [{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
+        nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         avatar: [
             { type: 'url', trigger: 'change', message: t('validation.upload') },
-            { type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) },
+            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
         ],
-        password: [{ type: 'string', min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) }],
+        password: [{ type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) }],
         repeatPassword: [
-            { type: 'string', min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },
+            { required: computed((): boolean => (saveForm.data.password ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
-                required: computed((): boolean => {
-                    return saveForm.data.password ? true : false
-                }),
+                trigger: 'blur',
                 validator: (rule: any, value: any, callback: any) => {
                     if (saveForm.data.password != saveForm.data.repeatPassword) {
                         callback(new Error())
                     }
                     callback()
                 },
-                trigger: 'blur',
                 message: t('validation.repeatPassword'),
             },
         ],
         passwordToCheck: [
-            { type: 'string', min: 6, max: 30, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 30 }) },
+            { required: computed((): boolean => (saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false)), message: t('profile.tip.passwordToCheck') },
+            { type: 'string', trigger: 'blur', min: 6, max: 30, message: t('validation.between.string', { min: 6, max: 30 }) },
             {
-                required: computed((): boolean => {
-                    return saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false
-                }),
                 trigger: 'blur',
-                message: t('profile.tip.passwordToCheck'),
-            },
-            {
                 validator: (rule: any, value: any, callback: any) => {
                     if (saveForm.data.password && saveForm.data.password == saveForm.data.passwordToCheck) {
                         callback(new Error())
                     }
                     callback()
                 },
-                trigger: 'blur',
                 message: t('validation.newPasswordDiffOldPassword'),
             },
         ],
-    } as any,
+    } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
