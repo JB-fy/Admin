@@ -29,27 +29,27 @@ type myGenViewSaveField struct {
 	paramHandle    myGenDataStrHandler
 }
 
-func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field myGenField, i18nPath string) {
+func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field string, i18nPath string) {
 	viewSaveThis.importModule = append(viewSaveThis.importModule, viewSaveField.importModule...)
 	if viewSaveField.dataInitBefore.getData() != `` {
-		viewSaveThis.dataInitBefore = append(viewSaveThis.dataInitBefore, field.FieldRaw+`: `+viewSaveField.dataInitBefore.getData()+`,`)
+		viewSaveThis.dataInitBefore = append(viewSaveThis.dataInitBefore, field+`: `+viewSaveField.dataInitBefore.getData()+`,`)
 	}
 	if viewSaveField.dataInitAfter.getData() != `` {
-		viewSaveThis.dataInitAfter = append(viewSaveThis.dataInitAfter, field.FieldRaw+`: `+viewSaveField.dataInitAfter.getData()+`,`)
+		viewSaveThis.dataInitAfter = append(viewSaveThis.dataInitAfter, field+`: `+viewSaveField.dataInitAfter.getData()+`,`)
 	}
 	rule := viewSaveField.rule.getData()
 	if viewSaveField.isRequired {
 		rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
 	}
 	if len(rule) > 0 {
-		viewSaveThis.rule = append(viewSaveThis.rule, field.FieldRaw+`: [`+gstr.Join(append([]string{``}, rule...), `
+		viewSaveThis.rule = append(viewSaveThis.rule, field+`: [`+gstr.Join(append([]string{``}, rule...), `
             `)+`
         ],`)
 	} else {
-		viewSaveThis.rule = append(viewSaveThis.rule, field.FieldRaw+`: [],`)
+		viewSaveThis.rule = append(viewSaveThis.rule, field+`: [],`)
 	}
 	if viewSaveField.form.getData() != `` {
-		viewSaveThis.form = append(viewSaveThis.form, `<el-form-item :label="t('`+i18nPath+`.name.`+field.FieldRaw+`')" prop="`+field.FieldRaw+`">
+		viewSaveThis.form = append(viewSaveThis.form, `<el-form-item :label="t('`+i18nPath+`.name.`+field+`')" prop="`+field+`">
                     `+viewSaveField.form.getData()+`
                 </el-form-item>`)
 	}
@@ -518,7 +518,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		viewSave.Add(viewSaveField, v, i18nPath)
+		viewSave.Add(viewSaveField, v.FieldRaw, i18nPath)
 	}
 	return
 }
