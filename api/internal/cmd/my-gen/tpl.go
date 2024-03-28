@@ -11,13 +11,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type config struct { //固定配置参数
-	maxLenOfStrFilter uint // 字段是TypeVarchar或TypeChar时，字段长度大于该值时，不生成过滤条件
-	maxLenOfStrHiddle uint // 字段是TypeVarchar或TypeChar时，字段长度大于等于该值时，前端列表字段设置with: 200, hidden: true
-}
-
 type myGenTpl struct {
-	Config             config         //配置参数
 	Link               string         //当前数据库连接配置（gf gen dao命令生成dao需要）
 	TableArr           []string       //当前数据库全部数据表（获取扩展表，中间表等需要）
 	Group              string         //数据库分组
@@ -141,10 +135,6 @@ type handleExtendMiddle struct {
 // 创建模板参数
 func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool) (tpl myGenTpl) {
 	tpl = myGenTpl{
-		Config: config{
-			maxLenOfStrFilter: 30,
-			maxLenOfStrHiddle: 120,
-		},
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,

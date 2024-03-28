@@ -434,7 +434,7 @@ func getDaoFieldList(tpl myGenTpl, fieldArr ...string) (dao myGenDao) {
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型`	// `char类型`
-			if gconv.Uint(v.FieldLimitStr) <= tpl.Config.maxLenOfStrFilter {
+			if gconv.Uint(v.FieldLimitStr) <= configMaxLenOfStrFilter {
 				daoField.filterParse.Method = ReturnType
 			}
 			if v.IsUnique && v.IsNull {
@@ -821,7 +821,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型`	// `char类型`
-			if gconv.Uint(v.FieldLimitStr) <= tpl.Config.maxLenOfStrFilter {
+			if gconv.Uint(v.FieldLimitStr) <= configMaxLenOfStrFilter {
 				daoField.filterParse.Method = ReturnType
 			}
 		case TypeText: // `text类型`

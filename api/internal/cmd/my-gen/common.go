@@ -7,6 +7,11 @@ import (
 	"github.com/fatih/color"
 )
 
+const ( //配置
+	configMaxLenOfStrFilter = 30  // 字段是TypeVarchar或TypeChar时，字段长度大于该值时，不生成过滤条件
+	configMaxLenOfStrHiddle = 120 // 字段是TypeVarchar或TypeChar时，字段长度大于等于该值时，前端列表字段设置with: 200, hidden: true
+)
+
 type myGenTableType = uint
 type myGenFieldTypePrimary = string
 type myGenFieldType = int

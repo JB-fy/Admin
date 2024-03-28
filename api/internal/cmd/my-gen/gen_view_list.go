@@ -392,7 +392,7 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl, i18nPath string, fie
 		case TypeFloat: // `float等类型`
 		case TypeFloatU: // `float等类型（unsigned）`
 		case TypeVarchar, TypeChar: // `varchar类型` // `char类型`
-			if gconv.Uint(v.FieldLimitStr) >= tpl.Config.maxLenOfStrHiddle {
+			if gconv.Uint(v.FieldLimitStr) >= configMaxLenOfStrHiddle {
 				viewListField.width.DataType = `200`
 				viewListField.hidden.Method = ReturnType
 				viewListField.hidden.DataType = `true`
