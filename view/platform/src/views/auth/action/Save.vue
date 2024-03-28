@@ -13,16 +13,19 @@ const saveForm = reactive({
     rules: {
         actionName: [
             { required: true, message: t('validation.required') },
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
         actionCode: [
             { required: true, message: t('validation.required') },
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },
         ],
-        remark: [{ type: 'string', max: 120, trigger: 'blur', message: t('validation.max.string', { max: 120 }) }],
-        isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        sceneIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
+        remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
+        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        sceneIdArr: [
+            { required: true, message: t('validation.required') },
+            { type: 'array', trigger: 'change', min: 1, message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },
+        ],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -81,9 +84,6 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('auth.action.name.actionCode')" prop="actionCode">
                     <el-input v-model="saveForm.data.actionCode" :placeholder="t('auth.action.name.actionCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
-                <el-form-item :label="t('auth.action.name.sceneId')" prop="sceneIdArr">
-                    <my-transfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.action.name.remark')" prop="remark">
                     <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />

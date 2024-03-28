@@ -15,21 +15,36 @@ const saveForm = reactive({
     rules: {
         roleName: [
             { required: true, message: t('validation.required') },
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
         sceneId: [
             { required: true, message: t('validation.required') },
-            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+            { type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },
         ],
         /* tableId: [
             // { required: true, message: t('validation.required') },
-            { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
+            { type: 'integer', trigger: 'change', min: 0, message: t('validation.select') },
         ], */
-        isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
-        actionIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
+        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        menuIdArr: [
+            {
+                type: 'array',
+                trigger: 'change',
+                message: t('validation.select'),
+                defaultField: {
+                    type: 'array',
+                    defaultField: {
+                        type: 'integer',
+                        min: 1,
+                        message: t('validation.min.number', { min: 1 }),
+                    },
+                },
+            },
+        ],
+        actionIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }],
     } as any,
     submit: () => {
+        console.log(saveForm.data.menuIdArr)
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
                 return false

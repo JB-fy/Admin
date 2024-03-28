@@ -26,7 +26,6 @@ type MenuListFilter struct {
 	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 	Pid            *uint       `json:"pid,omitempty" v:"" dc:"父ID"`
 	Level          *uint       `json:"level,omitempty" v:"min:1" dc:"层级"`
-	MenuUrl        string      `json:"menuUrl,omitempty" v:"max-length:120" dc:"链接"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`

@@ -18,7 +18,7 @@ type Menu struct {
 	Pid       interface{} // 父ID
 	Level     interface{} // 层级
 	IdPath    interface{} // 层级路径
-	MenuIcon  interface{} // 图标
+	MenuIcon  interface{} // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
 	MenuUrl   interface{} // 链接
 	ExtraData interface{} // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      interface{} // 排序值。从小到大排序，默认50，范围0-100

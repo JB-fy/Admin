@@ -83,7 +83,7 @@ type RoleCreateReq struct {
 	g.Meta   `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
 	RoleName *string `json:"roleName,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneId  *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
-	// TableId  *uint   `json:"tableId,omitempty" v:"min:1" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	// TableId  *uint   `json:"tableId,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
@@ -97,7 +97,7 @@ type RoleUpdateReq struct {
 	IdArr    []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	RoleName *string `json:"roleName,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId  *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
-	// TableId  *uint   `json:"tableId,omitempty" v:"min:1" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	// TableId  *uint   `json:"tableId,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
