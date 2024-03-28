@@ -319,7 +319,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 			viewSaveField.form.Method = ReturnType
-			viewSaveField.form.DataType = `<el-date-picker v-model="saveForm.data.` + v.FieldRaw + `" type="date" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 150px" />`
+			viewSaveField.form.DataType = `<el-date-picker v-model="saveForm.data.` + v.FieldRaw + `" type="date" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />`
 		default:
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :clearable="true" />`
