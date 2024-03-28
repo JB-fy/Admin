@@ -422,15 +422,16 @@ func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenC
 
 func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenController) {
 	tpl := tplEM.tpl
-	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
 	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
 
+	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
 	for _, v := range tplEM.FieldArr {
 		field := daoPath + `.Columns().` + gstr.CaseCamel(v)
 		controller.list = append(controller.list, field)
 		controller.info = append(controller.info, field)
 		controller.tree = append(controller.tree, field)
 	}
+
 	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
 	return
 }

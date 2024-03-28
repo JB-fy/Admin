@@ -11,7 +11,13 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
+type config struct { //固定配置参数
+	maxLenOfStrFilter uint // 字段是TypeVarchar或TypeChar时，字段长度大于该值时，不生成过滤条件
+	maxLenOfStrHiddle uint // 字段是TypeVarchar或TypeChar时，字段长度大于等于该值时，前端列表字段设置with: 200, hidden: true
+}
+
 type myGenTpl struct {
+	Config             config         //配置参数
 	Link               string         //当前数据库连接配置（gf gen dao命令生成dao需要）
 	TableArr           []string       //当前数据库全部数据表（获取扩展表，中间表等需要）
 	Group              string         //数据库分组
@@ -172,17 +178,30 @@ type handleRelId struct {
 	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
 }
 
+// TODO
 type handleExtendMiddle struct {
-	tplOfTop           myGenTpl
-	tpl                myGenTpl
-	RelId              string   //关联字段
-	FieldArr           []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
-	FieldArrOfIdSuffix []string //FieldArr中的id后缀字段数组
+	tplOfTop                 myGenTpl
+	tpl                      myGenTpl
+	RelId                    string //关联字段
+	daoPath                  string
+	daoTable                 string
+	daoTable1                string
+	daoTable2                string
+	FieldArr                 []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
+	FieldArrOfOther          []string //FieldArr中除id后缀字段外的其它字段数组
+	FieldArrOfIdSuffix       []string //FieldArr中的id后缀字段数组
+	FieldColumnArr           []string
+	FieldColumnArrOfOther    []string
+	FieldColumnArrOfIdSuffix []string
 }
 
 // 创建模板参数
 func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool) (tpl myGenTpl) {
 	tpl = myGenTpl{
+		Config: config{
+			maxLenOfStrFilter: 30,
+			maxLenOfStrHiddle: 120,
+		},
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
@@ -857,20 +876,49 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	return
 }
 
-// 获取扩展表和中间表要处理的字段数组
-func (myGenTplThis *myGenTpl) getExtendMiddleFieldArr(tpl myGenTpl, relId string) (fieldArr []string, fieldArrOfIdSuffix []string) {
-	fieldArrOfIgnore := []string{relId}
-	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != relId {
-		fieldArrOfIgnore = append(fieldArrOfIgnore, tpl.Handle.Id.List[0].FieldRaw)
+// 创建扩展表和中间表模板参数
+func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMiddleTpl myGenTpl, relId string) (handleExtendMiddleObj handleExtendMiddle) {
+	extendMiddleTpl.gfGenDao(false) //dao文件生成
+
+	handleExtendMiddleObj = handleExtendMiddle{
+		tplOfTop:  tplOfTop,
+		tpl:       extendMiddleTpl,
+		RelId:     relId,
+		daoPath:   extendMiddleTpl.TableCaseCamel,
+		daoTable:  extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
+		daoTable1: `table` + extendMiddleTpl.TableCaseCamel,
+		daoTable2: extendMiddleTpl.TableCaseCamel,
 	}
-	for _, v := range tpl.FieldList {
+	if extendMiddleTpl.ModuleDirCaseKebab != tplOfTop.ModuleDirCaseKebab {
+		handleExtendMiddleObj.daoPath = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel
+		handleExtendMiddleObj.daoTable = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`
+		handleExtendMiddleObj.daoTable1 = `table` + extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
+		handleExtendMiddleObj.daoTable2 = extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
+	}
+
+	fieldArrOfIgnore := []string{relId}
+	if extendMiddleTpl.Handle.Id.IsPrimary && len(extendMiddleTpl.Handle.Id.List) == 1 && extendMiddleTpl.Handle.Id.List[0].FieldRaw != relId {
+		fieldArrOfIgnore = append(fieldArrOfIgnore, extendMiddleTpl.Handle.Id.List[0].FieldRaw)
+	}
+	for _, v := range extendMiddleTpl.FieldList {
 		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{TypeNameDeleted, TypeNameUpdated, TypeNameCreated}).Contains(v.FieldTypeName) {
 			continue
 		}
-		fieldArr = append(fieldArr, v.FieldRaw)
-		if v.FieldTypeName == TypeNameIdSuffix {
-			fieldArrOfIdSuffix = append(fieldArr, v.FieldRaw)
+		handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
+		if v.FieldTypeName != TypeNameIdSuffix {
+			handleExtendMiddleObj.FieldArrOfOther = append(handleExtendMiddleObj.FieldArrOfOther, v.FieldRaw)
+		} else {
+			handleExtendMiddleObj.FieldArrOfIdSuffix = append(handleExtendMiddleObj.FieldArrOfIdSuffix, v.FieldRaw)
 		}
+	}
+	for _, v := range handleExtendMiddleObj.FieldArr {
+		handleExtendMiddleObj.FieldColumnArr = append(handleExtendMiddleObj.FieldColumnArr, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
+	}
+	for _, v := range handleExtendMiddleObj.FieldArrOfOther {
+		handleExtendMiddleObj.FieldColumnArrOfOther = append(handleExtendMiddleObj.FieldColumnArrOfOther, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
+	}
+	for _, v := range handleExtendMiddleObj.FieldArrOfIdSuffix {
+		handleExtendMiddleObj.FieldColumnArrOfIdSuffix = append(handleExtendMiddleObj.FieldColumnArrOfIdSuffix, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
 	}
 	return
 }
@@ -904,13 +952,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			if len(key.FieldArr) != 1 {
 				continue
 			}
-			extendTpl.gfGenDao(false) //dao文件生成
-			handleExtendMiddleObj := handleExtendMiddle{
-				tplOfTop: tpl,
-				tpl:      extendTpl,
-				RelId:    key.Field,
-			}
-			handleExtendMiddleObj.FieldArr, handleExtendMiddleObj.FieldArrOfIdSuffix = myGenTplThis.getExtendMiddleFieldArr(extendTpl, key.Field)
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.Field)
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
@@ -986,13 +1028,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				continue
 			}
-			middleTpl.gfGenDao(false) //dao文件生成
-			handleExtendMiddleObj := handleExtendMiddle{
-				tplOfTop: tpl,
-				tpl:      middleTpl,
-				RelId:    key.Field,
-			}
-			handleExtendMiddleObj.FieldArr, handleExtendMiddleObj.FieldArrOfIdSuffix = myGenTplThis.getExtendMiddleFieldArr(middleTpl, key.Field)
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, key.Field)
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}

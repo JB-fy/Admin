@@ -145,12 +145,12 @@ func getViewQueryFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (v
 			// viewQueryField.form.Method = ReturnType
 			viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
 		case TypeVarchar: // `varchar类型`
-			if gconv.Uint(v.FieldLimitStr) <= 30 {
+			if gconv.Uint(v.FieldLimitStr) <= tpl.Config.maxLenOfStrFilter {
 				viewQueryField.form.Method = ReturnType
 				viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
 			}
 		case TypeChar: // `char类型`
-			if gconv.Uint(v.FieldLimitStr) <= 30 {
+			if gconv.Uint(v.FieldLimitStr) <= tpl.Config.maxLenOfStrFilter {
 				viewQueryField.form.Method = ReturnType
 				viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
 			}
