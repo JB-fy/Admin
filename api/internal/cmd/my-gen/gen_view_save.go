@@ -239,7 +239,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 		case TypeVarchar: // `varchar类型`
-			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
+			if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
 				viewSaveField.isRequired = true
 			}
 			viewSaveField.rule.Method = ReturnType
@@ -251,7 +251,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeChar: // `char类型`
-			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
+			if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
 				viewSaveField.isRequired = true
 			}
 			viewSaveField.rule.Method = ReturnType
@@ -342,8 +342,10 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 		case TypeNameCreated: // 创建时间字段
 			continue
 		case TypeNamePid: // pid；	类型：int等类型；
+			viewSaveField.dataInitAfter.Method = ReturnTypeName
+			viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + v.FieldRaw + ` ? saveCommon.data.` + v.FieldRaw + ` : undefined`
 			viewSaveField.rule.Method = ReturnTypeName
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') },`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },`)
 			viewSaveField.form.Method = ReturnTypeName
 			viewSaveField.form.DataTypeName = `<my-cascader v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />`
 			viewSaveField.paramHandle.Method = ReturnTypeName
@@ -389,6 +391,8 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 				apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			}
+			viewSaveField.dataInitAfter.Method = ReturnTypeName
+			viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + v.FieldRaw + ` ? saveCommon.data.` + v.FieldRaw + ` : undefined`
 			viewSaveField.rule.Method = ReturnTypeName
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
 				`// { required: true, message: t('validation.required') },`,
@@ -399,8 +403,6 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 				viewSaveField.form.DataTypeName = `<my-cascader v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
 			} else {
 				viewSaveField.form.DataTypeName = `<my-select v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
-				viewSaveField.dataInitAfter.Method = ReturnTypeName
-				viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + v.FieldRaw + ` ? saveCommon.data.` + v.FieldRaw + ` : undefined`
 			}
 			viewSaveField.paramHandle.Method = ReturnTypeName
 			viewSaveField.paramHandle.DataTypeName = `param.` + v.FieldRaw + ` === undefined ? param.` + v.FieldRaw + ` = 0 : null`
@@ -518,6 +520,6 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 }
 
 func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSave) {
-	viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfGen.I18nPath, tplEM.FieldArr...))
+	viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
 	return
 }

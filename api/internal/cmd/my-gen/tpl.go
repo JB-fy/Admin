@@ -173,10 +173,11 @@ type handleRelId struct {
 }
 
 type handleExtendMiddle struct {
-	tplOfGen myGenTpl
-	tpl      myGenTpl
-	RelId    string   //关联字段
-	FieldArr []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
+	tplOfTop           myGenTpl
+	tpl                myGenTpl
+	RelId              string   //关联字段
+	FieldArr           []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
+	FieldArrOfIdSuffix []string //FieldArr中的id后缀字段数组
 }
 
 // 创建模板参数
@@ -857,7 +858,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 }
 
 // 获取扩展表和中间表要处理的字段数组
-func (myGenTplThis *myGenTpl) getExtendMiddleFieldArr(tpl myGenTpl, relId string) (fieldArr []string) {
+func (myGenTplThis *myGenTpl) getExtendMiddleFieldArr(tpl myGenTpl, relId string) (fieldArr []string, fieldArrOfIdSuffix []string) {
 	fieldArrOfIgnore := []string{relId}
 	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != relId {
 		fieldArrOfIgnore = append(fieldArrOfIgnore, tpl.Handle.Id.List[0].FieldRaw)
@@ -867,6 +868,9 @@ func (myGenTplThis *myGenTpl) getExtendMiddleFieldArr(tpl myGenTpl, relId string
 			continue
 		}
 		fieldArr = append(fieldArr, v.FieldRaw)
+		if v.FieldTypeName == TypeNameIdSuffix {
+			fieldArrOfIdSuffix = append(fieldArr, v.FieldRaw)
+		}
 	}
 	return
 }
@@ -902,11 +906,11 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			}
 			extendTpl.gfGenDao(false) //dao文件生成
 			handleExtendMiddleObj := handleExtendMiddle{
-				tplOfGen: tpl,
+				tplOfTop: tpl,
 				tpl:      extendTpl,
 				RelId:    key.Field,
-				FieldArr: myGenTplThis.getExtendMiddleFieldArr(extendTpl, key.Field),
 			}
+			handleExtendMiddleObj.FieldArr, handleExtendMiddleObj.FieldArrOfIdSuffix = myGenTplThis.getExtendMiddleFieldArr(extendTpl, key.Field)
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
@@ -984,11 +988,11 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			}
 			middleTpl.gfGenDao(false) //dao文件生成
 			handleExtendMiddleObj := handleExtendMiddle{
-				tplOfGen: tpl,
+				tplOfTop: tpl,
 				tpl:      middleTpl,
 				RelId:    key.Field,
-				FieldArr: myGenTplThis.getExtendMiddleFieldArr(middleTpl, key.Field),
 			}
+			handleExtendMiddleObj.FieldArr, handleExtendMiddleObj.FieldArrOfIdSuffix = myGenTplThis.getExtendMiddleFieldArr(middleTpl, key.Field)
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}

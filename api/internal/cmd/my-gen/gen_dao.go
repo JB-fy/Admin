@@ -777,7 +777,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		table1: `table` + tpl.TableCaseCamel,
 		table2: tpl.TableCaseCamel,
 	}
-	if tpl.ModuleDirCaseKebab != tplEM.tplOfGen.ModuleDirCaseKebab {
+	if tpl.ModuleDirCaseKebab != tplEM.tplOfTop.ModuleDirCaseKebab {
 		daoTmpObj = daoTmp{
 			path:   `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel,
 			table:  `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
@@ -906,7 +906,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				daoPath := relIdObj.tpl.TableCaseCamel
 				daoTable := `table` + relIdObj.tpl.TableCaseCamel
 				// if relIdObj.tpl.ModuleDirCaseKebab != tpl.ModuleDirCaseKebab {
-				if relIdObj.tpl.ModuleDirCaseKebab != tplEM.tplOfGen.ModuleDirCaseKebab {
+				if relIdObj.tpl.ModuleDirCaseKebab != tplEM.tplOfTop.ModuleDirCaseKebab {
 					daoField.importDao = append(daoField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 					daoPath = `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 					daoTable = `table` + relIdObj.tpl.ModuleDirCaseCamel + relIdObj.tpl.TableCaseCamel

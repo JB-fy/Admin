@@ -275,6 +275,6 @@ func getViewQueryFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (v
 	return
 }
 func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQuery) {
-	viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfGen.I18nPath, tplEM.FieldArr...))
+	viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
 	return
 }

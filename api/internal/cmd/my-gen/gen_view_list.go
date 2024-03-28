@@ -655,6 +655,6 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl, i18nPath string, fie
 }
 
 func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
-	viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfGen.I18nPath, tplEM.FieldArr...))
+	viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
 	return
 }
