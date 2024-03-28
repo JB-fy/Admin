@@ -279,8 +279,11 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{
                 type: 'object',
                 /* fields: {
-                    xxxx: { type: 'string', required: true, message: 'xxxx' + t('validation.required') },
-                    xxxx: { type: 'integer', required: true, min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
+                    xxxx: [
+						{ required: true, message: t('validation.required') },
+						{ type: 'string', message: 'xxxx' + t('validation.input') },
+						// { type: 'integer', min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
+					],
                 }, */
                 transform(value: any) {
                     if (value === '' || value === null || value === undefined) {
@@ -357,7 +360,10 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 			viewSaveField.importModule = append(viewSaveField.importModule, `import md5 from 'js-md5'`)
 			viewSaveField.rule.Method = ReturnTypeName
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
+				`{ required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), message: t('validation.required')`,
+				`{ type: 'string', min: 6, max: 20, trigger: 'blur', message: t('validation.between.string', { min: 6, max: 20 }) },`,
+			)
 			viewSaveField.form.Method = ReturnTypeName
 			viewSaveField.form.DataTypeName = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert v-if="saveForm.data.idArr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />`
