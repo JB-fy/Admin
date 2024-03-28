@@ -11,6 +11,7 @@ const saveForm = reactive({
         sort: 50,
         ...saveCommon.data,
         sceneId: saveCommon.data.sceneId ? saveCommon.data.sceneId : undefined,
+        pid: saveCommon.data.pid ? saveCommon.data.pid : undefined,
     } as { [propName: string]: any },
     rules: {
         menuName: [
@@ -21,7 +22,7 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'integer', min: 1, trigger: 'change', message: t('validation.select') },
         ],
-        pid: [{ type: 'integer', min: 0, trigger: 'change', message: t('validation.select') }],
+        pid: [{ type: 'integer', min: 1, trigger: 'change', message: t('validation.select') }],
         menuIcon: [
             { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
             // { type: 'url', trigger: 'change', message: t('validation.upload') },
