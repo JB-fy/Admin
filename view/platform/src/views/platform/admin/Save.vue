@@ -14,43 +14,34 @@ const saveForm = reactive({
     rules: {
         phone: [
             {
-                required: computed((): boolean => {
-                    return saveForm.data.account ? false : true
-                }),
+                required: computed((): boolean => (saveForm.data.account ? false : true)),
                 message: t('validation.required'),
             },
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
         account: [
             {
-                required: computed((): boolean => {
-                    return saveForm.data.phone ? false : true
-                }),
+                required: computed((): boolean => (saveForm.data.phone ? false : true)),
                 message: t('validation.required'),
             },
-            { type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
-            {
-                type: 'string',
-                required: computed((): boolean => {
-                    return saveForm.data.idArr?.length ? false : true
-                }),
-                min: 6,
-                max: 20,
-                trigger: 'blur',
-                message: t('validation.between.string', { min: 6, max: 20 }),
-            },
+            { required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
-        nickname: [{ type: 'string', max: 30, trigger: 'blur', message: t('validation.max.string', { max: 30 }) }],
+        nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         avatar: [
-            { type: 'string', max: 200, trigger: 'blur', message: t('validation.max.string', { max: 200 }) },
+            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
-        isStop: [{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), trigger: 'change', message: t('validation.select') }],
-        roleIdArr: [{ type: 'array', required: true, min: 1, trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer' } }],
+        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        roleIdArr: [
+            { required: true, message: t('validation.required') },
+            { type: 'array', trigger: 'change', min: 1, message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },
+        ],
     } as any,
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {

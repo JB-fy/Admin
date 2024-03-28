@@ -27,7 +27,6 @@ type UserListFilter struct {
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	Address        string      `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
 	IdCardName     string      `json:"idCardName,omitempty" v:"max-length:30" dc:"身份证姓名"`
 	IdCardNo       string      `json:"idCardNo,omitempty" v:"max-length:30" dc:"身份证号码"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`

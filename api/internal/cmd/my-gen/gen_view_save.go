@@ -361,7 +361,7 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 			viewSaveField.importModule = append(viewSaveField.importModule, `import md5 from 'js-md5'`)
 			viewSaveField.rule.Method = ReturnTypeName
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
-				`{ required: computed((): boolean => { return saveForm.data.idArr?.length ? false : true; }), message: t('validation.required')`,
+				`{ required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },`,
 				`{ type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },`,
 			)
 			viewSaveField.form.Method = ReturnTypeName
