@@ -774,14 +774,14 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				}
 				insertDataOf` + tplEM.daoTable2 + `[k] = v
 				daoModel.AfterInsert[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `] = insertDataOf` + tplEM.daoTable2
-	if len(tplEM.FieldArrOfOther) > 0 {
-		dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArrOfOther, `, `)+`:`+insertParseStr)
-	}
 	if len(tplEM.FieldArrOfIdSuffix) > 0 {
 		dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArrOfIdSuffix, `, `)+`:
 				if gconv.Uint(v) == 0 {
 					continue
 				}`+insertParseStr)
+	}
+	if len(tplEM.FieldArrOfOther) > 0 {
+		dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArrOfOther, `, `)+`:`+insertParseStr)
 	}
 	dao.insertHook = append(dao.insertHook, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
 					insertDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})

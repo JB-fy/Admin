@@ -125,11 +125,11 @@ type handleExtendMiddle struct {
 	daoTable1                string
 	daoTable2                string
 	FieldArr                 []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
-	FieldArrOfOther          []string //FieldArr中除id后缀字段外的其它字段数组
 	FieldArrOfIdSuffix       []string //FieldArr中的id后缀字段数组
+	FieldArrOfOther          []string //FieldArr中除id后缀字段外的其它字段数组
 	FieldColumnArr           []string
-	FieldColumnArrOfOther    []string
 	FieldColumnArrOfIdSuffix []string
+	FieldColumnArrOfOther    []string
 }
 
 // 创建模板参数
@@ -838,20 +838,20 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 			continue
 		}
 		handleExtendMiddleObj.FieldArr = append(handleExtendMiddleObj.FieldArr, v.FieldRaw)
-		if v.FieldTypeName != TypeNameIdSuffix {
-			handleExtendMiddleObj.FieldArrOfOther = append(handleExtendMiddleObj.FieldArrOfOther, v.FieldRaw)
-		} else {
+		if v.FieldTypeName == TypeNameIdSuffix {
 			handleExtendMiddleObj.FieldArrOfIdSuffix = append(handleExtendMiddleObj.FieldArrOfIdSuffix, v.FieldRaw)
+		} else {
+			handleExtendMiddleObj.FieldArrOfOther = append(handleExtendMiddleObj.FieldArrOfOther, v.FieldRaw)
 		}
 	}
 	for _, v := range handleExtendMiddleObj.FieldArr {
 		handleExtendMiddleObj.FieldColumnArr = append(handleExtendMiddleObj.FieldColumnArr, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
 	}
-	for _, v := range handleExtendMiddleObj.FieldArrOfOther {
-		handleExtendMiddleObj.FieldColumnArrOfOther = append(handleExtendMiddleObj.FieldColumnArrOfOther, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
-	}
 	for _, v := range handleExtendMiddleObj.FieldArrOfIdSuffix {
 		handleExtendMiddleObj.FieldColumnArrOfIdSuffix = append(handleExtendMiddleObj.FieldColumnArrOfIdSuffix, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
+	}
+	for _, v := range handleExtendMiddleObj.FieldArrOfOther {
+		handleExtendMiddleObj.FieldColumnArrOfOther = append(handleExtendMiddleObj.FieldColumnArrOfOther, handleExtendMiddleObj.daoPath+`.Columns().`+gstr.CaseCamel(v))
 	}
 	return
 }
