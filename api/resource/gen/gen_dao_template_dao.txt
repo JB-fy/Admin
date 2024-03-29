@@ -180,12 +180,12 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseUpdate(update map[string]in
 			switch k {
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {

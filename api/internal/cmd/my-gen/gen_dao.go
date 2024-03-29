@@ -440,34 +440,35 @@ func getDaoFieldList(tpl myGenTpl, fieldArr ...string) (dao myGenDao) {
 			if v.IsUnique && v.IsNull {
 				daoField.insertParse.Method = ReturnType
 				daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
-				insertData[k] = v
 				if gconv.String(v) == `+"``"+` {
-					insertData[k] = nil
-				}`)
+					v = nil
+				}
+				insertData[k] = v`)
 
 				daoField.updateParse.Method = ReturnType
 				daoField.updateParse.DataType = append(daoField.updateParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
-				updateData[`+daoTable+`+`+"`.`"+`+k] = v
 				if gconv.String(v) == `+"``"+` {
-					updateData[`+daoTable+`+`+"`.`"+`+k] = nil
-				}`)
+					v = nil
+				}
+				updateData[`+daoTable+`+`+"`.`"+`+k] = v`)
 			}
 		case TypeText: // `text类型`
 		case TypeJson: // `json类型`
 			if v.IsNull {
 				daoField.insertParse.Method = ReturnType
 				daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
-				insertData[k] = v
 				if gconv.String(v) == `+"``"+` {
-					insertData[k] = nil
-				}`)
+					v = nil
+				}
+				insertData[k] = v`)
 
 				daoField.updateParse.Method = ReturnType
 				daoField.updateParse.DataType = append(daoField.updateParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
-				updateData[`+daoTable+`+`+"`.`"+`+k] = gvar.New(v)
 				if gconv.String(v) == `+"``"+` {
 					updateData[`+daoTable+`+`+"`.`"+`+k] = nil
-				}`)
+					continue
+				}
+				updateData[`+daoTable+`+`+"`.`"+`+k] = gvar.New(v)`)
 			}
 		case TypeTimestamp: // `timestamp类型`
 		case TypeDatetime: // `datetime类型`
@@ -767,34 +768,37 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				m = m.Fields(`+tplEM.daoTable1+` + `+"`.`"+` + v)
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTable1+`, daoModel))`)
 
-	insertParseStr := `
-				insertDataOf` + tplEM.daoTable2 + `, ok := daoModel.AfterInsert[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `].(map[string]interface{})
-				if !ok {
-					insertDataOf` + tplEM.daoTable2 + ` = map[string]interface{}{}
-				}
-				insertDataOf` + tplEM.daoTable2 + `[k] = v
-				daoModel.AfterInsert[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `] = insertDataOf` + tplEM.daoTable2
-	if len(tplEM.FieldArrOfIdSuffix) > 0 {
-		dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArrOfIdSuffix, `, `)+`:
-				if gconv.Uint(v) == 0 {
+	dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
+				if gvar.New(v).IsEmpty() {
 					continue
-				}`+insertParseStr)
-	}
-	if len(tplEM.FieldArrOfOther) > 0 {
-		dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArrOfOther, `, `)+`:`+insertParseStr)
-	}
+				}
+				insertDataOf`+tplEM.daoTable2+`, ok := daoModel.AfterInsert[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`].(map[string]interface{})
+				if !ok {
+					insertDataOf`+tplEM.daoTable2+` = map[string]interface{}{}
+				}
+				insertDataOf`+tplEM.daoTable2+`[k] = v
+				daoModel.AfterInsert[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`] = insertDataOf`+tplEM.daoTable2)
 	dao.insertHook = append(dao.insertHook, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
 					insertDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
 					insertDataOf`+tplEM.daoTable2+`[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
 					`+tplEM.daoPath+`.CtxDaoModel(ctx).HookInsert(insertDataOf`+tplEM.daoTable2+`).Insert()`)
 
-	dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
-				updateDataOf`+tplEM.daoTable2+`, ok := daoModel.AfterUpdate[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`].(map[string]interface{})
+	updateParseStr := `
+				updateDataOf` + tplEM.daoTable2 + `, ok := daoModel.AfterUpdate[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `].(map[string]interface{})
 				if !ok {
-					updateDataOf`+tplEM.daoTable2+` = map[string]interface{}{}
+					updateDataOf` + tplEM.daoTable2 + ` = map[string]interface{}{}
 				}
-				updateDataOf`+tplEM.daoTable2+`[k] = v
-				daoModel.AfterUpdate[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`] = updateDataOf`+tplEM.daoTable2)
+				updateDataOf` + tplEM.daoTable2 + `[k] = v
+				daoModel.AfterUpdate[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `] = updateDataOf` + tplEM.daoTable2
+	if len(tplEM.FieldArrOfIdSuffix) > 0 {
+		dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArrOfIdSuffix, `, `)+`:
+				if gconv.Uint(v) == 0 {
+					continue
+				}`+updateParseStr)
+	}
+	if len(tplEM.FieldArrOfOther) > 0 {
+		dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArrOfOther, `, `)+`:`+updateParseStr)
+	}
 	dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
 					for _, id := range daoModel.IdArr {
 						updateDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
