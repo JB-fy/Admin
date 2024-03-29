@@ -12,24 +12,23 @@ import (
 )
 
 type myGenTpl struct {
-	Link               string         //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr           []string       //当前数据库全部数据表（获取扩展表，中间表等需要）
-	Group              string         //数据库分组
-	RemovePrefixCommon string         //要删除的共有前缀
-	RemovePrefixAlone  string         //要删除的独有前缀
-	RemovePrefix       string         //要删除的前缀
-	TableType          myGenTableType //表类型。按该字段区分哪种功能表
-	Table              string         //表名（原始，包含前缀）
-	TableCaseSnake     string         //表名（蛇形，已去除前缀）
-	TableCaseCamel     string         //表名（大驼峰，已去除前缀）
-	TableCaseKebab     string         //表名（横线，已去除前缀）
-	KeyList            []myGenKey     //索引列表
-	FieldList          []myGenField   //字段列表
-	ModuleDirCaseCamel string         //模块目录（大驼峰，/会被去除）
-	ModuleDirCaseKebab string         //模块目录（横线，/会被保留）
-	LogicStructName    string         //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	I18nPath           string         //前端多语言使用
-	Handle             struct {       //需特殊处理的字段
+	Link               string       //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr           []string     //当前数据库全部数据表（获取扩展表，中间表等需要）
+	Group              string       //数据库分组
+	RemovePrefixCommon string       //要删除的共有前缀
+	RemovePrefixAlone  string       //要删除的独有前缀
+	RemovePrefix       string       //要删除的前缀
+	Table              string       //表名（原始，包含前缀）
+	TableCaseSnake     string       //表名（蛇形，已去除前缀）
+	TableCaseCamel     string       //表名（大驼峰，已去除前缀）
+	TableCaseKebab     string       //表名（横线，已去除前缀）
+	KeyList            []myGenKey   //索引列表
+	FieldList          []myGenField //字段列表
+	ModuleDirCaseCamel string       //模块目录（大驼峰，/会被去除）
+	ModuleDirCaseKebab string       //模块目录（横线，/会被保留）
+	LogicStructName    string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	I18nPath           string       //前端多语言使用
+	Handle             struct {     //需特殊处理的字段
 		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
 			List      []myGenField
 			IsPrimary bool //是否主键
@@ -119,7 +118,8 @@ type handleRelId struct {
 type handleExtendMiddle struct {
 	tplOfTop                 myGenTpl
 	tpl                      myGenTpl
-	RelId                    string //关联字段
+	TableType                myGenTableType //表类型。按该字段区分哪种功能表
+	RelId                    string         //关联字段
 	daoPath                  string
 	daoTable                 string
 	daoTable1                string
@@ -891,15 +891,15 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			}
 			if key.IsPrimary { //主键
 				if !key.IsAutoInc { //不自增
-					handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
+					handleExtendMiddleObj.TableType = TableTypeExtendOne
 					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				}
 			} else {
 				if key.IsUnique { //唯一索引
-					handleExtendMiddleObj.tpl.TableType = TableTypeExtendOne
+					handleExtendMiddleObj.TableType = TableTypeExtendOne
 					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				} else { //普通索引
-					handleExtendMiddleObj.tpl.TableType = TableTypeExtendMany
+					handleExtendMiddleObj.TableType = TableTypeExtendMany
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
 			}
@@ -965,15 +965,18 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
+			if len(handleExtendMiddleObj.FieldArrOfIdSuffix) == 0 { //没有其它表的关联id字段，不是中间表
+				continue
+			}
 			if len(key.FieldArr) == 1 {
 				if key.IsPrimary { //主键
 					if !key.IsAutoInc { //不自增
-						handleExtendMiddleObj.tpl.TableType = TableTypeMiddleOne
+						handleExtendMiddleObj.TableType = TableTypeMiddleOne
 						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
 				} else {
 					if key.IsUnique { //唯一索引
-						handleExtendMiddleObj.tpl.TableType = TableTypeMiddleOne
+						handleExtendMiddleObj.TableType = TableTypeMiddleOne
 						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
 				}
@@ -986,7 +989,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 					}
 				}
 				if isAllId {
-					handleExtendMiddleObj.tpl.TableType = TableTypeMiddleMany
+					handleExtendMiddleObj.TableType = TableTypeMiddleMany
 					middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 				}
 			}

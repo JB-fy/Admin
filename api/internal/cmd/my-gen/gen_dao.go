@@ -220,7 +220,7 @@ func genDao(tpl myGenTpl) {
 	if len(dao.updateParse) > 0 {
 		updateParsePoint := `default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+` + "`.`" + `+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+` + "`.`" + `+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}`
 		tplDao = gstr.Replace(tplDao, updateParsePoint, gstr.Join(append(dao.updateParse, ``), `
 			`)+updateParsePoint, 1)
@@ -769,7 +769,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTable1+`, daoModel))`)
 
 	dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
-				if gvar.New(v).IsEmpty() {
+				if garray.NewStrArrayFrom([]string{`+"``, `0`, `[]`, `{}`"+`}).Contains(gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
 					continue
 				}
 				insertDataOf`+tplEM.daoTable2+`, ok := daoModel.AfterInsert[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`].(map[string]interface{})
@@ -778,32 +778,62 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				}
 				insertDataOf`+tplEM.daoTable2+`[k] = v
 				daoModel.AfterInsert[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`] = insertDataOf`+tplEM.daoTable2)
-	dao.insertHook = append(dao.insertHook, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		dao.insertHook = append(dao.insertHook, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
 					insertDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
 					insertDataOf`+tplEM.daoTable2+`[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
 					`+tplEM.daoPath+`.CtxDaoModel(ctx).HookInsert(insertDataOf`+tplEM.daoTable2+`).Insert()`)
+	case TableTypeMiddleOne:
+		insertHookIdSuffixArr := []string{}
+		insertHookIdSuffixIfArr := []string{}
+		for k, v := range tplEM.FieldArrOfIdSuffix {
+			insertHookIdSuffixArr = append(insertHookIdSuffixArr, `_, ok`+gstr.CaseCamel(v)+` := insertDataOf`+tplEM.daoTable2+`[`+tplEM.FieldColumnArrOfIdSuffix[k]+`]`)
+			insertHookIdSuffixIfArr = append(insertHookIdSuffixIfArr, `ok`+gstr.CaseCamel(v))
+		}
+		dao.insertHook = append(dao.insertHook, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
+					insertDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
+					`+gstr.Join(append(insertHookIdSuffixArr, ``), `
+					`)+`if `+gstr.Join(insertHookIdSuffixIfArr, ` || `)+` { //多ID时，存在一个ID且不等于0（等于0在ParseInsert解析时已过滤，故存在就肯定不等于0）就可插入。可根据自己业务修改
+						insertDataOf`+tplEM.daoTable2+`[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
+						`+tplEM.daoPath+`.CtxDaoModel(ctx).HookInsert(insertDataOf`+tplEM.daoTable2+`).Insert()
+					}`)
+	}
 
-	updateParseStr := `
-				updateDataOf` + tplEM.daoTable2 + `, ok := daoModel.AfterUpdate[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `].(map[string]interface{})
+	dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
+				updateDataOf`+tplEM.daoTable2+`, ok := daoModel.AfterUpdate[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`].(map[string]interface{})
 				if !ok {
-					updateDataOf` + tplEM.daoTable2 + ` = map[string]interface{}{}
+					updateDataOf`+tplEM.daoTable2+` = map[string]interface{}{}
 				}
-				updateDataOf` + tplEM.daoTable2 + `[k] = v
-				daoModel.AfterUpdate[` + "`" + gstr.CaseCamelLower(tplEM.daoTable2) + "`" + `] = updateDataOf` + tplEM.daoTable2
-	if len(tplEM.FieldArrOfIdSuffix) > 0 {
-		dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArrOfIdSuffix, `, `)+`:
-				if gconv.Uint(v) == 0 {
-					continue
-				}`+updateParseStr)
-	}
-	if len(tplEM.FieldArrOfOther) > 0 {
-		dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArrOfOther, `, `)+`:`+updateParseStr)
-	}
-	dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
+				updateDataOf`+tplEM.daoTable2+`[k] = v
+				daoModel.AfterUpdate[`+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`] = updateDataOf`+tplEM.daoTable2)
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
+					updateDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
 					for _, id := range daoModel.IdArr {
-						updateDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
 						`+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(daoThis.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, id).HookUpdate(updateDataOf`+tplEM.daoTable2+`).Update()
 					}`)
+	case TableTypeMiddleOne:
+		updateHookBeforeIdSuffixArr := []string{}
+		updateHookBeforeIdSuffixIfArr := []string{}
+		for k, v := range tplEM.FieldArrOfIdSuffix {
+			updateHookBeforeIdSuffixArr = append(updateHookBeforeIdSuffixArr, gstr.CaseCamelLower(v)+`, ok`+gstr.CaseCamel(v)+` := updateDataOf`+tplEM.daoTable2+`[`+tplEM.FieldColumnArrOfIdSuffix[k]+`]`)
+			updateHookBeforeIdSuffixIfArr = append(updateHookBeforeIdSuffixIfArr, `(ok`+gstr.CaseCamel(v)+` && gconv.Uint(`+gstr.CaseCamelLower(v)+`) == 0)`)
+		}
+		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+gstr.CaseCamelLower(tplEM.daoTable2)+"`"+`:
+					updateDataOf`+tplEM.daoTable2+`, _ := v.(map[string]interface{})
+					`+gstr.Join(append(updateHookBeforeIdSuffixArr, ``), `
+					`)+`if `+gstr.Join(updateHookBeforeIdSuffixIfArr, ` && `)+` { //多ID时，全部ID存在且等于0就删除。可根据自己业务修改
+						for _, id := range daoModel.IdArr {
+							`+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(daoThis.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, id).Delete()
+						}
+					} else {
+						for _, id := range daoModel.IdArr {
+							`+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(daoThis.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, id).HookUpdate(updateDataOf`+tplEM.daoTable2+`).Update()
+						}
+					}`)
+	}
 
 	dao.deleteHook = append(dao.deleteHook, tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr).Delete()`)
 
