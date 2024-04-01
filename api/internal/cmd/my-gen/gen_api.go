@@ -274,6 +274,9 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 		}
 
 		apiField := myGenApiField{}
+		if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
+			apiField.isRequired = true
+		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型` // `int等类型（unsigned）`
@@ -329,9 +332,6 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
-				apiField.isRequired = true
-			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
 			apiField.saveRule.Method = ReturnType
@@ -348,9 +348,6 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if !v.IsNull && (v.IsUnique || gvar.New(v.Default).IsNil()) {
-				apiField.isRequired = true
-			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
 			apiField.saveRule.Method = ReturnType
@@ -384,9 +381,6 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*gtime.Time`
 
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				apiField.isRequired = true
-			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d H:i:s`)
 			apiField.saveRule.Method = ReturnType
@@ -401,9 +395,6 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `*string`
 
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				apiField.isRequired = true
-			}
 			apiField.filterRule.Method = ReturnType
 			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d`)
 			apiField.saveRule.Method = ReturnType

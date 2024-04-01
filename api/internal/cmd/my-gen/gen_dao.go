@@ -437,7 +437,7 @@ func getDaoFieldList(tpl myGenTpl, fieldArr ...string) (dao myGenDao) {
 			if gconv.Uint(v.FieldLimitStr) <= configMaxLenOfStrFilter {
 				daoField.filterParse.Method = ReturnType
 			}
-			if v.IsUnique && v.IsNull {
+			if v.IsNull && v.IsUnique {
 				daoField.insertParse.Method = ReturnType
 				daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				if gconv.String(v) == `+"``"+` {
@@ -728,7 +728,7 @@ func getDaoFieldList(tpl myGenTpl, fieldArr ...string) (dao myGenDao) {
 			daoField.filterParse.Method = ReturnTypeName
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 			filterParseStr := `m = m.WhereLTE(` + daoTable + `+` + "`.`" + `+k, v)`
-			if !v.IsNull && gconv.String(v.Default) == `` {
+			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + daoTable + ` + ` + "`.`" + ` + k))`
 			}
 			daoField.filterParse.Method = ReturnTypeName
@@ -736,7 +736,7 @@ func getDaoFieldList(tpl myGenTpl, fieldArr ...string) (dao myGenDao) {
 				`+filterParseStr)
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 			filterParseStr := `m = m.WhereGTE(` + daoTable + `+` + "`.`" + `+k, v)`
-			if !v.IsNull && gconv.String(v.Default) == `` {
+			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + daoTable + ` + ` + "`.`" + ` + k))`
 			}
 			daoField.filterParse.Method = ReturnTypeName
@@ -973,7 +973,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.filterParse.Method = ReturnTypeName
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 			filterParseStr := `m = m.WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
-			if !v.IsNull && gconv.String(v.Default) == `` {
+			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
 			}
 			daoField.filterParse.Method = ReturnTypeName
@@ -983,7 +983,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTable1+`, daoModel))`)
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 			filterParseStr := `m = m.WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
-			if !v.IsNull && gconv.String(v.Default) == `` {
+			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
 			}
 			daoField.filterParse.Method = ReturnTypeName

@@ -195,7 +195,9 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 		}
 
 		viewSaveField := myGenViewSaveField{}
-
+		if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
+			viewSaveField.isRequired = true
+		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
 		case TypeInt: // `int等类型`
@@ -239,9 +241,6 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 		case TypeVarchar: // `varchar类型`
-			if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
-				viewSaveField.isRequired = true
-			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', max: `+v.FieldLimitStr+`, message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
 			viewSaveField.form.Method = ReturnType
@@ -251,9 +250,6 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 			}
 		case TypeChar: // `char类型`
-			if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
-				viewSaveField.isRequired = true
-			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', len: `+v.FieldLimitStr+`, message: t('validation.size.string', { size: `+v.FieldLimitStr+` }) },`)
 			viewSaveField.form.Method = ReturnType
@@ -305,17 +301,11 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (vi
                     ` + viewSaveField.form.DataType
 			}
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				viewSaveField.isRequired = true
-			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 			viewSaveField.form.Method = ReturnType
 			viewSaveField.form.DataType = `<el-date-picker v-model="saveForm.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + v.FieldRaw + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
 		case TypeDate: // `date类型`
-			if !v.IsNull && gconv.String(v.Default) == `` {
-				viewSaveField.isRequired = true
-			}
 			viewSaveField.rule.Method = ReturnType
 			viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 			viewSaveField.form.Method = ReturnType
