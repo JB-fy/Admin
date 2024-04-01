@@ -32,12 +32,12 @@ type myGenApiField struct {
 	saveRule   myGenDataSliceHandler
 }
 
-func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField) {
+func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType myGenTableType) {
 	if apiField.filterType.getData() != `` {
 		apiThis.filter = append(apiThis.filter, field.FieldCaseCamel+` `+apiField.filterType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.createType.getData() != `` {
-		if apiField.isRequired {
+		if apiField.isRequired && garray.NewFrom([]interface{}{TableTypeExtendOne, TableTypeMiddleOne}).Contains(tableType) {
 			apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, apiField.saveRule.getData()...), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 		} else {
 			apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
@@ -74,9 +74,9 @@ func (apiThis *myGenApi) Unique() {
 // api生成
 func genApi(option myGenOption, tpl myGenTpl) {
 	api := getApiIdAndLabel(tpl)
-	api.Merge(getApiFieldList(tpl, tpl.FieldArr...))
+	api.Merge(getApiFieldList(tpl, TableTypeDefault, tpl.FieldArr...))
 	for _, v := range tpl.FieldArrAfter {
-		api.Merge(getApiFieldList(tpl, v))
+		api.Merge(getApiFieldList(tpl, TableTypeDefault, v))
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		api.Merge(getApiExtendMiddleOne(v))
@@ -267,7 +267,7 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 	return
 }
 
-func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
+func getApiFieldList(tpl myGenTpl, tableType myGenTableType, fieldArr ...string) (api myGenApi) {
 	for _, v := range tpl.FieldList {
 		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
 			continue
@@ -596,12 +596,12 @@ func getApiFieldList(tpl myGenTpl, fieldArr ...string) (api myGenApi) {
 		/*--------根据字段命名类型处理 结束--------*/
 
 	finalHandle:
-		api.Add(apiField, v)
+		api.Add(apiField, v, tableType)
 	}
 	return
 }
 
 func getApiExtendMiddleOne(tplEM handleExtendMiddle) (api myGenApi) {
-	api.Merge(getApiFieldList(tplEM.tpl, tplEM.FieldArr...))
+	api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...))
 	return
 }

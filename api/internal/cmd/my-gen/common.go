@@ -19,6 +19,7 @@ type myGenFieldTypeName = string
 type myGenDataHandleMethod = uint
 
 const (
+	TableTypeDefault    myGenTableType = 0  //默认
 	TableTypeExtendOne  myGenTableType = 1  //扩展表（一对一）
 	TableTypeExtendMany myGenTableType = 2  //扩展表（一对多）
 	TableTypeMiddleOne  myGenTableType = 11 //中间表（一对一）
