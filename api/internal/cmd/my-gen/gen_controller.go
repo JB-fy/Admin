@@ -27,10 +27,10 @@ func (controllerThis *myGenController) Merge(controllerOther myGenController) {
 
 func (controllerThis *myGenController) Unique() {
 	controllerThis.importDao = garray.NewStrArrayFrom(controllerThis.importDao).Unique().Slice()
-	controllerThis.list = garray.NewStrArrayFrom(controllerThis.list).Unique().Slice()
-	controllerThis.info = garray.NewStrArrayFrom(controllerThis.info).Unique().Slice()
-	controllerThis.tree = garray.NewStrArrayFrom(controllerThis.tree).Unique().Slice()
-	controllerThis.noAuth = garray.NewStrArrayFrom(controllerThis.noAuth).Unique().Slice()
+	// controllerThis.list = garray.NewStrArrayFrom(controllerThis.list).Unique().Slice()
+	// controllerThis.info = garray.NewStrArrayFrom(controllerThis.info).Unique().Slice()
+	// controllerThis.tree = garray.NewStrArrayFrom(controllerThis.tree).Unique().Slice()
+	// controllerThis.noAuth = garray.NewStrArrayFrom(controllerThis.noAuth).Unique().Slice()
 }
 
 // controller生成
@@ -423,15 +423,23 @@ func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenC
 func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenController) {
 	tpl := tplEM.tpl
 	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
-
 	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
-	for _, v := range tplEM.FieldArr {
-		field := daoPath + `.Columns().` + gstr.CaseCamel(v)
-		controller.list = append(controller.list, field)
-		controller.info = append(controller.info, field)
-		controller.tree = append(controller.tree, field)
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		for _, v := range tplEM.FieldArr {
+			field := daoPath + `.Columns().` + gstr.CaseCamel(v)
+			controller.list = append(controller.list, field)
+			controller.info = append(controller.info, field)
+			controller.tree = append(controller.tree, field)
+		}
+	case TableTypeMiddleOne:
+		for _, v := range append(tplEM.FieldArrOfIdSuffix, tplEM.FieldArrOfOther...) {
+			field := daoPath + `.Columns().` + gstr.CaseCamel(v)
+			controller.list = append(controller.list, field)
+			controller.info = append(controller.info, field)
+			controller.tree = append(controller.tree, field)
+		}
 	}
-
 	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
 	return
 }

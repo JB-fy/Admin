@@ -39,9 +39,9 @@ func (viewI18nThis *myGenViewI18n) Merge(viewI18nOther myGenViewI18n) {
 }
 
 func (viewI18nThis *myGenViewI18n) Unique() {
-	viewI18nThis.name = garray.NewStrArrayFrom(viewI18nThis.name).Unique().Slice()
-	viewI18nThis.status = garray.NewStrArrayFrom(viewI18nThis.status).Unique().Slice()
-	viewI18nThis.tip = garray.NewStrArrayFrom(viewI18nThis.tip).Unique().Slice()
+	// viewI18nThis.name = garray.NewStrArrayFrom(viewI18nThis.name).Unique().Slice()
+	// viewI18nThis.status = garray.NewStrArrayFrom(viewI18nThis.status).Unique().Slice()
+	// viewI18nThis.tip = garray.NewStrArrayFrom(viewI18nThis.tip).Unique().Slice()
 }
 
 // 视图模板Query生成
@@ -174,6 +174,12 @@ func getViewI18nFieldList(tpl myGenTpl, fieldArr ...string) (viewI18n myGenViewI
 }
 
 func getViewI18nExtendMiddleOne(tplEM handleExtendMiddle) (viewI18n myGenViewI18n) {
-	viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArr...))
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArr...))
+	case TableTypeMiddleOne:
+		viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArrOfIdSuffix...))
+		viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArrOfOther...))
+	}
 	return
 }

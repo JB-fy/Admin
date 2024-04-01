@@ -62,13 +62,13 @@ func (apiThis *myGenApi) Merge(apiOther myGenApi) {
 }
 
 func (apiThis *myGenApi) Unique() {
-	apiThis.filter = garray.NewStrArrayFrom(apiThis.filter).Unique().Slice()
-	apiThis.info = garray.NewStrArrayFrom(apiThis.info).Unique().Slice()
-	apiThis.create = garray.NewStrArrayFrom(apiThis.create).Unique().Slice()
-	apiThis.update = garray.NewStrArrayFrom(apiThis.update).Unique().Slice()
-	apiThis.delete = garray.NewStrArrayFrom(apiThis.delete).Unique().Slice()
-	apiThis.res = garray.NewStrArrayFrom(apiThis.res).Unique().Slice()
-	apiThis.resOfAdd = garray.NewStrArrayFrom(apiThis.resOfAdd).Unique().Slice()
+	// apiThis.filter = garray.NewStrArrayFrom(apiThis.filter).Unique().Slice()
+	// apiThis.info = garray.NewStrArrayFrom(apiThis.info).Unique().Slice()
+	// apiThis.create = garray.NewStrArrayFrom(apiThis.create).Unique().Slice()
+	// apiThis.update = garray.NewStrArrayFrom(apiThis.update).Unique().Slice()
+	// apiThis.delete = garray.NewStrArrayFrom(apiThis.delete).Unique().Slice()
+	// apiThis.res = garray.NewStrArrayFrom(apiThis.res).Unique().Slice()
+	// apiThis.resOfAdd = garray.NewStrArrayFrom(apiThis.resOfAdd).Unique().Slice()
 }
 
 // api生成
@@ -602,6 +602,12 @@ func getApiFieldList(tpl myGenTpl, tableType myGenTableType, fieldArr ...string)
 }
 
 func getApiExtendMiddleOne(tplEM handleExtendMiddle) (api myGenApi) {
-	api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...))
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...))
+	case TableTypeMiddleOne:
+		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfIdSuffix...))
+		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfOther...))
+	}
 	return
 }

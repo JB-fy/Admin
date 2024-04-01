@@ -54,7 +54,7 @@ func (viewListThis *myGenViewList) Merge(viewListOther myGenViewList) {
 }
 
 func (viewListThis *myGenViewList) Unique() {
-	viewListThis.columns = garray.NewStrArrayFrom(viewListThis.columns).Unique().Slice()
+	// viewListThis.columns = garray.NewStrArrayFrom(viewListThis.columns).Unique().Slice()
 }
 
 // 视图模板List生成
@@ -655,6 +655,12 @@ func getViewListFieldList(option myGenOption, tpl myGenTpl, i18nPath string, fie
 }
 
 func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
-	viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
+	case TableTypeMiddleOne:
+		viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
+		viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+	}
 	return
 }

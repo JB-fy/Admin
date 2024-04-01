@@ -549,12 +549,17 @@ func getViewSaveFieldList(tpl myGenTpl, i18nPath string, tableType myGenTableTyp
 }
 
 func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSave) {
-	viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``, tplEM.FieldArrOfIdSuffix...))
-	fieldIfArr := []string{}
-	for _, v := range tplEM.FieldArrOfIdSuffix {
-		fieldIfArr = append(fieldIfArr, `saveForm.data.`+v)
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``, tplEM.FieldArr...))
+	case TableTypeMiddleOne:
+		viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``, tplEM.FieldArrOfIdSuffix...))
+		fieldIfArr := []string{}
+		for _, v := range tplEM.FieldArrOfIdSuffix {
+			fieldIfArr = append(fieldIfArr, `saveForm.data.`+v)
+		}
+		fieldIf := gstr.Join(fieldIfArr, ` || `)
+		viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf, tplEM.FieldArrOfOther...))
 	}
-	fieldIf := gstr.Join(fieldIfArr, ` || `)
-	viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf, tplEM.FieldArrOfOther...))
 	return
 }

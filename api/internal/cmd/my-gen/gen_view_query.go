@@ -35,8 +35,8 @@ func (viewQueryThis *myGenViewQuery) Merge(viewQueryOther myGenViewQuery) {
 }
 
 func (viewQueryThis *myGenViewQuery) Unique() {
-	viewQueryThis.dataInit = garray.NewStrArrayFrom(viewQueryThis.dataInit).Unique().Slice()
-	viewQueryThis.form = garray.NewStrArrayFrom(viewQueryThis.form).Unique().Slice()
+	// viewQueryThis.dataInit = garray.NewStrArrayFrom(viewQueryThis.dataInit).Unique().Slice()
+	// viewQueryThis.form = garray.NewStrArrayFrom(viewQueryThis.form).Unique().Slice()
 }
 
 // 视图模板Query生成
@@ -275,6 +275,12 @@ func getViewQueryFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (v
 	return
 }
 func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQuery) {
-	viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
+	switch tplEM.TableType {
+	case TableTypeExtendOne:
+		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
+	case TableTypeMiddleOne:
+		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
+		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+	}
 	return
 }
