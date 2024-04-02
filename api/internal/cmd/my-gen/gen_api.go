@@ -84,6 +84,12 @@ func genApi(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		api.Merge(getApiExtendMiddleOne(v))
 	}
+	for _, v := range tpl.Handle.ExtendTableManyList {
+		api.Merge(getApiExtendMiddleMany(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableManyList {
+		api.Merge(getApiExtendMiddleMany(v))
+	}
 	api.Unique()
 
 	tplApi := `package api
@@ -607,7 +613,30 @@ func getApiExtendMiddleOne(tplEM handleExtendMiddle) (api myGenApi) {
 		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...))
 	case TableTypeMiddleOne:
 		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfIdSuffix...))
-		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfOther...))
+		if len(tplEM.FieldArrOfOther) > 0 {
+			api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfOther...))
+		}
+	}
+	return
+}
+
+func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
+	apiTmp := getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...)
+	api.filter = append(api.filter, apiTmp.filter...)
+	if len(tplEM.FieldArr) == 1 {
+		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVal)+` *[]uint `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`+"`")
+		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVal)+` *[]uint `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`+"`")
+		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVal)+` []uint `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" dc:"菜单ID列表"`+"`")
+	} else {
+		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVal)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
+		`)+`
+	} `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"" dc:"列表"`+"`")
+		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVal)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
+		`)+`
+	} `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"" dc:"列表"`+"`")
+		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVal)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.res...), `
+		`)+`
+	} `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" dc:"列表"`+"`")
 	}
 	return
 }

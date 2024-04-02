@@ -554,12 +554,14 @@ func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSav
 		viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``, tplEM.FieldArr...))
 	case TableTypeMiddleOne:
 		viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``, tplEM.FieldArrOfIdSuffix...))
-		fieldIfArr := []string{}
-		for _, v := range tplEM.FieldArrOfIdSuffix {
-			fieldIfArr = append(fieldIfArr, `saveForm.data.`+v)
+		if len(tplEM.FieldArrOfOther) > 0 {
+			fieldIfArr := []string{}
+			for _, v := range tplEM.FieldArrOfIdSuffix {
+				fieldIfArr = append(fieldIfArr, `saveForm.data.`+v)
+			}
+			fieldIf := gstr.Join(fieldIfArr, ` || `)
+			viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf, tplEM.FieldArrOfOther...))
 		}
-		fieldIf := gstr.Join(fieldIfArr, ` || `)
-		viewSave.Merge(getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf, tplEM.FieldArrOfOther...))
 	}
 	return
 }

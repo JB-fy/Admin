@@ -660,7 +660,9 @@ func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (v
 		viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
 	case TableTypeMiddleOne:
 		viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
-		viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+		if len(tplEM.FieldArrOfOther) > 0 {
+			viewList.Merge(getViewListFieldList(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+		}
 	}
 	return
 }

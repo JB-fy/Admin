@@ -179,7 +179,9 @@ func getViewI18nExtendMiddleOne(tplEM handleExtendMiddle) (viewI18n myGenViewI18
 		viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArr...))
 	case TableTypeMiddleOne:
 		viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArrOfIdSuffix...))
-		viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArrOfOther...))
+		if len(tplEM.FieldArrOfOther) > 0 {
+			viewI18n.Merge(getViewI18nFieldList(tplEM.tpl, tplEM.FieldArrOfOther...))
+		}
 	}
 	return
 }

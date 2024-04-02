@@ -120,10 +120,10 @@ type handleExtendMiddle struct {
 	tpl                      myGenTpl
 	TableType                myGenTableType //表类型。按该字段区分哪种功能表
 	RelId                    string         //关联字段
+	FieldVal                 string         //字段变量名。一对多关联用
 	daoPath                  string
 	daoTable                 string
-	daoTable1                string
-	daoTable2                string
+	daoTableVal              string
 	FieldArr                 []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
 	FieldArrOfIdSuffix       []string //FieldArr中的id后缀字段数组
 	FieldArrOfOther          []string //FieldArr中除id后缀字段外的其它字段数组
@@ -814,19 +814,19 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 	extendMiddleTpl.gfGenDao(false) //dao文件生成
 
 	handleExtendMiddleObj = handleExtendMiddle{
-		tplOfTop:  tplOfTop,
-		tpl:       extendMiddleTpl,
-		RelId:     relId,
-		daoPath:   extendMiddleTpl.TableCaseCamel,
-		daoTable:  extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
-		daoTable1: `table` + extendMiddleTpl.TableCaseCamel,
-		daoTable2: extendMiddleTpl.TableCaseCamel,
+		tplOfTop:    tplOfTop,
+		tpl:         extendMiddleTpl,
+		RelId:       relId,
+		FieldVal:    gstr.CaseCamelLower(extendMiddleTpl.TableCaseCamel),
+		daoPath:     extendMiddleTpl.TableCaseCamel,
+		daoTable:    extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
+		daoTableVal: `table` + extendMiddleTpl.TableCaseCamel,
 	}
 	if extendMiddleTpl.ModuleDirCaseKebab != tplOfTop.ModuleDirCaseKebab {
+		handleExtendMiddleObj.FieldVal = gstr.CaseCamelLower(extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel)
 		handleExtendMiddleObj.daoPath = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel
 		handleExtendMiddleObj.daoTable = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`
-		handleExtendMiddleObj.daoTable1 = `table` + extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
-		handleExtendMiddleObj.daoTable2 = extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
+		handleExtendMiddleObj.daoTableVal = `table` + extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
 	}
 
 	fieldArrOfIgnore := []string{relId}
@@ -900,6 +900,11 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				} else { //普通索引
 					handleExtendMiddleObj.TableType = TableTypeExtendMany
+					if len(handleExtendMiddleObj.FieldArr) == 1 {
+						handleExtendMiddleObj.FieldVal = gstr.CaseCamelLower(handleExtendMiddleObj.FieldArr[0]) + `Arr`
+					} else {
+						handleExtendMiddleObj.FieldVal = gstr.CaseCamelLower(gstr.TrimRightStr(gstr.TrimLeftStr(handleExtendMiddleObj.FieldVal, `relTo`, 1), `RelOf`, 1)) + `List`
+					}
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
 			}
@@ -991,6 +996,11 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				}
 				if isAllId { //联合主键 或 联合唯一索引
 					handleExtendMiddleObj.TableType = TableTypeMiddleMany
+					if len(handleExtendMiddleObj.FieldArr) == 1 {
+						handleExtendMiddleObj.FieldVal = gstr.CaseCamelLower(handleExtendMiddleObj.FieldArr[0]) + `Arr`
+					} else {
+						handleExtendMiddleObj.FieldVal = gstr.CaseCamelLower(gstr.TrimRightStr(gstr.TrimLeftStr(handleExtendMiddleObj.FieldVal, `relTo`, 1), `RelOf`, 1)) + `List`
+					}
 					middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 				}
 			}

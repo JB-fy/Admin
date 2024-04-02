@@ -43,6 +43,12 @@ func genController(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		controller.Merge(getControllerExtendMiddleOne(v))
 	}
+	for _, v := range tpl.Handle.ExtendTableManyList {
+		controller.Merge(getControllerExtendMiddleMany(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableManyList {
+		controller.Merge(getControllerExtendMiddleMany(v))
+	}
 	controller.Unique()
 
 	tplController := `package controller
@@ -440,6 +446,14 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 			controller.tree = append(controller.tree, field)
 		}
 	}
+	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
+	return
+}
+
+func getControllerExtendMiddleMany(tplEM handleExtendMiddle) (controller myGenController) {
+	controller.list = append(controller.list, "`"+tplEM.FieldVal+"`")
+	controller.info = append(controller.info, "`"+tplEM.FieldVal+"`")
+	controller.tree = append(controller.tree, "`"+tplEM.FieldVal+"`")
 	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
 	return
 }

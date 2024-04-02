@@ -280,7 +280,9 @@ func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQ
 		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
 	case TableTypeMiddleOne:
 		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
-		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+		if len(tplEM.FieldArrOfOther) > 0 {
+			viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+		}
 	}
 	return
 }
