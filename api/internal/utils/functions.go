@@ -2,10 +2,13 @@ package utils
 
 import (
 	"api/internal/consts"
+	"api/internal/dao"
 	"context"
 	"os/exec"
 
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -201,4 +204,80 @@ func Tree(list g.List, id uint, priKey string, pidKey string) (tree g.List) {
 		}
 	}
 	return
+}
+
+// 保存关联表（一对多）。关联表除主表关联id外，只剩1个有用字段
+func SaveArrRelMany(ctx context.Context, relDao dao.DaoInterface, idField string, valField string, id interface{}, valArr []interface{}) {
+	valArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(idField, id).Array(valField)
+	valArrOfOld := gconv.SliceAny(valArrOfOldTmp)
+
+	/**----新增关联 开始----**/
+	insertValArr := gset.NewFrom(valArr).Diff(gset.NewFrom(valArrOfOld)).Slice()
+	if len(insertValArr) > 0 {
+		insertList := []map[string]interface{}{}
+		for _, v := range insertValArr {
+			insertList = append(insertList, map[string]interface{}{
+				idField:  id,
+				valField: v,
+			})
+		}
+		relDao.CtxDaoModel(ctx).Data(insertList).Insert()
+	}
+	/**----新增关联 结束----**/
+
+	/**----删除关联 开始----**/
+	deleteValArr := gset.NewFrom(valArrOfOld).Diff(gset.NewFrom(valArr)).Slice()
+	if len(deleteValArr) > 0 {
+		relDao.CtxDaoModel(ctx).Filters(g.Map{
+			idField:  id,
+			valField: deleteValArr,
+		}).Delete()
+	}
+	/**----删除关联 结束----**/
+}
+
+// 保存关联表（一对多），有顺序要求时使用。关联表除主表关联id外，只剩1个有用字段
+func SaveArrRelManyWithSort(ctx context.Context, relDao dao.DaoInterface, idField string, valField string, idArr []interface{}, valArr []interface{}) {
+	relDao.CtxDaoModel(ctx).Filter(idField, idArr).Delete()
+	insertList := []map[string]interface{}{}
+	for _, id := range idArr {
+		for _, v := range valArr {
+			insertList = append(insertList, map[string]interface{}{
+				idField:  id,
+				valField: v,
+			})
+		}
+	}
+	relDao.CtxDaoModel(ctx).Data(insertList).Insert()
+}
+
+// 保存关联表（一对多）。关联表除主表关联id外，至少还剩2个有用字段
+func SaveListRelMany(ctx context.Context, relDao dao.DaoInterface, idField string, idSuffixFieldArr []string, id interface{}, valList []map[string]interface{}) {
+	inStrArr := []string{}
+	for _, v := range valList {
+		saveItem := gjson.New(gjson.MustEncodeString(v)).Map()
+		saveItem[idField] = id
+		relDao.CtxDaoModel(ctx).Data(saveItem).Save()
+
+		idArr := []string{gconv.String(id)}
+		for _, idSuffixField := range idSuffixFieldArr {
+			idArr = append(idArr, gconv.String(v[idSuffixField]))
+		}
+		inStrArr = append(inStrArr, `('`+gstr.Join(idArr, `', '`)+`')`)
+	}
+	relDao.CtxDaoModel(ctx).GetModel().Where(`(` + gstr.Join(append([]string{idField}, idSuffixFieldArr...), `, `) + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)
+}
+
+// 保存关联表（一对多），有顺序要求时使用。关联表除主表关联id外，至少还剩2个有用字段
+func SaveListRelManyWithSort(ctx context.Context, relDao dao.DaoInterface, idField string, idArr []interface{}, valList []map[string]interface{}) {
+	relDao.CtxDaoModel(ctx).Filter(idField, idArr).Delete()
+	insertList := []map[string]interface{}{}
+	for _, id := range idArr {
+		for _, v := range valList {
+			insertItem := gjson.New(gjson.MustEncodeString(v)).Map()
+			insertItem[idField] = id
+			insertList = append(insertList, insertItem)
+		}
+	}
+	relDao.CtxDaoModel(ctx).Data(insertList).Insert()
 }

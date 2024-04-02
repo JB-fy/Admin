@@ -961,6 +961,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
 				continue
 			}
+			if !key.IsUnique { // 必须唯一
+				continue
+			}
 			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, key.Field)
 			if len(handleExtendMiddleObj.FieldArr) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
@@ -974,11 +977,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 						handleExtendMiddleObj.TableType = TableTypeMiddleOne
 						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
-				} else {
-					if key.IsUnique { //唯一索引
-						handleExtendMiddleObj.TableType = TableTypeMiddleOne
-						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
-					}
+				} else { //唯一索引
+					handleExtendMiddleObj.TableType = TableTypeMiddleOne
+					middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 				}
 			} else {
 				isAllId := true
@@ -988,7 +989,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 						isAllId = false
 					}
 				}
-				if isAllId {
+				if isAllId { //联合主键 或 联合唯一索引
 					handleExtendMiddleObj.TableType = TableTypeMiddleMany
 					middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 				}
