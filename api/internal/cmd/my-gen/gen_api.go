@@ -624,9 +624,6 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	apiTmp := getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...)
 	api.filter = append(api.filter, apiTmp.filter...)
 	if len(tplEM.FieldArr) == 1 {
-		// api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVal)+` *[]uint `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`+"`")
-		// api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVal)+` *[]uint `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`+"`")
-		// api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVal)+` []uint `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" dc:"菜单ID列表"`+"`")
 		tpl := tplEM.tpl
 		for _, v := range tpl.FieldList {
 			if v.FieldRaw != tplEM.FieldArr[0] {
@@ -816,7 +813,6 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			}
 			/*--------根据字段命名类型处理 结束--------*/
 
-			// api.Add(apiField, v, tplEM.TableType)
 			if apiField.createType.getData() != `` {
 				api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVal)+` `+apiField.createType.getData()+` `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
 			}
