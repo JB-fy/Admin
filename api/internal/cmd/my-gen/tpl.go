@@ -120,10 +120,10 @@ type handleExtendMiddle struct {
 	tpl                      myGenTpl
 	TableType                myGenTableType //表类型。按该字段区分哪种功能表
 	RelId                    string         //关联字段
-	FieldVal                 string         //字段变量名。一对多关联用
+	FieldVal                 string         //字段变量名
 	daoPath                  string
 	daoTable                 string
-	daoTableVal              string
+	daoTableVal              string   //表变量名
 	FieldArr                 []string //字段数组。除了自增主键，RelId，创建时间，更新时间，软删除等字段外其它字段才生成代码
 	FieldArrOfIdSuffix       []string //FieldArr中的id后缀字段数组
 	FieldArrOfOther          []string //FieldArr中除id后缀字段外的其它字段数组
