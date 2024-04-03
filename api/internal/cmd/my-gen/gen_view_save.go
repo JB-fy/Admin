@@ -576,14 +576,9 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 
 		tpl := tplEM.tpl
 		i18nPath := tplEM.tplOfTop.I18nPath
-		// fieldPrefix := tplEM.FieldVar
-		fieldPrefix := ``
 
 		// fieldPath := tplEM.FieldVar + `Name`
-		fieldPath := v.FieldRaw
-		if fieldPrefix != `` {
-			fieldPath = fieldPrefix + `.` + v.FieldRaw
-		}
+		fieldPath := tplEM.FieldVar
 
 		viewSaveField := myGenViewSaveField{}
 		if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
@@ -750,7 +745,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveField.formContent.Method = ReturnTypeName
 			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
 				viewSaveField.rule.Method = ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } }`)
+				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select')/* , defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } */ },`)
 
 				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
 
@@ -771,7 +766,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				viewSaveField.rule.Method = ReturnTypeName
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 }`)
 
-				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用my-select，小表用my-transfer -->
+				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用my-select（滚动分页），小表用my-transfer（无分页） -->
 					<my-select v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
                     <!-- <my-transfer v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->`
 			}
@@ -843,9 +838,6 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				`// { type: 'array', trigger: 'change', max: 10, message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } },`,
 			)
 			fieldHandle := gstr.CaseCamelLower(v.FieldRaw) + `Handle`
-			if fieldPrefix != `` {
-				fieldHandle = gstr.CaseCamelLower(fieldPrefix+`_`+v.FieldRaw) + `Handle`
-			}
 			viewSaveField.formContent.Method = ReturnTypeName
 			viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + fieldPath + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length]" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                         {{ item }}
@@ -881,7 +873,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		viewSave.Add(viewSaveField, v.FieldRaw, i18nPath, tplEM.TableType, fieldPrefix, ``)
+		viewSave.Add(viewSaveField, fieldPath, i18nPath, tplEM.TableType, ``, ``)
 
 	} else {
 		viewSaveTmp := getViewSaveFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``, tplEM.FieldArrOfIdSuffix...)

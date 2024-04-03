@@ -87,12 +87,14 @@ func DbTablePartition(ctx context.Context, dbGroup string, dbTable string, parti
 }
 
 // 保存关联表（一对多）。关联表除主表关联id外，只剩1个有用字段
-func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, valField string, id interface{}, valArr []interface{}) {
-	valArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(idField, id).Array(valField)
-	valArrOfOld := gconv.SliceAny(valArrOfOldTmp)
+func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, valField string, id interface{}, valArr []string /* []interface{} */) {
+	// valArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(idField, id).Array(valField)
+	// valArrOfOld := gconv.SliceAny(valArrOfOldTmp)
+	valArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(idField, id).ArrayStr(valField)
 
 	/**----新增关联 开始----**/
-	insertValArr := gset.NewFrom(valArr).Diff(gset.NewFrom(valArrOfOld)).Slice()
+	// insertValArr := gset.NewFrom(valArr).Diff(gset.NewFrom(valArrOfOld)).Slice()
+	insertValArr := gset.NewStrSetFrom(valArr).Diff(gset.NewStrSetFrom(valArrOfOld)).Slice()
 	if len(insertValArr) > 0 {
 		insertList := []map[string]interface{}{}
 		for _, v := range insertValArr {
@@ -106,7 +108,7 @@ func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, va
 	/**----新增关联 结束----**/
 
 	/**----删除关联 开始----**/
-	deleteValArr := gset.NewFrom(valArrOfOld).Diff(gset.NewFrom(valArr)).Slice()
+	deleteValArr := gset.NewStrSetFrom(valArrOfOld).Diff(gset.NewStrSetFrom(valArr)).Slice()
 	if len(deleteValArr) > 0 {
 		relDao.CtxDaoModel(ctx).Filters(g.Map{
 			idField:  id,
