@@ -643,65 +643,28 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.updateType.DataType = `*[]uint`
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `[]uint`
-		case TypeFloat: // `float等类型`
+		case TypeFloat, TypeFloatU: // `float等类型` // `float等类型（unsigned）`
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*[]float64`
 			apiField.updateType.Method = ReturnType
 			apiField.updateType.DataType = `*[]float64`
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `[]float64`
-		case TypeFloatU: // `float等类型（unsigned）`
-			apiField.createType.Method = ReturnType
-			apiField.createType.DataType = `*[]float64`
-			apiField.updateType.Method = ReturnType
-			apiField.updateType.DataType = `*[]float64`
-			apiField.resType.Method = ReturnType
-			apiField.resType.DataType = `[]float64`
-
-			apiField.saveRule.Method = ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:0`)
-		case TypeVarchar: // `varchar类型`
-			apiField.createType.Method = ReturnType
-			apiField.createType.DataType = `*[]string`
-			apiField.updateType.Method = ReturnType
-			apiField.updateType.DataType = `*[]string`
-			apiField.resType.Method = ReturnType
-			apiField.resType.DataType = `[]string`
-
-			apiField.saveRule.Method = ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `max-length:`+v.FieldLimitStr)
-		case TypeChar: // `char类型`
-			apiField.createType.Method = ReturnType
-			apiField.createType.DataType = `*[]string`
-			apiField.updateType.Method = ReturnType
-			apiField.updateType.DataType = `*[]string`
-			apiField.resType.Method = ReturnType
-			apiField.resType.DataType = `[]string`
-
-			apiField.saveRule.Method = ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `size:`+v.FieldLimitStr)
-		case TypeText, TypeJson: // `text类型` // `json类型`
-			apiField.createType.Method = ReturnType
-			apiField.createType.DataType = `*[]string`
-			apiField.updateType.Method = ReturnType
-			apiField.updateType.DataType = `*[]string`
-			apiField.resType.Method = ReturnType
-			apiField.resType.DataType = `[]string`
-
-			if v.FieldType == TypeJson {
+			if v.FieldType == TypeFloatU {
 				apiField.saveRule.Method = ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `json`)
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:0`)
 			}
+		/* // 注释掉的类型当作字符串处理
 		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*[]gtime.Time`
 			apiField.updateType.Method = ReturnType
 			apiField.updateType.DataType = `*[]gtime.Time`
 			apiField.resType.Method = ReturnType
-			apiField.resType.DataType = `[]gtime.Time`
+			apiField.resType.DataType = `*[]gtime.Time`
 
 			apiField.saveRule.Method = ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `date-format:Y-m-d H:i:s`)
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d H:i:s`)
 		case TypeDate: // `date类型`
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*[]gtime.Time`
@@ -711,7 +674,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.resType.DataType = `[]string`
 
 			apiField.saveRule.Method = ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `date-format:Y-m-d`)
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`) */
 		default:
 			apiField.createType.Method = ReturnType
 			apiField.createType.DataType = `*[]string`
@@ -719,23 +682,35 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.updateType.DataType = `*[]string`
 			apiField.resType.Method = ReturnType
 			apiField.resType.DataType = `[]string`
+
+			switch v.FieldType {
+			case TypeVarchar:
+				apiField.saveRule.Method = ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `max-length:`+v.FieldLimitStr)
+			case TypeChar:
+				apiField.saveRule.Method = ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `size:`+v.FieldLimitStr)
+			case TypeJson:
+				apiField.saveRule.Method = ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `json`)
+			case TypeTimestamp, TypeDatetime:
+				apiField.saveRule.Method = ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d H:i:s`)
+			case TypeDate:
+				apiField.saveRule.Method = ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`)
+			}
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNameDeleted, TypeNameUpdated, TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
-			return
 		case TypeNamePid: // pid；	类型：int等类型；
-			return
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			return
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			return
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-			return
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			return
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 			apiField.saveRule.Method = ReturnUnion
@@ -764,29 +739,25 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.saveRule.Method = ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `between:0,100`)
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			/* statusArr := make([]string, len(v.StatusList))
+			statusArr := make([]string, len(v.StatusList))
 			for index, item := range v.StatusList {
 				statusArr[index] = item[0]
 			}
 			statusStr := gstr.Join(statusArr, `,`)
 			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:`+statusStr) */
-			return
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:`+statusStr)
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			/* apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`) */
-			return
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`)
 		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-			if v.FieldType != TypeVarchar {
-				return
+			if v.FieldType == TypeVarchar {
+				apiField.saveRule.Method = ReturnUnion
+				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
 			}
-			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
 		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-			return
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 

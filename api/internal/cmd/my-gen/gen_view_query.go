@@ -49,6 +49,12 @@ func genViewQuery(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		viewQuery.Merge(getViewQueryExtendMiddleOne(v))
 	}
+	for _, v := range tpl.Handle.ExtendTableManyList {
+		viewQuery.Merge(getViewQueryExtendMiddleMany(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableManyList {
+		viewQuery.Merge(getViewQueryExtendMiddleMany(v))
+	}
 	for _, v := range tpl.FieldArrAfter {
 		viewQuery.Merge(getViewQueryFieldList(tpl, tpl.I18nPath, v))
 	}
@@ -274,6 +280,7 @@ func getViewQueryFieldList(tpl myGenTpl, i18nPath string, fieldArr ...string) (v
 	}
 	return
 }
+
 func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQuery) {
 	switch tplEM.TableType {
 	case TableTypeExtendOne:
@@ -282,6 +289,23 @@ func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQ
 		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
 		if len(tplEM.FieldArrOfOther) > 0 {
 			viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+		}
+	}
+	return
+}
+
+func getViewQueryExtendMiddleMany(tplEM handleExtendMiddle) (viewQuery myGenViewQuery) {
+	switch tplEM.TableType {
+	case TableTypeExtendMany:
+		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
+	case TableTypeMiddleMany:
+		if len(tplEM.GenFieldArr) == 1 {
+			viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
+		} else {
+			viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
+			if len(tplEM.FieldArrOfOther) > 0 {
+				viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
+			}
 		}
 	}
 	return

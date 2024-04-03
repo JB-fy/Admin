@@ -198,7 +198,10 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 
 		viewI18nField := myGenViewI18nField{}
 		viewI18nField.name.Method = ReturnType
-		viewI18nField.name.DataType = `'` + v.FieldName + `列表'`
+		viewI18nField.name.DataType = `'` + v.FieldName + `'` //`'` + v.FieldName + `列表'`
+		if v.FieldTypeName == TypeNameIdSuffix && gstr.ToUpper(gstr.SubStr(v.FieldName, -2)) == `ID` {
+			viewI18nField.name.DataType = `'` + gstr.SubStr(v.FieldName, 0, -2) + `'` //`'` + gstr.SubStr(v.FieldName, 0, -2) + `列表'`
+		}
 
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
@@ -223,17 +226,11 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case TypeNameDeleted, TypeNameUpdated, TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
-			return
 		case TypeNamePid: // pid；	类型：int等类型；
-			return
 		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			return
 		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			return
 		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-			return
 		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			return
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
@@ -266,7 +263,8 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		viewI18n.Add(viewI18nField, tplEM.FieldVar)
+		viewI18n.Add(viewI18nField, v.FieldRaw)     //viewQuery用
+		viewI18n.Add(viewI18nField, tplEM.FieldVar) //viewSave用
 	} else {
 		viewI18nTmp := getViewI18nFieldList(tplEM.tpl, tplEM.FieldArrOfIdSuffix...)
 		if len(tplEM.FieldArrOfOther) > 0 {

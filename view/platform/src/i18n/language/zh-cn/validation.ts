@@ -28,6 +28,7 @@ export default {
         array: '必须等于 {size} 个元素',
     },
     number: '必须是数字',
+    array: '必须是数组',
     required: '必须的',
     input: '请输入',
     select: '请选择',
