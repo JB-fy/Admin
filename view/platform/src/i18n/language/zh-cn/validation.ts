@@ -2,24 +2,28 @@ export default {
     between: {
         string: '必须在 {min} 到 {max} 个字符之间',
         number: '必须在 {min} 到 {max} 之间',
+        select: '必须选择 {min} 到 {max} 项',
         upload: '必须上传 {min} 到 {max} 个文件',
         array: '必须在 {min} 到 {max} 个元素之间',
     },
     min: {
         string: '必须大于等于 {min} 个字符',
         number: '必须大于等于 {min}',
+        select: '最少选择 {min} 项',
         upload: '最少上传 {min} 个文件',
         array: '必须大于等于 {min} 个元素',
     },
     max: {
         string: '必须小于等于 {max} 个字符',
         number: '必须小于等于 {max}',
+        select: '最多选择 {max} 项',
         upload: '最多上传 {max} 个文件',
         array: '必须小于等于 {max} 个元素',
     },
     size: {
         string: '必须等于 {size} 个字符',
         number: '必须等于 {size}',
+        select: '必须选 {size} 项',
         upload: '必须上传 {size} 个文件',
         array: '必须等于 {size} 个元素',
     },

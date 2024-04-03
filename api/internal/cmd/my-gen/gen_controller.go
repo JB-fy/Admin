@@ -451,9 +451,8 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 }
 
 func getControllerExtendMiddleMany(tplEM handleExtendMiddle) (controller myGenController) {
-	controller.list = append(controller.list, "`"+tplEM.FieldVal+"`")
-	controller.info = append(controller.info, "`"+tplEM.FieldVal+"`")
-	controller.tree = append(controller.tree, "`"+tplEM.FieldVal+"`")
-	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
+	controller.list = append(controller.list, "`"+tplEM.FieldVar+"`")
+	controller.info = append(controller.info, "`"+tplEM.FieldVar+"`")
+	controller.tree = append(controller.tree, "`"+tplEM.FieldVar+"`")
 	return
 }

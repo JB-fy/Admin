@@ -623,216 +623,192 @@ func getApiExtendMiddleOne(tplEM handleExtendMiddle) (api myGenApi) {
 func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	apiTmp := getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...)
 	api.filter = append(api.filter, apiTmp.filter...)
-	if len(tplEM.FieldArr) == 1 {
-		tpl := tplEM.tpl
-		for _, v := range tpl.FieldList {
-			if v.FieldRaw != tplEM.FieldArr[0] {
-				continue
-			}
+	if len(tplEM.GenFieldArr) == 1 {
+		v := tplEM.GenFieldArr[0]
 
-			apiField := myGenApiField{}
-			/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
-			switch v.FieldType {
-			case TypeInt: // `int等类型` // `int等类型（unsigned）`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]int`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]int`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]int`
-			case TypeIntU: // `int等类型（unsigned）`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]uint`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]uint`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]uint`
-			case TypeFloat: // `float等类型`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]float64`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]float64`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]float64`
-			case TypeFloatU: // `float等类型（unsigned）`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]float64`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]float64`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]float64`
+		apiField := myGenApiField{}
+		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
+		switch v.FieldType {
+		case TypeInt: // `int等类型` // `int等类型（unsigned）`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]int`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]int`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]int`
+		case TypeIntU: // `int等类型（unsigned）`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]uint`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]uint`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]uint`
+		case TypeFloat: // `float等类型`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]float64`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]float64`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]float64`
+		case TypeFloatU: // `float等类型（unsigned）`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]float64`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]float64`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]float64`
 
+			apiField.saveRule.Method = ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:0`)
+		case TypeVarchar: // `varchar类型`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]string`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]string`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]string`
+
+			apiField.saveRule.Method = ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `max-length:`+v.FieldLimitStr)
+		case TypeChar: // `char类型`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]string`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]string`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]string`
+
+			apiField.saveRule.Method = ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `size:`+v.FieldLimitStr)
+		case TypeText, TypeJson: // `text类型` // `json类型`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]string`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]string`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]string`
+
+			if v.FieldType == TypeJson {
 				apiField.saveRule.Method = ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:0`)
-			case TypeVarchar: // `varchar类型`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]string`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]string`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]string`
-
-				apiField.saveRule.Method = ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `max-length:`+v.FieldLimitStr)
-			case TypeChar: // `char类型`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]string`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]string`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]string`
-
-				apiField.saveRule.Method = ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `size:`+v.FieldLimitStr)
-			case TypeText, TypeJson: // `text类型` // `json类型`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]string`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]string`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]string`
-
-				if v.FieldType == TypeJson {
-					apiField.saveRule.Method = ReturnType
-					apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `json`)
-				}
-			case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]gtime.Time`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]gtime.Time`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]gtime.Time`
-
-				apiField.saveRule.Method = ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `date-format:Y-m-d H:i:s`)
-			case TypeDate: // `date类型`
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]gtime.Time`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]gtime.Time`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]string`
-
-				apiField.saveRule.Method = ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `date-format:Y-m-d`)
-			default:
-				apiField.createType.Method = ReturnType
-				apiField.createType.DataType = `*[]string`
-				apiField.updateType.Method = ReturnType
-				apiField.updateType.DataType = `*[]string`
-				apiField.resType.Method = ReturnType
-				apiField.resType.DataType = `[]string`
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `json`)
 			}
-			/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
+		case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]gtime.Time`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]gtime.Time`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]gtime.Time`
 
-			/*--------根据字段命名类型处理 开始--------*/
-			switch v.FieldTypeName {
-			case TypeNameDeleted: // 软删除字段
-				continue
-			case TypeNameUpdated: // 更新时间字段
-				continue
-			case TypeNameCreated: // 创建时间字段
-				continue
-			case TypeNamePid: // pid；	类型：int等类型；
-				continue
-			case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-				continue
-			case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-				continue
-			case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-				continue
-			case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-				continue
-			case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-			case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `regex:^[\\p{L}\\p{N}_-]+$`)
-			case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-				/* apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `passport`) */
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`)
-			case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `phone`)
-			case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `email`)
-			case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
-			case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `ip`)
-			case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `min:0`)
-			case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `between:0,100`)
-			case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-				statusArr := make([]string, len(v.StatusList))
-				for index, item := range v.StatusList {
-					statusArr[index] = item[0]
-				}
-				statusStr := gstr.Join(statusArr, `,`)
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:`+statusStr)
-			case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`)
-			case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-			case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-			case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-			case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-				if v.FieldType == TypeVarchar {
-					apiField.saveRule.Method = ReturnUnion
-					apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
-				} else {
-					apiField.createType.Method = ReturnTypeName
-					apiField.createType.DataTypeName = `*[][]string`
-					apiField.updateType.Method = ReturnTypeName
-					apiField.updateType.DataTypeName = `*[][]string`
-					apiField.resType.Method = ReturnTypeName
-					apiField.resType.DataTypeName = `[][]string`
+			apiField.saveRule.Method = ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `date-format:Y-m-d H:i:s`)
+		case TypeDate: // `date类型`
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]gtime.Time`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]gtime.Time`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]string`
 
-					apiField.saveRule.Method = ReturnUnion
-					apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `distinct`, `foreach`, `foreach`, `url`, `foreach`, `foreach`, `min-length:1`)
-				}
-			case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-				apiField.createType.Method = ReturnTypeName
-				apiField.createType.DataTypeName = `*[][]interface{}`
-				apiField.updateType.Method = ReturnTypeName
-				apiField.updateType.DataTypeName = `*[][]interface{}`
-				apiField.resType.Method = ReturnTypeName
-				apiField.resType.DataTypeName = `[][]interface{}`
+			apiField.saveRule.Method = ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `date-format:Y-m-d`)
+		default:
+			apiField.createType.Method = ReturnType
+			apiField.createType.DataType = `*[]string`
+			apiField.updateType.Method = ReturnType
+			apiField.updateType.DataType = `*[]string`
+			apiField.resType.Method = ReturnType
+			apiField.resType.DataType = `[]string`
+		}
+		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
-				apiField.saveRule.Method = ReturnUnion
-				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `distinct`)
+		/*--------根据字段命名类型处理 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameDeleted, TypeNameUpdated, TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
+			return
+		case TypeNamePid: // pid；	类型：int等类型；
+			return
+		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+			return
+		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			return
+		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+			return
+		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			return
+		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `regex:^[\\p{L}\\p{N}_-]+$`)
+		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
+			/* apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `passport`) */
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`)
+		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `phone`)
+		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `email`)
+		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
+		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `ip`)
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `min:0`)
+		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `between:0,100`)
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			/* statusArr := make([]string, len(v.StatusList))
+			for index, item := range v.StatusList {
+				statusArr[index] = item[0]
 			}
-			/*--------根据字段命名类型处理 结束--------*/
+			statusStr := gstr.Join(statusArr, `,`)
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:`+statusStr) */
+			return
+		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			/* apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`) */
+			return
+		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			if v.FieldType != TypeVarchar {
+				return
+			}
+			apiField.saveRule.Method = ReturnUnion
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
+		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+			return
+		}
+		/*--------根据字段命名类型处理 结束--------*/
 
-			if apiField.createType.getData() != `` {
-				api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVal)+` `+apiField.createType.getData()+` `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
-			}
-			if apiField.updateType.getData() != `` {
-				api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVal)+` `+apiField.updateType.getData()+` `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
-			}
-			if apiField.resType.getData() != `` {
-				api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVal)+` `+apiField.resType.getData()+` `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" dc:"`+v.FieldDesc+`列表"`+"`")
-			}
+		if apiField.createType.getData() != `` {
+			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.getData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
+		}
+		if apiField.updateType.getData() != `` {
+			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.getData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
+		}
+		if apiField.resType.getData() != `` {
+			api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.resType.getData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"`+v.FieldDesc+`列表"`+"`")
 		}
 	} else {
-		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVal)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
+		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"" dc:"列表"`+"`")
-		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVal)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" v:"" dc:"列表"`+"`")
-		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVal)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.res...), `
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.res...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVal+`,omitempty" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"列表"`+"`")
 	}
 	return
 }
