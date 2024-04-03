@@ -1055,7 +1055,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					}
 					`+tplEM.daoPath+`.CtxDaoModel(ctx).Data(insertList).Insert()`)
 		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
-					// daoIndex.SaveArrRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.FieldArr[0])+`, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用
+					// daoIndex.SaveArrRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.FieldArr[0])+`, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
 					valArr := gconv.SliceStr(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveArrRelMany(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.FieldArr[0])+`, id, valArr )
@@ -1079,7 +1079,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					daoIndex.SaveListRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, gconv.SliceAny(daoModel.IdArr), valList)`)
 		case TableTypeMiddleMany:
 			dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
-					// daoIndex.SaveListRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, gconv.SliceAny(daoModel.IdArr), gconv.SliceMap(v)) // 有顺序要求时使用
+					// daoIndex.SaveListRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, gconv.SliceAny(daoModel.IdArr), gconv.SliceMap(v)) // 有顺序要求时使用，同时注释下面代码
 					valList := gconv.SliceMap(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveListRelMany(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, []string{`+gstr.Join(tplEM.FieldColumnArrOfIdSuffix, `, `)+`}, id, valList )

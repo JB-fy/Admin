@@ -766,7 +766,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				viewSaveField.rule.Method = ReturnTypeName
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 }`)
 
-				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用my-select（滚动分页），小表用my-transfer（无分页） -->
+				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
 					<my-select v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
                     <!-- <my-transfer v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->`
 			}
