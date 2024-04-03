@@ -295,13 +295,13 @@ func getViewQueryExtendMiddleOne(tplEM handleExtendMiddle) (viewQuery myGenViewQ
 }
 
 func getViewQueryExtendMiddleMany(tplEM handleExtendMiddle) (viewQuery myGenViewQuery) {
-	switch tplEM.TableType {
-	case TableTypeExtendMany:
+	if len(tplEM.GenFieldArr) == 1 {
 		viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
-	case TableTypeMiddleMany:
-		if len(tplEM.GenFieldArr) == 1 {
+	} else {
+		switch tplEM.TableType {
+		case TableTypeExtendMany:
 			viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArr...))
-		} else {
+		case TableTypeMiddleMany:
 			viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfIdSuffix...))
 			if len(tplEM.FieldArrOfOther) > 0 {
 				viewQuery.Merge(getViewQueryFieldList(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldArrOfOther...))
