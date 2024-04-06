@@ -5,6 +5,8 @@
     align-items: center;
     /* center水平居中；space-between两边对齐 */
     justify-content: center;
+    /* 同时设置弹性盒子内元素水平和垂直方向上的间距 */
+    gap: 10px;
     /* 弹性盒子内元素设置，用于占满剩余空间 */
     flex: 1;
     /* row水平显示；row-reverse水平显示，但顺序相反；column垂直显示；column-reverse垂直显示，但顺序相反 */
