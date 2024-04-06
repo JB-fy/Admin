@@ -779,10 +779,10 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.resType.getData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"`+v.FieldDesc+`列表"`+"`")
 		}
 	} else {
-		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
+		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` *[]struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
 		`)+`
 	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
-		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
+		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` *[]struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
 		`)+`
 	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.res...), `

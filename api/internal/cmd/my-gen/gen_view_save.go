@@ -67,7 +67,22 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 					{{formContent}}
 				</el-form-item>`)
 	}
-	viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
+
+	if TableTypeMiddleMany == tableType {
+		formContent := gstr.TrimStr(viewSaveField.formContent.getData(), ` `)
+		if fieldIf != `` {
+			formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldIf+`"`, 1)
+		}
+		/* switch gstr.Split(formContent, ` `)[0] {
+		case `<el-input`:
+			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 200px;" />`
+		case `<el-input-number`:
+			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
+		} */
+		viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
+	} else {
+		viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
+	}
 	if viewSaveField.formHandle.getData() != `` {
 		viewSaveThis.formHandle = append(viewSaveThis.formHandle, viewSaveField.formHandle.getData())
 	}
@@ -778,11 +793,25 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		viewSave.Add(viewSaveField, tplEM.FieldVar, i18nPath, i18nFieldPath, tplEM.TableType, ``)
 	} else {
 		viewSaveTmp := myGenViewSave{}
-		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
-		}
-		for _, v := range tplEM.FieldListOfOther {
-			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
+		switch tplEM.TableType {
+		case TableTypeExtendMany:
+			for _, v := range tplEM.FieldList {
+				viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
+			}
+		case TableTypeMiddleMany:
+			for _, v := range tplEM.FieldListOfIdSuffix {
+				viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
+			}
+			if len(tplEM.FieldListOfOther) > 0 {
+				fieldIfArr := []string{}
+				for _, v := range tplEM.FieldListOfIdSuffix {
+					fieldIfArr = append(fieldIfArr, `saveForm.data.`+tplEM.FieldVar+`[index].`+v.FieldRaw)
+				}
+				fieldIf := gstr.Join(fieldIfArr, ` || `)
+				for _, v := range tplEM.FieldListOfOther {
+					viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, fieldIf)
+				}
+			}
 		}
 
 		/* importModule   []string
