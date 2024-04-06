@@ -45,7 +45,7 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 	rule := viewSaveField.rule.getData()
 	if viewSaveField.isRequired {
 		if fieldIf == `` {
-			if garray.NewFrom([]interface{}{TableTypeExtendOne, TableTypeMiddleOne}).Contains(tableType) {
+			if garray.NewFrom([]interface{}{TableTypeDefault, TableTypeExtendOne, TableTypeMiddleOne}).Contains(tableType) {
 				rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
 			}
 		} else {
