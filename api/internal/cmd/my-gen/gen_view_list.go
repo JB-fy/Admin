@@ -74,7 +74,7 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 		viewList.idType = `string`
 	}
 	for _, v := range tpl.FieldListOfDefault {
-		viewList.Add(getViewListField(option, tpl, tpl.I18nPath, v))
+		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewList.Merge(getViewListExtendMiddleOne(option, v))
@@ -83,7 +83,7 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 		viewList.Merge(getViewListExtendMiddleOne(option, v))
 	}
 	for _, v := range tpl.FieldListOfAfter {
-		viewList.Add(getViewListField(option, tpl, tpl.I18nPath, v))
+		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
 	}
 	viewList.Unique()
 
@@ -373,7 +373,7 @@ defineExpose({
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
 	gfile.PutContents(saveFile, tplView)
 }
-func getViewListField(option myGenOption, tpl myGenTpl, i18nPath string, v myGenField) (viewListField myGenViewListField) {
+func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
 	viewListField.dataKey.Method = ReturnType
 	viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
 	viewListField.title.Method = ReturnType
@@ -655,14 +655,14 @@ func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (v
 	switch tplEM.TableType {
 	case TableTypeExtendOne:
 		for _, v := range tplEM.FieldList {
-			viewList.Add(getViewListField(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, v))
+			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
 	case TableTypeMiddleOne:
 		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewList.Add(getViewListField(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, v))
+			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
 		for _, v := range tplEM.FieldListOfOther {
-			viewList.Add(getViewListField(option, tplEM.tpl, tplEM.tplOfTop.I18nPath, v))
+			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
 	}
 	return

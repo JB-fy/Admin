@@ -116,7 +116,7 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 	}
 	viewSave := myGenViewSave{}
 	for _, v := range tpl.FieldListOfDefault {
-		viewSave.Add(getViewSaveField(tpl, tpl.I18nPath, ``, v), v.FieldRaw, tpl.I18nPath, TableTypeDefault, ``, ``)
+		viewSave.Add(getViewSaveField(tpl, v, tpl.I18nPath, ``), v.FieldRaw, tpl.I18nPath, TableTypeDefault, ``, ``)
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewSave.Merge(getViewSaveExtendMiddleOne(v))
@@ -131,7 +131,7 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 		viewSave.Merge(getViewSaveExtendMiddleMany(v))
 	}
 	for _, v := range tpl.FieldListOfAfter {
-		viewSave.Add(getViewSaveField(tpl, tpl.I18nPath, ``, v), v.FieldRaw, tpl.I18nPath, TableTypeDefault, ``, ``)
+		viewSave.Add(getViewSaveField(tpl, v, tpl.I18nPath, ``), v.FieldRaw, tpl.I18nPath, TableTypeDefault, ``, ``)
 	}
 	viewSave.Unique()
 
@@ -224,7 +224,7 @@ const saveDrawer = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewSaveField(tpl myGenTpl, i18nPath string, fieldPrefix string, v myGenField) (viewSaveField myGenViewSaveField) {
+func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix string) (viewSaveField myGenViewSaveField) {
 	fieldPath := v.FieldRaw
 	if fieldPrefix != `` {
 		fieldPath = fieldPrefix + `.` + v.FieldRaw
@@ -548,11 +548,11 @@ func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSav
 	switch tplEM.TableType {
 	case TableTypeExtendOne:
 		for _, v := range tplEM.FieldList {
-			viewSave.Add(getViewSaveField(tplEM.tpl, tplEM.tplOfTop.I18nPath, ``, v), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``)
+			viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, ``), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``)
 		}
 	case TableTypeMiddleOne:
 		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewSave.Add(getViewSaveField(tplEM.tpl, tplEM.tplOfTop.I18nPath, ``, v), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``)
+			viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, ``), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``)
 		}
 		if len(tplEM.FieldListOfOther) > 0 {
 			fieldIfArr := []string{}
@@ -561,7 +561,7 @@ func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSav
 			}
 			fieldIf := gstr.Join(fieldIfArr, ` || `)
 			for _, v := range tplEM.FieldListOfOther {
-				viewSave.Add(getViewSaveField(tplEM.tpl, tplEM.tplOfTop.I18nPath, ``, v), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf)
+				viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, ``), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf)
 			}
 		}
 	}
@@ -791,10 +791,10 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 	} else {
 		viewSaveTmp := myGenViewSave{}
 		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, v), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``)
+			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, tplEM.FieldVar), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``)
 		}
 		for _, v := range tplEM.FieldListOfOther {
-			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, v), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``)
+			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, tplEM.FieldVar), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``)
 		}
 	}
 	return
