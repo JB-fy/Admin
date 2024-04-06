@@ -13,13 +13,13 @@ import (
 
 type myGenApi struct {
 	filterOfFixed []string
+	resOfAdd      []string
 	filter        []string
 	info          []string
 	create        []string
 	update        []string
 	delete        []string
 	res           []string
-	resOfAdd      []string
 }
 
 type myGenApiField struct {
@@ -82,9 +82,11 @@ func (apiThis *myGenApi) Unique() {
 // api生成
 func genApi(option myGenOption, tpl myGenTpl) {
 	api := getApiIdAndLabel(tpl)
-	api.Merge(getApiFieldList(tpl, TableTypeDefault, tpl.FieldArr...))
-	for _, v := range tpl.FieldArrAfter {
-		api.Merge(getApiFieldList(tpl, TableTypeDefault, v))
+	for _, v := range tpl.FieldListOfDefault {
+		api.Add(getApiField(tpl, v), v, TableTypeDefault)
+	}
+	for _, v := range tpl.FieldListOfAfter {
+		api.Add(getApiField(tpl, v), v, TableTypeDefault)
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		api.Merge(getApiExtendMiddleOne(v))
@@ -606,34 +608,31 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	return
 }
 
-func getApiFieldList(tpl myGenTpl, tableType myGenTableType, fieldArr ...string) (api myGenApi) {
-	for _, v := range tpl.FieldList {
-		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
-			continue
-		}
-		api.Add(getApiField(tpl, v), v, tableType)
-	}
-	return
-}
-
 func getApiExtendMiddleOne(tplEM handleExtendMiddle) (api myGenApi) {
 	switch tplEM.TableType {
 	case TableTypeExtendOne:
-		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...))
+		for _, v := range tplEM.FieldList {
+			api.Add(getApiField(tplEM.tpl, v), v, tplEM.TableType)
+		}
 	case TableTypeMiddleOne:
-		api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfIdSuffix...))
-		if len(tplEM.FieldArrOfOther) > 0 {
-			api.Merge(getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArrOfOther...))
+		for _, v := range tplEM.FieldListOfIdSuffix {
+			api.Add(getApiField(tplEM.tpl, v), v, tplEM.TableType)
+		}
+		for _, v := range tplEM.FieldListOfOther {
+			api.Add(getApiField(tplEM.tpl, v), v, tplEM.TableType)
 		}
 	}
 	return
 }
 
 func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
-	apiTmp := getApiFieldList(tplEM.tpl, tplEM.TableType, tplEM.FieldArr...)
+	apiTmp := myGenApi{}
+	for _, v := range tplEM.FieldList {
+		apiTmp.Add(getApiField(tplEM.tpl, v), v, tplEM.TableType)
+	}
 	api.filter = append(api.filter, apiTmp.filter...)
-	if len(tplEM.GenFieldArr) == 1 {
-		v := tplEM.GenFieldArr[0]
+	if len(tplEM.FieldList) == 1 {
+		v := tplEM.FieldList[0]
 
 		apiField := myGenApiField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/

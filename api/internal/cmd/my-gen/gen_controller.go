@@ -36,7 +36,9 @@ func (controllerThis *myGenController) Unique() {
 // controller生成
 func genController(option myGenOption, tpl myGenTpl) {
 	controller := getControllerIdAndLabel(tpl)
-	controller.Merge(getControllerFieldList(tpl))
+	for _, v := range tpl.FieldList {
+		controller.Merge(getControllerField(tpl, v))
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		controller.Merge(getControllerExtendMiddleOne(v))
 	}
@@ -361,67 +363,71 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	return
 }
 
+func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController) {
+	/*--------根据字段主键类型处理 开始--------*/
+	switch v.FieldTypePrimary {
+	case TypePrimary: // 独立主键
+	case TypePrimaryAutoInc: // 独立主键（自增）
+		return
+	case TypePrimaryMany: // 联合主键
+	case TypePrimaryManyAutoInc: // 联合主键（自增）
+		return
+	}
+	/*--------根据字段主键类型处理 结束--------*/
+
+	/*--------根据字段命名类型处理 开始--------*/
+	switch v.FieldTypeName {
+	case TypeNameDeleted: // 软删除字段
+	case TypeNameUpdated: // 更新时间字段
+	case TypeNameCreated: // 创建时间字段
+	case TypeNamePid: // pid；	类型：int等类型；
+	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+	case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+		// controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+	case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+		// controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+	case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+	case TypeNameCodeSuffix: // code后缀；	类型：varchar；
+	case TypeNameAccountSuffix: // account后缀；	类型：varchar；
+	case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+	case TypeNameEmailSuffix: // email后缀；	类型：varchar；
+	case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
+			daoPath := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
+			importDaoStr := `dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
+			if !garray.NewStrArrayFrom(controller.importDao).Contains(importDaoStr) {
+				controller.importDao = append(controller.importDao, importDaoStr)
+			}
+			fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])
+			if relIdObj.Suffix != `` {
+				fieldTmp += "+`" + relIdObj.Suffix + "`"
+			}
+			controller.list = append(controller.list, fieldTmp)
+		}
+	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+	case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+	case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+	case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+	case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+	case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+	case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+	case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+	case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+	}
+	/*--------根据字段命名类型处理 结束--------*/
+	return
+}
+
 func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenController) {
 	for _, v := range tpl.FieldList {
 		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
 			continue
 		}
-
-		/*--------根据字段主键类型处理 开始--------*/
-		switch v.FieldTypePrimary {
-		case TypePrimary: // 独立主键
-		case TypePrimaryAutoInc: // 独立主键（自增）
-			continue
-		case TypePrimaryMany: // 联合主键
-		case TypePrimaryManyAutoInc: // 联合主键（自增）
-			continue
-		}
-		/*--------根据字段主键类型处理 结束--------*/
-
-		/*--------根据字段命名类型处理 开始--------*/
-		switch v.FieldTypeName {
-		case TypeNameDeleted: // 软删除字段
-		case TypeNameUpdated: // 更新时间字段
-		case TypeNameCreated: // 创建时间字段
-		case TypeNamePid: // pid；	类型：int等类型；
-		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-			// controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
-		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			// controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
-		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-			if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
-				daoPath := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-				importDaoStr := `dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
-				if !garray.NewStrArrayFrom(controller.importDao).Contains(importDaoStr) {
-					controller.importDao = append(controller.importDao, importDaoStr)
-				}
-				fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])
-				if relIdObj.Suffix != `` {
-					fieldTmp += "+`" + relIdObj.Suffix + "`"
-				}
-				controller.list = append(controller.list, fieldTmp)
-			}
-		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-		}
-		/*--------根据字段命名类型处理 结束--------*/
+		controller.Merge(getControllerField(tpl, v))
 	}
 	return
 }
@@ -432,21 +438,23 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
 	switch tplEM.TableType {
 	case TableTypeExtendOne:
-		for _, v := range tplEM.FieldArr {
-			field := daoPath + `.Columns().` + gstr.CaseCamel(v)
+		for _, v := range tplEM.FieldList {
+			field := daoPath + `.Columns().` + v.FieldCaseCamel
 			controller.list = append(controller.list, field)
 			controller.info = append(controller.info, field)
 			controller.tree = append(controller.tree, field)
 		}
 	case TableTypeMiddleOne:
-		for _, v := range append(tplEM.FieldArrOfIdSuffix, tplEM.FieldArrOfOther...) {
-			field := daoPath + `.Columns().` + gstr.CaseCamel(v)
+		for _, v := range append(tplEM.FieldListOfIdSuffix, tplEM.FieldListOfOther...) {
+			field := daoPath + `.Columns().` + v.FieldCaseCamel
 			controller.list = append(controller.list, field)
 			controller.info = append(controller.info, field)
 			controller.tree = append(controller.tree, field)
 		}
 	}
-	controller.Merge(getControllerFieldList(tplEM.tpl, tplEM.FieldArr...))
+	for _, v := range tplEM.FieldList {
+		controller.Merge(getControllerField(tplEM.tpl, v))
+	}
 	return
 }
 
