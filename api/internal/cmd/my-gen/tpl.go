@@ -12,12 +12,13 @@ import (
 )
 
 type myGenTpl struct {
-	Link               string       //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr           []string     //当前数据库全部数据表（获取扩展表，中间表等需要）
-	Group              string       //数据库分组
-	RemovePrefixCommon string       //要删除的共有前缀
-	RemovePrefixAlone  string       //要删除的独有前缀
-	RemovePrefix       string       //要删除的前缀
+	Link               string   //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr           []string //当前数据库全部数据表（获取扩展表，中间表等需要）
+	Group              string   //数据库分组
+	RemovePrefixCommon string   //要删除的共有前缀
+	RemovePrefixAlone  string   //要删除的独有前缀
+	RemovePrefix       string   //要删除的前缀
+	// TableType          myGenTableType //TODO表类型
 	Table              string       //表名（原始，包含前缀）
 	TableCaseSnake     string       //表名（蛇形，已去除前缀）
 	TableCaseCamel     string       //表名（大驼峰，已去除前缀）
@@ -114,7 +115,6 @@ type handleRelId struct {
 	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
 }
 
-// TODO
 type handleExtendMiddle struct {
 	tplOfTop                 myGenTpl
 	tpl                      myGenTpl

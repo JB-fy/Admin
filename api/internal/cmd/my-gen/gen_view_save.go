@@ -62,18 +62,16 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 	} else {
 		viewSaveThis.rule = append(viewSaveThis.rule, field+`: [],`)
 	}
-	if viewSaveField.formContent.getData() != `` {
-		if fieldIf == `` {
-			viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item :label="t('`+i18nPath+`.name.`+fieldPath+`')" prop="`+fieldPath+`">
+	if fieldIf == `` {
+		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item :label="t('`+i18nPath+`.name.`+fieldPath+`')" prop="`+fieldPath+`">
                     {{formContent}}
                 </el-form-item>`)
-		} else {
-			viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item v-if="`+fieldIf+`" :label="t('`+i18nPath+`.name.`+fieldPath+`')" prop="`+fieldPath+`">
+	} else {
+		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item v-if="`+fieldIf+`" :label="t('`+i18nPath+`.name.`+fieldPath+`')" prop="`+fieldPath+`">
 					{{formContent}}
 				</el-form-item>`)
-		}
-		viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
 	}
+	viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
 	if viewSaveField.formHandle.getData() != `` {
 		viewSaveThis.formHandle = append(viewSaveThis.formHandle, viewSaveField.formHandle.getData())
 	}
