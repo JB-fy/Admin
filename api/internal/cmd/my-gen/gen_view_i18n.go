@@ -265,8 +265,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		viewI18n.Add(viewI18nField, v.FieldRaw)     //viewQuery用
-		viewI18n.Add(viewI18nField, tplEM.FieldVar) //viewSave用
+		viewI18n.Add(viewI18nField, tplEM.FieldVar)
 	} else {
 		viewI18nTmp := myGenViewI18n{}
 		for _, v := range tplEM.FieldListOfIdSuffix {
@@ -275,7 +274,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		for _, v := range tplEM.FieldListOfOther {
 			viewI18nTmp.Add(getViewI18nField(tplEM.tpl, v), v.FieldRaw)
 		}
-		viewI18n.name = append(viewI18n.name, tplEM.FieldVar+`Name: '列表',`)
+		viewI18n.name = append(viewI18n.name, tplEM.FieldVar+`Label: '列表',`)
 		viewI18n.name = append(viewI18n.name, tplEM.FieldVar+`: {`+gstr.Join(append([]string{``}, viewI18nTmp.name...), `
             `)+`
         },`)

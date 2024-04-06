@@ -30,13 +30,9 @@ type myGenViewSaveField struct {
 	paramHandle    myGenDataStrHandler
 }
 
-func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field string, i18nPath string, tableType myGenTableType, fieldPrefix string, fieldIf string) {
+func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field string, i18nPath string, i18nFieldPath string, tableType myGenTableType, fieldIf string) {
 	if viewSaveField.formContent.getData() == `` {
 		return
-	}
-	fieldPath := field
-	if fieldPrefix != `` {
-		fieldPath = fieldPrefix + `.` + field
 	}
 	viewSaveThis.importModule = append(viewSaveThis.importModule, viewSaveField.importModule...)
 	if viewSaveField.dataInitBefore.getData() != `` {
@@ -63,11 +59,11 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 		viewSaveThis.rule = append(viewSaveThis.rule, field+`: [],`)
 	}
 	if fieldIf == `` {
-		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item :label="t('`+i18nPath+`.name.`+fieldPath+`')" prop="`+fieldPath+`">
+		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item :label="t('`+i18nPath+`.name.`+i18nFieldPath+`')" prop="`+field+`">
                     {{formContent}}
                 </el-form-item>`)
 	} else {
-		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item v-if="`+fieldIf+`" :label="t('`+i18nPath+`.name.`+fieldPath+`')" prop="`+fieldPath+`">
+		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item v-if="`+fieldIf+`" :label="t('`+i18nPath+`.name.`+i18nFieldPath+`')" prop="`+field+`">
 					{{formContent}}
 				</el-form-item>`)
 	}
@@ -116,7 +112,7 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 	}
 	viewSave := myGenViewSave{}
 	for _, v := range tpl.FieldListOfDefault {
-		viewSave.Add(getViewSaveField(tpl, v, tpl.I18nPath, ``), v.FieldRaw, tpl.I18nPath, TableTypeDefault, ``, ``)
+		viewSave.Add(getViewSaveField(tpl, v, tpl.I18nPath, v.FieldRaw), v.FieldRaw, tpl.I18nPath, v.FieldRaw, TableTypeDefault, ``)
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewSave.Merge(getViewSaveExtendMiddleOne(v))
@@ -131,7 +127,7 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 		viewSave.Merge(getViewSaveExtendMiddleMany(v))
 	}
 	for _, v := range tpl.FieldListOfAfter {
-		viewSave.Add(getViewSaveField(tpl, v, tpl.I18nPath, ``), v.FieldRaw, tpl.I18nPath, TableTypeDefault, ``, ``)
+		viewSave.Add(getViewSaveField(tpl, v, tpl.I18nPath, v.FieldRaw), v.FieldRaw, tpl.I18nPath, v.FieldRaw, TableTypeDefault, ``)
 	}
 	viewSave.Unique()
 
@@ -224,12 +220,7 @@ const saveDrawer = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix string) (viewSaveField myGenViewSaveField) {
-	fieldPath := v.FieldRaw
-	if fieldPrefix != `` {
-		fieldPath = fieldPrefix + `.` + v.FieldRaw
-	}
-
+func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPath string) (viewSaveField myGenViewSaveField) {
 	if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
 		viewSaveField.isRequired = true
 	}
@@ -244,7 +235,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'integer', trigger: 'change', message: t('validation.input') },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 	case TypeIntU: // `int等类型（unsigned）`
 		defaultVal := gconv.Uint(v.Default)
 		if defaultVal != 0 {
@@ -254,7 +245,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 	case TypeFloat: // `float等类型`
 		defaultVal := gconv.Float64(v.Default)
 		if defaultVal != 0 {
@@ -264,7 +255,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'number', trigger: 'change', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 	case TypeFloatU: // `float等类型（unsigned）`
 		defaultVal := gconv.Float64(v.Default)
 		if defaultVal != 0 {
@@ -274,23 +265,23 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'number', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
 	case TypeVarchar: // `varchar类型`
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', max: `+v.FieldLimitStr+`, message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
+		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
 		if v.IsUnique {
-			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 		}
 	case TypeChar: // `char类型`
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', len: `+v.FieldLimitStr+`, message: t('validation.size.string', { size: `+v.FieldLimitStr+` }) },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
+		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
 		if v.IsUnique {
-			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 		}
 	case TypeText: // `text类型`
@@ -301,7 +292,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', message: t('validation.input') },`)
 
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<my-editor v-model="saveForm.data.` + fieldPath + `" />`
+		viewSaveField.formContent.DataType = `<my-editor v-model="saveForm.data.` + v.FieldRaw + `" />`
 	case TypeJson: // `json类型`
 		if !v.IsNull {
 			viewSaveField.isRequired = true
@@ -330,24 +321,24 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
                 },
             },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + fieldPath + `" type="textarea" :autosize="{ minRows: 3 }" />`
+		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" type="textarea" :autosize="{ minRows: 3 }" />`
 		if v.FieldTip != `` {
-			viewSaveField.formContent.DataType = `<el-alert :title="t('` + i18nPath + `.tip.` + fieldPath + `')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
+			viewSaveField.formContent.DataType = `<el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
                     ` + viewSaveField.formContent.DataType
 		}
 	case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + fieldPath + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
+		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
 	case TypeDate: // `date类型`
 		viewSaveField.rule.Method = ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + fieldPath + `" type="date" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />`
+		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + v.FieldRaw + `" type="date" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />`
 	default:
 		viewSaveField.formContent.Method = ReturnType
-		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :clearable="true" />`
+		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" />`
 	}
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
@@ -371,13 +362,13 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		return myGenViewSaveField{}
 	case TypeNamePid: // pid；	类型：int等类型；
 		viewSaveField.dataInitAfter.Method = ReturnTypeName
-		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + fieldPath + ` ? saveCommon.data.` + fieldPath + ` : undefined`
+		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + v.FieldRaw + ` ? saveCommon.data.` + v.FieldRaw + ` : undefined`
 		viewSaveField.rule.Method = ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },`)
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />`
+		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { excIdArr: saveForm.data.idArr } } }" :props="{ checkStrictly: true, emitPath: false }" />`
 		viewSaveField.paramHandle.Method = ReturnTypeName
-		viewSaveField.paramHandle.DataTypeName = `param.` + fieldPath + ` === undefined ? param.` + fieldPath + ` = 0 : null`
+		viewSaveField.paramHandle.DataTypeName = `param.` + v.FieldRaw + ` === undefined ? param.` + v.FieldRaw + ` = 0 : null`
 	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		return myGenViewSaveField{}
 	case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
@@ -390,10 +381,10 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 			`{ type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },`,
 		)
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-input v-model="saveForm.data.` + fieldPath + `" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+		viewSaveField.formContent.DataTypeName = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert v-if="saveForm.data.idArr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />`
 		viewSaveField.paramHandle.Method = ReturnTypeName
-		viewSaveField.paramHandle.DataTypeName = `param.` + fieldPath + ` ? param.` + fieldPath + ` = md5(param.` + fieldPath + `) : delete param.` + fieldPath
+		viewSaveField.paramHandle.DataTypeName = `param.` + v.FieldRaw + ` ? param.` + v.FieldRaw + ` = md5(param.` + v.FieldRaw + `) : delete param.` + v.FieldRaw
 	case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewSaveField{}
 	case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
@@ -423,7 +414,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 			apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 		}
 		viewSaveField.dataInitAfter.Method = ReturnTypeName
-		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + fieldPath + ` ? saveCommon.data.` + fieldPath + ` : undefined`
+		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + v.FieldRaw + ` ? saveCommon.data.` + v.FieldRaw + ` : undefined`
 		viewSaveField.rule.Method = ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
 			`// { required: true, message: t('validation.required') },`,
@@ -431,18 +422,18 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 		)
 		viewSaveField.formContent.Method = ReturnTypeName
 		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
-			viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
+			viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
 		} else {
-			viewSaveField.formContent.DataTypeName = `<my-select v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
+			viewSaveField.formContent.DataTypeName = `<my-select v-model="saveForm.data.` + v.FieldRaw + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
 		}
 		viewSaveField.paramHandle.Method = ReturnTypeName
-		viewSaveField.paramHandle.DataTypeName = `param.` + fieldPath + ` === undefined ? param.` + fieldPath + ` = 0 : null`
+		viewSaveField.paramHandle.DataTypeName = `param.` + v.FieldRaw + ` === undefined ? param.` + v.FieldRaw + ` = 0 : null`
 	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		viewSaveField.rule.Method = ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: 0, max: 100, message: t('validation.between.number', { min: 0, max: 100 }) },`)
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + fieldPath + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />
-                    <el-alert :title="t('` + i18nPath + `.tip.` + fieldPath + `')" type="info" :show-icon="true" :closable="false" />`
+		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + v.FieldRaw + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />
+                    <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
 	case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		defaultVal := gconv.String(v.Default)
 		if defaultVal == `` {
@@ -454,31 +445,31 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 			viewSaveField.dataInitBefore.DataTypeName = `'` + defaultVal + `'`
 		}
 		viewSaveField.rule.Method = ReturnTypeName
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('`+i18nPath+`.status.`+fieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-radio-group v-model="saveForm.data.` + fieldPath + `">
-                        <el-radio v-for="(item, index) in (tm('` + i18nPath + `.status.` + fieldPath + `') as any)" :key="index" :value="item.value">
+		viewSaveField.formContent.DataTypeName = `<el-radio-group v-model="saveForm.data.` + v.FieldRaw + `">
+                        <el-radio v-for="(item, index) in (tm('` + i18nPath + `.status.` + i18nFieldPath + `') as any)" :key="index" :value="item.value">
                             {{ item.label }}
                         </el-radio>
                     </el-radio-group>`
 		if len(v.StatusList) > 5 { //超过5个状态用select组件，小于5个用radio组件
-			viewSaveField.formContent.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + fieldPath + `" :options="tm('` + i18nPath + `.status.` + fieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :clearable="false" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
+			viewSaveField.formContent.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + v.FieldRaw + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="false" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 		}
 	case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		viewSaveField.rule.Method = ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-switch v-model="saveForm.data.` + fieldPath + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />`
+		viewSaveField.formContent.DataTypeName = `<el-switch v-model="saveForm.data.` + v.FieldRaw + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />`
 	case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
 	case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
 		if v.FieldType != TypeDate {
 			viewSaveField.formContent.Method = ReturnTypeName
-			viewSaveField.formContent.DataTypeName = `<el-date-picker v-model="saveForm.data.` + fieldPath + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`
+			viewSaveField.formContent.DataTypeName = `<el-date-picker v-model="saveForm.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`
 		}
 	case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		if v.FieldType == TypeVarchar {
 			viewSaveField.formContent.Method = ReturnTypeName
-			viewSaveField.formContent.DataTypeName = `<el-input v-model="saveForm.data.` + fieldPath + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" />`
+			viewSaveField.formContent.DataTypeName = `<el-input v-model="saveForm.data.` + v.FieldRaw + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" />`
 		}
 	case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
 		if v.FieldType == TypeVarchar {
@@ -498,20 +489,18 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
 			attrOfAdd += ` accept="image/*"`
 		}
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + fieldPath + `"` + attrOfAdd + ` />`
+		viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + v.FieldRaw + `"` + attrOfAdd + ` />`
 	case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		viewSaveField.rule.Method = ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'blur', message: t('validation.array'), defaultField: { type: 'string', message: t('validation.input') } },	// 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })`)
-		fieldHandle := gstr.CaseCamelLower(v.FieldRaw) + `Handle`
-		if fieldPrefix != `` {
-			fieldHandle = gstr.CaseCamelLower(fieldPrefix+`_`+v.FieldRaw) + `Handle`
-		}
+		// fieldHandle := gstr.CaseCamelLower(v.FieldRaw) + `Handle`
+		fieldHandle := gstr.CaseCamelLower(gstr.Replace(i18nFieldPath, `.`, `_`)) + `Handle`
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + fieldPath + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + v.FieldRaw + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                         {{ item }}
                     </el-tag>
-                    <!-- <el-input-number v-if="` + fieldHandle + `.visible" :ref="(el: any) => ` + fieldHandle + `.ref = el" v-model="` + fieldHandle + `.value" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" @keyup.enter="` + fieldHandle + `.addValue" @blur="` + fieldHandle + `.addValue" :controls="false" size="small" style="width: 150px;" /> -->
-                    <el-input v-if="` + fieldHandle + `.visible" :ref="(el: any) => ` + fieldHandle + `.ref = el" v-model="` + fieldHandle + `.value" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" @keyup.enter="` + fieldHandle + `.addValue" @blur="` + fieldHandle + `.addValue" :show-word-limit="true" :clearable="true" size="small" style="width: 200px;" />
+                    <!-- <el-input-number v-if="` + fieldHandle + `.visible" :ref="(el: any) => ` + fieldHandle + `.ref = el" v-model="` + fieldHandle + `.value" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" @keyup.enter="` + fieldHandle + `.addValue" @blur="` + fieldHandle + `.addValue" :controls="false" size="small" style="width: 150px;" /> -->
+                    <el-input v-if="` + fieldHandle + `.visible" :ref="(el: any) => ` + fieldHandle + `.ref = el" v-model="` + fieldHandle + `.value" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" @keyup.enter="` + fieldHandle + `.addValue" @blur="` + fieldHandle + `.addValue" :show-word-limit="true" :clearable="true" size="small" style="width: 200px;" />
                     <el-button v-else type="primary" size="small" @click="` + fieldHandle + `.visibleChange">
                         <autoicon-ep-plus />{{ t('common.add') }}
                     </el-button>`
@@ -529,14 +518,14 @@ func getViewSaveField(tpl myGenTpl, v myGenField, i18nPath string, fieldPrefix s
     },
     addValue: () => {
         if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === '')) {
-			Array.isArray(saveForm.data.` + fieldPath + `) ? null : (saveForm.data.` + fieldPath + ` = [])
-            saveForm.data.` + fieldPath + `.push(` + fieldHandle + `.value)
+			Array.isArray(saveForm.data.` + v.FieldRaw + `) ? null : (saveForm.data.` + v.FieldRaw + ` = [])
+            saveForm.data.` + v.FieldRaw + `.push(` + fieldHandle + `.value)
         }
         ` + fieldHandle + `.visible = false
         ` + fieldHandle + `.value = undefined
     },
     delValue: (item: any) => {
-        saveForm.data.` + fieldPath + `.splice(saveForm.data.` + fieldPath + `.indexOf(item), 1)
+        saveForm.data.` + v.FieldRaw + `.splice(saveForm.data.` + v.FieldRaw + `.indexOf(item), 1)
     },
 })`
 	}
@@ -548,11 +537,11 @@ func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSav
 	switch tplEM.TableType {
 	case TableTypeExtendOne:
 		for _, v := range tplEM.FieldList {
-			viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, ``), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``)
+			viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, v.FieldRaw, tplEM.TableType, ``)
 		}
 	case TableTypeMiddleOne:
 		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, ``), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, ``)
+			viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, v.FieldRaw, tplEM.TableType, ``)
 		}
 		if len(tplEM.FieldListOfOther) > 0 {
 			fieldIfArr := []string{}
@@ -561,7 +550,7 @@ func getViewSaveExtendMiddleOne(tplEM handleExtendMiddle) (viewSave myGenViewSav
 			}
 			fieldIf := gstr.Join(fieldIfArr, ` || `)
 			for _, v := range tplEM.FieldListOfOther {
-				viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, ``), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, ``, fieldIf)
+				viewSave.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, v.FieldRaw, tplEM.TableType, fieldIf)
 			}
 		}
 	}
@@ -574,7 +563,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 
 		tpl := tplEM.tpl
 		i18nPath := tplEM.tplOfTop.I18nPath
-		fieldPath := tplEM.FieldVar
+		i18nFieldPath := tplEM.FieldVar
 
 		viewSaveField := myGenViewSaveField{}
 		/*--------部分命名类型直接处理后返回 开始--------*/
@@ -584,10 +573,10 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			isReturn = true
 
 			viewSaveField.rule.Method = ReturnTypeName
-			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'enum', enum: (tm('`+i18nPath+`.status.`+fieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
 			viewSaveField.formContent.Method = ReturnTypeName
-			viewSaveField.formContent.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + fieldPath + `" :options="tm('` + i18nPath + `.status.` + fieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + fieldPath + `')" :multiple="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
+			viewSaveField.formContent.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			isReturn = true
 
@@ -601,19 +590,19 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				viewSaveField.rule.Method = ReturnTypeName
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select')/* , defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } */ },`)
 
-				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
+				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
 
 				viewSaveField.paramHandle.Method = ReturnTypeName
-				viewSaveField.paramHandle.DataTypeName = `if (param.` + fieldPath + ` === undefined) {
-                param.` + fieldPath + ` = []
+				viewSaveField.paramHandle.DataTypeName = `if (param.` + tplEM.FieldVar + ` === undefined) {
+                param.` + tplEM.FieldVar + ` = []
             } else {
-                let ` + fieldPath + `: any = []
-                param.` + fieldPath + `.forEach((item: any) => {
-                    ` + fieldPath + ` = ` + fieldPath + `.concat(item)
+                let ` + tplEM.FieldVar + `: any = []
+                param.` + tplEM.FieldVar + `.forEach((item: any) => {
+                    ` + tplEM.FieldVar + ` = ` + tplEM.FieldVar + `.concat(item)
                 })
-                //param.` + fieldPath + ` = [...new Set(` + fieldPath + `)]
-                param.` + fieldPath + ` = ` + fieldPath + `.filter((item: any, index: any) => {
-                    return ` + fieldPath + `.indexOf(item) === index
+                //param.` + tplEM.FieldVar + ` = [...new Set(` + tplEM.FieldVar + `)]
+                param.` + tplEM.FieldVar + ` = ` + tplEM.FieldVar + `.filter((item: any, index: any) => {
+                    return ` + tplEM.FieldVar + `.indexOf(item) === index
                 })
             }`
 			} else {
@@ -621,8 +610,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
 				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
-					<my-select v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
-                    <!-- <my-transfer v-model="saveForm.data.` + fieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->`
+					<my-select v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
+                    <!-- <my-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->`
 			}
 		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
 			if v.FieldType == TypeVarchar {
@@ -637,11 +626,11 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 					attrOfAdd += ` accept="image/*"`
 				}
 				viewSaveField.formContent.Method = ReturnTypeName
-				viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + fieldPath + `"` + attrOfAdd + ` />`
+				viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + tplEM.FieldVar + `"` + attrOfAdd + ` />`
 			}
 		}
 		if isReturn {
-			viewSave.Add(viewSaveField, fieldPath, i18nPath, tplEM.TableType, ``, ``)
+			viewSave.Add(viewSaveField, tplEM.FieldVar, i18nPath, i18nFieldPath, tplEM.TableType, ``)
 			return
 		}
 		/*--------部分命名类型直接处理后返回 结束--------*/
@@ -725,7 +714,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="0" :max="100" :step="1" /* :step-strictly="true" controls-position="right" */ />`
 		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewSaveFieldTmp.rule.Method = ReturnTypeName
-			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('`+i18nPath+`.status.`+fieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			viewSaveFieldTmp.rule.Method = ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
@@ -745,9 +734,9 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'blur', message: t('validation.array'), defaultField: [`+gstr.Join(append([]string{``}, viewSaveFieldTmp.rule.getData()...), `
                 `)+`] },	// 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })`)
 
-		fieldHandle := gstr.CaseCamelLower(fieldPath) + `Handle`
+		fieldHandle := gstr.CaseCamelLower(tplEM.FieldVar) + `Handle`
 		formContent := gstr.TrimStr(viewSaveFieldTmp.formContent.getData(), ` `)
-		formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldHandle+`.visible" :ref="(el: any) => `+fieldHandle+`.ref = el" v-model="`+fieldHandle+`.value" :placeholder="t('`+i18nPath+`.name.`+fieldPath+`')" @keyup.enter="`+fieldHandle+`.addValue" @blur="`+fieldHandle+`.addValue"`, 1)
+		formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldHandle+`.visible" :ref="(el: any) => `+fieldHandle+`.ref = el" v-model="`+fieldHandle+`.value" :placeholder="t('`+i18nPath+`.name.`+i18nFieldPath+`')" @keyup.enter="`+fieldHandle+`.addValue" @blur="`+fieldHandle+`.addValue"`, 1)
 		switch gstr.Split(formContent, ` `)[0] {
 		case `<el-input`:
 			formContent = gstr.SubStr(formContent, 0, -2) + `size="small" style="width: 200px;" />`
@@ -756,7 +745,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		}
 
 		viewSaveField.formContent.Method = ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + fieldPath + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
+		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + tplEM.FieldVar + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                         {{ item }}
                     </el-tag>
 					` + formContent + `
@@ -777,24 +766,24 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
     },
     addValue: () => {
         if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === '')) {
-			Array.isArray(saveForm.data.` + fieldPath + `) ? null : (saveForm.data.` + fieldPath + ` = [])
-            saveForm.data.` + fieldPath + `.push(` + fieldHandle + `.value)
+			Array.isArray(saveForm.data.` + tplEM.FieldVar + `) ? null : (saveForm.data.` + tplEM.FieldVar + ` = [])
+            saveForm.data.` + tplEM.FieldVar + `.push(` + fieldHandle + `.value)
         }
         ` + fieldHandle + `.visible = false
         ` + fieldHandle + `.value = undefined
     },
     delValue: (item: any) => {
-        saveForm.data.` + fieldPath + `.splice(saveForm.data.` + fieldPath + `.indexOf(item), 1)
+        saveForm.data.` + tplEM.FieldVar + `.splice(saveForm.data.` + tplEM.FieldVar + `.indexOf(item), 1)
     },
 })`
-		viewSave.Add(viewSaveField, tplEM.FieldVar, i18nPath, tplEM.TableType, ``, ``)
+		viewSave.Add(viewSaveField, tplEM.FieldVar, i18nPath, i18nFieldPath, tplEM.TableType, ``)
 	} else {
 		viewSaveTmp := myGenViewSave{}
 		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, tplEM.FieldVar), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``)
+			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
 		}
 		for _, v := range tplEM.FieldListOfOther {
-			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, tplEM.FieldVar), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.TableType, tplEM.FieldVar, ``)
+			viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
 		}
 	}
 	return
