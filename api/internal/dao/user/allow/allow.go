@@ -11,12 +11,13 @@ func init() {
 	allow.RegisterUser(&User)
 }
 
-步骤二：api/internal/dao/user内导入的其它dao目录，如需导入api/internal/dao/user，则改成导入api/internal/dao/user/allow
+步骤二：api/internal/dao/下的其它目录，如需导入api/internal/dao/user，则改成导入api/internal/dao/user/allow
 import (
 	// daoUser "api/internal/dao/user"
 	daoUser "api/internal/dao/user/allow"
 )
 */
+
 /* import (
 	"api/internal/dao"
 	"api/internal/dao/user/internal"
