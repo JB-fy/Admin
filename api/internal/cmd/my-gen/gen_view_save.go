@@ -43,12 +43,15 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 	}
 	rule := viewSaveField.rule.getData()
 	if viewSaveField.isRequired {
-		if fieldIf == `` {
-			if garray.NewFrom([]interface{}{TableTypeDefault, TableTypeExtendOne, TableTypeMiddleOne}).Contains(tableType) {
+		if fieldIf != `` && tableType == TableTypeMiddleOne {
+			rule = append([]string{`{ required: computed((): boolean => ` + fieldIf + `), message: t('validation.required') },`}, rule...)
+		} else {
+			switch tableType {
+			case TableTypeExtendMany, TableTypeMiddleMany:
+				rule = append([]string{`{ required: true, message: t('` + i18nPath + `.name.` + i18nFieldPath + `.` + field + `') + t('validation.required') },`}, rule...)
+			default:
 				rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
 			}
-		} else {
-			rule = append([]string{`{ required: computed((): boolean => ` + fieldIf + `), message: t('validation.required') },`}, rule...)
 		}
 	}
 	if len(rule) > 0 {
@@ -62,25 +65,24 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item :label="t('`+i18nPath+`.name.`+i18nFieldPath+`')" prop="`+field+`">
                     {{formContent}}
                 </el-form-item>`)
+		viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
 	} else {
 		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item v-if="`+fieldIf+`" :label="t('`+i18nPath+`.name.`+i18nFieldPath+`')" prop="`+field+`">
 					{{formContent}}
 				</el-form-item>`)
-	}
-	if TableTypeMiddleMany == tableType {
-		formContent := gstr.TrimStr(viewSaveField.formContent.getData(), ` `)
-		if fieldIf != `` {
+		if tableType == TableTypeMiddleMany {
+			formContent := gstr.TrimStr(viewSaveField.formContent.getData(), ` `)
 			formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldIf+`"`, 1)
+			/* switch gstr.Split(formContent, ` `)[0] {
+			case `<el-input`:
+				formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 200px;" />`
+			case `<el-input-number`:
+				formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
+			} */
+			viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
+		} else {
+			viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
 		}
-		/* switch gstr.Split(formContent, ` `)[0] {
-		case `<el-input`:
-			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 200px;" />`
-		case `<el-input-number`:
-			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
-		} */
-		viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
-	} else {
-		viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.getData())
 	}
 	if viewSaveField.formHandle.getData() != `` {
 		viewSaveThis.formHandle = append(viewSaveThis.formHandle, viewSaveField.formHandle.getData())
@@ -791,15 +793,28 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 })`
 		viewSave.Add(viewSaveField, tplEM.FieldVar, i18nPath, i18nFieldPath, tplEM.TableType, ``)
 	} else {
+		viewSaveFieldAddMessagePrefix := func(viewSaveField myGenViewSaveField, messagePrefix string) myGenViewSaveField {
+			for k, v := range viewSaveField.rule.DataType {
+				viewSaveField.rule.DataType[k] = gstr.Replace(v, `message: `, `message: `+messagePrefix+` + `, 1)
+			}
+			for k, v := range viewSaveField.rule.DataTypeName {
+				viewSaveField.rule.DataTypeName[k] = gstr.Replace(v, `message: `, `message: `+messagePrefix+` + `, 1)
+			}
+			return viewSaveField
+		}
 		viewSaveTmp := myGenViewSave{}
 		switch tplEM.TableType {
 		case TableTypeExtendMany:
 			for _, v := range tplEM.FieldList {
-				viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
+				viewSaveField := getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw)
+				viewSaveField = viewSaveFieldAddMessagePrefix(viewSaveField, `t('`+tplEM.tplOfTop.I18nPath+`.name.`+tplEM.FieldVar+`.`+v.FieldRaw+`')`)
+				viewSaveTmp.Add(viewSaveField, v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
 			}
 		case TableTypeMiddleMany:
 			for _, v := range tplEM.FieldListOfIdSuffix {
-				viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
+				viewSaveField := getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw)
+				viewSaveField = viewSaveFieldAddMessagePrefix(viewSaveField, `t('`+tplEM.tplOfTop.I18nPath+`.name.`+tplEM.FieldVar+`.`+v.FieldRaw+`')`)
+				viewSaveTmp.Add(viewSaveField, v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, ``)
 			}
 			if len(tplEM.FieldListOfOther) > 0 {
 				fieldIfArr := []string{}
@@ -808,19 +823,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				}
 				fieldIf := gstr.Join(fieldIfArr, ` || `)
 				for _, v := range tplEM.FieldListOfOther {
-					viewSaveTmp.Add(getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw), v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, fieldIf)
+					viewSaveField := getViewSaveField(tplEM.tpl, v, tplEM.FieldVar+`[index].`+v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar+`.`+v.FieldRaw)
+					viewSaveField = viewSaveFieldAddMessagePrefix(viewSaveField, `t('`+tplEM.tplOfTop.I18nPath+`.name.`+tplEM.FieldVar+`.`+v.FieldRaw+`')`)
+					viewSaveTmp.Add(viewSaveField, v.FieldRaw, tplEM.tplOfTop.I18nPath, tplEM.FieldVar, tplEM.TableType, fieldIf)
 				}
 			}
 		}
 
-		/* importModule   []string
-		dataInitBefore []string
-		dataInitAfter  []string
-		rule           []string
-		formItem       []string
-		formContent    []string
-		formHandle     []string
-		paramHandle    []string */
 		viewSave.importModule = append(viewSave.importModule, viewSaveTmp.importModule...)
 		viewSave.dataInitAfter = append(viewSave.dataInitAfter, tplEM.FieldVar+`: saveCommon.data.`+tplEM.FieldVar+` ? saveCommon.data.`+tplEM.FieldVar+` : [],`)
 		viewSave.rule = append(viewSave.rule, tplEM.FieldVar+`: [

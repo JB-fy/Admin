@@ -43,11 +43,11 @@ func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType
 		apiThis.filter = append(apiThis.filter, field.FieldCaseCamel+` `+apiField.filterType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.createType.getData() != `` {
+		saveRuleArr := apiField.saveRule.getData()
 		if apiField.isRequired && garray.NewFrom([]interface{}{TableTypeDefault, TableTypeExtendOne, TableTypeMiddleOne}).Contains(tableType) {
-			apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, apiField.saveRule.getData()...), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
-		} else {
-			apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+			saveRuleArr = append([]string{`required`}, saveRuleArr...)
 		}
+		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.updateType.getData() != `` {
 		apiThis.update = append(apiThis.update, field.FieldCaseCamel+` `+apiField.updateType.getData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
