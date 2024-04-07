@@ -167,15 +167,15 @@ func (daoThis *userDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 		for k, v := range insert {
 			switch k {
 			case daoThis.Columns().Phone:
-				insertData[k] = v
 				if gconv.String(v) == `` {
-					insertData[k] = nil
+					v = nil
 				}
+				insertData[k] = v
 			case daoThis.Columns().Account:
-				insertData[k] = v
 				if gconv.String(v) == `` {
-					insertData[k] = nil
+					v = nil
 				}
+				insertData[k] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -227,15 +227,15 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Phone:
-				updateData[daoModel.DbTable+`.`+k] = v
 				if gconv.String(v) == `` {
-					updateData[daoModel.DbTable+`.`+k] = nil
+					v = nil
 				}
+				updateData[daoModel.DbTable+`.`+k] = v
 			case daoThis.Columns().Account:
-				updateData[daoModel.DbTable+`.`+k] = v
 				if gconv.String(v) == `` {
-					updateData[daoModel.DbTable+`.`+k] = nil
+					v = nil
 				}
+				updateData[daoModel.DbTable+`.`+k] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -247,12 +247,12 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				updateData[daoModel.DbTable+`.`+k] = password
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {

@@ -15,11 +15,11 @@ const saveForm = reactive({
     rules: {
         phone: [
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
+            { type: 'string', trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
         account: [
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
+            { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
             { required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },
@@ -115,7 +115,7 @@ const saveDrawer = reactive({
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.birthday')" prop="birthday">
-                    <el-date-picker v-model="saveForm.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 150px" />
+                    <el-date-picker v-model="saveForm.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.address')" prop="address">
                     <el-input v-model="saveForm.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :show-word-limit="true" :clearable="true" />

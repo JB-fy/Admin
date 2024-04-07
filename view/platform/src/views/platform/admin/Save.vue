@@ -18,7 +18,7 @@ const saveForm = reactive({
                 message: t('validation.required'),
             },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
+            { type: 'string', trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
         account: [
             {
@@ -26,7 +26,7 @@ const saveForm = reactive({
                 message: t('validation.required'),
             },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },
+            { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
             { required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },

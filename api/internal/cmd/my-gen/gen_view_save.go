@@ -407,13 +407,13 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		}
 	case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		viewSaveField.rule.Method = ReturnUnion
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}\p{N}_-]+$/u, trigger: 'blur', message: t('validation.alpha_dash') },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },`)
 	case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		viewSaveField.rule.Method = ReturnUnion
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },`)
 	case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 		viewSaveField.rule.Method = ReturnUnion
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },`)
 	case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		viewSaveField.rule.Method = ReturnUnion
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'email', trigger: 'blur', message: t('validation.email') },`)
@@ -705,13 +705,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
 			viewSaveFieldTmp.rule.Method = ReturnUnion
-			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },`)
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'string', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },`)
 		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
 			viewSaveFieldTmp.rule.Method = ReturnUnion
-			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },`)
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'string', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },`)
 		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
 			viewSaveFieldTmp.rule.Method = ReturnUnion
-			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },`)
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'string', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },`)
 		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
 			viewSaveFieldTmp.rule.Method = ReturnUnion
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'email', message: t('validation.email') },`)
