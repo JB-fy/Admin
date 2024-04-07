@@ -21,13 +21,13 @@ type AdminListFilter struct {
 	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	AdminId        *uint       `json:"adminId,omitempty" v:"min:1" dc:"管理员ID"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
-	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	RoleId         *uint       `json:"roleId,omitempty" v:"min:1" dc:"角色ID"`
 }
 
@@ -47,6 +47,7 @@ type AdminListItem struct {
 	IsStop    *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	RoleIdArr []uint      `json:"roleIdArr,omitempty" dc:"角色ID列表"`
 }
 
 /*--------列表 结束--------*/

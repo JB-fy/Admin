@@ -64,30 +64,6 @@ func (daoThis *roleRelToMenuDao) ParseFilter(filter map[string]interface{}, daoM
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
-			case `id`, `idArr`:
-				idArr := []string{gconv.String(v)}
-				if gvar.New(v).IsSlice() {
-					idArr = gconv.SliceStr(v)
-				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `('`+gstr.Replace(id, `|`, `', '`)+`')`)
-				}
-				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().RoleId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().MenuId + `) IN (` + gstr.Join(inStrArr, `, `) + `)`)
-			case `excId`, `excIdArr`:
-				idArr := []string{gconv.String(v)}
-				if gvar.New(v).IsSlice() {
-					idArr = gconv.SliceStr(v)
-				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `('`+gstr.Replace(id, `|`, `', '`)+`')`)
-				}
-				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().RoleId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().MenuId + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -110,16 +86,6 @@ func (daoThis *roleRelToMenuDao) ParseField(field []string, fieldWithParam map[s
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
-			case `id`:
-				m = m.Fields(`CONCAT_WS('|', IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().RoleId + `, ''), IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().MenuId + `, ''))` + ` AS ` + v)
-			case Role.Columns().RoleName:
-				tableRole := Role.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableRole + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableRole, daoModel))
-			case Menu.Columns().MenuName:
-				tableMenu := Menu.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableMenu + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableMenu, daoModel))
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -286,9 +252,6 @@ func (daoThis *roleRelToMenuDao) ParseGroup(group []string, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
-			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -309,14 +272,6 @@ func (daoThis *roleRelToMenuDao) ParseOrder(order []string, daoModel *daoIndex.D
 			kArr := gstr.Split(v, `,`)
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
-			case `id`:
-				suffix := gstr.TrimLeftStr(kArr[0], k, 1)
-				m = m.Order(daoModel.DbTable + `.` + daoThis.Columns().RoleId + suffix)
-				m = m.Order(daoModel.DbTable + `.` + daoThis.Columns().MenuId + suffix)
-				remain := gstr.TrimLeftStr(gstr.TrimLeftStr(v, k+suffix, 1), `,`, 1)
-				if remain != `` {
-					m = m.Order(remain)
-				}
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -340,10 +295,6 @@ func (daoThis *roleRelToMenuDao) ParseJoin(joinTable string, daoModel *daoIndex.
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
-		case Role.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Role.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
-		case Menu.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Menu.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.Columns().MenuId)
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}

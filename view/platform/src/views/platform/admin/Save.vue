@@ -18,7 +18,7 @@ const saveForm = reactive({
                 message: t('validation.required'),
             },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
+            { pattern: /^1[3-9]\d{9}$/, trigger: 'blur', message: t('validation.phone') },
         ],
         account: [
             {
@@ -26,7 +26,7 @@ const saveForm = reactive({
                 message: t('validation.required'),
             },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
+            { pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, trigger: 'blur', message: t('validation.account') },
         ],
         password: [
             { required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },
@@ -37,11 +37,11 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         roleIdArr: [
             { required: true, message: t('validation.required') },
-            { type: 'array', trigger: 'change', min: 1, message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },
+            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
+        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -113,7 +113,9 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('platform.admin.name.avatar')" prop="avatar">
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" />
                 </el-form-item>
-                <el-form-item :label="t('platform.admin.name.roleId')" prop="roleIdArr">
+                <el-form-item :label="t('platform.admin.name.roleIdArr')" prop="roleIdArr">
+                    <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
+                    <!-- <my-select v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" :multiple="true" /> -->
                     <my-transfer v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.isStop')" prop="isStop">

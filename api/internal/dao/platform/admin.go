@@ -11,7 +11,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -84,9 +83,9 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *da
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:
-				tableRoleRelOfPlatformAdmin := daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
-				m = m.Where(tableRoleRelOfPlatformAdmin+`.`+k, v)
-				m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
+				tableAuthRoleRelOfPlatformAdmin := daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
+				m = m.Where(tableAuthRoleRelOfPlatformAdmin+`.`+k, v)
+				m = m.Handler(daoThis.ParseJoin(tableAuthRoleRelOfPlatformAdmin, daoModel))
 			case `loginName`:
 				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
@@ -152,8 +151,8 @@ func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `roleIdArr`:
-						idArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
-						record[v] = gvar.New(idArr)
+						roleIdArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, record[daoThis.PrimaryKey()]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
+						record[v] = gvar.New(roleIdArr)
 					default:
 						record[v] = gvar.New(nil)
 					}
@@ -177,15 +176,15 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, daoModel *da
 		for k, v := range insert {
 			switch k {
 			case daoThis.Columns().Phone:
-				insertData[k] = v
 				if gconv.String(v) == `` {
-					insertData[k] = nil
+					v = nil
 				}
+				insertData[k] = v
 			case daoThis.Columns().Account:
-				insertData[k] = v
 				if gconv.String(v) == `` {
-					insertData[k] = nil
+					v = nil
 				}
+				insertData[k] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -224,7 +223,14 @@ func (daoThis *adminDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `roleIdArr`:
-					daoThis.SaveRelRole(ctx, gconv.SliceUint(v), uint(id))
+					insertList := []map[string]interface{}{}
+					for _, item := range gconv.SliceAny(v) {
+						insertList = append(insertList, map[string]interface{}{
+							daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId: id,
+							daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:  item,
+						})
+					}
+					daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Data(insertList).Insert()
 				}
 			}
 			return
@@ -239,15 +245,15 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoModel *da
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Phone:
-				updateData[daoModel.DbTable+`.`+k] = v
 				if gconv.String(v) == `` {
-					updateData[daoModel.DbTable+`.`+k] = nil
+					v = nil
 				}
+				updateData[daoModel.DbTable+`.`+k] = v
 			case daoThis.Columns().Account:
-				updateData[daoModel.DbTable+`.`+k] = v
 				if gconv.String(v) == `` {
-					updateData[daoModel.DbTable+`.`+k] = nil
+					v = nil
 				}
+				updateData[daoModel.DbTable+`.`+k] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -261,12 +267,12 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoModel *da
 				daoModel.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
@@ -296,9 +302,10 @@ func (daoThis *adminDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
 				case `roleIdArr`:
-					relIdArr := gconv.SliceUint(v)
+					// daoIndex.SaveArrRelManyWithSort(ctx, &daoAuth.RoleRelOfPlatformAdmin, daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
+					valArr := gconv.SliceStr(v)
 					for _, id := range daoModel.IdArr {
-						daoThis.SaveRelRole(ctx, relIdArr, id)
+						daoIndex.SaveArrRelMany(ctx, &daoAuth.RoleRelOfPlatformAdmin, daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId, id, valArr)
 					}
 				}
 			}
@@ -392,8 +399,8 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
-		/* case daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
-		m = m.LeftJoin(joinTable, joinTable+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
+		case daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}
@@ -402,35 +409,3 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 }
 
 // Fill with you ideas below.
-
-// 保存关联角色
-func (daoThis *adminDao) SaveRelRole(ctx context.Context, relIdArr []uint, id uint) {
-	relDao := daoAuth.RoleRelOfPlatformAdmin
-	priKey := relDao.Columns().AdminId
-	relKey := relDao.Columns().RoleId
-	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
-
-	/**----新增关联 开始----**/
-	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
-	if len(insertRelIdArr) > 0 {
-		insertList := []map[string]interface{}{}
-		for _, v := range insertRelIdArr {
-			insertList = append(insertList, map[string]interface{}{
-				priKey: id,
-				relKey: v,
-			})
-		}
-		relDao.CtxDaoModel(ctx).Data(insertList).Insert()
-	}
-	/**----新增关联 结束----**/
-
-	/**----删除关联 开始----**/
-	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
-	if len(deleteRelIdArr) > 0 {
-		relDao.CtxDaoModel(ctx).Filters(g.Map{
-			priKey: id,
-			relKey: deleteRelIdArr,
-		}).Delete()
-	}
-	/**----删除关联 结束----**/
-}

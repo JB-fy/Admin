@@ -64,30 +64,6 @@ func (daoThis *actionRelToSceneDao) ParseFilter(filter map[string]interface{}, d
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
-			case `id`, `idArr`:
-				idArr := []string{gconv.String(v)}
-				if gvar.New(v).IsSlice() {
-					idArr = gconv.SliceStr(v)
-				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `('`+gstr.Replace(id, `|`, `', '`)+`')`)
-				}
-				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().ActionId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().SceneId + `) IN (` + gstr.Join(inStrArr, `, `) + `)`)
-			case `excId`, `excIdArr`:
-				idArr := []string{gconv.String(v)}
-				if gvar.New(v).IsSlice() {
-					idArr = gconv.SliceStr(v)
-				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `('`+gstr.Replace(id, `|`, `', '`)+`')`)
-				}
-				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().ActionId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().SceneId + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)
-			case `timeRangeStart`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -110,16 +86,6 @@ func (daoThis *actionRelToSceneDao) ParseField(field []string, fieldWithParam ma
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
-			case `id`:
-				m = m.Fields(`CONCAT_WS('|', IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().ActionId + `, ''), IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().SceneId + `, ''))` + ` AS ` + v)
-			case Action.Columns().ActionName:
-				tableAction := Action.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableAction + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableAction, daoModel))
-			case Scene.Columns().SceneName:
-				tableScene := Scene.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableScene + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -286,9 +252,6 @@ func (daoThis *actionRelToSceneDao) ParseGroup(group []string, daoModel *daoInde
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
-			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().SceneId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -309,14 +272,6 @@ func (daoThis *actionRelToSceneDao) ParseOrder(order []string, daoModel *daoInde
 			kArr := gstr.Split(v, `,`)
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
-			case `id`:
-				suffix := gstr.TrimLeftStr(kArr[0], k, 1)
-				m = m.Order(daoModel.DbTable + `.` + daoThis.Columns().ActionId + suffix)
-				m = m.Order(daoModel.DbTable + `.` + daoThis.Columns().SceneId + suffix)
-				remain := gstr.TrimLeftStr(gstr.TrimLeftStr(v, k+suffix, 1), `,`, 1)
-				if remain != `` {
-					m = m.Order(remain)
-				}
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -340,10 +295,6 @@ func (daoThis *actionRelToSceneDao) ParseJoin(joinTable string, daoModel *daoInd
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
-		case Action.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Action.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.Columns().ActionId)
-		case Scene.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Scene.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.Columns().SceneId)
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}

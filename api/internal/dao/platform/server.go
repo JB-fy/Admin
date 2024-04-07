@@ -55,14 +55,88 @@ func (daoThis *serverDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[st
 	return table
 }
 
+// 解析filter
+func (daoThis *serverDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+	return func(m *gdb.Model) *gdb.Model {
+		for k, v := range filter {
+			switch k {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Where(tableXxxx+`.`+k, v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
+			default:
+				if daoThis.ColumnArr().Contains(k) {
+					m = m.Where(daoModel.DbTable+`.`+k, v)
+				} else {
+					m = m.Where(k, v)
+				}
+			}
+		}
+		return m
+	}
+}
+
+// 解析field
+func (daoThis *serverDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+	return func(m *gdb.Model) *gdb.Model {
+		for _, v := range field {
+			switch v {
+			/* case `xxxx`:
+			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
+			m = m.Fields(tableXxxx + `.` + v)
+			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
+			daoModel.AfterField.Add(v) */
+			default:
+				if daoThis.ColumnArr().Contains(v) {
+					m = m.Fields(daoModel.DbTable + `.` + v)
+				} else {
+					m = m.Fields(v)
+				}
+			}
+		}
+		for k, v := range fieldWithParam {
+			switch k {
+			default:
+				daoModel.AfterFieldWithParam[k] = v
+			}
+		}
+		return m
+	}
+}
+
+// hook select
+func (daoThis *serverDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+	return gdb.HookHandler{
+		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
+			result, err = in.Next(ctx)
+			if err != nil {
+				return
+			}
+			for _, record := range result {
+				for _, v := range daoModel.AfterField.Slice() {
+					switch v {
+					default:
+						record[v] = gvar.New(nil)
+					}
+				}
+				/* for k, v := range daoModel.AfterFieldWithParam {
+					switch k {
+					case `xxxx`:
+						record[k] = gvar.New(v)
+					}
+				} */
+			}
+			return
+		},
+	}
+}
+
 // 解析insert
 func (daoThis *serverDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
-			case `id`:
-				insertData[daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -104,16 +178,14 @@ func (daoThis *serverDao) ParseUpdate(update map[string]interface{}, daoModel *d
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
-			case `id`:
-				updateData[daoModel.DbTable+`.`+daoThis.PrimaryKey()] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
@@ -175,93 +247,11 @@ func (daoThis *serverDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandle
 	}
 }
 
-// 解析field
-func (daoThis *serverDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
-	return func(m *gdb.Model) *gdb.Model {
-		for _, v := range field {
-			switch v {
-			/* case `xxxx`:
-			m = m.Handler(daoThis.ParseJoin(Xxxx.ParseDbTable(m.GetCtx()), daoModel))
-			daoModel.AfterField.Add(v) */
-			case `id`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
-			default:
-				if daoThis.ColumnArr().Contains(v) {
-					m = m.Fields(daoModel.DbTable + `.` + v)
-				} else {
-					m = m.Fields(v)
-				}
-			}
-		}
-		for k, v := range fieldWithParam {
-			switch k {
-			default:
-				daoModel.AfterFieldWithParam[k] = v
-			}
-		}
-		return m
-	}
-}
-
-// hook select
-func (daoThis *serverDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
-	return gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			for _, record := range result {
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
-			return
-		},
-	}
-}
-
-// 解析filter
-func (daoThis *serverDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
-	return func(m *gdb.Model) *gdb.Model {
-		for k, v := range filter {
-			switch k {
-			case `excId`, `excIdArr`:
-				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-				}
-			case `id`, `idArr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-			default:
-				if daoThis.ColumnArr().Contains(k) {
-					m = m.Where(daoModel.DbTable+`.`+k, v)
-				} else {
-					m = m.Where(k, v)
-				}
-			}
-		}
-		return m
-	}
-}
-
 // 解析group
 func (daoThis *serverDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
-			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -279,10 +269,9 @@ func (daoThis *serverDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
-			k := gstr.Split(v, ` `)[0]
+			kArr := gstr.Split(v, `,`)
+			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
-			case `id`:
-				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
