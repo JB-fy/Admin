@@ -29,7 +29,7 @@
 
 # 常用命令（服务端GO和PHP任选一个。推荐使用GO服务端，功能更多，如全自动代码生成）
 
-#### GO服务端（推荐。代码目录：[api](./api)）
+#### GO服务端（代码目录：[api](./api)）
 ```bash
 # 服务启动（--gf.gcfg.file用于指定配置文件，默认config.yaml）
 gf run main.go -a "http --gf.gcfg.file=config.prod.yaml"
@@ -44,9 +44,19 @@ gf gen dao
 gf gen service
 ```
 
+#### VUE前端（代码目录：[view/platform](./view/platform)）
+```bash
+# 服务启动
+npm run dev
+# 打包
+npm run build
+# 代码格式化
+npm run format
+```
+
 ## 代码自动生成流程（强烈建议搭配Git使用）
 
-1.新建数据库表。如：auth_test
+1.新建数据库表（建表规范如下）。如：auth_test
 ```
 表名统一使用蛇形命名。不同功能表按以下表规则命名
 	主表：正常命名即可。参考以下示例
@@ -123,16 +133,6 @@ gf gen service
 ## 常见错误处理
 
 1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./internal/dao/user/allow/allow.go)解决
-
-#### VUE前端（代码目录：[view/platform](./view/platform)）
-```bash
-# 服务启动
-npm run dev
-# 打包
-npm run build
-# 代码格式化
-npm run format
-```
 
 ## 微信交流群
 | 微信 |
