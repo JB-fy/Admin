@@ -173,10 +173,6 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 	return
 }
 
-func getViewI18nFieldList(tpl myGenTpl, fieldArr ...string) (viewI18n myGenViewI18n) {
-	return
-}
-
 func getViewI18nExtendMiddleOne(tplEM handleExtendMiddle) (viewI18n myGenViewI18n) {
 	switch tplEM.TableType {
 	case TableTypeExtendOne:

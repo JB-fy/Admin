@@ -422,16 +422,6 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	return
 }
 
-func getControllerFieldList(tpl myGenTpl, fieldArr ...string) (controller myGenController) {
-	for _, v := range tpl.FieldList {
-		if len(fieldArr) > 0 && !garray.NewStrArrayFrom(fieldArr).Contains(v.FieldRaw) {
-			continue
-		}
-		controller.Merge(getControllerField(tpl, v))
-	}
-	return
-}
-
 func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenController) {
 	tpl := tplEM.tpl
 	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
