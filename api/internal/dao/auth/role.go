@@ -10,10 +10,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -82,6 +80,14 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case RoleRelToAction.Columns().ActionId:
+				tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
+				m = m.Where(tableRoleRelToAction+`.`+k, v)
+				m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))
+			case RoleRelToMenu.Columns().MenuId:
+				tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
+				m = m.Where(tableRoleRelToMenu+`.`+k, v)
+				m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
 			case Scene.Columns().SceneCode:
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableScene+`.`+k, v)
@@ -116,7 +122,10 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
-			case `menuIdArr`, `actionIdArr`:
+			case `actionIdArr`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				daoModel.AfterField.Add(v)
+			case `menuIdArr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 				daoModel.AfterField.Add(v)
 			case `tableName`:
@@ -154,12 +163,12 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			for _, record := range result {
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
-					case `menuIdArr`:
-						idArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
-						record[v] = gvar.New(idArr)
 					case `actionIdArr`:
-						idArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
-						record[v] = gvar.New(idArr)
+						actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
+						record[v] = gvar.New(actionIdArr)
+					case `menuIdArr`:
+						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
+						record[v] = gvar.New(menuIdArr)
 					case `tableName`:
 						if record[daoThis.Columns().TableId].Uint() == 0 {
 							record[v] = gvar.New(`平台`)
@@ -190,7 +199,9 @@ func (daoThis *roleDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
-			case `menuIdArr`, `actionIdArr`:
+			case `actionIdArr`:
+				daoModel.AfterInsert[k] = v
+			case `menuIdArr`:
 				daoModel.AfterInsert[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
@@ -218,10 +229,24 @@ func (daoThis *roleDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			for k, v := range daoModel.AfterInsert {
 				switch k {
-				case `menuIdArr`:
-					daoThis.SaveRelMenu(ctx, gconv.SliceUint(v), uint(id))
 				case `actionIdArr`:
-					daoThis.SaveRelAction(ctx, gconv.SliceUint(v), uint(id))
+					insertList := []map[string]interface{}{}
+					for _, item := range gconv.SliceAny(v) {
+						insertList = append(insertList, map[string]interface{}{
+							RoleRelToAction.Columns().RoleId:   id,
+							RoleRelToAction.Columns().ActionId: item,
+						})
+					}
+					RoleRelToAction.CtxDaoModel(ctx).Data(insertList).Insert()
+				case `menuIdArr`:
+					insertList := []map[string]interface{}{}
+					for _, item := range gconv.SliceAny(v) {
+						insertList = append(insertList, map[string]interface{}{
+							RoleRelToMenu.Columns().RoleId: id,
+							RoleRelToMenu.Columns().MenuId: item,
+						})
+					}
+					RoleRelToMenu.CtxDaoModel(ctx).Data(insertList).Insert()
 				}
 			}
 			return
@@ -235,16 +260,18 @@ func (daoThis *roleDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
-			case `menuIdArr`, `actionIdArr`:
+			case `actionIdArr`:
+				daoModel.AfterUpdate[k] = v
+			case `menuIdArr`:
 				daoModel.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
@@ -273,15 +300,17 @@ func (daoThis *roleDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
-				case `menuIdArr`:
-					relIdArr := gconv.SliceUint(v)
-					for _, id := range daoModel.IdArr {
-						daoThis.SaveRelMenu(ctx, relIdArr, id)
-					}
 				case `actionIdArr`:
-					relIdArr := gconv.SliceUint(v)
+					// daoIndex.SaveArrRelManyWithSort(ctx, &RoleRelToAction, RoleRelToAction.Columns().RoleId, RoleRelToAction.Columns().ActionId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
+					valArr := gconv.SliceStr(v)
 					for _, id := range daoModel.IdArr {
-						daoThis.SaveRelAction(ctx, relIdArr, id)
+						daoIndex.SaveArrRelMany(ctx, &RoleRelToAction, RoleRelToAction.Columns().RoleId, RoleRelToAction.Columns().ActionId, id, valArr)
+					}
+				case `menuIdArr`:
+					// daoIndex.SaveArrRelManyWithSort(ctx, &RoleRelToMenu, RoleRelToMenu.Columns().RoleId, RoleRelToMenu.Columns().MenuId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
+					valArr := gconv.SliceStr(v)
+					for _, id := range daoModel.IdArr {
+						daoIndex.SaveArrRelMany(ctx, &RoleRelToMenu, RoleRelToMenu.Columns().RoleId, RoleRelToMenu.Columns().MenuId, id, valArr)
 					}
 				}
 			}
@@ -317,8 +346,8 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 
-			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
+			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr).Delete()
 			return
 		},
@@ -379,6 +408,10 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
 		case Scene.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+Scene.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.Columns().SceneId)
+		case RoleRelToAction.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
+		case RoleRelToMenu.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToMenu.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}
@@ -387,67 +420,3 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 }
 
 // Fill with you ideas below.
-
-// 保存关联菜单
-func (daoThis *roleDao) SaveRelMenu(ctx context.Context, relIdArr []uint, id uint) {
-	relDao := RoleRelToMenu
-	priKey := relDao.Columns().RoleId
-	relKey := relDao.Columns().MenuId
-	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
-
-	/**----新增关联 开始----**/
-	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
-	if len(insertRelIdArr) > 0 {
-		insertList := []map[string]interface{}{}
-		for _, v := range insertRelIdArr {
-			insertList = append(insertList, map[string]interface{}{
-				priKey: id,
-				relKey: v,
-			})
-		}
-		relDao.CtxDaoModel(ctx).Data(insertList).Insert()
-	}
-	/**----新增关联 结束----**/
-
-	/**----删除关联 开始----**/
-	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
-	if len(deleteRelIdArr) > 0 {
-		relDao.CtxDaoModel(ctx).Filters(g.Map{
-			priKey: id,
-			relKey: deleteRelIdArr,
-		}).Delete()
-	}
-	/**----删除关联 结束----**/
-}
-
-// 保存关联操作
-func (daoThis *roleDao) SaveRelAction(ctx context.Context, relIdArr []uint, id uint) {
-	relDao := RoleRelToAction
-	priKey := relDao.Columns().RoleId
-	relKey := relDao.Columns().ActionId
-	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
-
-	/**----新增关联 开始----**/
-	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
-	if len(insertRelIdArr) > 0 {
-		insertList := []map[string]interface{}{}
-		for _, v := range insertRelIdArr {
-			insertList = append(insertList, map[string]interface{}{
-				priKey: id,
-				relKey: v,
-			})
-		}
-		relDao.CtxDaoModel(ctx).Data(insertList).Insert()
-	}
-	/**----新增关联 开始----**/
-
-	/**----删除关联 结束----**/
-	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
-	if len(deleteRelIdArr) > 0 {
-		relDao.CtxDaoModel(ctx).Filters(g.Map{
-			priKey: id,
-			relKey: deleteRelIdArr,
-		}).Delete()
-	}
-	/**----删除关联 结束----**/
-}

@@ -23,28 +23,15 @@ const saveForm = reactive({
         ],
         /* tableId: [
             // { required: true, message: t('validation.required') },
-            { type: 'integer', trigger: 'change', min: 0, message: t('validation.select') },
+            { type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },
         ], */
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
-        menuIdArr: [
-            {
-                type: 'array',
-                trigger: 'change',
-                message: t('validation.select'),
-                defaultField: {
-                    type: 'array',
-                    defaultField: {
-                        type: 'integer',
-                        min: 1,
-                        message: t('validation.min.number', { min: 1 }),
-                    },
-                },
-            },
+        actionIdArr: [
+            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
-        actionIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }],
+        menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') /* , defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } */ }],
+        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
-        console.log(saveForm.data.menuIdArr)
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
                 return false
@@ -127,10 +114,12 @@ const saveDrawer = reactive({
                 <!-- <el-form-item :label="t('auth.role.name.tableId')" prop="tableId">
                     <my-select v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
                 </el-form-item> -->
-                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuId')" prop="menuIdArr">
+                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuIdArr')" prop="menuIdArr">
                     <my-cascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
                 </el-form-item>
-                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionId')" prop="actionIdArr">
+                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.actionIdArr')" prop="actionIdArr">
+                    <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
+                    <!-- <my-select v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" :multiple="true" /> -->
                     <my-transfer v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.role.name.isStop')" prop="isStop">

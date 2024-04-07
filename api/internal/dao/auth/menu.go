@@ -222,10 +222,10 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 					daoModel.AfterInsert[`pLevel`] = 0
 				}
 			case daoThis.Columns().ExtraData:
-				insertData[k] = v
 				if gconv.String(v) == `` {
-					insertData[k] = nil
+					v = nil
 				}
+				insertData[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -314,18 +314,19 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 					updateData[daoModel.DbTable+`.`+daoThis.Columns().Level] = gdb.Raw(daoModel.DbTable + `.` + daoThis.Columns().Level + ` - ` + gconv.String(pLevelOfOld-pLevelOfNew))
 				}
 			case daoThis.Columns().ExtraData:
-				updateData[daoModel.DbTable+`.`+k] = gvar.New(v)
 				if gconv.String(v) == `` {
 					updateData[daoModel.DbTable+`.`+k] = nil
+					continue
 				}
+				updateData[daoModel.DbTable+`.`+k] = gvar.New(v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
@@ -467,8 +468,8 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 			m = m.LeftJoin(joinTable, joinTable+`.`+Role.PrimaryKey()+` = `+RoleRelToMenu.ParseDbTable(m.GetCtx())+`.`+RoleRelToMenu.Columns().RoleId)
 		case RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToMenu.ParseDbTable(m.GetCtx())+`.`+RoleRelToMenu.Columns().RoleId)
-		/* case RoleRelToMenu.ParseDbTable(m.GetCtx()):
-		m = m.LeftJoin(joinCode+` AS `+joinCode, joinCode+`.`+RoleRelToMenu.Columns().MenuId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
+		case RoleRelToMenu.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable+` AS `+joinTable, joinTable+`.`+RoleRelToMenu.Columns().MenuId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}
