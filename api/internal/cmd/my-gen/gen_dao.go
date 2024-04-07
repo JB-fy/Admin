@@ -139,13 +139,11 @@ func genDao(tpl myGenTpl) {
 		dao.Merge(getDaoExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.ExtendTableManyList {
-		// genDao(v.tpl)
-		v.tpl.gfGenDao(true)
+		v.tpl.gfGenDao(false)
 		dao.Merge(getDaoExtendMiddleMany(v))
 	}
 	for _, v := range tpl.Handle.MiddleTableManyList {
-		// genDao(v.tpl)
-		v.tpl.gfGenDao(true)
+		v.tpl.gfGenDao(false)
 		dao.Merge(getDaoExtendMiddleMany(v))
 	}
 	dao.Unique()
