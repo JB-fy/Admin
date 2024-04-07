@@ -82,6 +82,12 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableOneList {
 		viewList.Merge(getViewListExtendMiddleOne(option, v))
 	}
+	for _, v := range tpl.Handle.ExtendTableManyList {
+		viewList.Merge(getViewListExtendMiddleMany(option, v))
+	}
+	for _, v := range tpl.Handle.MiddleTableManyList {
+		viewList.Merge(getViewListExtendMiddleMany(option, v))
+	}
 	for _, v := range tpl.FieldListOfAfter {
 		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
 	}
@@ -619,8 +625,6 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 ]
             }`
 	case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-		viewListField.width.Method = ReturnTypeName
-		viewListField.width.DataTypeName = `100`
 		viewListField.hidden.Method = ReturnEmpty
 		viewListField.cellRenderer.Method = ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
@@ -664,6 +668,104 @@ func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (v
 		for _, v := range tplEM.FieldListOfOther {
 			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
+	}
+	return
+}
+
+func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
+	if len(tplEM.FieldList) == 1 {
+		v := tplEM.FieldList[0]
+
+		isReturn := false
+		viewListField := myGenViewListField{}
+		viewListField.dataKey.Method = ReturnType
+		viewListField.dataKey.DataType = `'` + tplEM.FieldVar + `'`
+		viewListField.title.Method = ReturnType
+		viewListField.title.DataType = `t('` + tplEM.tplOfTop.I18nPath + `.name.` + tplEM.FieldVar + `')`
+		viewListField.key.Method = ReturnType
+		viewListField.key.DataType = `'` + tplEM.FieldVar + `'`
+		viewListField.align.Method = ReturnType
+		viewListField.align.DataType = `'center'`
+		viewListField.width.Method = ReturnType
+		viewListField.width.DataType = `150`
+		/*--------部分命名类型直接处理后返回 开始--------*/
+		switch v.FieldTypeName {
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			return myGenViewList{}
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			return myGenViewList{}
+		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+			if v.FieldType != TypeVarchar {
+				return myGenViewList{}
+			}
+			isReturn = true
+			viewListField.width.Method = ReturnTypeName
+			viewListField.width.DataTypeName = `100`
+			viewListField.hidden.Method = ReturnEmpty
+			viewListField.cellRenderer.Method = ReturnTypeName
+			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + tplEM.FieldVar + `) {
+                    return
+                }
+                let imageList: string[] = props.rowData.` + tplEM.FieldVar + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {imageList.map((item) => {
+                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
+                        })}
+                    </el-scrollbar>
+                ]
+            }`
+		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			if v.FieldType != TypeVarchar {
+				return myGenViewList{}
+			}
+			isReturn = true
+			viewListField.rowHeight = 100
+			viewListField.hidden.Method = ReturnEmpty
+			viewListField.cellRenderer.Method = ReturnTypeName
+			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + tplEM.FieldVar + `) {
+                    return
+                }
+                let videoList: string[] = props.rowData.` + tplEM.FieldVar + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {videoList.map((item) => {
+                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            return <video style="width: 120px; height: 80px;" preload="none" controls={true} src={item} />
+                        })}
+                    </el-scrollbar>,
+                ]
+            }`
+		}
+		if isReturn {
+			viewList.Add(viewListField)
+			return
+		}
+		/*--------部分命名类型直接处理后返回 结束--------*/
+		viewListField.hidden.Method = ReturnEmpty
+		viewListField.cellRenderer.Method = ReturnTypeName
+		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + tplEM.FieldVar + `) {
+                    return
+                }
+                let arrList: any[] = props.rowData.` + tplEM.FieldVar + `
+                let tagType = tm('config.const.tagType') as string[]
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {arrList.map((item, index) => {
+                            return [
+                                <el-tag style="margin: auto 5px 5px auto;" type={tagType[index % tagType.length]}>
+                                    {item}
+                                </el-tag>,
+                            ]
+                        })}
+                    </el-scrollbar>,
+                ]
+            }`
+		viewList.Add(viewListField)
 	}
 	return
 }

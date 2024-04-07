@@ -459,8 +459,24 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 }
 
 func getControllerExtendMiddleMany(tplEM handleExtendMiddle) (controller myGenController) {
-	controller.list = append(controller.list, "`"+tplEM.FieldVar+"`")
 	controller.info = append(controller.info, "`"+tplEM.FieldVar+"`")
-	controller.tree = append(controller.tree, "`"+tplEM.FieldVar+"`")
+	if len(tplEM.FieldList) == 1 {
+		isShow := true
+		v := tplEM.FieldList[0]
+		switch v.FieldTypeName {
+		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			isShow = false
+		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			isShow = false
+		case TypeNameImageSuffix, TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			if v.FieldType != TypeVarchar {
+				isShow = false
+			}
+		}
+		if isShow {
+			controller.list = append(controller.list, "`"+tplEM.FieldVar+"`")
+			controller.tree = append(controller.tree, "`"+tplEM.FieldVar+"`")
+		}
+	}
 	return
 }

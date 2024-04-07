@@ -67,7 +67,6 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 					{{formContent}}
 				</el-form-item>`)
 	}
-
 	if TableTypeMiddleMany == tableType {
 		formContent := gstr.TrimStr(viewSaveField.formContent.getData(), ` `)
 		if fieldIf != `` {
