@@ -21,12 +21,12 @@ type ActionListFilter struct {
 	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
+	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	ActionId       *uint       `json:"actionId,omitempty" v:"min:1" dc:"操作ID"`
 	ActionName     string      `json:"actionName,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode     string      `json:"actionCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
-	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
 }
 
@@ -45,6 +45,7 @@ type ActionListItem struct {
 	IsStop     *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt  *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
 	CreatedAt  *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	SceneIdArr []uint      `json:"sceneIdArr,omitempty" dc:"场景ID列表"`
 }
 
 /*--------列表 结束--------*/

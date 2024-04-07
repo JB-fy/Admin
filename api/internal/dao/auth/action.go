@@ -10,7 +10,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -82,7 +81,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `timeRangeEnd`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `sceneId`:
+			case ActionRelToScene.Columns().SceneId:
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
@@ -168,8 +167,8 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `sceneIdArr`:
-						idArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(daoThis.PrimaryKey(), record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
-						record[v] = gvar.New(idArr)
+						sceneIdArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
+						record[v] = gvar.New(sceneIdArr)
 					default:
 						record[v] = gvar.New(nil)
 					}
@@ -221,7 +220,14 @@ func (daoThis *actionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `sceneIdArr`:
-					daoThis.SaveRelScene(ctx, gconv.SliceUint(v), uint(id))
+					insertList := []map[string]interface{}{}
+					for _, item := range gconv.SliceAny(v) {
+						insertList = append(insertList, map[string]interface{}{
+							ActionRelToScene.Columns().ActionId: id,
+							ActionRelToScene.Columns().SceneId:  item,
+						})
+					}
+					ActionRelToScene.CtxDaoModel(ctx).Data(insertList).Insert()
 				}
 			}
 			return
@@ -239,12 +245,12 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, daoModel *d
 				daoModel.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //因下面bug处理方式，json类型字段传参必须是gvar变量，否则不会自动生成json格式
+					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
 				}
 			}
 		}
-		//m = m.Data(updateData) //字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`
-		//解决字段被解析成`table.xxxx`的BUG
+		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
+		// 上面方法的BUG解决方式
 		fieldArr := []string{}
 		valueArr := []interface{}{}
 		for k, v := range updateData {
@@ -274,9 +280,10 @@ func (daoThis *actionDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
 				case `sceneIdArr`:
-					relIdArr := gconv.SliceUint(v)
+					// daoIndex.SaveArrRelManyWithSort(ctx, &ActionRelToScene, ActionRelToScene.Columns().ActionId, ActionRelToScene.Columns().SceneId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
+					valArr := gconv.SliceStr(v)
 					for _, id := range daoModel.IdArr {
-						daoThis.SaveRelScene(ctx, relIdArr, id)
+						daoIndex.SaveArrRelMany(ctx, &ActionRelToScene, ActionRelToScene.Columns().ActionId, ActionRelToScene.Columns().SceneId, id, valArr)
 					}
 				}
 			}
@@ -371,14 +378,14 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
+		case ActionRelToScene.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+ActionRelToScene.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		case Role.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+Role.PrimaryKey()+` = `+RoleRelToAction.ParseDbTable(m.GetCtx())+`.`+RoleRelToAction.Columns().RoleId)
 		case RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToAction.ParseDbTable(m.GetCtx())+`.`+RoleRelToAction.Columns().RoleId)
-		/* case ActionRelToScene.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+ActionRelToScene.Columns().ActionId+` = `+tableThis+`.`+daoThis.PrimaryKey())
 		case RoleRelToAction.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().ActionId+` = `+tableThis+`.`+daoThis.PrimaryKey()) */
+			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}
@@ -387,35 +394,3 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 }
 
 // Fill with you ideas below.
-
-// 保存关联场景
-func (daoThis *actionDao) SaveRelScene(ctx context.Context, relIdArr []uint, id uint) {
-	relDao := ActionRelToScene
-	priKey := relDao.Columns().ActionId
-	relKey := relDao.Columns().SceneId
-	relIdArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(priKey, id).ArrayUint(relKey)
-
-	/**----新增关联 开始----**/
-	insertRelIdArr := gset.NewFrom(relIdArr).Diff(gset.NewFrom(relIdArrOfOld)).Slice()
-	if len(insertRelIdArr) > 0 {
-		insertList := []map[string]interface{}{}
-		for _, v := range insertRelIdArr {
-			insertList = append(insertList, map[string]interface{}{
-				priKey: id,
-				relKey: v,
-			})
-		}
-		relDao.CtxDaoModel(ctx).Data(insertList).Insert()
-	}
-	/**----新增关联 结束----**/
-
-	/**----删除关联 开始----**/
-	deleteRelIdArr := gset.NewFrom(relIdArrOfOld).Diff(gset.NewFrom(relIdArr)).Slice()
-	if len(deleteRelIdArr) > 0 {
-		relDao.CtxDaoModel(ctx).Filters(g.Map{
-			priKey: id,
-			relKey: deleteRelIdArr,
-		}).Delete()
-	}
-	/**----删除关联 结束----**/
-}

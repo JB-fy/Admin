@@ -56,7 +56,7 @@ const queryForm = reactive({
             <el-input v-model="queryCommon.data.actionCode" :placeholder="t('auth.action.name.actionCode')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="sceneId">
-            <my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.action.name.sceneId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+            <my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.action.name.sceneIdArr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
         </el-form-item>
         <el-form-item prop="isStop">
             <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.action.name.isStop')" :clearable="true" style="width: 86px" />

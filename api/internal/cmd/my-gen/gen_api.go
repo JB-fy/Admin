@@ -742,7 +742,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `ip`)
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			apiField.saveRule.Method = ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `min:0`)
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `min:1`)
 		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			apiField.saveRule.Method = ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `between:0,100`)
@@ -769,6 +769,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
+		apiField.saveRule.DataTypeName = append([]string{`distinct`}, apiField.saveRule.DataTypeName...)
 		if apiField.createType.getData() != `` {
 			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.getData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(apiField.saveRule.getData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
 		}

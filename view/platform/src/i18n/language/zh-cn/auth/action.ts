@@ -4,7 +4,7 @@ export default {
         actionCode: '标识',
         remark: '备注',
         isStop: '停用',
-        sceneId: '场景',
+        sceneIdArr: '场景',
     },
     status: {},
     tip: {},
