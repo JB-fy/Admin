@@ -2,10 +2,13 @@ package my_gen
 
 import (
 	"context"
+	"fmt"
 	"math"
 
+	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -896,14 +899,54 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			if key.IsPrimary { //主键
 				if !key.IsAutoInc { //不自增
 					handleExtendMiddleObj.TableType = TableTypeExtendOne
-					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				}
 			} else {
 				if key.IsUnique { //唯一索引
 					handleExtendMiddleObj.TableType = TableTypeExtendOne
-					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				} else { //普通索引
 					handleExtendMiddleObj.TableType = TableTypeExtendMany
+				}
+			}
+
+			switch handleExtendMiddleObj.TableType {
+			case TableTypeExtendOne:
+				isExtendOne := true
+				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
+				isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，请确认？默认(yes)：`))
+			isExtendOneEnd:
+				for {
+					switch isExtendOneStr {
+					case ``, `1`, `yes`:
+						isExtendOne = true
+						break isExtendOneEnd
+					case `0`, `no`:
+						isExtendOne = false
+						break isExtendOneEnd
+					default:
+						isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，请确认？默认(yes)：`))
+					}
+				}
+				if isExtendOne {
+					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
+				}
+			case TableTypeExtendMany:
+				isExtendMany := true
+				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
+				isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，请确认？默认(yes)：`))
+			isExtendManyEnd:
+				for {
+					switch isExtendManyStr {
+					case ``, `1`, `yes`:
+						isExtendMany = true
+						break isExtendManyEnd
+					case `0`, `no`:
+						isExtendMany = false
+						break isExtendManyEnd
+					default:
+						isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，请确认？默认(yes)：`))
+					}
+				}
+				if isExtendMany {
 					if len(handleExtendMiddleObj.FieldList) == 1 {
 						handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(handleExtendMiddleObj.FieldList[0].FieldRaw) + `Arr`
 					} else {
@@ -984,11 +1027,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				if key.IsPrimary { //主键
 					if !key.IsAutoInc { //不自增
 						handleExtendMiddleObj.TableType = TableTypeMiddleOne
-						middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 					}
 				} else { //唯一索引
 					handleExtendMiddleObj.TableType = TableTypeMiddleOne
-					middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 				}
 			} else {
 				isAllId := true
@@ -1000,13 +1041,19 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				}
 				if isAllId { //联合主键 或 联合唯一索引
 					handleExtendMiddleObj.TableType = TableTypeMiddleMany
-					if len(handleExtendMiddleObj.FieldList) == 1 {
-						handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(handleExtendMiddleObj.FieldList[0].FieldRaw) + `Arr`
-					} else {
-						handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(gstr.TrimRightStr(gstr.TrimLeftStr(handleExtendMiddleObj.FieldVar, `relTo`, 1), `RelOf`, 1)) + `List`
-					}
-					middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 				}
+			}
+
+			switch handleExtendMiddleObj.TableType {
+			case TableTypeMiddleOne:
+				middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
+			case TableTypeMiddleMany:
+				if len(handleExtendMiddleObj.FieldList) == 1 {
+					handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(handleExtendMiddleObj.FieldList[0].FieldRaw) + `Arr`
+				} else {
+					handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(gstr.TrimRightStr(gstr.TrimLeftStr(handleExtendMiddleObj.FieldVar, `relTo`, 1), `RelOf`, 1)) + `List`
+				}
+				middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 			}
 		}
 	}
