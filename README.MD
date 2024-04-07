@@ -44,21 +44,6 @@ gf gen service
 ./main myGen
 ```
 
-#### PHP服务端（不推荐。代码目录：[api_php](./api_php)）
-```bash
-# 服务启动
-php bin/hyperf.php start
-
-# 服务启动（热更新）
-php bin/hyperf.php server:watch
-
-# 快速生成模型类（--pool对应哪个库）
-php bin/hyperf.php gen:model --pool=default 
-
-# 快速生成Dao类（需先修改AbstractDao继承自\Hyperf\DbConnection\Model\Model，再注释掉冲突的方法，生成后再还原）
-php bin/hyperf.php gen:model --pool=default --path=app/Module/Db/Dao --inheritance=AbstractDao --uses='App\Module\Db\Dao\AbstractDao'
-```
-
 #### VUE前端（代码目录：[view/platform](./view/platform)）
 ```bash
 # 服务启动
