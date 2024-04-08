@@ -9,6 +9,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gutil"
 )
 
 // 数据库表按时间做分区（通用，默认以分区最大日期作为分区名）
@@ -169,4 +170,34 @@ func SaveListRelManyWithSort(ctx context.Context, relDao DaoInterface, idField s
 		}
 	}
 	relDao.CtxDaoModel(ctx).Data(insertList).Insert()
+}
+
+// 更新时，判断是否空数据更新（HookUpdate中用于判断in.Data）
+func IsEmptyDataOfUpdate(ctx context.Context, dbGroup string, data interface{}) (isEmptyData bool) {
+	switch v := data.(type) {
+	case string:
+		if v == `` || gstr.Pos(v, `,`) == 0 {
+			isEmptyData = true
+		}
+	case map[string]interface{}:
+		switch len(v) {
+		case 0:
+			isEmptyData = true
+		case 1:
+			dbConfig := g.DB(dbGroup).GetConfig()
+			if !dbConfig.TimeMaintainDisabled {
+				updatedFieldNames := []string{`updated_at`, `update_at`}
+				if dbConfig.UpdatedAt != `` {
+					updatedFieldNames = []string{dbConfig.UpdatedAt}
+				}
+				for _, updatedField := range updatedFieldNames {
+					if gutil.MapContainsPossibleKey(v, updatedField) {
+						isEmptyData = true
+						break
+					}
+				}
+			}
+		}
+	}
+	return
 }

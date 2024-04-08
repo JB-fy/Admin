@@ -9,6 +9,7 @@ import (
 	"api/internal/dao/user/internal"
 	"context"
 	"database/sql"
+	"database/sql/driver"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -274,9 +275,13 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 func (daoThis *userDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
+			if daoIndex.IsEmptyDataOfUpdate(ctx, daoModel.DbGroup, in.Data) {
+				result = driver.RowsAffected(0)
+			} else {
+				result, err = in.Next(ctx)
+				if err != nil {
+					return
+				}
 			}
 
 			/* row, _ := result.RowsAffected()
