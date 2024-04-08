@@ -55,6 +55,7 @@ func (jwtThis *JWT) ParseToken(tokenString string) (claims *CustomClaims, err er
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtThis.SignKey, nil
 	})
+	claims, ok := token.Claims.(*CustomClaims)
 	if err != nil {
 		err = NewErrorCode(jwtThis.Ctx, 39994001, err.Error())
 		return
@@ -63,7 +64,6 @@ func (jwtThis *JWT) ParseToken(tokenString string) (claims *CustomClaims, err er
 		err = NewErrorCode(jwtThis.Ctx, 39994001, ``)
 		return
 	}
-	claims, ok := token.Claims.(*CustomClaims)
 	if !ok {
 		err = NewErrorCode(jwtThis.Ctx, 39994001, ``)
 		return
