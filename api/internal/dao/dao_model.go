@@ -199,11 +199,7 @@ func (daoModelThis *DaoModel) HookDelete() *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Field(field string) *DaoModel {
-	return daoModelThis.Fields([]string{field})
-}
-
-func (daoModelThis *DaoModel) Fields(field []string) *DaoModel {
+func (daoModelThis *DaoModel) Fields(field ...string) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]interface{}{}, daoModelThis))
 	return daoModelThis
 }
@@ -233,20 +229,12 @@ func (daoModelThis *DaoModel) Filters(filter map[string]interface{}) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Group(group string) *DaoModel {
-	return daoModelThis.Groups([]string{group})
-}
-
-func (daoModelThis *DaoModel) Groups(group []string) *DaoModel {
+func (daoModelThis *DaoModel) Group(group ...string) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseGroup(group, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Order(order string) *DaoModel {
-	return daoModelThis.Orders([]string{order})
-}
-
-func (daoModelThis *DaoModel) Orders(order []string) *DaoModel {
+func (daoModelThis *DaoModel) Order(order ...string) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseOrder(order, daoModelThis))
 	return daoModelThis
 }
@@ -350,6 +338,21 @@ func (daoModelThis *DaoModel) Union(unions ...*gdb.Model) *DaoModel {
 
 func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
 	daoModelThis.model = daoModelThis.model.UnionAll(unions...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) OrderAsc(column string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.OrderAsc(column)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) OrderDesc(column string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.OrderDesc(column)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) OrderRandom() *DaoModel {
+	daoModelThis.model = daoModelThis.model.OrderRandom()
 	return daoModelThis
 }
 
@@ -499,7 +502,7 @@ func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...interface{}) ([]uint, 
 
 // 封装常用方法
 func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb.Value, error) {
-	list, err := daoModelThis.Fields([]string{field, key}).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).HookSelect().All()
 	if err != nil {
 		return nil, err
 	}
@@ -515,7 +518,7 @@ func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb
 
 // 封装常用方法
 func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, error) {
-	list, err := daoModelThis.Fields([]string{field, key}).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).HookSelect().All()
 	if err != nil {
 		return nil, err
 	}
@@ -531,7 +534,7 @@ func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, er
 
 // 封装常用方法
 func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Value, error) {
-	list, err := daoModelThis.Fields([]string{field, key}).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).HookSelect().All()
 	if err != nil {
 		return nil, err
 	}
@@ -547,7 +550,7 @@ func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Va
 
 // 封装常用方法
 func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.Value, error) {
-	list, err := daoModelThis.Fields([]string{field, key}).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).HookSelect().All()
 	if err != nil {
 		return nil, err
 	}
