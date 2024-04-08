@@ -1033,7 +1033,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				daoModel.AfterUpdate[k] = v`)
 	if len(tplEM.FieldList) == 1 {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+tplEM.FieldVar+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
+						`+tplEM.FieldVar+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
 						record[v] = gvar.New(`+tplEM.FieldVar+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]interface{}{}
