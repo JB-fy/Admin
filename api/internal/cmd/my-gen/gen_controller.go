@@ -133,7 +133,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 		if option.IsCount {
 			tplController += `Count: count, `
 		}
-		tplController += `List:  []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListItem{}}
+		tplController += `List: []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListItem{}}
 	list.Structs(&res.List)
 	return
 }
@@ -317,7 +317,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 		tplController += `
 	field = append(field, ` + "`tree`" + `)
 
-	list, err :=dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().ListPri()
+	list, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().ListPri()
 	if err != nil {
 		return
 	}
