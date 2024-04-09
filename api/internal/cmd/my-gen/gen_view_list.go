@@ -443,10 +443,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		viewListField.title.Method = ReturnTypeName
 		viewListField.title.DataTypeName = `t('common.name.createdAt')`
 	case TypeNamePid: // pid；	类型：int等类型；
-		if len(tpl.Handle.LabelList) > 0 {
-			viewListField.dataKey.Method = ReturnTypeName
-			viewListField.dataKey.DataTypeName = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
-		}
+		viewListField.dataKey.Method = ReturnTypeName
+		viewListField.dataKey.DataTypeName = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
 	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		viewListField.sortable.Method = ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
@@ -466,7 +464,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 			viewListField.dataKey.Method = ReturnTypeName
 			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}

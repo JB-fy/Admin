@@ -343,23 +343,21 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	}
 	controller.noAuth = []string{"`id`"}
 
-	if len(tpl.Handle.LabelList) > 0 {
-		controller.list = append(controller.list, "`label`")
-		controller.info = append(controller.info, "`label`")
-		controller.tree = append(controller.tree, "`label`")
-		if tpl.Handle.Pid.Pid != `` {
-			controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-			// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-		}
-		controller.noAuth = append(controller.noAuth, "`label`")
-		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
-			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
-		}
-		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
-		/* for _, v := range tpl.Handle.LabelList {
-			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
-		} */
+	controller.list = append(controller.list, "`label`")
+	controller.info = append(controller.info, "`label`")
+	controller.tree = append(controller.tree, "`label`")
+	if tpl.Handle.Pid.Pid != `` {
+		controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
+		// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
 	}
+	controller.noAuth = append(controller.noAuth, "`label`")
+	if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
+		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
+	}
+	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
+	/* for _, v := range tpl.Handle.LabelList {
+		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
+	} */
 	return
 }
 
@@ -396,7 +394,7 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 			daoPath := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 			importDaoStr := `dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
 			if !garray.NewStrArrayFrom(controller.importDao).Contains(importDaoStr) {

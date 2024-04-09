@@ -277,10 +277,8 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 
-	if len(tpl.Handle.LabelList) > 0 {
-		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
-		api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
-	}
+	api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
+	api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	return
 }
 
@@ -477,9 +475,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	case TypeNamePid: // pid；	类型：int等类型；
 		apiField.filterType.Method = ReturnType
 
-		if len(tpl.Handle.LabelList) > 0 {
-			apiField.resOfAdd = append(apiField.resOfAdd, `P`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` *string `+"`"+`json:"p`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`,omitempty" dc:"父级"`+"`")
-		}
+		apiField.resOfAdd = append(apiField.resOfAdd, `P`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` *string `+"`"+`json:"p`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`,omitempty" dc:"父级"`+"`")
 	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		apiField.filterType.Method = ReturnType
 		apiField.createType.Method = ReturnEmpty
@@ -499,7 +495,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenApiField{}
 	case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
+		if gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
 			apiField.isRequired = true
 		}
 	case TypeNameCodeSuffix: // code后缀；	类型：varchar；
@@ -545,7 +541,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:0`)
 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 			apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+gstr.CaseCamel(relIdObj.Suffix)+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
 		}
 	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；

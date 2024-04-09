@@ -504,9 +504,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 	//id后缀字段
 	for k, v := range tpl.Handle.RelIdMap {
-		if len(v.tpl.Handle.LabelList) == 0 {
-			continue
-		}
 		for _, item := range fieldList {
 			if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
 				v.IsRedundName = true

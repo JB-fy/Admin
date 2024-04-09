@@ -404,7 +404,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 	case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewSaveField{}
 	case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		if len(tpl.Handle.LabelList) > 0 && gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
+		if gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
 			viewSaveField.isRequired = true
 		}
 	case TypeNameCodeSuffix: // code后缀；	类型：varchar；

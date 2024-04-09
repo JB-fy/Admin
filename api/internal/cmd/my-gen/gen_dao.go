@@ -401,31 +401,29 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 				}`)
 	}
 
-	labelListLen := len(tpl.Handle.LabelList)
-	if labelListLen > 0 {
-		fieldParseStr := `case ` + "`label`" + `:
+	fieldParseStr := `case ` + "`label`" + `:
 				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)`
-		filterParseStr := `case ` + "`label`" + `:
+	filterParseStr := `case ` + "`label`" + `:
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
-		if labelListLen > 1 {
-			fieldParseStrTmp := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `"
-			parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
-			for i := labelListLen - 2; i >= 0; i-- {
-				fieldParseStrTmp = "IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + fieldParseStrTmp + ")"
-				if i == 0 {
-					parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
-				} else {
-					parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
-				}
+	labelListLen := len(tpl.Handle.LabelList)
+	if labelListLen > 1 {
+		fieldParseStrTmp := "` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `"
+		parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
+		for i := labelListLen - 2; i >= 0; i-- {
+			fieldParseStrTmp = "IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, " + fieldParseStrTmp + ")"
+			if i == 0 {
+				parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
+			} else {
+				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
-			fieldParseStr = `case ` + "`label`" + `:
-				m = m.Fields(` + "`" + fieldParseStrTmp + " AS ` + v)"
-			filterParseStr = `case ` + "`label`" + `:
-				m = m.Where(m.Builder().` + parseFilterStr + `)`
 		}
-		dao.fieldParse = append(dao.fieldParse, fieldParseStr)
-		dao.filterParse = append(dao.filterParse, filterParseStr)
+		fieldParseStr = `case ` + "`label`" + `:
+				m = m.Fields(` + "`" + fieldParseStrTmp + " AS ` + v)"
+		filterParseStr = `case ` + "`label`" + `:
+				m = m.Where(m.Builder().` + parseFilterStr + `)`
 	}
+	dao.fieldParse = append(dao.fieldParse, fieldParseStr)
+	dao.filterParse = append(dao.filterParse, filterParseStr)
 	return
 }
 
@@ -514,12 +512,10 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.filterParse.Method = ReturnTypeName
 
 		daoField.fieldParse.Method = ReturnTypeName
-		if len(tpl.Handle.LabelList) > 0 {
-			daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`"+`:
+		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`"+`:
 				tableP := `+"`p_`"+` + `+daoTable+`
 				m = m.Fields(tableP + `+"`.`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` + `+"` AS `"+` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))`)
-		}
 		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`tree`"+`:
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.PrimaryKey())
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+v.FieldCaseCamel+`)
@@ -701,7 +697,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				}
 			}
 
-			if !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
+			if !relIdObj.IsRedundName {
 				fieldParseStr := `case ` + daoPathRel + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `:` + `
 				` + daoTableRel + ` := ` + daoPathRel + `.ParseDbTable(m.GetCtx())
 				m = m.Fields(` + daoTableRel + ` + ` + "`.`" + ` + v)
@@ -934,7 +930,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 					}
 				}
 
-				if !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
+				if !relIdObj.IsRedundName {
 					fieldParseStr := `case ` + daoPathRel + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `:` + `
 				` + tplEM.daoTableVar + ` := ` + tplEM.daoPath + `.ParseDbTable(m.GetCtx())
 				` + daoTableRel + ` := ` + daoPathRel + `.ParseDbTable(m.GetCtx())
