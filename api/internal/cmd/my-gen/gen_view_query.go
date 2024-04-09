@@ -158,7 +158,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case TypeText: // `text类型`
 	case TypeJson: // `json类型`
 	case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
-		viewQueryField.form.Method = ReturnType
+		// viewQueryField.form.Method = ReturnType
 		viewQueryField.form.DataType = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
 	case TypeDate: // `date类型`
 		viewQueryField.form.Method = ReturnType
