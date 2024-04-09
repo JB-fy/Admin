@@ -337,27 +337,15 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 
 func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
-		controller.list = []string{"`id`"}
-		controller.info = []string{"`id`"}
-		controller.tree = []string{"`id`"}
+		controller.list = append(controller.list, "`id`")
+		controller.info = append(controller.info, "`id`")
+		controller.tree = append(controller.tree, "`id`")
 	}
-	controller.noAuth = []string{"`id`"}
-
 	controller.list = append(controller.list, "`label`")
 	controller.info = append(controller.info, "`label`")
 	controller.tree = append(controller.tree, "`label`")
-	if tpl.Handle.Pid.Pid != `` {
-		controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-		// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-	}
-	controller.noAuth = append(controller.noAuth, "`label`")
-	if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
-		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
-	}
-	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0]))
-	/* for _, v := range tpl.Handle.LabelList {
-		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(v))
-	} */
+
+	controller.noAuth = append(controller.noAuth, "`id`", "`label`")
 	return
 }
 
@@ -379,6 +367,8 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case TypeNameUpdated: // 更新时间字段
 	case TypeNameCreated: // 创建时间字段
 	case TypeNamePid: // pid；	类型：int等类型；
+		controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
+		// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
 	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 	case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 	case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
