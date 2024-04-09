@@ -688,9 +688,9 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 	case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		daoField.filterParse.Method = ReturnTypeName
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` {
-			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` {
 			daoPathRel := relIdObj.tpl.TableCaseCamel
 			daoTableRel := `table` + relIdObj.tpl.TableCaseCamel
 			if relIdObj.tpl.ModuleDirCaseKebab != tpl.ModuleDirCaseKebab {
@@ -701,7 +701,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				}
 			}
 
-			if !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
+			if !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
 				fieldParseStr := `case ` + daoPathRel + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `:` + `
 				` + daoTableRel + ` := ` + daoPathRel + `.ParseDbTable(m.GetCtx())
 				m = m.Fields(` + daoTableRel + ` + ` + "`.`" + ` + v)
@@ -921,9 +921,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			daoField.filterParse.Method = ReturnTypeName
-			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` {
-				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+			if relIdObj.tpl.Table != `` {
 				daoPathRel := relIdObj.tpl.TableCaseCamel
 				daoTableRel := `table` + relIdObj.tpl.TableCaseCamel
 				if relIdObj.tpl.ModuleDirCaseKebab != tplEM.tplOfTop.ModuleDirCaseKebab {
@@ -934,7 +934,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 					}
 				}
 
-				if !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
+				if !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
 					fieldParseStr := `case ` + daoPathRel + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0]) + `:` + `
 				` + tplEM.daoTableVar + ` := ` + tplEM.daoPath + `.ParseDbTable(m.GetCtx())
 				` + daoTableRel + ` := ` + daoPathRel + `.ParseDbTable(m.GetCtx())

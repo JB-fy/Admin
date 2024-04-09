@@ -544,8 +544,8 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.saveRule.Method = ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:0`)
 
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` && !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
-			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
 			apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+gstr.CaseCamel(relIdObj.Suffix)+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
 		}
 	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；

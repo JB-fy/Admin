@@ -45,7 +45,8 @@ type myGenTpl struct {
 				表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
 				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
 				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
+				上面字段都没有时，默认第二个字段
 		*/
 		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
@@ -471,7 +472,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
 			表名去掉前缀 + Email > 主键去掉ID + Email > Email >
 			表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname
+			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
+			上面字段都没有时，默认第二个字段
 	*/
 	labelList := []string{}
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
@@ -495,6 +497,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				break
 			}
 		}
+	}
+	if len(tpl.Handle.LabelList) == 0 {
+		tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1].FieldRaw)
 	}
 
 	//id后缀字段

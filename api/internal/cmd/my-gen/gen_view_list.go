@@ -465,9 +465,10 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` && !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
 			viewListField.dataKey.Method = ReturnTypeName
-			viewListField.dataKey.DataTypeName = `'` + tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.LabelList[0] + tpl.Handle.RelIdMap[v.FieldRaw].Suffix + `'`
+			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}
 	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		viewListField.sortable.Method = ReturnTypeName

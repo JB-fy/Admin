@@ -235,15 +235,15 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` {
-			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` {
 			apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 		}
 
 		viewQueryField.form.Method = ReturnTypeName
 		viewQueryField.form.DataTypeName = `<my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
+		if relIdObj.tpl.Handle.Pid.Pid != `` {
 			viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
 		}
 	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；

@@ -143,7 +143,7 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
 			viewI18nField.name.Method = ReturnTypeName
 			viewI18nField.name.DataTypeName = `'` + relIdObj.FieldName + `'`
 		}
@@ -196,9 +196,9 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 
 		viewI18nField := myGenViewI18nField{}
 		viewI18nField.name.Method = ReturnType
-		viewI18nField.name.DataType = `'` + v.FieldName + `'` //`'` + v.FieldName + `列表'`
+		viewI18nField.name.DataType = `'` + v.FieldName /*  + `列表` */ + `'`
 		if v.FieldTypeName == TypeNameIdSuffix && gstr.ToUpper(gstr.SubStr(v.FieldName, -2)) == `ID` {
-			viewI18nField.name.DataType = `'` + gstr.SubStr(v.FieldName, 0, -2) + `'` //`'` + gstr.SubStr(v.FieldName, 0, -2) + `列表'`
+			viewI18nField.name.DataType = `'` + gstr.SubStr(v.FieldName, 0, -2) /*  + `列表` */ + `'`
 		}
 
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/

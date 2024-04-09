@@ -424,9 +424,9 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'url', trigger: 'blur', message: t('validation.url') },`)
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` {
-			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` {
 			apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 		}
 		viewSaveField.dataInitAfter.Method = ReturnTypeName
@@ -437,7 +437,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 			`{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },`,
 		)
 		viewSaveField.formContent.Method = ReturnTypeName
-		if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
+		if relIdObj.tpl.Handle.Pid.Pid != `` {
 			viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
 		} else {
 			viewSaveField.formContent.DataTypeName = `<my-select v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
@@ -595,13 +595,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			isReturn = true
 
+			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
-			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Table != `` {
-				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+			if relIdObj.tpl.Table != `` {
 				apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			}
 			viewSaveField.formContent.Method = ReturnTypeName
-			if tpl.Handle.RelIdMap[v.FieldRaw].tpl.Handle.Pid.Pid != `` {
+			if relIdObj.tpl.Handle.Pid.Pid != `` {
 				viewSaveField.rule.Method = ReturnTypeName
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select')/* , defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } */ },`)
 

@@ -396,7 +396,7 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
+		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName && len(relIdObj.tpl.Handle.LabelList) > 0 {
 			daoPath := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 			importDaoStr := `dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
 			if !garray.NewStrArrayFrom(controller.importDao).Contains(importDaoStr) {
