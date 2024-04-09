@@ -696,7 +696,9 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			if relIdObj.tpl.ModuleDirCaseKebab != tpl.ModuleDirCaseKebab {
 				daoField.importDao = append(daoField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 				daoPathRel = `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-				daoTableRel = `table` + relIdObj.tpl.ModuleDirCaseCamel + relIdObj.tpl.TableCaseCamel
+				if relIdObj.tpl.ModuleDirCaseCamel != relIdObj.tpl.TableCaseCamel {
+					daoTableRel = `table` + relIdObj.tpl.ModuleDirCaseCamel + relIdObj.tpl.TableCaseCamel
+				}
 			}
 
 			if !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {
@@ -927,7 +929,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				if relIdObj.tpl.ModuleDirCaseKebab != tplEM.tplOfTop.ModuleDirCaseKebab {
 					daoField.importDao = append(daoField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 					daoPathRel = `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-					daoTableRel = `table` + relIdObj.tpl.ModuleDirCaseCamel + relIdObj.tpl.TableCaseCamel
+					if relIdObj.tpl.ModuleDirCaseCamel != relIdObj.tpl.TableCaseCamel {
+						daoTableRel = `table` + relIdObj.tpl.ModuleDirCaseCamel + relIdObj.tpl.TableCaseCamel
+					}
 				}
 
 				if !tpl.Handle.RelIdMap[v.FieldRaw].IsRedundName {

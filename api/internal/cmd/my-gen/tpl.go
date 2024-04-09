@@ -832,7 +832,9 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 		handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel)
 		handleExtendMiddleObj.daoPath = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel
 		handleExtendMiddleObj.daoTable = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`
-		handleExtendMiddleObj.daoTableVar = `table` + extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
+		if extendMiddleTpl.ModuleDirCaseCamel != extendMiddleTpl.TableCaseCamel {
+			handleExtendMiddleObj.daoTableVar = `table` + extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel
+		}
 	}
 
 	fieldArrOfIgnore := []string{relId}
