@@ -368,7 +368,6 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case TypeNameCreated: // 创建时间字段
 	case TypeNamePid: // pid；	类型：int等类型；
 		controller.list = append(controller.list, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
-		// controller.info = append(controller.info, "`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`")
 	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 	case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 	case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
