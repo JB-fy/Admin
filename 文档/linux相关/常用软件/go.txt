@@ -1,9 +1,9 @@
 解压安装包
-    tar -xvf go1.20.4.linux-amd64.tar.gz
+    tar -xvf go1.22.2.linux-amd64.tar.gz
 移动到指定目录
-    mv /server/go /server/tool/go-1.20.4
+    mv /server/go /server/tool/go-1.22.2
 设置环境变量增加以下目录（参考linux常用命令）
-    /server/tool/go-1.20.4/bin
+    /server/tool/go-1.22.2/bin
 
 
 
@@ -12,13 +12,11 @@
     go env
         #主要配置说明
             GOPATH  公共工作目录
-            GOBIN   go install命令安装可执行文件的存放路径，默认空，则使用GOPATH/bin作为存放路径。该存放路径必须设置到系统环境变量中，否则执行文件命令会报找不到
+            GOBIN   go install命令安装的可执行文件存放路径，默认空，则存放在GOPATH/bin路径下。该存放路径须设置到环境变量中，否则如：goframe框架的gf命令会找不到
 #启用module功能
-go env -w GO111MODULE=on
+    go env -w GO111MODULE=on
 #修改代理（默认：https://proxy.golang.org,direct）
     go env -w GOPROXY=https://goproxy.cn,direct
-#修改GOPATH（默认：/home/xx/go，建议修改为与GOROOT一致，这样就不用设置/home/xx/go/bin到环境变量中）
-    go env -w GOPATH=/server/tool/go-1.20.4
 #安装可执行文件
     go install
 #删除其它命令产生的文件和目录
