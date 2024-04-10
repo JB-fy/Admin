@@ -56,8 +56,7 @@ func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 	if len(uploadTypeOpt) > 0 {
 		uploadType = uploadTypeOpt[0]
 	} else {
-		uploadTypeVar, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `uploadType`).Value(daoPlatform.Config.Columns().ConfigValue)
-		uploadType = uploadTypeVar.String()
+		uploadType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `uploadType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
 	}
 
 	switch uploadType {

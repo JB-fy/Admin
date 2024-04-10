@@ -14,8 +14,7 @@ func NewOneClick(ctx context.Context, oneClickTypeOpt ...string) OneClick {
 	if len(oneClickTypeOpt) > 0 {
 		oneClickType = oneClickTypeOpt[0]
 	} else {
-		oneClickTypeVar, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `oneClickType`).Value(daoPlatform.Config.Columns().ConfigValue)
-		oneClickType = oneClickTypeVar.String()
+		oneClickType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `oneClickType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
 	}
 
 	switch oneClickType {

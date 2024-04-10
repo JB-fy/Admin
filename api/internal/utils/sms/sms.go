@@ -15,8 +15,7 @@ func NewSms(ctx context.Context, smsTypeOpt ...string) Sms {
 	if len(smsTypeOpt) > 0 {
 		smsType = smsTypeOpt[0]
 	} else {
-		smsTypeVar, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `smsType`).Value(daoPlatform.Config.Columns().ConfigValue)
-		smsType = smsTypeVar.String()
+		smsType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `smsType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
 	}
 
 	switch smsType {
