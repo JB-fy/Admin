@@ -20,6 +20,7 @@ require (
 	github.com/redis/go-redis/v9 v9.4.0 // indirect
 	github.com/smartwalle/alipay/v3 v3.2.20
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
+	github.com/yidun/yidun-golang-sdk v1.0.6 // indirect
 	go.opentelemetry.io/otel/sdk v1.22.0 // indirect
 	golang.org/x/net v0.20.0
 	golang.org/x/tools v0.6.0

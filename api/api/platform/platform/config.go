@@ -74,6 +74,11 @@ type Config struct {
 	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" dc:"阿里云IdCard-请求路径"`
 	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
 
+	OneClickType              *string `json:"oneClickType,omitempty" dc:"一键登录方式"`
+	OneClickOfYidunSecretId   *string `json:"oneClickOfYidunSecretId,omitempty" dc:"易盾-SecretId"`
+	OneClickOfYidunSecretKey  *string `json:"oneClickOfYidunSecretKey,omitempty" dc:"易盾-SecretKey"`
+	OneClickOfYidunBusinessId *string `json:"oneClickOfYidunBusinessId,omitempty" dc:"易盾-BusinessId"`
+
 	PushType                 *string `json:"pushType,omitempty" dc:"推送方式"`
 	PushOfTxHost             *string `json:"pushOfTxHost,omitempty" dc:"腾讯移动推送-域名"`
 	PushOfTxAndroidAccessID  *string `json:"pushOfTxAndroidAccessID,omitempty" dc:"腾讯移动推送-AccessID(安卓)"`
@@ -154,6 +159,11 @@ type ConfigSaveReq struct {
 	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`
 	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
 	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
+
+	OneClickType              *string `json:"oneClickType,omitempty" v:"in:oneClickOfYidun" dc:"一键登录方式"`
+	OneClickOfYidunSecretId   *string `json:"oneClickOfYidunSecretId,omitempty" v:"" dc:"易盾-SecretId"`
+	OneClickOfYidunSecretKey  *string `json:"oneClickOfYidunSecretKey,omitempty" v:"" dc:"易盾-SecretKey"`
+	OneClickOfYidunBusinessId *string `json:"oneClickOfYidunBusinessId,omitempty" v:"" dc:"易盾-BusinessId"`
 
 	PushType                 *string `json:"pushType,omitempty" v:"in:pushOfTx" dc:"推送方式"`
 	PushOfTxHost             *string `json:"pushOfTxHost,omitempty" v:"url" dc:"腾讯移动推送-域名"`

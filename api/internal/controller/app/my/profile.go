@@ -8,7 +8,7 @@ import (
 	daoUser "api/internal/dao/user"
 	"api/internal/service"
 	"api/internal/utils"
-	idCard "api/internal/utils/id-card"
+	id_card "api/internal/utils/id-card"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -107,7 +107,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			idCardInfo, errTmp := idCard.NewIdCard(ctx).Auth(gconv.String(data[`idCardName`]), gconv.String(data[`idCardNo`]))
+			idCardInfo, errTmp := id_card.NewIdCard(ctx).Auth(gconv.String(data[`idCardName`]), gconv.String(data[`idCardNo`]))
 			if errTmp != nil {
 				err = errTmp
 				return

@@ -4,6 +4,7 @@ export default {
         pay: '支付',
         sms: '短信',
         idCard: '实名认证',
+        oneClick: '一键登录',
         push: '推送',
         vod: '视频点播',
 
@@ -49,6 +50,11 @@ export default {
         idCardOfAliyunPath: '阿里云IdCard-请求路径',
         idCardOfAliyunAppcode: '阿里云IdCard-Appcode',
 
+        oneClickType: '一键登录方式',
+        oneClickOfYidunSecretId: '易盾-SecretId',
+        oneClickOfYidunSecretKey: '易盾-SecretKey',
+        oneClickOfYidunBusinessId: '易盾-BusinessId',
+
         pushType: '推送方式',
         pushOfTxHost: '腾讯移动推送-域名',
         pushOfTxAndroidAccessID: '腾讯移动推送-AccessID(安卓)',
@@ -71,6 +77,7 @@ export default {
         ],
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
+        oneClickType: [{ value: `oneClickOfYidun`, label: '易盾' }],
         pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
