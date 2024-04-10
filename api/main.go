@@ -15,8 +15,11 @@ import (
 )
 
 func main() {
-	initialize.Entry()
+	ctx := gctx.GetInitCtx()
+
+	initialize.Entry(ctx)
+
 	cmd.Main.AddCommand(&cmd.MyGen)
 	cmd.Main.AddCommand(&cmd.Http)
-	cmd.Main.Run(gctx.New())
+	cmd.Main.Run(ctx)
 }
