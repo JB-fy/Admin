@@ -12,7 +12,7 @@
     go env
         #主要配置说明
             GOPATH  公共工作目录
-            GOBIN   go install命令安装的可执行文件存放路径，默认空，则存放在GOPATH/bin路径下。该存放路径须设置到环境变量中，否则如：goframe框架的gf命令会找不到
+            GOBIN   go install命令安装的可执行文件存放路径，默认空，则存放在GOPATH/bin路径下。如安装了其它命令（如goframe框架的gf命令），则该路径须设置到环境变量中
 #启用module功能
     go env -w GO111MODULE=on
 #修改代理（默认：https://proxy.golang.org,direct）
