@@ -5,7 +5,7 @@ import (
 )
 
 // 初始化可能有顺序要求，故统一到这里执行初始化函数
-func Index() {
+func Entry() {
 	ctx := gctx.New()
 
 	initGenv(ctx)  // 环境变量设置
