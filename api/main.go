@@ -8,7 +8,7 @@ import (
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 
-	_ "api/internal/initialize"
+	initialize "api/internal/initialize"
 
 	"api/internal/cmd"
 
@@ -16,6 +16,7 @@ import (
 )
 
 func main() {
+	initialize.InitMy()
 	cmd.Main.AddCommand(&cmd.MyGen)
 	cmd.Main.AddCommand(&cmd.Http)
 	cmd.Main.Run(gctx.New())
