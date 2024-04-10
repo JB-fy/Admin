@@ -37,11 +37,10 @@ func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	}
 
 	menuName = menuNameArr[len(menuNameArr)-1]
-	idVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
+	id, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
 		daoAuth.Menu.Columns().SceneId: sceneId,
 		daoAuth.Menu.Columns().MenuUrl: menuUrl,
-	}).Value(daoAuth.Menu.PrimaryKey())
-	id := idVar.Uint()
+	}).ValueUint(daoAuth.Menu.PrimaryKey())
 	if id == 0 {
 		daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
 			daoAuth.Menu.Columns().SceneId:   sceneId,

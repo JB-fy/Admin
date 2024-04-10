@@ -483,21 +483,21 @@ func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...interface{}) ([]string,
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...interface{}) ([]int, error) {
-	result, err := daoModelThis.Array(fieldsAndWhere...)
-	if err != nil {
-		return nil, err
-	}
-	return gconv.SliceInt(result), nil
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...interface{}) ([]uint, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
 	return gconv.SliceUint(result), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...interface{}) ([]int, error) {
+	result, err := daoModelThis.Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	return gconv.SliceInt(result), nil
 }
 
 // 封装常用方法
@@ -533,22 +533,6 @@ func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, er
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).HookSelect().All()
-	if err != nil {
-		return nil, err
-	}
-	if list.IsEmpty() {
-		return nil, nil
-	}
-	result := make(map[int]gdb.Value, len(list))
-	for _, v := range list {
-		result[v[key].Int()] = v[field]
-	}
-	return result, nil
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.Value, error) {
 	list, err := daoModelThis.Fields(field, key).HookSelect().All()
 	if err != nil {
@@ -560,6 +544,22 @@ func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.
 	result := make(map[uint]gdb.Value, len(list))
 	for _, v := range list {
 		result[v[key].Uint()] = v[field]
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Value, error) {
+	list, err := daoModelThis.Fields(field, key).HookSelect().All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := make(map[int]gdb.Value, len(list))
+	for _, v := range list {
+		result[v[key].Int()] = v[field]
 	}
 	return result, nil
 }
@@ -578,6 +578,15 @@ func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...interface{}) (string, e
 }
 
 // 封装常用方法
+func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...interface{}) (uint, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return 0, err
+	}
+	return result.Uint(), nil
+}
+
+// 封装常用方法
 func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...interface{}) (int, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
@@ -587,12 +596,12 @@ func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...interface{}) (int, erro
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...interface{}) (uint, error) {
+func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...interface{}) (int64, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return 0, err
 	}
-	return result.Uint(), nil
+	return result.Int64(), nil
 }
 
 func (daoModelThis *DaoModel) HasField(field string) (bool, error) {

@@ -42,8 +42,7 @@ func genAction(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	for _, v := range actionList {
 		id, err := daoAuth.Action.CtxDaoModel(ctx).HookInsert(v).InsertAndGetId()
 		if err != nil { //报错就是操作权限已存在（唯一索引冲突）
-			idVar, _ := daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionCode, v[daoAuth.Action.Columns().ActionCode]).Value(daoAuth.Action.PrimaryKey())
-			id = idVar.Int64()
+			id, _ = daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionCode, v[daoAuth.Action.Columns().ActionCode]).ValueInt64(daoAuth.Action.PrimaryKey())
 			daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionCode, v[daoAuth.Action.Columns().ActionCode]).HookUpdate(v).Update()
 		}
 		daoAuth.ActionRelToScene.CtxDaoModel(ctx).Data(map[string]interface{}{
