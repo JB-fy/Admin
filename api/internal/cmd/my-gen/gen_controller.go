@@ -346,6 +346,10 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	controller.tree = append(controller.tree, "`label`")
 
 	controller.noAuth = append(controller.noAuth, "`id`", "`label`")
+	/* if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
+		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
+	}
+	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])) */
 	return
 }
 
