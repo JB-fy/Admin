@@ -10,8 +10,8 @@ import (
 
 // ActionRelToScene is the golang structure for table action_rel_to_scene.
 type ActionRelToScene struct {
-	ActionId  uint        `json:"actionId"  ` // 操作ID
-	SceneId   uint        `json:"sceneId"   ` // 场景ID
-	UpdatedAt *gtime.Time `json:"updatedAt" ` // 更新时间
-	CreatedAt *gtime.Time `json:"createdAt" ` // 创建时间
+	ActionId  uint        `json:"actionId"  orm:"actionId"  ` // 操作ID
+	SceneId   uint        `json:"sceneId"   orm:"sceneId"   ` // 场景ID
+	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updatedAt" ` // 更新时间
+	CreatedAt *gtime.Time `json:"createdAt" orm:"createdAt" ` // 创建时间
 }

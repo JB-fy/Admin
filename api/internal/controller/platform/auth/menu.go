@@ -27,7 +27,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	}
 
 	allowField := daoAuth.Menu.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, `pMenuName`, daoAuth.Scene.Columns().SceneName)
+	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `pMenuName`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -40,7 +40,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuId, daoAuth.Menu.Columns().MenuName}
+		field = []string{`id`, `label`}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -178,7 +178,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
 	if !isAuth {
-		field = []string{`id`, `label`, daoAuth.Menu.Columns().MenuId, daoAuth.Menu.Columns().MenuName}
+		field = []string{`id`, `label`}
 	}
 	/**--------权限验证 结束--------**/
 
