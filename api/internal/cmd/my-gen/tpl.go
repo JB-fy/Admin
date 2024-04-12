@@ -112,10 +112,12 @@ type handlePassword struct {
 }
 
 type handleRelId struct {
-	tpl          myGenTpl
-	FieldName    string //字段名称
-	IsRedundName bool   //是否冗余过关联表名称字段
-	Suffix       string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	tpl             myGenTpl
+	FieldName       string //字段名称
+	IsRedundName    bool   //是否冗余过关联表名称字段
+	Suffix          string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
+	SuffixCaseCamel string //关联表字段后缀（大驼峰）
+	SuffixCaseSnake string //关联表字段后缀（蛇形）
 }
 
 type handleExtendMiddle struct {
@@ -385,9 +387,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 						handleRelIdObj.FieldName = gstr.SubStr(handleRelIdObj.FieldName, 0, -2)
 					}
 					if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
-						handleRelIdObj.Suffix = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
+						handleRelIdObj.SuffixCaseSnake = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
+						handleRelIdObj.SuffixCaseCamel = gstr.CaseCamel(handleRelIdObj.SuffixCaseSnake)
+						handleRelIdObj.Suffix = handleRelIdObj.SuffixCaseSnake
 						if fieldTmp.FieldRaw != fieldTmp.FieldCaseSnake {
-							handleRelIdObj.Suffix = gstr.CaseCamel(handleRelIdObj.Suffix)
+							handleRelIdObj.Suffix = handleRelIdObj.SuffixCaseCamel
 						}
 					}
 					tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
