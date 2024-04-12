@@ -320,7 +320,6 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
                 message: t('validation.json'),
                 /* fields: {
                     xxxx: [
-						{ required: true, message: t('validation.required') },
 						{ type: 'string', message: 'xxxx' + t('validation.input') },
 						// { type: 'integer', min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
 					],
@@ -432,10 +431,10 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.dataInitAfter.Method = ReturnTypeName
 		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + dataFieldPath + ` ? saveCommon.data.` + dataFieldPath + ` : undefined`
 		viewSaveField.rule.Method = ReturnTypeName
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
-			`// { required: true, message: t('validation.required') },`,
-			`{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },`,
-		)
+		if !viewSaveField.isRequired {
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `// { required: true, message: t('validation.required') },`)
+		}
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },`)
 		viewSaveField.formContent.Method = ReturnTypeName
 		if relIdObj.tpl.Handle.Pid.Pid != `` {
 			viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
@@ -833,13 +832,11 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		viewSave.importModule = append(viewSave.importModule, viewSaveTmp.importModule...)
 		viewSave.dataInitAfter = append(viewSave.dataInitAfter, tplEM.FieldVar+`: saveCommon.data.`+tplEM.FieldVar+` ? saveCommon.data.`+tplEM.FieldVar+` : [],`)
 		viewSave.rule = append(viewSave.rule, tplEM.FieldVar+`: [
-            // { required: true, message: t('validation.required') },
             {
                 type: 'array',
                 trigger: 'change',
                 message: t('validation.array'),
                 defaultField: [
-                    // { required: true, message: t('validation.required') },
                     {
                         type: 'object',
                         fields: {`+gstr.Join(append([]string{``}, viewSaveTmp.rule...), `

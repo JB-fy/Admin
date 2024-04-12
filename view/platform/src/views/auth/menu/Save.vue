@@ -38,7 +38,6 @@ const saveForm = reactive({
                 message: t('validation.json'),
                 /* fields: {
                     xxxx: [
-						{ required: true, message: t('validation.required') },
 						{ type: 'string', message: 'xxxx' + t('validation.input') },
 						// { type: 'integer', min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
 					],

@@ -538,7 +538,11 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.Method = ReturnUnion
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 		apiField.saveRule.Method = ReturnUnion
-		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:0`)
+		if apiField.isRequired {
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:1`)
+		} else {
+			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:0`)
+		}
 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
