@@ -1,7 +1,7 @@
 安装存储库
     curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 安装
-    yum install gitlab-ce-16.8.7-ce.0.el9.x86_64
+    dnf install gitlab-ce-16.8.7-ce.0.el9.x86_64.rpm
 修改配置文件
     vi /etc/gitlab/gitlab.rb
         # 设置外部url
