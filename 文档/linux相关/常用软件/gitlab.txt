@@ -1,0 +1,22 @@
+安装存储库
+    curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+安装
+    yum install gitlab-ce-16.8.7-ce.0.el9.x86_64
+修改配置文件
+    vi /etc/gitlab/gitlab.rb
+        # 设置外部url
+        external_url 'http://192.168.0.201:8989'
+        # 设置时区
+        gitlab_rails['time_zone'] = 'Asia/Shanghai'
+        # 设置数据存储目录
+        git_data_dirs({
+            "default" => {
+                "path" => "/usr/local/gitlab/data"
+            }
+        })
+设置密码
+    gitlab-rake "gitlab:password:reset"
+重载配置
+    gitlab-ctl reconfigure
+开机启动
+    systemctl enable gitlab-runsvdir
