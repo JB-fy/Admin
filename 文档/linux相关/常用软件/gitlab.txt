@@ -24,9 +24,19 @@
                 "path" => "/usr/local/gitlab/data"
             }
         })
-设置密码
-    gitlab-rake "gitlab:password:reset"
 重载配置
     gitlab-ctl reconfigure
 开机启动
     systemctl enable gitlab-runsvdir
+网站设置
+    设置语言
+        全局设置：左下角Admin Area > Settings > Preferences > Localization 
+        个人设置：右上角头像 > Preferences > Localization
+
+
+/**----------------常用命令 开始----------------**/
+gitlab-ctl reconfigure  //重载配置
+gitlab-ctl restart  //重启
+gitlab-ctl stop //停止
+gitlab-rake "gitlab:password:reset" //重置密码（命令执行后需等一会才会弹出提示。密码至少8位，且必须有字母）
+/**----------------常用命令 结束----------------**/
