@@ -36,7 +36,30 @@
 
 /**----------------常用命令 开始----------------**/
 gitlab-ctl reconfigure  //重载配置
-gitlab-ctl restart  //重启
+gitlab-ctl start //启动
 gitlab-ctl stop //停止
+gitlab-ctl restart  //重启
 gitlab-rake "gitlab:password:reset" //重置密码（命令执行后需等一会才会弹出提示。密码至少8位，且必须有字母）
 /**----------------常用命令 结束----------------**/
+
+
+/**----------------CI/CD设置 开始----------------**/
+安装gitlab-runner
+    参考/admin/runners > 右上角... > 显示runner安装和注册说明
+新建runner
+    进入/admin/runners页面 > 右上角新建实例runner
+
+部署到远程服务器需设置ssh免密登录
+    gitlab服务器生成私钥公钥
+        执行ssh-keygen命令会在/root/.ssh目录下会生成id_rsa私钥文件和id_rsa.pub公钥文件
+    拷贝公钥到远程服务器
+        方式1：
+            在gitlab服务器执行命令
+                ssh-copy-id -i /root/.ssh/id_rsa.pub 远程服务器账号@远程服务器IP
+            根据提示输入远程服务器账号的密码即可
+        方式2：
+            复制gitlab服务器/root/.ssh/id_rsa.pub公钥文件内的公钥 到 远程服务器/root/.ssh/authorized_keys文件内（如已有其它密钥，则新增一行）
+                远程服务器无/root/.ssh/authorized_keys文件时，可执行ssh localhost命令生成
+
+在git仓库新增.gitlab-ci.yml文件就可开启持续部署
+/**----------------CI/CD设置 结束----------------**/
