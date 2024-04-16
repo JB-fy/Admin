@@ -5,9 +5,19 @@
 修改配置文件
     vi /etc/gitlab/gitlab.rb
         # 设置外部url
-        external_url 'http://192.168.0.201:8989'
+        external_url 'http://gitlab.example.com'
         # 设置时区
         gitlab_rails['time_zone'] = 'Asia/Shanghai'
+        #设置工作线程
+        puma['worker_processes'] = 2
+        #设置最大连接数
+        sidekiq['max_concurrency'] = 8
+        #设置buffer
+        postgresql['shared_buffers'] = "128MB"
+        #设置工作进程数
+        postgresql['max_worker_processes'] = 4
+        #关闭普罗米修斯(占用资源)
+        prometheus_monitoring['enable'] = false
         # 设置数据存储目录
         git_data_dirs({
             "default" => {
