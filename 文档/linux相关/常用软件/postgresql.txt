@@ -16,6 +16,8 @@
     su - postgres
     # 初始化
     /server/tool/postgresql-16.2/bin/initdb -D /server/tool/postgresql-16.2/data
+    # 初始化完成后切换回root用户
+    su root
     # 修改数据库配置参数
     vi /server/tool/postgresql-16.2/data/postgresql.conf
         修改以下参数
@@ -23,7 +25,7 @@
         post = 5432
     vi /server/tool/postgresql-16.2/data/pg_hba.conf
         追加（位置：# IPv4 local connections:）
-        host    all             all             0.0.0.0/0            trust
+        host    all             all             0.0.0.0/0               trust
 编辑自启动文件
     vi /etc/systemd/system/postgresql-16.2.service
 [Unit]
@@ -34,10 +36,10 @@ Type=forking
 User=postgres
 Group=postgres
 WorkingDirectory=/server/tool/postgresql-16.2
-# PIDFile=/server/tool/postgresql-16.2/run/mysqld.pid
-ExecStart=/server/tool/postgresql-16.2/bin/pg_ctl start -D /server/tool/postgresql-16.2/data
-ExecReload=/server/tool/postgresql-16.2/bin/pg_ctl reload -D /server/tool/postgresql-16.2/data
-ExecStop=/server/tool/postgresql-16.2/bin/pg_ctl stop -D /server/tool/postgresql-16.2/data
+# PIDFile=/server/tool/postgresql-16.2/run/postgresql.pid
+ExecStart=/server/tool/postgresql-16.2/bin/pg_ctl -D /server/tool/postgresql-16.2/data -l logfile start
+ExecReload=/server/tool/postgresql-16.2/bin/pg_ctl -D /server/tool/postgresql-16.2/data -l logfile reload
+ExecStop=/server/tool/postgresql-16.2/bin/pg_ctl -D /server/tool/postgresql-16.2/data -l logfile stop
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
@@ -45,3 +47,5 @@ WantedBy=multi-user.target
     systemctl enable postgresql-16.2
 启动数据库
     /server/tool/postgresql-16.2/bin/postgres -D /server/tool/postgresql-16.2/data >logfile 2>&1
+设置环境变量增加以下目录（参考linux常用命令）
+    /server/tool/postgresql-16.2/bin
