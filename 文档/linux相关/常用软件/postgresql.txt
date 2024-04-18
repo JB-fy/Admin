@@ -1,0 +1,47 @@
+安装依赖
+    dnf install gcc gcc-c++ make readline-devel
+创建目录
+    mkdir /server/tool/postgresql-16.2 /server/tool/postgresql-16.2/conf /server/tool/postgresql-16.2/data
+解压安装包
+    tar -xvf postgresql-16.2.tar.gz
+进入解压目录编译
+    ./configure --prefix=/server/tool/postgresql-16.2 --sysconfdir=/server/tool/postgresql-16.2/conf --localstatedir=/server/tool/postgresql-16.2/data
+    make && make install
+初始化数据库
+    # 创建用户组，用户并改变文件所属用户组和用户
+    groupadd postgres
+    useradd -r -g postgres postgres
+    chown -R postgres:postgres /server/tool/postgresql-16.2/data
+    # 切换到postgres用户（必须使用root以外的用户初始化数据库）
+    su - postgres
+    # 初始化
+    /server/tool/postgresql-16.2/bin/initdb -D /server/tool/postgresql-16.2/data
+    # 修改数据库配置参数
+    vi /server/tool/postgresql-16.2/data/postgresql.conf
+        修改以下参数
+        listen_addresses = '*'
+        post = 5432
+    vi /server/tool/postgresql-16.2/data/pg_hba.conf
+        追加（位置：# IPv4 local connections:）
+        host    all             all             0.0.0.0/0            trust
+编辑自启动文件
+        vi /etc/systemd/system/postgresql-16.2.service
+[Unit]
+Description=postgresql-16.2
+After=network.target
+[Service]
+Type=forking
+User=postgres
+Group=postgres
+WorkingDirectory=/server/tool/postgresql-16.2
+# PIDFile=/server/tool/postgresql-16.2/run/mysqld.pid
+ExecStart=/server/tool/postgresql-16.2/bin/pg_ctl start -D /server/tool/postgresql-16.2/data
+ExecReload=/server/tool/postgresql-16.2/bin/pg_ctl reload -D /server/tool/postgresql-16.2/data
+ExecStop=/server/tool/postgresql-16.2/bin/pg_ctl stop -D /server/tool/postgresql-16.2/data
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+设置自启动
+        systemctl enable postgresql-16.2
+启动数据库
+    /server/tool/postgresql-16.2/bin/postgres -D /server/tool/postgresql-16.2/data >logfile 2>&1

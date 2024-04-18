@@ -74,17 +74,20 @@ vi /etc/systemd/system/xxxx.service
 [Unit]
 Description=nginx
 After=network.target
-#Wants=redis-server.service mysql.service
+# Wants=redis-server.service mysql.service
 [Service]
 Type=forking
-PIDFile=/server/tool/xxxx/logs/nginx.pid
+# User=nginx
+# Group=nginx
+# WorkingDirectory=/server/tool/xxxx
+# PIDFile=/server/tool/xxxx/logs/nginx.pid
 ExecStart=/server/tool/xxxx/sbin/nginx
 ExecReload=/server/tool/xxxx/sbin/nginx -s reload
 ExecStop=/server/tool/xxxx/sbin/nginx -s quit
 PrivateTmp=true
-#Restart=always	
-#RestartSec=5s
-#StartLimitInterval=0
+# Restart=always	
+# RestartSec=5s
+# StartLimitInterval=0
 [Install]
 WantedBy=multi-user.target
 /**--------设置自启动 结束--------**/
