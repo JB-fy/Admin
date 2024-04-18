@@ -26,8 +26,8 @@
         listen_addresses = '*'
         post = 5432
     vi /server/tool/postgresql-16.2/data/pg_hba.conf
-        追加（位置：# IPv4 local connections:）
-        host    all             all             0.0.0.0/0               trust
+        在（# IPv4 local connections:）后面追加一行
+        host    all             all             0.0.0.0/0               md5
 启动数据库
     /server/tool/postgresql-16.2/bin/pg_ctl -D /server/tool/postgresql-16.2/data -l logfile start
     # 登录数据库
