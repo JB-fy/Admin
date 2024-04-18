@@ -28,9 +28,11 @@
         host    all             all             0.0.0.0/0               trust
 启动数据库
     /server/tool/postgresql-16.2/bin/pg_ctl -D /server/tool/postgresql-16.2/data -l logfile start
-设置密码
+    # 登录数据库
     /server/tool/postgresql-16.2/bin/psql -U postgres
+    # 设置密码
     ALTER USER postgres WITH PASSWORD 'postgres@123';
+    # 退出
     \q
 编辑自启动文件
     vi /etc/systemd/system/postgresql-16.2.service
