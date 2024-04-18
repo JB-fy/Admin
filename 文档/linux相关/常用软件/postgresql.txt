@@ -25,7 +25,7 @@
         追加（位置：# IPv4 local connections:）
         host    all             all             0.0.0.0/0            trust
 编辑自启动文件
-        vi /etc/systemd/system/postgresql-16.2.service
+    vi /etc/systemd/system/postgresql-16.2.service
 [Unit]
 Description=postgresql-16.2
 After=network.target
@@ -42,6 +42,6 @@ PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 设置自启动
-        systemctl enable postgresql-16.2
+    systemctl enable postgresql-16.2
 启动数据库
     /server/tool/postgresql-16.2/bin/postgres -D /server/tool/postgresql-16.2/data >logfile 2>&1
