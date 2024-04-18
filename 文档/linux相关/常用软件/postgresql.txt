@@ -1,5 +1,5 @@
 安装依赖
-    dnf install gcc gcc-c++ make readline-devel
+    dnf install gcc gcc-c++ make readline-devel openssl-devel
 创建目录
     mkdir /server/tool/postgresql-16.2 /server/tool/postgresql-16.2/conf /server/tool/postgresql-16.2/data
 解压安装包
@@ -47,5 +47,9 @@ WantedBy=multi-user.target
     systemctl enable postgresql-16.2
 启动数据库
     /server/tool/postgresql-16.2/bin/postgres -D /server/tool/postgresql-16.2/data -l logfile start
+设置密码
+    /server/tool/postgresql-16.2/bin/psql -U postgres
+    ALTER USER postgres WITH PASSWORD 'postgres@123';
+    \q
 设置环境变量增加以下目录（参考linux常用命令）
     /server/tool/postgresql-16.2/bin
