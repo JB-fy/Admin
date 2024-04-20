@@ -1,6 +1,7 @@
 package my_gen
 
 import (
+	"api/internal/cmd/my-gen/internal"
 	"context"
 	"fmt"
 	"math"
@@ -15,25 +16,26 @@ import (
 )
 
 type myGenTpl struct {
-	Link               string       //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr           []string     //当前数据库全部数据表（获取扩展表，中间表等需要）
-	Group              string       //数据库分组
-	RemovePrefixCommon string       //要删除的共有前缀
-	RemovePrefixAlone  string       //要删除的独有前缀
-	RemovePrefix       string       //要删除的前缀
-	Table              string       //表名（原始，包含前缀）
-	TableCaseSnake     string       //表名（蛇形，已去除前缀）
-	TableCaseCamel     string       //表名（大驼峰，已去除前缀）
-	TableCaseKebab     string       //表名（横线，已去除前缀）
-	KeyList            []myGenKey   //索引列表
-	FieldList          []myGenField //字段列表
-	FieldListOfDefault []myGenField //除FieldListOfAfter外，表的其它字段数组。
-	FieldListOfAfter   []myGenField //最后处理的字段数组。且需按该数组顺序处理
-	ModuleDirCaseCamel string       //模块目录（大驼峰，/会被去除）
-	ModuleDirCaseKebab string       //模块目录（横线，/会被保留）
-	LogicStructName    string       //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	I18nPath           string       //前端多语言使用
-	Handle             struct {     //需特殊处理的字段
+	DbHandler          internal.MyGenDbHandler //数据库处理器
+	Link               string                  //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr           []string                //当前数据库全部数据表（获取扩展表，中间表等需要）
+	Group              string                  //数据库分组
+	RemovePrefixCommon string                  //要删除的共有前缀
+	RemovePrefixAlone  string                  //要删除的独有前缀
+	RemovePrefix       string                  //要删除的前缀
+	Table              string                  //表名（原始，包含前缀）
+	TableCaseSnake     string                  //表名（蛇形，已去除前缀）
+	TableCaseCamel     string                  //表名（大驼峰，已去除前缀）
+	TableCaseKebab     string                  //表名（横线，已去除前缀）
+	KeyList            []internal.MyGenKey     //索引列表
+	FieldList          []myGenField            //字段列表
+	FieldListOfDefault []myGenField            //除FieldListOfAfter外，表的其它字段数组。
+	FieldListOfAfter   []myGenField            //最后处理的字段数组。且需按该数组顺序处理
+	ModuleDirCaseCamel string                  //模块目录（大驼峰，/会被去除）
+	ModuleDirCaseKebab string                  //模块目录（横线，/会被保留）
+	LogicStructName    string                  //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	I18nPath           string                  //前端多语言使用
+	Handle             struct {                //需特殊处理的字段
 		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
 			List      []myGenField
 			IsPrimary bool //是否主键
@@ -66,7 +68,7 @@ type myGenTpl struct {
 }
 
 type myGenField struct {
-	myGenFieldTmp
+	internal.MyGenField
 	IsUnique             bool                  // 是否独立的唯一索引
 	FieldType            myGenFieldType        // 字段类型（数据类型）
 	FieldTypePrimary     myGenFieldTypePrimary // 字段类型（主键类型）
@@ -82,25 +84,6 @@ type myGenField struct {
 	FieldLimitStr        string                // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitFloat      [2]string             // 浮点数字段限制。第1个表示整数位，第2个表示小数位
 	FieldShowLenMax      int                   // 显示长度。公式：汉字个数 + (其它字符个数 / 2)。前端el-select-v2等部分组件生成时，根据该值设置宽度
-}
-
-type myGenFieldTmp struct {
-	FieldRaw     string      // 字段（原始）
-	FieldTypeRaw string      // 字段类型（原始）
-	IsNull       bool        // 字段是否可为NULL
-	Default      interface{} // 默认值
-	Comment      string      // 注释（原始）。
-	IsAutoInc    bool        // 是否自增
-}
-
-type myGenKey struct {
-	Name      string   // 索引名称。主键：PRIMARY；其它：定义
-	Index     uint     // 索引顺序。从1开始，单索引都是1，联合索引按字段数量顺序递增
-	Field     string   // 字段（原始）
-	FieldArr  []string // 字段数组。联合索引有多字段，需按顺序存入
-	IsPrimary bool     // 是否主键
-	IsUnique  bool     // 是否唯一
-	IsAutoInc bool     // 是否自增
 }
 
 type handlePassword struct {
@@ -146,9 +129,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
 		Table:              table,
 	}
+	tpl.DbHandler = internal.NewMyGenDbHandler(ctx, g.DB(tpl.Group).GetConfig().Type)
 	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[tpl.Group])[0][`link`])
-	tpl.TableArr = tpl.getTable(ctx, tpl.Group)
-	tpl.KeyList = tpl.getTableKey(ctx, tpl.Group, tpl.Table)
+	tpl.TableArr = tpl.DbHandler.GetTableArr(ctx, tpl.Group)
+	tpl.KeyList = tpl.DbHandler.GetKeyList(ctx, tpl.Group, tpl.Table)
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
 	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
@@ -171,10 +155,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.ModuleDirCaseCamel = moduleDirCaseCamel
 	tpl.I18nPath = gstr.Replace(moduleDirCaseKebab, `/`, `.`) + `.` + tpl.TableCaseKebab
 
-	fieldListTmp := tpl.getTableField(ctx, tpl.Group, tpl.Table)
+	fieldListTmp := tpl.DbHandler.GetFieldList(ctx, tpl.Group, tpl.Table)
 	fieldList := make([]myGenField, len(fieldListTmp))
 	for k, v := range fieldListTmp {
-		fieldTmp := myGenField{myGenFieldTmp: v}
+		fieldTmp := myGenField{MyGenField: v}
 		fieldTmp.FieldCaseSnake = gstr.CaseSnake(fieldTmp.FieldRaw)
 		fieldTmp.FieldCaseCamel = gstr.CaseCamel(fieldTmp.FieldRaw)
 		fieldTmp.FieldCaseSnakeRemove = gstr.Split(fieldTmp.FieldCaseSnake, `_of_`)[0]
@@ -561,96 +545,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	return
 }
 
-// 获取表
-func (myGenTplThis *myGenTpl) getTable(ctx context.Context, group string) (tableArr []string) {
-	tableArr, _ = g.DB(group).Tables(ctx) //框架自带。大概率兼容多种数据库
-	return
-}
-
-// TODO 获取表字段（当前仅对mysql做处理）
-func (myGenTplThis *myGenTpl) getTableField(ctx context.Context, group, table string) (fieldList []myGenFieldTmp) {
-	fieldListTmp, _ := g.DB(group).TableFields(ctx, table) //框架自带。大概率兼容多种数据库
-	fieldList = make([]myGenFieldTmp, len(fieldListTmp))
-	for _, v := range fieldListTmp {
-		field := myGenFieldTmp{
-			FieldRaw:     v.Name,
-			FieldTypeRaw: v.Type,
-			IsNull:       v.Null,
-			Default:      v.Default,
-			Comment:      v.Comment,
-		}
-		fieldList[v.Index] = field
-	}
-	switch g.DB(group).GetConfig().Type {
-	case `mysql`:
-		/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
-		fieldList = make([]myGenFieldTmp, len(fieldListTmp))
-		for k, v := range fieldListTmp {
-			fieldList[k] = myGenFieldTmp{
-				// KeyRaw:       v[`Key`].String(),
-				FieldRaw:     v[`Field`].String(),
-				FieldTypeRaw: v[`Type`].String(),
-				IsNull:       v[`Null`].Bool(),
-				Default:      v[`Default`].String(),
-				Comment:      v[`Comment`].String(),
-			}
-			if v[`Extra`].String() == `auto_increment` {
-				fieldList[k].IsAutoInc = true
-			}
-		} */
-		for _, v := range fieldListTmp {
-			if v.Extra == `auto_increment` {
-				fieldList[v.Index].IsAutoInc = true
-			}
-		}
-	case `sqlite`:
-	case `mssql`:
-	case `pgsql`:
-	case `oracle`:
-	}
-	return
-}
-
-// TODO 获取表索引（当前仅对mysql做处理）
-func (myGenTplThis *myGenTpl) getTableKey(ctx context.Context, group, table string) (keyList []myGenKey) {
-	switch g.DB(group).GetConfig().Type {
-	case `mysql`:
-		keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW KEYS FROM `+table)
-		keyList = make([]myGenKey, len(keyListTmp))
-		fieldList := myGenTplThis.getTableField(ctx, group, table)
-		fieldArrMap := map[string][]string{}
-		for k, v := range keyListTmp {
-			key := myGenKey{
-				Name:     v[`Key_name`].String(),
-				Index:    v[`Seq_in_index`].Uint(),
-				Field:    v[`Column_name`].String(),
-				IsUnique: !v[`Non_unique`].Bool(),
-			}
-			if key.Name == `PRIMARY` {
-				key.IsPrimary = true
-				for _, field := range fieldList {
-					if key.Field == field.FieldRaw && field.IsAutoInc {
-						key.IsAutoInc = true
-						break
-					}
-				}
-			}
-			keyList[k] = key
-
-			fieldArrMap[key.Name] = append(fieldArrMap[key.Name], key.Field)
-		}
-		for k, v := range keyList {
-			v.FieldArr = fieldArrMap[v.Name]
-			keyList[k] = v
-		}
-	case `sqlite`:
-	case `mssql`:
-	case `pgsql`:
-	case `oracle`:
-	}
-	return
-}
-
 // 执行gf gen dao命令生成dao文件
 func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 	commandArg := []string{
@@ -744,7 +638,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		removePrefixAloneTmp = gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1) + `_`
 	}
 	isSamePrimaryFunc := func(table string) bool {
-		tableKeyList := tpl.getTableKey(ctx, tpl.Group, table)
+		tableKeyList := tpl.DbHandler.GetKeyList(ctx, tpl.Group, table)
 		for _, v := range tableKeyList {
 			if v.IsPrimary && len(v.FieldArr) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.Field)) {
 				return true
