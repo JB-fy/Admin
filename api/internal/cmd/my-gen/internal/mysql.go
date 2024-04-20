@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -46,32 +47,37 @@ func (dbHandler mysql) GetFieldList(ctx context.Context, group, table string) (f
 
 func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey) {
 	keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW KEYS FROM `+table)
-	keyList = make([]MyGenKey, len(keyListTmp))
 	fieldList := dbHandler.GetFieldList(ctx, group, table)
+	keyNameList := []string{}
 	fieldArrMap := map[string][]string{}
-	for k, v := range keyListTmp {
-		key := MyGenKey{
-			Name:     v[`Key_name`].String(),
-			Index:    v[`Seq_in_index`].Uint(),
-			Field:    v[`Column_name`].String(),
-			IsUnique: !v[`Non_unique`].Bool(),
+	for _, v := range keyListTmp {
+		keyName := v[`Key_name`].String()
+		if !garray.NewStrArrayFrom(keyNameList).Contains(keyName) {
+			keyNameList = append(keyNameList, keyName)
 		}
-		if key.Name == `PRIMARY` {
+		fieldArrMap[keyName] = append(fieldArrMap[keyName], v[`Column_name`].String())
+	}
+	for _, keyName := range keyNameList {
+		key := MyGenKey{}
+		key.FieldArr = append(key.FieldArr, fieldArrMap[keyName]...)
+		if keyName == `PRIMARY` {
 			key.IsPrimary = true
+		}
+		for _, v := range keyListTmp {
+			if keyName == v[`Key_name`].String() {
+				key.IsUnique = !v[`Non_unique`].Bool()
+				break
+			}
+		}
+		if len(key.FieldArr) == 1 {
 			for _, field := range fieldList {
-				if key.Field == field.FieldRaw && field.IsAutoInc {
+				if key.FieldArr[0] == field.FieldRaw && field.IsAutoInc {
 					key.IsAutoInc = true
 					break
 				}
 			}
 		}
-		keyList[k] = key
-
-		fieldArrMap[key.Name] = append(fieldArrMap[key.Name], key.Field)
-	}
-	for k, v := range keyList {
-		v.FieldArr = fieldArrMap[v.Name]
-		keyList[k] = v
+		keyList = append(keyList, key)
 	}
 	return
 }

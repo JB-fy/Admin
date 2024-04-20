@@ -75,33 +75,26 @@ func (dbHandler pgsql) GetFieldList(ctx context.Context, group, table string) (f
 
 // TODO
 func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey) {
-	keyListTmp, _ := g.DB(group).GetAll(ctx, `SELECT pg_index.* FROM pg_index JOIN pg_class ON pg_index.indrelid = pg_class.OID WHERE pg_class.relname = '`+table+`'`)
-	keyList = make([]MyGenKey, len(keyListTmp))
+	indrelid, _ := g.DB(group).GetValue(ctx, `SELECT oid FROM pg_class WHERE relname = '`+table+`'`)
+	keyListTmp, _ := g.DB(group).GetAll(ctx, `SELECT * FROM pg_index WHERE indrelid = '`+indrelid.String()+`'`)
 	fieldList := dbHandler.GetFieldList(ctx, group, table)
-	fieldArrMap := map[string][]string{}
-	for k, v := range keyListTmp {
-		key := MyGenKey{
-			Name:     v[`relname`].String(),
-			Index:    v[`Seq_in_index`].Uint(),
-			Field:    v[`Column_name`].String(),
-			IsUnique: !v[`Non_unique`].Bool(),
+	for _, v := range keyListTmp {
+		if !v[`indisvalid`].Bool() {
+			continue
 		}
-		if key.Name == `PRIMARY` {
-			key.IsPrimary = true
-			for _, field := range fieldList {
-				if key.Field == field.FieldRaw && field.IsAutoInc {
-					key.IsAutoInc = true
-					break
-				}
+		key := MyGenKey{
+			IsPrimary: v[`indisprimary`].Bool(),
+			IsUnique:  v[`indisunique`].Bool(),
+		}
+		// g.DB(group).GetValue(ctx, `SELECT indkey FROM pg_index WHERE indexrelid = `+v[`indexrelid`].String())
+		fieldIndex := v[`indkey`].Int() //TODO indkey返回值有BUG。联合索引应该返回4 5，但这里却是0。
+		if fieldIndex != 0 {
+			key.FieldArr = append(key.FieldArr, fieldList[fieldIndex-1].FieldRaw)
+			if fieldList[fieldIndex-1].IsAutoInc {
+				key.IsAutoInc = true
 			}
 		}
-		keyList[k] = key
-
-		fieldArrMap[key.Name] = append(fieldArrMap[key.Name], key.Field)
-	}
-	for k, v := range keyList {
-		v.FieldArr = fieldArrMap[v.Name]
-		keyList[k] = v
+		keyList = append(keyList, key)
 	}
 	return
 }

@@ -231,7 +231,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 		/*--------确定字段主键类型 开始--------*/
 		for _, key := range tpl.KeyList {
-			if fieldTmp.FieldRaw != key.Field {
+			if !garray.NewStrArrayFrom(key.FieldArr).Contains(fieldTmp.FieldRaw) {
 				continue
 			}
 			if key.IsUnique && len(key.FieldArr) == 1 {
@@ -640,7 +640,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	isSamePrimaryFunc := func(table string) bool {
 		tableKeyList := tpl.DbHandler.GetKeyList(ctx, tpl.Group, table)
 		for _, v := range tableKeyList {
-			if v.IsPrimary && len(v.FieldArr) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.Field)) {
+			if v.IsPrimary && len(v.FieldArr) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.FieldArr[0])) {
 				return true
 			}
 		}
@@ -790,13 +790,13 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range extendTpl.KeyList {
-			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
-				continue
-			}
 			if len(key.FieldArr) != 1 {
 				continue
 			}
-			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.Field)
+			if !myGenTplThis.IsSamePrimary(tpl, key.FieldArr[0]) {
+				continue
+			}
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.FieldArr[0])
 			if len(handleExtendMiddleObj.FieldList) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
@@ -914,13 +914,13 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 
 		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range middleTpl.KeyList {
-			if !myGenTplThis.IsSamePrimary(tpl, key.Field) {
-				continue
-			}
 			if !key.IsUnique { // 必须唯一
 				continue
 			}
-			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, key.Field)
+			if !myGenTplThis.IsSamePrimary(tpl, key.FieldArr[0]) {
+				continue
+			}
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, key.FieldArr[0])
 			if len(handleExtendMiddleObj.FieldList) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}

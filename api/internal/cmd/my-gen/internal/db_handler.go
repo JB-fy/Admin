@@ -22,9 +22,6 @@ type MyGenField struct {
 }
 
 type MyGenKey struct {
-	Name      string   // 索引名称。主键：PRIMARY；其它：定义
-	Index     uint     // 索引顺序。从1开始，单索引都是1，联合索引按字段数量顺序递增
-	Field     string   // 字段（原始）
 	FieldArr  []string // 字段数组。联合索引有多字段，需按顺序存入
 	IsPrimary bool     // 是否主键
 	IsUnique  bool     // 是否唯一
