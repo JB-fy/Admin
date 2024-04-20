@@ -3,7 +3,10 @@ package internal
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type pgsql struct {
@@ -18,11 +21,24 @@ func (dbHandler pgsql) GetFieldList(ctx context.Context, group, table string) (f
 			FieldRaw:     v[`column_name`].String(),
 			FieldTypeRaw: v[`data_type`].String(),
 			IsNull:       v[`is_nullable`].Bool(),
-			Default:      v[`column_default`].String(),
+			Default:      v[`column_default`].Interface(),
 			Comment:      v[`column_comment`].String(),
 		}
-		if v[`Extra`].String() == `auto_increment` {
-			field.IsAutoInc = true
+		if !v[`column_default`].IsNil() {
+			defaultStr := v[`column_default`].String()
+			if gstr.Pos(defaultStr, `nextval`) == 0 {
+				field.IsAutoInc = true
+				// field.Default = 0
+			} else {
+				if gstr.Pos(defaultStr, `::`) != -1 {
+					switch gstr.Split(defaultStr, `::`)[0] {
+					case `''`:
+						field.Default = ``
+					case `NULL`:
+						field.Default = nil
+					}
+				}
+			}
 		}
 		fieldList[v[`ordinal_position`].Int()-1] = field
 	} */
@@ -36,15 +52,30 @@ func (dbHandler pgsql) GetFieldList(ctx context.Context, group, table string) (f
 			Default:      v.Default,
 			Comment:      v.Comment,
 		}
-		if v.Extra == `auto_increment` {
-			field.IsAutoInc = true
+		if !gvar.New(v.Default).IsNil() {
+			defaultStr := gconv.String(v.Default)
+			if gstr.Pos(defaultStr, `nextval`) == 0 {
+				field.IsAutoInc = true
+				// field.Default = 0
+			} else {
+				if gstr.Pos(defaultStr, `::`) != -1 {
+					switch gstr.Split(defaultStr, `::`)[0] {
+					case `''`:
+						field.Default = ``
+					case `NULL`:
+						field.Default = nil
+					}
+				}
+			}
 		}
 		fieldList[v.Index] = field
 	}
 	return
 }
+
+// TODO
 func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey) {
-	keyListTmp, _ := g.DB(group).GetAll(ctx, `SELECT * FROM pg_index JOIN pg_class ON pg_index.indrelid = pg_class.OID WHERE pg_class.relname = '`+table+`'`)
+	keyListTmp, _ := g.DB(group).GetAll(ctx, `SELECT pg_index.* FROM pg_index JOIN pg_class ON pg_index.indrelid = pg_class.OID WHERE pg_class.relname = '`+table+`'`)
 	keyList = make([]MyGenKey, len(keyListTmp))
 	fieldList := dbHandler.GetFieldList(ctx, group, table)
 	fieldArrMap := map[string][]string{}

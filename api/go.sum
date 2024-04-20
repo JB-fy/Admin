@@ -71,6 +71,8 @@ github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpv
 github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.0 h1:5Igvtz4gy5UMvH+Ut4kLIpwSzggV9ZgDVBsIiOctH5E=
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.0/go.mod h1:0+flZ0clMKjtH1sTI7YD2KG4FPr8xz0L9h1WMd5M2Z8=
+github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.7.0 h1:S5ckWfyByaNgQZd/foDGPjX7sXkh1vVUDO61ITfSWBU=
+github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.7.0/go.mod h1:V3u5Iw/HOl99Pyj7yF6tgknz5oa9MCZoOy7xueLCg5c=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.0 h1:hJxshC0gZyFZaGo2HItXd5XMzIMbCRcgShr1ljMYwUc=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.0/go.mod h1:is3Q3ItZSPMZ1RBJ3xIcEasyGZnOg8eNeG9dubOx/zc=
 github.com/gogf/gf/v2 v2.7.0 h1:CjxhbMiE7oqf6K8ZtGuKt3dQEwK4vL6LhiI+dI7tJGU=
@@ -109,6 +111,8 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
+github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=

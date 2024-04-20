@@ -18,7 +18,7 @@ func (dbHandler mysql) GetFieldList(ctx context.Context, group, table string) (f
 			FieldRaw:     v[`Field`].String(),
 			FieldTypeRaw: v[`Type`].String(),
 			IsNull:       v[`Null`].Bool(),
-			Default:      v[`Default`].String(),
+			Default:      v[`Default`].Interface(),
 			Comment:      v[`Comment`].String(),
 		}
 		if v[`Extra`].String() == `auto_increment` {

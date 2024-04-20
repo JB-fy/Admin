@@ -33,7 +33,7 @@
     # 登录数据库
     /server/tool/postgresql-16.2/bin/psql -U postgres
     # 设置密码
-    ALTER USER postgres WITH PASSWORD 'postgres@123';
+    ALTER USER postgres WITH PASSWORD '123456';
     # 退出
     \q
 编辑自启动文件
