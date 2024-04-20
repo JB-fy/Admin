@@ -5,6 +5,8 @@ import (
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gregex"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type mysql struct {
@@ -79,5 +81,34 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 		}
 		keyList = append(keyList, key)
 	}
+	return
+}
+
+func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitStr string) {
+	fieldTypeRaw := ``
+	if len(fieldTypeRawOpt) > 0 {
+		fieldTypeRaw = gconv.String(fieldTypeRawOpt[0])
+	} /* else {
+	} */
+
+	fieldLimitStrTmp, _ := gregex.MatchString(`.*\((\d*)\)`, fieldTypeRaw)
+	if len(fieldLimitStrTmp) > 1 {
+		fieldLimitStr = fieldLimitStrTmp[1]
+	}
+	return
+}
+
+func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitFloat [2]string) {
+	fieldTypeRaw := ``
+	if len(fieldTypeRawOpt) > 0 {
+		fieldTypeRaw = gconv.String(fieldTypeRawOpt[0])
+	} /* else {
+	} */
+
+	fieldLimitFloatTmp, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, fieldTypeRaw)
+	if len(fieldLimitFloatTmp) < 3 {
+		fieldLimitFloatTmp = []string{``, `10`, `2`}
+	}
+	fieldLimitFloat = [2]string{fieldLimitFloatTmp[1], fieldLimitFloatTmp[2]}
 	return
 }

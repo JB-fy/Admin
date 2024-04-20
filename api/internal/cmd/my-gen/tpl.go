@@ -187,17 +187,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			`{"`, `' + "{'{'}" + '"`,
 		})
 
-		tmpFieldLimitStr, _ := gregex.MatchString(`.*\((\d*)\)`, fieldTmp.FieldTypeRaw)
-		if len(tmpFieldLimitStr) > 1 {
-			fieldTmp.FieldLimitStr = tmpFieldLimitStr[1]
-		}
-		tmpFieldLimitFloat, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, fieldTmp.FieldTypeRaw)
-		if len(tmpFieldLimitFloat) < 3 {
-			tmpFieldLimitFloat = []string{``, `10`, `2`}
-		}
-		fieldTmp.FieldLimitFloat = [2]string{tmpFieldLimitFloat[1], tmpFieldLimitFloat[2]}
-
 		fieldTmp.FieldShowLenMax = tpl.getShowLen(fieldTmp.FieldName)
+
+		fieldTmp.FieldLimitStr = tpl.DbHandler.GetFieldLimitStr(ctx, tpl.Group, tpl.Table, v.FieldRaw, fieldTmp.FieldTypeRaw)
+
+		fieldTmp.FieldLimitFloat = tpl.DbHandler.GetFieldLimitFloat(ctx, tpl.Group, tpl.Table, v.FieldRaw, fieldTmp.FieldTypeRaw)
 
 		/*--------确定字段数据类型 开始--------*/
 		if gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1 { //int等类型

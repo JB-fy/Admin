@@ -14,7 +14,7 @@ type pgsql struct {
 }
 
 func (dbHandler pgsql) GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField) {
-	/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SELECT *, col_description ( 'tes' :: REGCLASS, ordinal_position ) AS column_comment  FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`'`)
+	/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SELECT *,col_description ('tes' :: REGCLASS, ordinal_position) AS column_comment FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`'`)
 	fieldList = make([]MyGenField, len(fieldListTmp))
 	for _, v := range fieldListTmp {
 		field := MyGenField{
@@ -95,5 +95,17 @@ func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (key
 		}
 		keyList = append(keyList, key)
 	}
+	return
+}
+
+func (dbHandler pgsql) GetFieldLimitStr(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitStr string) {
+	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field+`'`)
+	fieldLimitStr = fieldInfo[`character_maximum_length`].String()
+	return
+}
+
+func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitFloat [2]string) {
+	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field+`'`)
+	fieldLimitFloat = [2]string{fieldInfo[`numeric_precision_radix`].String(), fieldInfo[`numeric_scale`].String()}
 	return
 }

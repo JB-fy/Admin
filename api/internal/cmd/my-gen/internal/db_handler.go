@@ -7,9 +7,11 @@ import (
 )
 
 type MyGenDbHandler interface {
-	GetTableArr(ctx context.Context, group string) (tableArr []string)              // 获取数据库表数组
-	GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField) // 获取表字段列表
-	GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey)       // 获取表索引列表
+	GetTableArr(ctx context.Context, group string) (tableArr []string)                                                         // 获取数据库表数组
+	GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField)                                            // 获取表字段列表
+	GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey)                                                  // 获取表索引列表
+	GetFieldLimitStr(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitStr string)        // 获取字符串字段限制
+	GetFieldLimitFloat(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitFloat [2]string) // 获取浮点数字段限制
 }
 
 type MyGenField struct {
