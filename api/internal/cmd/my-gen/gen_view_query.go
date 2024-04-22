@@ -256,8 +256,8 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
 		if v.FieldType != internal.TypeDate {
 			viewQueryField.form.Method = internal.ReturnTypeName
 			viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`

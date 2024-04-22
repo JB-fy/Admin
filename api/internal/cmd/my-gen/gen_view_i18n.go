@@ -164,8 +164,8 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 			}
 		}
 	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 	case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
 	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
@@ -254,8 +254,8 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 				}
 			}
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
 		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text

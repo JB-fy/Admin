@@ -352,7 +352,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
 				// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
 			}
-		} else if garray.NewIntArrayFrom([]int{internal.TypeTimestamp, internal.TypeDatetime, internal.TypeDate}).Contains(fieldTmp.FieldType) { //timestamp或datetime或date类型
+		} else if garray.NewIntArrayFrom([]int{internal.TypeTimestamp, internal.TypeDatetime, internal.TypeDate}).Contains(fieldTmp.FieldType) { //datetime或date或timestamp类型
 			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀
 				fieldTmp.FieldTypeName = internal.TypeNameStartPrefix
 			} else if garray.NewStrArrayFrom([]string{`end`}).Contains(fieldPrefix) { //end_前缀

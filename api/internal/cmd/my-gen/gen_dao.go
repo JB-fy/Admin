@@ -731,7 +731,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.filterParse.Method = internal.ReturnTypeName
 	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		daoField.filterParse.Method = internal.ReturnTypeName
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
 		filterParseStr := `m = m.WhereLTE(` + daoTable + `+` + "`.`" + `+k, v)`
 		if v.IsNull {
 			filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + daoTable + ` + ` + "`.`" + ` + k))`
@@ -739,7 +739,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.filterParse.Method = internal.ReturnTypeName
 		daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+filterParseStr)
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
 		filterParseStr := `m = m.WhereGTE(` + daoTable + `+` + "`.`" + `+k, v)`
 		if v.IsNull {
 			filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + daoTable + ` + ` + "`.`" + ` + k))`
@@ -970,7 +970,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.filterParse.Method = internal.ReturnTypeName
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			daoField.filterParse.Method = internal.ReturnTypeName
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
 			filterParseStr := `m = m.WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
@@ -980,7 +980,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				`+filterParseStr+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
 			filterParseStr := `m = m.WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
@@ -1162,7 +1162,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.filterParse.Method = internal.ReturnTypeName
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			daoField.filterParse.Method = internal.ReturnTypeName
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
 			filterParseStr := `m = m.WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
@@ -1172,7 +1172,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				`+filterParseStr+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
 			filterParseStr := `m = m.WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
