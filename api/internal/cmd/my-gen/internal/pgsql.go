@@ -98,14 +98,45 @@ func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (key
 	return
 }
 
-func (dbHandler pgsql) GetFieldLimitStr(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitStr string) {
-	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field+`'`)
+func (dbHandler pgsql) GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string) {
+	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field.FieldRaw+`'`)
 	fieldLimitStr = fieldInfo[`character_maximum_length`].String()
 	return
 }
 
-func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitFloat [2]string) {
-	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field+`'`)
+func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) {
+	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field.FieldRaw+`'`)
 	fieldLimitFloat = [2]string{fieldInfo[`numeric_precision_radix`].String(), fieldInfo[`numeric_scale`].String()}
+	return
+}
+
+func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
+	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
+		fieldType = TypeInt
+		/* if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 { //pgsql不分正负
+			fieldType = TypeIntU
+		} */
+	} else if gstr.Pos(field.FieldTypeRaw, `numeric`) != -1 || gstr.Pos(field.FieldTypeRaw, `real`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 { //float类型
+		fieldType = TypeFloat
+		/* if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 { //pgsql不分正负
+			fieldType = TypeFloatU
+		} */
+	} else if field.FieldTypeRaw == `character varying` { //varchar类型
+		fieldType = TypeVarchar
+	} else if field.FieldTypeRaw == `character` { //char类型
+		fieldType = TypeChar
+	} else if field.FieldTypeRaw == `text` { //text类型
+		fieldType = TypeText
+	} else if field.FieldTypeRaw == `json` { //json类型
+		fieldType = TypeJson
+	} else if gstr.Pos(field.FieldTypeRaw, `timestamp`) != -1 { //datetime类型（在pgsql中，timestamp类型就是datetime类型）
+		fieldType = TypeDatetime
+	} else if field.FieldTypeRaw == `date` { //date类型
+		fieldType = TypeDate
+	} else /* if gstr.Pos(field.FieldTypeRaw, `timestamp`) != -1 { //timestamp类型
+		fieldType = TypeTimestamp //pgsql没有该类型
+	} else  */if gstr.Pos(field.FieldTypeRaw, `time`) != -1 { //time类型
+		fieldType = TypeTime
+	}
 	return
 }

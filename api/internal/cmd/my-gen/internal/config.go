@@ -27,9 +27,10 @@ const (
 	TypeChar                                // `char类型`
 	TypeText                                // `text类型`
 	TypeJson                                // `json类型`
-	TypeTimestamp                           // `timestamp类型`
 	TypeDatetime                            // `datetime类型`
 	TypeDate                                // `date类型`
+	TypeTime                                // `time类型`	//TODO未做生成
+	TypeTimestamp                           // `timestamp类型`
 
 	TypePrimary            MyGenFieldTypePrimary = `独立主键`
 	TypePrimaryAutoInc     MyGenFieldTypePrimary = `独立主键（自增）`

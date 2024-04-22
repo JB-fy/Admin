@@ -189,38 +189,12 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 		fieldTmp.FieldShowLenMax = tpl.getShowLen(fieldTmp.FieldName)
 
-		fieldTmp.FieldLimitStr = tpl.DbHandler.GetFieldLimitStr(ctx, tpl.Group, tpl.Table, v.FieldRaw, fieldTmp.FieldTypeRaw)
+		fieldTmp.FieldLimitStr = tpl.DbHandler.GetFieldLimitStr(ctx, v, tpl.Group, tpl.Table)
 
-		fieldTmp.FieldLimitFloat = tpl.DbHandler.GetFieldLimitFloat(ctx, tpl.Group, tpl.Table, v.FieldRaw, fieldTmp.FieldTypeRaw)
+		fieldTmp.FieldLimitFloat = tpl.DbHandler.GetFieldLimitFloat(ctx, v, tpl.Group, tpl.Table)
 
 		/*--------确定字段数据类型 开始--------*/
-		if gstr.Pos(fieldTmp.FieldTypeRaw, `int`) != -1 && gstr.Pos(fieldTmp.FieldTypeRaw, `point`) == -1 { //int等类型
-			fieldTmp.FieldType = internal.TypeInt
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = internal.TypeIntU
-			}
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `double`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `float`) != -1 { //float类型
-			fieldTmp.FieldType = internal.TypeFloat
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `unsigned`) != -1 {
-				fieldTmp.FieldType = internal.TypeFloatU
-			}
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `varchar`) != -1 { //varchar类型
-			fieldTmp.FieldType = internal.TypeVarchar
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `char`) != -1 { //char类型
-			fieldTmp.FieldType = internal.TypeChar
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `text`) != -1 { //text类型
-			fieldTmp.FieldType = internal.TypeText
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `json`) != -1 { //json类型
-			fieldTmp.FieldType = internal.TypeJson
-
-		} else if gstr.Pos(fieldTmp.FieldTypeRaw, `timestamp`) != -1 || gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 { //timestamp或datetime或date类型
-			fieldTmp.FieldType = internal.TypeTimestamp
-			if gstr.Pos(fieldTmp.FieldTypeRaw, `datetime`) != -1 {
-				fieldTmp.FieldType = internal.TypeDatetime
-			} else if gstr.Pos(fieldTmp.FieldTypeRaw, `date`) != -1 {
-				fieldTmp.FieldType = internal.TypeDate
-			}
-		}
+		fieldTmp.FieldType = tpl.DbHandler.GetFieldType(ctx, v, tpl.Group, tpl.Table)
 		/*--------确定字段数据类型 结束--------*/
 
 		/*--------确定字段主键类型 开始--------*/

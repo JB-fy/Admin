@@ -6,7 +6,7 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
-	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/text/gstr"
 )
 
 type mysql struct {
@@ -84,31 +84,50 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 	return
 }
 
-func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitStr string) {
-	fieldTypeRaw := ``
-	if len(fieldTypeRawOpt) > 0 {
-		fieldTypeRaw = gconv.String(fieldTypeRawOpt[0])
-	} /* else {
-	} */
-
-	fieldLimitStrTmp, _ := gregex.MatchString(`.*\((\d*)\)`, fieldTypeRaw)
+func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string) {
+	fieldLimitStrTmp, _ := gregex.MatchString(`.*\((\d*)\)`, field.FieldTypeRaw)
 	if len(fieldLimitStrTmp) > 1 {
 		fieldLimitStr = fieldLimitStrTmp[1]
 	}
 	return
 }
 
-func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitFloat [2]string) {
-	fieldTypeRaw := ``
-	if len(fieldTypeRawOpt) > 0 {
-		fieldTypeRaw = gconv.String(fieldTypeRawOpt[0])
-	} /* else {
-	} */
-
-	fieldLimitFloatTmp, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, fieldTypeRaw)
+func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) {
+	fieldLimitFloatTmp, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, field.FieldTypeRaw)
 	if len(fieldLimitFloatTmp) < 3 {
 		fieldLimitFloatTmp = []string{``, `10`, `2`}
 	}
 	fieldLimitFloat = [2]string{fieldLimitFloatTmp[1], fieldLimitFloatTmp[2]}
+	return
+}
+
+func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
+	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
+		fieldType = TypeInt
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+			fieldType = TypeIntU
+		}
+	} else if gstr.Pos(field.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(field.FieldTypeRaw, `float`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 { //float类型
+		fieldType = TypeFloat
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+			fieldType = TypeFloatU
+		}
+	} else if gstr.Pos(field.FieldTypeRaw, `varchar`) != -1 { //varchar类型
+		fieldType = TypeVarchar
+	} else if gstr.Pos(field.FieldTypeRaw, `char`) != -1 { //char类型
+		fieldType = TypeChar
+	} else if gstr.Pos(field.FieldTypeRaw, `text`) != -1 { //text类型
+		fieldType = TypeText
+	} else if gstr.Pos(field.FieldTypeRaw, `json`) != -1 { //json类型
+		fieldType = TypeJson
+	} else if gstr.Pos(field.FieldTypeRaw, `datetime`) != -1 { //datetime类型
+		fieldType = TypeDatetime
+	} else if gstr.Pos(field.FieldTypeRaw, `date`) != -1 { //date类型
+		fieldType = TypeDate
+	} else if gstr.Pos(field.FieldTypeRaw, `timestamp`) != -1 { //timestamp类型
+		fieldType = TypeTimestamp
+	} else if gstr.Pos(field.FieldTypeRaw, `time`) != -1 { //time类型
+		fieldType = TypeTime
+	}
 	return
 }
