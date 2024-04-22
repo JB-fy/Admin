@@ -165,6 +165,9 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeDate: // `date类型`
 		viewQueryField.form.Method = internal.ReturnType
 		viewQueryField.form.DataType = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="date" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />`
+	case internal.TypeTime: // `time类型`
+		// viewQueryField.form.Method = internal.ReturnType
+		viewQueryField.form.DataType = `<el-time-picker v-model="queryCommon.data.` + v.FieldRaw + `" placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="HH:mm:ss" value-format="HH:mm:ss" />`
 	default:
 		viewQueryField.form.Method = internal.ReturnType
 		viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" />`
@@ -256,11 +259,16 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
-		if v.FieldType != internal.TypeDate {
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
+		switch v.FieldType {
+		case internal.TypeDatetime, internal.TypeTimestamp:
 			viewQueryField.form.Method = internal.ReturnTypeName
 			viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.` + v.FieldRaw + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`
+		case internal.TypeDate:
+		case internal.TypeTime:
+			viewQueryField.form.Method = internal.ReturnTypeName
+			viewQueryField.form.DataTypeName = `<el-time-picker v-model="queryCommon.data.` + v.FieldRaw + `" placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="HH:mm:ss" value-format="HH:mm:ss" :default-value="new Date(2000, 0, 1, 23, 59, 59)" />`
 		}
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		return myGenViewQueryField{}

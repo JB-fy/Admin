@@ -409,6 +409,20 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d`)
 		apiField.saveRule.Method = internal.ReturnType
 		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`)
+	case internal.TypeTime: // `time类型`
+		apiField.filterType.Method = internal.ReturnType
+		apiField.filterType.DataType = `string`
+		apiField.createType.Method = internal.ReturnType
+		apiField.createType.DataType = `*string`
+		apiField.updateType.Method = internal.ReturnType
+		apiField.updateType.DataType = `*string`
+		apiField.resType.Method = internal.ReturnType
+		apiField.resType.DataType = `*string`
+
+		apiField.filterRule.Method = internal.ReturnType
+		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:H:i:s`)
+		apiField.saveRule.Method = internal.ReturnType
+		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:H:i:s`)
 	default:
 		apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `string`
@@ -571,9 +585,9 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `in:0,1`)
 		apiField.saveRule.Method = internal.ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `in:0,1`)
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		apiField.filterType.Method = internal.ReturnType
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		apiField.filterType.Method = internal.ReturnType
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		apiField.filterType.Method = internal.ReturnEmpty
@@ -683,7 +697,17 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.resType.DataType = `[]string`
 
 			apiField.saveRule.Method = internal.ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`) */
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`)
+		case internal.TypeTime: // `time类型`
+			apiField.createType.Method = internal.ReturnType
+			apiField.createType.DataType = `*[]string`
+			apiField.updateType.Method = internal.ReturnType
+			apiField.updateType.DataType = `*[]string`
+			apiField.resType.Method = internal.ReturnType
+			apiField.resType.DataType = `[]string`
+
+			apiField.saveRule.Method = internal.ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:H:i:s`) */
 		default:
 			apiField.createType.Method = internal.ReturnType
 			apiField.createType.DataType = `*[]string`
@@ -702,12 +726,15 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			case internal.TypeJson:
 				apiField.saveRule.Method = internal.ReturnType
 				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `json`)
-			case internal.TypeTimestamp, internal.TypeDatetime:
+			case internal.TypeDatetime, internal.TypeTimestamp:
 				apiField.saveRule.Method = internal.ReturnType
 				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d H:i:s`)
 			case internal.TypeDate:
 				apiField.saveRule.Method = internal.ReturnType
 				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`)
+			case internal.TypeTime:
+				apiField.saveRule.Method = internal.ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:H:i:s`)
 			}
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
@@ -758,8 +785,8 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			apiField.saveRule.Method = internal.ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`)
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
 			if v.FieldType == internal.TypeVarchar {

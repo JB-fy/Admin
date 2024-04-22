@@ -418,6 +418,9 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		viewListField.width.DataType = `100`
 		viewListField.sortable.Method = internal.ReturnType
 		viewListField.sortable.DataType = `true`
+	case internal.TypeTime: // `time类型`
+		viewListField.sortable.Method = internal.ReturnType
+		viewListField.sortable.DataType = `true`
 	}
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
@@ -565,8 +568,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     />,
                 ]
             }`
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 	case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
 		viewListField.width.Method = internal.ReturnTypeName

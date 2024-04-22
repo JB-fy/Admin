@@ -353,6 +353,11 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnType
 		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + dataFieldPath + `" type="date" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />`
+	case internal.TypeTime: // `time类型`
+		viewSaveField.rule.Method = internal.ReturnType
+		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
+		viewSaveField.formContent.Method = internal.ReturnType
+		viewSaveField.formContent.DataType = `<el-time-picker v-model="saveForm.data.` + dataFieldPath + `" placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="HH:mm:ss" value-format="HH:mm:ss" />`
 	default:
 		viewSaveField.formContent.Method = internal.ReturnType
 		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" />`
@@ -477,11 +482,16 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<el-switch v-model="saveForm.data.` + dataFieldPath + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />`
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
-		if v.FieldType != internal.TypeDate {
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
+		switch v.FieldType {
+		case internal.TypeDatetime, internal.TypeTimestamp:
 			viewSaveField.formContent.Method = internal.ReturnTypeName
 			viewSaveField.formContent.DataTypeName = `<el-date-picker v-model="saveForm.data.` + dataFieldPath + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" :default-time="new Date(2000, 0, 1, 23, 59, 59)" />`
+		case internal.TypeDate:
+		case internal.TypeTime:
+			viewSaveField.formContent.Method = internal.ReturnTypeName
+			viewSaveField.formContent.DataTypeName = `<el-time-picker v-model="saveForm.data.` + dataFieldPath + `" placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="HH:mm:ss" value-format="HH:mm:ss" :default-value="new Date(2000, 0, 1, 23, 59, 59)" />`
 		}
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		if v.FieldType == internal.TypeVarchar {
@@ -734,8 +744,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 			if v.FieldType == internal.TypeVarchar {
 				viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName

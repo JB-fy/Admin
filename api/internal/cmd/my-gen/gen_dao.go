@@ -475,14 +475,14 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				}
 				updateData[`+daoTable+`+`+"`.`"+`+k] = gvar.New(v)`)
 		}
-	case internal.TypeTimestamp: // `timestamp类型`
-	case internal.TypeDatetime: // `datetime类型`
+	case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 	case internal.TypeDate: // `date类型`
 		daoField.filterParse.Method = internal.ReturnType
 		daoField.orderParse.Method = internal.ReturnType
 		daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
 				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+	case internal.TypeTime: // `time类型`
 	default:
 		daoField.filterParse.Method = internal.ReturnType
 	}
@@ -731,7 +731,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.filterParse.Method = internal.ReturnTypeName
 	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		daoField.filterParse.Method = internal.ReturnTypeName
-	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		filterParseStr := `m = m.WhereLTE(` + daoTable + `+` + "`.`" + `+k, v)`
 		if v.IsNull {
 			filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + daoTable + ` + ` + "`.`" + ` + k))`
@@ -739,7 +739,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.filterParse.Method = internal.ReturnTypeName
 		daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+filterParseStr)
-	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		filterParseStr := `m = m.WhereGTE(` + daoTable + `+` + "`.`" + `+k, v)`
 		if v.IsNull {
 			filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + daoTable + ` + ` + "`.`" + ` + k))`
@@ -861,8 +861,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			}
 		case internal.TypeText: // `text类型`
 		case internal.TypeJson: // `json类型`
-		case internal.TypeTimestamp: // `timestamp类型`
-		case internal.TypeDatetime: // `datetime类型`
+		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 		case internal.TypeDate: // `date类型`
 			daoField.filterParse.Method = internal.ReturnType
 			daoField.orderParse.Method = internal.ReturnType
@@ -871,6 +870,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
 				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+		case internal.TypeTime: // `time类型`
 		default:
 			daoField.filterParse.Method = internal.ReturnType
 		}
@@ -970,7 +970,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.filterParse.Method = internal.ReturnTypeName
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			daoField.filterParse.Method = internal.ReturnTypeName
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 			filterParseStr := `m = m.WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
@@ -980,7 +980,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				`+filterParseStr+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 			filterParseStr := `m = m.WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
@@ -1099,8 +1099,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			}
 		case internal.TypeText: // `text类型`
 		case internal.TypeJson: // `json类型`
-		case internal.TypeTimestamp: // `timestamp类型`
-		case internal.TypeDatetime: // `datetime类型`
+		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 		case internal.TypeDate: // `date类型`
 			daoField.filterParse.Method = internal.ReturnType
 			daoField.orderParse.Method = internal.ReturnType
@@ -1109,6 +1108,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
 				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+		case internal.TypeTime: // `time类型`
 		default:
 			daoField.filterParse.Method = internal.ReturnType
 		}
@@ -1162,7 +1162,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.filterParse.Method = internal.ReturnTypeName
 		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 			daoField.filterParse.Method = internal.ReturnTypeName
-		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 			filterParseStr := `m = m.WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
@@ -1172,7 +1172,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				`+filterParseStr+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
-		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 			filterParseStr := `m = m.WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
 				filterParseStr = `m = m.Where(m.Builder().WhereGTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v).WhereOrNull(` + tplEM.daoTable + ` + ` + "`.`" + ` + k))`
