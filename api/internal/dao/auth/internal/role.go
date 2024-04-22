@@ -35,13 +35,13 @@ type RoleColumns struct {
 
 // roleColumns holds the columns for table auth_role.
 var roleColumns = RoleColumns{
-	RoleId:    "roleId",
-	RoleName:  "roleName",
-	SceneId:   "sceneId",
-	TableId:   "tableId",
-	IsStop:    "isStop",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	RoleId:    "role_id",
+	RoleName:  "role_name",
+	SceneId:   "scene_id",
+	TableId:   "table_id",
+	IsStop:    "is_stop",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewRoleDao creates and returns a new DAO object for table data access.

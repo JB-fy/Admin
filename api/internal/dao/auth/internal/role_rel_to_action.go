@@ -32,10 +32,10 @@ type RoleRelToActionColumns struct {
 
 // roleRelToActionColumns holds the columns for table auth_role_rel_to_action.
 var roleRelToActionColumns = RoleRelToActionColumns{
-	RoleId:    "roleId",
-	ActionId:  "actionId",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	RoleId:    "role_id",
+	ActionId:  "action_id",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewRoleRelToActionDao creates and returns a new DAO object for table data access.

@@ -43,7 +43,7 @@ type UserColumns struct {
 
 // userColumns holds the columns for table user.
 var userColumns = UserColumns{
-	UserId:     "userId",
+	UserId:     "user_id",
 	Phone:      "phone",
 	Account:    "account",
 	Password:   "password",
@@ -53,11 +53,11 @@ var userColumns = UserColumns{
 	Gender:     "gender",
 	Birthday:   "birthday",
 	Address:    "address",
-	IdCardName: "idCardName",
-	IdCardNo:   "idCardNo",
-	IsStop:     "isStop",
-	UpdatedAt:  "updatedAt",
-	CreatedAt:  "createdAt",
+	IdCardName: "id_card_name",
+	IdCardNo:   "id_card_no",
+	IsStop:     "is_stop",
+	UpdatedAt:  "updated_at",
+	CreatedAt:  "created_at",
 }
 
 // NewUserDao creates and returns a new DAO object for table data access.

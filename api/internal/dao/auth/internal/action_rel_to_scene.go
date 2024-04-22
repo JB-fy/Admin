@@ -32,10 +32,10 @@ type ActionRelToSceneColumns struct {
 
 // actionRelToSceneColumns holds the columns for table auth_action_rel_to_scene.
 var actionRelToSceneColumns = ActionRelToSceneColumns{
-	ActionId:  "actionId",
-	SceneId:   "sceneId",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	ActionId:  "action_id",
+	SceneId:   "scene_id",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewActionRelToSceneDao creates and returns a new DAO object for table data access.

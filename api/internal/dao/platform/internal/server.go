@@ -33,11 +33,11 @@ type ServerColumns struct {
 
 // serverColumns holds the columns for table platform_server.
 var serverColumns = ServerColumns{
-	ServerId:  "serverId",
-	NetworkIp: "networkIp",
-	LocalIp:   "localIp",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	ServerId:  "server_id",
+	NetworkIp: "network_ip",
+	LocalIp:   "local_ip",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewServerDao creates and returns a new DAO object for table data access.

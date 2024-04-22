@@ -36,14 +36,14 @@ type SceneColumns struct {
 
 // sceneColumns holds the columns for table auth_scene.
 var sceneColumns = SceneColumns{
-	SceneId:     "sceneId",
-	SceneName:   "sceneName",
-	SceneCode:   "sceneCode",
-	SceneConfig: "sceneConfig",
+	SceneId:     "scene_id",
+	SceneName:   "scene_name",
+	SceneCode:   "scene_code",
+	SceneConfig: "scene_config",
 	Remark:      "remark",
-	IsStop:      "isStop",
-	UpdatedAt:   "updatedAt",
-	CreatedAt:   "createdAt",
+	IsStop:      "is_stop",
+	UpdatedAt:   "updated_at",
+	CreatedAt:   "created_at",
 }
 
 // NewSceneDao creates and returns a new DAO object for table data access.

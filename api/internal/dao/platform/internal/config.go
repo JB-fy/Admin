@@ -32,10 +32,10 @@ type ConfigColumns struct {
 
 // configColumns holds the columns for table platform_config.
 var configColumns = ConfigColumns{
-	ConfigKey:   "configKey",
-	ConfigValue: "configValue",
-	UpdatedAt:   "updatedAt",
-	CreatedAt:   "createdAt",
+	ConfigKey:   "config_key",
+	ConfigValue: "config_value",
+	UpdatedAt:   "updated_at",
+	CreatedAt:   "created_at",
 }
 
 // NewConfigDao creates and returns a new DAO object for table data access.

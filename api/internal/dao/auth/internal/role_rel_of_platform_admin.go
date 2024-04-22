@@ -32,10 +32,10 @@ type RoleRelOfPlatformAdminColumns struct {
 
 // roleRelOfPlatformAdminColumns holds the columns for table auth_role_rel_of_platform_admin.
 var roleRelOfPlatformAdminColumns = RoleRelOfPlatformAdminColumns{
-	RoleId:    "roleId",
-	AdminId:   "adminId",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	RoleId:    "role_id",
+	AdminId:   "admin_id",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewRoleRelOfPlatformAdminDao creates and returns a new DAO object for table data access.

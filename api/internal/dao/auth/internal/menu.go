@@ -41,19 +41,19 @@ type MenuColumns struct {
 
 // menuColumns holds the columns for table auth_menu.
 var menuColumns = MenuColumns{
-	MenuId:    "menuId",
-	MenuName:  "menuName",
-	SceneId:   "sceneId",
+	MenuId:    "menu_id",
+	MenuName:  "menu_name",
+	SceneId:   "scene_id",
 	Pid:       "pid",
 	Level:     "level",
-	IdPath:    "idPath",
-	MenuIcon:  "menuIcon",
-	MenuUrl:   "menuUrl",
-	ExtraData: "extraData",
+	IdPath:    "id_path",
+	MenuIcon:  "menu_icon",
+	MenuUrl:   "menu_url",
+	ExtraData: "extra_data",
 	Sort:      "sort",
-	IsStop:    "isStop",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	IsStop:    "is_stop",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewMenuDao creates and returns a new DAO object for table data access.

@@ -35,13 +35,13 @@ type ActionColumns struct {
 
 // actionColumns holds the columns for table auth_action.
 var actionColumns = ActionColumns{
-	ActionId:   "actionId",
-	ActionName: "actionName",
-	ActionCode: "actionCode",
+	ActionId:   "action_id",
+	ActionName: "action_name",
+	ActionCode: "action_code",
 	Remark:     "remark",
-	IsStop:     "isStop",
-	UpdatedAt:  "updatedAt",
-	CreatedAt:  "createdAt",
+	IsStop:     "is_stop",
+	UpdatedAt:  "updated_at",
+	CreatedAt:  "created_at",
 }
 
 // NewActionDao creates and returns a new DAO object for table data access.

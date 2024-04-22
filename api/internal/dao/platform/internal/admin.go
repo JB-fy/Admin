@@ -38,16 +38,16 @@ type AdminColumns struct {
 
 // adminColumns holds the columns for table platform_admin.
 var adminColumns = AdminColumns{
-	AdminId:   "adminId",
+	AdminId:   "admin_id",
 	Phone:     "phone",
 	Account:   "account",
 	Password:  "password",
 	Salt:      "salt",
 	Nickname:  "nickname",
 	Avatar:    "avatar",
-	IsStop:    "isStop",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	IsStop:    "is_stop",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewAdminDao creates and returns a new DAO object for table data access.

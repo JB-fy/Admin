@@ -32,10 +32,10 @@ type RoleRelToMenuColumns struct {
 
 // roleRelToMenuColumns holds the columns for table auth_role_rel_to_menu.
 var roleRelToMenuColumns = RoleRelToMenuColumns{
-	RoleId:    "roleId",
-	MenuId:    "menuId",
-	UpdatedAt: "updatedAt",
-	CreatedAt: "createdAt",
+	RoleId:    "role_id",
+	MenuId:    "menu_id",
+	UpdatedAt: "updated_at",
+	CreatedAt: "created_at",
 }
 
 // NewRoleRelToMenuDao creates and returns a new DAO object for table data access.
