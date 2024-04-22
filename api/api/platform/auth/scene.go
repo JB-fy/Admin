@@ -23,10 +23,10 @@ type SceneListFilter struct {
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
-	SceneName      string      `json:"sceneName,omitempty" v:"max-length:30" dc:"名称"`
-	SceneCode      string      `json:"sceneCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	SceneId        *uint       `json:"scene_id,omitempty" v:"min:1" dc:"场景ID"`
+	SceneName      string      `json:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
+	SceneCode      string      `json:"scene_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 type SceneListRes struct {
@@ -37,14 +37,14 @@ type SceneListRes struct {
 type SceneListItem struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
-	SceneName   *string     `json:"sceneName,omitempty" dc:"名称"`
-	SceneCode   *string     `json:"sceneCode,omitempty" dc:"标识"`
-	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	SceneName   *string     `json:"scene_name,omitempty" dc:"名称"`
+	SceneCode   *string     `json:"scene_code,omitempty" dc:"标识"`
+	SceneConfig *string     `json:"scene_config,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	Remark      *string     `json:"remark,omitempty" dc:"备注"`
-	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -63,14 +63,14 @@ type SceneInfoRes struct {
 type SceneInfo struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
-	SceneName   *string     `json:"sceneName,omitempty" dc:"名称"`
-	SceneCode   *string     `json:"sceneCode,omitempty" dc:"标识"`
-	SceneConfig *string     `json:"sceneConfig,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	SceneName   *string     `json:"scene_name,omitempty" dc:"名称"`
+	SceneCode   *string     `json:"scene_code,omitempty" dc:"标识"`
+	SceneConfig *string     `json:"scene_config,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	Remark      *string     `json:"remark,omitempty" dc:"备注"`
-	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/
@@ -78,11 +78,11 @@ type SceneInfo struct {
 /*--------新增 开始--------*/
 type SceneCreateReq struct {
 	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"新增"`
-	SceneName   *string `json:"sceneName,omitempty" v:"required|max-length:30" dc:"名称"`
-	SceneCode   *string `json:"sceneCode,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	SceneConfig *string `json:"sceneConfig,omitempty" v:"required|json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	SceneName   *string `json:"scene_name,omitempty" v:"required|max-length:30" dc:"名称"`
+	SceneCode   *string `json:"scene_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
+	SceneConfig *string `json:"scene_config,omitempty" v:"required|json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -91,11 +91,11 @@ type SceneCreateReq struct {
 type SceneUpdateReq struct {
 	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"修改"`
 	IdArr       []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	SceneName   *string `json:"sceneName,omitempty" v:"max-length:30" dc:"名称"`
-	SceneCode   *string `json:"sceneCode,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	SceneConfig *string `json:"sceneConfig,omitempty" v:"json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	SceneName   *string `json:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
+	SceneCode   *string `json:"scene_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
+	SceneConfig *string `json:"scene_config,omitempty" v:"json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
 	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

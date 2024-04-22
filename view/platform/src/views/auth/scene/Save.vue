@@ -11,16 +11,16 @@ const saveForm = reactive({
         ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
-        sceneName: [
+        scene_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
-        sceneCode: [
+        scene_code: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },
         ],
-        sceneConfig: [
+        scene_config: [
             { required: true, message: t('validation.required') },
             {
                 type: 'object',
@@ -45,7 +45,7 @@ const saveForm = reactive({
             },
         ],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -98,23 +98,23 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <el-form-item :label="t('auth.scene.name.sceneName')" prop="sceneName">
-                    <el-input v-model="saveForm.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                <el-form-item :label="t('auth.scene.name.scene_name')" prop="scene_name">
+                    <el-input v-model="saveForm.data.scene_name" :placeholder="t('auth.scene.name.scene_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('auth.scene.name.sceneCode')" prop="sceneCode">
-                    <el-input v-model="saveForm.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                <el-form-item :label="t('auth.scene.name.scene_code')" prop="scene_code">
+                    <el-input v-model="saveForm.data.scene_code" :placeholder="t('auth.scene.name.scene_code')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('auth.scene.name.sceneConfig')" prop="sceneConfig">
-                    <el-alert :title="t('auth.scene.tip.sceneConfig')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
-                    <el-input v-model="saveForm.data.sceneConfig" type="textarea" :autosize="{ minRows: 3 }" />
+                <el-form-item :label="t('auth.scene.name.scene_config')" prop="scene_config">
+                    <el-alert :title="t('auth.scene.tip.scene_config')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
+                    <el-input v-model="saveForm.data.scene_config" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.scene.name.remark')" prop="remark">
                     <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
                 </el-form-item>
-                <el-form-item :label="t('auth.scene.name.isStop')" prop="isStop">
+                <el-form-item :label="t('auth.scene.name.is_stop')" prop="is_stop">
                     <el-switch
-                        v-model="saveForm.data.isStop"
+                        v-model="saveForm.data.is_stop"
                         :active-value="1"
                         :inactive-value="0"
                         :inline-prompt="true"

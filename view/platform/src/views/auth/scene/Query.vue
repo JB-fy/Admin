@@ -49,14 +49,14 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </el-form-item>
-        <el-form-item prop="sceneName">
-            <el-input v-model="queryCommon.data.sceneName" :placeholder="t('auth.scene.name.sceneName')" maxlength="30" :clearable="true" />
+        <el-form-item prop="scene_name">
+            <el-input v-model="queryCommon.data.scene_name" :placeholder="t('auth.scene.name.scene_name')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="sceneCode">
-            <el-input v-model="queryCommon.data.sceneCode" :placeholder="t('auth.scene.name.sceneCode')" maxlength="30" :clearable="true" />
+        <el-form-item prop="scene_code">
+            <el-input v-model="queryCommon.data.scene_code" :placeholder="t('auth.scene.name.scene_code')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.isStop')" :clearable="true" style="width: 86px" />
+        <el-form-item prop="is_stop">
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker
