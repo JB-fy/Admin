@@ -381,7 +381,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.saveRule.Method = internal.ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `json`)
 		}
-	case internal.TypeTimestamp, internal.TypeDatetime: // `timestamp类型` // `datetime类型`
+	case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 		// apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `*gtime.Time`
 		apiField.createType.Method = internal.ReturnType
@@ -664,7 +664,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:0`)
 			}
 		/* // 注释掉的类型当作字符串处理
-		case internal.TypeTimestamp, internal.TypeDatetime: // `timestamp类型` // `datetime类型`
+		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 			apiField.createType.Method = internal.ReturnType
 			apiField.createType.DataType = `*[]gtime.Time`
 			apiField.updateType.Method = internal.ReturnType

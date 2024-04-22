@@ -343,7 +343,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 			viewSaveField.formContent.DataType = `<el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
                     ` + viewSaveField.formContent.DataType
 		}
-	case internal.TypeTimestamp, internal.TypeDatetime: // `timestamp类型` // `datetime类型`
+	case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnType

@@ -411,7 +411,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		viewListField.width.DataType = `200`
 		viewListField.hidden.Method = internal.ReturnType
 		viewListField.hidden.DataType = `true`
-	case internal.TypeTimestamp, internal.TypeDatetime: // `timestamp类型` // `datetime类型`
+	case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 		viewListField.sortable.Method = internal.ReturnType
 		viewListField.sortable.DataType = `true`
 	case internal.TypeDate: // `date类型`
