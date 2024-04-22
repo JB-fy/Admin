@@ -23,8 +23,8 @@ type ProfileInfo struct {
 	Gender     uint   `json:"gender" dc:"性别：0未设置 1男 2女"`
 	Birthday   string `json:"birthday" dc:"生日"`
 	Address    string `json:"address" dc:"详细地址"`
-	IdCardName string `json:"idCardName" dc:"身份证姓名"`
-	IdCardNo   string `json:"idCardNo" dc:"身份证号码"`
+	IdCardName string `json:"id_card_name" dc:"身份证姓名"`
+	IdCardNo   string `json:"id_card_no" dc:"身份证号码"`
 }
 
 /*--------个人信息 结束--------*/
@@ -39,8 +39,8 @@ type ProfileUpdateReq struct {
 	Gender               *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday             *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	Address              *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
-	IdCardName           *string     `json:"idCardName,omitempty" v:"required-with:IdCardNo|max-length:30" dc:"身份证姓名"`
-	IdCardNo             *string     `json:"idCardNo,omitempty" v:"required-with:IdCardName|max-length:30" dc:"身份证号码"`
+	IdCardName           *string     `json:"id_card_name,omitempty" v:"required-with:IdCardNo|max-length:30" dc:"身份证姓名"`
+	IdCardNo             *string     `json:"id_card_no,omitempty" v:"required-with:IdCardName|max-length:30" dc:"身份证号码"`
 	Password             *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
 	PasswordToCheck      *string     `json:"passwordToCheck,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号|密码用，passwordToCheck和smsCodeToPassword传一个即可"`
 	SmsCodeToPassword    *string     `json:"smsCodeToPassword,omitempty" v:"size:4" dc:"短信验证码。修改密码用，passwordToCheck和smsCodeToPassword传一个即可"`

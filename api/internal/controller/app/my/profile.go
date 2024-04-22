@@ -101,13 +101,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 			data[userColumns.Phone] = nil
-		case `idCardNo`:
+		case `id_card_no`:
 			if loginInfo[userColumns.IdCardNo].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990009, ``)
 				return
 			}
 
-			idCardInfo, errTmp := id_card.NewIdCard(ctx).Auth(gconv.String(data[`idCardName`]), gconv.String(data[`idCardNo`]))
+			idCardInfo, errTmp := id_card.NewIdCard(ctx).Auth(gconv.String(data[`id_card_name`]), gconv.String(data[`id_card_no`]))
 			if errTmp != nil {
 				err = errTmp
 				return
