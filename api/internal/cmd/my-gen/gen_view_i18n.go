@@ -1,6 +1,8 @@
 package my_gen
 
 import (
+	"api/internal/cmd/my-gen/internal"
+
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -13,22 +15,22 @@ type myGenViewI18n struct {
 }
 
 type myGenViewI18nField struct {
-	name   myGenDataStrHandler
-	status myGenDataSliceHandler
-	tip    myGenDataStrHandler
+	name   internal.MyGenDataStrHandler
+	status internal.MyGenDataSliceHandler
+	tip    internal.MyGenDataStrHandler
 }
 
 func (viewI18nThis *myGenViewI18n) Add(viewI18nField myGenViewI18nField, field string) {
-	if viewI18nField.name.getData() != `` {
-		viewI18nThis.name = append(viewI18nThis.name, field+`: `+viewI18nField.name.getData()+`,`)
+	if viewI18nField.name.GetData() != `` {
+		viewI18nThis.name = append(viewI18nThis.name, field+`: `+viewI18nField.name.GetData()+`,`)
 	}
-	if len(viewI18nField.status.getData()) > 0 {
-		viewI18nThis.status = append(viewI18nThis.status, field+`: [`+gstr.Join(append([]string{``}, viewI18nField.status.getData()...), `
+	if len(viewI18nField.status.GetData()) > 0 {
+		viewI18nThis.status = append(viewI18nThis.status, field+`: [`+gstr.Join(append([]string{``}, viewI18nField.status.GetData()...), `
 		`)+`
 	],`)
 	}
-	if viewI18nField.tip.getData() != `` {
-		viewI18nThis.tip = append(viewI18nThis.tip, field+`: `+viewI18nField.tip.getData()+`,`)
+	if viewI18nField.tip.GetData() != `` {
+		viewI18nThis.tip = append(viewI18nThis.tip, field+`: `+viewI18nField.tip.GetData()+`,`)
 	}
 }
 
@@ -85,74 +87,74 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 }
 
 func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nField) {
-	viewI18nField.name.Method = ReturnType
+	viewI18nField.name.Method = internal.ReturnType
 	viewI18nField.name.DataType = `'` + v.FieldName + `'`
 
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case TypeInt: // `int等类型`
-	case TypeIntU: // `int等类型（unsigned）`
-	case TypeFloat: // `float等类型`
-	case TypeFloatU: // `float等类型（unsigned）`
-	case TypeVarchar: // `varchar类型`
-	case TypeChar: // `char类型`
-	case TypeText: // `text类型`
-	case TypeJson: // `json类型`
-		viewI18nField.tip.Method = ReturnType
+	case internal.TypeInt: // `int等类型`
+	case internal.TypeIntU: // `int等类型（unsigned）`
+	case internal.TypeFloat: // `float等类型`
+	case internal.TypeFloatU: // `float等类型（unsigned）`
+	case internal.TypeVarchar: // `varchar类型`
+	case internal.TypeChar: // `char类型`
+	case internal.TypeText: // `text类型`
+	case internal.TypeJson: // `json类型`
+		viewI18nField.tip.Method = internal.ReturnType
 		if v.FieldTip != `` {
 			viewI18nField.tip.DataType = `'` + v.FieldTip + `'`
 		}
-	case TypeTimestamp: // `timestamp类型`
-	case TypeDatetime: // `datetime类型`
-	case TypeDate: // `date类型`
+	case internal.TypeTimestamp: // `timestamp类型`
+	case internal.TypeDatetime: // `datetime类型`
+	case internal.TypeDate: // `date类型`
 	}
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
-	case TypePrimary: // 独立主键
-	case TypePrimaryAutoInc: // 独立主键（自增）
+	case internal.TypePrimary: // 独立主键
+	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		return myGenViewI18nField{}
-	case TypePrimaryMany: // 联合主键
-	case TypePrimaryManyAutoInc: // 联合主键（自增）
+	case internal.TypePrimaryMany: // 联合主键
+	case internal.TypePrimaryManyAutoInc: // 联合主键（自增）
 	}
 	/*--------根据字段主键类型处理 结束--------*/
 
 	/*--------根据字段命名类型处理 开始--------*/
 	switch v.FieldTypeName {
-	case TypeNameDeleted: // 软删除字段
+	case internal.TypeNameDeleted: // 软删除字段
 		return myGenViewI18nField{}
-	case TypeNameUpdated: // 更新时间字段
+	case internal.TypeNameUpdated: // 更新时间字段
 		return myGenViewI18nField{}
-	case TypeNameCreated: // 创建时间字段
+	case internal.TypeNameCreated: // 创建时间字段
 		return myGenViewI18nField{}
-	case TypeNamePid: // pid；	类型：int等类型；
-		viewI18nField.name.Method = ReturnTypeName
+	case internal.TypeNamePid: // pid；	类型：int等类型；
+		viewI18nField.name.Method = internal.ReturnTypeName
 		viewI18nField.name.DataTypeName = `'父级'`
-	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-	case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-	case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-	case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewI18nField{}
-	case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-	case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-	case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-	case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-	case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-	case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
+	case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
+	case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
+	case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
-			viewI18nField.name.Method = ReturnTypeName
+			viewI18nField.name.Method = internal.ReturnTypeName
 			viewI18nField.name.DataTypeName = `'` + relIdObj.FieldName + `'`
 		}
-	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-		viewI18nField.tip.Method = ReturnTypeName
+	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+		viewI18nField.tip.Method = internal.ReturnTypeName
 		viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
-	case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-		viewI18nField.status.Method = ReturnTypeName
-		if garray.NewIntArrayFrom([]int{TypeVarchar, TypeChar}).Contains(v.FieldType) {
+	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		viewI18nField.status.Method = internal.ReturnTypeName
+		if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
 			for _, status := range v.StatusList {
 				viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 			}
@@ -161,13 +163,13 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 				viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 			}
 		}
-	case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-	case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-	case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-	case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-	case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-	case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-	case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+	case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 	}
 	/*--------根据字段命名类型处理 结束--------*/
 	return
@@ -175,11 +177,11 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 
 func getViewI18nExtendMiddleOne(tplEM handleExtendMiddle) (viewI18n myGenViewI18n) {
 	switch tplEM.TableType {
-	case TableTypeExtendOne:
+	case internal.TableTypeExtendOne:
 		for _, v := range tplEM.FieldList {
 			viewI18n.Add(getViewI18nField(tplEM.tpl, v), v.FieldRaw)
 		}
-	case TableTypeMiddleOne:
+	case internal.TableTypeMiddleOne:
 		for _, v := range tplEM.FieldListOfIdSuffix {
 			viewI18n.Add(getViewI18nField(tplEM.tpl, v), v.FieldRaw)
 		}
@@ -195,54 +197,54 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		v := tplEM.FieldList[0]
 
 		viewI18nField := myGenViewI18nField{}
-		viewI18nField.name.Method = ReturnType
+		viewI18nField.name.Method = internal.ReturnType
 		viewI18nField.name.DataType = `'` + v.FieldName /*  + `列表` */ + `'`
-		if v.FieldTypeName == TypeNameIdSuffix && gstr.ToUpper(gstr.SubStr(v.FieldName, -2)) == `ID` {
+		if v.FieldTypeName == internal.TypeNameIdSuffix && gstr.ToUpper(gstr.SubStr(v.FieldName, -2)) == `ID` {
 			viewI18nField.name.DataType = `'` + gstr.SubStr(v.FieldName, 0, -2) /*  + `列表` */ + `'`
 		}
 
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
-		case TypeInt: // `int等类型`
-		case TypeIntU: // `int等类型（unsigned）`
-		case TypeFloat: // `float等类型`
-		case TypeFloatU: // `float等类型（unsigned）`
-		case TypeVarchar: // `varchar类型`
-		case TypeChar: // `char类型`
-		case TypeText: // `text类型`
-		case TypeJson: // `json类型`
-			viewI18nField.tip.Method = ReturnType
+		case internal.TypeInt: // `int等类型`
+		case internal.TypeIntU: // `int等类型（unsigned）`
+		case internal.TypeFloat: // `float等类型`
+		case internal.TypeFloatU: // `float等类型（unsigned）`
+		case internal.TypeVarchar: // `varchar类型`
+		case internal.TypeChar: // `char类型`
+		case internal.TypeText: // `text类型`
+		case internal.TypeJson: // `json类型`
+			viewI18nField.tip.Method = internal.ReturnType
 			if v.FieldTip != `` {
 				viewI18nField.tip.DataType = `'` + v.FieldTip + `'`
 			}
-		case TypeTimestamp: // `timestamp类型`
-		case TypeDatetime: // `datetime类型`
-		case TypeDate: // `date类型`
+		case internal.TypeTimestamp: // `timestamp类型`
+		case internal.TypeDatetime: // `datetime类型`
+		case internal.TypeDate: // `date类型`
 		}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNameDeleted, TypeNameUpdated, TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
-		case TypeNamePid: // pid；	类型：int等类型；
-		case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-		case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
-		case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-		case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-		case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-		case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-		case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-		case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-		case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			viewI18nField.tip.Method = ReturnTypeName
+		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
+		case internal.TypeNamePid: // pid；	类型：int等类型；
+		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+		case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
+		case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
+		case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+			viewI18nField.tip.Method = internal.ReturnTypeName
 			viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
-		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			viewI18nField.status.Method = ReturnTypeName
-			if garray.NewIntArrayFrom([]int{TypeVarchar, TypeChar}).Contains(v.FieldType) {
+		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			viewI18nField.status.Method = internal.ReturnTypeName
+			if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
 				for _, status := range v.StatusList {
 					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 				}
@@ -251,13 +253,13 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 				}
 			}
-		case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-		case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-		case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-		case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-		case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+		case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+		case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 

@@ -1,6 +1,8 @@
 package my_gen
 
 import (
+	"api/internal/cmd/my-gen/internal"
+
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -15,38 +17,38 @@ type myGenViewList struct {
 
 type myGenViewListField struct {
 	rowHeight    uint
-	dataKey      myGenDataStrHandler
-	title        myGenDataStrHandler
-	key          myGenDataStrHandler
-	align        myGenDataStrHandler
-	width        myGenDataStrHandler
-	sortable     myGenDataStrHandler
-	hidden       myGenDataStrHandler
-	cellRenderer myGenDataStrHandler
+	dataKey      internal.MyGenDataStrHandler
+	title        internal.MyGenDataStrHandler
+	key          internal.MyGenDataStrHandler
+	align        internal.MyGenDataStrHandler
+	width        internal.MyGenDataStrHandler
+	sortable     internal.MyGenDataStrHandler
+	hidden       internal.MyGenDataStrHandler
+	cellRenderer internal.MyGenDataStrHandler
 }
 
 func (viewListThis *myGenViewList) Add(viewListField myGenViewListField) {
-	if viewListField.dataKey.getData() == `` {
+	if viewListField.dataKey.GetData() == `` {
 		return
 	}
 	if viewListThis.rowHeight < viewListField.rowHeight {
 		viewListThis.rowHeight = viewListField.rowHeight
 	}
 	columnAttrStr := []string{
-		`dataKey: ` + viewListField.dataKey.getData() + `,`,
-		`title: ` + viewListField.title.getData() + `,`,
-		`key: ` + viewListField.key.getData() + `,`,
-		`align: ` + viewListField.align.getData() + `,`,
-		`width: ` + viewListField.width.getData() + `,`,
+		`dataKey: ` + viewListField.dataKey.GetData() + `,`,
+		`title: ` + viewListField.title.GetData() + `,`,
+		`key: ` + viewListField.key.GetData() + `,`,
+		`align: ` + viewListField.align.GetData() + `,`,
+		`width: ` + viewListField.width.GetData() + `,`,
 	}
-	if viewListField.sortable.getData() != `` {
-		columnAttrStr = append(columnAttrStr, `sortable: `+viewListField.sortable.getData()+`,`)
+	if viewListField.sortable.GetData() != `` {
+		columnAttrStr = append(columnAttrStr, `sortable: `+viewListField.sortable.GetData()+`,`)
 	}
-	if viewListField.hidden.getData() != `` {
-		columnAttrStr = append(columnAttrStr, `hidden: `+viewListField.hidden.getData()+`,`)
+	if viewListField.hidden.GetData() != `` {
+		columnAttrStr = append(columnAttrStr, `hidden: `+viewListField.hidden.GetData()+`,`)
 	}
-	if viewListField.cellRenderer.getData() != `` {
-		columnAttrStr = append(columnAttrStr, `cellRenderer: `+viewListField.cellRenderer.getData()+`,`)
+	if viewListField.cellRenderer.GetData() != `` {
+		columnAttrStr = append(columnAttrStr, `cellRenderer: `+viewListField.cellRenderer.GetData()+`,`)
 	}
 	viewListThis.columns = append(viewListThis.columns, `{`+gstr.Join(append([]string{``}, columnAttrStr...), `
             `)+`
@@ -70,7 +72,7 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 		rowHeight: 50,
 		idType:    `number`,
 	}
-	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{TypeInt, TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
+	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
 		viewList.idType = `string`
 	}
 	for _, v := range tpl.FieldListOfDefault {
@@ -380,99 +382,99 @@ defineExpose({
 	gfile.PutContents(saveFile, tplView)
 }
 func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
-	viewListField.dataKey.Method = ReturnType
+	viewListField.dataKey.Method = internal.ReturnType
 	viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
-	viewListField.title.Method = ReturnType
+	viewListField.title.Method = internal.ReturnType
 	viewListField.title.DataType = `t('` + i18nPath + `.name.` + v.FieldRaw + `')`
-	viewListField.key.Method = ReturnType
+	viewListField.key.Method = internal.ReturnType
 	viewListField.key.DataType = `'` + v.FieldRaw + `'`
-	viewListField.align.Method = ReturnType
+	viewListField.align.Method = internal.ReturnType
 	viewListField.align.DataType = `'center'`
-	viewListField.width.Method = ReturnType
+	viewListField.width.Method = internal.ReturnType
 	viewListField.width.DataType = `150`
 
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case TypeInt, TypeIntU: // `int等类型` // `int等类型（unsigned）`
+	case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
 		if gstr.Pos(v.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(v.FieldTypeRaw, `smallint`) != -1 {
 			viewListField.width.DataType = `100`
 		}
-	case TypeFloat: // `float等类型`
-	case TypeFloatU: // `float等类型（unsigned）`
-	case TypeVarchar, TypeChar: // `varchar类型` // `char类型`
-		if gconv.Uint(v.FieldLimitStr) >= configMaxLenOfStrHiddle {
+	case internal.TypeFloat: // `float等类型`
+	case internal.TypeFloatU: // `float等类型（unsigned）`
+	case internal.TypeVarchar, internal.TypeChar: // `varchar类型` // `char类型`
+		if gconv.Uint(v.FieldLimitStr) >= internal.ConfigMaxLenOfStrHiddle {
 			viewListField.width.DataType = `200`
-			viewListField.hidden.Method = ReturnType
+			viewListField.hidden.Method = internal.ReturnType
 			viewListField.hidden.DataType = `true`
 		}
-	case TypeText, TypeJson: // `text类型` // `json类型`
+	case internal.TypeText, internal.TypeJson: // `text类型` // `json类型`
 		viewListField.width.DataType = `200`
-		viewListField.hidden.Method = ReturnType
+		viewListField.hidden.Method = internal.ReturnType
 		viewListField.hidden.DataType = `true`
-	case TypeTimestamp, TypeDatetime: // `timestamp类型` // `datetime类型`
-		viewListField.sortable.Method = ReturnType
+	case internal.TypeTimestamp, internal.TypeDatetime: // `timestamp类型` // `datetime类型`
+		viewListField.sortable.Method = internal.ReturnType
 		viewListField.sortable.DataType = `true`
-	case TypeDate: // `date类型`
+	case internal.TypeDate: // `date类型`
 		viewListField.width.DataType = `100`
-		viewListField.sortable.Method = ReturnType
+		viewListField.sortable.Method = internal.ReturnType
 		viewListField.sortable.DataType = `true`
 	}
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 结束--------*/
 
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
-	case TypePrimary: // 独立主键
+	case internal.TypePrimary: // 独立主键
 		if v.FieldRaw == `id` {
 			return myGenViewListField{}
 		}
-	case TypePrimaryAutoInc: // 独立主键（自增）
+	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		return myGenViewListField{}
-	case TypePrimaryMany: // 联合主键
-	case TypePrimaryManyAutoInc: // 联合主键（自增）
+	case internal.TypePrimaryMany: // 联合主键
+	case internal.TypePrimaryManyAutoInc: // 联合主键（自增）
 	}
 	/*--------根据字段主键类型处理 结束--------*/
 
 	/*--------根据字段命名类型处理 开始--------*/
 	switch v.FieldTypeName {
-	case TypeNameDeleted: // 软删除字段
+	case internal.TypeNameDeleted: // 软删除字段
 		return myGenViewListField{}
-	case TypeNameUpdated: // 更新时间字段
-		viewListField.title.Method = ReturnTypeName
+	case internal.TypeNameUpdated: // 更新时间字段
+		viewListField.title.Method = internal.ReturnTypeName
 		viewListField.title.DataTypeName = `t('common.name.updatedAt')`
-	case TypeNameCreated: // 创建时间字段
-		viewListField.title.Method = ReturnTypeName
+	case internal.TypeNameCreated: // 创建时间字段
+		viewListField.title.Method = internal.ReturnTypeName
 		viewListField.title.DataTypeName = `t('common.name.createdAt')`
-	case TypeNamePid: // pid；	类型：int等类型；
-		viewListField.dataKey.Method = ReturnTypeName
+	case internal.TypeNamePid: // pid；	类型：int等类型；
+		viewListField.dataKey.Method = internal.ReturnTypeName
 		viewListField.dataKey.DataTypeName = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
-	case TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		viewListField.sortable.Method = ReturnTypeName
+	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
-	case TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-		viewListField.hidden.Method = ReturnTypeName
+	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		viewListField.hidden.Method = internal.ReturnTypeName
 		viewListField.hidden.DataTypeName = `true`
-	case TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+	case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
 		return myGenViewListField{}
-	case TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewListField{}
-	case TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-	case TypeNameCodeSuffix: // code后缀；	类型：varchar；
-	case TypeNameAccountSuffix: // account后缀；	类型：varchar；
-	case TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
-	case TypeNameEmailSuffix: // email后缀；	类型：varchar；
-	case TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
-	case TypeNameIpSuffix: // IP后缀；	类型：varchar；
-	case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
+	case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
+	case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
+	case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
+	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
-			viewListField.dataKey.Method = ReturnTypeName
+			viewListField.dataKey.Method = internal.ReturnTypeName
 			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}
-	case TypeNameSortSuffix, TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-		viewListField.sortable.Method = ReturnTypeName
+	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
 		if option.IsUpdate {
-			viewListField.cellRenderer.Method = ReturnTypeName
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `) {
                     let currentRef: any
@@ -526,15 +528,15 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 ]
             }`
 		}
-	case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-		viewListField.cellRenderer.Method = ReturnTypeName
+	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
                 let obj = tm('` + i18nPath + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
-	case TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
 			cellRendererStr = `onChange={(val: number) => {
@@ -548,7 +550,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                                 .catch((error) => {})
                         }}`
 		}
-		viewListField.cellRenderer.Method = ReturnTypeName
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 return [
                     <el-switch
@@ -563,16 +565,16 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     />,
                 ]
             }`
-	case TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
-	case TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
-	case TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-	case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-		viewListField.width.Method = ReturnTypeName
+	case internal.TypeNameStartPrefix: // start_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameEndPrefix: // end_前缀；	类型：timestamp或datetime或date；
+	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
+	case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+		viewListField.width.Method = internal.ReturnTypeName
 		viewListField.width.DataTypeName = `100`
-		viewListField.hidden.Method = ReturnEmpty
+		viewListField.hidden.Method = internal.ReturnEmpty
 		cellRendererStr := `
                 const imageList = [props.rowData.` + v.FieldRaw + `]`
-		if v.FieldType != TypeVarchar {
+		if v.FieldType != internal.TypeVarchar {
 			cellRendererStr = `
                 let imageList: string[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
@@ -581,7 +583,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     imageList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 		}
-		viewListField.cellRenderer.Method = ReturnTypeName
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
@@ -595,12 +597,12 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     </el-scrollbar>
                 ]
             }`
-	case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
 		viewListField.rowHeight = 100
-		viewListField.hidden.Method = ReturnEmpty
+		viewListField.hidden.Method = internal.ReturnEmpty
 		cellRendererStr := `
                 const videoList = [props.rowData.` + v.FieldRaw + `]`
-		if v.FieldType != TypeVarchar {
+		if v.FieldType != internal.TypeVarchar {
 			cellRendererStr = `
                 let videoList: string[]
                 if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
@@ -609,7 +611,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     videoList = JSON.parse(props.rowData.` + v.FieldRaw + `)
                 }`
 		}
-		viewListField.cellRenderer.Method = ReturnTypeName
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
@@ -623,9 +625,9 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     </el-scrollbar>,
                 ]
             }`
-	case TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
-		viewListField.hidden.Method = ReturnEmpty
-		viewListField.cellRenderer.Method = ReturnTypeName
+	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		viewListField.hidden.Method = internal.ReturnEmpty
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData.` + v.FieldRaw + `) {
                     return
@@ -656,11 +658,11 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 
 func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
 	switch tplEM.TableType {
-	case TableTypeExtendOne:
+	case internal.TableTypeExtendOne:
 		for _, v := range tplEM.FieldList {
 			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
-	case TableTypeMiddleOne:
+	case internal.TableTypeMiddleOne:
 		for _, v := range tplEM.FieldListOfIdSuffix {
 			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
@@ -677,31 +679,31 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
 
 		isReturn := false
 		viewListField := myGenViewListField{}
-		viewListField.dataKey.Method = ReturnType
+		viewListField.dataKey.Method = internal.ReturnType
 		viewListField.dataKey.DataType = `'` + tplEM.FieldVar + `'`
-		viewListField.title.Method = ReturnType
+		viewListField.title.Method = internal.ReturnType
 		viewListField.title.DataType = `t('` + tplEM.tplOfTop.I18nPath + `.name.` + tplEM.FieldVar + `')`
-		viewListField.key.Method = ReturnType
+		viewListField.key.Method = internal.ReturnType
 		viewListField.key.DataType = `'` + tplEM.FieldVar + `'`
-		viewListField.align.Method = ReturnType
+		viewListField.align.Method = internal.ReturnType
 		viewListField.align.DataType = `'center'`
-		viewListField.width.Method = ReturnType
+		viewListField.width.Method = internal.ReturnType
 		viewListField.width.DataType = `150`
 		/*--------部分命名类型直接处理后返回 开始--------*/
 		switch v.FieldTypeName {
-		case TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			return myGenViewList{}
-		case TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			return myGenViewList{}
-		case TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-			if v.FieldType != TypeVarchar {
+		case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
+			if v.FieldType != internal.TypeVarchar {
 				return myGenViewList{}
 			}
 			isReturn = true
-			viewListField.width.Method = ReturnTypeName
+			viewListField.width.Method = internal.ReturnTypeName
 			viewListField.width.DataTypeName = `100`
-			viewListField.hidden.Method = ReturnEmpty
-			viewListField.cellRenderer.Method = ReturnTypeName
+			viewListField.hidden.Method = internal.ReturnEmpty
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData.` + tplEM.FieldVar + `) {
                     return
@@ -716,14 +718,14 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     </el-scrollbar>
                 ]
             }`
-		case TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
-			if v.FieldType != TypeVarchar {
+		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			if v.FieldType != internal.TypeVarchar {
 				return myGenViewList{}
 			}
 			isReturn = true
 			viewListField.rowHeight = 100
-			viewListField.hidden.Method = ReturnEmpty
-			viewListField.cellRenderer.Method = ReturnTypeName
+			viewListField.hidden.Method = internal.ReturnEmpty
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData.` + tplEM.FieldVar + `) {
                     return
@@ -744,8 +746,8 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
 			return
 		}
 		/*--------部分命名类型直接处理后返回 结束--------*/
-		viewListField.hidden.Method = ReturnEmpty
-		viewListField.cellRenderer.Method = ReturnTypeName
+		viewListField.hidden.Method = internal.ReturnEmpty
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData.` + tplEM.FieldVar + `) {
                     return

@@ -76,6 +76,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 package my_gen
 
 import (
+	"api/internal/cmd/my-gen/internal"
 	daoAuth "api/internal/dao/auth"
 	"context"
 	"fmt"
@@ -140,7 +141,7 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 		genViewRouter(option, tpl) // 前端路由生成
 		genMenu(ctx, option, tpl)  // 菜单生成
 
-		command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
+		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
 }
 

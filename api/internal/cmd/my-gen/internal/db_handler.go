@@ -12,6 +12,7 @@ type MyGenDbHandler interface {
 	GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey)                                                  // 获取表索引列表
 	GetFieldLimitStr(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitStr string)        // 获取字符串字段限制
 	GetFieldLimitFloat(ctx context.Context, group, table, field string, fieldTypeRawOpt ...string) (fieldLimitFloat [2]string) // 获取浮点数字段限制
+	// GetFieldType(ctx context.Context, group, table string, field string, fieldTypeRawOpt ...string) (keyList []MyGenKey)       // 获取表索引列表
 }
 
 type MyGenField struct {

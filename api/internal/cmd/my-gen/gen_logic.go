@@ -1,6 +1,7 @@
 package my_gen
 
 import (
+	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
 
 	"github.com/gogf/gf/v2/os/gfile"
@@ -153,5 +154,5 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
-	command(`service生成`, true, ``, `gf`, `gen`, `service`)
+	internal.Command(`service生成`, true, ``, `gf`, `gen`, `service`)
 }
