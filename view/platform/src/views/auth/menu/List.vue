@@ -35,16 +35,16 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'menuName',
-            title: t('auth.menu.name.menuName'),
-            key: 'menuName',
+            dataKey: 'menu_name',
+            title: t('auth.menu.name.menu_name'),
+            key: 'menu_name',
             align: 'center',
             width: 150,
         },
         {
-            dataKey: 'sceneName',
-            title: t('auth.menu.name.sceneId'),
-            key: 'sceneId',
+            dataKey: 'scene_name',
+            title: t('auth.menu.name.scene_id'),
+            key: 'scene_id',
             align: 'center',
             width: 150,
         },
@@ -64,17 +64,17 @@ const table = reactive({
             sortable: true,
         },
         {
-            dataKey: 'idPath',
-            title: t('auth.menu.name.idPath'),
-            key: 'idPath',
+            dataKey: 'id_path',
+            title: t('auth.menu.name.id_path'),
+            key: 'id_path',
             align: 'center',
             width: 200,
             hidden: true,
         },
         {
-            dataKey: 'menuIcon',
-            title: t('auth.menu.name.menuIcon'),
-            key: 'menuIcon',
+            dataKey: 'menu_icon',
+            title: t('auth.menu.name.menu_icon'),
+            key: 'menu_icon',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
@@ -82,17 +82,17 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'menuUrl',
-            title: t('auth.menu.name.menuUrl'),
-            key: 'menuUrl',
+            dataKey: 'menu_url',
+            title: t('auth.menu.name.menu_url'),
+            key: 'menu_url',
             align: 'center',
             width: 200,
             hidden: true,
         },
         {
-            dataKey: 'extraData',
-            title: t('auth.menu.name.extraData'),
-            key: 'extraData',
+            dataKey: 'extra_data',
+            title: t('auth.menu.name.extra_data'),
+            key: 'extra_data',
             align: 'center',
             width: 200,
             hidden: true,
@@ -158,15 +158,15 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'isStop',
-            title: t('auth.menu.name.isStop'),
-            key: 'isStop',
+            dataKey: 'is_stop',
+            title: t('auth.menu.name.is_stop'),
+            key: 'is_stop',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
                     <el-switch
-                        model-value={props.rowData.isStop}
+                        model-value={props.rowData.is_stop}
                         active-value={1}
                         inactive-value={0}
                         inline-prompt={true}
@@ -176,10 +176,10 @@ const table = reactive({
                         onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val,
+                                is_stop: val,
                             })
                                 .then((res) => {
-                                    props.rowData.isStop = val
+                                    props.rowData.is_stop = val
                                 })
                                 .catch((error) => {})
                         }}
@@ -188,17 +188,17 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'updatedAt',
+            dataKey: 'updated_at',
             title: t('common.name.updatedAt'),
-            key: 'updatedAt',
+            key: 'updated_at',
             align: 'center',
             width: 150,
             sortable: true,
         },
         {
-            dataKey: 'createdAt',
+            dataKey: 'created_at',
             title: t('common.name.createdAt'),
-            key: 'createdAt',
+            key: 'created_at',
             align: 'center',
             width: 150,
             sortable: true,

@@ -11,21 +11,20 @@ const saveForm = reactive({
         ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
-        actionName: [
+        action_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
-        actionCode: [
+        action_code: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },
         ],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
         sceneIdArr: [
-            { required: true, message: t('validation.required') },
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -78,24 +77,24 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <el-form-item :label="t('auth.action.name.actionName')" prop="actionName">
-                    <el-input v-model="saveForm.data.actionName" :placeholder="t('auth.action.name.actionName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                <el-form-item :label="t('auth.action.name.action_name')" prop="action_name">
+                    <el-input v-model="saveForm.data.action_name" :placeholder="t('auth.action.name.action_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('auth.action.name.actionCode')" prop="actionCode">
-                    <el-input v-model="saveForm.data.actionCode" :placeholder="t('auth.action.name.actionCode')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                <el-form-item :label="t('auth.action.name.action_code')" prop="action_code">
+                    <el-input v-model="saveForm.data.action_code" :placeholder="t('auth.action.name.action_code')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('auth.action.name.remark')" prop="remark">
+                    <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
                 </el-form-item>
                 <el-form-item :label="t('auth.action.name.sceneIdArr')" prop="sceneIdArr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
                     <!-- <my-select v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" :multiple="true" /> -->
                     <my-transfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </el-form-item>
-                <el-form-item :label="t('auth.action.name.remark')" prop="remark">
-                    <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
-                </el-form-item>
-                <el-form-item :label="t('auth.action.name.isStop')" prop="isStop">
+                <el-form-item :label="t('auth.action.name.is_stop')" prop="is_stop">
                     <el-switch
-                        v-model="saveForm.data.isStop"
+                        v-model="saveForm.data.is_stop"
                         :active-value="1"
                         :inactive-value="0"
                         :inline-prompt="true"

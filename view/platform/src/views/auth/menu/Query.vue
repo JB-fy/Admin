@@ -49,11 +49,11 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </el-form-item>
-        <el-form-item prop="menuName">
-            <el-input v-model="queryCommon.data.menuName" :placeholder="t('auth.menu.name.menuName')" maxlength="30" :clearable="true" />
+        <el-form-item prop="menu_name">
+            <el-input v-model="queryCommon.data.menu_name" :placeholder="t('auth.menu.name.menu_name')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="sceneId">
-            <my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.menu.name.sceneId')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+        <el-form-item prop="scene_id">
+            <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.menu.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
         </el-form-item>
         <el-form-item prop="pid">
             <my-cascader
@@ -67,8 +67,8 @@ const queryForm = reactive({
         <el-form-item prop="level">
             <el-input-number v-model="queryCommon.data.level" :placeholder="t('auth.menu.name.level')" :min="1" :controls="false" />
         </el-form-item>
-        <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.isStop')" :clearable="true" style="width: 86px" />
+        <el-form-item prop="is_stop">
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker

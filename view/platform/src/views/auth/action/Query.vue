@@ -49,17 +49,17 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </el-form-item>
-        <el-form-item prop="actionName">
-            <el-input v-model="queryCommon.data.actionName" :placeholder="t('auth.action.name.actionName')" maxlength="30" :clearable="true" />
+        <el-form-item prop="action_name">
+            <el-input v-model="queryCommon.data.action_name" :placeholder="t('auth.action.name.action_name')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="actionCode">
-            <el-input v-model="queryCommon.data.actionCode" :placeholder="t('auth.action.name.actionCode')" maxlength="30" :clearable="true" />
+        <el-form-item prop="action_code">
+            <el-input v-model="queryCommon.data.action_code" :placeholder="t('auth.action.name.action_code')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="sceneId">
-            <my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.action.name.sceneIdArr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+        <el-form-item prop="scene_id">
+            <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.action.name.sceneIdArr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
         </el-form-item>
-        <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('auth.action.name.isStop')" :clearable="true" style="width: 86px" />
+        <el-form-item prop="is_stop">
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('auth.action.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker
