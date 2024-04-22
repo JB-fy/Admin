@@ -9,19 +9,19 @@ const saveForm = reactive({
     loading: false,
     data: {
         ...saveCommon.data,
-        sceneId: saveCommon.data.sceneId ? saveCommon.data.sceneId : undefined,
-        // tableId: saveCommon.data.tableId ? saveCommon.data.tableId : undefined,
+        scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
+        // table_id: saveCommon.data.table_id ? saveCommon.data.table_id : undefined,
     } as { [propName: string]: any },
     rules: {
-        roleName: [
+        role_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
-        sceneId: [
+        scene_id: [
             { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },
         ],
-        /* tableId: [
+        /* table_id: [
             // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },
         ], */
@@ -29,7 +29,7 @@ const saveForm = reactive({
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
         menuIdArr: [{ type: 'array', trigger: 'change', message: t('validation.select') /* , defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } */ }],
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -38,8 +38,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.sceneId === undefined ? (param.sceneId = 0) : null
-            // param.tableId === undefined ? (param.tableId = 0) : null
+            param.scene_id === undefined ? (param.scene_id = 0) : null
+            // param.table_id === undefined ? (param.table_id = 0) : null
             if (param.menuIdArr === undefined) {
                 param.menuIdArr = []
             } else {
@@ -96,12 +96,12 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <el-form-item :label="t('auth.role.name.roleName')" prop="roleName">
-                    <el-input v-model="saveForm.data.roleName" :placeholder="t('auth.role.name.roleName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                <el-form-item :label="t('auth.role.name.role_name')" prop="role_name">
+                    <el-input v-model="saveForm.data.role_name" :placeholder="t('auth.role.name.role_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('auth.role.name.sceneId')" prop="sceneId">
+                <el-form-item :label="t('auth.role.name.scene_id')" prop="scene_id">
                     <my-select
-                        v-model="saveForm.data.sceneId"
+                        v-model="saveForm.data.scene_id"
                         :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
                         @change="
                             () => {
@@ -111,8 +111,8 @@ const saveDrawer = reactive({
                         "
                     />
                 </el-form-item>
-                <!-- <el-form-item :label="t('auth.role.name.tableId')" prop="tableId">
-                    <my-select v-model="saveForm.data.tableId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
+                <!-- <el-form-item :label="t('auth.role.name.table_id')" prop="table_id">
+                    <my-select v-model="saveForm.data.table_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
                 </el-form-item> -->
                 <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.role.name.menuIdArr')" prop="menuIdArr">
                     <my-cascader v-model="saveForm.data.menuIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true" :props="{ multiple: true }" />
@@ -122,9 +122,9 @@ const saveDrawer = reactive({
                     <!-- <my-select v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" :multiple="true" /> -->
                     <my-transfer v-model="saveForm.data.actionIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { sceneId: saveForm.data.sceneId } } }" />
                 </el-form-item>
-                <el-form-item :label="t('auth.role.name.isStop')" prop="isStop">
+                <el-form-item :label="t('auth.role.name.is_stop')" prop="is_stop">
                     <el-switch
-                        v-model="saveForm.data.isStop"
+                        v-model="saveForm.data.is_stop"
                         :active-value="1"
                         :inactive-value="0"
                         :inline-prompt="true"

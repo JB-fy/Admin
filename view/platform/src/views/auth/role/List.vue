@@ -35,36 +35,36 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'roleName',
-            title: t('auth.role.name.roleName'),
-            key: 'roleName',
+            dataKey: 'role_name',
+            title: t('auth.role.name.role_name'),
+            key: 'role_name',
             align: 'center',
             width: 150,
         },
         {
-            dataKey: 'sceneName',
-            title: t('auth.role.name.sceneId'),
-            key: 'sceneId',
+            dataKey: 'scene_name',
+            title: t('auth.role.name.scene_id'),
+            key: 'scene_id',
             align: 'center',
             width: 150,
         },
         {
-            dataKey: 'tableName',
-            title: t('auth.role.name.tableId'),
-            key: 'tableId',
+            dataKey: 'table_name',
+            title: t('auth.role.name.table_id'),
+            key: 'table_id',
             align: 'center',
             width: 150,
         },
         {
-            dataKey: 'isStop',
-            title: t('auth.role.name.isStop'),
-            key: 'isStop',
+            dataKey: 'is_stop',
+            title: t('auth.role.name.is_stop'),
+            key: 'is_stop',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
                     <el-switch
-                        model-value={props.rowData.isStop}
+                        model-value={props.rowData.is_stop}
                         active-value={1}
                         inactive-value={0}
                         inline-prompt={true}
@@ -74,10 +74,10 @@ const table = reactive({
                         onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val,
+                                is_stop: val,
                             })
                                 .then((res) => {
-                                    props.rowData.isStop = val
+                                    props.rowData.is_stop = val
                                 })
                                 .catch((error) => {})
                         }}
@@ -86,17 +86,17 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'updatedAt',
+            dataKey: 'updated_at',
             title: t('common.name.updatedAt'),
-            key: 'updatedAt',
+            key: 'updated_at',
             align: 'center',
             width: 150,
             sortable: true,
         },
         {
-            dataKey: 'createdAt',
+            dataKey: 'created_at',
             title: t('common.name.createdAt'),
-            key: 'createdAt',
+            key: 'created_at',
             align: 'center',
             width: 150,
             sortable: true,

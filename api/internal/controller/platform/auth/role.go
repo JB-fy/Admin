@@ -27,7 +27,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 
 	allowField := daoAuth.Role.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `tableName`)
+	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `table_name`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()

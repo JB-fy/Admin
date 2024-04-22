@@ -23,13 +23,13 @@ type RoleListFilter struct {
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	RoleId         *uint       `json:"roleId,omitempty" v:"min:1" dc:"角色ID"`
-	RoleName       string      `json:"roleName,omitempty" v:"max-length:30" dc:"名称"`
-	SceneId        *uint       `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
-	TableId        *uint       `json:"tableId,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
-	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	ActionId       *uint       `json:"actionId,omitempty" v:"min:1" dc:"操作ID"`
-	MenuId         *uint       `json:"menuId,omitempty" v:"min:1" dc:"菜单ID"`
+	RoleId         *uint       `json:"role_id,omitempty" v:"min:1" dc:"角色ID"`
+	RoleName       string      `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
+	SceneId        *uint       `json:"scene_id,omitempty" v:"min:1" dc:"场景ID"`
+	TableId        *uint       `json:"table_id,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	ActionId       *uint       `json:"action_id,omitempty" v:"min:1" dc:"操作ID"`
+	MenuId         *uint       `json:"menu_id,omitempty" v:"min:1" dc:"菜单ID"`
 }
 
 type RoleListRes struct {
@@ -40,17 +40,17 @@ type RoleListRes struct {
 type RoleListItem struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	RoleId      *uint       `json:"roleId,omitempty" dc:"角色ID"`
-	RoleName    *string     `json:"roleName,omitempty" dc:"名称"`
-	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
-	TableId     *uint       `json:"tableId,omitempty" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
-	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
+	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
+	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	TableId     *uint       `json:"table_id,omitempty" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 	ActionIdArr []uint      `json:"actionIdArr,omitempty" dc:"操作ID列表"`
 	MenuIdArr   []uint      `json:"menuIdArr,omitempty" dc:"菜单ID列表"`
-	SceneName   *string     `json:"sceneName,omitempty" dc:"场景"`
-	TableName   *string     `json:"tableName,omitempty" dc:"关联名称"`
+	SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
+	TableName   *string     `json:"table_name,omitempty" dc:"关联名称"`
 }
 
 /*--------列表 结束--------*/
@@ -69,13 +69,13 @@ type RoleInfoRes struct {
 type RoleInfo struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	RoleId      *uint       `json:"roleId,omitempty" dc:"角色ID"`
-	RoleName    *string     `json:"roleName,omitempty" dc:"名称"`
-	SceneId     *uint       `json:"sceneId,omitempty" dc:"场景ID"`
-	TableId     *uint       `json:"tableId,omitempty" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
-	IsStop      *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
+	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
+	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	TableId     *uint       `json:"table_id,omitempty" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 	ActionIdArr []uint      `json:"actionIdArr,omitempty" dc:"操作ID列表"`
 	MenuIdArr   []uint      `json:"menuIdArr,omitempty" dc:"菜单ID列表"`
 }
@@ -85,10 +85,10 @@ type RoleInfo struct {
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
 	g.Meta   `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
-	RoleName *string `json:"roleName,omitempty" v:"required|max-length:30" dc:"名称"`
-	SceneId  *uint   `json:"sceneId,omitempty" v:"required|min:1" dc:"场景ID"`
-	// TableId     *uint   `json:"tableId,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
-	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	RoleName *string `json:"role_name,omitempty" v:"required|max-length:30" dc:"名称"`
+	SceneId  *uint   `json:"scene_id,omitempty" v:"required|min:1" dc:"场景ID"`
+	// TableId     *uint   `json:"table_id,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 }
@@ -99,10 +99,10 @@ type RoleCreateReq struct {
 type RoleUpdateReq struct {
 	g.Meta   `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
 	IdArr    []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	RoleName *string `json:"roleName,omitempty" v:"max-length:30" dc:"名称"`
-	SceneId  *uint   `json:"sceneId,omitempty" v:"min:1" dc:"场景ID"`
-	// TableId     *uint   `json:"tableId,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
-	IsStop      *uint   `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	RoleName *string `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
+	SceneId  *uint   `json:"scene_id,omitempty" v:"min:1" dc:"场景ID"`
+	// TableId     *uint   `json:"table_id,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
+	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
 	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 }

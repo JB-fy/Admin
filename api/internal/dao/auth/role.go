@@ -125,7 +125,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 			case `menuIdArr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 				daoModel.AfterField.Add(v)
-			case `tableName`:
+			case `table_name`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().TableId)
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + Scene.Columns().SceneCode)
@@ -166,7 +166,7 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 					case `menuIdArr`:
 						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
 						record[v] = gvar.New(menuIdArr)
-					case `tableName`:
+					case `table_name`:
 						if record[daoThis.Columns().TableId].Uint() == 0 {
 							record[v] = gvar.New(`平台`)
 							continue

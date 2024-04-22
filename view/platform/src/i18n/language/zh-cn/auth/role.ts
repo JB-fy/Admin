@@ -1,9 +1,9 @@
 export default {
     name: {
-        roleName: '名称',
-        sceneId: '场景',
-        tableId: '关联',
-        isStop: '停用',
+        role_name: '名称',
+        scene_id: '场景',
+        table_id: '关联',
+        is_stop: '停用',
         actionIdArr: '操作',
         menuIdArr: '菜单',
     },
