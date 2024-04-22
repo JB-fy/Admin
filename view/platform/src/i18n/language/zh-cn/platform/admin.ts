@@ -5,7 +5,7 @@ export default {
         password: '密码',
         nickname: '昵称',
         avatar: '头像',
-        isStop: '停用',
+        is_stop: '停用',
         roleIdArr: '角色',
     },
     status: {},

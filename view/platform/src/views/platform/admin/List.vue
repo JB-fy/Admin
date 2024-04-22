@@ -77,15 +77,15 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'isStop',
-            title: t('platform.admin.name.isStop'),
-            key: 'isStop',
+            dataKey: 'is_stop',
+            title: t('platform.admin.name.is_stop'),
+            key: 'is_stop',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
                 return [
                     <el-switch
-                        model-value={props.rowData.isStop}
+                        model-value={props.rowData.is_stop}
                         active-value={1}
                         inactive-value={0}
                         inline-prompt={true}
@@ -95,10 +95,10 @@ const table = reactive({
                         onChange={(val: number) => {
                             handleUpdate({
                                 idArr: [props.rowData.id],
-                                isStop: val,
+                                is_stop: val,
                             })
                                 .then((res) => {
-                                    props.rowData.isStop = val
+                                    props.rowData.is_stop = val
                                 })
                                 .catch((error) => {})
                         }}
@@ -107,17 +107,17 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'updatedAt',
+            dataKey: 'updated_at',
             title: t('common.name.updatedAt'),
-            key: 'updatedAt',
+            key: 'updated_at',
             align: 'center',
             width: 150,
             sortable: true,
         },
         {
-            dataKey: 'createdAt',
+            dataKey: 'created_at',
             title: t('common.name.createdAt'),
-            key: 'createdAt',
+            key: 'created_at',
             align: 'center',
             width: 150,
             sortable: true,

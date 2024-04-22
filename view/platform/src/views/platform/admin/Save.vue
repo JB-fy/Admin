@@ -41,7 +41,7 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -118,9 +118,9 @@ const saveDrawer = reactive({
                     <!-- <my-select v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" :multiple="true" /> -->
                     <my-transfer v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" />
                 </el-form-item>
-                <el-form-item :label="t('platform.admin.name.isStop')" prop="isStop">
+                <el-form-item :label="t('platform.admin.name.is_stop')" prop="is_stop">
                     <el-switch
-                        v-model="saveForm.data.isStop"
+                        v-model="saveForm.data.is_stop"
                         :active-value="1"
                         :inactive-value="0"
                         :inline-prompt="true"

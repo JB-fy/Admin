@@ -885,10 +885,17 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if !key.IsUnique { // 必须唯一
 				continue
 			}
-			if !myGenTplThis.IsSamePrimary(tpl, key.FieldArr[0]) {
+			keyField := ``
+			for _, keyFieldTmp := range key.FieldArr {
+				if myGenTplThis.IsSamePrimary(tpl, keyFieldTmp) {
+					keyField = keyFieldTmp
+					break
+				}
+			}
+			if keyField == `` {
 				continue
 			}
-			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, key.FieldArr[0])
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, keyField)
 			if len(handleExtendMiddleObj.FieldList) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
