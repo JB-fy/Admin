@@ -64,14 +64,14 @@ const queryForm = reactive({
         <el-form-item prop="birthday">
             <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
         </el-form-item>
-        <el-form-item prop="idCardName">
-            <el-input v-model="queryCommon.data.idCardName" :placeholder="t('user.user.name.idCardName')" maxlength="30" :clearable="true" />
+        <el-form-item prop="id_card_name">
+            <el-input v-model="queryCommon.data.id_card_name" :placeholder="t('user.user.name.id_card_name')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="idCardNo">
-            <el-input v-model="queryCommon.data.idCardNo" :placeholder="t('user.user.name.idCardNo')" maxlength="30" :clearable="true" />
+        <el-form-item prop="id_card_no">
+            <el-input v-model="queryCommon.data.id_card_no" :placeholder="t('user.user.name.id_card_no')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="isStop">
-            <el-select-v2 v-model="queryCommon.data.isStop" :options="tm('common.status.whether')" :placeholder="t('user.user.name.isStop')" :clearable="true" style="width: 86px" />
+        <el-form-item prop="is_stop">
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('user.user.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="timeRange">
             <el-date-picker

@@ -33,9 +33,9 @@ const saveForm = reactive({
         gender: [{ type: 'enum', trigger: 'change', enum: (tm('user.user.status.gender') as any).map((item: any) => item.value), message: t('validation.select') }],
         birthday: [{ type: 'string', trigger: 'change', message: t('validation.select') }],
         address: [{ type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) }],
-        idCardName: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
-        idCardNo: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
-        isStop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        id_card_name: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
+        id_card_no: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -120,15 +120,15 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('user.user.name.address')" prop="address">
                     <el-input v-model="saveForm.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('user.user.name.idCardName')" prop="idCardName">
-                    <el-input v-model="saveForm.data.idCardName" :placeholder="t('user.user.name.idCardName')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                <el-form-item :label="t('user.user.name.id_card_name')" prop="id_card_name">
+                    <el-input v-model="saveForm.data.id_card_name" :placeholder="t('user.user.name.id_card_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('user.user.name.idCardNo')" prop="idCardNo">
-                    <el-input v-model="saveForm.data.idCardNo" :placeholder="t('user.user.name.idCardNo')" maxlength="30" :show-word-limit="true" :clearable="true" />
+                <el-form-item :label="t('user.user.name.id_card_no')" prop="id_card_no">
+                    <el-input v-model="saveForm.data.id_card_no" :placeholder="t('user.user.name.id_card_no')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('user.user.name.isStop')" prop="isStop">
+                <el-form-item :label="t('user.user.name.is_stop')" prop="is_stop">
                     <el-switch
-                        v-model="saveForm.data.isStop"
+                        v-model="saveForm.data.is_stop"
                         :active-value="1"
                         :inactive-value="0"
                         :inline-prompt="true"

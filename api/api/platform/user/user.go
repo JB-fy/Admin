@@ -23,15 +23,15 @@ type UserListFilter struct {
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	UserId         *uint       `json:"userId,omitempty" v:"min:1" dc:"用户ID"`
+	UserId         *uint       `json:"user_id,omitempty" v:"min:1" dc:"用户ID"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	IdCardName     string      `json:"idCardName,omitempty" v:"max-length:30" dc:"身份证姓名"`
-	IdCardNo       string      `json:"idCardNo,omitempty" v:"max-length:30" dc:"身份证号码"`
-	IsStop         *uint       `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	IdCardName     string      `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
+	IdCardNo       string      `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 type UserListRes struct {
@@ -42,7 +42,7 @@ type UserListRes struct {
 type UserListItem struct {
 	Id         *uint       `json:"id,omitempty" dc:"ID"`
 	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	UserId     *uint       `json:"userId,omitempty" dc:"用户ID"`
+	UserId     *uint       `json:"user_id,omitempty" dc:"用户ID"`
 	Phone      *string     `json:"phone,omitempty" dc:"手机"`
 	Account    *string     `json:"account,omitempty" dc:"账号"`
 	Nickname   *string     `json:"nickname,omitempty" dc:"昵称"`
@@ -50,11 +50,11 @@ type UserListItem struct {
 	Gender     *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
 	Birthday   *string     `json:"birthday,omitempty" dc:"生日"`
 	Address    *string     `json:"address,omitempty" dc:"详细地址"`
-	IdCardName *string     `json:"idCardName,omitempty" dc:"身份证姓名"`
-	IdCardNo   *string     `json:"idCardNo,omitempty" dc:"身份证号码"`
-	IsStop     *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	IdCardName *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
+	IdCardNo   *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
+	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -73,7 +73,7 @@ type UserInfoRes struct {
 type UserInfo struct {
 	Id         *uint       `json:"id,omitempty" dc:"ID"`
 	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	UserId     *uint       `json:"userId,omitempty" dc:"用户ID"`
+	UserId     *uint       `json:"user_id,omitempty" dc:"用户ID"`
 	Phone      *string     `json:"phone,omitempty" dc:"手机"`
 	Account    *string     `json:"account,omitempty" dc:"账号"`
 	Nickname   *string     `json:"nickname,omitempty" dc:"昵称"`
@@ -81,11 +81,11 @@ type UserInfo struct {
 	Gender     *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
 	Birthday   *string     `json:"birthday,omitempty" dc:"生日"`
 	Address    *string     `json:"address,omitempty" dc:"详细地址"`
-	IdCardName *string     `json:"idCardName,omitempty" dc:"身份证姓名"`
-	IdCardNo   *string     `json:"idCardNo,omitempty" dc:"身份证号码"`
-	IsStop     *uint       `json:"isStop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updatedAt,omitempty" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"createdAt,omitempty" dc:"创建时间"`
+	IdCardName *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
+	IdCardNo   *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
+	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/
@@ -102,9 +102,9 @@ type UserUpdateReq struct {
 	Gender     *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday   *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	Address    *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
-	IdCardName *string     `json:"idCardName,omitempty" v:"max-length:30" dc:"身份证姓名"`
-	IdCardNo   *string     `json:"idCardNo,omitempty" v:"max-length:30" dc:"身份证号码"` */
-	IsStop *uint `json:"isStop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	IdCardName *string     `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
+	IdCardNo   *string     `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"` */
+	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
