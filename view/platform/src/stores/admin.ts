@@ -302,23 +302,23 @@ export const useAdminStore = defineStore('admin', {
                 for (let i = 0; i < menuTree.length; i++) {
                     menuTreeTmp[i] = {
                         i18n: menuTree[i].i18n,
-                        icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
-                        url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
+                        icon: menuTree[i]?.menu_icon ?? menuTree[i]?.icon,
+                        url: menuTree[i]?.menu_url ?? menuTree[i]?.url,
                         children: [],
                     }
                     if (menuTree[i].children?.length) {
                         menuChain.push({
                             i18n: menuTree[i].i18n,
-                            icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
-                            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
+                            icon: menuTree[i]?.menu_icon ?? menuTree[i]?.icon,
+                            url: menuTree[i]?.menu_url ?? menuTree[i]?.url,
                         })
                         menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, [...menuChain])
                         menuChain.pop()
                     } else {
                         const menu = {
                             i18n: menuTree[i].i18n,
-                            icon: menuTree[i]?.menuIcon ?? menuTree[i]?.icon,
-                            url: menuTree[i]?.menuUrl ?? menuTree[i]?.url,
+                            icon: menuTree[i]?.menu_icon ?? menuTree[i]?.icon,
+                            url: menuTree[i]?.menu_url ?? menuTree[i]?.url,
                         }
                         //设置菜单列表
                         this.menuList.push({

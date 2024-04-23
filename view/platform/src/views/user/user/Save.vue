@@ -22,7 +22,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
-            { required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },
+            { required: computed((): boolean => (saveForm.data.id_arr?.length ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
         nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
@@ -46,7 +46,7 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
-                if (param?.idArr?.length > 0) {
+                if (param?.id_arr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/create', param, true)
@@ -99,7 +99,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('user.user.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.idArr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert v-if="saveForm.data.id_arr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('user.user.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />

@@ -18,9 +18,9 @@ type MenuTreeItem struct {
 	Label    *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	Pid      *uint   `json:"pid,omitempty" dc:"父级ID"`
 	MenuId   *uint   `json:"menuId,omitempty" dc:"菜单ID"`
-	MenuIcon *string `json:"menuIcon,omitempty" dc:"菜单图标"`
-	MenuName *string `json:"menuName,omitempty" dc:"菜单名称"`
-	MenuUrl  *string `json:"menuUrl,omitempty" dc:"菜单链接"`
+	MenuIcon *string `json:"menu_icon,omitempty" dc:"菜单图标"`
+	MenuName *string `json:"menu_name,omitempty" dc:"菜单名称"`
+	MenuUrl  *string `json:"menu_url,omitempty" dc:"菜单链接"`
 	I18n     struct {
 		Title struct {
 			En   *string `json:"en,omitempty" dc:"英语"`

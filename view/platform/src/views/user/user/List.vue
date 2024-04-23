@@ -141,7 +141,7 @@ const table = reactive({
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                         onChange={(val: number) => {
                             handleUpdate({
-                                idArr: [props.rowData.id],
+                                id_arr: [props.rowData.id],
                                 is_stop: val,
                             })
                                 .then((res) => {
@@ -203,7 +203,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
             saveCommon.data = { ...res.data.info }
             switch (type) {
                 case 'edit':
-                    saveCommon.data.idArr = [saveCommon.data.id]
+                    saveCommon.data.id_arr = [saveCommon.data.id]
                     delete saveCommon.data.id
                     saveCommon.title = t('common.edit')
                     break
@@ -217,7 +217,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         .catch(() => {})
 }
 //更新
-const handleUpdate = async (param: { idArr: number[]; [propName: string]: any }) => {
+const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
     await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/update', param, true)
 }
 

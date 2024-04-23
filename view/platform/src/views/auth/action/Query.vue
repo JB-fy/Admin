@@ -6,7 +6,7 @@ const { t, tm } = useI18n()
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
     ...queryCommon.data,
-    timeRange: (() => {
+    time_range: (() => {
         return undefined
         /* const date = new Date()
         return [
@@ -14,15 +14,15 @@ queryCommon.data = {
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
         ] */
     })(),
-    timeRangeStart: computed(() => {
-        if (queryCommon.data.timeRange?.length) {
-            return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
+    time_range_start: computed(() => {
+        if (queryCommon.data.time_range?.length) {
+            return dayjs(queryCommon.data.time_range[0]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
     }),
-    timeRangeEnd: computed(() => {
-        if (queryCommon.data.timeRange?.length) {
-            return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
+    time_range_end: computed(() => {
+        if (queryCommon.data.time_range?.length) {
+            return dayjs(queryCommon.data.time_range[1]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
     }),
@@ -61,9 +61,9 @@ const queryForm = reactive({
         <el-form-item prop="is_stop">
             <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('auth.action.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
-        <el-form-item prop="timeRange">
+        <el-form-item prop="time_range">
             <el-date-picker
-                v-model="queryCommon.data.timeRange"
+                v-model="queryCommon.data.time_range"
                 type="datetimerange"
                 range-separator="-"
                 :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]"

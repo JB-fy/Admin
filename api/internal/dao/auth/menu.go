@@ -81,9 +81,9 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `pIdPathOfOld`: //父级IdPath（旧）
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
-			case `timeRangeStart`:
+			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
+			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `selfMenu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`: 场景id, `loginId`: 登录身份id}
 				val := gconv.Map(v)
@@ -144,7 +144,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().Pid)
 				m = m.Handler(daoThis.ParseOrder([]string{`tree`}, daoModel))
-			case `showMenu`: //前端显示菜单需要以下字段，且title需要转换
+			case `show_menu`: //前端显示菜单需要以下字段，且title需要转换
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuName)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuIcon)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuUrl)
@@ -181,11 +181,11 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			for _, record := range result {
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
-					case `showMenu`:
+					case `show_menu`:
 						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
 						record[`i18n`] = extraDataJson.Get(`i18n`)
 						if record[`i18n`] == nil {
-							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[`menuName`]}})
+							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[daoThis.Columns().MenuName]}})
 						}
 					default:
 						record[v] = gvar.New(nil)

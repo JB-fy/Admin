@@ -68,9 +68,9 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
-			case `id`, `idArr`:
+			case `id`, `id_arr`:
 				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-			case `excId`, `excIdArr`:
+			case `exc_id`, `exc_id_arr`:
 				if gvar.New(v).IsSlice() {
 					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 				} else {
@@ -80,9 +80,9 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
 			case daoThis.Columns().IdCardName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case `timeRangeStart`:
+			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
+			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `loginName`:
 				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {

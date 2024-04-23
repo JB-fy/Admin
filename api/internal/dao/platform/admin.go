@@ -79,9 +79,9 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *da
 				}
 			case `label`:
 				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
-			case `timeRangeStart`:
+			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
+			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:
 				tableAuthRoleRelOfPlatformAdmin := daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())

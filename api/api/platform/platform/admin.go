@@ -21,8 +21,8 @@ type AdminListFilter struct {
 	ExcId          *uint       `json:"exc_id,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
-	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
-	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	AdminId        *uint       `json:"admin_id,omitempty" v:"min:1" dc:"管理员ID"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`

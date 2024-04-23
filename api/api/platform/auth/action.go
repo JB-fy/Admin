@@ -21,8 +21,8 @@ type ActionListFilter struct {
 	ExcId          *uint       `json:"exc_id,omitempty" v:"min:1" dc:"排除ID"`
 	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
-	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
-	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
+	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	ActionId       *uint       `json:"action_id,omitempty" v:"min:1" dc:"操作ID"`
 	ActionName     string      `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode     string      `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`

@@ -77,9 +77,9 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().RoleName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case `timeRangeStart`:
+			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `timeRangeEnd`:
+			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case RoleRelToAction.Columns().ActionId:
 				tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
