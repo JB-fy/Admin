@@ -195,7 +195,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		return myGenViewQueryField{}
 	case internal.TypeNameCreated: // 创建时间字段
 		viewQueryField.dataInit.Method = internal.ReturnTypeName
-		viewQueryField.dataInit.DataTypeName = `timeRange: (() => {
+		viewQueryField.dataInit.DataTypeName = internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `: (() => {
         return undefined
         /* const date = new Date()
         return [
@@ -204,22 +204,22 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
         ] */
     })(),
     ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`) + `: computed(() => {
-        if (queryCommon.data.timeRange?.length) {
-            return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
+        if (queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `?.length) {
+            return dayjs(queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `[0]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
     }),
     ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`) + `: computed(() => {
-        if (queryCommon.data.timeRange?.length) {
-            return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
+        if (queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `?.length) {
+            return dayjs(queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `[1]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
     }),`
 
 		viewQueryField.formProp.Method = internal.ReturnTypeName
-		viewQueryField.formProp.DataTypeName = `timeRange`
+		viewQueryField.formProp.DataTypeName = internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`)
 		viewQueryField.form.Method = internal.ReturnTypeName
-		viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.timeRange" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />`
+		viewQueryField.form.DataTypeName = `<el-date-picker v-model="queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `" type="datetimerange" range-separator="-" :default-time="[new Date(2000, 0, 1, 0, 0, 0), new Date(2000, 0, 1, 23, 59, 59)]" :start-placeholder="t('common.name.timeRangeStart')" :end-placeholder="t('common.name.timeRangeEnd')" />`
 	case internal.TypeNamePid: // pid；	类型：int等类型；
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />`
