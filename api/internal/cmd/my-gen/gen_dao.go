@@ -337,9 +337,9 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 }`
 	}
 	if len(tpl.Handle.Id.List) == 1 {
-		dao.filterParse = append(dao.filterParse, `case `+"`id`, `idArr`"+`:
+		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)`)
-		dao.filterParse = append(dao.filterParse, `case `+"`excId`, `excIdArr`"+`:
+		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
 				if gvar.New(v).IsSlice() {
 					m = m.WhereNotIn(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)
 				} else {
@@ -369,7 +369,7 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
 			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
-		dao.filterParse = append(dao.filterParse, `case `+"`id`, `idArr`"+`:
+		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
 					idArr = gconv.SliceStr(v)
@@ -379,7 +379,7 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`)"+`
 				}
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) IN (` + gstr.Join(inStrArr, `, `) + `)`)")
-		dao.filterParse = append(dao.filterParse, `case `+"`excId`, `excIdArr`"+`:
+		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
 					idArr = gconv.SliceStr(v)

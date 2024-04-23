@@ -234,47 +234,47 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 		case internal.TypeInt:
 			api.filterOfFixed = append(api.filterOfFixed,
 				`Id *int `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
-				`IdArr []int `+"`"+`json:"idArr,omitempty" v:"distinct" dc:"ID数组"`+"`",
-				`ExcId *int `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
-				`ExcIdArr []int `+"`"+`json:"excIdArr,omitempty" v:"distinct" dc:"排除ID数组"`+"`",
+				`IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"distinct" dc:"ID数组"`+"`",
+				`ExcId *int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"" dc:"排除ID"`+"`",
+				`ExcIdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"distinct" dc:"排除ID数组"`+"`",
 			)
 			api.info = append(api.info, `Id int `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []int `+"`"+`json:"idArr,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+			api.update = append(api.update, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *int `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		case internal.TypeIntU:
 			api.filterOfFixed = append(api.filterOfFixed,
 				`Id *uint `+"`"+`json:"id,omitempty" v:"min:1" dc:"ID"`+"`",
-				`IdArr []uint `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`+"`",
-				`ExcId *uint `+"`"+`json:"excId,omitempty" v:"min:1" dc:"排除ID"`+"`",
-				`ExcIdArr []uint `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`+"`",
+				`IdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`+"`",
+				`ExcId *uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"min:1" dc:"排除ID"`+"`",
+				`ExcIdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`+"`",
 			)
 			api.info = append(api.info, `Id uint `+"`"+`json:"id" v:"required|min:1" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []uint `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
+			api.update = append(api.update, `IdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *uint `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		default:
 			api.filterOfFixed = append(api.filterOfFixed,
 				`Id string `+"`"+`json:"id,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`",
-				`IdArr []string `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`",
-				`ExcId string `+"`"+`json:"excId,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"排除ID"`+"`",
-				`ExcIdArr []string `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"排除ID数组"`+"`",
+				`IdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`",
+				`ExcId string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"排除ID"`+"`",
+				`ExcIdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"排除ID数组"`+"`",
 			)
 			api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required|max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
+			api.update = append(api.update, `IdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		}
 	} else {
 		api.filterOfFixed = append(api.filterOfFixed,
 			`Id string `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
-			`IdArr []string `+"`"+`json:"idArr,omitempty" v:"distinct|foreach|min-length:1" dc:"ID数组"`+"`",
-			`ExcId string `+"`"+`json:"excId,omitempty" v:"" dc:"排除ID"`+"`",
-			`ExcIdArr []string `+"`"+`json:"excIdArr,omitempty" v:"distinct|foreach|min-length:1" dc:"排除ID数组"`+"`",
+			`IdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"distinct|foreach|min-length:1" dc:"ID数组"`+"`",
+			`ExcId string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"" dc:"排除ID"`+"`",
+			`ExcIdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"distinct|foreach|min-length:1" dc:"排除ID数组"`+"`",
 		)
 		api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
-		api.update = append(api.update, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
-		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"idArr,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.update = append(api.update, `IdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 

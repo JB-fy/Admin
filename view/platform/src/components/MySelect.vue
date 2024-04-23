@@ -129,7 +129,7 @@ const select = reactive({
                 return props.api.selectedField
             }
             if (select.api.param.field[0] == 'id') {
-                return props.multiple ? 'idArr' : 'id'
+                return props.multiple ? 'id_arr' : 'id'
             }
             return select.api.param.field[0]
         }),

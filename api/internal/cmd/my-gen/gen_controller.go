@@ -226,7 +226,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, ` + "`idArr`" + `)
+	delete(data, ` + "`" + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + "`" + `)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
 		return

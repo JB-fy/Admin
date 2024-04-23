@@ -223,7 +223,7 @@ const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
             saveCommon.data = { ...res.data.info }
             switch (type) {
                 case 'edit':
-                    saveCommon.data.idArr = [saveCommon.data.id]
+                    saveCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` = [saveCommon.data.id]
                     delete saveCommon.data.id
                     saveCommon.title = t('common.edit')
                     break
@@ -248,7 +248,7 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
         showClose: false,
     })
         .then(() => {
-            request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { idArr: idArr }, true)
+            request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true)
                 .then((res) => {
                     getList()
                 })
@@ -260,7 +260,7 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
 	if option.IsUpdate {
 		tplView += `
 //更新
-const handleUpdate = async (param: { idArr: ` + viewList.idType + `[]; [propName: string]: any }) => {
+const handleUpdate = async (param: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: ` + viewList.idType + `[]; [propName: string]: any }) => {
     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/update', param, true)
 }`
 	}
@@ -505,7 +505,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                                 props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = false
                                 if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + v.FieldRaw + `) {
                                     handleUpdate({
-                                        idArr: [props.rowData.id],
+                                        ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id],
                                         ` + v.FieldRaw + `: currentVal,
                                     })
                                         .then((res) => {
@@ -547,7 +547,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		if option.IsUpdate {
 			cellRendererStr = `onChange={(val: number) => {
                             handleUpdate({
-                                idArr: [props.rowData.id],
+                                ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id],
                                 ` + v.FieldRaw + `: val,
                             })
                                 .then((res) => {
