@@ -396,8 +396,11 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
 	case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
-		if gstr.Pos(v.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(v.FieldTypeRaw, `smallint`) != -1 {
+		switch v.FieldLimitInt {
+		case 2:
 			viewListField.width.DataType = `100`
+		case 8:
+			viewListField.width.DataType = `200`
 		}
 	case internal.TypeFloat: // `float等类型`
 	case internal.TypeFloatU: // `float等类型（unsigned）`

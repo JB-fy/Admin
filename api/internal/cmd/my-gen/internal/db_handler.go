@@ -11,6 +11,7 @@ type MyGenDbHandler interface {
 	GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField)                            // 获取表字段列表
 	GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey)                                  // 获取表索引列表
 	GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string)        // 获取字符串字段限制
+	GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int)           // 获取整数字段限制。2字节，4字节，8字节
 	GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) // 获取浮点数字段限制
 	GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType)        // 获取字段类型
 }

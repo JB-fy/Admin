@@ -92,6 +92,16 @@ func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, field MyGenField, g
 	return
 }
 
+func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int) {
+	fieldLimitInt = 4
+	if gstr.Pos(field.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
+		fieldLimitInt = 2
+	} else if gstr.Pos(field.FieldTypeRaw, `bigint`) != -1 {
+		fieldLimitInt = 8
+	}
+	return
+}
+
 func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) {
 	fieldLimitFloatTmp, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, field.FieldTypeRaw)
 	if len(fieldLimitFloatTmp) < 3 {

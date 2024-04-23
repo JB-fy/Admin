@@ -110,6 +110,16 @@ func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 	return
 }
 
+func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int) {
+	fieldLimitInt = 4
+	if gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
+		fieldLimitInt = 2
+	} else if gstr.Pos(field.FieldTypeRaw, `bigint`) != -1 {
+		fieldLimitInt = 8
+	}
+	return
+}
+
 func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
 	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
 		fieldType = TypeInt
