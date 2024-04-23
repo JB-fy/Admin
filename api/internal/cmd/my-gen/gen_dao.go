@@ -1034,8 +1034,8 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				daoModel.AfterUpdate[k] = v`)
 	if len(tplEM.FieldList) == 1 {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+tplEM.FieldVar+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
-						record[v] = gvar.New(`+tplEM.FieldVar+`)`)
+						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
+						record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]interface{}{}
 					for _, item := range gconv.SliceAny(v) {
@@ -1053,8 +1053,8 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					}`)
 	} else {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+tplEM.FieldVar+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
-						record[v] = gvar.New(gjson.MustEncodeString(`+tplEM.FieldVar+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
+						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
+						record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]interface{}{}
 					for _, item := range gconv.SliceMap(v) {

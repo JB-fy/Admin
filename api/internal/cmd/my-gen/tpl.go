@@ -657,13 +657,13 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 		tplOfTop:    tplOfTop,
 		tpl:         extendMiddleTpl,
 		RelId:       relId,
-		FieldVar:    gstr.CaseCamelLower(extendMiddleTpl.TableCaseCamel),
+		FieldVar:    internal.GetStrByFieldStyle(tplOfTop.FieldStyle, extendMiddleTpl.TableCaseCamel),
 		daoPath:     extendMiddleTpl.TableCaseCamel,
 		daoTable:    extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
 		daoTableVar: `table` + extendMiddleTpl.TableCaseCamel,
 	}
 	if extendMiddleTpl.ModuleDirCaseKebab != tplOfTop.ModuleDirCaseKebab {
-		handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(extendMiddleTpl.ModuleDirCaseCamel + extendMiddleTpl.TableCaseCamel)
+		handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(tplOfTop.FieldStyle, extendMiddleTpl.ModuleDirCaseCamel+extendMiddleTpl.TableCaseCamel)
 		handleExtendMiddleObj.daoPath = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel
 		handleExtendMiddleObj.daoTable = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`
 		if extendMiddleTpl.ModuleDirCaseCamel != extendMiddleTpl.TableCaseCamel {
@@ -783,9 +783,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 				}
 				if isExtendMany {
 					if len(handleExtendMiddleObj.FieldList) == 1 {
-						handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(handleExtendMiddleObj.FieldList[0].FieldRaw) + `Arr`
+						handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, handleExtendMiddleObj.FieldList[0].FieldRaw, ``, `arr`)
 					} else {
-						handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(gstr.TrimRightStr(gstr.TrimLeftStr(handleExtendMiddleObj.FieldVar, `relTo`, 1), `RelOf`, 1)) + `List`
+						handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, gstr.TrimRightStr(gstr.TrimLeftStr(gstr.CaseCamelLower(handleExtendMiddleObj.FieldVar), `relTo`, 1), `RelOf`, 1), ``, `list`)
 					}
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
@@ -891,9 +891,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
 			case internal.TableTypeMiddleMany:
 				if len(handleExtendMiddleObj.FieldList) == 1 {
-					handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(handleExtendMiddleObj.FieldList[0].FieldRaw) + `Arr`
+					handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, handleExtendMiddleObj.FieldList[0].FieldRaw, ``, `arr`)
 				} else {
-					handleExtendMiddleObj.FieldVar = gstr.CaseCamelLower(gstr.TrimRightStr(gstr.TrimLeftStr(handleExtendMiddleObj.FieldVar, `relTo`, 1), `RelOf`, 1)) + `List`
+					handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, gstr.TrimRightStr(gstr.TrimLeftStr(gstr.CaseCamelLower(handleExtendMiddleObj.FieldVar), `relTo`, 1), `RelOf`, 1), ``, `list`)
 				}
 				middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 			}

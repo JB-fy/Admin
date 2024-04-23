@@ -272,7 +272,8 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		for _, v := range tplEM.FieldListOfOther {
 			viewI18nTmp.Add(getViewI18nField(tplEM.tpl, v), v.FieldRaw)
 		}
-		viewI18n.name = append(viewI18n.name, tplEM.FieldVar+`Label: '列表',`)
+
+		viewI18n.name = append(viewI18n.name, internal.GetStrByFieldStyle(tplEM.tplOfTop.FieldStyle, tplEM.FieldVar, ``, `label`)+`: '列表',`)
 		viewI18n.name = append(viewI18n.name, tplEM.FieldVar+`: {`+gstr.Join(append([]string{``}, viewI18nTmp.name...), `
             `)+`
         },`)

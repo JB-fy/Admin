@@ -622,13 +622,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				viewSaveField.paramHandle.DataTypeName = `if (param.` + tplEM.FieldVar + ` === undefined) {
                 param.` + tplEM.FieldVar + ` = []
             } else {
-                let ` + tplEM.FieldVar + `: any = []
+                let ` + gstr.CaseCamelLower(tplEM.FieldVar) + `: any = []
                 param.` + tplEM.FieldVar + `.forEach((item: any) => {
-                    ` + tplEM.FieldVar + ` = ` + tplEM.FieldVar + `.concat(item)
+                    ` + gstr.CaseCamelLower(tplEM.FieldVar) + ` = ` + gstr.CaseCamelLower(tplEM.FieldVar) + `.concat(item)
                 })
-                //param.` + tplEM.FieldVar + ` = [...new Set(` + tplEM.FieldVar + `)]
-                param.` + tplEM.FieldVar + ` = ` + tplEM.FieldVar + `.filter((item: any, index: any) => {
-                    return ` + tplEM.FieldVar + `.indexOf(item) === index
+                //param.` + tplEM.FieldVar + ` = [...new Set(` + gstr.CaseCamelLower(tplEM.FieldVar) + `)]
+                param.` + tplEM.FieldVar + ` = ` + gstr.CaseCamelLower(tplEM.FieldVar) + `.filter((item: any, index: any) => {
+                    return ` + gstr.CaseCamelLower(tplEM.FieldVar) + `.indexOf(item) === index
                 })
             }`
 			} else {
@@ -858,10 +858,10 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                 ],
             },
         ],`)
-		viewSave.formItem = append(viewSave.formItem, `<el-form-item :label="t('`+tplEM.tplOfTop.I18nPath+`.name.`+tplEM.FieldVar+`Label')" prop="`+tplEM.FieldVar+`" style="min-height: 60px">
+		viewSave.formItem = append(viewSave.formItem, `<el-form-item :label="t('`+tplEM.tplOfTop.I18nPath+`.name.`+internal.GetStrByFieldStyle(tplEM.tplOfTop.FieldStyle, tplEM.FieldVar, ``, `label`)+`')" prop="`+tplEM.FieldVar+`" style="min-height: 60px">
                     <template #label>
                         <span style="text-align: right">
-                            <div>{{ t('`+tplEM.tplOfTop.I18nPath+`.name.`+tplEM.FieldVar+`Label') }}</div>
+                            <div>{{ t('`+tplEM.tplOfTop.I18nPath+`.name.`+internal.GetStrByFieldStyle(tplEM.tplOfTop.FieldStyle, tplEM.FieldVar, ``, `label`)+`') }}</div>
                             <el-button type="primary" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.push({})"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>
                         </span>
                     </template>
