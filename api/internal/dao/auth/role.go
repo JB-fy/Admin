@@ -89,6 +89,9 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
 				m = m.Where(tableRoleRelToMenu+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
+			case Scene.Columns().SceneCode:
+				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.PrimaryKey())
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)

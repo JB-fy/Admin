@@ -29,7 +29,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
-            { required: computed((): boolean => (saveForm.data.idArr?.length ? false : true)), message: t('validation.required') },
+            { required: computed((): boolean => (saveForm.data.id_arr?.length ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
         nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
@@ -37,7 +37,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
-        roleIdArr: [
+        role_id_arr: [
             { required: true, message: t('validation.required') },
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
@@ -52,7 +52,7 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
-                if (param?.idArr?.length > 0) {
+                if (param?.id_arr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/create', param, true)
@@ -105,7 +105,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.idArr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert v-if="saveForm.data.id_arr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('platform.admin.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
@@ -113,10 +113,10 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('platform.admin.name.avatar')" prop="avatar">
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" />
                 </el-form-item>
-                <el-form-item :label="t('platform.admin.name.roleIdArr')" prop="roleIdArr">
+                <el-form-item :label="t('platform.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
-                    <!-- <my-select v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" :multiple="true" /> -->
-                    <my-transfer v-model="saveForm.data.roleIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { sceneCode: `platform` } } }" />
+                    <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { scene_code: `platform` } } }" :multiple="true" /> -->
+                    <my-transfer v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { scene_code: `platform` } } }" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.is_stop')" prop="is_stop">
                     <el-switch

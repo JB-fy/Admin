@@ -17,9 +17,9 @@ type AdminListReq struct {
 
 type AdminListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"min:1" dc:"ID"`
-	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
+	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
+	ExcId          *uint       `json:"exc_id,omitempty" v:"min:1" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
@@ -47,7 +47,7 @@ type AdminListItem struct {
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	RoleIdArr []uint      `json:"roleIdArr,omitempty" dc:"角色ID列表"`
+	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
 }
 
 /*--------列表 结束--------*/
@@ -74,7 +74,7 @@ type AdminInfo struct {
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	RoleIdArr []uint      `json:"roleIdArr,omitempty" dc:"角色ID列表"`
+	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
 }
 
 /*--------详情 结束--------*/
@@ -88,7 +88,7 @@ type AdminCreateReq struct {
 	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	RoleIdArr *[]uint `json:"roleIdArr,omitempty" v:"required|distinct|foreach|min:1" dc:"角色ID列表"`
+	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"角色ID列表"`
 }
 
 /*--------新增 结束--------*/
@@ -96,14 +96,14 @@ type AdminCreateReq struct {
 /*--------修改 开始--------*/
 type AdminUpdateReq struct {
 	g.Meta    `path:"/admin/update" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"修改"`
-	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr     []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	Phone     *string `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account   *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	RoleIdArr *[]uint `json:"roleIdArr,omitempty" v:"distinct|foreach|min:1" dc:"角色ID列表"`
+	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"角色ID列表"`
 }
 
 /*--------修改 结束--------*/
@@ -111,7 +111,7 @@ type AdminUpdateReq struct {
 /*--------删除 开始--------*/
 type AdminDeleteReq struct {
 	g.Meta `path:"/admin/del" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"删除"`
-	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

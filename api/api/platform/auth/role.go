@@ -30,6 +30,7 @@ type RoleListFilter struct {
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	ActionId       *uint       `json:"action_id,omitempty" v:"min:1" dc:"操作ID"`
 	MenuId         *uint       `json:"menu_id,omitempty" v:"min:1" dc:"菜单ID"`
+	SceneCode      string      `json:"scene_code,omitempty" v:"max-length:30" dc:"场景标识"`
 }
 
 type RoleListRes struct {

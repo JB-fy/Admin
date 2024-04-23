@@ -6,7 +6,7 @@ export default {
         nickname: '昵称',
         avatar: '头像',
         is_stop: '停用',
-        roleIdArr: '角色',
+        role_id_arr: '角色',
     },
     status: {},
     tip: {},
