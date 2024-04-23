@@ -452,7 +452,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		viewListField.title.DataTypeName = `t('common.name.createdAt')`
 	case internal.TypeNamePid: // pid；	类型：int等类型；
 		viewListField.dataKey.Method = internal.ReturnTypeName
-		viewListField.dataKey.DataTypeName = `'p` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `'`
+		viewListField.dataKey.DataTypeName = `'` + internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`) + `'`
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`

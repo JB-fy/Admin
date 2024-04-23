@@ -53,7 +53,7 @@ type MenuListItem struct {
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 	SceneName *string     `json:"scene_name,omitempty" dc:"场景"`
-	PMenuName *string     `json:"pMenuName,omitempty" dc:"父级"`
+	PMenuName *string     `json:"p_menu_name,omitempty" dc:"父级"`
 }
 
 /*--------列表 结束--------*/

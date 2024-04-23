@@ -4,7 +4,6 @@ import (
 	"api/internal/cmd/my-gen/internal"
 	"context"
 	"fmt"
-	"math"
 
 	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/container/garray"
@@ -16,26 +15,27 @@ import (
 )
 
 type myGenTpl struct {
-	DbHandler          internal.MyGenDbHandler //数据库处理器
-	Link               string                  //当前数据库连接配置（gf gen dao命令生成dao需要）
-	TableArr           []string                //当前数据库全部数据表（获取扩展表，中间表等需要）
-	Group              string                  //数据库分组
-	RemovePrefixCommon string                  //要删除的共有前缀
-	RemovePrefixAlone  string                  //要删除的独有前缀
-	RemovePrefix       string                  //要删除的前缀
-	Table              string                  //表名（原始，包含前缀）
-	TableCaseSnake     string                  //表名（蛇形，已去除前缀）
-	TableCaseCamel     string                  //表名（大驼峰，已去除前缀）
-	TableCaseKebab     string                  //表名（横线，已去除前缀）
-	KeyList            []internal.MyGenKey     //索引列表
-	FieldList          []myGenField            //字段列表
-	FieldListOfDefault []myGenField            //除FieldListOfAfter外，表的其它字段数组。
-	FieldListOfAfter   []myGenField            //最后处理的字段数组。且需按该数组顺序处理
-	ModuleDirCaseCamel string                  //模块目录（大驼峰，/会被去除）
-	ModuleDirCaseKebab string                  //模块目录（横线，/会被保留）
-	LogicStructName    string                  //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
-	I18nPath           string                  //前端多语言使用
-	Handle             struct {                //需特殊处理的字段
+	DbHandler          internal.MyGenDbHandler  //数据库处理器
+	FieldStyle         internal.MyGenFieldStyle //表字段命名风格
+	Link               string                   //当前数据库连接配置（gf gen dao命令生成dao需要）
+	TableArr           []string                 //当前数据库全部数据表（获取扩展表，中间表等需要）
+	Group              string                   //数据库分组
+	RemovePrefixCommon string                   //要删除的共有前缀
+	RemovePrefixAlone  string                   //要删除的独有前缀
+	RemovePrefix       string                   //要删除的前缀
+	Table              string                   //表名（原始，包含前缀）
+	TableCaseSnake     string                   //表名（蛇形，已去除前缀）
+	TableCaseCamel     string                   //表名（大驼峰，已去除前缀）
+	TableCaseKebab     string                   //表名（横线，已去除前缀）
+	KeyList            []internal.MyGenKey      //索引列表
+	FieldList          []myGenField             //字段列表
+	FieldListOfDefault []myGenField             //除FieldListOfAfter外，表的其它字段数组。
+	FieldListOfAfter   []myGenField             //最后处理的字段数组。且需按该数组顺序处理
+	ModuleDirCaseCamel string                   //模块目录（大驼峰，/会被去除）
+	ModuleDirCaseKebab string                   //模块目录（横线，/会被保留）
+	LogicStructName    string                   //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
+	I18nPath           string                   //前端多语言使用
+	Handle             struct {                 //需特殊处理的字段
 		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
 			List      []myGenField
 			IsPrimary bool //是否主键
@@ -157,6 +157,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.I18nPath = gstr.Replace(moduleDirCaseKebab, `/`, `.`) + `.` + tpl.TableCaseKebab
 
 	fieldListTmp := tpl.DbHandler.GetFieldList(ctx, tpl.Group, tpl.Table)
+	tpl.FieldStyle = internal.GetFieldStyle(fieldListTmp)
 	fieldList := make([]myGenField, len(fieldListTmp))
 	for k, v := range fieldListTmp {
 		fieldTmp := myGenField{MyGenField: v}
@@ -188,7 +189,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			`{"`, `' + "{'{'}" + '"`,
 		})
 
-		fieldTmp.FieldShowLenMax = tpl.getShowLen(fieldTmp.FieldName)
+		fieldTmp.FieldShowLenMax = internal.GetShowLen(fieldTmp.FieldName)
 
 		fieldTmp.FieldLimitStr = tpl.DbHandler.GetFieldLimitStr(ctx, v, tpl.Group, tpl.Table)
 
@@ -247,10 +248,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) {
 				isStr = true
 			}
-			fieldTmp.StatusList = tpl.getStatusList(fieldTmp.FieldTip, isStr)
+			fieldTmp.StatusList = internal.GetStatusList(fieldTmp.FieldTip, isStr)
 
 			for _, status := range fieldTmp.StatusList {
-				showLen := tpl.getShowLen(status[1])
+				showLen := internal.GetShowLen(status[1])
 				if showLen > fieldTmp.FieldShowLenMax {
 					fieldTmp.FieldShowLenMax = showLen
 				}
@@ -283,7 +284,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && fieldTmp.FieldLimitStr == `32` { //password,passwd后缀
 				fieldTmp.FieldTypeName = internal.TypeNamePasswordSuffix
 
-				passwordMapKey := tpl.getHandlePasswordMapKey(fieldTmp.FieldRaw)
+				passwordMapKey := internal.GetHandlePasswordMapKey(fieldTmp.FieldRaw)
 				handlePasswordObj, ok := tpl.Handle.PasswordMap[passwordMapKey]
 				if ok {
 					handlePasswordObj.PasswordField = fieldTmp.FieldRaw
@@ -298,7 +299,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			} else if garray.NewStrArrayFrom([]string{`salt`}).Contains(fieldSuffix) { //salt后缀，且对应的password,passwd后缀存在时（才）有效。该命名类型需做二次确定
 				fieldTmp.FieldTypeName = internal.TypeNameSaltSuffix
 
-				passwordMapKey := tpl.getHandlePasswordMapKey(fieldTmp.FieldRaw)
+				passwordMapKey := internal.GetHandlePasswordMapKey(fieldTmp.FieldRaw)
 				handlePasswordObj, ok := tpl.Handle.PasswordMap[passwordMapKey]
 				if ok {
 					handlePasswordObj.SaltField = fieldTmp.FieldRaw
@@ -396,7 +397,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldList[k].FieldTypeName = internal.TypeNameSortSuffix
 			}
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			passwordMapKey := tpl.getHandlePasswordMapKey(v.FieldRaw)
+			passwordMapKey := internal.GetHandlePasswordMapKey(v.FieldRaw)
 			if !tpl.Handle.PasswordMap[passwordMapKey].IsCoexist {
 				fieldList[k].FieldTypeName = ``
 			}
@@ -543,47 +544,6 @@ func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, field string) bool {
 		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
 	}
 	return garray.NewStrArrayFrom(primaryKeyArr).Contains(gstr.CaseSnake(field))
-}
-
-// status字段注释解析
-func (myGenTplThis *myGenTpl) getStatusList(comment string, isStr bool) (statusList [][2]string) {
-	var tmp [][]string
-	if isStr {
-		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；]+)`, comment)
-	} else {
-		// tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；]+)`, comment)
-		tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\s,，;；]+)`, comment)
-	}
-
-	if len(tmp) == 0 {
-		statusList = [][2]string{{`0`, `请设置表字段注释后，再生成代码`}}
-		return
-	}
-	statusList = make([][2]string, len(tmp))
-	for k, v := range tmp {
-		statusList[k] = [2]string{v[1], v[2]}
-	}
-	return
-}
-
-// 获取显示长度。汉字个数 + (其它字符个数 / 2) 后的值
-func (myGenTplThis *myGenTpl) getShowLen(str string) int {
-	len := len(str)
-	lenRune := gstr.LenRune(str)
-	countHan := (len - lenRune) / 2
-	countOther := gconv.Int(math.Ceil(float64(len-countHan*3) / 2))
-	return countHan + countOther
-}
-
-// 获取Handle.PasswordMap的Key（以Password为主）
-func (myGenTplThis *myGenTpl) getHandlePasswordMapKey(passwordOrsalt string) (passwordMapKey string) {
-	passwordOrsalt = gstr.Replace(gstr.CaseCamel(passwordOrsalt), `Salt`, `Password`, 1) //替换salt
-	passwordOrsalt = gstr.Replace(passwordOrsalt, `Passwd`, `Password`, 1)               //替换passwd
-	passwordMapKey = gstr.CaseCamelLower(passwordOrsalt)                                 //默认：小驼峰
-	if gstr.CaseCamelLower(passwordOrsalt) != passwordOrsalt {                           //判断字段是不是蛇形
-		passwordMapKey = gstr.CaseSnake(passwordMapKey)
-	}
-	return
 }
 
 // 获取id后缀字段关联的表信息

@@ -49,7 +49,7 @@ const table = reactive({
             width: 150,
         },
         {
-            dataKey: 'pMenuName',
+            dataKey: 'p_menu_name',
             title: t('auth.menu.name.pid'),
             key: 'pid',
             align: 'center',

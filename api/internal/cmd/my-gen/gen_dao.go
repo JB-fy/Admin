@@ -513,7 +513,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.filterParse.Method = internal.ReturnTypeName
 
 		daoField.fieldParse.Method = internal.ReturnTypeName
-		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`p"+gstr.CaseCamel(tpl.Handle.LabelList[0])+"`"+`:
+		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+"`"+`:
 				tableP := `+"`p_`"+` + `+daoTable+`
 				m = m.Fields(tableP + `+"`.`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` + `+"` AS `"+` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))`)
@@ -652,7 +652,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}`
-		passwordMapKey := tpl.getHandlePasswordMapKey(v.FieldRaw)
+		passwordMapKey := internal.GetHandlePasswordMapKey(v.FieldRaw)
 		if tpl.Handle.PasswordMap[passwordMapKey].IsCoexist {
 			insertParseStr += `
 				salt := grand.S(` + tpl.Handle.PasswordMap[passwordMapKey].SaltLength + `)

@@ -490,7 +490,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	case internal.TypeNamePid: // pid；	类型：int等类型；
 		apiField.filterType.Method = internal.ReturnType
 
-		apiField.resOfAdd = append(apiField.resOfAdd, `P`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` *string `+"`"+`json:"p`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`,omitempty" dc:"父级"`+"`")
+		apiField.resOfAdd = append(apiField.resOfAdd, internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0], `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+`,omitempty" dc:"父级"`+"`")
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		apiField.filterType.Method = internal.ReturnType
 		apiField.createType.Method = internal.ReturnEmpty

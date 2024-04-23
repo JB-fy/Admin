@@ -136,7 +136,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]int
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
-			case `pMenuName`:
+			case `p_menu_name`:
 				tableP := `p_` + daoModel.DbTable
 				m = m.Fields(tableP + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))

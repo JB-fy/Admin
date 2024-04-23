@@ -27,7 +27,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	}
 
 	allowField := daoAuth.Menu.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `pMenuName`)
+	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
