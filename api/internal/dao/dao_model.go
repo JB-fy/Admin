@@ -160,7 +160,7 @@ func (daoModelThis *DaoModel) GroupPriOnJoin() *DaoModel {
 	return daoModelThis
 }
 
-// 列表（联表时，GroupBy主键）
+// TODO 列表（联表时，GroupBy主键）
 func (daoModelThis *DaoModel) ListPri() (gdb.Result, error) {
 	return daoModelThis. /* GroupPriOnJoin(). */ All()
 }
