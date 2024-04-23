@@ -78,7 +78,18 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
-                return <my-icon-dynamic icon={props.rowData.menuIcon} size="18px" />
+                if (!props.rowData.menu_icon) {
+                    return
+                }
+                const imageList = [props.rowData.menu_icon]
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        {imageList.map((item) => {
+                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
+                        })}
+                    </el-scrollbar>,
+                ]
             },
         },
         {
@@ -128,7 +139,7 @@ const table = reactive({
                                 props.rowData.editSort = false
                                 if ((currentVal || currentVal === 0) && currentVal != props.rowData.sort) {
                                     handleUpdate({
-                                        idArr: [props.rowData.id],
+                                        id_arr: [props.rowData.id],
                                         sort: currentVal,
                                     })
                                         .then((res) => {
@@ -175,7 +186,7 @@ const table = reactive({
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                         onChange={(val: number) => {
                             handleUpdate({
-                                idArr: [props.rowData.id],
+                                id_arr: [props.rowData.id],
                                 is_stop: val,
                             })
                                 .then((res) => {
@@ -265,7 +276,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
             saveCommon.data = { ...res.data.info }
             switch (type) {
                 case 'edit':
-                    saveCommon.data.idArr = [saveCommon.data.id]
+                    saveCommon.data.id_arr = [saveCommon.data.id]
                     delete saveCommon.data.id
                     saveCommon.title = t('common.edit')
                     break
@@ -287,7 +298,7 @@ const handleDelete = (idArr: number[]) => {
         showClose: false,
     })
         .then(() => {
-            request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/del', { idArr: idArr }, true)
+            request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/del', { id_arr: idArr }, true)
                 .then((res) => {
                     getList()
                 })
@@ -296,7 +307,7 @@ const handleDelete = (idArr: number[]) => {
         .catch(() => {})
 }
 //更新
-const handleUpdate = async (param: { idArr: number[]; [propName: string]: any }) => {
+const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/update', param, true)
 }
 

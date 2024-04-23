@@ -63,7 +63,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoReq) (res *apiAuth.ActionInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Action.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, `sceneIdArr`)
+	allowField = append(allowField, `id`, `label`, `scene_id_arr`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -120,7 +120,7 @@ func (controllerThis *Action) Create(ctx context.Context, req *apiAuth.ActionCre
 func (controllerThis *Action) Update(ctx context.Context, req *apiAuth.ActionUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, `idArr`)
+	delete(data, `id_arr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

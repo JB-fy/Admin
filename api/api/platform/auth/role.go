@@ -17,9 +17,9 @@ type RoleListReq struct {
 
 type RoleListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"min:1" dc:"ID"`
-	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
+	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
+	ExcId          *uint       `json:"exc_id,omitempty" v:"min:1" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
@@ -47,8 +47,8 @@ type RoleListItem struct {
 	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	ActionIdArr []uint      `json:"actionIdArr,omitempty" dc:"操作ID列表"`
-	MenuIdArr   []uint      `json:"menuIdArr,omitempty" dc:"菜单ID列表"`
+	ActionIdArr []uint      `json:"action_id_arr,omitempty" dc:"操作ID列表"`
+	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID列表"`
 	SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
 	TableName   *string     `json:"table_name,omitempty" dc:"关联名称"`
 }
@@ -76,8 +76,8 @@ type RoleInfo struct {
 	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	ActionIdArr []uint      `json:"actionIdArr,omitempty" dc:"操作ID列表"`
-	MenuIdArr   []uint      `json:"menuIdArr,omitempty" dc:"菜单ID列表"`
+	ActionIdArr []uint      `json:"action_id_arr,omitempty" dc:"操作ID列表"`
+	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID列表"`
 }
 
 /*--------详情 结束--------*/
@@ -89,8 +89,8 @@ type RoleCreateReq struct {
 	SceneId  *uint   `json:"scene_id,omitempty" v:"required|min:1" dc:"场景ID"`
 	// TableId     *uint   `json:"table_id,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
-	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
+	ActionIdArr *[]uint `json:"action_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
+	MenuIdArr   *[]uint `json:"menu_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 }
 
 /*--------新增 结束--------*/
@@ -98,13 +98,13 @@ type RoleCreateReq struct {
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
 	g.Meta   `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
-	IdArr    []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr    []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	RoleName *string `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId  *uint   `json:"scene_id,omitempty" v:"min:1" dc:"场景ID"`
 	// TableId     *uint   `json:"table_id,omitempty" v:"min:0" dc:"关联表ID。0表示平台创建，其它值根据sceneId对应不同表，表示由哪个机构或个人创建"`
 	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	ActionIdArr *[]uint `json:"actionIdArr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
-	MenuIdArr   *[]uint `json:"menuIdArr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
+	ActionIdArr *[]uint `json:"action_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"操作ID列表"`
+	MenuIdArr   *[]uint `json:"menu_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"菜单ID列表"`
 }
 
 /*--------修改 结束--------*/
@@ -112,7 +112,7 @@ type RoleUpdateReq struct {
 /*--------删除 开始--------*/
 type RoleDeleteReq struct {
 	g.Meta `path:"/role/del" method:"post" tags:"平台后台/权限管理/角色" sm:"删除"`
-	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

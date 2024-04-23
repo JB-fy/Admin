@@ -120,7 +120,7 @@ func (controllerThis *Menu) Create(ctx context.Context, req *apiAuth.MenuCreateR
 func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, `idArr`)
+	delete(data, `id_arr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

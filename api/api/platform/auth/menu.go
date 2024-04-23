@@ -17,9 +17,9 @@ type MenuListReq struct {
 
 type MenuListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"min:1" dc:"ID"`
-	IdArr          []uint      `json:"idArr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `json:"excId,omitempty" v:"min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"excIdArr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
+	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
+	ExcId          *uint       `json:"exc_id,omitempty" v:"min:1" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
@@ -107,7 +107,7 @@ type MenuCreateReq struct {
 /*--------修改 开始--------*/
 type MenuUpdateReq struct {
 	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"修改"`
-	IdArr     []uint  `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr     []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 	MenuName  *string `json:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId   *uint   `json:"scene_id,omitempty" v:"min:1" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"" dc:"父ID"`
@@ -123,7 +123,7 @@ type MenuUpdateReq struct {
 /*--------删除 开始--------*/
 type MenuDeleteReq struct {
 	g.Meta `path:"/menu/del" method:"post" tags:"平台后台/权限管理/菜单" sm:"删除"`
-	IdArr  []uint `json:"idArr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

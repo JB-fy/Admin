@@ -19,17 +19,17 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
         scene_id: [
-            { required: true, message: t('validation.required') },
+            // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },
         ],
         pid: [{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') }],
         menu_icon: [
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            // { type: 'url', trigger: 'change', message: t('validation.upload') },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         menu_url: [
             { type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) },
-            // { type: 'url', trigger: 'blur', message: t('validation.url') },
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         extra_data: [
             {
@@ -67,7 +67,7 @@ const saveForm = reactive({
             param.scene_id === undefined ? (param.scene_id = 0) : null
             param.pid === undefined ? (param.pid = 0) : null
             try {
-                if (param?.idArr?.length > 0) {
+                if (param?.id_arr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/create', param, true)
@@ -114,18 +114,13 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.menu_name" :placeholder="t('auth.menu.name.menu_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.scene_id')" prop="scene_id">
-                    <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => (saveForm.data.pid = 0)" />
+                    <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </el-form-item>
-                <el-form-item v-if="saveForm.data.sceneId" :label="t('auth.menu.name.pid')" prop="pid">
-                    <my-cascader
-                        v-model="saveForm.data.pid"
-                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.sceneId, exc_id_arr: saveForm.data.id_arr } } }"
-                        :props="{ checkStrictly: true, emitPath: false }"
-                    />
+                <el-form-item :label="t('auth.menu.name.pid')" prop="pid">
+                    <my-cascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { exc_id_arr: saveForm.data.id_arr } } }" :props="{ checkStrictly: true, emitPath: false }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_icon')" prop="menu_icon">
-                    <el-input v-model="saveForm.data.menu_icon" :placeholder="t('auth.menu.name.menu_icon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('auth.menu.tip.menu_icon')" type="info" :show-icon="true" :closable="false" />
+                    <my-upload v-model="saveForm.data.menu_icon" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_url')" prop="menu_url">
                     <el-input v-model="saveForm.data.menu_url" :placeholder="t('auth.menu.name.menu_url')" maxlength="120" :show-word-limit="true" :clearable="true" />

@@ -65,9 +65,9 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]interface{}, daoModel *da
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
-			case `id`, `idArr`:
+			case `id`, `id_arr`:
 				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-			case `excId`, `excIdArr`:
+			case `exc_id`, `exc_id_arr`:
 				if gvar.New(v).IsSlice() {
 					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 				} else {

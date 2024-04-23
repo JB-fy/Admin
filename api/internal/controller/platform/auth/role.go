@@ -63,7 +63,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) (res *apiAuth.RoleInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	allowField := daoAuth.Role.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, `actionIdArr`, `menuIdArr`)
+	allowField = append(allowField, `id`, `label`, `action_id_arr`, `menu_id_arr`)
 	field := allowField
 	if len(req.Field) > 0 {
 		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
@@ -120,7 +120,7 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, `idArr`)
+	delete(data, `id_arr`)
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

@@ -66,9 +66,9 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
-			case `id`, `idArr`:
+			case `id`, `id_arr`:
 				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
-			case `excId`, `excIdArr`:
+			case `exc_id`, `exc_id_arr`:
 				if gvar.New(v).IsSlice() {
 					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
 				} else {
@@ -135,7 +135,7 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]i
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ActionName + ` AS ` + v)
-			case `sceneIdArr`:
+			case `scene_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 				daoModel.AfterField.Add(v)
 			default:
@@ -167,7 +167,7 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for _, record := range result {
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
-					case `sceneIdArr`:
+					case `scene_id_arr`:
 						sceneIdArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, record[daoThis.PrimaryKey()]).Array(ActionRelToScene.Columns().SceneId)
 						record[v] = gvar.New(sceneIdArr)
 					default:
@@ -192,7 +192,7 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, daoModel *d
 		insertData := map[string]interface{}{}
 		for k, v := range insert {
 			switch k {
-			case `sceneIdArr`:
+			case `scene_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
@@ -220,7 +220,7 @@ func (daoThis *actionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 
 			for k, v := range daoModel.AfterInsert {
 				switch k {
-				case `sceneIdArr`:
+				case `scene_id_arr`:
 					insertList := []map[string]interface{}{}
 					for _, item := range gconv.SliceAny(v) {
 						insertList = append(insertList, map[string]interface{}{
@@ -242,7 +242,7 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, daoModel *d
 		updateData := map[string]interface{}{}
 		for k, v := range update {
 			switch k {
-			case `sceneIdArr`:
+			case `scene_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
@@ -284,7 +284,7 @@ func (daoThis *actionDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
-				case `sceneIdArr`:
+				case `scene_id_arr`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &ActionRelToScene, ActionRelToScene.Columns().ActionId, ActionRelToScene.Columns().SceneId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
 					valArr := gconv.SliceStr(v)
 					for _, id := range daoModel.IdArr {
