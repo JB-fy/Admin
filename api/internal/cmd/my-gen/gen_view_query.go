@@ -203,13 +203,13 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
         ] */
     })(),
-    timeRangeStart: computed(() => {
+    ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`) + `: computed(() => {
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[0]).format('YYYY-MM-DD HH:mm:ss')
         }
         return ''
     }),
-    timeRangeEnd: computed(() => {
+    ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`) + `: computed(() => {
         if (queryCommon.data.timeRange?.length) {
             return dayjs(queryCommon.data.timeRange[1]).format('YYYY-MM-DD HH:mm:ss')
         }

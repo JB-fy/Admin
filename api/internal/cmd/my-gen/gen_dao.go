@@ -505,9 +505,9 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 	case internal.TypeNameUpdated: // 更新时间字段
 	case internal.TypeNameCreated: // 创建时间字段
 		daoField.filterParse.Method = internal.ReturnTypeName
-		daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+"`timeRangeStart`"+`:
+		daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`)+"`"+`:
 				m = m.WhereGTE(`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+v.FieldCaseCamel+`, v)
-			case `+"`timeRangeEnd`"+`:
+			case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`)+"`"+`:
 				m = m.WhereLTE(`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+v.FieldCaseCamel+`, v)`)
 	case internal.TypeNamePid: // pid；	类型：int等类型；
 		daoField.filterParse.Method = internal.ReturnTypeName

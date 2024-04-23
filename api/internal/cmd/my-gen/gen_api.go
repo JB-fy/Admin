@@ -484,8 +484,8 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.updateType.Method = internal.ReturnEmpty
 
 		apiField.filterOfFixed = append(apiField.filterOfFixed,
-			`TimeRangeStart *gtime.Time `+"`"+`json:"timeRangeStart,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
-			`TimeRangeEnd   *gtime.Time `+"`"+`json:"timeRangeEnd,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
+			`TimeRangeStart *gtime.Time `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`)+`,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
+			`TimeRangeEnd   *gtime.Time `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`)+`,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
 		)
 	case internal.TypeNamePid: // pid；	类型：int等类型；
 		apiField.filterType.Method = internal.ReturnType
