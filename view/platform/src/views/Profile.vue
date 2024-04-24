@@ -51,7 +51,7 @@ const saveForm = reactive({
                     }
                     callback()
                 },
-                message: t('validation.newPasswordDiffOldPassword'),
+                message: t('validation.new_password_diff_old_password'),
             },
         ],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
