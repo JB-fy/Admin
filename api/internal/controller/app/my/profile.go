@@ -124,7 +124,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		}
 	}
 
-	filter := map[string]interface{}{`id`: loginInfo[`loginId`]}
+	filter := map[string]interface{}{`id`: loginInfo[`login_id`]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.User().Update(ctx, filter, data)

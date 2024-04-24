@@ -16,18 +16,18 @@ func Log(r *ghttp.Request) {
 	endTime := gtime.Now().UnixMicro()
 	runTime := (float64(endTime) - float64(startTime)) / 1000
 	data := map[string]interface{}{
-		`url`:       r.GetUrl(),
-		`header`:    r.Header,
-		`reqData`:   r.GetMap(),
-		`resData`:   r.Response.BufferString(),
-		`resStatus`: r.Response.Status,
-		`runTime`:   runTime,
+		`url`:        r.GetUrl(),
+		`header`:     r.Header,
+		`req_data`:   r.GetMap(),
+		`res_data`:   r.Response.BufferString(),
+		`res_status`: r.Response.Status,
+		`run_time`:   runTime,
 	}
-	data[`clientIp`] = r.GetClientIp()
-	data[`loginId`] = 0
+	data[`client_ip`] = r.GetClientIp()
+	data[`login_id`] = 0
 	loginInfo := utils.GetCtxLoginInfo(r.GetCtx())
 	if !loginInfo.IsEmpty() {
-		data[`loginId`] = loginInfo[`loginId`]
+		data[`login_id`] = loginInfo[`login_id`]
 	}
 	g.Log(`loggerHttp`).Info(r.GetCtx(), data)
 }

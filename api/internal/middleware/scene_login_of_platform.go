@@ -68,8 +68,8 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 			return
 		}
 
-		info[`loginId`] = gvar.New(claims.LoginId) //所有场景追加这个字段，方便统一调用
-		utils.SetCtxLoginInfo(r, info)             //用户信息保存在协程上下文
+		info[`login_id`] = gvar.New(claims.LoginId) //所有场景追加这个字段，方便统一调用
+		utils.SetCtxLoginInfo(r, info)              //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/
 
 		r.Middleware.Next()

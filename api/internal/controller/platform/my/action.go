@@ -24,7 +24,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 		`self_action`: map[string]interface{}{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`scene_id`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-			`login_id`:   loginInfo[`loginId`],
+			`login_id`:   loginInfo[`login_id`],
 		},
 	}
 	list, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().ListPri()

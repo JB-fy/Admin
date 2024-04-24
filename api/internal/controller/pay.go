@@ -82,7 +82,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		//订单查询
 		/* orderInfo, _ := daoXxxx.Order.CtxDaoModel(ctx).Filters(g.Map{
 			daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
-			daoXxxx.Order.Columns().UserId:    loginInfo[`loginId`],
+			daoXxxx.Order.Columns().UserId:    loginInfo[`login_id`],
 			daoXxxx.Order.Columns().PayStatus: 0,
 		}).One()
 		if orderInfo.IsEmpty() {

@@ -63,7 +63,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	//平台超级管理员，无权限限制
-	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[`loginId`].Uint() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() {
+	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[`login_id`].Uint() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() {
 		isAuth = true
 		return
 	}
@@ -73,7 +73,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 		`self_action`: map[string]interface{}{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`scene_id`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-			`login_id`:   loginInfo[`loginId`],
+			`login_id`:   loginInfo[`login_id`],
 		},
 	}
 	count, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Count()
