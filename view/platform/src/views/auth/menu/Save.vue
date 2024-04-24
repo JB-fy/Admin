@@ -25,11 +25,11 @@ const saveForm = reactive({
         pid: [{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') }],
         menu_icon: [
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
+            // { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         menu_url: [
             { type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) },
-            { type: 'url', trigger: 'blur', message: t('validation.url') },
+            // { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
         extra_data: [
             {
