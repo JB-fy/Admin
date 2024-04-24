@@ -115,7 +115,7 @@ func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]int
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
-				m = m.Fields(`IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `)) AS ` + v)
+				m = m.Fields(`COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, '')) AS ` + v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
