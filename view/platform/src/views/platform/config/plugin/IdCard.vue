@@ -18,7 +18,7 @@ const saveForm = reactive({
         idCardOfAliyunAppcode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
-        const param = { configKeyArr: Object.keys(saveForm.data) }
+        const param = { config_key_arr: Object.keys(saveForm.data) }
         try {
             const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
             saveForm.data = {

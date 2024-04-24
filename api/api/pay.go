@@ -7,7 +7,7 @@ import (
 /*--------列表 开始--------*/
 type PayListReq struct {
 	g.Meta `path:"/list" method:"post" tags:"支付" sm:"列表"`
-	// UseScene uint `json:"useScene" v:"required|in:0" dc:"使用场景：0手机APP 1手机浏览器 2电脑浏览器"`
+	// UseScene uint `json:"use_scene" v:"required|in:0" dc:"使用场景：0手机APP 1手机浏览器 2电脑浏览器"`
 }
 
 type PayListRes struct {

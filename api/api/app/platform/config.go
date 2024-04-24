@@ -7,7 +7,7 @@ import (
 /*--------获取 开始--------*/
 type ConfigGetReq struct {
 	g.Meta       `path:"/config/get" method:"post" tags:"APP/配置" sm:"获取"`
-	ConfigKeyArr *[]string `c:"configKeyArr,omitempty" json:"configKeyArr" v:"required|distinct|foreach|in:hotSearch,userAgreement,privacyAgreement" dc:"配置项Key列表。传值参考默认返回的字段"`
+	ConfigKeyArr *[]string `c:"config_key_arr,omitempty" json:"config_key_arr" v:"required|distinct|foreach|in:hotSearch,userAgreement,privacyAgreement" dc:"配置项Key列表。传值参考默认返回的字段"`
 }
 
 type ConfigGetRes struct {
