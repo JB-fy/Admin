@@ -48,7 +48,7 @@ func NewUploadOfAliyunOss(ctx context.Context, config map[string]interface{}) *U
 
 type UploadOfAliyunOssCallback struct {
 	Url      string `json:"url"`      //回调地址	utils.GetRequestUrl(ctx, 0) + `/upload/notify`
-	Body     string `json:"body"`     //回调参数	`filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+	Body     string `json:"body"`     //回调参数	`filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 	BodyType string `json:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
 }
 
@@ -80,7 +80,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 	if uploadThis.CallbackUrl != `` {
 		callback := UploadOfAliyunOssCallback{
 			Url:      uploadThis.CallbackUrl,
-			Body:     `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
+			Body:     `filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
 		}
 		uploadData[`callback`] = uploadThis.CreateCallbackStr(callback)
@@ -101,7 +101,7 @@ func (uploadThis *UploadOfAliyunOss) Config(param UploadParam) (config map[strin
 	//是否回调
 	if uploadThis.CallbackUrl != `` {
 		config[`callbackUrl`] = uploadThis.CallbackUrl
-		config[`callbackBody`] = `filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
+		config[`callbackBody`] = `filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
 		config[`callbackBodyType`] = `application/x-www-form-urlencoded`
 	}
 	return
@@ -131,7 +131,7 @@ func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error)
 	notifyInfo.Width = r.Get(`width`).Uint()
 	notifyInfo.Height = r.Get(`height`).Uint()
 	notifyInfo.Size = r.Get(`size`).Uint()
-	notifyInfo.MimeType = r.Get(`mimeType`).String()
+	notifyInfo.MimeType = r.Get(`mime_type`).String()
 
 	// 获取OSS的签名
 	strAuthorizationBase64 := r.Header.Get(`authorization`)

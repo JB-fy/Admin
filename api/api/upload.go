@@ -81,7 +81,7 @@ type UploadNotifyRes struct {
 	Width    uint   `json:"width" dc:"宽度"`
 	Height   uint   `json:"height" dc:"高度"`
 	Size     uint   `json:"size" dc:"大小。单位：比特"`
-	MimeType string `json:"mimeType" dc:"文件类型"`
+	MimeType string `json:"mime_type" dc:"文件类型"`
 }
 
 /*--------回调 结束--------*/
