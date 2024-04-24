@@ -116,6 +116,14 @@ func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group
 		fieldType = TypeInt
 		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
 			fieldType = TypeIntU
+		} else {
+			fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
+			fieldCaseSnakeRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+			fieldSplitArr := gstr.Split(fieldCaseSnakeRemove, `_`)
+			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+			if fieldSuffix != `id` {
+				fieldType = TypeIntU
+			}
 		}
 	} else if gstr.Pos(field.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(field.FieldTypeRaw, `float`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 { //float类型
 		fieldType = TypeFloat

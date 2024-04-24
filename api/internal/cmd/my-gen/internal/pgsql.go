@@ -123,14 +123,17 @@ func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, g
 func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
 	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
 		fieldType = TypeInt
-		/* if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 { //pgsql不分正负
+		// pgsql数字类型不分正负。故只判断id后缀为非0参数
+		fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
+		fieldCaseSnakeRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+		fieldSplitArr := gstr.Split(fieldCaseSnakeRemove, `_`)
+		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+		if fieldSuffix != `id` {
 			fieldType = TypeIntU
-		} */
+		}
 	} else if gstr.Pos(field.FieldTypeRaw, `numeric`) != -1 || gstr.Pos(field.FieldTypeRaw, `real`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 { //float类型
 		fieldType = TypeFloat
-		/* if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 { //pgsql不分正负
-			fieldType = TypeFloatU
-		} */
+		// pgsql数字类型不分正负
 	} else if field.FieldTypeRaw == `character varying` { //varchar类型
 		fieldType = TypeVarchar
 	} else if field.FieldTypeRaw == `character` { //char类型
