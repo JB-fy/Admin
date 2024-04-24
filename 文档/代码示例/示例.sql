@@ -2,15 +2,15 @@
 CASE 字段 WHEN 匹配 THEN 值 ELSE 默认值 END                                    // 当字段匹配时返回对应值，否则返回默认值
 IF(条件, 值1, 值2)                                                             // 当条件为真，返回值1,否则返回值2
 IFNULL(值1, 值2)                                                               // 当值1为null时，返回值2
-NULLIF(值1, 值2)                                                               // 当值1等于值2，返回null，否则返回值1   //Postgresql通用
-COALESCE(值,...)                                                               // 返回第一个非NULL参数  //Postgresql通用
+NULLIF(值1, 值2)                                                               // 当值1等于值2，返回null，否则返回值1           //Postgresql通用
+COALESCE(值,...)                                                               // 返回第一个非NULL参数                          //Postgresql通用
 
 AVG([DISTINCT] 字段)                                                           // 平均值
 ROUND(值, 2)                                                                   // 保留两位小数
-CONCAT(字符串,...)                                                             // 拼接字符串
-CONCAT_WS(分隔符, 字符串,...)                                                  // 拼接字符串。可指定分隔符
+CONCAT(字符串,...)                                                             // 拼接字符串                                    //Postgresql通用
+CONCAT_WS(分隔符, 字符串,...)                                                  // 拼接字符串。可指定分隔符                      //Postgresql通用
 GROUP_CONCAT([DISTINCT] 字段 [ORDER BY 排序字段 ASC/DESC] [SEPARATOR 分隔符])  // 拼接字符串。一般在GROUP BY语句中使用
-REPLACE(字符串, ',', '')                                                       // 替换字符串。
+REPLACE(字符串, ',', '')                                                       // 替换字符串。                                  //Postgresql通用
 LENGTH(字符串)                                                                 // 字符串长度。中文根据编码不同，算多个字符
 CHAR_LENGTH(字符串)                                                            // 字符串长度。中英文都算1个字符
 

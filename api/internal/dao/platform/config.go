@@ -310,7 +310,7 @@ func (daoThis *configDao) Save(ctx context.Context, config map[string]interface{
 			_, err = tx.Model(daoModelThis.DbTable).Data(g.Map{
 				daoThis.Columns().ConfigKey:   k,
 				daoThis.Columns().ConfigValue: v,
-			}).Save()
+			}).OnConflict(daoThis.Columns().ConfigKey).Save()
 			if err != nil {
 				return
 			}

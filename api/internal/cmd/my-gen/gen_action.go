@@ -48,6 +48,6 @@ func genAction(ctx context.Context, option myGenOption, tpl myGenTpl) {
 		daoAuth.ActionRelToScene.CtxDaoModel(ctx).Data(map[string]interface{}{
 			daoAuth.ActionRelToScene.Columns().ActionId: id,
 			daoAuth.ActionRelToScene.Columns().SceneId:  option.SceneInfo[daoAuth.Scene.Columns().SceneId],
-		}).Save()
+		}).OnConflict(daoAuth.ActionRelToScene.Columns().ActionId, daoAuth.ActionRelToScene.Columns().SceneId).Save()
 	}
 }

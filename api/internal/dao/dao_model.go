@@ -331,6 +331,11 @@ func (daoModelThis *DaoModel) Data(data ...interface{}) *DaoModel {
 	return daoModelThis
 }
 
+func (daoModelThis *DaoModel) OnConflict(onConflict ...interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.OnConflict(onConflict...)
+	return daoModelThis
+}
+
 func (daoModelThis *DaoModel) Distinct() *DaoModel {
 	daoModelThis.model = daoModelThis.model.Distinct()
 	return daoModelThis

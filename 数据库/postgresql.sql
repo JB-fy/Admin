@@ -12,15 +12,15 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 24/04/2024 14:56:17
+ Date: 24/04/2024 16:44:57
 */
 
 
 -- ----------------------------
--- Sequence structure for auth_action_actionId_seq
+-- Sequence structure for auth_action_action_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."auth_action_actionId_seq";
-CREATE SEQUENCE "public"."auth_action_actionId_seq" 
+DROP SEQUENCE IF EXISTS "public"."auth_action_action_id_seq";
+CREATE SEQUENCE "public"."auth_action_action_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -28,10 +28,10 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for auth_menu_menuId_seq
+-- Sequence structure for auth_menu_menu_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."auth_menu_menuId_seq";
-CREATE SEQUENCE "public"."auth_menu_menuId_seq" 
+DROP SEQUENCE IF EXISTS "public"."auth_menu_menu_id_seq";
+CREATE SEQUENCE "public"."auth_menu_menu_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -39,10 +39,10 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for auth_role_roleId_seq
+-- Sequence structure for auth_role_role_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."auth_role_roleId_seq";
-CREATE SEQUENCE "public"."auth_role_roleId_seq" 
+DROP SEQUENCE IF EXISTS "public"."auth_role_role_id_seq";
+CREATE SEQUENCE "public"."auth_role_role_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -50,10 +50,10 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for auth_scene_sceneId_seq
+-- Sequence structure for auth_scene_scene_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."auth_scene_sceneId_seq";
-CREATE SEQUENCE "public"."auth_scene_sceneId_seq" 
+DROP SEQUENCE IF EXISTS "public"."auth_scene_scene_id_seq";
+CREATE SEQUENCE "public"."auth_scene_scene_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -61,10 +61,10 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for platform_admin_adminId_seq
+-- Sequence structure for platform_admin_admin_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."platform_admin_adminId_seq";
-CREATE SEQUENCE "public"."platform_admin_adminId_seq" 
+DROP SEQUENCE IF EXISTS "public"."platform_admin_admin_id_seq";
+CREATE SEQUENCE "public"."platform_admin_admin_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -72,10 +72,10 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for platform_server_serverId_seq
+-- Sequence structure for platform_server_server_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."platform_server_serverId_seq";
-CREATE SEQUENCE "public"."platform_server_serverId_seq" 
+DROP SEQUENCE IF EXISTS "public"."platform_server_server_id_seq";
+CREATE SEQUENCE "public"."platform_server_server_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -83,10 +83,10 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for user_userId_seq
+-- Sequence structure for user_user_user_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."user_userId_seq";
-CREATE SEQUENCE "public"."user_userId_seq" 
+DROP SEQUENCE IF EXISTS "public"."user_user_user_id_seq";
+CREATE SEQUENCE "public"."user_user_user_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -98,13 +98,13 @@ CACHE 1;
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."auth_action";
 CREATE TABLE "public"."auth_action" (
-  "action_id" int4 NOT NULL DEFAULT nextval('"auth_action_actionId_seq"'::regclass),
+  "action_id" int4 NOT NULL DEFAULT nextval('auth_action_action_id_seq'::regclass),
   "action_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "action_code" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_action"."action_id" IS '操作ID';
@@ -150,8 +150,8 @@ DROP TABLE IF EXISTS "public"."auth_action_rel_to_scene";
 CREATE TABLE "public"."auth_action_rel_to_scene" (
   "action_id" int4 NOT NULL DEFAULT 0,
   "scene_id" int4 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_action_rel_to_scene"."action_id" IS '操作ID';
@@ -192,7 +192,7 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES (24, 1, '2024-01-01 00:00
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."auth_menu";
 CREATE TABLE "public"."auth_menu" (
-  "menu_id" int4 NOT NULL DEFAULT nextval('"auth_menu_menuId_seq"'::regclass),
+  "menu_id" int4 NOT NULL DEFAULT nextval('auth_menu_menu_id_seq'::regclass),
   "menu_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_id" int4 NOT NULL DEFAULT 0,
   "pid" int4 NOT NULL DEFAULT 0,
@@ -203,8 +203,8 @@ CREATE TABLE "public"."auth_menu" (
   "extra_data" json,
   "sort" int2 NOT NULL DEFAULT 0,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_menu"."menu_id" IS '菜单ID';
@@ -243,13 +243,13 @@ INSERT INTO "public"."auth_menu" VALUES (13, '用户', 1, 12, 2, '0-12-13', 'van
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."auth_role";
 CREATE TABLE "public"."auth_role" (
-  "role_id" int4 NOT NULL DEFAULT nextval('"auth_role_roleId_seq"'::regclass),
+  "role_id" int4 NOT NULL DEFAULT nextval('auth_role_role_id_seq'::regclass),
   "role_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_id" int4 NOT NULL DEFAULT 0,
   "table_id" int4 NOT NULL DEFAULT 0,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_role"."role_id" IS '角色ID';
@@ -271,8 +271,8 @@ DROP TABLE IF EXISTS "public"."auth_role_rel_of_platform_admin";
 CREATE TABLE "public"."auth_role_rel_of_platform_admin" (
   "role_id" int4 NOT NULL DEFAULT 0,
   "admin_id" int4 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_role_rel_of_platform_admin"."role_id" IS '角色ID';
@@ -291,8 +291,8 @@ DROP TABLE IF EXISTS "public"."auth_role_rel_to_action";
 CREATE TABLE "public"."auth_role_rel_to_action" (
   "role_id" int4 NOT NULL DEFAULT 0,
   "action_id" int4 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_role_rel_to_action"."role_id" IS '角色ID';
@@ -311,8 +311,8 @@ DROP TABLE IF EXISTS "public"."auth_role_rel_to_menu";
 CREATE TABLE "public"."auth_role_rel_to_menu" (
   "role_id" int4 NOT NULL DEFAULT 0,
   "menu_id" int4 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_role_rel_to_menu"."role_id" IS '角色ID';
@@ -329,14 +329,14 @@ COMMENT ON COLUMN "public"."auth_role_rel_to_menu"."created_at" IS '创建时间
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."auth_scene";
 CREATE TABLE "public"."auth_scene" (
-  "scene_id" int4 NOT NULL DEFAULT nextval('"auth_scene_sceneId_seq"'::regclass),
+  "scene_id" int4 NOT NULL DEFAULT nextval('auth_scene_scene_id_seq'::regclass),
   "scene_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_code" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_config" json NOT NULL,
   "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."auth_scene"."scene_id" IS '场景ID';
@@ -359,7 +359,7 @@ INSERT INTO "public"."auth_scene" VALUES (2, 'APP', 'app', '{"signKey": "www.adm
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."platform_admin";
 CREATE TABLE "public"."platform_admin" (
-  "admin_id" int4 NOT NULL DEFAULT nextval('"platform_admin_adminId_seq"'::regclass),
+  "admin_id" int4 NOT NULL DEFAULT nextval('platform_admin_admin_id_seq'::regclass),
   "phone" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
@@ -367,12 +367,12 @@ CREATE TABLE "public"."platform_admin" (
   "nickname" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."platform_admin"."admin_id" IS '管理员ID';
-COMMENT ON COLUMN "public"."platform_admin"."phone" IS '手机号';
+COMMENT ON COLUMN "public"."platform_admin"."phone" IS '手机';
 COMMENT ON COLUMN "public"."platform_admin"."account" IS '账号';
 COMMENT ON COLUMN "public"."platform_admin"."password" IS '密码。md5保存';
 COMMENT ON COLUMN "public"."platform_admin"."salt" IS '密码盐';
@@ -393,9 +393,9 @@ INSERT INTO "public"."platform_admin" VALUES (1, NULL, 'admin', '0930b03ed8d217f
 DROP TABLE IF EXISTS "public"."platform_config";
 CREATE TABLE "public"."platform_config" (
   "config_key" varchar(60) COLLATE "pg_catalog"."default" NOT NULL,
-  "config_value" text COLLATE "pg_catalog"."default" NOT NULL,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "config_value" text COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::text,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."platform_config"."config_key" IS '配置Key';
@@ -460,11 +460,11 @@ INSERT INTO "public"."platform_config" VALUES ('vodType', 'vodOfAliyun', '2024-0
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."platform_server";
 CREATE TABLE "public"."platform_server" (
-  "server_id" int4 NOT NULL DEFAULT nextval('"platform_server_serverId_seq"'::regclass),
-  "network_ip" varchar(15) COLLATE "pg_catalog"."default" NOT NULL,
-  "local_ip" varchar(15) COLLATE "pg_catalog"."default" NOT NULL,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "server_id" int4 NOT NULL DEFAULT nextval('platform_server_server_id_seq'::regclass),
+  "network_ip" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "local_ip" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."platform_server"."server_id" IS '服务器ID';
@@ -482,7 +482,7 @@ COMMENT ON COLUMN "public"."platform_server"."created_at" IS '创建时间';
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."user_user";
 CREATE TABLE "public"."user_user" (
-  "user_id" int4 NOT NULL DEFAULT nextval('"user_userId_seq"'::regclass),
+  "user_id" int4 NOT NULL DEFAULT nextval('user_user_user_id_seq'::regclass),
   "phone" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
@@ -495,8 +495,8 @@ CREATE TABLE "public"."user_user" (
   "id_card_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "id_card_no" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "updated_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 COMMENT ON COLUMN "public"."user_user"."user_id" IS '用户ID';
@@ -522,51 +522,51 @@ COMMENT ON COLUMN "public"."user_user"."created_at" IS '创建时间';
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."auth_action_actionId_seq"
+ALTER SEQUENCE "public"."auth_action_action_id_seq"
 OWNED BY "public"."auth_action"."action_id";
-SELECT setval('"public"."auth_action_actionId_seq"', 1, false);
+SELECT setval('"public"."auth_action_action_id_seq"', 24, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."auth_menu_menuId_seq"
+ALTER SEQUENCE "public"."auth_menu_menu_id_seq"
 OWNED BY "public"."auth_menu"."menu_id";
-SELECT setval('"public"."auth_menu_menuId_seq"', 1, false);
+SELECT setval('"public"."auth_menu_menu_id_seq"', 13, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."auth_role_roleId_seq"
+ALTER SEQUENCE "public"."auth_role_role_id_seq"
 OWNED BY "public"."auth_role"."role_id";
-SELECT setval('"public"."auth_role_roleId_seq"', 1, false);
+SELECT setval('"public"."auth_role_role_id_seq"', 1, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."auth_scene_sceneId_seq"
+ALTER SEQUENCE "public"."auth_scene_scene_id_seq"
 OWNED BY "public"."auth_scene"."scene_id";
-SELECT setval('"public"."auth_scene_sceneId_seq"', 4, true);
+SELECT setval('"public"."auth_scene_scene_id_seq"', 2, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."platform_admin_adminId_seq"
+ALTER SEQUENCE "public"."platform_admin_admin_id_seq"
 OWNED BY "public"."platform_admin"."admin_id";
-SELECT setval('"public"."platform_admin_adminId_seq"', 1, false);
+SELECT setval('"public"."platform_admin_admin_id_seq"', 1, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."platform_server_serverId_seq"
+ALTER SEQUENCE "public"."platform_server_server_id_seq"
 OWNED BY "public"."platform_server"."server_id";
-SELECT setval('"public"."platform_server_serverId_seq"', 1, false);
+SELECT setval('"public"."platform_server_server_id_seq"', 1, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."user_userId_seq"
+ALTER SEQUENCE "public"."user_user_user_id_seq"
 OWNED BY "public"."user_user"."user_id";
-SELECT setval('"public"."user_userId_seq"', 1, false);
+SELECT setval('"public"."user_user_user_id_seq"', 1, false);
 
 -- ----------------------------
 -- Indexes structure for table auth_action
@@ -705,7 +705,7 @@ ALTER TABLE "public"."platform_config" ADD CONSTRAINT "platform_config_pkey" PRI
 -- ----------------------------
 -- Indexes structure for table platform_server
 -- ----------------------------
-CREATE UNIQUE INDEX "platform_server_networkIp_idx" ON "public"."platform_server" USING btree (
+CREATE UNIQUE INDEX "platform_server_network_ip_idx" ON "public"."platform_server" USING btree (
   "network_ip" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 
@@ -717,14 +717,14 @@ ALTER TABLE "public"."platform_server" ADD CONSTRAINT "platform_server_pkey" PRI
 -- ----------------------------
 -- Indexes structure for table user_user
 -- ----------------------------
-CREATE UNIQUE INDEX "user_account_idx" ON "public"."user_user" USING btree (
+CREATE UNIQUE INDEX "user_user_account_idx" ON "public"."user_user" USING btree (
   "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
-CREATE UNIQUE INDEX "user_phone_idx" ON "public"."user_user" USING btree (
+CREATE UNIQUE INDEX "user_user_phone_idx" ON "public"."user_user" USING btree (
   "phone" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 
 -- ----------------------------
 -- Primary Key structure for table user_user
 -- ----------------------------
-ALTER TABLE "public"."user_user" ADD CONSTRAINT "user_pkey" PRIMARY KEY ("user_id");
+ALTER TABLE "public"."user_user" ADD CONSTRAINT "user_user_pkey" PRIMARY KEY ("user_id");

@@ -99,7 +99,7 @@ func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, i
 	for _, v := range valList {
 		saveItem := gjson.New(gjson.MustEncodeString(v)).Map()
 		saveItem[idField] = id
-		relDao.CtxDaoModel(ctx).Data(saveItem).Save()
+		relDao.CtxDaoModel(ctx).Data(saveItem).OnConflict(gconv.SliceAny(append([]string{idField}, idSuffixFieldArr...))...).Save()
 
 		idArr := []string{gconv.String(id)}
 		for _, idSuffixField := range idSuffixFieldArr {

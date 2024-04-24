@@ -20,6 +20,6 @@ func initGenv(ctx context.Context) {
 	daoPlatform.Server.CtxDaoModel(ctx).Data(g.Map{
 		daoPlatform.Server.Columns().NetworkIp: serverNetworkIp,
 		daoPlatform.Server.Columns().LocalIp:   serverLocalIp,
-	}).Save()
+	}).OnConflict(daoPlatform.Server.Columns().NetworkIp).Save()
 	/**--------记录当前服务器IP 结束--------**/
 }
