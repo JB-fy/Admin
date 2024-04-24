@@ -14,12 +14,12 @@ type pgsql struct {
 }
 
 func (dbHandler pgsql) GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField) {
-	/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SELECT *,col_description ('tes' :: REGCLASS, ordinal_position) AS column_comment FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`'`)
+	/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SELECT *,col_description ('`+table+`' :: REGCLASS, ordinal_position) AS column_comment FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`'`)
 	fieldList = make([]MyGenField, len(fieldListTmp))
 	for _, v := range fieldListTmp {
 		field := MyGenField{
 			FieldRaw:     v[`column_name`].String(),
-			FieldTypeRaw: v[`data_type`].String(),
+			FieldTypeRaw: v[`udt_name`].String(),	//v[`data_type`].String()当前框架使用的与udt_name一致
 			IsNull:       v[`is_nullable`].Bool(),
 			Default:      v[`column_default`].Interface(),
 			Comment:      v[`column_comment`].String(),
@@ -112,43 +112,49 @@ func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 
 func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int) {
 	fieldLimitInt = 4
-	if gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
+	switch field.FieldTypeRaw {
+	case `int2`:
 		fieldLimitInt = 2
-	} else if gstr.Pos(field.FieldTypeRaw, `bigint`) != -1 {
+	case `int4`:
+		fieldLimitInt = 4
+	case `int8`:
 		fieldLimitInt = 8
 	}
 	return
 }
 
 func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
-	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
+	switch field.FieldTypeRaw {
+	case `int2`, `int4`, `int8`: //int等类型
 		fieldType = TypeInt
 		// pgsql数字类型不分正负。故只判断id后缀为非0参数
-		fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
-		fieldCaseSnakeRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-		fieldSplitArr := gstr.Split(fieldCaseSnakeRemove, `_`)
-		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-		if fieldSuffix != `id` {
+		if field.IsAutoInc {
 			fieldType = TypeIntU
+		} else {
+			fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
+			fieldCaseSnakeRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
+			fieldSplitArr := gstr.Split(fieldCaseSnakeRemove, `_`)
+			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
+			if fieldSuffix != `id` {
+				fieldType = TypeIntU
+			}
 		}
-	} else if gstr.Pos(field.FieldTypeRaw, `numeric`) != -1 || gstr.Pos(field.FieldTypeRaw, `real`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 { //float类型
+	case `numeric`, `float4`, `float8`: //float类型
 		fieldType = TypeFloat
 		// pgsql数字类型不分正负
-	} else if field.FieldTypeRaw == `character varying` { //varchar类型
+	case `varchar`: //varchar类型
 		fieldType = TypeVarchar
-	} else if field.FieldTypeRaw == `character` { //char类型
+	case `bpchar`: //char类型
 		fieldType = TypeChar
-	} else if field.FieldTypeRaw == `text` { //text类型
+	case `text`: //text类型
 		fieldType = TypeText
-	} else if field.FieldTypeRaw == `json` { //json类型
+	case `json`: //json类型
 		fieldType = TypeJson
-	} else if gstr.Pos(field.FieldTypeRaw, `timestamp`) != -1 { //datetime类型（在pgsql中，timestamp类型就是datetime类型）
+	case `timestamp`: //datetime类型（在pgsql中，timestamp类型就是datetime类型）
 		fieldType = TypeDatetime
-	} else if field.FieldTypeRaw == `date` { //date类型
+	case `date`: //date类型
 		fieldType = TypeDate
-	} else /* if gstr.Pos(field.FieldTypeRaw, `timestamp`) != -1 { //timestamp类型
-		fieldType = TypeTimestamp //pgsql没有该类型
-	} else  */if gstr.Pos(field.FieldTypeRaw, `time`) != -1 { //time类型
+	case `time`: //time类型
 		fieldType = TypeTime
 	}
 	return

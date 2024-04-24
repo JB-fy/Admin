@@ -114,7 +114,7 @@ func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
 	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
 		fieldType = TypeInt
-		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 || field.IsAutoInc {
 			fieldType = TypeIntU
 		} else {
 			fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
