@@ -86,15 +86,15 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
-			case `selfAction`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`sceneCode`: `场景标识`, `sceneId`=>场景id, `loginId`: 登录身份id}
+			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`=>场景id, `login_id`: 登录身份id}
 				val := gconv.Map(v)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
-				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`sceneId`])
+				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
-				switch gconv.String(val[`sceneCode`]) {
+				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
-					if gconv.Uint(val[`loginId`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
+					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
 						continue
 					}
 					tableRole := Role.ParseDbTable(m.GetCtx())
@@ -104,7 +104,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 					m = m.Handler(daoThis.ParseJoin(tableRole, daoModel))
 
 					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`loginId`])
+					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
 				default:
 					m = m.Where(`1 = 0`)
@@ -195,9 +195,10 @@ func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, daoModel *d
 			case `scene_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
-					insertData[k] = v
+				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+					continue
 				}
+				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -245,26 +246,13 @@ func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, daoModel *d
 			case `scene_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
+				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+					continue
 				}
+				updateData[k] = v
 			}
 		}
-		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
-		// 上面方法的BUG解决方式
-		fieldArr := []string{}
-		valueArr := []interface{}{}
-		for k, v := range updateData {
-			if _, ok := v.(gdb.Raw); ok {
-				fieldArr = append(fieldArr, k+` = `+gconv.String(v))
-			} else {
-				fieldArr = append(fieldArr, k+` = ?`)
-				valueArr = append(valueArr, v)
-			}
-		}
-		data := []interface{}{gstr.Join(fieldArr, `,`)}
-		data = append(data, valueArr...)
-		m = m.Data(data...)
+		m = m.Data(updateData)
 		return m
 	}
 }

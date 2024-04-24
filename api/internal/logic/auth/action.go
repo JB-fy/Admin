@@ -70,10 +70,10 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 
 	filter := map[string]interface{}{
 		daoAuth.Action.Columns().ActionCode: actionCode,
-		`selfAction`: map[string]interface{}{
-			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
-			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-			`loginId`:   loginInfo[`loginId`],
+		`self_action`: map[string]interface{}{
+			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
+			`scene_id`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+			`login_id`:   loginInfo[`loginId`],
 		},
 	}
 	count, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Count()

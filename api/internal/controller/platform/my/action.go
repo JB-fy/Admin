@@ -21,10 +21,10 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	actionColumns := daoAuth.Action.Columns()
 	field := []string{`id`, `label`, actionColumns.ActionId, actionColumns.ActionName}
 	filter := map[string]interface{}{
-		`selfAction`: map[string]interface{}{
-			`sceneCode`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
-			`sceneId`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
-			`loginId`:   loginInfo[`loginId`],
+		`self_action`: map[string]interface{}{
+			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
+			`scene_id`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+			`login_id`:   loginInfo[`loginId`],
 		},
 	}
 	list, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().ListPri()

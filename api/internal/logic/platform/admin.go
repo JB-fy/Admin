@@ -26,8 +26,8 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 	daoThis := daoPlatform.Admin
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
-	if _, ok := data[`roleIdArr`]; ok {
-		roleIdArr := gconv.SliceUint(data[`roleIdArr`])
+	if _, ok := data[`role_id_arr`]; ok {
+		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
 		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.PrimaryKey())
 		filterTmp := g.Map{daoAuth.Role.PrimaryKey(): roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}
 		count, _ := daoAuth.Role.CtxDaoModel(ctx).Filters(filterTmp).Count()
@@ -52,8 +52,8 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 		return
 	}
 
-	if _, ok := data[`roleIdArr`]; ok {
-		roleIdArr := gconv.SliceUint(data[`roleIdArr`])
+	if _, ok := data[`role_id_arr`]; ok {
+		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
 		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.PrimaryKey())
 		count, _ := daoAuth.Role.CtxDaoModel(ctx).Filters(g.Map{daoAuth.Role.PrimaryKey(): roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}).Count()
 		if len(roleIdArr) != count {
