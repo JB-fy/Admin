@@ -574,7 +574,11 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			}`)
 
 			daoField.updateParse.Method = internal.ReturnTypeName
-			updateChildIdPathAndLevelListVar := internal.GetStrByFieldStyle(tpl.FieldStyle, `update_child_id_path_and_level_list`)
+			updateChildIdPathAndLevelListStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `update_child_id_path_and_level_list`)
+			pIdPathOfOldStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `p_id_path_of_old`)
+			pIdPathOfNewStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `p_id_path_of_new`)
+			pLevelOldStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `p_level_of_old`)
+			pLevelNewStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `p_level_of_new`)
 			daoField.updateParse.DataTypeName = append(daoField.updateParse.DataTypeName, `case `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`:
 				updateData[k] = v
 				pIdPath := `+"`0`"+`
@@ -587,53 +591,53 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`] = gdb.Raw(`+"`CONCAT('`"+` + pIdPath + `+"`-', `"+` + `+daoPath+`.PrimaryKey() + `+"`)`"+`)
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`] = pLevel + 1
 				//更新所有子孙级的idPath和level
-				`+gstr.CaseCamelLower(updateChildIdPathAndLevelListVar)+` := []map[string]interface{}{}
+				`+gstr.CaseCamelLower(updateChildIdPathAndLevelListStr)+` := []map[string]interface{}{}
 				oldList, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.PrimaryKey(), daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`].Uint() {
-						`+gstr.CaseCamelLower(updateChildIdPathAndLevelListVar)+` = append(`+gstr.CaseCamelLower(updateChildIdPathAndLevelListVar)+`, map[string]interface{}{
-							`+"`pIdPathOfOld`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`],
-							`+"`pIdPathOfNew`"+`: pIdPath + `+"`-`"+` + oldInfo[`+daoPath+`.PrimaryKey()].String(),
-							`+"`pLevelOfOld`"+`:  oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`],
-							`+"`pLevelOfNew`"+`:  pLevel + 1,
+						`+gstr.CaseCamelLower(updateChildIdPathAndLevelListStr)+` = append(`+gstr.CaseCamelLower(updateChildIdPathAndLevelListStr)+`, map[string]interface{}{
+							`+"`"+pIdPathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`],
+							`+"`"+pIdPathOfNewStr+"`"+`: pIdPath + `+"`-`"+` + oldInfo[`+daoPath+`.PrimaryKey()].String(),
+							`+"`"+pLevelOldStr+"`"+`:  oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`],
+							`+"`"+pLevelNewStr+"`"+`:  pLevel + 1,
 						})
 					}
 				}
-				if len(`+gstr.CaseCamelLower(updateChildIdPathAndLevelListVar)+`) > 0 {
-					daoModel.AfterUpdate[`+"`"+updateChildIdPathAndLevelListVar+"`"+`] = `+gstr.CaseCamelLower(updateChildIdPathAndLevelListVar)+`
+				if len(`+gstr.CaseCamelLower(updateChildIdPathAndLevelListStr)+`) > 0 {
+					daoModel.AfterUpdate[`+"`"+updateChildIdPathAndLevelListStr+"`"+`] = `+gstr.CaseCamelLower(updateChildIdPathAndLevelListStr)+`
 				}
-			case `+"`childIdPath`"+`: //更新所有子孙级的idPath。参数：map[string]interface{}{`+"`pIdPathOfOld`"+`: `+"`父级IdPath（旧）`"+`, `+"`pIdPathOfNew`"+`: `+"`父级IdPath（新）`"+`}
+			case `+"`childIdPath`"+`: //更新所有子孙级的idPath。参数：map[string]interface{}{`+"`"+pIdPathOfOldStr+"`"+`: `+"`父级IdPath（旧）`"+`, `+"`"+pIdPathOfNewStr+"`"+`: `+"`父级IdPath（新）`"+`}
 				val := gconv.Map(v)
-				pIdPathOfOld := gconv.String(val[`+"`pIdPathOfOld`"+`])
-				pIdPathOfNew := gconv.String(val[`+"`pIdPathOfNew`"+`])
+				pIdPathOfOld := gconv.String(val[`+"`"+pIdPathOfOldStr+"`"+`])
+				pIdPathOfNew := gconv.String(val[`+"`"+pIdPathOfNewStr+"`"+`])
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`] = gdb.Raw(`+"`REPLACE(`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+` + `+"`, '`"+` + pIdPathOfOld + `+"`', '`"+` + pIdPathOfNew + `+"`')`"+`)
-			case `+"`childLevel`"+`: //更新所有子孙级的level。参数：map[string]interface{}{`+"`pLevelOfOld`"+`: `+"`父级Level（旧）`"+`, `+"`pLevelOfNew`"+`: `+"`父级Level（新）`"+`}
+			case `+"`childLevel`"+`: //更新所有子孙级的level。参数：map[string]interface{}{`+"`"+pLevelOldStr+"`"+`: `+"`父级Level（旧）`"+`, `+"`"+pLevelNewStr+"`"+`: `+"`父级Level（新）`"+`}
 				val := gconv.Map(v)
-				pLevelOfOld := gconv.Uint(val[`+"`pLevelOfOld`"+`])
-				pLevelOfNew := gconv.Uint(val[`+"`pLevelOfNew`"+`])
+				pLevelOfOld := gconv.Uint(val[`+"`"+pLevelOldStr+"`"+`])
+				pLevelOfNew := gconv.Uint(val[`+"`"+pLevelNewStr+"`"+`])
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`] = gdb.Raw(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+` + `+"` + `"+` + gconv.String(pLevelOfNew-pLevelOfOld))
 				if pLevelOfNew < pLevelOfOld {
 					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`] = gdb.Raw(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+` + `+"` - `"+` + gconv.String(pLevelOfOld-pLevelOfNew))
 				}`)
 
 			daoField.updateHookAfter.Method = internal.ReturnTypeName
-			daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+updateChildIdPathAndLevelListVar+"`"+`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`+"`pIdPathOfOld`"+`: `+"`父级IdPath（旧）`"+`, `+"`pIdPathOfNew`"+`: `+"`父级IdPath（新）`"+`, `+"`pLevelOfOld`"+`: `+"`父级Level（旧）`"+`, `+"`pLevelOfNew`"+`: `+"`父级Level（新）`"+`}
+			daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+updateChildIdPathAndLevelListStr+"`"+`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`+"`"+pIdPathOfOldStr+"`"+`: `+"`父级IdPath（旧）`"+`, `+"`"+pIdPathOfNewStr+"`"+`: `+"`父级IdPath（新）`"+`, `+"`"+pLevelOldStr+"`"+`: `+"`父级Level（旧）`"+`, `+"`"+pLevelNewStr+"`"+`: `+"`父级Level（新）`"+`}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoModel.CloneNew().Filter(`+"`pIdPathOfOld`"+`, v1[`+"`pIdPathOfOld`"+`]).HookUpdate(g.Map{
+						daoModel.CloneNew().Filter(`+"`"+pIdPathOfOldStr+"`"+`, v1[`+"`"+pIdPathOfOldStr+"`"+`]).HookUpdate(g.Map{
 							`+"`childIdPath`"+`: g.Map{
-								`+"`pIdPathOfOld`"+`: v1[`+"`pIdPathOfOld`"+`],
-								`+"`pIdPathOfNew`"+`: v1[`+"`pIdPathOfNew`"+`],
+								`+"`"+pIdPathOfOldStr+"`"+`: v1[`+"`"+pIdPathOfOldStr+"`"+`],
+								`+"`"+pIdPathOfNewStr+"`"+`: v1[`+"`"+pIdPathOfNewStr+"`"+`],
 							},
 							`+"`childLevel`"+`: g.Map{
-								`+"`pLevelOfOld`"+`: v1[`+"`pLevelOfOld`"+`],
-								`+"`pLevelOfNew`"+`: v1[`+"`pLevelOfNew`"+`],
+								`+"`"+pLevelOldStr+"`"+`: v1[`+"`"+pLevelOldStr+"`"+`],
+								`+"`"+pLevelNewStr+"`"+`: v1[`+"`"+pLevelNewStr+"`"+`],
 							},
 						}).Update()
 					}`)
 
 			daoField.filterParse.Method = internal.ReturnTypeName
-			daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+"`pIdPathOfOld`"+`: //父级IdPath（旧）
+			daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+"`"+pIdPathOfOldStr+"`"+`: //父级IdPath（旧）
 				m = m.WhereLike(`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`, gconv.String(v)+`+"`-%`"+`)`)
 		}
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；

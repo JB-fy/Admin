@@ -79,7 +79,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().MenuName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case `pIdPathOfOld`: //父级IdPath（旧）
+			case `p_id_path_of_old`: //父级IdPath（旧）
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
@@ -292,25 +292,25 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						updateChildIdPathAndLevelList = append(updateChildIdPathAndLevelList, map[string]interface{}{
-							`pIdPathOfOld`: oldInfo[daoThis.Columns().IdPath],
-							`pIdPathOfNew`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
-							`pLevelOfOld`:  oldInfo[daoThis.Columns().Level],
-							`pLevelOfNew`:  pLevel + 1,
+							`p_id_path_of_old`: oldInfo[daoThis.Columns().IdPath],
+							`p_id_path_of_new`: pIdPath + `-` + oldInfo[daoThis.PrimaryKey()].String(),
+							`p_level_of_old`:   oldInfo[daoThis.Columns().Level],
+							`p_level_of_new`:   pLevel + 1,
 						})
 					}
 				}
 				if len(updateChildIdPathAndLevelList) > 0 {
 					daoModel.AfterUpdate[`update_child_id_path_and_level_list`] = updateChildIdPathAndLevelList
 				}
-			case `childIdPath`: //更新所有子孙级的idPath。参数：map[string]interface{}{`pIdPathOfOld`: `父级IdPath（旧）`, `pIdPathOfNew`: `父级IdPath（新）`}
+			case `childIdPath`: //更新所有子孙级的idPath。参数：map[string]interface{}{`p_id_path_of_old`: `父级IdPath（旧）`, `p_id_path_of_new`: `父级IdPath（新）`}
 				val := gconv.Map(v)
-				pIdPathOfOld := gconv.String(val[`pIdPathOfOld`])
-				pIdPathOfNew := gconv.String(val[`pIdPathOfNew`])
+				pIdPathOfOld := gconv.String(val[`p_id_path_of_old`])
+				pIdPathOfNew := gconv.String(val[`p_id_path_of_new`])
 				updateData[daoThis.Columns().IdPath] = gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + pIdPathOfOld + `', '` + pIdPathOfNew + `')`)
-			case `childLevel`: //更新所有子孙级的level。参数：map[string]interface{}{`pLevelOfOld`: `父级Level（旧）`, `pLevelOfNew`: `父级Level（新）`}
+			case `childLevel`: //更新所有子孙级的level。参数：map[string]interface{}{`p_level_of_old`: `父级Level（旧）`, `p_level_of_new`: `父级Level（新）`}
 				val := gconv.Map(v)
-				pLevelOfOld := gconv.Uint(val[`pLevelOfOld`])
-				pLevelOfNew := gconv.Uint(val[`pLevelOfNew`])
+				pLevelOfOld := gconv.Uint(val[`p_level_of_old`])
+				pLevelOfNew := gconv.Uint(val[`p_level_of_new`])
 				updateData[daoThis.Columns().Level] = gdb.Raw(daoModel.DbTable + `.` + daoThis.Columns().Level + ` + ` + gconv.String(pLevelOfNew-pLevelOfOld))
 				if pLevelOfNew < pLevelOfOld {
 					updateData[daoThis.Columns().Level] = gdb.Raw(daoModel.DbTable + `.` + daoThis.Columns().Level + ` - ` + gconv.String(pLevelOfOld-pLevelOfNew))
@@ -353,17 +353,17 @@ func (daoThis *menuDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
-				case `update_child_id_path_and_level_list`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`pIdPathOfOld`: `父级IdPath（旧）`, `pIdPathOfNew`: `父级IdPath（新）`, `pLevelOfOld`: `父级Level（旧）`, `pLevelOfNew`: `父级Level（新）`}
+				case `update_child_id_path_and_level_list`: //修改pid时，更新所有子孙级的idPath和level。参数：[]map[string]interface{}{`p_id_path_of_old`: `父级IdPath（旧）`, `p_id_path_of_new`: `父级IdPath（新）`, `p_level_of_old`: `父级Level（旧）`, `p_level_of_new`: `父级Level（新）`}
 					val := v.([]map[string]interface{})
 					for _, v1 := range val {
-						daoModel.CloneNew().Filter(`pIdPathOfOld`, v1[`pIdPathOfOld`]).HookUpdate(g.Map{
+						daoModel.CloneNew().Filter(`p_id_path_of_old`, v1[`p_id_path_of_old`]).HookUpdate(g.Map{
 							`childIdPath`: g.Map{
-								`pIdPathOfOld`: v1[`pIdPathOfOld`],
-								`pIdPathOfNew`: v1[`pIdPathOfNew`],
+								`p_id_path_of_old`: v1[`p_id_path_of_old`],
+								`p_id_path_of_new`: v1[`p_id_path_of_new`],
 							},
 							`childLevel`: g.Map{
-								`pLevelOfOld`: v1[`pLevelOfOld`],
-								`pLevelOfNew`: v1[`pLevelOfNew`],
+								`p_level_of_old`: v1[`p_level_of_old`],
+								`p_level_of_new`: v1[`p_level_of_new`],
 							},
 						}).Update()
 					}
