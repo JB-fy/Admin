@@ -42,10 +42,10 @@ type ProfileUpdateReq struct {
 	IdCardName           *string     `json:"id_card_name,omitempty" v:"required-with:IdCardNo|max-length:30" dc:"身份证姓名"`
 	IdCardNo             *string     `json:"id_card_no,omitempty" v:"required-with:IdCardName|max-length:30" dc:"身份证号码"`
 	Password             *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
-	PasswordToCheck      *string     `json:"password_to_check,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号|密码用，password_to_check和smsCodeToPassword传一个即可"`
-	SmsCodeToPassword    *string     `json:"smsCodeToPassword,omitempty" v:"size:4" dc:"短信验证码。修改密码用，password_to_check和smsCodeToPassword传一个即可"`
-	SmsCodeToBindPhone   *string     `json:"smsCodeToBindPhone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。绑定手机用"`
-	SmsCodeToUnbingPhone *string     `json:"smsCodeToUnbingPhone,omitempty" v:"size:4" dc:"短信验证码。解绑手机用"`
+	PasswordToCheck      *string     `json:"password_to_check,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号|密码用，password_to_check和sms_code_to_password传一个即可"`
+	SmsCodeToPassword    *string     `json:"sms_code_to_password,omitempty" v:"size:4" dc:"短信验证码。修改密码用，password_to_check和sms_code_to_password传一个即可"`
+	SmsCodeToBindPhone   *string     `json:"sms_code_to_bind_phone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。绑定手机用"`
+	SmsCodeToUnbingPhone *string     `json:"sms_code_to_unbing_phone,omitempty" v:"size:4" dc:"短信验证码。解绑手机用"`
 }
 
 /*--------修改个人信息 结束--------*/

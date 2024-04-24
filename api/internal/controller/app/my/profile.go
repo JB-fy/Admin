@@ -61,7 +61,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-		case `smsCodeToPassword`:
+		case `sms_code_to_password`:
 			phone := loginInfo[userColumns.Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
@@ -74,7 +74,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-		case `smsCodeToBindPhone`:
+		case `sms_code_to_bind_phone`:
 			if loginInfo[userColumns.Phone].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990005, ``)
 				return
@@ -87,7 +87,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-		case `smsCodeToUnbingPhone`:
+		case `sms_code_to_unbing_phone`:
 			phone := loginInfo[userColumns.Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
