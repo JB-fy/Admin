@@ -118,7 +118,7 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]in
 			case `id`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
 			case `label`:
-				m = m.Fields(`IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, IF(IFNULL(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '') != '', ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `)) AS ` + v)
+				m = m.Fields(`COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, '')) AS ` + v)
 			case `role_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
 				daoModel.AfterField.Add(v)
