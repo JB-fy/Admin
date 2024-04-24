@@ -28,7 +28,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`loginName`, req.LoginName).One()
+	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
@@ -57,7 +57,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	userColumns := daoUser.User.Columns()
-	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`loginName`, req.LoginName).One()
+	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return

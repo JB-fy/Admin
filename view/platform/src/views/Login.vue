@@ -7,7 +7,7 @@ const loginForm = reactive({
     ref: null as any,
     data: {} as { [propName: string]: any },
     rules: {
-        loginName: [
+        login_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
@@ -24,7 +24,7 @@ const loginForm = reactive({
             }
             loginForm.loading = true
             try {
-                await useAdminStore().login(loginForm.data.loginName, loginForm.data.password)
+                await useAdminStore().login(loginForm.data.login_name, loginForm.data.password)
                 router.replace((route.query.redirect ? route.query.redirect : '/') as string)
             } catch (error) {}
             loginForm.loading = false
@@ -40,8 +40,8 @@ const loginForm = reactive({
             <div style="font-size: 25px">{{ t('common.login') }}</div>
         </el-divider>
         <el-form :ref="(el: any) => loginForm.ref = el" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
-            <el-form-item prop="loginName">
-                <el-input v-model="loginForm.data.loginName" :placeholder="t('login.name.loginName')">
+            <el-form-item prop="login_name">
+                <el-input v-model="loginForm.data.login_name" :placeholder="t('login.name.login_name')">
                     <template #prefix>
                         <autoicon-ep-user />
                     </template>

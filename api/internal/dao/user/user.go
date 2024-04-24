@@ -84,7 +84,7 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `loginName`:
+			case `login_name`:
 				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
 				} else {

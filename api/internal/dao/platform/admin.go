@@ -87,7 +87,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *da
 				tableAuthRoleRelOfPlatformAdmin := daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
 				m = m.Where(tableAuthRoleRelOfPlatformAdmin+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableAuthRoleRelOfPlatformAdmin, daoModel))
-			case `loginName`:
+			case `login_name`:
 				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
 				} else {
@@ -198,9 +198,10 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, daoModel *da
 			case `role_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
-					insertData[k] = v
+				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+					continue
 				}
+				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -249,44 +250,31 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoModel *da
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[daoModel.DbTable+`.`+k] = v
+				updateData[k] = v
 			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[daoModel.DbTable+`.`+k] = v
+				updateData[k] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
 					password = gmd5.MustEncrypt(password)
 				}
 				salt := grand.S(8)
-				updateData[daoModel.DbTable+`.`+daoThis.Columns().Salt] = salt
+				updateData[daoThis.Columns().Salt] = salt
 				password = gmd5.MustEncrypt(password + salt)
-				updateData[daoModel.DbTable+`.`+k] = password
+				updateData[k] = password
 			case `role_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
+				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+					continue
 				}
+				updateData[k] = v
 			}
 		}
-		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
-		// 上面方法的BUG解决方式
-		fieldArr := []string{}
-		valueArr := []interface{}{}
-		for k, v := range updateData {
-			if _, ok := v.(gdb.Raw); ok {
-				fieldArr = append(fieldArr, k+` = `+gconv.String(v))
-			} else {
-				fieldArr = append(fieldArr, k+` = ?`)
-				valueArr = append(valueArr, v)
-			}
-		}
-		data := []interface{}{gstr.Join(fieldArr, `,`)}
-		data = append(data, valueArr...)
-		m = m.Data(data...)
+		m = m.Data(updateData)
 		return m
 	}
 }

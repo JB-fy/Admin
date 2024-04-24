@@ -154,7 +154,8 @@ func genDao(tpl myGenTpl) {
 		tplDao = gstr.Replace(tplDao, importDaoPoint, importDaoPoint+gstr.Join(append([]string{``}, dao.importDao...), `
 	`), 1)
 	}
-	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/util/gconv"`, `"github.com/gogf/gf/v2/util/gconv"
+	tplDao = gstr.Replace(tplDao, `"github.com/gogf/gf/v2/text/gstr"`, `"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/crypto/gmd5"

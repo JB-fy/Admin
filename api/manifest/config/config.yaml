@@ -42,7 +42,7 @@ database:
       # weight: "100" # 负载均衡权重，用于负载均衡控制，不使用应用层的负载均衡机制请置空
       # prefix: ""
       # charset: "utf8"
-      timezone: "Local"
+      # timezone: "Local"
       # maxIdle: "10" # 连接池最大闲置的连接数
       # maxOpen: "10" # 连接池最大打开的连接数
       # maxLifetime: "30s" # 连接对象可重复使用的时间长度
