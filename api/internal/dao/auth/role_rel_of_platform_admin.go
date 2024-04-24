@@ -14,7 +14,6 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // internalRoleRelOfPlatformAdminDao is internal type for wrapping internal DAO implements.
@@ -139,9 +138,10 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseInsert(insert map[string]interfac
 		for k, v := range insert {
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
-					insertData[k] = v
+				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+					continue
 				}
+				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -180,26 +180,13 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]interfac
 		for k, v := range update {
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
-					updateData[daoModel.DbTable+`.`+k] = gvar.New(v) //json类型字段传参必须是gvar变量（原因：下面BUG解决方式导致map类型数据更新时，不会自动转换json）
+				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+					continue
 				}
+				updateData[k] = v
 			}
 		}
-		// m = m.Data(updateData) // 2.5某版本之前，字段被解析成`table.xxxx`，正确的应该是`table`.`xxxx`	// 2.6版本开始更过分，居然直接把字段过滤掉不做更新，报错都没有
-		// 上面方法的BUG解决方式
-		fieldArr := []string{}
-		valueArr := []interface{}{}
-		for k, v := range updateData {
-			if _, ok := v.(gdb.Raw); ok {
-				fieldArr = append(fieldArr, k+` = `+gconv.String(v))
-			} else {
-				fieldArr = append(fieldArr, k+` = ?`)
-				valueArr = append(valueArr, v)
-			}
-		}
-		data := []interface{}{gstr.Join(fieldArr, `,`)}
-		data = append(data, valueArr...)
-		m = m.Data(data...)
+		m = m.Data(updateData)
 		return m
 	}
 }
