@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 24/04/2024 16:44:57
+ Date: 24/04/2024 18:08:54
 */
 
 
@@ -201,7 +201,7 @@ CREATE TABLE "public"."auth_menu" (
   "menu_icon" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "menu_url" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "extra_data" json,
-  "sort" int2 NOT NULL DEFAULT 0,
+  "sort" int2 NOT NULL DEFAULT 50,
   "is_stop" int2 NOT NULL DEFAULT 0,
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
