@@ -48,7 +48,7 @@ database:
       # maxLifetime: "30s" # 连接对象可重复使用的时间长度
       debug: true # 开启调试模式。默认为false
       # dryRun: false # ORM空跑(只读不写)
-      # timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
+      timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
 
 redis:
   default:

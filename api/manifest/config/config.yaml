@@ -36,19 +36,19 @@ database:
     path: "log/sql/"
     # stdout: false # 日志是否输出到终端。默认为true
   default:
-    # - link: "pgsql:postgres:123456@tcp(0.0.0.0:5432)/dev_admin"
-    - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
+    - link: "pgsql:postgres:123456@tcp(0.0.0.0:5432)/dev_admin"
+    # - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
       # role: "master" # 主从配置(master/slave)
       # weight: "100" # 负载均衡权重，用于负载均衡控制，不使用应用层的负载均衡机制请置空
       # prefix: ""
       # charset: "utf8"
-      timezone: "Local"
+      # timezone: "Local"
       # maxIdle: "10" # 连接池最大闲置的连接数
       # maxOpen: "10" # 连接池最大打开的连接数
       # maxLifetime: "30s" # 连接对象可重复使用的时间长度
       debug: true # 开启调试模式。默认为false
       # dryRun: false # ORM空跑(只读不写)
-      timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
+      # timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
 
 redis:
   default:
