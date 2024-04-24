@@ -53,7 +53,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 
 		常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
 			密码		命名：password,passwd后缀；		类型：char(32)；
-			加密盐 		命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			密码盐 		命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			名称		命名：name,title后缀；			类型：varchar；
 			标识		命名：code后缀；				类型：varchar；
 			账号		命名：account后缀；				类型：varchar；

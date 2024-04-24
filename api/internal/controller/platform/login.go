@@ -19,7 +19,7 @@ func NewLogin() *Login {
 	return &Login{}
 }
 
-// 获取加密盐
+// 获取密码盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
 	adminColumns := daoPlatform.Admin.Columns()
 	info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()

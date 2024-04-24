@@ -8,8 +8,8 @@ type CommonCreateRes struct {
 }
 
 type CommonSaltRes struct {
-	SaltStatic  string `json:"salt_static" dc:"静态加密盐"`
-	SaltDynamic string `json:"salt_dynamic" dc:"动态加密盐"`
+	SaltStatic  string `json:"salt_static" dc:"静态密码盐"`
+	SaltDynamic string `json:"salt_dynamic" dc:"动态密码盐"`
 }
 
 type CommonTokenRes struct {

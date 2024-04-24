@@ -91,8 +91,8 @@ type handlePassword struct {
 	IsCoexist      bool   //是否同时存在
 	PasswordField  string //密码字段
 	PasswordLength string //密码字段长度
-	SaltField      string //加密盐字段
-	SaltLength     string //加密盐字段长度
+	SaltField      string //密码盐字段
+	SaltLength     string //密码盐字段长度
 }
 
 type handleRelId struct {
