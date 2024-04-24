@@ -7,18 +7,18 @@ import (
 	"context"
 )
 
-type sUser struct{}
+type sUserUser struct{}
 
-func NewUser() *sUser {
-	return &sUser{}
+func NewUserUser() *sUserUser {
+	return &sUserUser{}
 }
 
 func init() {
-	service.RegisterUser(NewUser())
+	service.RegisterUserUser(NewUserUser())
 }
 
 // 新增
-func (logicThis *sUser) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sUserUser) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
 	daoThis := daoUser.User
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -27,7 +27,7 @@ func (logicThis *sUser) Create(ctx context.Context, data map[string]interface{})
 }
 
 // 修改
-func (logicThis *sUser) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
 	daoThis := daoUser.User
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -42,7 +42,7 @@ func (logicThis *sUser) Update(ctx context.Context, filter map[string]interface{
 }
 
 // 删除
-func (logicThis *sUser) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sUserUser) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
 	daoThis := daoUser.User
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 

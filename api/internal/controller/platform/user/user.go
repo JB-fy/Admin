@@ -38,7 +38,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `userLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `userUserLook`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}
@@ -75,7 +75,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `userLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `userUserLook`)
 	if err != nil {
 		return
 	}
@@ -108,12 +108,12 @@ func (controllerThis *User) Update(ctx context.Context, req *apiUser.UserUpdateR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `userUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `userUserUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.User().Update(ctx, filter, data)
+	_, err = service.UserUser().Update(ctx, filter, data)
 	return
 }

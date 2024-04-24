@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 22/04/2024 18:20:54
+ Date: 24/04/2024 14:56:17
 */
 
 
@@ -140,8 +140,8 @@ INSERT INTO "public"."auth_action" VALUES (19, '平台管理员-编辑', 'platfo
 INSERT INTO "public"."auth_action" VALUES (20, '平台管理员-删除', 'platformAdminDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO "public"."auth_action" VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO "public"."auth_action" VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO "public"."auth_action" VALUES (23, '用户-查看', 'userLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO "public"."auth_action" VALUES (24, '用户-编辑', 'userUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO "public"."auth_action" VALUES (23, '用户-查看', 'userUserLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO "public"."auth_action" VALUES (24, '用户-编辑', 'userUserUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -478,10 +478,10 @@ COMMENT ON COLUMN "public"."platform_server"."created_at" IS '创建时间';
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for user
+-- Table structure for user_user
 -- ----------------------------
-DROP TABLE IF EXISTS "public"."user";
-CREATE TABLE "public"."user" (
+DROP TABLE IF EXISTS "public"."user_user";
+CREATE TABLE "public"."user_user" (
   "user_id" int4 NOT NULL DEFAULT nextval('"user_userId_seq"'::regclass),
   "phone" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
@@ -499,24 +499,24 @@ CREATE TABLE "public"."user" (
   "created_at" timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
-COMMENT ON COLUMN "public"."user"."user_id" IS '用户ID';
-COMMENT ON COLUMN "public"."user"."phone" IS '手机号';
-COMMENT ON COLUMN "public"."user"."account" IS '账号';
-COMMENT ON COLUMN "public"."user"."password" IS '密码。md5保存';
-COMMENT ON COLUMN "public"."user"."salt" IS '密码盐';
-COMMENT ON COLUMN "public"."user"."nickname" IS '昵称';
-COMMENT ON COLUMN "public"."user"."avatar" IS '头像';
-COMMENT ON COLUMN "public"."user"."gender" IS '性别：0未设置 1男 2女';
-COMMENT ON COLUMN "public"."user"."birthday" IS '生日';
-COMMENT ON COLUMN "public"."user"."address" IS '详细地址';
-COMMENT ON COLUMN "public"."user"."id_card_name" IS '身份证姓名';
-COMMENT ON COLUMN "public"."user"."id_card_no" IS '身份证号码';
-COMMENT ON COLUMN "public"."user"."is_stop" IS '停用：0否 1是';
-COMMENT ON COLUMN "public"."user"."updated_at" IS '更新时间';
-COMMENT ON COLUMN "public"."user"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."user_user"."user_id" IS '用户ID';
+COMMENT ON COLUMN "public"."user_user"."phone" IS '手机';
+COMMENT ON COLUMN "public"."user_user"."account" IS '账号';
+COMMENT ON COLUMN "public"."user_user"."password" IS '密码。md5保存';
+COMMENT ON COLUMN "public"."user_user"."salt" IS '密码盐';
+COMMENT ON COLUMN "public"."user_user"."nickname" IS '昵称';
+COMMENT ON COLUMN "public"."user_user"."avatar" IS '头像';
+COMMENT ON COLUMN "public"."user_user"."gender" IS '性别：0未设置 1男 2女';
+COMMENT ON COLUMN "public"."user_user"."birthday" IS '生日';
+COMMENT ON COLUMN "public"."user_user"."address" IS '详细地址';
+COMMENT ON COLUMN "public"."user_user"."id_card_name" IS '身份证姓名';
+COMMENT ON COLUMN "public"."user_user"."id_card_no" IS '身份证号码';
+COMMENT ON COLUMN "public"."user_user"."is_stop" IS '停用：0否 1是';
+COMMENT ON COLUMN "public"."user_user"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."user_user"."created_at" IS '创建时间';
 
 -- ----------------------------
--- Records of user
+-- Records of user_user
 -- ----------------------------
 
 -- ----------------------------
@@ -565,7 +565,7 @@ SELECT setval('"public"."platform_server_serverId_seq"', 1, false);
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."user_userId_seq"
-OWNED BY "public"."user"."user_id";
+OWNED BY "public"."user_user"."user_id";
 SELECT setval('"public"."user_userId_seq"', 1, false);
 
 -- ----------------------------
@@ -715,16 +715,16 @@ CREATE UNIQUE INDEX "platform_server_networkIp_idx" ON "public"."platform_server
 ALTER TABLE "public"."platform_server" ADD CONSTRAINT "platform_server_pkey" PRIMARY KEY ("server_id");
 
 -- ----------------------------
--- Indexes structure for table user
+-- Indexes structure for table user_user
 -- ----------------------------
-CREATE UNIQUE INDEX "user_account_idx" ON "public"."user" USING btree (
+CREATE UNIQUE INDEX "user_account_idx" ON "public"."user_user" USING btree (
   "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
-CREATE UNIQUE INDEX "user_phone_idx" ON "public"."user" USING btree (
+CREATE UNIQUE INDEX "user_phone_idx" ON "public"."user_user" USING btree (
   "phone" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 
 -- ----------------------------
--- Primary Key structure for table user
+-- Primary Key structure for table user_user
 -- ----------------------------
-ALTER TABLE "public"."user" ADD CONSTRAINT "user_pkey" PRIMARY KEY ("user_id");
+ALTER TABLE "public"."user_user" ADD CONSTRAINT "user_pkey" PRIMARY KEY ("user_id");

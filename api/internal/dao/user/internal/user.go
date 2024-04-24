@@ -13,7 +13,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// UserDao is the data access object for table user.
+// UserDao is the data access object for table user_user.
 type UserDao struct {
 	table      string           // table is the underlying table name of the DAO.
 	group      string           // group is the database configuration group name of current DAO.
@@ -22,13 +22,13 @@ type UserDao struct {
 	columnArr  *garray.StrArray // 所有字段的数组
 }
 
-// UserColumns defines and stores column names for table user.
+// UserColumns defines and stores column names for table user_user.
 type UserColumns struct {
 	UserId     string // 用户ID
 	Phone      string // 手机
 	Account    string // 账号
 	Password   string // 密码。md5保存
-	Salt       string // 加密盐
+	Salt       string // 密码盐
 	Nickname   string // 昵称
 	Avatar     string // 头像
 	Gender     string // 性别：0未设置 1男 2女
@@ -41,7 +41,7 @@ type UserColumns struct {
 	CreatedAt  string // 创建时间
 }
 
-// userColumns holds the columns for table user.
+// userColumns holds the columns for table user_user.
 var userColumns = UserColumns{
 	UserId:     "user_id",
 	Phone:      "phone",
@@ -64,7 +64,7 @@ var userColumns = UserColumns{
 func NewUserDao() *UserDao {
 	return &UserDao{
 		group:   `default`,
-		table:   `user`,
+		table:   `user_user`,
 		columns: userColumns,
 		primaryKey: func() string {
 			return reflect.ValueOf(userColumns).Field(0).String()
