@@ -205,10 +205,9 @@ func genDao(tpl myGenTpl) {
 	}
 	if len(dao.insertParse) > 0 {
 		insertParsePoint := `default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
-				}
-				insertData[k] = v`
+				if daoThis.ColumnArr().Contains(k) {
+					insertData[k] = v
+				}`
 		tplDao = gstr.Replace(tplDao, insertParsePoint, gstr.Join(append(dao.insertParse, ``), `
 			`)+insertParsePoint, 1)
 	}
@@ -235,10 +234,9 @@ func genDao(tpl myGenTpl) {
 	// 解析update
 	if len(dao.updateParse) > 0 {
 		updateParsePoint := `default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
-				}
-				updateData[k] = v`
+				if daoThis.ColumnArr().Contains(k) {
+					updateData[k] = v
+				}`
 		tplDao = gstr.Replace(tplDao, updateParsePoint, gstr.Join(append(dao.updateParse, ``), `
 			`)+updateParsePoint, 1)
 	}

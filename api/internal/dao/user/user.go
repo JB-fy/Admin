@@ -187,10 +187,9 @@ func (daoThis *userDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 				password = gmd5.MustEncrypt(password + salt)
 				insertData[k] = password
 			default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
+				if daoThis.ColumnArr().Contains(k) {
+					insertData[k] = v
 				}
-				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -248,10 +247,9 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				password = gmd5.MustEncrypt(password + salt)
 				updateData[k] = password
 			default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
+				if daoThis.ColumnArr().Contains(k) {
+					updateData[k] = v
 				}
-				updateData[k] = v
 			}
 		}
 		m = m.Data(updateData)

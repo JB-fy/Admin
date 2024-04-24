@@ -138,10 +138,9 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseInsert(insert map[string]interfac
 		for k, v := range insert {
 			switch k {
 			default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
+				if daoThis.ColumnArr().Contains(k) {
+					insertData[k] = v
 				}
-				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -180,10 +179,9 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]interfac
 		for k, v := range update {
 			switch k {
 			default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
+				if daoThis.ColumnArr().Contains(k) {
+					updateData[k] = v
 				}
-				updateData[k] = v
 			}
 		}
 		m = m.Data(updateData)

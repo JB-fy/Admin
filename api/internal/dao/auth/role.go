@@ -204,10 +204,9 @@ func (daoThis *roleDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 			case `menu_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
+				if daoThis.ColumnArr().Contains(k) {
+					insertData[k] = v
 				}
-				insertData[k] = v
 			}
 		}
 		m = m.Data(insertData)
@@ -266,10 +265,9 @@ func (daoThis *roleDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 			case `menu_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if !daoThis.ColumnArr().Contains(k) {
-					continue
+				if daoThis.ColumnArr().Contains(k) {
+					updateData[k] = v
 				}
-				updateData[k] = v
 			}
 		}
 		m = m.Data(updateData)
