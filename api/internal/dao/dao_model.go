@@ -39,6 +39,7 @@ type DaoModel struct {
 	model               *gdb.Model
 	DbGroup             string // 分库情况下，解析后所确定的库
 	DbTable             string // 分表情况下，解析后所确定的表
+	IsAutoField         bool   // 插入|更新是否自动过滤表不存在字段
 	IdArr               []uint // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即在各种sql条件设置完后）
 	AfterInsert         map[string]interface{}
 	AfterUpdate         map[string]interface{}
@@ -140,6 +141,15 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 	return daoModelThis.model
 }
 
+// 插入|更新是否自动过滤表不存在字段
+func (daoModelThis *DaoModel) SetIsAutoField(isAutoFieldopt ...bool) *DaoModel {
+	daoModelThis.IsAutoField = true
+	if len(isAutoFieldopt) > 0 {
+		daoModelThis.IsAutoField = isAutoFieldopt[0]
+	}
+	return daoModelThis
+}
+
 // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 func (daoModelThis *DaoModel) SetIdArr() *DaoModel {
 	idArr, _ := daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.PrimaryKey())
@@ -162,7 +172,7 @@ func (daoModelThis *DaoModel) GroupPriOnJoin() *DaoModel {
 
 // TODO 列表（联表时，GroupBy主键）
 func (daoModelThis *DaoModel) ListPri() (gdb.Result, error) {
-	return daoModelThis. /* GroupPriOnJoin(). */ All()
+	return daoModelThis.GroupPriOnJoin().All()
 }
 
 // 总数（联表时，主键去重）
@@ -175,7 +185,7 @@ func (daoModelThis *DaoModel) CountPri() (int, error) {
 
 // 详情（联表时，GroupBy主键）
 func (daoModelThis *DaoModel) InfoPri() (gdb.Record, error) {
-	return daoModelThis. /* GroupPriOnJoin(). */ One()
+	return daoModelThis.GroupPriOnJoin().One()
 }
 
 /*--------业务可能用到的方法 结束--------*/
