@@ -138,7 +138,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseInsert(insert map[string]in
 		for k, v := range insert {
 			switch k {
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				insertData[k] = v
@@ -180,7 +180,7 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) ParseUpdate(update map[string]in
 		for k, v := range update {
 			switch k {
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				updateData[k] = v

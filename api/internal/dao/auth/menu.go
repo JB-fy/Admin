@@ -228,7 +228,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 				}
 				insertData[k] = v
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				insertData[k] = v
@@ -322,7 +322,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				}
 				updateData[k] = v
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				updateData[k] = v

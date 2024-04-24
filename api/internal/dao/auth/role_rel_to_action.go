@@ -138,7 +138,7 @@ func (daoThis *roleRelToActionDao) ParseInsert(insert map[string]interface{}, da
 		for k, v := range insert {
 			switch k {
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				insertData[k] = v
@@ -180,7 +180,7 @@ func (daoThis *roleRelToActionDao) ParseUpdate(update map[string]interface{}, da
 		for k, v := range update {
 			switch k {
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				updateData[k] = v

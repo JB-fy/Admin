@@ -198,7 +198,7 @@ func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, daoModel *da
 			case `role_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				insertData[k] = v
@@ -268,7 +268,7 @@ func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoModel *da
 			case `role_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				updateData[k] = v

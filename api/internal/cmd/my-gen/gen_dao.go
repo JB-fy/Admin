@@ -205,7 +205,7 @@ func genDao(tpl myGenTpl) {
 	}
 	if len(dao.insertParse) > 0 {
 		insertParsePoint := `default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				insertData[k] = v`
@@ -235,7 +235,7 @@ func genDao(tpl myGenTpl) {
 	// 解析update
 	if len(dao.updateParse) > 0 {
 		updateParsePoint := `default:
-				if daoModel.IsAutoField && !daoThis.ColumnArr().Contains(k) {
+				if !daoThis.ColumnArr().Contains(k) {
 					continue
 				}
 				updateData[k] = v`
