@@ -55,7 +55,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 89999999, ``)
 				return
 			}
-		case `passwordToCheck`:
+		case `password_to_check`:
 			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[userColumns.Salt].String()) != loginInfo[userColumns.Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return

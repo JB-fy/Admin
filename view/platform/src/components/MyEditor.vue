@@ -55,15 +55,15 @@ const myEditor = reactive({
         branding: false, // 右下角Tiny技术支持信息是否显示
         images_upload_handler: (blobInfo: any, progress: any) => {
             return new Promise((resolve, reject) => {
-                let data: { [propName: string]: any } = { ...myEditor.signInfo.uploadData }
+                let data: { [propName: string]: any } = { ...myEditor.signInfo.upload_data }
                 const filename = blobInfo.filename()
                 data.key = myEditor.signInfo.dir + blobInfo.id() + '_' + randomInt(1000, 9999) + filename.slice(filename.lastIndexOf('.'))
                 data.file = blobInfo.blob()
                 axios
-                    .post(myEditor.signInfo.uploadUrl, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+                    .post(myEditor.signInfo.upload_url, data, { headers: { 'Content-Type': 'multipart/form-data' } })
                     .then((res) => {
                         let imgUrl = myEditor.signInfo.host + '/' + data.key
-                        if (myEditor.signInfo?.isRes) {
+                        if (myEditor.signInfo?.is_res) {
                             if (res.data.code !== 0) {
                                 reject(t('common.tip.uploadFail'))
                                 return
@@ -85,7 +85,7 @@ const myEditor = reactive({
         } */
         ...props.init,
     },
-    signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ uploadUrl: "https://xxxxx.com/upload", uploadData: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, isRes: 1 }
+    signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ upload_url: "https://xxxxx.com/upload", upload_data: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, is_res: 1 }
     //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await myEditor.api.getSignInfo()

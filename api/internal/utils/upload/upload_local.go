@@ -43,8 +43,8 @@ func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 	r := g.RequestFromCtx(uploadThis.Ctx)
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
-	minSize := r.Get(`minSize`).Int64()
-	maxSize := r.Get(`maxSize`).Int64()
+	minSize := r.Get(`min_size`).Int64()
+	maxSize := r.Get(`max_size`).Int64()
 	rand := r.Get(`rand`).String()
 	key := r.Get(`key`).String()
 	sign := r.Get(`sign`).String()
@@ -54,11 +54,11 @@ func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
 		return
 	}
 	signData := map[string]interface{}{
-		`dir`:     dir,
-		`expire`:  expire,
-		`minSize`: minSize,
-		`maxSize`: maxSize,
-		`rand`:    rand,
+		`dir`:      dir,
+		`expire`:   expire,
+		`min_size`: minSize,
+		`max_size`: maxSize,
+		`rand`:     rand,
 	}
 	if sign != uploadThis.CreateSign(signData) {
 		err = errors.New(`签名错误`)
@@ -137,11 +137,11 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err
 	}
 
 	uploadData := map[string]interface{}{
-		`dir`:     param.Dir,
-		`expire`:  param.Expire,
-		`minSize`: param.MinSize,
-		`maxSize`: param.MaxSize,
-		`rand`:    grand.S(8),
+		`dir`:      param.Dir,
+		`expire`:   param.Expire,
+		`min_size`: param.MinSize,
+		`max_size`: param.MaxSize,
+		`rand`:     grand.S(8),
 	}
 	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
 

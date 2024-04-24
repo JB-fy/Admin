@@ -42,6 +42,6 @@ export default {
     alpha: '只能包含字母',
     alpha_dash: '只能包含字母、数字、中划线或下划线',
     alpha_num: '只能包含字母和数字',
-    repeatPassword: '两次密码不一致',
+    repeat_password: '两次密码不一致',
     newPasswordDiffOldPassword: '新密码必须与旧密码不同',
 }

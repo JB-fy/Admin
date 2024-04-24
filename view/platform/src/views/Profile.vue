@@ -26,27 +26,27 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
         ],
         password: [{ type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) }],
-        repeatPassword: [
+        repeat_password: [
             { required: computed((): boolean => (saveForm.data.password ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 trigger: 'blur',
                 validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password != saveForm.data.repeatPassword) {
+                    if (saveForm.data.password != saveForm.data.repeat_password) {
                         callback(new Error())
                     }
                     callback()
                 },
-                message: t('validation.repeatPassword'),
+                message: t('validation.repeat_password'),
             },
         ],
-        passwordToCheck: [
-            { required: computed((): boolean => (saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false)), message: t('profile.tip.passwordToCheck') },
+        password_to_check: [
+            { required: computed((): boolean => (saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false)), message: t('profile.tip.password_to_check') },
             { type: 'string', trigger: 'blur', min: 6, max: 30, message: t('validation.between.string', { min: 6, max: 30 }) },
             {
                 trigger: 'blur',
                 validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password && saveForm.data.password == saveForm.data.passwordToCheck) {
+                    if (saveForm.data.password && saveForm.data.password == saveForm.data.password_to_check) {
                         callback(new Error())
                     }
                     callback()
@@ -65,8 +65,8 @@ const saveForm = reactive({
             param.account || delete param.account
             param.phone || delete param.phone
             param.password ? (param.password = md5(param.password)) : delete param.password
-            delete param.repeatPassword
-            param.passwordToCheck ? (param.passwordToCheck = md5(param.passwordToCheck)) : delete param.passwordToCheck
+            delete param.repeat_password
+            param.password_to_check ? (param.password_to_check = md5(param.password_to_check)) : delete param.password_to_check
             try {
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/my/profile/update', param, true)
                 //成功则更新用户信息
@@ -104,13 +104,13 @@ const saveForm = reactive({
                     <el-input v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('profile.name.repeatPassword')" prop="repeatPassword">
-                    <el-input v-model="saveForm.data.repeatPassword" :placeholder="t('profile.name.repeatPassword')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                <el-form-item :label="t('profile.name.repeat_password')" prop="repeat_password">
+                    <el-input v-model="saveForm.data.repeat_password" :placeholder="t('profile.name.repeat_password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('profile.name.passwordToCheck')" prop="passwordToCheck">
-                    <el-input v-model="saveForm.data.passwordToCheck" :placeholder="t('profile.name.passwordToCheck')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert :title="t('profile.tip.passwordToCheck')" type="info" :show-icon="true" :closable="false" />
+                <el-form-item :label="t('profile.name.password_to_check')" prop="password_to_check">
+                    <el-input v-model="saveForm.data.password_to_check" :placeholder="t('profile.name.password_to_check')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                    <el-alert :title="t('profile.tip.password_to_check')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>

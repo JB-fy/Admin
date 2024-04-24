@@ -17,7 +17,7 @@ type MenuTreeItem struct {
 	Id       *uint   `json:"id,omitempty" dc:"ID"`
 	Label    *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	Pid      *uint   `json:"pid,omitempty" dc:"父级ID"`
-	MenuId   *uint   `json:"menuId,omitempty" dc:"菜单ID"`
+	MenuId   *uint   `json:"menu_id,omitempty" dc:"菜单ID"`
 	MenuIcon *string `json:"menu_icon,omitempty" dc:"菜单图标"`
 	MenuName *string `json:"menu_name,omitempty" dc:"菜单名称"`
 	MenuUrl  *string `json:"menu_url,omitempty" dc:"菜单链接"`

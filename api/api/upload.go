@@ -21,16 +21,16 @@ type UploadUploadReq struct {
 /*--------获取签名（H5直传用） 开始--------*/
 type UploadSignReq struct {
 	g.Meta   `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
-	FileType string `json:"fileType" v:"" dc:"文件类型"`
+	FileType string `json:"file_type" v:"" dc:"文件类型"`
 }
 
 type UploadSignRes struct {
-	UploadUrl  string                 `json:"uploadUrl,omitempty" dc:"上传地址"`
-	UploadData map[string]interface{} `json:"uploadData,omitempty" dc:"上传数据"`
+	UploadUrl  string                 `json:"upload_url,omitempty" dc:"上传地址"`
+	UploadData map[string]interface{} `json:"upload_data,omitempty" dc:"上传数据"`
 	Host       string                 `json:"host,omitempty" dc:"站点域名（当上传无响应信息，前端组件用于与上传目录拼接形成文件访问地址）"`
 	Dir        string                 `json:"dir,omitempty" dc:"上传目录"`
 	Expire     uint                   `json:"expire,omitempty" dc:"过期时间"`
-	IsRes      uint                   `json:"isRes,omitempty" dc:"是否有响应信息。0否 1是"`
+	IsRes      uint                   `json:"is_res,omitempty" dc:"是否有响应信息。0否 1是"`
 }
 
 /*--------获取签名（H5直传用） 结束--------*/
@@ -38,7 +38,7 @@ type UploadSignRes struct {
 /*--------获取配置信息（APP直传前调用） 开始--------*/
 type UploadConfigReq struct {
 	g.Meta   `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用）"`
-	FileType string `json:"fileType" v:"" dc:"文件类型"`
+	FileType string `json:"file_type" v:"" dc:"文件类型"`
 }
 
 type UploadConfigRes struct {
@@ -56,7 +56,7 @@ type UploadConfigRes struct {
 //阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
 type UploadStsReq struct {
 	g.Meta   `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
-	FileType string `json:"fileType" v:"" dc:"文件类型"`
+	FileType string `json:"file_type" v:"" dc:"文件类型"`
 }
 
 type UploadStsRes struct {
@@ -72,8 +72,8 @@ type UploadStsRes struct {
 
 /*--------回调 开始--------*/
 type UploadNotifyReq struct {
-	g.Meta     `path:"/notify/:uploadType" method:"get,post" tags:"上传" sm:"回调"`
-	UploadType string `json:"uploadType" v:"required|in:uploadOfLocal,uploadOfAliyunOss" in:"path" dc:"上传方式"`
+	g.Meta     `path:"/notify/:upload_type" method:"get,post" tags:"上传" sm:"回调"`
+	UploadType string `json:"upload_type" v:"required|in:uploadOfLocal,uploadOfAliyunOss" in:"path" dc:"上传方式"`
 }
 
 type UploadNotifyRes struct {
