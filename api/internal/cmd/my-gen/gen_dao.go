@@ -355,7 +355,7 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 		orderParseStrArr := []string{}
 		for _, v := range tpl.Handle.Id.List {
 			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
-			fieldParseStrArr = append(fieldParseStrArr, "COALESCE(` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `, '')")
+			fieldParseStrArr = append(fieldParseStrArr, "COALESCE("+tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeCOALESCE, "` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `")+", '')")
 			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
 			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
@@ -398,10 +398,10 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 1 {
-		fieldParseStrArr := []string{"NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + " + `, '')"}
+		fieldParseStrArr := []string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])+" + `") + ", '')"}
 		parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 		for i := labelListLen - 2; i >= 0; i-- {
-			fieldParseStrArr = append([]string{"NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + " + `, '')"}, fieldParseStrArr...)
+			fieldParseStrArr = append([]string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[i])+" + `") + ", '')"}, fieldParseStrArr...)
 			if i == 0 {
 				parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			} else {

@@ -160,3 +160,14 @@ func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group
 	}
 	return
 }
+
+func (dbHandler pgsql) GetFuncFieldFormat(dbFuncCode MyGenDbFuncCode, field string) (fieldFormat string) {
+	fieldFormat = field //默认值
+	switch dbFuncCode {
+	case DbFuncCodeNULLIF, DbFuncCodeCOALESCE, DbFuncCodeREPLACE: //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+		fieldFormat = field + `::TEXT`
+	case DbFuncCodeCONCAT: //Mysql和Postgresql通用
+	case DbFuncCodeCONCAT_WS: //Mysql和Postgresql通用
+	}
+	return
+}

@@ -149,3 +149,9 @@ func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group
 	}
 	return
 }
+
+func (dbHandler mysql) GetFuncFieldFormat(dbFuncCode MyGenDbFuncCode, field string) (fieldFormat string) {
+	// 默认以Mysql为主，所以Mysql直接返回field
+	fieldFormat = field //默认值
+	return
+}

@@ -6,6 +6,16 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
+type MyGenDbFuncCode = string
+
+const (
+	DbFuncCodeNULLIF    MyGenDbFuncCode = `NULLIF`    //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeCOALESCE  MyGenDbFuncCode = `COALESCE`  //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeREPLACE   MyGenDbFuncCode = `REPLACE`   //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeCONCAT    MyGenDbFuncCode = `CONCAT`    //Mysql和Postgresql通用
+	DbFuncCodeCONCAT_WS MyGenDbFuncCode = `CONCAT_WS` //Mysql和Postgresql通用
+)
+
 type MyGenDbHandler interface {
 	GetTableArr(ctx context.Context, group string) (tableArr []string)                                         // 获取数据库表数组
 	GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField)                            // 获取表字段列表
@@ -14,6 +24,7 @@ type MyGenDbHandler interface {
 	GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int)           // 获取整数字段限制。2字节，4字节，8字节
 	GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) // 获取浮点数字段限制
 	GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType)        // 获取字段类型
+	GetFuncFieldFormat(dbFuncCode MyGenDbFuncCode, field string) (fieldFormat string)                          // 获取用于部分函数的字段格式
 }
 
 type MyGenField struct {
