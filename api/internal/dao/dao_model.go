@@ -160,7 +160,8 @@ func (daoModelThis *DaoModel) GroupPriOnJoin() *DaoModel {
 	return daoModelThis
 }
 
-// TODO 列表（联表时，GroupBy主键）
+// 列表（联表时，GroupBy主键）
+// 为兼容Postgresql，不再默认GroupBy主键（Postgresql联表查询其它表字段时，如果存在GroupBy，其它表字段必须放在GroupBy后面）
 func (daoModelThis *DaoModel) ListPri() (gdb.Result, error) {
 	return daoModelThis. /* GroupPriOnJoin(). */ All()
 }
@@ -174,6 +175,7 @@ func (daoModelThis *DaoModel) CountPri() (int, error) {
 }
 
 // 详情（联表时，GroupBy主键）
+// 为兼容Postgresql，不再默认GroupBy主键（Postgresql联表查询其它表字段时，如果存在GroupBy，其它表字段必须放在GroupBy后面）
 func (daoModelThis *DaoModel) InfoPri() (gdb.Record, error) {
 	return daoModelThis. /* GroupPriOnJoin(). */ One()
 }
