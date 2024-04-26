@@ -75,7 +75,7 @@ func (dbHandler pgsql) GetFieldList(ctx context.Context, group, table string) (f
 
 func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey) {
 	indrelid, _ := g.DB(group).GetValue(ctx, `SELECT oid FROM pg_class WHERE relname = '`+table+`'`)
-	keyListTmp, _ := g.DB(group).GetAll(ctx, `SELECT * FROM pg_index WHERE indrelid = '`+indrelid.String()+`'`)
+	keyListTmp, _ := g.DB(group).GetAll(ctx, `SELECT * FROM pg_index WHERE indrelid = `+indrelid.String()) //联合索引时，indkey返回值有BUG。正确应该返回4 5，实际却返回0
 	fieldList := dbHandler.GetFieldList(ctx, group, table)
 	for _, v := range keyListTmp {
 		if !v[`indisvalid`].Bool() {
@@ -85,12 +85,24 @@ func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (key
 			IsPrimary: v[`indisprimary`].Bool(),
 			IsUnique:  v[`indisunique`].Bool(),
 		}
-		// g.DB(group).GetValue(ctx, `SELECT indkey FROM pg_index WHERE indexrelid = `+v[`indexrelid`].String())
-		fieldIndex := v[`indkey`].Int() //TODO indkey返回值有BUG。联合索引应该返回4 5，但这里却是0。
-		if fieldIndex != 0 {
-			key.FieldArr = append(key.FieldArr, fieldList[fieldIndex-1].FieldRaw)
-			if fieldList[fieldIndex-1].IsAutoInc {
+		/* keyFieldIndexArr := gstr.Split(v[`indkey`].String(), ` `) //联合索引时，indkey返回值有BUG。正确应该返回4 5，实际却返回0
+		for _, keyFieldIndex := range keyFieldIndexArr {
+			fieldIndex := gconv.Int(keyFieldIndex) - 1
+			key.FieldArr = append(key.FieldArr, fieldList[fieldIndex].FieldRaw)
+			if fieldList[fieldIndex].IsAutoInc {
 				key.IsAutoInc = true
+			}
+		} */
+		keyFieldList, _ := g.DB(group).GetAll(ctx, `SELECT * FROM pg_attribute WHERE attrelid = `+v[`indexrelid`].String()+` ORDER BY attnum`)
+		for _, keyField := range keyFieldList {
+			for _, field := range fieldList {
+				if keyField[`attname`].String() != field.FieldRaw {
+					continue
+				}
+				key.FieldArr = append(key.FieldArr, field.FieldRaw)
+				if field.IsAutoInc {
+					key.IsAutoInc = true
+				}
 			}
 		}
 		keyList = append(keyList, key)
