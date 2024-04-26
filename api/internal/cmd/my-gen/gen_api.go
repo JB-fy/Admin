@@ -232,15 +232,21 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case internal.TypeInt:
+			ruleOfId := []string{}
+			ruleOfIdArr := []string{`distinct`}
+			if tpl.Handle.Id.List[0].IsAutoInc || tpl.Handle.Id.List[0].FieldTypeName == internal.TypeNameIdSuffix {
+				ruleOfId = append(ruleOfId, `min:1`)
+				ruleOfIdArr = append(ruleOfIdArr, `foreach`, `min:1`)
+			}
 			api.filterOfFixed = append(api.filterOfFixed,
-				`Id *int `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
-				`IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"distinct" dc:"ID数组"`+"`",
-				`ExcId *int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"" dc:"排除ID"`+"`",
-				`ExcIdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"distinct" dc:"排除ID数组"`+"`",
+				`Id *int `+"`"+`json:"id,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"ID"`+"`",
+				`IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"ID数组"`+"`",
+				`ExcId *int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"排除ID"`+"`",
+				`ExcIdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"排除ID数组"`+"`",
 			)
-			api.info = append(api.info, `Id int `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct" dc:"ID数组"`+"`")
+			api.info = append(api.info, `Id int `+"`"+`json:"id" v:"`+gstr.Join(append([]string{`required`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
+			api.update = append(api.update, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *int `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		case internal.TypeIntU:
 			api.filterOfFixed = append(api.filterOfFixed,

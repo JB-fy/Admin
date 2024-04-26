@@ -109,8 +109,12 @@ func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case internal.TypeInt:
+			ruleOfId := ``
+			if tpl.Handle.Id.List[0].IsAutoInc || tpl.Handle.Id.List[0].FieldTypeName == internal.TypeNameIdSuffix {
+				ruleOfId = ` :min="1"`
+			}
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :controls="false" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')"`+ruleOfId+` :controls="false" />
         </el-form-item>`)
 		case internal.TypeIntU:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">

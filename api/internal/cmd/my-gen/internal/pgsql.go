@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -128,18 +127,7 @@ func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group
 	switch field.FieldTypeRaw {
 	case `int2`, `int4`, `int8`: //int等类型
 		fieldType = TypeInt
-		// pgsql数字类型不分正负。故只判断id后缀为非0参数
-		if field.IsAutoInc || garray.NewStrArrayFrom([]string{`pid`, `level`}).Contains(field.FieldRaw) {
-			fieldType = TypeIntU
-		} else {
-			fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
-			fieldCaseSnakeRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-			fieldSplitArr := gstr.Split(fieldCaseSnakeRemove, `_`)
-			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-			if fieldSuffix == `id` {
-				fieldType = TypeIntU
-			}
-		}
+		// pgsql数字类型不分正负
 	case `numeric`, `float4`, `float8`: //float类型
 		fieldType = TypeFloat
 		// pgsql数字类型不分正负

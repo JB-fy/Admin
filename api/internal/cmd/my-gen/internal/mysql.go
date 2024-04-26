@@ -114,16 +114,8 @@ func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
 	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
 		fieldType = TypeInt
-		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 || field.IsAutoInc || garray.NewStrArrayFrom([]string{`pid`, `level`}).Contains(field.FieldRaw) {
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
 			fieldType = TypeIntU
-		} else {
-			fieldCaseSnake := gstr.CaseSnake(field.FieldRaw)
-			fieldCaseSnakeRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-			fieldSplitArr := gstr.Split(fieldCaseSnakeRemove, `_`)
-			fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
-			if fieldSuffix == `id` {
-				fieldType = TypeIntU
-			}
 		}
 	} else if gstr.Pos(field.FieldTypeRaw, `decimal`) != -1 || gstr.Pos(field.FieldTypeRaw, `float`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 { //float类型
 		fieldType = TypeFloat
