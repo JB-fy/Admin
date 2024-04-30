@@ -25,11 +25,6 @@ func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]interface{}) *
 	} else {
 		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`oneClickOfWxHost`, `oneClickOfWxAppId`, `oneClickOfWxSecret`})
 		config = configTmp.Map()
-		/* config = g.Map{
-			`oneClickOfWxHost`:   `https://api.weixin.qq.com`,
-			`oneClickOfWxAppId`:  `wxabe672da5799762e`,
-			`oneClickOfWxSecret`: `11111`,
-		} */
 	}
 
 	obj := OneClickOfWx{Ctx: ctx}
