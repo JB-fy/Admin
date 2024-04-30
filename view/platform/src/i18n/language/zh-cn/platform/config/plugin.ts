@@ -10,6 +10,9 @@ export default {
 
         payOfAli: '支付宝',
         payOfWx: '微信',
+
+        oneClickOfWx: '微信',
+        oneClickOfYidun: '易盾',
     },
     name: {
         uploadType: '上传方式',
@@ -50,7 +53,10 @@ export default {
         idCardOfAliyunPath: '阿里云IdCard-请求路径',
         idCardOfAliyunAppcode: '阿里云IdCard-Appcode',
 
-        oneClickType: '一键登录方式',
+        oneClickOfWxHost: '微信-域名',
+        oneClickOfWxAppId: '微信-AppId',
+        oneClickOfWxSecret: '微信-密钥',
+
         oneClickOfYidunSecretId: '易盾-SecretId',
         oneClickOfYidunSecretKey: '易盾-SecretKey',
         oneClickOfYidunBusinessId: '易盾-BusinessId',
@@ -77,7 +83,6 @@ export default {
         ],
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
-        oneClickType: [{ value: `oneClickOfYidun`, label: '易盾' }],
         pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },

@@ -74,7 +74,9 @@ type Config struct {
 	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" dc:"阿里云IdCard-请求路径"`
 	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
 
-	OneClickType              *string `json:"oneClickType,omitempty" dc:"一键登录方式"`
+	OneClickOfWxHost          *string `json:"oneClickOfWxHost,omitempty" dc:"微信-域名"`
+	OneClickOfWxAppId         *string `json:"oneClickOfWxAppId,omitempty" dc:"微信-AppId"`
+	OneClickOfWxSecret        *string `json:"oneClickOfWxSecret,omitempty" dc:"微信-密钥"`
 	OneClickOfYidunSecretId   *string `json:"oneClickOfYidunSecretId,omitempty" dc:"易盾-SecretId"`
 	OneClickOfYidunSecretKey  *string `json:"oneClickOfYidunSecretKey,omitempty" dc:"易盾-SecretKey"`
 	OneClickOfYidunBusinessId *string `json:"oneClickOfYidunBusinessId,omitempty" dc:"易盾-BusinessId"`
@@ -160,7 +162,9 @@ type ConfigSaveReq struct {
 	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
 	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
 
-	OneClickType              *string `json:"oneClickType,omitempty" v:"in:oneClickOfYidun" dc:"一键登录方式"`
+	OneClickOfWxHost          *string `json:"oneClickOfWxHost,omitempty" v:"url" dc:"微信-域名"`
+	OneClickOfWxAppId         *string `json:"oneClickOfWxAppId,omitempty" v:"" dc:"微信-AppId"`
+	OneClickOfWxSecret        *string `json:"oneClickOfWxSecret,omitempty" v:"" dc:"微信-密钥"`
 	OneClickOfYidunSecretId   *string `json:"oneClickOfYidunSecretId,omitempty" v:"" dc:"易盾-SecretId"`
 	OneClickOfYidunSecretKey  *string `json:"oneClickOfYidunSecretKey,omitempty" v:"" dc:"易盾-SecretKey"`
 	OneClickOfYidunBusinessId *string `json:"oneClickOfYidunBusinessId,omitempty" v:"" dc:"易盾-BusinessId"`
