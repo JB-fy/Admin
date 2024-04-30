@@ -13,9 +13,9 @@ import (
 
 type OneClickOfWx struct {
 	Ctx    context.Context
-	Host   string `json:"oneClickOfWxHost"`   //https://api.weixin.qq.com 或 https://api2.weixin.qq.com（备用）
-	AppId  string `json:"oneClickOfWxAppId"`  //wxabe672da5799762e
-	Secret string `json:"oneClickOfWxSecret"` //
+	Host   string `json:"oneClickOfWxHost"`
+	AppId  string `json:"oneClickOfWxAppId"`
+	Secret string `json:"oneClickOfWxSecret"`
 }
 
 func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]interface{}) *OneClickOfWx {

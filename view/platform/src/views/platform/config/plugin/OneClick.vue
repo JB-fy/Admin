@@ -60,7 +60,12 @@ saveForm.initData()
         <el-tabs tab-position="left">
             <el-tab-pane :label="t('platform.config.plugin.label.oneClickOfWx')" :lazy="true">
                 <el-form-item :label="t('platform.config.plugin.name.oneClickOfWxHost')" prop="oneClickOfWxHost">
-                    <el-input v-model="saveForm.data.oneClickOfWxHost" :placeholder="t('platform.config.plugin.name.oneClickOfWxHost')" :clearable="true" />
+                    <el-input v-model="saveForm.data.oneClickOfWxHost" :placeholder="t('platform.config.plugin.name.oneClickOfWxHost')" :clearable="true" style="max-width: 500px" />
+                    <el-alert type="info" :show-icon="true" :closable="false">
+                        <template #title>
+                            <span v-html="t('platform.config.plugin.tip.oneClickOfWxHost')"></span>
+                        </template>
+                    </el-alert>
                 </el-form-item>
                 <el-form-item :label="t('platform.config.plugin.name.oneClickOfWxAppId')" prop="oneClickOfWxAppId">
                     <el-input v-model="saveForm.data.oneClickOfWxAppId" :placeholder="t('platform.config.plugin.name.oneClickOfWxAppId')" :clearable="true" />
