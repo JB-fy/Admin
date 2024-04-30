@@ -50,6 +50,7 @@ type UserListItem struct {
 	Gender     *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
 	Birthday   *string     `json:"birthday,omitempty" dc:"生日"`
 	Address    *string     `json:"address,omitempty" dc:"详细地址"`
+	OpenIdOfWx *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
 	IdCardName *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
 	IdCardNo   *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
 	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
@@ -81,6 +82,7 @@ type UserInfo struct {
 	Gender     *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
 	Birthday   *string     `json:"birthday,omitempty" dc:"生日"`
 	Address    *string     `json:"address,omitempty" dc:"详细地址"`
+	OpenIdOfWx *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
 	IdCardName *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
 	IdCardNo   *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
 	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
@@ -102,6 +104,7 @@ type UserUpdateReq struct {
 	Gender     *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday   *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	Address    *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
+	OpenIdOfWx *string     `json:"open_id_of_wx,omitempty" v:"max-length:128" dc:"微信openId"`
 	IdCardName *string     `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
 	IdCardNo   *string     `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"` */
 	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`

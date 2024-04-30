@@ -108,6 +108,14 @@ const table = reactive({
             hidden: true,
         },
         {
+            dataKey: 'open_id_of_wx',
+            title: t('user.user.name.open_id_of_wx'),
+            key: 'open_id_of_wx',
+            align: 'center',
+            width: 200,
+            hidden: true,
+        },
+        {
             dataKey: 'id_card_name',
             title: t('user.user.name.id_card_name'),
             key: 'id_card_name',

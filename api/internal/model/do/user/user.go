@@ -22,6 +22,7 @@ type User struct {
 	Gender     interface{} // 性别：0未设置 1男 2女
 	Birthday   *gtime.Time // 生日
 	Address    interface{} // 详细地址
+	OpenIdOfWx interface{} // 微信openId
 	IdCardName interface{} // 身份证姓名
 	IdCardNo   interface{} // 身份证号码
 	IsStop     interface{} // 停用：0否 1是

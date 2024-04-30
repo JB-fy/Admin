@@ -34,6 +34,7 @@ type UserColumns struct {
 	Gender     string // 性别：0未设置 1男 2女
 	Birthday   string // 生日
 	Address    string // 详细地址
+	OpenIdOfWx string // 微信openId
 	IdCardName string // 身份证姓名
 	IdCardNo   string // 身份证号码
 	IsStop     string // 停用：0否 1是
@@ -53,6 +54,7 @@ var userColumns = UserColumns{
 	Gender:     "gender",
 	Birthday:   "birthday",
 	Address:    "address",
+	OpenIdOfWx: "open_id_of_wx",
 	IdCardName: "id_card_name",
 	IdCardNo:   "id_card_no",
 	IsStop:     "is_stop",

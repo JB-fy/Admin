@@ -8,6 +8,7 @@ export default {
         gender: '性别',
         birthday: '生日',
         address: '详细地址',
+        open_id_of_wx: '微信openId',
         id_card_name: '身份证姓名',
         id_card_no: '身份证号码',
         is_stop: '停用',
