@@ -40,22 +40,23 @@ type UserListRes struct {
 }
 
 type UserListItem struct {
-	Id         *uint       `json:"id,omitempty" dc:"ID"`
-	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	UserId     *uint       `json:"user_id,omitempty" dc:"用户ID"`
-	Phone      *string     `json:"phone,omitempty" dc:"手机"`
-	Account    *string     `json:"account,omitempty" dc:"账号"`
-	Nickname   *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar     *string     `json:"avatar,omitempty" dc:"头像"`
-	Gender     *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
-	Birthday   *string     `json:"birthday,omitempty" dc:"生日"`
-	Address    *string     `json:"address,omitempty" dc:"详细地址"`
-	OpenIdOfWx *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
-	IdCardName *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
-	IdCardNo   *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
-	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	UserId      *uint       `json:"user_id,omitempty" dc:"用户ID"`
+	Phone       *string     `json:"phone,omitempty" dc:"手机"`
+	Account     *string     `json:"account,omitempty" dc:"账号"`
+	Nickname    *string     `json:"nickname,omitempty" dc:"昵称"`
+	Avatar      *string     `json:"avatar,omitempty" dc:"头像"`
+	Gender      *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
+	Birthday    *string     `json:"birthday,omitempty" dc:"生日"`
+	Address     *string     `json:"address,omitempty" dc:"详细地址"`
+	OpenIdOfWx  *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
+	UnionIdOfWx *string     `json:"union_id_of_wx,omitempty" dc:"微信unionId"`
+	IdCardName  *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
+	IdCardNo    *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------列表 结束--------*/
@@ -72,22 +73,23 @@ type UserInfoRes struct {
 }
 
 type UserInfo struct {
-	Id         *uint       `json:"id,omitempty" dc:"ID"`
-	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	UserId     *uint       `json:"user_id,omitempty" dc:"用户ID"`
-	Phone      *string     `json:"phone,omitempty" dc:"手机"`
-	Account    *string     `json:"account,omitempty" dc:"账号"`
-	Nickname   *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar     *string     `json:"avatar,omitempty" dc:"头像"`
-	Gender     *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
-	Birthday   *string     `json:"birthday,omitempty" dc:"生日"`
-	Address    *string     `json:"address,omitempty" dc:"详细地址"`
-	OpenIdOfWx *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
-	IdCardName *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
-	IdCardNo   *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
-	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	UserId      *uint       `json:"user_id,omitempty" dc:"用户ID"`
+	Phone       *string     `json:"phone,omitempty" dc:"手机"`
+	Account     *string     `json:"account,omitempty" dc:"账号"`
+	Nickname    *string     `json:"nickname,omitempty" dc:"昵称"`
+	Avatar      *string     `json:"avatar,omitempty" dc:"头像"`
+	Gender      *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
+	Birthday    *string     `json:"birthday,omitempty" dc:"生日"`
+	Address     *string     `json:"address,omitempty" dc:"详细地址"`
+	OpenIdOfWx  *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
+	UnionIdOfWx *string     `json:"union_id_of_wx,omitempty" dc:"微信unionId"`
+	IdCardName  *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
+	IdCardNo    *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/
@@ -96,17 +98,18 @@ type UserInfo struct {
 type UserUpdateReq struct {
 	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"修改"`
 	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
-	/* Phone      *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account    *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password   *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
-	Nickname   *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Avatar     *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Gender     *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
-	Birthday   *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	Address    *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
-	OpenIdOfWx *string     `json:"open_id_of_wx,omitempty" v:"max-length:128" dc:"微信openId"`
-	IdCardName *string     `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
-	IdCardNo   *string     `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"` */
+	/* Phone       *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Account     *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Password    *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
+	Nickname    *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar      *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
+	Gender      *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
+	Birthday    *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
+	Address     *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
+	OpenIdOfWx  *string     `json:"open_id_of_wx,omitempty" v:"max-length:128" dc:"微信openId"`
+	UnionIdOfWx *string     `json:"union_id_of_wx,omitempty" v:"max-length:64" dc:"微信unionId"`
+	IdCardName  *string     `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
+	IdCardNo    *string     `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"` */
 	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 

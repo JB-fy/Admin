@@ -195,12 +195,16 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 		}
 		filter[daoUser.User.Columns().OpenIdOfWx] = accessToken.OpenId
 		saveData[daoUser.User.Columns().OpenIdOfWx] = accessToken.OpenId
+		if accessToken.UnionId != `` {
+			saveData[daoUser.User.Columns().UnionIdOfWx] = accessToken.UnionId
+		}
 		if accessToken.Scope == `snsapi_userinfo` {
 			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(accessToken.OpenId, accessToken.AccessToken)
 			if errTmp != nil {
 				err = errTmp
 				return
 			}
+			saveData[daoUser.User.Columns().UnionIdOfWx] = userInfo.UnionId
 			saveData[daoUser.User.Columns().Nickname] = userInfo.Nickname
 			saveData[daoUser.User.Columns().Gender] = userInfo.Gender
 			saveData[daoUser.User.Columns().Avatar] = userInfo.Avatar

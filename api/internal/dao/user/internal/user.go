@@ -24,42 +24,44 @@ type UserDao struct {
 
 // UserColumns defines and stores column names for table user_user.
 type UserColumns struct {
-	UserId     string // 用户ID
-	Phone      string // 手机
-	Account    string // 账号
-	Password   string // 密码。md5保存
-	Salt       string // 密码盐
-	Nickname   string // 昵称
-	Avatar     string // 头像
-	Gender     string // 性别：0未设置 1男 2女
-	Birthday   string // 生日
-	Address    string // 详细地址
-	OpenIdOfWx string // 微信openId
-	IdCardName string // 身份证姓名
-	IdCardNo   string // 身份证号码
-	IsStop     string // 停用：0否 1是
-	UpdatedAt  string // 更新时间
-	CreatedAt  string // 创建时间
+	UserId      string // 用户ID
+	Phone       string // 手机
+	Account     string // 账号
+	Password    string // 密码。md5保存
+	Salt        string // 密码盐
+	Nickname    string // 昵称
+	Avatar      string // 头像
+	Gender      string // 性别：0未设置 1男 2女
+	Birthday    string // 生日
+	Address     string // 详细地址
+	OpenIdOfWx  string // 微信openId
+	UnionIdOfWx string // 微信unionId
+	IdCardName  string // 身份证姓名
+	IdCardNo    string // 身份证号码
+	IsStop      string // 停用：0否 1是
+	UpdatedAt   string // 更新时间
+	CreatedAt   string // 创建时间
 }
 
 // userColumns holds the columns for table user_user.
 var userColumns = UserColumns{
-	UserId:     "user_id",
-	Phone:      "phone",
-	Account:    "account",
-	Password:   "password",
-	Salt:       "salt",
-	Nickname:   "nickname",
-	Avatar:     "avatar",
-	Gender:     "gender",
-	Birthday:   "birthday",
-	Address:    "address",
-	OpenIdOfWx: "open_id_of_wx",
-	IdCardName: "id_card_name",
-	IdCardNo:   "id_card_no",
-	IsStop:     "is_stop",
-	UpdatedAt:  "updated_at",
-	CreatedAt:  "created_at",
+	UserId:      "user_id",
+	Phone:       "phone",
+	Account:     "account",
+	Password:    "password",
+	Salt:        "salt",
+	Nickname:    "nickname",
+	Avatar:      "avatar",
+	Gender:      "gender",
+	Birthday:    "birthday",
+	Address:     "address",
+	OpenIdOfWx:  "open_id_of_wx",
+	UnionIdOfWx: "union_id_of_wx",
+	IdCardName:  "id_card_name",
+	IdCardNo:    "id_card_no",
+	IsStop:      "is_stop",
+	UpdatedAt:   "updated_at",
+	CreatedAt:   "created_at",
 }
 
 // NewUserDao creates and returns a new DAO object for table data access.

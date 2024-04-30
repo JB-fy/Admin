@@ -34,6 +34,7 @@ const saveForm = reactive({
         birthday: [{ type: 'string', trigger: 'change', message: t('validation.select') }],
         address: [{ type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) }],
         open_id_of_wx: [{ type: 'string', trigger: 'blur', max: 128, message: t('validation.max.string', { max: 128 }) }],
+        union_id_of_wx: [{ type: 'string', trigger: 'blur', max: 64, message: t('validation.max.string', { max: 64 }) }],
         id_card_name: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         id_card_no: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
@@ -122,7 +123,11 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.address" :placeholder="t('user.user.name.address')" maxlength="60" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.open_id_of_wx')" prop="open_id_of_wx">
-                    <el-input v-model="saveForm.data.open_id_of_wx" :placeholder="t('user.user.name.open_id_of_wx')" maxlength="128" :show-word-limit="true" :clearable="true" />
+                    <el-input v-model="saveForm.data.open_id_of_wx" :placeholder="t('user.user.name.open_id_of_wx')" maxlength="128" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('user.user.name.union_id_of_wx')" prop="union_id_of_wx">
+                    <el-input v-model="saveForm.data.union_id_of_wx" :placeholder="t('user.user.name.union_id_of_wx')" maxlength="64" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.id_card_name')" prop="id_card_name">
                     <el-input v-model="saveForm.data.id_card_name" :placeholder="t('user.user.name.id_card_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
