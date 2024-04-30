@@ -27,13 +27,12 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	userColumns := daoUser.User.Columns()
 	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[userColumns.IsStop].Uint() == 1 {
+	if info[daoUser.User.Columns().IsStop].Uint() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
@@ -45,7 +44,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	if err != nil {
 		return
 	}
-	res = &api.CommonSaltRes{SaltStatic: info[userColumns.Salt].String(), SaltDynamic: saltDynamic}
+	res = &api.CommonSaltRes{SaltStatic: info[daoUser.User.Columns().Salt].String(), SaltDynamic: saltDynamic}
 	return
 }
 
@@ -56,13 +55,12 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	userColumns := daoUser.User.Columns()
 	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[userColumns.IsStop].Uint() == 1 {
+	if info[daoUser.User.Columns().IsStop].Uint() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
@@ -71,12 +69,12 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	if req.Password != `` { //密码
 		salt, _ := cache.NewSalt(ctx, sceneCode, req.LoginName).Get()
-		if salt == `` || gmd5.MustEncrypt(info[userColumns.Password].String()+salt) != req.Password {
+		if salt == `` || gmd5.MustEncrypt(info[daoUser.User.Columns().Password].String()+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
 		}
 	} else if req.SmsCode != `` { //短信验证码
-		phone := info[userColumns.Phone].String()
+		phone := info[daoUser.User.Columns().Phone].String()
 		if phone == `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
@@ -103,19 +101,18 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
-	userColumns := daoUser.User.Columns()
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(userColumns.Account, req.Account).One()
+		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Account, req.Account).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
-		data[userColumns.Account] = req.Account
-		data[userColumns.Nickname] = req.Account
+		data[daoUser.User.Columns().Account] = req.Account
+		data[daoUser.User.Columns().Nickname] = req.Account
 	}
 	if req.Password != `` {
-		data[userColumns.Password] = req.Password
+		data[daoUser.User.Columns().Password] = req.Password
 	}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
@@ -126,13 +123,13 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(userColumns.Phone, req.Phone).One()
+		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, req.Phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
-		data[userColumns.Phone] = req.Phone
-		data[userColumns.Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
+		data[daoUser.User.Columns().Phone] = req.Phone
+		data[daoUser.User.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 
 	userId, err := daoUser.User.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()

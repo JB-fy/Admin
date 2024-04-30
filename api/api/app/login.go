@@ -36,7 +36,7 @@ type LoginRegisterReq struct {
 
 /*--------密码找回 开始--------*/
 type LoginPasswordRecoveryReq struct {
-	g.Meta   `path:"/passwordRecovery" method:"post" tags:"APP/登录" sm:"密码找回"`
+	g.Meta   `path:"/password-recovery" method:"post" tags:"APP/登录" sm:"密码找回"`
 	Phone    string `json:"phone,omitempty" v:"required|max-length:30|phone" dc:"手机"`
 	SmsCode  string `json:"sms_code" v:"required|size:4" dc:"短信验证码"`
 	Password string `json:"password" v:"required|lsize:32" dc:"密码。加密后发送，公式：md5(密码)"`
