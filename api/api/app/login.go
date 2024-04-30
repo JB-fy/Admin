@@ -43,3 +43,30 @@ type LoginPasswordRecoveryReq struct {
 }
 
 /*--------密码找回 结束--------*/
+
+/*--------一键登录前置信息（如一些配置信息） 开始--------*/
+type LoginOneClickPreInfoReq struct {
+	g.Meta          `path:"/one-click-pre-info" method:"post" tags:"APP/登录" sm:"一键登录前置信息（如一些配置信息）"`
+	OneClickType    string `json:"one_click_type" v:"required|in:oneClickOfWx,oneClickOfYidun" default:"oneClickOfWx" dc:"一键登录类型：oneClickOfWx微信 oneClickOfYidun易盾"`
+	RedirectUriOfWx string `json:"redirect_uri_of_wx" v:"required-if:OneClickType,oneClickOfWx" dc:"重定向地址（微信用）"`
+	ScopeOfWx       string `json:"scope_of_wx" v:"in:snsapi_base,snsapi_userinfo" dc:"微信授权作用域（微信用）：snsapi_base不弹出授权页面，直接跳转，只能获取用户openid； snsapi_userinfo弹出授权页面，可通过openid拿到昵称、性别、所在地"`
+	StateOfWx       string `json:"state_of_wx" v:"max-length:128|regex:^[a-zA-Z0-9]*$" dc:"重定向后会带上state参数（微信用）。"`
+	ForcePopupOfWx  bool   `json:"force_popup_of_wx" v:"in:0,1" dc:"强制此次授权需要用户弹窗确认（微信用）"`
+}
+
+type LoginOneClickPreInfoRes struct {
+	CodeUrlOfWx string `json:"code_url_of_wx" dc:"微信授权地址"`
+}
+
+/*--------一键登录前置信息（如一些配置信息） 结束--------*/
+
+/*--------一键登录 开始--------*/
+type LoginOneClickReq struct {
+	g.Meta             `path:"/one-click" method:"post" tags:"APP/登录" sm:"一键登录"`
+	OneClickType       string `json:"one_click_type" v:"required|in:oneClickOfWx,oneClickOfYidun" default:"oneClickOfWx" dc:"一键登录类型：oneClickOfWx微信 oneClickOfYidun易盾"`
+	CodeOfWx           string `json:"code_of_wx" v:"required-if:OneClickType,oneClickOfWx" dc:"微信Code（微信用）"`
+	TokenOfYidun       string `json:"token_of_yidun"  v:"required-if:OneClickType,oneClickOfYidun" dc:"易盾Token（易盾用）"`
+	AccessTokenOfYidun string `json:"access_token_of_yidun"  v:"required-if:OneClickType,oneClickOfYidun" dc:"易盾运营商授权码（易盾用）"`
+}
+
+/*--------一键登录 结束--------*/

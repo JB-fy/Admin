@@ -7,6 +7,7 @@ import (
 	daoAuth "api/internal/dao/auth"
 	daoUser "api/internal/dao/user"
 	"api/internal/utils"
+	one_click "api/internal/utils/one-click"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -167,5 +168,75 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
+	return
+}
+
+// 一键登录前置信息
+func (controllerThis *Login) OneClickPreInfo(ctx context.Context, req *apiCurrent.LoginOneClickPreInfoReq) (res *apiCurrent.LoginOneClickPreInfoRes, err error) {
+	res = &apiCurrent.LoginOneClickPreInfoRes{}
+	switch req.OneClickType {
+	case `oneClickOfWx`: //微信
+		res.CodeUrlOfWx, err = one_click.NewOneClickOfWx(ctx).CodeUrl(req.RedirectUriOfWx, req.ScopeOfWx, req.StateOfWx, req.ForcePopupOfWx)
+	case `oneClickOfYidun`: //易盾
+	}
+	return
+}
+
+// 一键登录
+func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.LoginOneClickReq) (res *api.CommonTokenRes, err error) {
+	filter := g.Map{}
+	saveData := g.Map{}
+	switch req.OneClickType {
+	case `oneClickOfWx`: //微信
+		accessToken, errTmp := one_click.NewOneClickOfWx(ctx).AccessToken(req.CodeOfWx)
+		if errTmp != nil {
+			err = errTmp
+			return
+		}
+		filter[daoUser.User.Columns().OpenIdOfWx] = accessToken.OpenId
+		saveData[daoUser.User.Columns().OpenIdOfWx] = accessToken.OpenId
+		if accessToken.Scope == `snsapi_userinfo` {
+			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(accessToken.OpenId, accessToken.AccessToken)
+			if errTmp != nil {
+				err = errTmp
+				return
+			}
+			saveData[daoUser.User.Columns().Nickname] = userInfo.Nickname
+			saveData[daoUser.User.Columns().Gender] = userInfo.Gender
+			saveData[daoUser.User.Columns().Avatar] = userInfo.Avatar
+		}
+	case `oneClickOfYidun`: //易盾
+		phone, errTmp := one_click.NewOneClickOfYidun(ctx).Check(req.TokenOfYidun, req.AccessTokenOfYidun)
+		if errTmp != nil {
+			err = errTmp
+			return
+		}
+		filter[daoUser.User.Columns().Phone] = phone
+		saveData[daoUser.User.Columns().Phone] = phone
+	}
+
+	userId, _ := daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.PrimaryKey())
+	if userId == 0 {
+		userIdTmp, errTmp := daoUser.User.CtxDaoModel(ctx).HookInsert(saveData).InsertAndGetId()
+		if errTmp != nil { //报错就是并发引起的唯一索引冲突，故再做一次查询
+			userId, _ = daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.PrimaryKey())
+			// daoUser.User.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
+		} else {
+			userId = uint(userIdTmp)
+		}
+	} /*  else {
+		daoUser.User.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
+	} */
+
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	claims := utils.CustomClaims{LoginId: userId}
+	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
+	token, err := jwt.CreateToken(claims)
+	if err != nil {
+		return
+	}
+	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
+
+	res = &api.CommonTokenRes{Token: token}
 	return
 }
