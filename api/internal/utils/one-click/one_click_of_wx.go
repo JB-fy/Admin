@@ -32,7 +32,7 @@ func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]interface{}) *
 	return &obj
 }
 
-type AccessToken struct {
+type AccessTokenOfWx struct {
 	UnionId        string `json:"unionid"`         //用户统一标识（全局唯一），只有当scope为"snsapi_userinfo"时返回
 	OpenId         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	AccessToken    string `json:"access_token"`    //网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
@@ -42,7 +42,7 @@ type AccessToken struct {
 	IsSnapshotuser int    `json:"is_snapshotuser"` //是否为快照页模式虚拟账号，只有当用户是快照页模式虚拟账号时返回，值为1
 }
 
-type UserInfo struct {
+type UserInfoOfWx struct {
 	UnionId   string `json:"unionid"`    //用户统一标识（全局唯一）
 	OpenId    string `json:"openid"`     //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	Nickname  string `json:"nickname"`   //昵称
@@ -54,7 +54,7 @@ type UserInfo struct {
 	Privilege string `json:"privilege"`  //用户特权信息，json 数组，如微信沃卡用户为（chinaunicom）
 }
 
-type RefreshToken struct {
+type RefreshTokenOfWx struct {
 	OpenId      string
 	AccessToken string //授权Token
 	ExpireTime  int    //超时时间。单位：秒
@@ -77,7 +77,7 @@ func (oneClickThis *OneClickOfWx) CodeUrl(redirectUri string, scope string, stat
 }
 
 // 通过code换取网页授权access_token（code由前端自己获取）
-func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessToken, err error) {
+func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTokenOfWx, err error) {
 	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/access_token?appid=`+oneClickThis.AppId+`&secret=`+oneClickThis.Secret+`&code=`+code+`&grant_type=authorization_code`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/access_token`, g.Map{
 		`appid`:      oneClickThis.AppId,
@@ -101,7 +101,7 @@ func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTo
 }
 
 // 拉取用户信息(需scope为 snsapi_userinfo)
-func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo UserInfo, err error) {
+func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo UserInfoOfWx, err error) {
 	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/userinfo?access_token=`+accessToken+`&openid=`+openId+`&lang=zh_CN`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/userinfo`, g.Map{
 		`access_token`: accessToken,
@@ -124,7 +124,7 @@ func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo
 }
 
 // 刷新access_token（需要时用）
-func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken AccessToken, err error) {
+func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken AccessTokenOfWx, err error) {
 	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/refresh_token?appid=`+oneClickThis.AppId+`&grant_type=refresh_token&refresh_token=REFRESH_TOKEN`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/refresh_token`, g.Map{
 		`appid`:         oneClickThis.AppId,
@@ -168,12 +168,12 @@ func (oneClickThis *OneClickOfWx) Auth(openId, accessToken string) (err error) {
 }
 
 // 下面是一些额外接口
-type AccessTokenOfCgi struct {
+type AccessTokenCgiOfWx struct {
 	AccessToken string `json:"access_token"` //授权Token
 	ExpiresIn   int    `json:"expires_in"`   //有效时间，单位：秒
 }
 
-type UserInfoOfCgi struct {
+type UserInfoCgiOfWx struct {
 	UnionId        string `json:"unionid"`         //用户统一标识（全局唯一）。公众号绑定到微信开放平台账号后，才会出现该字段
 	OpenId         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	Subscribe      int    `json:"subscribe"`       //是否关注公众号：0否 1是
@@ -188,7 +188,7 @@ type UserInfoOfCgi struct {
 }
 
 // 获取access_token（注意：与上面通过code换取授权access_token不一样）
-func (oneClickThis *OneClickOfWx) AccessTokenOfCgi() (accessToken AccessTokenOfCgi, err error) {
+func (oneClickThis *OneClickOfWx) AccessTokenOfCgi() (accessToken AccessTokenCgiOfWx, err error) {
 	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/token?grant_type=client_credential&appid=`+oneClickThis.AppId+`&secret=`+oneClickThis.Secret)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/token`, g.Map{
 		`grant_type`: `client_credential`,
@@ -211,7 +211,7 @@ func (oneClickThis *OneClickOfWx) AccessTokenOfCgi() (accessToken AccessTokenOfC
 }
 
 // 获取用户基本信息
-func (oneClickThis *OneClickOfWx) UserInfoOfCgi(openId, accessToken string) (userInfo UserInfoOfCgi, err error) {
+func (oneClickThis *OneClickOfWx) UserInfoOfCgi(openId, accessToken string) (userInfo UserInfoCgiOfWx, err error) {
 	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/user/info?access_token=`+accessToken+`&openid=`+openId+`&lang=zh_CN`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/user/info`, g.Map{
 		`access_token`: accessToken,
