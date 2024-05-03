@@ -1,6 +1,7 @@
 package pay
 
 import (
+	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 
@@ -29,10 +30,16 @@ type PayOfWx struct {
 	NotifyUrl  string `json:"payOfWxNotifyUrl"`
 }
 
-func NewPayOfWx(ctx context.Context, config map[string]interface{}) *PayOfWx {
-	payOfWxObj := PayOfWx{
-		Ctx: ctx,
+func NewPayOfWx(ctx context.Context, configOpt ...map[string]interface{}) *PayOfWx {
+	var config map[string]interface{}
+	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
+		config = configOpt[0]
+	} else {
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`payOfWxAppId`, `payOfWxMchid`, `payOfWxSerialNo`, `payOfWxApiV3Key`, `payOfWxPrivateKey`, `payOfWxNotifyUrl`})
+		config = configTmp.Map()
 	}
+
+	payOfWxObj := PayOfWx{Ctx: ctx}
 	gconv.Struct(config, &payOfWxObj)
 	return &payOfWxObj
 }

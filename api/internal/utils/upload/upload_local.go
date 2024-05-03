@@ -1,6 +1,7 @@
 package upload
 
 import (
+	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 	"image"
@@ -30,10 +31,16 @@ type UploadOfLocal struct {
 	FileUrlPrefix string `json:"uploadOfLocalFileUrlPrefix"`
 }
 
-func NewUploadOfLocal(ctx context.Context, config map[string]interface{}) *UploadOfLocal {
-	uploadOfLocalObj := UploadOfLocal{
-		Ctx: ctx,
+func NewUploadOfLocal(ctx context.Context, configOpt ...map[string]interface{}) *UploadOfLocal {
+	var config map[string]interface{}
+	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
+		config = configOpt[0]
+	} else {
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`})
+		config = configTmp.Map()
 	}
+
+	uploadOfLocalObj := UploadOfLocal{Ctx: ctx}
 	gconv.Struct(config, &uploadOfLocalObj)
 	return &uploadOfLocalObj
 }

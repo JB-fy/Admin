@@ -19,7 +19,7 @@ type Sms struct {
 // phone 手机
 // useScene 使用场景
 func NewSms(ctx context.Context, sceneCode string, phone string, useScene int) *Sms {
-	//可以做分库逻辑
+	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &Sms{
 		Ctx:   ctx,

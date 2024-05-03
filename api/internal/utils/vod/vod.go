@@ -31,7 +31,6 @@ func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
 	switch vodType {
 	// case `vodOfAliyun`:
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`})
-		return NewVodOfAliyun(ctx, config.Map())
+		return NewVodOfAliyun(ctx)
 	}
 }

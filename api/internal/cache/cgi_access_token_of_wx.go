@@ -9,7 +9,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-type Salt struct {
+type CgiAccessTokenOfWx struct {
 	Ctx   context.Context
 	Redis *gredis.Redis
 	Key   string
@@ -17,22 +17,22 @@ type Salt struct {
 
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
 // loginName 账号/手机
-func NewSalt(ctx context.Context, sceneCode string, loginName string) *Salt {
+func NewCgiAccessTokenOfWx(ctx context.Context, appId string) *CgiAccessTokenOfWx {
 	//可在这里写分库逻辑
 	redis := g.Redis()
-	return &Salt{
+	return &CgiAccessTokenOfWx{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheSaltFormat, sceneCode, loginName),
+		Key:   fmt.Sprintf(consts.CacheCgiAccessTokenOfWx, appId),
 	}
 }
 
-func (cacheThis *Salt) Set(value string, ttl int64) (err error) {
+func (cacheThis *CgiAccessTokenOfWx) Set(value string, ttl int64) (err error) {
 	err = cacheThis.Redis.SetEX(cacheThis.Ctx, cacheThis.Key, value, ttl)
 	return
 }
 
-func (cacheThis *Salt) Get() (value string, err error) {
+func (cacheThis *CgiAccessTokenOfWx) Get() (value string, err error) {
 	valueTmp, err := cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
 	if err != nil {
 		return

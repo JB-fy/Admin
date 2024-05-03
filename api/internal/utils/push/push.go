@@ -3,8 +3,6 @@ package push
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 /*
@@ -55,7 +53,7 @@ type Push interface {
 	TagHandle(param TagParam) (err error)
 }
 
-// 设备类型：0-安卓 1-苹果 2-苹果电脑
+// 设备类型：0安卓 1苹果 2苹果电脑
 func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	pushType := ``
 	if len(pushTypeOpt) > 0 {
@@ -67,25 +65,6 @@ func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	switch pushType {
 	// case `pushOfTx`:	//腾讯移动推送
 	default:
-		config := g.Map{}
-		switch deviceType {
-		case 1: //IOS
-			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxIosAccessID`, `pushOfTxIosSecretKey`})
-			config[`pushOfTxHost`] = configTmp[`pushOfTxHost`]
-			config[`pushOfTxAccessID`] = configTmp[`pushOfTxIosAccessID`]
-			config[`pushOfTxSecretKey`] = configTmp[`pushOfTxIosSecretKey`]
-		case 2: //MacOS（暂时不做）
-			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxMacOSAccessID`, `pushOfTxMacOSSecretKey`})
-			config[`pushOfTxHost`] = configTmp[`pushOfTxHost`]
-			config[`pushOfTxAccessID`] = configTmp[`pushOfTxMacOSAccessID`]
-			config[`pushOfTxSecretKey`] = configTmp[`pushOfTxMacOSSecretKey`]
-		// case 0: //安卓
-		default:
-			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxAndroidAccessID`, `pushOfTxAndroidSecretKey`})
-			config[`pushOfTxHost`] = configTmp[`pushOfTxHost`]
-			config[`pushOfTxAccessID`] = configTmp[`pushOfTxAndroidAccessID`]
-			config[`pushOfTxSecretKey`] = configTmp[`pushOfTxAndroidSecretKey`]
-		}
-		return NewPushOfTx(ctx, config)
+		return NewPushOfTx(ctx, deviceType)
 	}
 }

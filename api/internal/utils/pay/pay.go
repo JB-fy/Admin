@@ -1,7 +1,6 @@
 package pay
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 )
 
@@ -49,11 +48,9 @@ func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
 
 	switch payType {
 	case `payOfWx`: //微信
-		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfWxAppId`, `payOfWxMchid`, `payOfWxSerialNo`, `payOfWxApiV3Key`, `payOfWxPrivateKey`, `payOfWxNotifyUrl`})
-		return NewPayOfWx(ctx, config.Map())
+		return NewPayOfWx(ctx)
 	// case `payOfAli`: //支付宝
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliPrivateKey`, `payOfAliPublicKey`, `payOfAliNotifyUrl`, `payOfAliOpAppId`})
-		return NewPayOfAli(ctx, config.Map())
+		return NewPayOfAli(ctx)
 	}
 }

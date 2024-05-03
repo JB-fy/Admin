@@ -7,4 +7,6 @@ var (
 
 	ConstCtxSceneInfoName = `sceneInfo`
 	ConstCtxLoginInfoName = `loginInfo`
+
+	CacheCgiAccessTokenOfWx = `cgiAccessTokenOfWx_%s` //微信Cgi授权Token。参数：微信公众号AppId
 )

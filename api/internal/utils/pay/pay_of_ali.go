@@ -1,6 +1,7 @@
 package pay
 
 import (
+	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 
@@ -18,10 +19,16 @@ type PayOfAli struct {
 	OpAppId    string `json:"payOfAliOpAppId"`
 }
 
-func NewPayOfAli(ctx context.Context, config map[string]interface{}) *PayOfAli {
-	payOfAliObj := PayOfAli{
-		Ctx: ctx,
+func NewPayOfAli(ctx context.Context, configOpt ...map[string]interface{}) *PayOfAli {
+	var config map[string]interface{}
+	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
+		config = configOpt[0]
+	} else {
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliPrivateKey`, `payOfAliPublicKey`, `payOfAliNotifyUrl`, `payOfAliOpAppId`})
+		config = configTmp.Map()
 	}
+
+	payOfAliObj := PayOfAli{Ctx: ctx}
 	gconv.Struct(config, &payOfAliObj)
 	return &payOfAliObj
 }

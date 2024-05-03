@@ -1,6 +1,7 @@
 package id_card
 
 import (
+	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 
@@ -17,10 +18,16 @@ type IdCardOfAliyun struct {
 	Appcode string `json:"idCardOfAliyunAppcode"`
 }
 
-func NewIdCardOfAliyun(ctx context.Context, config map[string]interface{}) *IdCardOfAliyun {
-	idCardOfAliyunObj := IdCardOfAliyun{
-		Ctx: ctx,
+func NewIdCardOfAliyun(ctx context.Context, configOpt ...map[string]interface{}) *IdCardOfAliyun {
+	var config map[string]interface{}
+	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
+		config = configOpt[0]
+	} else {
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`})
+		config = configTmp.Map()
 	}
+
+	idCardOfAliyunObj := IdCardOfAliyun{Ctx: ctx}
 	gconv.Struct(config, &idCardOfAliyunObj)
 	return &idCardOfAliyunObj
 }
