@@ -12,7 +12,7 @@ const props = defineProps({
         type: [String, Number, Array],
     },
     defaultOptions: {
-        //选项初始默认值。格式：[{ value: string | number, label: string },...]
+        //选项初始默认值。格式：[{ value: any, label: any },...]
         type: Array,
         default: [],
     },
@@ -20,7 +20,7 @@ const props = defineProps({
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
-     *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: string|number, label: string },...]
+     *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: any, label: any },...]
      *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数filter中使用的字段名。默认：props.api.param.field[0]
      *      searchField：非必须。当用户输入关键字做查询时，接口参数filter中使用的字段名。默认：props.api.param.field[1]
      */
@@ -74,17 +74,24 @@ const select = reactive({
         },
         set: (val) => {
             emits('update:modelValue', val)
-            emits('change')
+            emits(
+                'change',
+                props.multiple
+                    ? select.options.filter((item) => {
+                          return (val as any).indexOf(item.value) !== -1
+                      })
+                    : select.options.find((item) => item.value == val)
+            )
         },
     }),
-    options: [...props.defaultOptions] as any,
+    options: [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[],
     initOptions: () => {
         select.api.param.filter[select.api.selectedField] = props.modelValue
         select.api.addOptions()
         delete select.api.param.filter[select.api.selectedField]
     },
     resetOptions: () => {
-        select.options = [...props.defaultOptions] as any
+        select.options = [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[]
         select.api.param.page = 1
         select.api.isEnd = false
     },

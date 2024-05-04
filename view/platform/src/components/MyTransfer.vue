@@ -11,7 +11,7 @@ const props = defineProps({
         type: Array,
     },
     defaultOptions: {
-        //选项初始默认值。格式：[{ [transfer.props.key]: string | number, [transfer.props.label]: string },...]
+        //选项初始默认值。格式：[{ [transfer.props.key]: any, [transfer.props.label]: any },...]
         type: Array,
         default: [],
     },
@@ -47,7 +47,12 @@ const transfer = reactive({
         },
         set: (val) => {
             emits('update:modelValue', val)
-            emits('change')
+            emits(
+                'change',
+                transfer.options.filter((item: any) => {
+                    return val.indexOf(item[transfer.props.key]) !== -1
+                })
+            )
         },
     }),
     options: [...props.defaultOptions] as any,
