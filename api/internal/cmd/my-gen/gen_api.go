@@ -416,7 +416,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.saveRule.Method = internal.ReturnType
 		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d`)
 	case internal.TypeTime: // `time类型`
-		apiField.filterType.Method = internal.ReturnType
+		// apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `string`
 		apiField.createType.Method = internal.ReturnType
 		apiField.createType.DataType = `*string`

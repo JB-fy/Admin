@@ -264,6 +264,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
+		viewQueryField.form.Method = internal.ReturnType
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		switch v.FieldType {
 		case internal.TypeDatetime, internal.TypeTimestamp:
