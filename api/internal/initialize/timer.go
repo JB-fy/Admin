@@ -12,7 +12,7 @@ import (
 
 func initTimer(ctx context.Context) {
 	if !g.Cfg().MustGet(ctx, `dev`).Bool() {
-		if g.Cfg().MustGet(ctx, `cronServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, `SERVER_NETWORK_IP`).String() {
+		if g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, `SERVER_NETWORK_IP`).String() {
 			return
 		}
 	}
