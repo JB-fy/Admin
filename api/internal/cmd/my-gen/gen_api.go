@@ -622,7 +622,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.resType.Method = internal.ReturnTypeName
 		apiField.resType.DataTypeName = `*[]interface{}`
 
-		apiField.saveRule.Method = internal.ReturnUnion
+		apiField.saveRule.Method = internal.ReturnTypeName
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `distinct`)
 	}
 	/*--------根据字段命名类型处理 结束--------*/
