@@ -611,7 +611,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.resType.Method = internal.ReturnTypeName
 			apiField.resType.DataTypeName = `*[]string`
 
-			apiField.saveRule.Method = internal.ReturnUnion
+			apiField.saveRule.Method = internal.ReturnTypeName
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
 		}
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
