@@ -78,7 +78,6 @@ func (oneClickThis *OneClickOfWx) CodeUrl(redirectUri string, scope string, stat
 
 // 通过code换取网页授权access_token（code由前端自己获取）
 func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTokenOfWx, err error) {
-	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/access_token?appid=`+oneClickThis.AppId+`&secret=`+oneClickThis.Secret+`&code=`+code+`&grant_type=authorization_code`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/access_token`, g.Map{
 		`appid`:      oneClickThis.AppId,
 		`secret`:     oneClickThis.Secret,
@@ -102,7 +101,6 @@ func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTo
 
 // 拉取用户信息(需scope为 snsapi_userinfo)
 func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo UserInfoOfWx, err error) {
-	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/userinfo?access_token=`+accessToken+`&openid=`+openId+`&lang=zh_CN`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/userinfo`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openId,
@@ -125,7 +123,6 @@ func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo
 
 // 刷新access_token（需要时用）
 func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken AccessTokenOfWx, err error) {
-	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/refresh_token?appid=`+oneClickThis.AppId+`&grant_type=refresh_token&refresh_token=REFRESH_TOKEN`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/refresh_token`, g.Map{
 		`appid`:         oneClickThis.AppId,
 		`grant_type`:    `refresh_token`,
@@ -148,7 +145,6 @@ func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken
 
 // 授权验证（需要时用）
 func (oneClickThis *OneClickOfWx) Auth(openId, accessToken string) (err error) {
-	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/auth?access_token=`+accessToken+`&openid=`+openId)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/auth`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openId,
@@ -189,7 +185,6 @@ type CgiUserInfoOfWx struct {
 
 // 获取access_token（注意：与上面通过code换取授权access_token不一样）
 func (oneClickThis *OneClickOfWx) CgiAccessToken() (accessToken CgiAccessTokenOfWx, err error) {
-	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/token?grant_type=client_credential&appid=`+oneClickThis.AppId+`&secret=`+oneClickThis.Secret)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/token`, g.Map{
 		`grant_type`: `client_credential`,
 		`appid`:      oneClickThis.AppId,
@@ -212,7 +207,6 @@ func (oneClickThis *OneClickOfWx) CgiAccessToken() (accessToken CgiAccessTokenOf
 
 // 获取用户基本信息
 func (oneClickThis *OneClickOfWx) CgiUserInfo(openId, accessToken string) (userInfo CgiUserInfoOfWx, err error) {
-	// res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/user/info?access_token=`+accessToken+`&openid=`+openId+`&lang=zh_CN`)
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/cgi-bin/user/info`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openId,
