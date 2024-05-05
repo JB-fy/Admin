@@ -6,6 +6,7 @@ const IdCard = defineAsyncComponent(() => import('./plugin/IdCard.vue'))
 const OneClick = defineAsyncComponent(() => import('./plugin/OneClick.vue'))
 const Push = defineAsyncComponent(() => import('./plugin/Push.vue'))
 const Vod = defineAsyncComponent(() => import('./plugin/Vod.vue'))
+const Wx = defineAsyncComponent(() => import('./plugin/Wx.vue'))
 
 const { t } = useI18n()
 </script>
@@ -34,6 +35,9 @@ const { t } = useI18n()
                 </el-tab-pane>
                 <el-tab-pane :label="t('platform.config.plugin.label.vod')" :lazy="true">
                     <vod />
+                </el-tab-pane>
+                <el-tab-pane :label="t('platform.config.plugin.label.wx')" :lazy="true">
+                    <wx />
                 </el-tab-pane>
             </el-tabs>
         </el-main>

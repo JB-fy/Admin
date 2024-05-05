@@ -63,7 +63,7 @@ saveForm.initData()
                     <el-input v-model="saveForm.data.oneClickOfWxHost" :placeholder="t('platform.config.plugin.name.oneClickOfWxHost')" :clearable="true" style="max-width: 500px" />
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.plugin.tip.oneClickOfWxHost')"></span>
+                            <span v-html="t('platform.config.plugin.tip.wxHost')"></span>
                         </template>
                     </el-alert>
                 </el-form-item>

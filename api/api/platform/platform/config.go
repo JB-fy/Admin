@@ -95,6 +95,12 @@ type Config struct {
 	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" dc:"阿里云VOD-AccessKeySecret"`
 	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" dc:"阿里云VOD-Endpoint"`
 	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" dc:"阿里云VOD-RoleArn"`
+
+	WxGzhHost           *string `json:"wxGzhHost,omitempty" dc:"域名"`
+	WxGzhAppId          *string `json:"wxGzhAppId,omitempty" dc:"AppId"`
+	WxGzhSecret         *string `json:"wxGzhSecret,omitempty" dc:"密钥"`
+	WxGzhToken          *string `json:"wxGzhToken,omitempty" dc:"Token"`
+	WxGzhEncodingAESKey *string `json:"wxGzhEncodingAESKey,omitempty" dc:"EncodingAESKey"`
 }
 
 /*--------获取 结束--------*/
@@ -183,6 +189,12 @@ type ConfigSaveReq struct {
 	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
 	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" v:"" dc:"阿里云VOD-Endpoint"`
 	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" v:"" dc:"阿里云VOD-RoleArn"`
+
+	WxGzhHost           *string `json:"wxGzhHost,omitempty" v:"url" dc:"微信公众号-域名"`
+	WxGzhAppId          *string `json:"wxGzhAppId,omitempty" v:"" dc:"微信公众号-AppId"`
+	WxGzhSecret         *string `json:"wxGzhSecret,omitempty" v:"" dc:"微信公众号-密钥"`
+	WxGzhToken          *string `json:"wxGzhToken,omitempty" v:"" dc:"微信公众号-Token"`
+	WxGzhEncodingAESKey *string `json:"wxGzhEncodingAESKey,omitempty" v:"size:43" dc:"微信公众号-EncodingAESKey"`
 }
 
 /*--------保存 结束--------*/

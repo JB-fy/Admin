@@ -9,7 +9,7 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	id_card "api/internal/utils/id-card"
-	one_click "api/internal/utils/one-click"
+	"api/internal/utils/wx"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -134,8 +134,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 
 // 关注信息（微信公众号）
 func (controllerThis *Profile) FollowInfoOfWx(ctx context.Context, req *apiMy.ProfileFollowInfoOfWxReq) (res *apiMy.ProfileFollowInfoOfWxRes, err error) {
-	oneClickObj := one_click.NewOneClickOfWx(ctx)
-	accessToken, err := cache.NewCgiAccessTokenOfWx(ctx, oneClickObj.AppId).Get()
+	wxGzhObj := wx.NewWxGzh(ctx)
+	accessToken, err := cache.NewWxGzhAccessToken(ctx, wxGzhObj.AppId).Get()
 	if err != nil {
 		return
 	}
@@ -144,7 +144,7 @@ func (controllerThis *Profile) FollowInfoOfWx(ctx context.Context, req *apiMy.Pr
 		return
 	}
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	userInfo, err := oneClickObj.CgiUserInfo(loginInfo[daoUser.User.Columns().OpenIdOfWx].String(), accessToken)
+	userInfo, err := wxGzhObj.UserInfo(loginInfo[daoUser.User.Columns().OpenIdOfWx].String(), accessToken)
 	if err != nil {
 		return
 	}

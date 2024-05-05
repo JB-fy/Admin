@@ -27,13 +27,7 @@ func NewWxGzh(ctx context.Context, configOpt ...map[string]interface{}) *WxGzh {
 		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`})
 		config = configTmp.Map()
 	}
-	/* config = g.Map{
-		`wxGzhHost`:           `https://api.weixin.qq.com`,
-		`wxGzhAppId`:          `wxabe672da5799762e`,
-		`wxGzhSecret`:         `7892aa6a53514fadbea56f519ae5abeb`,
-		`wxGzhToken`:          `vote`,
-		`wxGzhEncodingAESKey`: `CqsDRiEpsnRsR1b9kDXHVvqnLTfQFqP0to6Uz68JHkO`, //固定43位
-	} */
+
 	obj := WxGzh{Ctx: ctx}
 	gconv.Struct(config, &obj)
 	return &obj

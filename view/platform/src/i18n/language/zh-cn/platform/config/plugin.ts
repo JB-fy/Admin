@@ -7,12 +7,15 @@ export default {
         oneClick: '一键登录',
         push: '推送',
         vod: '视频点播',
+        wx: '微信相关',
 
         payOfAli: '支付宝',
         payOfWx: '微信',
 
         oneClickOfWx: '微信',
         oneClickOfYidun: '易盾',
+
+        wxGzh: '公众号',
     },
     name: {
         uploadType: '上传方式',
@@ -75,6 +78,12 @@ export default {
         vodOfAliyunAccessKeySecret: '阿里云VOD-AccessKeySecret',
         vodOfAliyunEndpoint: '阿里云VOD-Endpoint',
         vodOfAliyunRoleArn: '阿里云VOD-RoleArn',
+
+        wxGzhHost: '域名',
+        wxGzhAppId: 'AppId',
+        wxGzhSecret: '密钥',
+        wxGzhToken: 'Token',
+        wxGzhEncodingAESKey: 'EncodingAESKey',
     },
     status: {
         uploadType: [
@@ -98,7 +107,7 @@ export default {
 
         idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 
-        oneClickOfWxHost:
+        wxHost:
             '参考：<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html">https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html</a>',
 
         pushOfTxHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
