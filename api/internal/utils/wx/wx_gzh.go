@@ -11,10 +11,12 @@ import (
 )
 
 type WxGzh struct {
-	Ctx    context.Context
-	Host   string `json:"wxGzhHost"`
-	AppId  string `json:"wxGzhAppId"`
-	Secret string `json:"wxGzhSecret"`
+	Ctx            context.Context
+	Host           string `json:"wxGzhHost"`
+	AppId          string `json:"wxGzhAppId"`
+	Secret         string `json:"wxGzhSecret"`
+	Token          string `json:"wxGzhToken"`
+	EncodingAESKey string `json:"wxGzhEncodingAESKey"`
 }
 
 func NewWxGzh(ctx context.Context, configOpt ...map[string]interface{}) *WxGzh {
@@ -22,10 +24,16 @@ func NewWxGzh(ctx context.Context, configOpt ...map[string]interface{}) *WxGzh {
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`})
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`})
 		config = configTmp.Map()
 	}
-
+	/* config = g.Map{
+		`wxGzhHost`:           `https://api.weixin.qq.com`,
+		`wxGzhAppId`:          `wxabe672da5799762e`,
+		`wxGzhSecret`:         `7892aa6a53514fadbea56f519ae5abeb`,
+		`wxGzhToken`:          `vote`,
+		`wxGzhEncodingAESKey`: `CqsDRiEpsnRsR1b9kDXHVvqnLTfQFqP0to6Uz68JHkO`, //固定43位
+	} */
 	obj := WxGzh{Ctx: ctx}
 	gconv.Struct(config, &obj)
 	return &obj

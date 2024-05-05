@@ -43,6 +43,16 @@ func InitRouterCommon(s *ghttp.Server) {
 			)
 		})
 	})
+	//微信
+	s.Group(`/wx`, func(group *ghttp.RouterGroup) {
+		controllerThis := controller.NewWx()
+		group.Group(``, func(group *ghttp.RouterGroup) {
+			group.Middleware(middleware.BodyRepeatable(true))
+			group.Bind(
+				controllerThis.GzhNotify,
+			)
+		})
+	})
 	//测试
 	s.Group(``, func(group *ghttp.RouterGroup) {
 		group.Bind(controller.NewTest())
