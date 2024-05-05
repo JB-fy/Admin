@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"api/internal/cache"
-	one_click "api/internal/utils/one-click"
+	"api/internal/utils/wx"
 	"context"
 	"time"
 
@@ -18,22 +18,22 @@ func initTimer(ctx context.Context) {
 	}
 
 	// myTimerThis := myTimer{}
-	// myTimerThis.CacheCgiAccessTokenOfWx(ctx) //缓存微信授权token（需要时启用）
+	// myTimerThis.CacheWxGzhAccessToken(ctx) //缓存微信授权token（需要时启用）
 }
 
 type myTimer struct{}
 
-func (myTimerThis *myTimer) CacheCgiAccessTokenOfWx(ctx context.Context) {
-	oneClickObj := one_click.NewOneClickOfWx(ctx)
-	accessTokenInfo, err := oneClickObj.CgiAccessToken()
+func (myTimerThis *myTimer) CacheWxGzhAccessToken(ctx context.Context) {
+	wxGzhObj := wx.NewWxGzh(ctx)
+	accessTokenInfo, err := wxGzhObj.AccessToken()
 	if err != nil {
-		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CacheCgiAccessTokenOfWx) //5秒后重试
+		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CacheWxGzhAccessToken) //5秒后重试
 		return
 	}
-	err = cache.NewCgiAccessTokenOfWx(ctx, oneClickObj.AppId).Set(accessTokenInfo.AccessToken, int64(accessTokenInfo.ExpiresIn))
+	err = cache.NewWxGzhAccessToken(ctx, wxGzhObj.AppId).Set(accessTokenInfo.AccessToken, int64(accessTokenInfo.ExpiresIn))
 	if err != nil {
-		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CacheCgiAccessTokenOfWx) //5秒后重试
+		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CacheWxGzhAccessToken) //5秒后重试
 		return
 	}
-	gtimer.SetTimeout(ctx, time.Duration(accessTokenInfo.ExpiresIn-30)*time.Second, myTimerThis.CacheCgiAccessTokenOfWx) //提早30秒刷新缓存
+	gtimer.SetTimeout(ctx, time.Duration(accessTokenInfo.ExpiresIn-30)*time.Second, myTimerThis.CacheWxGzhAccessToken) //提早30秒刷新缓存
 }
