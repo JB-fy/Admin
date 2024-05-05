@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	mobileverify "github.com/yidun/yidun-golang-sdk/yidun/service/mobileverify"
 )
@@ -39,7 +38,6 @@ func (oneClickThis *OneClickOfYidun) Check(token string, accessToken string) (ph
 
 	res, err := client.GetMobileNumber(req)
 	if err != nil {
-		g.Log().Error(oneClickThis.Ctx, `易盾一键登录接口错误：`, err)
 		return
 	}
 	if res.GetCode() != 200 {

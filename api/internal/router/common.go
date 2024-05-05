@@ -47,7 +47,6 @@ func InitRouterCommon(s *ghttp.Server) {
 	s.Group(`/wx`, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewWx()
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.BodyRepeatable(true))
 			group.Bind(
 				controllerThis.GzhNotify,
 			)

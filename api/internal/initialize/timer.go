@@ -18,7 +18,7 @@ func initTimer(ctx context.Context) {
 	}
 
 	// myTimerThis := myTimer{}
-	// myTimerThis.CacheWxGzhAccessToken(ctx) //缓存微信授权token（需要时启用）
+	// myTimerThis.CacheWxGzhAccessToken(ctx) //缓存微信公众号AccessToken（需要时启用）
 }
 
 type myTimer struct{}
@@ -27,11 +27,13 @@ func (myTimerThis *myTimer) CacheWxGzhAccessToken(ctx context.Context) {
 	wxGzhObj := wx.NewWxGzh(ctx)
 	accessTokenInfo, err := wxGzhObj.AccessToken()
 	if err != nil {
+		g.Log().Error(ctx, `获取微信公众号AccessToken接口错误：`+err.Error(), err)
 		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CacheWxGzhAccessToken) //5秒后重试
 		return
 	}
 	err = cache.NewWxGzhAccessToken(ctx, wxGzhObj.AppId).Set(accessTokenInfo.AccessToken, int64(accessTokenInfo.ExpiresIn))
 	if err != nil {
+		g.Log().Error(ctx, `缓存微信公众号AccessToken错误：`+err.Error(), err)
 		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CacheWxGzhAccessToken) //5秒后重试
 		return
 	}
