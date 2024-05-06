@@ -9,7 +9,6 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	id_card "api/internal/utils/id-card"
-	"api/internal/utils/wx"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -129,31 +128,5 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	/**--------参数处理 结束--------**/
 
 	_, err = service.UserUser().Update(ctx, filter, data)
-	return
-}
-
-// 关注信息（微信公众号）
-func (controllerThis *Profile) FollowInfoOfWx(ctx context.Context, req *apiMy.ProfileFollowInfoOfWxReq) (res *apiMy.ProfileFollowInfoOfWxRes, err error) {
-	wxGzhObj := wx.NewWxGzh(ctx)
-	accessToken, err := cache.NewWxGzhAccessToken(ctx, wxGzhObj.AppId).Get()
-	if err != nil {
-		return
-	}
-	if accessToken == `` {
-		err = utils.NewErrorCode(ctx, 99999999, `未发现微信授权token缓存，需先到/internal/initialize/timer.go中开启缓存微信授权token定时器`)
-		return
-	}
-	loginInfo := utils.GetCtxLoginInfo(ctx)
-	userInfo, err := wxGzhObj.UserInfo(loginInfo[daoUser.User.Columns().OpenIdOfWx].String(), accessToken)
-	if err != nil {
-		return
-	}
-	res = &apiMy.ProfileFollowInfoOfWxRes{
-		Info: apiMy.ProfileFollowInfoOfWx{
-			IsFollow:    userInfo.Subscribe,
-			FollowTime:  userInfo.SubscribeTime,
-			FollowScene: userInfo.SubscribeScene,
-		},
-	}
 	return
 }

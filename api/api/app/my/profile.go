@@ -49,20 +49,3 @@ type ProfileUpdateReq struct {
 }
 
 /*--------修改个人信息 结束--------*/
-
-/*--------关注信息（微信公众号） 开始--------*/
-type ProfileFollowInfoOfWxReq struct {
-	g.Meta `path:"/profile/follow-info-of-wx" method:"post" tags:"APP/我的" sm:"关注信息（微信公众号）"`
-}
-
-type ProfileFollowInfoOfWxRes struct {
-	Info ProfileFollowInfoOfWx `json:"info" dc:"详情"`
-}
-
-type ProfileFollowInfoOfWx struct {
-	IsFollow    int    `json:"is_follow" dc:"关注公众号：0否 1是"`
-	FollowTime  int    `json:"follow_time" dc:"关注时间戳"`
-	FollowScene string `json:"follow_scene" dc:"关注的渠道来源，ADD_SCENE_SEARCH 公众号搜索，ADD_SCENE_ACCOUNT_MIGRATION 公众号迁移，ADD_SCENE_PROFILE_CARD 名片分享，ADD_SCENE_QR_CODE 扫描二维码，ADD_SCENE_PROFILE_LINK	图文页内名称点击，ADD_SCENE_PROFILE_ITEM 图文页右上角菜单，ADD_SCENE_PAID 支付后关注，ADD_SCENE_WECHAT_ADVERTISEMENT 微信广告，ADD_SCENE_REPRINT 他人转载，ADD_SCENE_LIVESTREAM 视频号直播，ADD_SCENE_CHANNELS 视频号，ADD_SCENE_WXA 小程序关注，ADD_SCENE_OTHERS 其他"`
-}
-
-/*--------关注信息（微信公众号） 结束--------*/
