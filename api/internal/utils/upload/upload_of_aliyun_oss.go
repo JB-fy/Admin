@@ -23,7 +23,7 @@ import (
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	sts20150401 "github.com/alibabacloud-go/sts-20150401/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -60,7 +60,7 @@ type UploadOfAliyunOssCallback struct {
 }
 
 // 本地上传
-func (uploadThis *UploadOfAliyunOss) Upload() (notifyInfo NotifyInfo, err error) {
+func (uploadThis *UploadOfAliyunOss) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	return
 }
 
@@ -132,8 +132,7 @@ func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]
 }
 
 // 回调
-func (uploadThis *UploadOfAliyunOss) Notify() (notifyInfo NotifyInfo, err error) {
-	r := g.RequestFromCtx(uploadThis.Ctx)
+func (uploadThis *UploadOfAliyunOss) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	filename := r.Get(`filename`).String()
 	notifyInfo.Width = r.Get(`width`).Uint()
 	notifyInfo.Height = r.Get(`height`).Uint()

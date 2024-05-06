@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/smartwalle/alipay/v3"
 )
@@ -116,7 +116,7 @@ func (payThis *PayOfAli) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }
 
-func (payThis *PayOfAli) Notify() (notifyInfo NotifyInfo, err error) {
+func (payThis *PayOfAli) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -126,7 +126,6 @@ func (payThis *PayOfAli) Notify() (notifyInfo NotifyInfo, err error) {
 		return
 	}
 
-	r := g.RequestFromCtx(payThis.Ctx)
 	notifyData, err := client.DecodeNotification(r.Form)
 	if err != nil {
 		return
@@ -138,10 +137,10 @@ func (payThis *PayOfAli) Notify() (notifyInfo NotifyInfo, err error) {
 	return
 }
 
-func (payThis *PayOfAli) NotifyRes(failMsg string) {
+func (payThis *PayOfAli) NotifyRes(r *ghttp.Request, failMsg string) {
 	resData := `success` //success:	成功；fail：失败
 	if failMsg != `` {
 		resData = `fail`
 	}
-	g.RequestFromCtx(payThis.Ctx).Response.Write(resData)
+	r.Response.Write(resData)
 }

@@ -17,7 +17,7 @@ func NewUpload() *Upload {
 
 // 本地上传
 func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx).Upload()
+	notifyInfo, err := upload.NewUpload(ctx).Upload(g.RequestFromCtx(ctx))
 	if err != nil {
 		return
 	}
@@ -70,7 +70,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 // 回调
 func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx, req.UploadType).Notify()
+	notifyInfo, err := upload.NewUpload(ctx, req.UploadType).Notify(g.RequestFromCtx(ctx))
 	if err != nil {
 		return
 	}

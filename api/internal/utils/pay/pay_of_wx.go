@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 
 	"github.com/wechatpay-apiv3/wechatpay-go/core"
@@ -180,7 +180,7 @@ func (payThis *PayOfWx) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }
 
-func (payThis *PayOfWx) Notify() (notifyInfo NotifyInfo, err error) {
+func (payThis *PayOfWx) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -197,7 +197,6 @@ func (payThis *PayOfWx) Notify() (notifyInfo NotifyInfo, err error) {
 	handler := notify.NewNotifyHandler(payThis.APIv3Key, verifiers.NewSHA256WithRSAVerifier(certificateVisitor))
 
 	transaction := new(payments.Transaction)
-	r := g.RequestFromCtx(payThis.Ctx)
 	_ /* notifyReq */, err = handler.ParseNotifyRequest(payThis.Ctx, r.Request, transaction)
 	if err != nil {
 		return
@@ -212,7 +211,7 @@ func (payThis *PayOfWx) Notify() (notifyInfo NotifyInfo, err error) {
 	return
 }
 
-func (payThis *PayOfWx) NotifyRes(failMsg string) {
+func (payThis *PayOfWx) NotifyRes(r *ghttp.Request, failMsg string) {
 	resData := map[string]string{
 		`code`:    `SUCCESS`, //错误码，SUCCESS为清算机构接收成功，其他错误码为失败。
 		`message`: ``,        //返回信息，如非空，为错误原因。
@@ -223,5 +222,5 @@ func (payThis *PayOfWx) NotifyRes(failMsg string) {
 			`message`: failMsg,
 		}
 	}
-	g.RequestFromCtx(payThis.Ctx).Response.WriteJson(resData)
+	r.Response.WriteJson(resData)
 }

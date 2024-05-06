@@ -2,11 +2,24 @@ package wx
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"bytes"
 	"context"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"crypto/sha1"
+	"encoding/base64"
+	"encoding/binary"
+	"encoding/hex"
+	"encoding/xml"
 	"errors"
+	"io"
+	"sort"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -17,6 +30,7 @@ type WxGzh struct {
 	Secret         string `json:"wxGzhSecret"`
 	Token          string `json:"wxGzhToken"`
 	EncodingAESKey string `json:"wxGzhEncodingAESKey"`
+	AESKey         []byte
 }
 
 func NewWxGzh(ctx context.Context, configOpt ...map[string]interface{}) *WxGzh {
@@ -30,7 +44,27 @@ func NewWxGzh(ctx context.Context, configOpt ...map[string]interface{}) *WxGzh {
 
 	obj := WxGzh{Ctx: ctx}
 	gconv.Struct(config, &obj)
+	obj.AESKey, _ = base64.StdEncoding.DecodeString(obj.EncodingAESKey + `=`)
 	return &obj
+}
+
+type EncryptReqBody struct {
+	XMLName    xml.Name `xml:"xml"`
+	ToUserName string
+	Encrypt    string
+}
+
+type NotifyOfCommon struct {
+	XMLName      xml.Name `xml:"xml"`
+	ToUserName   string
+	FromUserName string
+	CreateTime   string
+	MsgType      string
+}
+
+type NotifyOfSubscribe struct {
+	NotifyOfCommon
+	Event string
 }
 
 type WxGzhAccessToken struct {
@@ -50,6 +84,142 @@ type WxGzhUserInfo struct {
 	TagidList      string `json:"tagid_list"`      //用户被打上的标签ID列表
 	QrScene        string `json:"qr_scene"`        //二维码扫码场景（开发者自定义）
 	QrSceneStr     string `json:"qr_scene_str"`    //二维码扫码场景描述（开发者自定义）
+}
+
+// 获取签名
+func (wxGzhThis *WxGzh) Sign(timestamp, nonce string) (sign string) {
+	arr := []string{wxGzhThis.Token, timestamp, nonce}
+	sort.Strings(arr)
+	sha := sha1.New()
+	sha.Write([]byte(gstr.Join(arr, ``)))
+	sign = hex.EncodeToString(sha.Sum(nil))
+	return
+}
+
+// 获取Msg签名
+func (wxGzhThis *WxGzh) MsgSign(timestamp, nonce, encrypt string) (sign string) {
+	arr := []string{wxGzhThis.Token, timestamp, nonce, encrypt}
+	sort.Strings(arr)
+	sha := sha1.New()
+	sha.Write([]byte(gstr.Join(arr, ``)))
+	sign = hex.EncodeToString(sha.Sum(nil))
+	return
+}
+
+func (wxGzhThis *WxGzh) GetEncryptReqBody(r *ghttp.Request) (encryptReqBody *EncryptReqBody) {
+	/* body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return
+	} */
+	body := r.GetBody()
+	encryptReqBody = &EncryptReqBody{}
+	xml.Unmarshal(body, encryptReqBody)
+	return
+
+}
+
+func (wxGzhThis *WxGzh) PKCS7Pad(message []byte, blocksize int) (padded []byte, err error) {
+	if blocksize < 2 {
+		err = errors.New(`block size is too small(minimum is 2 bytes)`)
+		return
+	}
+	if blocksize > 255 {
+		err = errors.New(`block size is too long(maxmum is 255 bytes)`)
+		return
+	}
+
+	// calculate padding length
+	padlen := blocksize - len(message)%blocksize
+	if padlen == 0 {
+		padlen = blocksize
+	}
+
+	// define PKCS7 padding block
+	padding := bytes.Repeat([]byte{byte(padlen)}, padlen)
+
+	// apply padding
+	padded = append(message, padding...)
+	return
+}
+
+// aes加密
+func (wxGzhThis *WxGzh) AesEncrypt(plainData []byte) (cipherData []byte, err error) {
+	k := len(wxGzhThis.AESKey)
+	if len(plainData)%k != 0 {
+		plainData, err = wxGzhThis.PKCS7Pad(plainData, k)
+		if err != nil {
+			return
+		}
+	}
+
+	block, err := aes.NewCipher(wxGzhThis.AESKey)
+	if err != nil {
+		return
+	}
+
+	iv := make([]byte, aes.BlockSize)
+	_, err = io.ReadFull(rand.Reader, iv)
+	if err != nil {
+		return
+	}
+
+	cipherData = make([]byte, len(plainData))
+	blockMode := cipher.NewCBCEncrypter(block, iv)
+	blockMode.CryptBlocks(cipherData, plainData)
+	return
+}
+
+// aes解密
+func (wxGzhThis *WxGzh) AesDecrypt(encrypt string) (decryptByte []byte, err error) {
+	cipherData, err := base64.StdEncoding.DecodeString(encrypt)
+	if err != nil {
+		return
+	}
+	if len(cipherData)%len(wxGzhThis.AESKey) != 0 {
+		err = errors.New(`crypto/cipher: ciphertext size is not multiple of aes key length`)
+		return
+	}
+
+	block, err := aes.NewCipher(wxGzhThis.AESKey)
+	if err != nil {
+		return
+	}
+
+	iv := make([]byte, aes.BlockSize)
+	_, err = io.ReadFull(rand.Reader, iv)
+	if err != nil {
+		return
+	}
+	blockMode := cipher.NewCBCDecrypter(block, iv)
+	decryptByte = make([]byte, len(cipherData))
+	blockMode.CryptBlocks(decryptByte, cipherData)
+	return
+}
+
+// 解析加密数据
+func (wxGzhThis *WxGzh) ParseDecrypt(decryptByte []byte) (notifyByte []byte, err error) {
+	buf := bytes.NewBuffer(decryptByte[16:20])
+	var msgLength int32
+	err = binary.Read(buf, binary.BigEndian, &msgLength)
+	if err != nil {
+		return
+	}
+
+	appIdPos := 20 + int(msgLength)
+	if string(decryptByte[appIdPos:appIdPos+len(wxGzhThis.AppId)]) != wxGzhThis.AppId {
+		err = errors.New(`AppId无效`)
+		return
+	}
+
+	notifyByte = decryptByte[20 : 20+msgLength]
+	return
+}
+
+// 关注/取消关注事件数据解析
+func (wxGzhThis *WxGzh) NotifyOfSubscribe(notifyByte []byte) (notify *NotifyOfSubscribe) {
+	notify = &NotifyOfSubscribe{}
+	xml.Unmarshal(notifyByte, notify)
+	return
 }
 
 // 获取access_token（注意：与上面通过code换取授权access_token不一样）

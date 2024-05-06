@@ -4,6 +4,7 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
 
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
@@ -33,11 +34,11 @@ type NotifyInfo struct {
 }
 
 type Upload interface {
-	Upload() (notifyInfo NotifyInfo, err error)                          // 本地上传
+	Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error)          // 本地上传
 	Sign(param UploadParam) (signInfo SignInfo, err error)               // 获取签名（H5直传用）
 	Config(param UploadParam) (config map[string]interface{}, err error) // 获取配置信息（APP直传前调用）
 	Sts(param UploadParam) (stsInfo map[string]interface{}, err error)   // 获取Sts Token（APP直传用）
-	Notify() (notifyInfo NotifyInfo, err error)                          // 回调
+	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)          // 回调
 }
 
 func CreateUploadParam(fileType string) (param UploadParam) {

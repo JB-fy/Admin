@@ -130,13 +130,14 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 
 // 回调
 func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (res *api.CommonNoDataRes, err error) {
+	r := g.RequestFromCtx(ctx)
 	payObj := pay.NewPay(ctx, req.PayType)
-	notifyInfo, err := payObj.Notify()
+	notifyInfo, err := payObj.Notify(r)
 	if err != nil {
-		payObj.NotifyRes(err.Error())
+		payObj.NotifyRes(r, err.Error())
 		return
 	}
-	//订单回调处理
+	// 订单回调处理
 	gutil.Dump(notifyInfo)
 	/* xxxxOrderHandler := daoXxxx.Order.CtxDaoModel(ctx)
 	err = xxxxOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
@@ -161,10 +162,10 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		return
 	})
 	if err != nil {
-		payObj.NotifyRes(err.Error())
+		payObj.NotifyRes(r, err.Error())
 		return
 	} */
 
-	payObj.NotifyRes(``)
+	payObj.NotifyRes(r, ``)
 	return
 }

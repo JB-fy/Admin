@@ -17,7 +17,7 @@ const saveForm = reactive({
         wxGzhAppId: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         wxGzhSecret: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         wxGzhToken: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        wxGzhEncodingAESKey: [{ type: 'string', trigger: 'blur', len: 43, message: t('validation.size.string', { size: 43}) }],
+        wxGzhEncodingAESKey: [{ type: 'string', trigger: 'blur', len: 43, message: t('validation.size.string', { size: 43 }) }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }

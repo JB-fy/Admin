@@ -16,7 +16,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/encoding/gjson"
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -46,8 +46,7 @@ func NewUploadOfLocal(ctx context.Context, configOpt ...map[string]interface{}) 
 }
 
 // 本地上传
-func (uploadThis *UploadOfLocal) Upload() (notifyInfo NotifyInfo, err error) {
-	r := g.RequestFromCtx(uploadThis.Ctx)
+func (uploadThis *UploadOfLocal) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
 	minSize := r.Get(`min_size`).Int64()
@@ -167,7 +166,7 @@ func (uploadThis *UploadOfLocal) Sts(param UploadParam) (stsInfo map[string]inte
 }
 
 // 回调
-func (uploadThis *UploadOfLocal) Notify() (notifyInfo NotifyInfo, err error) {
+func (uploadThis *UploadOfLocal) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	return
 }
 
