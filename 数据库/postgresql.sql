@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 24/04/2024 18:08:54
+ Date: 07/05/2024 17:33:12
 */
 
 
@@ -496,7 +496,9 @@ CREATE TABLE "public"."user_user" (
   "id_card_no" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "is_stop" int2 NOT NULL DEFAULT 0,
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "open_id_of_wx" varchar(128) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "union_id_of_wx" varchar(64) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying
 )
 ;
 COMMENT ON COLUMN "public"."user_user"."user_id" IS '用户ID';
@@ -514,6 +516,8 @@ COMMENT ON COLUMN "public"."user_user"."id_card_no" IS '身份证号码';
 COMMENT ON COLUMN "public"."user_user"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."user_user"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."user_user"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."user_user"."open_id_of_wx" IS '微信openId';
+COMMENT ON COLUMN "public"."user_user"."union_id_of_wx" IS '微信unionId';
 
 -- ----------------------------
 -- Records of user_user
@@ -720,8 +724,14 @@ ALTER TABLE "public"."platform_server" ADD CONSTRAINT "platform_server_pkey" PRI
 CREATE UNIQUE INDEX "user_user_account_idx" ON "public"."user_user" USING btree (
   "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
+CREATE UNIQUE INDEX "user_user_open_id_of_wx_idx" ON "public"."user_user" USING btree (
+  "open_id_of_wx" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
 CREATE UNIQUE INDEX "user_user_phone_idx" ON "public"."user_user" USING btree (
   "phone" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE UNIQUE INDEX "user_user_union_id_of_wx_idx" ON "public"."user_user" USING btree (
+  "union_id_of_wx" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 
 -- ----------------------------
