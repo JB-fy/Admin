@@ -18,7 +18,7 @@ func initTimer(ctx context.Context) {
 	}
 
 	// myTimerThis := myTimer{}
-	// myTimerThis.CacheWxGzhAccessToken(ctx) //缓存微信公众号AccessToken（需要时启用）
+	// myTimerThis.CacheWxGzhAccessToken(ctx) //缓存微信公众号AccessToken（需要时启用，且公众号需设置IP白名单）
 }
 
 type myTimer struct{}
