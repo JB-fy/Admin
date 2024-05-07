@@ -10,6 +10,7 @@ import (
 	one_click "api/internal/utils/one-click"
 	"context"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
@@ -198,7 +199,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 		if accessToken.UnionId != `` {
 			saveData[daoUser.User.Columns().UnionIdOfWx] = accessToken.UnionId
 		}
-		if accessToken.Scope == `snsapi_userinfo` {
+		if garray.NewStrArrayFrom([]string{`snsapi_userinfo`, `snsapi_login`}).Contains(accessToken.Scope) {
 			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(accessToken.OpenId, accessToken.AccessToken)
 			if errTmp != nil {
 				err = errTmp

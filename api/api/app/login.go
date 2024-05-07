@@ -49,7 +49,7 @@ type LoginOneClickPreInfoReq struct {
 	g.Meta          `path:"/one-click-pre-info" method:"post" tags:"APP/登录" sm:"一键登录前置信息（如一些配置信息）"`
 	OneClickType    string `json:"one_click_type" v:"required|in:oneClickOfWx,oneClickOfYidun" default:"oneClickOfWx" dc:"一键登录类型：oneClickOfWx微信 oneClickOfYidun易盾"`
 	RedirectUriOfWx string `json:"redirect_uri_of_wx" v:"required-if:OneClickType,oneClickOfWx" dc:"重定向地址（微信用）"`
-	ScopeOfWx       string `json:"scope_of_wx" v:"in:snsapi_base,snsapi_userinfo" default:"snsapi_base" dc:"微信授权作用域（微信用）：snsapi_base不弹出授权页面，直接跳转，只能获取用户openid； snsapi_userinfo弹出授权页面，可通过openid拿到昵称、性别、所在地"`
+	ScopeOfWx       string `json:"scope_of_wx" v:"in:snsapi_base,snsapi_userinfo" default:"snsapi_base" dc:"微信授权作用域（微信用）：snsapi_base用于公众号网页授权，静默授权；snsapi_userinfo用于公众号网页授权，弹出授权页面；snsapi_login用于开放平台网站应用"`
 	StateOfWx       string `json:"state_of_wx" v:"max-length:128|regex:^[a-zA-Z0-9]*$" dc:"重定向后会带上state参数（微信用）。"`
 	ForcePopupOfWx  bool   `json:"force_popup_of_wx" v:"in:0,1" dc:"强制此次授权需要用户弹窗确认（微信用）"`
 }
