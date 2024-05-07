@@ -2,7 +2,6 @@ package router
 
 import (
 	"api/internal/controller"
-	"api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gres"
@@ -21,36 +20,36 @@ func InitRouterCommon(s *ghttp.Server) {
 			// controllerThis.Sign,   //建议在场景内验证登录token后才可调用
 			// controllerThis.Config, //建议在场景内验证登录token后才可调用
 			controllerThis.Sts,
+			controllerThis.Notify,
 		)
-		group.Group(``, func(group *ghttp.RouterGroup) {
+		/* group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.BodyRepeatable(true))
 			group.Bind(
 				controllerThis.Notify,
 			)
-		})
+		}) */
 	})
 	//支付
 	s.Group(`/pay`, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewPay()
-		/* group.Bind(
+		group.Bind(
 			// controllerThis.List, //建议在场景内验证登录token后才可调用
 			// controllerThis.Pay, //建议在场景内验证登录token后才可调用
-		) */
-		group.Group(``, func(group *ghttp.RouterGroup) {
+			controllerThis.Notify,
+		)
+		/* group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.BodyRepeatable(true))
 			group.Bind(
 				controllerThis.Notify,
 			)
-		})
+		}) */
 	})
 	//微信
 	s.Group(`/wx`, func(group *ghttp.RouterGroup) {
 		controllerThis := controller.NewWx()
-		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Bind(
-				controllerThis.GzhNotify,
-			)
-		})
+		group.Bind(
+			controllerThis.GzhNotify,
+		)
 	})
 	//测试
 	s.Group(``, func(group *ghttp.RouterGroup) {
