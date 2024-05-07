@@ -66,10 +66,8 @@ func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq
 	if notify.MsgType == `event` {
 		switch notify.Event {
 		case `subscribe`: //关注
-			// 关注处理逻辑
 			return
 		case `unsubscribe`: //取消关注
-			// 取消关注处理逻辑
 			return
 		}
 	}
