@@ -14,8 +14,7 @@ bodyStr := string(body)
 
 // 启用该中间件r.GetBody()和r.GetBodyString()一定能读取到数据
 // 设置repeatableRead为true，r.Body才能读取到数据 */
-
-// 2.7有改成和2.5版本一样。故可不用该中间件了
+//
 func BodyRepeatable(repeatableRead bool) func(r *ghttp.Request) {
 	return func(r *ghttp.Request) {
 		r.MakeBodyRepeatableRead(repeatableRead)
