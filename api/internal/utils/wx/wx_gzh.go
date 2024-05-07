@@ -73,7 +73,7 @@ type WxGzhAccessToken struct {
 }
 
 type WxGzhUserInfo struct {
-	UnionId        string `json:"unionid"`         //用户统一标识（全局唯一）。公众号绑定到微信开放平台账号后，才会出现该字段
+	UnionId        string `json:"unionid"`         //用户统一标识（全局唯一）。公众号绑定到微信开放平台账号后，才会出现该字段（注意：还需要用户关注公众号。微信文档未说明这点）
 	OpenId         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	Subscribe      int    `json:"subscribe"`       //关注公众号：0否 1是
 	SubscribeTime  int    `json:"subscribe_time"`  //关注时间戳
