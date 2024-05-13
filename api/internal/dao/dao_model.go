@@ -16,6 +16,8 @@ type DaoInterface interface {
 	CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *DaoModel
 	ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string
 	ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string
+	ParseId(daoModel *DaoModel) string
+	ParseLabel(daoModel *DaoModel) string
 	ParseInsert(insert map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
 	HookInsert(daoModel *DaoModel) gdb.HookHandler
 	ParseUpdate(update map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
@@ -28,7 +30,7 @@ type DaoInterface interface {
 	ParseOrder(order []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseJoin(joinTable string, daoModel *DaoModel) gdb.ModelHandler
 
-	PrimaryKey() string
+	// PrimaryKey() string
 	// ColumnArr() *garray.StrArray
 }
 
@@ -142,7 +144,7 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 
 // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 func (daoModelThis *DaoModel) SetIdArr() *DaoModel {
-	idArr, _ := daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.PrimaryKey())
+	idArr, _ := daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 	daoModelThis.IdArr = gconv.SliceUint(idArr)
 	return daoModelThis
 }
@@ -169,7 +171,7 @@ func (daoModelThis *DaoModel) ListPri() (gdb.Result, error) {
 // 总数（联表时，主键去重）
 func (daoModelThis *DaoModel) CountPri() (int, error) {
 	if daoModelThis.IsJoin() {
-		return daoModelThis.CloneModel(). /* Group(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey()). */ Distinct().CountColumn(daoModelThis.DbTable + `.` + daoModelThis.dao.PrimaryKey())
+		return daoModelThis.CloneModel().Distinct().CountColumn(daoModelThis.dao.ParseId(daoModelThis))
 	}
 	return daoModelThis.Count()
 }

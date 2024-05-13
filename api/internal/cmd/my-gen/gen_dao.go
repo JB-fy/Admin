@@ -11,7 +11,8 @@ import (
 )
 
 type myGenDao struct {
-	primaryKeyFunction string
+	idParse    string
+	labelParse string
 
 	importDao []string
 
@@ -154,11 +155,13 @@ func genDao(tpl myGenTpl) {
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"`, 1)
 
-	if dao.primaryKeyFunction != `` {
-		primaryKeyFunctionPoint := `// 解析filter`
-		tplDao = gstr.Replace(tplDao, primaryKeyFunctionPoint, dao.primaryKeyFunction+`
-
-`+primaryKeyFunctionPoint, 1)
+	if dao.idParse != `` {
+		idParsePoint := `daoModel.DbTable + ` + "`.`" + ` + reflect.ValueOf(daoThis.Columns()).Field(0).String()`
+		tplDao = gstr.Replace(tplDao, idParsePoint, dao.idParse, 1)
+	}
+	if dao.labelParse != `` {
+		labelParsePoint := `daoModel.DbTable + ` + "`.`" + ` + reflect.ValueOf(daoThis.Columns()).Field(1).String()`
+		tplDao = gstr.Replace(tplDao, labelParsePoint, dao.labelParse, 1)
 	}
 
 	// 解析filter
@@ -309,7 +312,7 @@ func genDao(tpl myGenTpl) {
 	// 解析join
 	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 {
 		dao.joinParse = append(dao.joinParse, `default:
-			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+daoThis..Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis..Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`)
+			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`)
 	}
 	if len(dao.joinParse) > 0 {
 		joinParsePoint := `/* case Xxxx.ParseDbTable(m.GetCtx()):
@@ -325,6 +328,7 @@ func genDao(tpl myGenTpl) {
 
 func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 	if len(tpl.Handle.Id.List) == 1 {
+		dao.idParse = `daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)`)
 		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
@@ -333,8 +337,6 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				} else {
 					m = m.WhereNot(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)
 				}`)
-		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
-				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+` + `+"` AS `"+` + v)`)
 		if !tpl.Handle.Id.List[0].IsAutoInc {
 			dao.insertParse = append(dao.insertParse, `case `+"`id`"+`:
 					insertData[daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`] = v`)
@@ -347,16 +349,17 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				m = m.Order(daoModel.DbTable + `+"`.`"+` + gstr.Replace(v, k, daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, 1))`)
 	} else {
 		concatStr := `|`
+		idParseStrArr := []string{}
 		filterParseStrArr := []string{}
-		fieldParseStrArr := []string{}
 		groupParseStrArr := []string{}
 		orderParseStrArr := []string{}
 		for _, v := range tpl.Handle.Id.List {
+			idParseStrArr = append(idParseStrArr, "COALESCE("+tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeCOALESCE, "` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `")+", '')")
 			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
-			fieldParseStrArr = append(fieldParseStrArr, "COALESCE("+tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeCOALESCE, "` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `")+", '')")
 			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
 			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
+		dao.idParse = "`" + `CONCAT_WS('` + concatStr + `', ` + gstr.Join(idParseStrArr, `, `) + ")`"
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -377,8 +380,6 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`)"+`
 				}
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)")
-		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
-				m = m.Fields(`+"`"+`CONCAT_WS('`+concatStr+`', `+gstr.Join(fieldParseStrArr, `, `)+")` + ` AS ` + v)")
 		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:`+gstr.Join(append([]string{``}, groupParseStrArr...), `
 				`))
 		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
@@ -389,29 +390,30 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 					m = m.Order(remain)
 				}`)
 	}
+	dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
+				m = m.Fields(daoThis.ParseId(daoModel) + `+"` AS `"+` + v)`)
 
-	fieldParseStr := `case ` + "`label`" + `:
-				m = m.Fields(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` + ` + "` AS `" + ` + v)`
+	dao.labelParse = `daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0])
 	filterParseStr := `case ` + "`label`" + `:
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 1 {
-		fieldParseStrArr := []string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])+" + `") + ", '')"}
+		labelParseStrArr := []string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])+" + `") + ", '')"}
 		parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 		for i := labelListLen - 2; i >= 0; i-- {
-			fieldParseStrArr = append([]string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[i])+" + `") + ", '')"}, fieldParseStrArr...)
+			labelParseStrArr = append([]string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[i])+" + `") + ", '')"}, labelParseStrArr...)
 			if i == 0 {
 				parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			} else {
 				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
 		}
-		fieldParseStr = `case ` + "`label`" + `:
-				m = m.Fields(` + "`COALESCE(" + gstr.Join(fieldParseStrArr, `, `) + ") AS ` + v)"
+		dao.labelParse = `COALESCE(` + gstr.Join(labelParseStrArr, `, `) + `)`
 		filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
 	}
-	dao.fieldParse = append(dao.fieldParse, fieldParseStr)
+	dao.fieldParse = append(dao.fieldParse, `case `+"`label`"+`:
+				m = m.Fields(daoThis.ParseLabel(daoModel) + `+"` AS `"+` + v)`)
 	dao.filterParse = append(dao.filterParse, filterParseStr)
 	return
 }
