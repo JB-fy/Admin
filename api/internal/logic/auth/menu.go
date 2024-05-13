@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -29,13 +30,12 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			sceneId := gconv.Uint(data[daoThis.Columns().SceneId])
-			if pInfo[daoThis.Columns().SceneId].Uint() != sceneId {
+			if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -60,30 +60,34 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), pid).One()
+			if garray.NewArrayFrom(gconv.SliceAny(daoModelThis.IdArr)).Contains(pid) {
+				err = utils.NewErrorCode(ctx, 29999996, ``)
+				return
+			}
+			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, pid).One()
 			if pInfo.IsEmpty() {
 				err = utils.NewErrorCode(ctx, 29999997, ``)
 				return
 			}
-			oldList, _ := daoModelThis.CloneNew().Filter(daoThis.PrimaryKey(), daoModelThis.IdArr).All()
-			for _, oldInfo := range oldList {
-				if pid == oldInfo[daoThis.PrimaryKey()].Uint() { //父级不能是自身
-					err = utils.NewErrorCode(ctx, 29999996, ``)
+			for _, id := range daoModelThis.IdArr {
+				if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
+					err = utils.NewErrorCode(ctx, 29999995, ``)
 					return
 				}
-				if pid != oldInfo[daoThis.Columns().Pid].Uint() {
-					sceneId := oldInfo[daoThis.Columns().SceneId].Uint()
-					if _, ok := data[daoThis.Columns().SceneId]; ok {
-						sceneId = gconv.Uint(data[daoThis.Columns().SceneId])
-					}
-					if pInfo[daoThis.Columns().SceneId].Uint() != sceneId {
-						err = utils.NewErrorCode(ctx, 89999998, ``)
-						return
-					}
-					if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().IdPath].String(), `-`)).Contains(oldInfo[daoThis.PrimaryKey()].String()) { //父级不能是自身的子孙级
-						err = utils.NewErrorCode(ctx, 29999995, ``)
-						return
-					}
+			}
+			if _, ok := data[daoThis.Columns().SceneId]; ok {
+				if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
+					err = utils.NewErrorCode(ctx, 89999998, ``)
+					return
+				}
+			} else {
+				count, _ := daoModelThis.CloneNew().Filters(g.Map{
+					`id`:                      daoModelThis.IdArr,
+					daoThis.Columns().SceneId: pInfo[daoThis.Columns().SceneId],
+				}).Count()
+				if count != len(daoModelThis.IdArr) {
+					err = utils.NewErrorCode(ctx, 89999998, ``)
+					return
 				}
 			}
 		}

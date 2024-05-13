@@ -33,7 +33,7 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 			sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneId)
 			filterTmp := g.Map{daoAuth.Role.Columns().RoleId: roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}
 			count, _ := daoAuth.Role.CtxDaoModel(ctx).Filters(filterTmp).Count()
-			if roleIdArrLen != count {
+			if count != roleIdArrLen {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -61,7 +61,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 		if roleIdArrLen > 0 {
 			sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneId)
 			count, _ := daoAuth.Role.CtxDaoModel(ctx).Filters(g.Map{daoAuth.Role.Columns().RoleId: roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}).Count()
-			if roleIdArrLen != count {
+			if count != roleIdArrLen {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}

@@ -32,7 +32,7 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 		if menuIdArrLen > 0 {
 			filterTmp := g.Map{daoAuth.Menu.Columns().MenuId: menuIdArr, daoAuth.Menu.Columns().SceneId: data[`scene_id`]}
 			count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(filterTmp).Count()
-			if menuIdArrLen != count {
+			if count != menuIdArrLen {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -44,7 +44,7 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 		if actionIdArrLen > 0 {
 			filterTmp := g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: data[`scene_id`]}
 			count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(filterTmp).Count()
-			if actionIdArrLen != count {
+			if count != actionIdArrLen {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -82,7 +82,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 				filterTmp[daoAuth.Menu.Columns().SceneId] = sceneIdArr[0]
 			}
 			count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(filterTmp).Count()
-			if menuIdArrLen != count {
+			if count != menuIdArrLen {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -97,7 +97,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 			if _, ok := data[`scene_id`]; ok {
 				filterTmp[daoAuth.ActionRelToScene.Columns().SceneId] = data[`scene_id`]
 				count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(filterTmp).Count()
-				if actionIdArrLen != count {
+				if count != actionIdArrLen {
 					err = utils.NewErrorCode(ctx, 89999998, ``)
 					return
 				}
@@ -106,7 +106,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 					oldInfo, _ := daoModelThis.CloneNew().Filter(`id`, id).One()
 					filterTmp[daoAuth.ActionRelToScene.Columns().SceneId] = oldInfo[daoThis.Columns().SceneId]
 					count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(filterTmp).Count()
-					if actionIdArrLen != count {
+					if count != actionIdArrLen {
 						err = utils.NewErrorCode(ctx, 89999998, ``)
 						return
 					}
