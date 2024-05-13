@@ -29,9 +29,6 @@ type DaoInterface interface {
 	ParseGroup(group []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseOrder(order []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseJoin(joinTable string, daoModel *DaoModel) gdb.ModelHandler
-
-	// PrimaryKey() string
-	// ColumnArr() *garray.StrArray
 }
 
 type DaoModel struct {
