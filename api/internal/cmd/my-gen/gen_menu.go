@@ -21,7 +21,7 @@ func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
 		pidVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
 			daoAuth.Menu.Columns().SceneId:  sceneId,
 			daoAuth.Menu.Columns().MenuName: v,
-		}).Value(daoAuth.Menu.PrimaryKey())
+		}).Value(daoAuth.Menu.Columns().MenuId)
 		if pidVar.Uint() == 0 {
 			pid, _ = daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
 				daoAuth.Menu.Columns().SceneId:   sceneId,
@@ -40,7 +40,7 @@ func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	id, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
 		daoAuth.Menu.Columns().SceneId: sceneId,
 		daoAuth.Menu.Columns().MenuUrl: menuUrl,
-	}).ValueUint(daoAuth.Menu.PrimaryKey())
+	}).ValueUint(daoAuth.Menu.Columns().MenuId)
 	if id == 0 {
 		daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
 			daoAuth.Menu.Columns().SceneId:   sceneId,
@@ -51,7 +51,7 @@ func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		}).Insert()
 	} else {
-		daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.PrimaryKey(), id).SetIdArr().HookUpdate(g.Map{
+		daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.Columns().MenuId, id).SetIdArr().HookUpdate(g.Map{
 			daoAuth.Menu.Columns().MenuName:  menuName,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,

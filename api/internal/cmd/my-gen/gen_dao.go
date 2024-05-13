@@ -328,25 +328,25 @@ func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() 
 	}
 	if len(tpl.Handle.Id.List) == 1 {
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
-				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)`)
+				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)`)
 		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
 				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)
 				} else {
-					m = m.WhereNot(daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)
 				}`)
 		dao.fieldParse = append(dao.fieldParse, `case `+"`id`"+`:
-				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey() + `+"` AS `"+` + v)`)
+				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+` + `+"` AS `"+` + v)`)
 		if !tpl.Handle.Id.List[0].IsAutoInc {
 			dao.insertParse = append(dao.insertParse, `case `+"`id`"+`:
-					insertData[daoThis.PrimaryKey()] = v`)
+					insertData[daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`] = v`)
 			dao.updateParse = append(dao.updateParse, `case `+"`id`"+`:
-					updateData[daoThis.PrimaryKey()] = v`)
+					updateData[daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`] = v`)
 		}
 		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:
-				m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())`)
+				m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`)
 		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
-				m = m.Order(daoModel.DbTable + `+"`.`"+` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))`)
+				m = m.Order(daoModel.DbTable + `+"`.`"+` + gstr.Replace(v, k, daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, 1))`)
 	} else {
 		concatStr := `|`
 		filterParseStrArr := []string{}
