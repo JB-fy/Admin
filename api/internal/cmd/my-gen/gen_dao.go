@@ -307,6 +307,10 @@ func genDao(tpl myGenTpl) {
 	}
 
 	// 解析join
+	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 {
+		dao.joinParse = append(dao.joinParse, `default:
+			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+daoThis..Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis..Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`)
+	}
 	if len(dao.joinParse) > 0 {
 		joinParsePoint := `/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().XxxxId)
