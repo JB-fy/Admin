@@ -324,12 +324,6 @@ func genDao(tpl myGenTpl) {
 }
 
 func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
-	if tpl.Handle.Id.List[0].FieldRaw != tpl.FieldList[0].FieldRaw {
-		dao.primaryKeyFunction = `// 主键ID
-func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) PrimaryKey() string {
-	return ` + "`" + tpl.Handle.Id.List[0].FieldRaw + "`" + `
-}`
-	}
 	if len(tpl.Handle.Id.List) == 1 {
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				m = m.Where(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)`)
