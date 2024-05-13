@@ -127,7 +127,8 @@ const saveDrawer = reactive({
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.union_id_of_wx')" prop="union_id_of_wx">
-                    <el-input v-model="saveForm.data.union_id_of_wx" :placeholder="t('user.user.name.union_id_of_wx')" maxlength="64" :show-word-limit="true" :clearable="true" />
+                    <el-input v-model="saveForm.data.union_id_of_wx" :placeholder="t('user.user.name.union_id_of_wx')" maxlength="64" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('user.user.name.id_card_name')" prop="id_card_name">
                     <el-input v-model="saveForm.data.id_card_name" :placeholder="t('user.user.name.id_card_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
