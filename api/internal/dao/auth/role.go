@@ -56,6 +56,16 @@ func (daoThis *roleDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[stri
 	return table
 }
 
+// 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
+func (daoThis *roleDao) ParseId(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + daoThis.Columns().RoleId
+}
+
+// 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
+func (daoThis *roleDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + daoThis.Columns().RoleName
+}
+
 // 解析filter
 func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -66,12 +76,12 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
 			case `id`, `id_arr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().RoleId, v)
 			case `exc_id`, `exc_id_arr`:
 				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().RoleId, v)
 				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().RoleId, v)
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)
@@ -90,7 +100,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.Where(tableRoleRelToMenu+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
 			case Scene.Columns().SceneCode:
-				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.PrimaryKey())
+				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
@@ -115,18 +125,18 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]int
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
 			case `id`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleName + ` AS ` + v)
+				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			case Scene.Columns().SceneName:
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
 			case `action_id_arr`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
 				daoModel.AfterField.Add(v)
 			case `menu_id_arr`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
 				daoModel.AfterField.Add(v)
 			case `table_name`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().TableId)
@@ -164,10 +174,10 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `action_id_arr`:
-						actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.PrimaryKey()]).Array(RoleRelToAction.Columns().ActionId)
+						actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToAction.Columns().ActionId)
 						record[v] = gvar.New(actionIdArr)
 					case `menu_id_arr`:
-						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.PrimaryKey()]).Array(RoleRelToMenu.Columns().MenuId)
+						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
 						record[v] = gvar.New(menuIdArr)
 					case `table_name`:
 						if record[daoThis.Columns().TableId].Uint() == 0 {
@@ -350,7 +360,7 @@ func (daoThis *roleDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) 
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -372,7 +382,7 @@ func (daoThis *roleDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().RoleId, 1))
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -397,11 +407,13 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
 		case Scene.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Scene.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.Columns().SceneId)
+			m = m.LeftJoin(joinTable, joinTable+`.`+Scene.Columns().SceneId+` = `+daoModel.DbTable+`.`+daoThis.Columns().SceneId)
 		case RoleRelToAction.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
+			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		case RoleRelToMenu.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToMenu.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
+			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToMenu.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
+		default:
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		}
 		return m
 	}

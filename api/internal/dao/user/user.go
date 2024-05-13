@@ -59,6 +59,16 @@ func (daoThis *userDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[stri
 	return table
 }
 
+// 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
+func (daoThis *userDao) ParseId(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + daoThis.Columns().UserId
+}
+
+// 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
+func (daoThis *userDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
+	return `COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, ''))`
+}
+
 // 解析filter
 func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
@@ -69,12 +79,12 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
 			case `id`, `id_arr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().UserId, v)
 			case `exc_id`, `exc_id_arr`:
 				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().UserId, v)
 				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.PrimaryKey(), v)
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().UserId, v)
 				}
 			case `label`:
 				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
@@ -113,9 +123,9 @@ func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]int
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
 			case `id`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.PrimaryKey() + ` AS ` + v)
+				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
-				m = m.Fields(`COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, '')) AS ` + v)
+				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -191,6 +201,11 @@ func (daoThis *userDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 					v = nil
 				}
 				insertData[k] = v
+			case daoThis.Columns().UnionIdOfWx:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				insertData[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -252,6 +267,11 @@ func (daoThis *userDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				password = gmd5.MustEncrypt(password + salt)
 				updateData[k] = password
 			case daoThis.Columns().OpenIdOfWx:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				updateData[k] = v
+			case daoThis.Columns().UnionIdOfWx:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -321,7 +341,7 @@ func (daoThis *userDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) 
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -343,10 +363,10 @@ func (daoThis *userDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.PrimaryKey(), 1))
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UserId, 1))
 			case daoThis.Columns().Birthday:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.PrimaryKey())
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -370,6 +390,8 @@ func (daoThis *userDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
+		default:
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().UserId+` = `+daoModel.DbTable+`.`+daoThis.Columns().UserId)
 		}
 		return m
 	}

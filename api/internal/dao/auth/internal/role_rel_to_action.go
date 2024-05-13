@@ -15,11 +15,10 @@ import (
 
 // RoleRelToActionDao is the data access object for table auth_role_rel_to_action.
 type RoleRelToActionDao struct {
-	table      string                 // table is the underlying table name of the DAO.
-	group      string                 // group is the database configuration group name of current DAO.
-	columns    RoleRelToActionColumns // columns contains all the column names of Table for convenient usage.
-	primaryKey string                 // 主键ID
-	columnArr  *garray.StrArray       // 所有字段的数组
+	table     string                 // table is the underlying table name of the DAO.
+	group     string                 // group is the database configuration group name of current DAO.
+	columns   RoleRelToActionColumns // columns contains all the column names of Table for convenient usage.
+	columnArr *garray.StrArray       // 所有字段的数组
 }
 
 // RoleRelToActionColumns defines and stores column names for table auth_role_rel_to_action.
@@ -44,9 +43,6 @@ func NewRoleRelToActionDao() *RoleRelToActionDao {
 		group:   `default`,
 		table:   `auth_role_rel_to_action`,
 		columns: roleRelToActionColumns,
-		primaryKey: func() string {
-			return reflect.ValueOf(roleRelToActionColumns).Field(0).String()
-		}(),
 		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(roleRelToActionColumns)
 			count := v.NumField()
@@ -93,11 +89,6 @@ func (dao *RoleRelToActionDao) Ctx(ctx context.Context) *gdb.Model {
 // as it is automatically handled by this function.
 func (dao *RoleRelToActionDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
-}
-
-// 主键ID
-func (dao *RoleRelToActionDao) PrimaryKey() string {
-	return dao.primaryKey
 }
 
 // 所有字段的数组

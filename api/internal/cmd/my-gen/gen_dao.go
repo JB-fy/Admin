@@ -408,7 +408,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
 		}
-		dao.labelParse = `COALESCE(` + gstr.Join(labelParseStrArr, `, `) + `)`
+		dao.labelParse = "`COALESCE(" + gstr.Join(labelParseStrArr, `, `) + ")`"
 		filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
 	}

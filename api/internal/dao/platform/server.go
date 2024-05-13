@@ -10,6 +10,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"reflect"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -53,6 +54,16 @@ func (daoThis *serverDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[st
 	/* if len(dbTableOpt) > 0 {
 	} */
 	return table
+}
+
+// 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
+func (daoThis *serverDao) ParseId(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(0).String()
+}
+
+// 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
+func (daoThis *serverDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(1).String()
 }
 
 // 解析filter

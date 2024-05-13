@@ -15,11 +15,10 @@ import (
 
 // ActionRelToSceneDao is the data access object for table auth_action_rel_to_scene.
 type ActionRelToSceneDao struct {
-	table      string                  // table is the underlying table name of the DAO.
-	group      string                  // group is the database configuration group name of current DAO.
-	columns    ActionRelToSceneColumns // columns contains all the column names of Table for convenient usage.
-	primaryKey string                  // 主键ID
-	columnArr  *garray.StrArray        // 所有字段的数组
+	table     string                  // table is the underlying table name of the DAO.
+	group     string                  // group is the database configuration group name of current DAO.
+	columns   ActionRelToSceneColumns // columns contains all the column names of Table for convenient usage.
+	columnArr *garray.StrArray        // 所有字段的数组
 }
 
 // ActionRelToSceneColumns defines and stores column names for table auth_action_rel_to_scene.
@@ -44,9 +43,6 @@ func NewActionRelToSceneDao() *ActionRelToSceneDao {
 		group:   `default`,
 		table:   `auth_action_rel_to_scene`,
 		columns: actionRelToSceneColumns,
-		primaryKey: func() string {
-			return reflect.ValueOf(actionRelToSceneColumns).Field(0).String()
-		}(),
 		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(actionRelToSceneColumns)
 			count := v.NumField()
@@ -93,11 +89,6 @@ func (dao *ActionRelToSceneDao) Ctx(ctx context.Context) *gdb.Model {
 // as it is automatically handled by this function.
 func (dao *ActionRelToSceneDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
-}
-
-// 主键ID
-func (dao *ActionRelToSceneDao) PrimaryKey() string {
-	return dao.primaryKey
 }
 
 // 所有字段的数组

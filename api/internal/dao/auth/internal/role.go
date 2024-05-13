@@ -15,11 +15,10 @@ import (
 
 // RoleDao is the data access object for table auth_role.
 type RoleDao struct {
-	table      string           // table is the underlying table name of the DAO.
-	group      string           // group is the database configuration group name of current DAO.
-	columns    RoleColumns      // columns contains all the column names of Table for convenient usage.
-	primaryKey string           // 主键ID
-	columnArr  *garray.StrArray // 所有字段的数组
+	table     string           // table is the underlying table name of the DAO.
+	group     string           // group is the database configuration group name of current DAO.
+	columns   RoleColumns      // columns contains all the column names of Table for convenient usage.
+	columnArr *garray.StrArray // 所有字段的数组
 }
 
 // RoleColumns defines and stores column names for table auth_role.
@@ -50,9 +49,6 @@ func NewRoleDao() *RoleDao {
 		group:   `default`,
 		table:   `auth_role`,
 		columns: roleColumns,
-		primaryKey: func() string {
-			return reflect.ValueOf(roleColumns).Field(0).String()
-		}(),
 		columnArr: func() *garray.StrArray {
 			v := reflect.ValueOf(roleColumns)
 			count := v.NumField()
@@ -99,11 +95,6 @@ func (dao *RoleDao) Ctx(ctx context.Context) *gdb.Model {
 // as it is automatically handled by this function.
 func (dao *RoleDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
-}
-
-// 主键ID
-func (dao *RoleDao) PrimaryKey() string {
-	return dao.primaryKey
 }
 
 // 所有字段的数组
