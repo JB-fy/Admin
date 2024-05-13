@@ -367,8 +367,8 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 		daoModel.JoinTableSet.Add(joinTable)
 		switch joinTable {
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
-		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
-		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey()) */
+		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
+		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
 		case ActionRelToScene.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+ActionRelToScene.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		case Role.ParseDbTable(m.GetCtx()):
@@ -377,8 +377,6 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToAction.ParseDbTable(m.GetCtx())+`.`+RoleRelToAction.Columns().RoleId)
 		case RoleRelToAction.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
-		default:
-			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.PrimaryKey()+` = `+daoModel.DbTable+`.`+daoThis.PrimaryKey())
 		}
 		return m
 	}
