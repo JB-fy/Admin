@@ -50,7 +50,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		/**--------限制多地登录，多设备登录等情况下用（前置条件：登录时做过token缓存） 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoPlatform.Admin.CtxDaoModel(r.GetCtx()).Filter(daoPlatform.Admin.PrimaryKey(), claims.LoginId).One()
+		info, _ := daoPlatform.Admin.CtxDaoModel(r.GetCtx()).Filter(daoPlatform.Admin.Columns().AdminId, claims.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))

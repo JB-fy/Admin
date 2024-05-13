@@ -24,7 +24,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	filter := map[string]interface{}{
 		`self_menu`: map[string]interface{}{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
-			`scene_id`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 			`login_id`:   loginInfo[`login_id`],
 		},
 	}

@@ -89,7 +89,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		}
 	}
 
-	claims := utils.CustomClaims{LoginId: info[daoUser.User.PrimaryKey()].Uint()}
+	claims := utils.CustomClaims{LoginId: info[daoUser.User.Columns().UserId].Uint()}
 	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
@@ -220,11 +220,11 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 		saveData[daoUser.User.Columns().Phone] = phone
 	}
 
-	userId, _ := daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.PrimaryKey())
+	userId, _ := daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.Columns().UserId)
 	if userId == 0 {
 		userIdTmp, errTmp := daoUser.User.CtxDaoModel(ctx).HookInsert(saveData).InsertAndGetId()
 		if errTmp != nil { //报错就是并发引起的唯一索引冲突，故再做一次查询
-			userId, _ = daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.PrimaryKey())
+			userId, _ = daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.Columns().UserId)
 			// daoUser.User.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
 		} else {
 			userId = uint(userIdTmp)

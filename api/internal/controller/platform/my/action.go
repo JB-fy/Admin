@@ -23,7 +23,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	filter := map[string]interface{}{
 		`self_action`: map[string]interface{}{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
-			`scene_id`:   sceneInfo[daoAuth.Scene.PrimaryKey()],
+			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 			`login_id`:   loginInfo[`login_id`],
 		},
 	}

@@ -64,7 +64,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	claims := utils.CustomClaims{LoginId: info[daoPlatform.Admin.PrimaryKey()].Uint()}
+	claims := utils.CustomClaims{LoginId: info[daoPlatform.Admin.Columns().AdminId].Uint()}
 	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
