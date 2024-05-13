@@ -471,7 +471,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.orderParse.Method = internal.ReturnType
 		daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getOrderOfIdList(tpl.Handle.Id.List)) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 	case internal.TypeTime: // `time类型`
 	default:
 		daoField.filterParse.Method = internal.ReturnType
@@ -508,7 +508,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				m = m.Fields(tableP + `+"`.`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` + `+"` AS `"+` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))`)
 		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`tree`"+`:
-				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.PrimaryKey())
+				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+v.FieldCaseCamel+`)
 				m = m.Handler(daoThis.ParseOrder([]string{`+"`tree`"+`}, daoModel))`)
 
@@ -519,13 +519,13 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				m = m.OrderAsc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Sort) + `)`
 		}
 		orderParseStr += `
-				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.PrimaryKey())`
+				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `)`
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, orderParseStr)
 
 		daoField.joinParse.Method = internal.ReturnTypeName
 		daoField.joinParse.DataTypeName = append(daoField.joinParse.DataTypeName, `case `+"`p_`"+` + `+daoTable+`:
-			m = m.LeftJoin(`+daoTable+`+`+"` AS `"+`+joinTable, joinTable+`+"`.`"+`+`+daoPath+`.PrimaryKey()+`+"` = `"+`+`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+v.FieldCaseCamel+`)`)
+			m = m.LeftJoin(`+daoTable+`+`+"` AS `"+`+joinTable, joinTable+`+"`.`"+`+`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`+`+"` = `"+`+`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+v.FieldCaseCamel+`)`)
 
 		if tpl.Handle.Pid.IsCoexist {
 			daoField.insertParseBefore.Method = internal.ReturnTypeName
@@ -540,7 +540,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			daoField.insertParse.DataTypeName = append(daoField.insertParse.DataTypeName, `case `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.PrimaryKey(), v).One()
+					pInfo, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v).One()
 					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]interface{}{
 						`+"`"+pIdPathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String(),
 						`+"`"+pLevelStr+"`"+`:   pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`].Uint(),
@@ -555,7 +555,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			daoField.insertHook.Method = internal.ReturnTypeName
 			daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+selfUpdateStr+"`"+`: //更新自身的ID路径和层级。参数：map[string]interface{}{`+"`"+pIdPathStr+"`"+`: `+"`父级ID路径`"+`, `+"`"+pLevelStr+"`"+`: `+"`父级层级`"+`}
 					val := v.(map[string]interface{})
-					daoModel.CloneNew().Filter(daoThis.PrimaryKey(), id).HookUpdate(map[string]interface{}{
+					daoModel.CloneNew().Filter(daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, id).HookUpdate(map[string]interface{}{
 						daoThis.Columns().IdPath: gconv.String(val[`+"`"+pIdPathStr+"`"+`]) + `+"`-`"+` + gconv.String(id),
 						daoThis.Columns().Level:  gconv.Uint(val[`+"`"+pLevelStr+"`"+`]) + 1,
 					}).Update()`)
@@ -573,20 +573,20 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				pIdPath := `+"`0`"+`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.PrimaryKey(), v).One()
+					pInfo, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v).One()
 					pIdPath = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String()
 					pLevel = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`].Uint()
 				}
-				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`] = gdb.Raw(`+"`CONCAT('`"+` + pIdPath + `+"`-', `"+` + `+daoPath+`.PrimaryKey() + `+"`)`"+`)
+				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`] = gdb.Raw(`+"`CONCAT('`"+` + pIdPath + `+"`-', `"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+` + `+"`)`"+`)
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`] = pLevel + 1
 				//更新所有子孙级的ID路径和层级
 				`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]interface{}{}
-				oldList, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.PrimaryKey(), daoModel.IdArr).All()
+				oldList, _ := `+daoPath+`.CtxDaoModel(m.GetCtx()).Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`].Uint() {
 						`+gstr.CaseCamelLower(childUpdateStr)+` = append(`+gstr.CaseCamelLower(childUpdateStr)+`, map[string]interface{}{
 							`+"`"+pIdPathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`],
-							`+"`"+pIdPathOfNewStr+"`"+`: pIdPath + `+"`-`"+` + oldInfo[`+daoPath+`.PrimaryKey()].String(),
+							`+"`"+pIdPathOfNewStr+"`"+`: pIdPath + `+"`-`"+` + oldInfo[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`].String(),
 							`+"`"+pLevelOldStr+"`"+`:  oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`],
 							`+"`"+pLevelNewStr+"`"+`:  pLevel + 1,
 						})
@@ -635,7 +635,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 		return myGenDaoField{}
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
@@ -711,10 +711,10 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			}
 
 			joinParseStr := `case ` + daoPathRel + `.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.PrimaryKey()+` + "` = `" + `+` + daoTable + `+` + "`.`" + `+` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
+			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `+` + "` = `" + `+` + daoTable + `+` + "`.`" + `+` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
 			if relIdObj.Suffix != `` {
 				joinParseStr = `case ` + daoPathRel + `.ParseDbTable(m.GetCtx()) + ` + "`" + relIdObj.SuffixCaseSnake + "`" + `:
-			m = m.LeftJoin(` + daoPathRel + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.PrimaryKey()+` + "` = `" + `+` + daoTable + `+` + "`.`" + `+` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
+			m = m.LeftJoin(` + daoPathRel + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `+` + "` = `" + `+` + daoTable + `+` + "`.`" + `+` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
 			}
 			daoField.joinParse.Method = internal.ReturnTypeName
 			daoField.joinParse.DataTypeName = append(daoField.joinParse.DataTypeName, joinParseStr)
@@ -723,7 +723,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getOrderOfIdList(tpl.Handle.Id.List)) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		daoField.filterParse.Method = internal.ReturnTypeName
 	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
@@ -840,7 +840,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 	dao.deleteHook = append(dao.deleteHook, tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr).Delete()`)
 
 	dao.joinParse = append(dao.joinParse, `case `+tplEM.daoPath+`.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey())`)
+			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`)`)
 
 	fieldArrOfFilter := []string{}
 	daoFieldList := []myGenDaoField{}
@@ -865,7 +865,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())
+				`+getOrderOfIdList(tplEM.tplOfTop.Handle.Id.List)+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 		case internal.TypeTime: // `time类型`
 		default:
@@ -948,10 +948,10 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				}
 
 				joinParseStr := `case ` + daoPathRel + `.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.PrimaryKey()+` + "` = `" + `+` + tplEM.daoTable + `+` + "`.`" + `+` + tplEM.daoPath + `.Columns().` + v.FieldCaseCamel + `)`
+			m = m.LeftJoin(joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `+` + "` = `" + `+` + tplEM.daoTable + `+` + "`.`" + `+` + tplEM.daoPath + `.Columns().` + v.FieldCaseCamel + `)`
 				if relIdObj.Suffix != `` {
 					joinParseStr = `case ` + daoPathRel + `.ParseDbTable(m.GetCtx()) + ` + "`" + relIdObj.SuffixCaseSnake + "`" + `:
-			m = m.LeftJoin(` + daoPathRel + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.PrimaryKey()+` + "` = `" + `+` + tplEM.daoTable + `+` + "`.`" + `+` + tplEM.daoPath + `.Columns().` + v.FieldCaseCamel + `)`
+			m = m.LeftJoin(` + daoPathRel + `.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `+` + "` = `" + `+` + tplEM.daoTable + `+` + "`.`" + `+` + tplEM.daoPath + `.Columns().` + v.FieldCaseCamel + `)`
 				}
 				daoField.joinParse.Method = internal.ReturnTypeName
 				daoField.joinParse.DataTypeName = append(daoField.joinParse.DataTypeName, joinParseStr)
@@ -961,7 +961,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())
+				`+getOrderOfIdList(tplEM.tplOfTop.Handle.Id.List)+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			daoField.filterParse.Method = internal.ReturnTypeName
@@ -1023,7 +1023,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	}
 
 	dao.fieldParse = append(dao.fieldParse, `case `+"`"+tplEM.FieldVar+"`"+`:
-				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())
+				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`)
 				daoModel.AfterField.Add(v)`)
 	dao.insertParse = append(dao.insertParse, `case `+"`"+tplEM.FieldVar+"`"+`:
 				daoModel.AfterInsert[k] = v`)
@@ -1031,7 +1031,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				daoModel.AfterUpdate[k] = v`)
 	if len(tplEM.FieldList) == 1 {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
+						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
 						record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]interface{}{}
@@ -1050,7 +1050,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					}`)
 	} else {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.PrimaryKey()]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
+						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
 						record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]interface{}{}
@@ -1078,7 +1078,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	dao.deleteHook = append(dao.deleteHook, tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr).Delete()`)
 
 	dao.joinParse = append(dao.joinParse, `case `+tplEM.daoPath+`.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.PrimaryKey())`)
+			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`)`)
 
 	fieldArrOfFilter := []string{}
 	daoFieldList := []myGenDaoField{}
@@ -1103,7 +1103,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.PrimaryKey())
+				`+getOrderOfIdList(tplEM.tplOfTop.Handle.Id.List)+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
 		case internal.TypeTime: // `time类型`
 		default:
@@ -1205,5 +1205,15 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	for _, daoField := range daoFieldList {
 		dao.Add(daoField)
 	}
+	return
+}
+
+func getOrderOfIdList(idList []myGenField) (order string) {
+	orderArr := []string{}
+	for _, v := range idList {
+		orderArr = append(orderArr, `m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
+	}
+	order = gstr.Join(orderArr, `
+				`)
 	return
 }
