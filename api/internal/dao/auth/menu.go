@@ -225,7 +225,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *dao
 			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.Columns().MenuId, v).One()
+					pInfo, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, v).One()
 					daoModel.AfterInsert[`self_update`] = map[string]interface{}{
 						`p_id_path`: pInfo[daoThis.Columns().IdPath].String(),
 						`p_level`:   pInfo[daoThis.Columns().Level].Uint(),
@@ -291,7 +291,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				pIdPath := `0`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.Columns().MenuId, v).One()
+					pInfo, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, v).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}
@@ -299,7 +299,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				updateData[daoThis.Columns().Level] = pLevel + 1
 				//更新所有子孙级的ID路径和层级
 				childUpdateList := []map[string]interface{}{}
-				oldList, _ := daoThis.CtxDaoModel(m.GetCtx()).Filter(daoThis.Columns().MenuId, daoModel.IdArr).All()
+				oldList, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						childUpdateList = append(childUpdateList, map[string]interface{}{
