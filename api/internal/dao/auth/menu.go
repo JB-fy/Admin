@@ -299,7 +299,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				updateData[daoThis.Columns().Level] = pLevel + 1
 				//更新所有子孙级的ID路径和层级
 				childUpdateList := []map[string]interface{}{}
-				oldList, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, daoModel.IdArr).All()
+				oldList, _ := daoModel.CloneNew().Filter(`id`, daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
 						childUpdateList = append(childUpdateList, map[string]interface{}{

@@ -581,7 +581,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`] = pLevel + 1
 				//更新所有子孙级的ID路径和层级
 				`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]interface{}{}
-				oldList, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, daoModel.IdArr).All()
+				oldList, _ := daoModel.CloneNew().Filter(`+"`id`"+`, daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`].Uint() {
 						`+gstr.CaseCamelLower(childUpdateStr)+` = append(`+gstr.CaseCamelLower(childUpdateStr)+`, map[string]interface{}{
