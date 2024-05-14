@@ -79,7 +79,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `])
 		if pid > 0 {
-			if garray.NewArrayFrom(gconv.SliceAny(daoModelThis.IdArr)).Contains(pid) {
+			if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(pid) {
 				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
 				return
 			}

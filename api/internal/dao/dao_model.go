@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/gogf/gf/v2/container/gset"
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
@@ -36,9 +37,9 @@ type DaoModel struct {
 	dao                 DaoInterface
 	db                  gdb.DB
 	model               *gdb.Model
-	DbGroup             string // 分库情况下，解析后所确定的库
-	DbTable             string // 分表情况下，解析后所确定的表
-	IdArr               []uint // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即在各种sql条件设置完后）
+	DbGroup             string      // 分库情况下，解析后所确定的库
+	DbTable             string      // 分表情况下，解析后所确定的表
+	IdArr               []*gvar.Var // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即在各种sql条件设置完后）
 	AfterInsert         map[string]interface{}
 	AfterUpdate         map[string]interface{}
 	AfterField          *gset.StrSet
@@ -51,7 +52,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 	daoModelObj := DaoModel{
 		Ctx:                 ctx,
 		dao:                 dao,
-		IdArr:               []uint{},
+		IdArr:               []*gvar.Var{},
 		AfterInsert:         map[string]interface{}{},
 		AfterUpdate:         map[string]interface{}{},
 		AfterField:          gset.NewStrSet(),
@@ -103,7 +104,7 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 		db:                  daoModelThis.db,
 		DbGroup:             daoModelThis.DbGroup,
 		DbTable:             daoModelThis.DbTable,
-		IdArr:               []uint{},
+		IdArr:               []*gvar.Var{},
 		AfterInsert:         map[string]interface{}{},
 		AfterUpdate:         map[string]interface{}{},
 		AfterField:          gset.NewStrSet(),
@@ -141,8 +142,7 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 
 // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 func (daoModelThis *DaoModel) SetIdArr() *DaoModel {
-	idArr, _ := daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
-	daoModelThis.IdArr = gconv.SliceUint(idArr)
+	daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 	return daoModelThis
 }
 

@@ -60,7 +60,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 	if _, ok := data[daoThis.Columns().Pid]; ok {
 		pid := gconv.Uint(data[daoThis.Columns().Pid])
 		if pid > 0 {
-			if garray.NewArrayFrom(gconv.SliceAny(daoModelThis.IdArr)).Contains(pid) {
+			if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(pid) {
 				err = utils.NewErrorCode(ctx, 29999996, ``)
 				return
 			}
