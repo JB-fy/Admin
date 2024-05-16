@@ -321,7 +321,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNameLevel
 
 				tpl.Handle.Pid.Level = fieldTmp.FieldRaw
-			} else if garray.NewStrArrayFrom([]string{`sort`, `weight`, `num`, `number`}).Contains(fieldSuffix) { //sort,weight,num,number等后缀。该命名类型需做二次确定
+			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`, `level`, `rank`}).Contains(fieldSuffix) { //sort,num,number,weight,level,rank等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
 				if fieldTmp.FieldRaw == `sort` { //sort，且pid,level,idPath|id_path,sort同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameSort
