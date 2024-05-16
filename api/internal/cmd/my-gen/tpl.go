@@ -317,16 +317,16 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNamePid
 
 				tpl.Handle.Pid.Pid = fieldTmp.FieldRaw
-			} else if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
-				fieldTmp.FieldTypeName = internal.TypeNameLevel
-
-				tpl.Handle.Pid.Level = fieldTmp.FieldRaw
 			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`, `level`, `rank`}).Contains(fieldSuffix) { //sort,num,number,weight,level,rank等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
 				if fieldTmp.FieldRaw == `sort` { //sort，且pid,level,idPath|id_path,sort同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameSort
 
 					tpl.Handle.Pid.Sort = fieldTmp.FieldRaw
+				} else if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
+					fieldTmp.FieldTypeName = internal.TypeNameLevel
+
+					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				primaryKeyArr := []string{gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1) + `_id`}
