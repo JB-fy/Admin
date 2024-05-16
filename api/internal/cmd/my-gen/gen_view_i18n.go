@@ -133,7 +133,7 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 		viewI18nField.name.DataTypeName = `'父级'`
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-	case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewI18nField{}
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
@@ -149,7 +149,7 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 			viewI18nField.name.Method = internal.ReturnTypeName
 			viewI18nField.name.DataTypeName = `'` + relIdObj.FieldName + `'`
 		}
-	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight,num,number等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		viewI18nField.tip.Method = internal.ReturnTypeName
 		viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
@@ -163,12 +163,12 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 				viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 			}
 		}
-	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 	case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 	}
 	/*--------根据字段命名类型处理 结束--------*/
@@ -229,7 +229,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		case internal.TypeNamePid: // pid；	类型：int等类型；
 		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-		case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 		case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
@@ -239,7 +239,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight,num,number等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			viewI18nField.tip.Method = internal.ReturnTypeName
 			viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
@@ -253,12 +253,12 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 				}
 			}
-		case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
 		case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		}
 		/*--------根据字段命名类型处理 结束--------*/

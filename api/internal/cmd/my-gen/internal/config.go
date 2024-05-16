@@ -43,7 +43,7 @@ const (
 	TypeNameLevel          MyGenFieldTypeName = `命名：level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；`
 	TypeNameIdPath         MyGenFieldTypeName = `命名：idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；`
 	TypeNameSort           MyGenFieldTypeName = `命名：sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；`
-	TypeNamePasswordSuffix MyGenFieldTypeName = `命名：password,passwd后缀；		类型：char(32)；`
+	TypeNamePasswordSuffix MyGenFieldTypeName = `命名：password,passwd后缀；	类型：char(32)；`
 	TypeNameSaltSuffix     MyGenFieldTypeName = `命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；`
 	TypeNameNameSuffix     MyGenFieldTypeName = `命名：name,title后缀；	类型：varchar；`
 	TypeNameCodeSuffix     MyGenFieldTypeName = `命名：code后缀；	类型：varchar；`
@@ -53,13 +53,13 @@ const (
 	TypeNameUrlSuffix      MyGenFieldTypeName = `命名：url,link后缀；	类型：varchar；`
 	TypeNameIpSuffix       MyGenFieldTypeName = `命名：IP后缀；	类型：varchar；`
 	TypeNameIdSuffix       MyGenFieldTypeName = `命名：id后缀；	类型：int等类型；`
-	TypeNameSortSuffix     MyGenFieldTypeName = `命名：sort,weight等后缀；	类型：int等类型；`
+	TypeNameSortSuffix     MyGenFieldTypeName = `命名：sort,weight,num,number等后缀；	类型：int等类型；`
 	TypeNameStatusSuffix   MyGenFieldTypeName = `命名：status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）`
-	TypeNameIsPrefix       MyGenFieldTypeName = `命名：is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）`
+	TypeNameIsPrefix       MyGenFieldTypeName = `命名：is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）`
 	TypeNameStartPrefix    MyGenFieldTypeName = `命名：start_前缀；	类型：datetime或date或timestamp或time；`
 	TypeNameEndPrefix      MyGenFieldTypeName = `命名：end_前缀；	类型：datetime或date或timestamp或time；`
 	TypeNameRemarkSuffix   MyGenFieldTypeName = `命名：remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器`
 	TypeNameImageSuffix    MyGenFieldTypeName = `命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text`
-	TypeNameVideoSuffix    MyGenFieldTypeName = `命名：video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text`
+	TypeNameVideoSuffix    MyGenFieldTypeName = `命名：video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text`
 	TypeNameArrSuffix      MyGenFieldTypeName = `命名：list,arr等后缀；	类型：json或text；`
 )

@@ -459,7 +459,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 		viewListField.hidden.Method = internal.ReturnTypeName
 		viewListField.hidden.DataTypeName = `true`
-	case internal.TypeNamePasswordSuffix: // password,passwd后缀；		类型：char(32)；
+	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		return myGenViewListField{}
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewListField{}
@@ -476,7 +476,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			viewListField.dataKey.Method = internal.ReturnTypeName
 			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}
-	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,weight,num,number等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
 		if option.IsUpdate {
@@ -542,7 +542,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
-	case internal.TypeNameIsPrefix: // is_前缀；		类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
 			cellRendererStr = `onChange={(val: number) => {
@@ -603,7 +603,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     </el-scrollbar>
                 ]
             }`
-	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
 		viewListField.rowHeight = 100
 		viewListField.hidden.Method = internal.ReturnEmpty
 		cellRendererStr := `
@@ -724,7 +724,7 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     </el-scrollbar>
                 ]
             }`
-		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+		case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
 			if v.FieldType != internal.TypeVarchar {
 				return myGenViewList{}
 			}
