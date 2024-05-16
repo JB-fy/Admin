@@ -95,7 +95,7 @@ func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTo
 		return
 	}
 
-	gconv.Struct(resData.Map(), &accessToken)
+	resData.Var().Struct(&accessToken)
 	return
 }
 
@@ -117,7 +117,7 @@ func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo
 		return
 	}
 
-	gconv.Struct(resData.Map(), &userInfo)
+	resData.Var().Struct(&userInfo)
 	return
 }
 
@@ -139,7 +139,7 @@ func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken
 		return
 	}
 
-	gconv.Struct(resData.Map(), &accessToken)
+	resData.Var().Struct(&accessToken)
 	return
 }
 
