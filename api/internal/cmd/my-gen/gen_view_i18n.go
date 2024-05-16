@@ -92,12 +92,9 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case internal.TypeInt: // `int等类型`
-	case internal.TypeIntU: // `int等类型（unsigned）`
-	case internal.TypeFloat: // `float等类型`
-	case internal.TypeFloatU: // `float等类型（unsigned）`
-	case internal.TypeVarchar: // `varchar类型`
-	case internal.TypeChar: // `char类型`
+	case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
+	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
+	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 	case internal.TypeText: // `text类型`
 	case internal.TypeJson: // `json类型`
 		viewI18nField.tip.Method = internal.ReturnType
@@ -205,12 +202,9 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
-		case internal.TypeInt: // `int等类型`
-		case internal.TypeIntU: // `int等类型（unsigned）`
-		case internal.TypeFloat: // `float等类型`
-		case internal.TypeFloatU: // `float等类型（unsigned）`
-		case internal.TypeVarchar: // `varchar类型`
-		case internal.TypeChar: // `char类型`
+		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
+		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
+		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		case internal.TypeText: // `text类型`
 		case internal.TypeJson: // `json类型`
 			viewI18nField.tip.Method = internal.ReturnType

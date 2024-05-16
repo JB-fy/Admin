@@ -244,62 +244,51 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 	}
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case internal.TypeInt: // `int等类型`
-		defaultVal := gconv.Int(v.Default)
-		if defaultVal != 0 {
+	case internal.TypeInt, internal.TypeIntU: // `int等类型`	// `int等类型（unsigned）`
+		defaultVal := gconv.String(v.Default)
+		if defaultVal != `0` {
 			viewSaveField.dataInitBefore.Method = internal.ReturnType
-			viewSaveField.dataInitBefore.DataType = gconv.String(defaultVal)
+			viewSaveField.dataInitBefore.DataType = defaultVal
+		}
+		rule := `{ type: 'integer', trigger: 'change', message: t('validation.input') },`
+		attrOfAdd := ``
+		if v.FieldType == internal.TypeIntU {
+			rule = `{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },`
+			attrOfAdd = ` :min="0"`
 		}
 		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'integer', trigger: 'change', message: t('validation.input') },`)
+		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, rule)
 		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
-	case internal.TypeIntU: // `int等类型（unsigned）`
-		defaultVal := gconv.Uint(v.Default)
-		if defaultVal != 0 {
-			viewSaveField.dataInitBefore.Method = internal.ReturnType
-			viewSaveField.dataInitBefore.DataType = gconv.String(defaultVal)
-		}
-		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },`)
-		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="0" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
-	case internal.TypeFloat: // `float等类型`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :controls="false" :value-on-clear="` + defaultVal + `" />`
+	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	 // `float等类型（unsigned）`
 		defaultVal := gconv.Float64(v.Default)
 		if defaultVal != 0 {
 			viewSaveField.dataInitBefore.Method = internal.ReturnType
-			viewSaveField.dataInitBefore.DataType = gconv.String(defaultVal)
+			viewSaveField.dataInitBefore.DataType = gconv.String(v.Default)
+		}
+		rule := `{ type: 'number', trigger: 'change', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`
+		attrOfAdd := ``
+		if v.FieldType == internal.TypeFloatU {
+			rule = `{ type: 'number', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`
+			attrOfAdd = ` :min="0"`
 		}
 		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'number', trigger: 'change', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`)
+		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, rule)
 		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
-	case internal.TypeFloatU: // `float等类型（unsigned）`
-		defaultVal := gconv.Float64(v.Default)
-		if defaultVal != 0 {
-			viewSaveField.dataInitBefore.Method = internal.ReturnType
-			viewSaveField.dataInitBefore.DataType = gconv.String(defaultVal)
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(v.Default) + `" />`
+	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
+		rule := `{ type: 'string', trigger: 'blur', max: ` + v.FieldLimitStr + `, message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`
+		attrOfAdd := ``
+		if v.FieldType == internal.TypeChar {
+			rule = `{ type: 'string', trigger: 'blur', len: ` + v.FieldLimitStr + `, message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`
+			attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`
 		}
 		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'number', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`)
+		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, rule)
 		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(defaultVal) + `" />`
-	case internal.TypeVarchar: // `varchar类型`
-		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', max: `+v.FieldLimitStr+`, message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
-		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
+		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
 		if v.IsUnique {
-			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
-		}
-	case internal.TypeChar: // `char类型`
-		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'blur', len: `+v.FieldLimitStr+`, message: t('validation.size.string', { size: `+v.FieldLimitStr+` }) },`)
-		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
-		if v.IsUnique {
-			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+			viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />`
 		}
 	case internal.TypeText: // `text类型`
@@ -664,36 +653,39 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		viewSaveFieldTmp := myGenViewSaveField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
-		case internal.TypeInt: // `int等类型`
+		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
+			rule := `{ type: 'integer', message: t('validation.input') },`
+			attrOfAdd := ``
+			if v.FieldType == internal.TypeIntU {
+				rule = `{ type: 'integer', min: 0, message: t('validation.min.number', { min: 0 }) },`
+				attrOfAdd = ` :min="0"`
+			}
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'integer', message: t('validation.input') },`)
+			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, rule)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number :controls="false" />`
-		case internal.TypeIntU: // `int等类型（unsigned）`
+			viewSaveFieldTmp.formContent.DataType = `<el-input-number` + attrOfAdd + ` :controls="false" />`
+		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
+			rule := `{ type: 'number', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`
+			attrOfAdd := ``
+			if v.FieldType == internal.TypeFloatU {
+				rule = `{ type: 'number', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`
+				attrOfAdd = ` :min="0"`
+			}
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'integer', min: 0, message: t('validation.min.number', { min: 0 }) },`)
+			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, rule)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number :min="0" :controls="false" />`
-		case internal.TypeFloat: // `float等类型`
+			viewSaveFieldTmp.formContent.DataType = `<el-input-number` + attrOfAdd + ` :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
+		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
+			rule := `{ type: 'string', max: ` + v.FieldLimitStr + `, message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`
+			attrOfAdd := ``
+			if v.FieldType == internal.TypeChar {
+				rule = `{ type: 'string', len: ` + v.FieldLimitStr + `, message: t('validation.size.string', { size: ` + v.FieldLimitStr + ` }) },`
+				attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`
+			}
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'number', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`)
+			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, rule)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
-		case internal.TypeFloatU: // `float等类型（unsigned）`
-			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'number', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`)
-			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
-		case internal.TypeVarchar: // `varchar类型`
-			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'string', max: `+v.FieldLimitStr+`, message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
-			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
-		case internal.TypeChar: // `char类型`
-			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'string', len: `+v.FieldLimitStr+`, message: t('validation.size.string', { size: `+v.FieldLimitStr+` }) },`)
-			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
+			viewSaveFieldTmp.formContent.DataType = `<el-input` + attrOfAdd + ` maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" :clearable="true" />`
 		case internal.TypeText, internal.TypeJson: // `text类型` // `json类型`
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
 			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'string', message: t('validation.input') },`)

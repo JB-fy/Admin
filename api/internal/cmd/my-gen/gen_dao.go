@@ -424,10 +424,8 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case internal.TypeInt: // `int等类型`
-	case internal.TypeIntU: // `int等类型（unsigned）`
-	case internal.TypeFloat: // `float等类型`
-	case internal.TypeFloatU: // `float等类型（unsigned）`
+	case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
+	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			daoField.filterParse.Method = internal.ReturnType
@@ -848,10 +846,8 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		daoField := myGenDaoField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
-		case internal.TypeInt: // `int等类型`
-		case internal.TypeIntU: // `int等类型（unsigned）`
-		case internal.TypeFloat: // `float等类型`
-		case internal.TypeFloatU: // `float等类型（unsigned）`
+		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
+		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 			if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 				daoField.filterParse.Method = internal.ReturnType
@@ -1086,10 +1082,8 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 		daoField := myGenDaoField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
-		case internal.TypeInt: // `int等类型`
-		case internal.TypeIntU: // `int等类型（unsigned）`
-		case internal.TypeFloat: // `float等类型`
-		case internal.TypeFloatU: // `float等类型（unsigned）`
+		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
+		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 			if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 				daoField.filterParse.Method = internal.ReturnType

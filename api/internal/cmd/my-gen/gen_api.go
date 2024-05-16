@@ -231,7 +231,11 @@ type ` + tpl.TableCaseCamel + `TreeItem struct {` + gstr.Join(append([]string{``
 func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
-		case internal.TypeInt:
+		case internal.TypeInt, internal.TypeIntU:
+			dataType := `int`
+			if tpl.Handle.Id.List[0].FieldType == internal.TypeIntU {
+				dataType = `uint`
+			}
 			ruleOfId := []string{}
 			ruleOfIdArr := []string{`distinct`}
 			if tpl.Handle.Id.List[0].IsAutoInc || tpl.Handle.Id.List[0].FieldTypeName == internal.TypeNameIdSuffix {
@@ -239,26 +243,15 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 				ruleOfIdArr = append(ruleOfIdArr, `foreach`, `min:1`)
 			}
 			api.filterOfFixed = append(api.filterOfFixed,
-				`Id *int `+"`"+`json:"id,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"ID"`+"`",
-				`IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"ID数组"`+"`",
-				`ExcId *int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"排除ID"`+"`",
-				`ExcIdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"排除ID数组"`+"`",
+				`Id *`+dataType+" `"+`json:"id,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"ID"`+"`",
+				`IdArr []`+dataType+" `"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"ID数组"`+"`",
+				`ExcId *`+dataType+" `"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"排除ID"`+"`",
+				`ExcIdArr []`+dataType+" `"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"排除ID数组"`+"`",
 			)
-			api.info = append(api.info, `Id int `+"`"+`json:"id" v:"`+gstr.Join(append([]string{`required`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []int `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
-			api.res = append(api.res, `Id *int `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
-		case internal.TypeIntU:
-			api.filterOfFixed = append(api.filterOfFixed,
-				`Id *uint `+"`"+`json:"id,omitempty" v:"min:1" dc:"ID"`+"`",
-				`IdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`+"`",
-				`ExcId *uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+`,omitempty" v:"min:1" dc:"排除ID"`+"`",
-				`ExcIdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+`,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`+"`",
-			)
-			api.info = append(api.info, `Id uint `+"`"+`json:"id" v:"required|min:1" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `IdArr []uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`+"`")
-			api.res = append(api.res, `Id *uint `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
+			api.info = append(api.info, `Id `+dataType+" `"+`json:"id" v:"`+gstr.Join(append([]string{`required`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
+			api.update = append(api.update, `IdArr []`+dataType+" `"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `IdArr []`+dataType+" `"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`,omitempty" v:"`+gstr.Join(append([]string{`required`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
+			api.res = append(api.res, `Id *`+dataType+" `"+`json:"id,omitempty" dc:"ID"`+"`")
 		default:
 			api.filterOfFixed = append(api.filterOfFixed,
 				`Id string `+"`"+`json:"id,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`",
@@ -295,34 +288,20 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	}
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case internal.TypeInt: // `int等类型` // `int等类型（unsigned）`
+	case internal.TypeInt, internal.TypeIntU: // `int等类型`	// `int等类型（unsigned）`
+		dataType := `int`
+		if v.FieldType == internal.TypeIntU {
+			dataType = `uint`
+		}
 		// apiField.filterType.Method = internal.ReturnType
-		apiField.filterType.DataType = `*int`
+		apiField.filterType.DataType = `*` + dataType
 		apiField.createType.Method = internal.ReturnType
-		apiField.createType.DataType = `*int`
+		apiField.createType.DataType = `*` + dataType
 		apiField.updateType.Method = internal.ReturnType
-		apiField.updateType.DataType = `*int`
+		apiField.updateType.DataType = `*` + dataType
 		apiField.resType.Method = internal.ReturnType
-		apiField.resType.DataType = `*int`
-	case internal.TypeIntU: // `int等类型（unsigned）`
-		// apiField.filterType.Method = internal.ReturnType
-		apiField.filterType.DataType = `*uint`
-		apiField.createType.Method = internal.ReturnType
-		apiField.createType.DataType = `*uint`
-		apiField.updateType.Method = internal.ReturnType
-		apiField.updateType.DataType = `*uint`
-		apiField.resType.Method = internal.ReturnType
-		apiField.resType.DataType = `*uint`
-	case internal.TypeFloat: // `float等类型`
-		// apiField.filterType.Method = internal.ReturnType
-		apiField.filterType.DataType = `*float64`
-		apiField.createType.Method = internal.ReturnType
-		apiField.createType.DataType = `*float64`
-		apiField.updateType.Method = internal.ReturnType
-		apiField.updateType.DataType = `*float64`
-		apiField.resType.Method = internal.ReturnType
-		apiField.resType.DataType = `*float64`
-	case internal.TypeFloatU: // `float等类型（unsigned）`
+		apiField.resType.DataType = `*` + dataType
+	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	// `float等类型（unsigned）`
 		// apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `*float64`
 		apiField.createType.Method = internal.ReturnType
@@ -332,11 +311,13 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.resType.Method = internal.ReturnType
 		apiField.resType.DataType = `*float64`
 
-		apiField.filterRule.Method = internal.ReturnType
-		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `min:0`)
-		apiField.saveRule.Method = internal.ReturnType
-		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `min:0`)
-	case internal.TypeVarchar: // `varchar类型`
+		if v.FieldType == internal.TypeFloatU {
+			apiField.filterRule.Method = internal.ReturnType
+			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `min:0`)
+			apiField.saveRule.Method = internal.ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `min:0`)
+		}
+	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			apiField.filterType.Method = internal.ReturnType
 			apiField.filterType.DataType = `string`
@@ -352,22 +333,9 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
 		apiField.saveRule.Method = internal.ReturnType
 		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max-length:`+v.FieldLimitStr)
-	case internal.TypeChar: // `char类型`
-		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
-			apiField.filterType.Method = internal.ReturnType
-			apiField.filterType.DataType = `string`
+		if v.FieldType == internal.TypeChar {
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `size:`+v.FieldLimitStr)
 		}
-		apiField.createType.Method = internal.ReturnType
-		apiField.createType.DataType = `*string`
-		apiField.updateType.Method = internal.ReturnType
-		apiField.updateType.DataType = `*string`
-		apiField.resType.Method = internal.ReturnType
-		apiField.resType.DataType = `*string`
-
-		apiField.filterRule.Method = internal.ReturnType
-		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
-		apiField.saveRule.Method = internal.ReturnType
-		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `size:`+v.FieldLimitStr)
 	case internal.TypeText, internal.TypeJson: // `text类型` // `json类型`
 		// apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `string`
@@ -658,20 +626,17 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		apiField := myGenApiField{}
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
-		case internal.TypeInt: // `int等类型` // `int等类型（unsigned）`
+		case internal.TypeInt, internal.TypeIntU: // `int等类型`	// `int等类型（unsigned）`
+			dataType := `int`
+			if v.FieldType == internal.TypeIntU {
+				dataType = `uint`
+			}
 			apiField.createType.Method = internal.ReturnType
-			apiField.createType.DataType = `*[]int`
+			apiField.createType.DataType = `*[]` + dataType
 			apiField.updateType.Method = internal.ReturnType
-			apiField.updateType.DataType = `*[]int`
+			apiField.updateType.DataType = `*[]` + dataType
 			apiField.resType.Method = internal.ReturnType
-			apiField.resType.DataType = `[]int`
-		case internal.TypeIntU: // `int等类型（unsigned）`
-			apiField.createType.Method = internal.ReturnType
-			apiField.createType.DataType = `*[]uint`
-			apiField.updateType.Method = internal.ReturnType
-			apiField.updateType.DataType = `*[]uint`
-			apiField.resType.Method = internal.ReturnType
-			apiField.resType.DataType = `[]uint`
+			apiField.resType.DataType = `[]` + dataType
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型` // `float等类型（unsigned）`
 			apiField.createType.Method = internal.ReturnType
 			apiField.createType.DataType = `*[]float64`

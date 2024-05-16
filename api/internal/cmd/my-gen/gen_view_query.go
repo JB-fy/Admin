@@ -108,17 +108,13 @@ const queryForm = reactive({
 func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
-		case internal.TypeInt:
+		case internal.TypeInt, internal.TypeIntU:
 			ruleOfId := ``
 			if tpl.Handle.Id.List[0].IsAutoInc || tpl.Handle.Id.List[0].FieldTypeName == internal.TypeNameIdSuffix {
 				ruleOfId = ` :min="1"`
 			}
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')"`+ruleOfId+` :controls="false" />
-        </el-form-item>`)
-		case internal.TypeIntU:
-			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
         </el-form-item>`)
 		default:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
@@ -139,27 +135,28 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
-	case internal.TypeInt: // `int等类型`
-		// viewQueryField.form.Method = internal.ReturnType
-		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :controls="false" />`
-	case internal.TypeIntU: // `int等类型（unsigned）`
-		// viewQueryField.form.Method = internal.ReturnType
-		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="0" :controls="false" />`
-	case internal.TypeFloat: // `float等类型`
-		// viewQueryField.form.Method = internal.ReturnType
-		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
-	case internal.TypeFloatU: // `float等类型（unsigned）`
-		// viewQueryField.form.Method = internal.ReturnType
-		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="0" :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
-	case internal.TypeVarchar: // `varchar类型`
-		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
-			viewQueryField.form.Method = internal.ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+	case internal.TypeInt, internal.TypeIntU: // `int等类型`	// `int等类型（unsigned）`
+		attrOfAdd := ``
+		if v.FieldType == internal.TypeIntU {
+			attrOfAdd = ` :min="0"`
 		}
-	case internal.TypeChar: // `char类型`
+		// viewQueryField.form.Method = internal.ReturnType
+		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :controls="false" />`
+	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	// `float等类型（unsigned）`
+		attrOfAdd := ``
+		if v.FieldType == internal.TypeFloatU {
+			attrOfAdd = ` :min="0"`
+		}
+		// viewQueryField.form.Method = internal.ReturnType
+		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
+	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
+			attrOfAdd := ``
+			if v.FieldType == internal.TypeChar {
+				attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`
+			}
 			viewQueryField.form.Method = internal.ReturnType
-			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="` + v.FieldLimitStr + `" maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
+			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
 		}
 	case internal.TypeText: // `text类型`
 	case internal.TypeJson: // `json类型`
