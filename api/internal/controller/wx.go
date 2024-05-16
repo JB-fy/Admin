@@ -51,25 +51,30 @@ func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq
 		err = utils.NewErrorCode(ctx, 99999999, `消息签名错误`)
 		return
 	}
-	decryptByte, err := wxGzhObj.AesDecrypt(encrypt)
-	if err != nil {
-		return
-	}
-	notifyByte, err := wxGzhObj.ParseDecrypt(decryptByte)
+	msgByte, err := wxGzhObj.AesDecrypt(encrypt)
 	if err != nil {
 		return
 	}
 
-	// 微信这个死垃圾没有针对事件给唯一标识，得将数据对每个事件都解析一次才能知道是什么事件（根据自身业务需要增加事件处理）
-	// 关注/取消关注事件
-	notify := wxGzhObj.NotifyOfSubscribe(notifyByte)
-	if notify.MsgType == `event` {
+	notify, err := wxGzhObj.Notify(msgByte)
+	if err != nil {
+		return
+	}
+	encryptMsg := ``
+	switch notify.MsgType {
+	case `event`: //接收事件推送
 		switch notify.Event {
 		case `subscribe`: //关注
-			return
 		case `unsubscribe`: //取消关注
-			return
 		}
+	case `text`: //接收普通消息（文本）
+		/* //回复用户消息（文本）
+		encryptMsg, err = wxGzhObj.EncryptMsg(notify.ToUserName, notify.FromUserName, timestamp, `text`, `测试`)
+		if err != nil {
+			return
+		} */
 	}
+
+	wxGzhObj.NotifyRes(r, notify.FromUserName, notify.ToUserName, nonce, timestamp, encryptMsg)
 	return
 }
