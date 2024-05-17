@@ -555,16 +555,16 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			statusArr[index] = item[0]
 		}
 		statusStr := gstr.Join(statusArr, `,`)
-		apiField.filterRule.Method = internal.ReturnUnion
+		apiField.filterRule.Method = internal.ReturnTypeName
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `in:`+statusStr)
-		apiField.saveRule.Method = internal.ReturnUnion
+		apiField.saveRule.Method = internal.ReturnTypeName
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `in:`+statusStr)
 	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		apiField.filterType.Method = internal.ReturnType
 
-		apiField.filterRule.Method = internal.ReturnUnion
+		apiField.filterRule.Method = internal.ReturnTypeName
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `in:0,1`)
-		apiField.saveRule.Method = internal.ReturnUnion
+		apiField.saveRule.Method = internal.ReturnTypeName
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `in:0,1`)
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		apiField.filterType.Method = internal.ReturnType
@@ -772,10 +772,10 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 				statusArr[index] = item[0]
 			}
 			statusStr := gstr.Join(statusArr, `,`)
-			apiField.saveRule.Method = internal.ReturnUnion
+			apiField.saveRule.Method = internal.ReturnTypeName
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:`+statusStr)
 		case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			apiField.saveRule.Method = internal.ReturnUnion
+			apiField.saveRule.Method = internal.ReturnTypeName
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`)
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
