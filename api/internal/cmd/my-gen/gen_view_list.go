@@ -475,7 +475,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			viewListField.dataKey.Method = internal.ReturnTypeName
 			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}
-	case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
+	case internal.TypeNameSortSuffix, internal.TypeNameLevelSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// level,rank等后缀；	类型：int等类型；
 		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
 		if option.IsUpdate {

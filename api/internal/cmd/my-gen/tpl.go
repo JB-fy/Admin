@@ -317,14 +317,17 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 				tpl.Handle.Pid.Pid = fieldTmp.FieldRaw
 				fieldTmp.FieldLimitInt.Min = `1`
-			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`, `level`, `rank`}).Contains(fieldSuffix) { //sort,num,number,weight,level,rank等后缀
+			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`}).Contains(fieldSuffix) { //sort,num,number,weight等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
+				if fieldSuffix == `sort` {
+					tpl.Handle.Pid.Sort = append(tpl.Handle.Pid.Sort, fieldTmp.FieldRaw)
+				}
+			} else if garray.NewStrArrayFrom([]string{`level`, `rank`}).Contains(fieldSuffix) { //level,rank等后缀
+				fieldTmp.FieldTypeName = internal.TypeNameLevelSuffix
 				if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameLevel
 
 					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
-				} else if fieldSuffix == `sort` {
-					tpl.Handle.Pid.Sort = append(tpl.Handle.Pid.Sort, fieldTmp.FieldRaw)
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				primaryKeyArr := []string{gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1) + `_id`}
@@ -388,11 +391,15 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	/*--------命名类型二次确认的字段 开始--------*/
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
-		case internal.TypeNameLevel, internal.TypeNameIdPath: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；	// idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 			if !tpl.Handle.Pid.IsCoexist {
-				fieldList[k].FieldTypeName = internal.TypeNameSortSuffix
+				fieldList[k].FieldTypeName = internal.TypeNameLevelSuffix
 			} else {
 				fieldList[k].FieldLimitInt.Min = `1`
+			}
+		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			if !tpl.Handle.Pid.IsCoexist {
+				fieldList[k].FieldTypeName = ``
 			}
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			passwordMapKey := internal.GetHandlePasswordMapKey(v.FieldRaw)

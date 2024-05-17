@@ -440,7 +440,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		}
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined ? param.` + dataFieldPath + ` = 0 : null`
-	case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
+	case internal.TypeNameSortSuffix, internal.TypeNameLevelSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// level,rank等后缀；	类型：int等类型；
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
@@ -736,7 +736,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'url', message: t('validation.url') },`)
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
+		case internal.TypeNameSortSuffix, internal.TypeNameLevelSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// level,rank等后缀；	类型：int等类型；
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
