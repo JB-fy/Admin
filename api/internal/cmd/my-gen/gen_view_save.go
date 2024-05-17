@@ -376,7 +376,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.dataInitAfter.Method = internal.ReturnTypeName
 		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + dataFieldPath + ` ? saveCommon.data.` + dataFieldPath + ` : undefined`
 		viewSaveField.rule.Method = internal.ReturnTypeName
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`) + `: saveForm.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` } } }" :props="{ checkStrictly: true, emitPath: false }" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
@@ -431,7 +431,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		if !viewSaveField.isRequired {
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `// { required: true, message: t('validation.required') },`)
 		}
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: 1, message: t('validation.select') },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		if relIdObj.tpl.Handle.Pid.Pid != `` {
 			viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
@@ -607,7 +607,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveField.formContent.Method = internal.ReturnTypeName
 			if relIdObj.tpl.Handle.Pid.Pid != `` {
 				viewSaveField.rule.Method = internal.ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select')/* , defaultField: { type: 'array', defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } } */ },`)
+				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select')/* , defaultField: { type: 'array', defaultField: { type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') } } */ },`)
 
 				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
 
@@ -626,7 +626,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
             }`
 			} else {
 				viewSaveField.rule.Method = internal.ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, message: t('validation.min.number', { min: 1 }) } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
+				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
 				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
 					<my-select v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />

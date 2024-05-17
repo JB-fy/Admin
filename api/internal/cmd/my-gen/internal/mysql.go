@@ -163,9 +163,9 @@ func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, g
 			fieldLimitInt.Max = `18446744073709551615`
 		}
 	}
-	/* if field.IsAutoInc {
+	if field.IsAutoInc {
 		fieldLimitInt.Min = `1`
-	} */
+	}
 	return
 }
 

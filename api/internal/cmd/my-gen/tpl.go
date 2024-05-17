@@ -314,6 +314,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNamePid
 
 				tpl.Handle.Pid.Pid = fieldTmp.FieldRaw
+				fieldTmp.FieldLimitInt.Min = `1`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`, `level`, `rank`}).Contains(fieldSuffix) { //sort,num,number,weight,level,rank等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
 				if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
@@ -330,6 +331,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				}
 				if !garray.NewStrArrayFrom(primaryKeyArr).Contains(fieldTmp.FieldCaseSnake) { // 本表id字段不算
 					fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
+
+					fieldTmp.FieldLimitInt.Min = `1`
 					handleRelIdObj := handleRelId{
 						tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldRaw),
 						FieldName: fieldTmp.FieldName,
@@ -386,6 +389,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		case internal.TypeNameLevel, internal.TypeNameIdPath: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；	// idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = internal.TypeNameSortSuffix
+			} else {
+				fieldList[k].FieldLimitInt.Min = `1`
 			}
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			passwordMapKey := internal.GetHandlePasswordMapKey(v.FieldRaw)

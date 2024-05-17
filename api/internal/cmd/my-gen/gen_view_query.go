@@ -109,12 +109,8 @@ func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case internal.TypeInt, internal.TypeIntU:
-			ruleOfId := ` :min="` + tpl.Handle.Id.List[0].FieldLimitInt.Min + `" :max="` + tpl.Handle.Id.List[0].FieldLimitInt.Max + `"`
-			if tpl.Handle.Id.List[0].IsAutoInc || tpl.Handle.Id.List[0].FieldTypeName == internal.TypeNameIdSuffix {
-				ruleOfId = ` :min="1" :max="` + tpl.Handle.Id.List[0].FieldLimitInt.Max + `"`
-			}
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')"`+ruleOfId+` :controls="false" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`" :max="`+tpl.Handle.Id.List[0].FieldLimitInt.Max+`" :controls="false" />
         </el-form-item>`)
 		default:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
@@ -225,7 +221,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree' }" :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :props="{ checkStrictly: true, emitPath: false }" />`
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 		viewQueryField.form.Method = internal.ReturnTypeName
-		viewQueryField.form.DataTypeName = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="1" :max="` + v.FieldLimitInt.Max + `" :controls="false" />`
+		viewQueryField.form.DataTypeName = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" />`
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 		return myGenViewQueryField{}
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；

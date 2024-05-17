@@ -443,9 +443,6 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterType.Method = internal.ReturnType
 		apiField.createType.Method = internal.ReturnEmpty
 		apiField.updateType.Method = internal.ReturnEmpty
-
-		apiField.filterRule.Method = internal.ReturnUnion
-		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 		// 跳过命名类型处理
 		return
 	case internal.TypePrimaryMany: // 联合主键
@@ -455,9 +452,6 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterType.Method = internal.ReturnType
 		apiField.createType.Method = internal.ReturnEmpty
 		apiField.updateType.Method = internal.ReturnEmpty
-
-		apiField.filterRule.Method = internal.ReturnUnion
-		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 		// 跳过命名类型处理
 		return
 	}
@@ -488,9 +482,6 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterType.Method = internal.ReturnType
 		apiField.createType.Method = internal.ReturnEmpty
 		apiField.updateType.Method = internal.ReturnEmpty
-
-		apiField.filterRule.Method = internal.ReturnUnion
-		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 		apiField.filterType.Method = internal.ReturnEmpty
 		apiField.createType.Method = internal.ReturnEmpty
@@ -543,13 +534,12 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		apiField.filterType.Method = internal.ReturnType
 
-		apiField.filterRule.Method = internal.ReturnUnion
-		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `min:1`)
-		apiField.saveRule.Method = internal.ReturnUnion
-		if apiField.isRequired {
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:1`)
-		} else {
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `min:0`)
+		if !apiField.isRequired {
+			for index, rule := range apiField.saveRule.DataType {
+				if rule == `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max {
+					apiField.saveRule.DataType[index] = `between:0,` + v.FieldLimitInt.Max
+				}
+			}
 		}
 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
@@ -775,8 +765,6 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.saveRule.Method = internal.ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `ip`)
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			apiField.saveRule.Method = internal.ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `min:1`)
 		case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			statusArr := make([]string, len(v.StatusList))
