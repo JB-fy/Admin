@@ -86,7 +86,7 @@ npm run format
 				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
 				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
 				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
-				上面字段都没有时，默认第二个字段
+				上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 
 	字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 

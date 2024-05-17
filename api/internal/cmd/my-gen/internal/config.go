@@ -1,9 +1,41 @@
 package internal
 
+import "github.com/gogf/gf/v2/container/garray"
+
 const ( //配置
 	ConfigMaxLenOfStrFilter = 30  // 字段是TypeVarchar或TypeChar时，字段长度大于该值时，不生成过滤条件
-	ConfigMaxLenOfStrHiddle = 120 // 字段是TypeVarchar或TypeChar时，字段长度大于等于该值时，前端列表字段设置with: 200, hidden: true
+	ConfigMaxLenOfStrHiddle = 120 // 字段是TypeVarchar或TypeChar时，字段长度大于等于该值时，前端列表显示设置with: 200, hidden: true
 )
+
+var (
+	// 当Id和Label找不到符合条件的字段时，排除这些字段后，默认剩余字段中的第一个和第二个
+	ConfigIdAndLabelExcField = []interface{}{
+		TypeNameCreated,
+		TypeNameUpdated,
+		TypeNameDeleted,
+		MyGenFieldArrOfTypeName{
+			FieldTypeName: TypeNameIsPrefix,
+			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
+		},
+		// TypeNameIsPrefix,
+	}
+	// 从上往下，将对应的字段放最后显示
+	ConfigAfterField = []interface{}{
+		TypeNameCreated,
+		TypeNameUpdated,
+		TypeNameDeleted,
+		MyGenFieldArrOfTypeName{
+			FieldTypeName: TypeNameIsPrefix,
+			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
+		},
+		TypeNameIsPrefix,
+	}
+)
+
+type MyGenFieldArrOfTypeName struct {
+	FieldTypeName MyGenFieldTypeName
+	FieldArr      *garray.StrArray
+}
 
 type MyGenTableType = uint
 type MyGenFieldTypePrimary = string

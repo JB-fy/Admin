@@ -36,7 +36,7 @@ type myGenTpl struct {
 	LogicStructName    string                   //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	I18nPath           string                   //前端多语言使用
 	Handle             struct {                 //需特殊处理的字段
-		Id struct { //主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
+		Id struct { //主键列表（无主键时，默认为排除internal.ConfigIdAndLabelExcField过后的第一个字段）。联合主键有多字段，需按顺序存入
 			List      []myGenField
 			IsPrimary bool //是否主键
 		}
@@ -48,7 +48,7 @@ type myGenTpl struct {
 				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
 				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
 				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
-				上面字段都没有时，默认第二个字段
+				上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 		*/
 		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
@@ -411,7 +411,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	/*--------命名类型二次确认的字段 结束--------*/
 
 	/*--------需特殊处理的字段解析 开始--------*/
-	//主键列表（无主键时，默认第一个字段）。联合主键有多字段，需按顺序存入
+	//主键列表（无主键时，默认为排除internal.ConfigIdAndLabelExcField过后的第一个字段）。联合主键有多字段，需按顺序存入
 	for _, key := range tpl.KeyList {
 		if !key.IsPrimary {
 			continue
@@ -427,9 +427,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 		break
 	}
-	if len(tpl.Handle.Id.List) == 0 {
-		tpl.Handle.Id.List = append(tpl.Handle.Id.List, fieldList[0])
-	}
 	/*
 		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
 			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -438,7 +435,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			表名去掉前缀 + Email > 主键去掉ID + Email > Email >
 			表名去掉前缀 + Account > 主键去掉ID + Account > Account >
 			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
-			上面字段都没有时，默认第二个字段
+			上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 	*/
 	labelList := []string{}
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
@@ -463,8 +460,42 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			}
 		}
 	}
-	if len(tpl.Handle.LabelList) == 0 {
-		tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1].FieldRaw)
+
+	if len(tpl.Handle.Id.List) == 0 || len(tpl.Handle.LabelList) == 0 {
+		idAndLabelfieldList := []myGenField{}
+		for _, v := range tpl.FieldList {
+			isFind := false
+			for _, afterField := range internal.ConfigIdAndLabelExcField {
+				switch val := afterField.(type) {
+				case internal.MyGenFieldTypeName:
+					if val == v.FieldTypeName {
+						isFind = true
+					}
+				case internal.MyGenFieldArrOfTypeName:
+					if val.FieldTypeName == v.FieldTypeName && val.FieldArr.Contains(v.FieldRaw) {
+						isFind = true
+					}
+				}
+			}
+			if !isFind {
+				idAndLabelfieldList = append(idAndLabelfieldList, v)
+			}
+		}
+
+		if len(tpl.Handle.Id.List) == 0 {
+			if len(idAndLabelfieldList) > 0 {
+				tpl.Handle.Id.List = append(tpl.Handle.Id.List, idAndLabelfieldList[0])
+			} else {
+				tpl.Handle.Id.List = append(tpl.Handle.Id.List, fieldList[0])
+			}
+		}
+		if len(tpl.Handle.LabelList) == 0 {
+			if len(idAndLabelfieldList) > 1 {
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, idAndLabelfieldList[1].FieldRaw)
+			} else {
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1].FieldRaw)
+			}
+		}
 	}
 
 	//id后缀字段
@@ -489,33 +520,29 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 	tpl.FieldList = fieldList
 
-	/* for _, v := range tpl.FieldList {
-		if v.FieldTypeName == internal.TypeNameIsPrefix && v.FieldCaseCamel != `IsStop` {
-			tpl.FieldListOfAfter = append(tpl.FieldListOfAfter, v)
-			continue
-		}
-	} */
-	for _, v := range tpl.FieldList {
-		if v.FieldTypeName == internal.TypeNameIsPrefix && v.FieldCaseCamel == `IsStop` {
-			tpl.FieldListOfAfter = append(tpl.FieldListOfAfter, v)
-			break
-		}
-	}
-	fieldTypeNameArrAfter := []string{internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated}
-	for _, fieldTypeName := range fieldTypeNameArrAfter {
+	afterFieldArr := garray.NewStrArray()
+	for _, afterField := range internal.ConfigAfterField {
 		for _, v := range tpl.FieldList {
-			if fieldTypeName == v.FieldTypeName {
-				tpl.FieldListOfAfter = append(tpl.FieldListOfAfter, v)
+			isFind := false
+			switch val := afterField.(type) {
+			case internal.MyGenFieldTypeName:
+				if val == v.FieldTypeName {
+					isFind = true
+				}
+			case internal.MyGenFieldArrOfTypeName:
+				if val.FieldTypeName == v.FieldTypeName && val.FieldArr.Contains(v.FieldRaw) {
+					isFind = true
+				}
+			}
+			if isFind && !afterFieldArr.Contains(v.FieldRaw) {
+				tpl.FieldListOfAfter = append([]myGenField{v}, tpl.FieldListOfAfter...)
+				afterFieldArr.Append(v.FieldRaw)
 				break
 			}
 		}
 	}
-	fieldArrOfAfter := []string{}
-	for _, v := range tpl.FieldListOfAfter {
-		fieldArrOfAfter = append(fieldArrOfAfter, v.FieldRaw)
-	}
 	for _, v := range tpl.FieldList {
-		if !garray.NewStrArrayFrom(fieldArrOfAfter).Contains(v.FieldRaw) {
+		if !afterFieldArr.Contains(v.FieldRaw) {
 			tpl.FieldListOfDefault = append(tpl.FieldListOfDefault, v)
 		}
 	}

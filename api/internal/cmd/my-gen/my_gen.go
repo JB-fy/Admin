@@ -25,7 +25,8 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 表字段名统一使用小驼峰或蛇形命名（建议：小驼峰）
 	尽量根据表名设置以下两个字段（作用1：常用于前端部分组件，如my-select或my-cascader等组件；作用2：用于关联表查询）
 		xxId主键字段。示例：good表命名goodId, good_category表命名categoryId
-			注意：考虑兼容旧数据库，主键可命名为id（id命名只允许用于独立主键，表其它字段禁用；表是联合主键则全表禁用）
+			注意1：如果不存在xxId主键字段，默认为排除internal.ConfigIdAndLabelExcField过后的第一个字段
+			注意2：考虑兼容旧数据库，主键可命名为id，但只允许用于独立主键，表其它字段禁用；表是联合主键则全表禁用
 		xxName或xxTitle字段。示例：good表命名goodName, article表命名articleTitle
 			注意：如果不存在xxName或xxTitle字段，按以下优先级使用
 				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
@@ -34,7 +35,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
 				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
 				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
-				上面字段都没有时，默认第二个字段
+				上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 
 	字段都必须有注释。以下符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用
 
