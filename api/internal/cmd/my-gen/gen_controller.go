@@ -406,8 +406,7 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-	case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-	case internal.TypeNameVideoSuffix: // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
+	case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 	}
 	/*--------根据字段命名类型处理 结束--------*/
@@ -450,7 +449,7 @@ func getControllerExtendMiddleMany(tplEM handleExtendMiddle) (controller myGenCo
 			isShow = false
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			isShow = false
-		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
+		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 			if v.FieldType != internal.TypeVarchar {
 				isShow = false
 			}

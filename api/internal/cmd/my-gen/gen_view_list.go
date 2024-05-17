@@ -630,6 +630,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     </el-scrollbar>,
                 ]
             }`
+	case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		viewListField.hidden.Method = internal.ReturnEmpty
 		viewListField.cellRenderer.Method = internal.ReturnTypeName

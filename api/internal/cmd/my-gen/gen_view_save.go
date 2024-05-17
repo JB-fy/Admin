@@ -491,7 +491,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 			viewSaveField.formContent.Method = internal.ReturnTypeName
 			viewSaveField.formContent.DataTypeName = `<el-input v-model="saveForm.data.` + dataFieldPath + `" type="textarea" :autosize="{ minRows: 3 }" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" />`
 		}
-	case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
+	case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 		if v.FieldType == internal.TypeVarchar {
 			viewSaveField.rule.Method = internal.ReturnUnion
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'url', trigger: 'change', message: t('validation.upload') },`)
@@ -503,10 +503,13 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		if v.FieldType != internal.TypeVarchar {
 			attrOfAdd += ` :multiple="true"`
 		}
-		if v.FieldTypeName == internal.TypeNameVideoSuffix {
-			attrOfAdd += ` accept="video/*" :isImage="false"`
-		} else {
+		switch v.FieldTypeName {
+		case internal.TypeNameImageSuffix:
 			attrOfAdd += ` accept="image/*"`
+		case internal.TypeNameVideoSuffix:
+			attrOfAdd += ` accept="video/*" :isImage="false"`
+		case internal.TypeNameFileSuffix:
+			attrOfAdd += ` :isImage="false"`
 		}
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + dataFieldPath + `"` + attrOfAdd + ` />`
@@ -632,17 +635,20 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 					<my-select v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
                     <!-- <my-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->`
 			}
-		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
+		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 			if v.FieldType == internal.TypeVarchar {
 				isReturn = true
 
 				viewSaveField.rule.Method = internal.ReturnTypeName
 				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.upload'), defaultField: { type: 'url', message: t('validation.url') } },	// 限制数组数量时用：max: 10, message: t('validation.max.upload', { max: 10 })`)
 				attrOfAdd := ` :multiple="true"`
-				if v.FieldTypeName == internal.TypeNameVideoSuffix {
-					attrOfAdd += ` accept="video/*" :isImage="false"`
-				} else {
+				switch v.FieldTypeName {
+				case internal.TypeNameImageSuffix:
 					attrOfAdd += ` accept="image/*"`
+				case internal.TypeNameVideoSuffix:
+					attrOfAdd += ` accept="video/*" :isImage="false"`
+				case internal.TypeNameFileSuffix:
+					attrOfAdd += ` :isImage="false"`
 				}
 				viewSaveField.formContent.Method = internal.ReturnTypeName
 				viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + tplEM.FieldVar + `"` + attrOfAdd + ` />`
@@ -748,7 +754,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
 				viewSaveFieldTmp.formContent.DataTypeName = `<el-input type="textarea" :autosize="{ minRows: 3 }" maxlength="` + v.FieldLimitStr + `" :show-word-limit="true" />`
 			}
-		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text // video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
+		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 		case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		}
 		/*--------根据字段命名类型处理 结束--------*/
