@@ -17,7 +17,6 @@ var (
 			FieldTypeName: TypeNameIsPrefix,
 			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
 		},
-		// TypeNameIsPrefix,
 	}
 	// 从上往下，将对应的字段放最后显示
 	ConfigAfterField = []interface{}{
