@@ -145,7 +145,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		// viewQueryField.form.Method = internal.ReturnType
 		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + gconv.String(v.FieldLimitFloat.Precision) + `" :controls="false" />`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
+		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			attrOfAdd := ``
 			if v.FieldType == internal.TypeChar {
 				attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`
@@ -248,7 +248,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		}
 	case internal.TypeNameSortSuffix: // sort,num,number,weight等后缀；	类型：int等类型；
 		return myGenViewQueryField{}
-	case internal.TypeNameLevelSuffix: // level,rank等后缀；	类型：int等类型；
+	case internal.TypeNameNoSuffix: // no,level,rank等后缀；	类型：int等类型；
 		viewQueryField.form.Method = internal.ReturnType
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewQueryField.form.Method = internal.ReturnTypeName

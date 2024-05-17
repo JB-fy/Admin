@@ -322,8 +322,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				if fieldSuffix == `sort` {
 					tpl.Handle.Pid.Sort = append(tpl.Handle.Pid.Sort, fieldTmp.FieldRaw)
 				}
-			} else if garray.NewStrArrayFrom([]string{`level`, `rank`}).Contains(fieldSuffix) { //level,rank等后缀
-				fieldTmp.FieldTypeName = internal.TypeNameLevelSuffix
+			} else if garray.NewStrArrayFrom([]string{`no`, `level`, `rank`}).Contains(fieldSuffix) { //no,level,rank等后缀
+				fieldTmp.FieldTypeName = internal.TypeNameNoSuffix
 				if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameLevel
 
@@ -393,7 +393,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		switch v.FieldTypeName {
 		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 			if !tpl.Handle.Pid.IsCoexist {
-				fieldList[k].FieldTypeName = internal.TypeNameLevelSuffix
+				fieldList[k].FieldTypeName = internal.TypeNameNoSuffix
 			} else {
 				fieldList[k].FieldLimitInt.Min = `1`
 			}
