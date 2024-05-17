@@ -239,8 +239,11 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 			ruleOfId := []string{}
 			ruleOfIdArr := []string{`distinct`}
 			if tpl.Handle.Id.List[0].IsAutoInc || tpl.Handle.Id.List[0].FieldTypeName == internal.TypeNameIdSuffix {
-				ruleOfId = append(ruleOfId, `min:1`)
-				ruleOfIdArr = append(ruleOfIdArr, `foreach`, `min:1`)
+				ruleOfId = append(ruleOfId, `between:1,`+tpl.Handle.Id.List[0].FieldLimitInt.Max)
+				ruleOfIdArr = append(ruleOfIdArr, `foreach`, `between:1,`+tpl.Handle.Id.List[0].FieldLimitInt.Max)
+			} else {
+				ruleOfId = append(ruleOfId, `between:`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`,`+tpl.Handle.Id.List[0].FieldLimitInt.Max)
+				ruleOfIdArr = append(ruleOfIdArr, `foreach`, `between:`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`,`+tpl.Handle.Id.List[0].FieldLimitInt.Max)
 			}
 			api.filterOfFixed = append(api.filterOfFixed,
 				`Id *`+dataType+" `"+`json:"id,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"ID"`+"`",
@@ -301,6 +304,11 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.updateType.DataType = `*` + dataType
 		apiField.resType.Method = internal.ReturnType
 		apiField.resType.DataType = `*` + dataType
+
+		apiField.filterRule.Method = internal.ReturnType
+		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max)
+		apiField.saveRule.Method = internal.ReturnType
+		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max)
 	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	// `float等类型（unsigned）`
 		// apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `*float64`
@@ -311,11 +319,21 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.resType.Method = internal.ReturnType
 		apiField.resType.DataType = `*float64`
 
-		if v.FieldType == internal.TypeFloatU {
+		if v.FieldLimitFloat.Min != `` && v.FieldLimitFloat.Max != `` {
 			apiField.filterRule.Method = internal.ReturnType
-			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `min:0`)
+			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `between:`+v.FieldLimitFloat.Min+`,`+v.FieldLimitFloat.Max)
 			apiField.saveRule.Method = internal.ReturnType
-			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `min:0`)
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `between:`+v.FieldLimitFloat.Min+`,`+v.FieldLimitFloat.Max)
+		} else if v.FieldLimitFloat.Min != `` {
+			apiField.filterRule.Method = internal.ReturnType
+			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `min:`+v.FieldLimitFloat.Min)
+			apiField.saveRule.Method = internal.ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `min:`+v.FieldLimitFloat.Min)
+		} else if v.FieldLimitFloat.Max != `` {
+			apiField.filterRule.Method = internal.ReturnType
+			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max:`+v.FieldLimitFloat.Max)
+			apiField.saveRule.Method = internal.ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max:`+v.FieldLimitFloat.Max)
 		}
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		if gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
@@ -332,9 +350,10 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.Method = internal.ReturnType
 		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `max-length:`+v.FieldLimitStr)
 		apiField.saveRule.Method = internal.ReturnType
-		apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max-length:`+v.FieldLimitStr)
 		if v.FieldType == internal.TypeChar {
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `size:`+v.FieldLimitStr)
+		} else {
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max-length:`+v.FieldLimitStr)
 		}
 	case internal.TypeText, internal.TypeJson: // `text类型` // `json类型`
 		// apiField.filterType.Method = internal.ReturnType
@@ -538,8 +557,6 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+relIdObj.SuffixCaseCamel+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
 		}
 	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-		apiField.saveRule.Method = internal.ReturnUnion
-		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `between:0,100`)
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		apiField.filterType.Method = internal.ReturnType
 
@@ -637,6 +654,11 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.updateType.DataType = `*[]` + dataType
 			apiField.resType.Method = internal.ReturnType
 			apiField.resType.DataType = `[]` + dataType
+
+			apiField.filterRule.Method = internal.ReturnType
+			apiField.filterRule.DataType = append(apiField.filterRule.DataType, `foreach`, `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max)
+			apiField.saveRule.Method = internal.ReturnType
+			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max)
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型` // `float等类型（unsigned）`
 			apiField.createType.Method = internal.ReturnType
 			apiField.createType.DataType = `*[]float64`
@@ -644,9 +666,22 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.updateType.DataType = `*[]float64`
 			apiField.resType.Method = internal.ReturnType
 			apiField.resType.DataType = `[]float64`
-			if v.FieldType == internal.TypeFloatU {
+
+			if v.FieldLimitFloat.Min != `` && v.FieldLimitFloat.Max != `` {
+				apiField.filterRule.Method = internal.ReturnType
+				apiField.filterRule.DataType = append(apiField.filterRule.DataType, `foreach`, `between:`+v.FieldLimitFloat.Min+`,`+v.FieldLimitFloat.Max)
 				apiField.saveRule.Method = internal.ReturnType
-				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:0`)
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `between:`+v.FieldLimitFloat.Min+`,`+v.FieldLimitFloat.Max)
+			} else if v.FieldLimitFloat.Min != `` {
+				apiField.filterRule.Method = internal.ReturnType
+				apiField.filterRule.DataType = append(apiField.filterRule.DataType, `foreach`, `min:`+v.FieldLimitFloat.Min)
+				apiField.saveRule.Method = internal.ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `min:`+v.FieldLimitFloat.Min)
+			} else if v.FieldLimitFloat.Max != `` {
+				apiField.filterRule.Method = internal.ReturnType
+				apiField.filterRule.DataType = append(apiField.filterRule.DataType, `foreach`, `max:`+v.FieldLimitFloat.Max)
+				apiField.saveRule.Method = internal.ReturnType
+				apiField.saveRule.DataType = append(apiField.saveRule.DataType, `foreach`, `max:`+v.FieldLimitFloat.Max)
 			}
 		/* // 注释掉的类型当作字符串处理
 		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
@@ -743,8 +778,6 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.saveRule.Method = internal.ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `min:1`)
 		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			apiField.saveRule.Method = internal.ReturnUnion
-			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `between:0,100`)
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			statusArr := make([]string, len(v.StatusList))
 			for index, item := range v.StatusList {

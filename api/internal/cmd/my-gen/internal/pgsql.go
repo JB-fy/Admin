@@ -157,6 +157,9 @@ func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, g
 		fieldLimitInt.Min = `-9223372036854775808`
 		fieldLimitInt.Max = `9223372036854775807`
 	}
+	/* if field.IsAutoInc {
+		fieldLimitInt.Min = `1`
+	} */
 	return
 }
 

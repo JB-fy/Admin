@@ -250,28 +250,29 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 			viewSaveField.dataInitBefore.Method = internal.ReturnType
 			viewSaveField.dataInitBefore.DataType = defaultVal
 		}
-		rule := `{ type: 'integer', trigger: 'change', message: t('validation.input') },`
-		attrOfAdd := ``
-		if v.FieldType == internal.TypeIntU {
-			rule = `{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },`
-			attrOfAdd = ` :min="0"`
-		}
 		viewSaveField.rule.Method = internal.ReturnType
-		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, rule)
+		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :controls="false" :value-on-clear="` + defaultVal + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" :value-on-clear="` + defaultVal + `" />`
 	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	 // `float等类型（unsigned）`
 		defaultVal := gconv.Float64(v.Default)
 		if defaultVal != 0 {
 			viewSaveField.dataInitBefore.Method = internal.ReturnType
 			viewSaveField.dataInitBefore.DataType = gconv.String(v.Default)
 		}
-		rule := `{ type: 'number', trigger: 'change', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`
+		rule := `{ type: 'number', trigger: 'change', message: t('validation.input') },`
 		attrOfAdd := ``
-		if v.FieldType == internal.TypeFloatU {
-			rule = `{ type: 'number', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`
-			attrOfAdd = ` :min="0"`
+		if v.FieldLimitFloat.Min != `` && v.FieldLimitFloat.Max != `` {
+			rule = `{ type: 'number', trigger: 'change', min: ` + v.FieldLimitFloat.Min + `, max: ` + v.FieldLimitFloat.Max + `, message: t('validation.between.number', { min: ` + v.FieldLimitFloat.Min + `, max: ` + v.FieldLimitFloat.Max + ` }) },`
+			attrOfAdd = ` :min="` + v.FieldLimitFloat.Min + `" :max="` + v.FieldLimitFloat.Max + `"`
+		} else if v.FieldLimitFloat.Min != `` {
+			rule = `{ type: 'number', trigger: 'change', min: ` + v.FieldLimitFloat.Min + `, message: t('validation.min.number', { min: ` + v.FieldLimitFloat.Min + ` }) },`
+			attrOfAdd = ` :min="` + v.FieldLimitFloat.Min + `"`
+		} else if v.FieldLimitFloat.Max != `` {
+			rule = `{ type: 'number', trigger: 'change', max: ` + v.FieldLimitFloat.Max + `, message: t('validation.max.number', { max: ` + v.FieldLimitFloat.Max + ` }) },`
+			attrOfAdd = ` :max="` + v.FieldLimitFloat.Max + `"`
 		}
+		rule += `    // type: 'float'在值为0时验证不能通过`
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, rule)
 		viewSaveField.formContent.Method = internal.ReturnType
@@ -441,9 +442,9 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined ? param.` + dataFieldPath + ` = 0 : null`
 	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 		viewSaveField.rule.Method = internal.ReturnTypeName
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: 0, max: 100, message: t('validation.between.number', { min: 0, max: 100 }) },`)
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />
+		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />
                     <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		defaultVal := gconv.String(v.Default)
@@ -654,16 +655,10 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 		switch v.FieldType {
 		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
-			rule := `{ type: 'integer', message: t('validation.input') },`
-			attrOfAdd := ``
-			if v.FieldType == internal.TypeIntU {
-				rule = `{ type: 'integer', min: 0, message: t('validation.min.number', { min: 0 }) },`
-				attrOfAdd = ` :min="0"`
-			}
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
-			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, rule)
+			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number` + attrOfAdd + ` :controls="false" />`
+			viewSaveFieldTmp.formContent.DataType = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" />`
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 			rule := `{ type: 'number', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`
 			attrOfAdd := ``
@@ -727,9 +722,9 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: 0, max: 100, message: t('validation.between.number', { min: 0, max: 100 }) },`)
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="0" :max="100" :step="1" /* :step-strictly="true" controls-position="right" */ />`
+			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" /* :step-strictly="true" controls-position="right" */ />`
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)

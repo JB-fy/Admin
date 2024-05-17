@@ -163,6 +163,9 @@ func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, g
 			fieldLimitInt.Max = `18446744073709551615`
 		}
 	}
+	/* if field.IsAutoInc {
+		fieldLimitInt.Min = `1`
+	} */
 	return
 }
 
@@ -176,9 +179,9 @@ func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 	if gstr.Pos(field.FieldTypeRaw, `decimal`) != -1 /* || gstr.Pos(field.FieldTypeRaw, `float`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 */ {
 		fieldLimitFloat.Max = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision) + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
 		fieldLimitFloat.Min = `-` + fieldLimitFloat.Max
-		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
-			fieldLimitFloat.Min = `0`
-		}
+	}
+	if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+		fieldLimitFloat.Min = `0`
 	}
 	return
 }

@@ -493,11 +493,11 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                             model-value={currentVal}
                             placeholder={t('` + i18nPath + `.tip.` + v.FieldRaw + `')}
                             precision={0}
-                            min={0}
-                            max={100}
+                            min={` + v.FieldLimitInt.Min + `}
+                            max={` + v.FieldLimitInt.Max + `}
                             step={1}
                             step-strictly={true}
-                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + v.FieldRaw + `是0或100时，只一个按钮可点击
+                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + v.FieldRaw + `最小值或最大值时，只一个按钮可点击
                             controls-position="right"
                             onChange={(val: number) => (currentVal = val)}
                             onBlur={() => {
