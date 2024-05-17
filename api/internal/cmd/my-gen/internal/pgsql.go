@@ -110,31 +110,6 @@ func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (key
 	return
 }
 
-func (dbHandler pgsql) GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string) {
-	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field.FieldRaw+`'`)
-	fieldLimitStr = fieldInfo[`character_maximum_length`].String()
-	return
-}
-
-func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) {
-	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field.FieldRaw+`'`)
-	fieldLimitFloat = [2]string{fieldInfo[`numeric_precision_radix`].String(), fieldInfo[`numeric_scale`].String()}
-	return
-}
-
-func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int) {
-	fieldLimitInt = 4
-	switch field.FieldTypeRaw {
-	case `int2`:
-		fieldLimitInt = 2
-	case `int4`:
-		fieldLimitInt = 4
-	case `int8`:
-		fieldLimitInt = 8
-	}
-	return
-}
-
 func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
 	switch field.FieldTypeRaw {
 	case `int2`, `int4`, `int8`: //int等类型
@@ -157,6 +132,45 @@ func (dbHandler pgsql) GetFieldType(ctx context.Context, field MyGenField, group
 		fieldType = TypeDate
 	case `time`: //time类型
 		fieldType = TypeTime
+	}
+	return
+}
+
+func (dbHandler pgsql) GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string) {
+	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field.FieldRaw+`'`)
+	fieldLimitStr = fieldInfo[`character_maximum_length`].String()
+	return
+}
+
+func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt MyGenFieldLimitInt) {
+	switch field.FieldTypeRaw {
+	case `int2`:
+		fieldLimitInt.Size = 2
+		fieldLimitInt.Min = `-32768`
+		fieldLimitInt.Max = `32767`
+	case `int4`:
+		fieldLimitInt.Size = 4
+		fieldLimitInt.Min = `-8388608`
+		fieldLimitInt.Max = `8388607`
+	case `int8`:
+		fieldLimitInt.Size = 8
+		fieldLimitInt.Min = `-9223372036854775808`
+		fieldLimitInt.Max = `9223372036854775807`
+	}
+	return
+}
+
+func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat MyGenFieldLimitFloat) {
+	fieldInfo, _ := g.DB(group).GetOne(ctx, `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '`+table+`' AND column_name = '`+field.FieldRaw+`'`)
+	switch field.FieldTypeRaw {
+	case `numeric`:
+		fieldLimitFloat.Size = fieldInfo[`numeric_precision`].Int()
+		fieldLimitFloat.Precision = fieldInfo[`numeric_scale`].Int()
+		fieldLimitFloat.Max = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision) + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
+		fieldLimitFloat.Min = `-` + fieldLimitFloat.Max
+	case `float4`, `float8`:
+		fieldLimitFloat.Size = 10
+		fieldLimitFloat.Precision = 2
 	}
 	return
 }

@@ -275,7 +275,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, rule)
 		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + v.FieldLimitFloat[1] + `" :controls="false" :value-on-clear="` + gconv.String(v.Default) + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + gconv.String(v.FieldLimitFloat.Precision) + `" :controls="false" :value-on-clear="` + gconv.String(v.Default) + `" />`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		rule := `{ type: 'string', trigger: 'blur', max: ` + v.FieldLimitStr + `, message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`
 		attrOfAdd := ``
@@ -674,7 +674,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
 			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, rule)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number` + attrOfAdd + ` :precision="` + v.FieldLimitFloat[1] + `" :controls="false" />`
+			viewSaveFieldTmp.formContent.DataType = `<el-input-number` + attrOfAdd + ` :precision="` + gconv.String(v.FieldLimitFloat.Precision) + `" :controls="false" />`
 		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 			rule := `{ type: 'string', max: ` + v.FieldLimitStr + `, message: t('validation.max.string', { max: ` + v.FieldLimitStr + ` }) },`
 			attrOfAdd := ``

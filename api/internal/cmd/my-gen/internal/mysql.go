@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type mysql struct {
@@ -84,33 +85,6 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 	return
 }
 
-func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string) {
-	fieldLimitStrTmp, _ := gregex.MatchString(`.*\((\d*)\)`, field.FieldTypeRaw)
-	if len(fieldLimitStrTmp) > 1 {
-		fieldLimitStr = fieldLimitStrTmp[1]
-	}
-	return
-}
-
-func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int) {
-	fieldLimitInt = 4
-	if gstr.Pos(field.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
-		fieldLimitInt = 2
-	} else if gstr.Pos(field.FieldTypeRaw, `bigint`) != -1 {
-		fieldLimitInt = 8
-	}
-	return
-}
-
-func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) {
-	fieldLimitFloatTmp, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, field.FieldTypeRaw)
-	if len(fieldLimitFloatTmp) < 3 {
-		fieldLimitFloatTmp = []string{``, `10`, `2`}
-	}
-	fieldLimitFloat = [2]string{fieldLimitFloatTmp[1], fieldLimitFloatTmp[2]}
-	return
-}
-
 func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType) {
 	if gstr.Pos(field.FieldTypeRaw, `int`) != -1 && gstr.Pos(field.FieldTypeRaw, `point`) == -1 { //int等类型
 		fieldType = TypeInt
@@ -138,6 +112,73 @@ func (dbHandler mysql) GetFieldType(ctx context.Context, field MyGenField, group
 		fieldType = TypeTimestamp
 	} else if gstr.Pos(field.FieldTypeRaw, `time`) != -1 { //time类型
 		fieldType = TypeTime
+	}
+	return
+}
+
+func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string) {
+	fieldLimitStrTmp, _ := gregex.MatchString(`.*\((\d*)\)`, field.FieldTypeRaw)
+	if len(fieldLimitStrTmp) > 1 {
+		fieldLimitStr = fieldLimitStrTmp[1]
+	}
+	return
+}
+
+func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt MyGenFieldLimitInt) {
+	fieldLimitInt.Size = 4
+	if gstr.Pos(field.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
+		fieldLimitInt.Size = 2
+	} else if gstr.Pos(field.FieldTypeRaw, `bigint`) != -1 {
+		fieldLimitInt.Size = 8
+	}
+	switch fieldLimitInt.Size {
+	case 2:
+		if gstr.Pos(field.FieldTypeRaw, `tinyint`) != -1 {
+			fieldLimitInt.Min = `-128`
+			fieldLimitInt.Max = `127`
+			if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+				fieldLimitInt.Min = `0`
+				fieldLimitInt.Max = `255`
+			}
+		} else {
+			fieldLimitInt.Min = `-32768`
+			fieldLimitInt.Max = `32767`
+			if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+				fieldLimitInt.Min = `0`
+				fieldLimitInt.Max = `65535`
+			}
+		}
+	case 4:
+		fieldLimitInt.Min = `-8388608`
+		fieldLimitInt.Max = `8388607`
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+			fieldLimitInt.Min = `0`
+			fieldLimitInt.Max = `16777215`
+		}
+	case 8:
+		fieldLimitInt.Min = `-9223372036854775808`
+		fieldLimitInt.Max = `9223372036854775807`
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+			fieldLimitInt.Min = `0`
+			fieldLimitInt.Max = `18446744073709551615`
+		}
+	}
+	return
+}
+
+func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat MyGenFieldLimitFloat) {
+	fieldLimitFloatTmp, _ := gregex.MatchString(`.*\((\d*),(\d*)\)`, field.FieldTypeRaw)
+	if len(fieldLimitFloatTmp) < 3 {
+		fieldLimitFloatTmp = []string{``, `10`, `2`}
+	}
+	fieldLimitFloat.Size = gconv.Int(fieldLimitFloatTmp[1])
+	fieldLimitFloat.Precision = gconv.Int(fieldLimitFloatTmp[2])
+	if gstr.Pos(field.FieldTypeRaw, `decimal`) != -1 /* || gstr.Pos(field.FieldTypeRaw, `float`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 */ {
+		fieldLimitFloat.Max = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision) + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
+		fieldLimitFloat.Min = `-` + fieldLimitFloat.Max
+		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+			fieldLimitFloat.Min = `0`
+		}
 	}
 	return
 }

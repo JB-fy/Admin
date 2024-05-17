@@ -396,7 +396,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
 	case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
-		switch v.FieldLimitInt {
+		switch v.FieldLimitInt.Size {
 		case 2:
 			viewListField.width.DataType = `100`
 		case 8:

@@ -17,14 +17,14 @@ const (
 )
 
 type MyGenDbHandler interface {
-	GetTableArr(ctx context.Context, group string) (tableArr []string)                                         // 获取数据库表数组
-	GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField)                            // 获取表字段列表
-	GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey)                                  // 获取表索引列表
-	GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string)        // 获取字符串字段限制
-	GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt int)           // 获取整数字段限制。2字节，4字节，8字节
-	GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat [2]string) // 获取浮点数字段限制
-	GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType)        // 获取字段类型
-	GetFuncFieldFormat(dbFuncCode MyGenDbFuncCode, field string) (fieldFormat string)                          // 获取用于部分函数的字段格式
+	GetTableArr(ctx context.Context, group string) (tableArr []string)                                                    // 获取数据库表数组
+	GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField)                                       // 获取表字段列表
+	GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey)                                             // 获取表索引列表
+	GetFieldType(ctx context.Context, field MyGenField, group, table string) (fieldType MyGenFieldType)                   // 获取字段类型
+	GetFieldLimitStr(ctx context.Context, field MyGenField, group, table string) (fieldLimitStr string)                   // 获取字符串字段限制
+	GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt MyGenFieldLimitInt)       // 获取整数字段限制
+	GetFieldLimitFloat(ctx context.Context, field MyGenField, group, table string) (fieldLimitFloat MyGenFieldLimitFloat) // 获取浮点数字段限制
+	GetFuncFieldFormat(dbFuncCode MyGenDbFuncCode, field string) (fieldFormat string)                                     // 获取用于部分函数的字段格式
 }
 
 type MyGenField struct {
@@ -41,6 +41,19 @@ type MyGenKey struct {
 	IsPrimary bool     // 是否主键
 	IsUnique  bool     // 是否唯一
 	IsAutoInc bool     // 是否自增
+}
+
+type MyGenFieldLimitInt struct {
+	Size int    // 2字节，4字节，8字节
+	Min  string // 最小值
+	Max  string // 最大值
+}
+
+type MyGenFieldLimitFloat struct {
+	Size      int    // 位数（含小数位）
+	Precision int    // 小数位
+	Min       string // 最小值
+	Max       string // 最大值
 }
 
 type common struct{}

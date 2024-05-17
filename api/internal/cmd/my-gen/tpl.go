@@ -82,8 +82,8 @@ type myGenField struct {
 	FieldTip             string                         // 字段提示。由注释解析出来，前端提示用。
 	StatusList           [][2]string                    // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 	FieldLimitStr        string                         // 字符串字段限制。varchar表示最大长度；char表示长度；
-	FieldLimitInt        int                            // 整数字段限制。2字节，4字节，8字节
-	FieldLimitFloat      [2]string                      // 浮点数字段限制。第1个表示整数位，第2个表示小数位
+	FieldLimitInt        internal.MyGenFieldLimitInt    // 整数字段限制
+	FieldLimitFloat      internal.MyGenFieldLimitFloat  // 浮点数字段限制
 	FieldShowLenMax      int                            // 显示长度。公式：汉字个数 + (其它字符个数 / 2)。前端el-select-v2等部分组件生成时，根据该值设置宽度
 }
 
@@ -190,11 +190,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		})
 
 		fieldTmp.FieldShowLenMax = internal.GetShowLen(fieldTmp.FieldName)
-
 		fieldTmp.FieldLimitStr = tpl.DbHandler.GetFieldLimitStr(ctx, v, tpl.Group, tpl.Table)
-
 		fieldTmp.FieldLimitInt = tpl.DbHandler.GetFieldLimitInt(ctx, v, tpl.Group, tpl.Table)
-
 		fieldTmp.FieldLimitFloat = tpl.DbHandler.GetFieldLimitFloat(ctx, v, tpl.Group, tpl.Table)
 
 		/*--------确定字段数据类型 开始--------*/
