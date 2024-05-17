@@ -57,7 +57,7 @@ type myGenTpl struct {
 			Pid       string   //父级字段
 			Level     string   //层级字段
 			IdPath    string   //层级路径字段
-			Sort      []string //排序字段
+			Sort      []string //排序字段列表（当有排序字段时，树状列表对这些字段做正序排序）
 		}
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
 		ExtendTableOneList  []handleExtendMiddle   //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为不递增主键或唯一索引
