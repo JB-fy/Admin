@@ -663,12 +663,19 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
 			viewSaveFieldTmp.formContent.DataType = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" />`
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
-			rule := `{ type: 'number', message: t('validation.input') },    // type: 'float'在值为0时验证不能通过`
+			rule := `{ type: 'number', message: t('validation.input') },`
 			attrOfAdd := ``
-			if v.FieldType == internal.TypeFloatU {
-				rule = `{ type: 'number', min: 0, message: t('validation.min.number', { min: 0 }) },    // type: 'float'在值为0时验证不能通过`
-				attrOfAdd = ` :min="0"`
+			if v.FieldLimitFloat.Min != `` && v.FieldLimitFloat.Max != `` {
+				rule = `{ type: 'number', min: ` + v.FieldLimitFloat.Min + `, max: ` + v.FieldLimitFloat.Max + `, message: t('validation.between.number', { min: ` + v.FieldLimitFloat.Min + `, max: ` + v.FieldLimitFloat.Max + ` }) },`
+				attrOfAdd = ` :min="` + v.FieldLimitFloat.Min + `" :max="` + v.FieldLimitFloat.Max + `"`
+			} else if v.FieldLimitFloat.Min != `` {
+				rule = `{ type: 'number', min: ` + v.FieldLimitFloat.Min + `, message: t('validation.min.number', { min: ` + v.FieldLimitFloat.Min + ` }) },`
+				attrOfAdd = ` :min="` + v.FieldLimitFloat.Min + `"`
+			} else if v.FieldLimitFloat.Max != `` {
+				rule = `{ type: 'number', max: ` + v.FieldLimitFloat.Max + `, message: t('validation.max.number', { max: ` + v.FieldLimitFloat.Max + ` }) },`
+				attrOfAdd = ` :max="` + v.FieldLimitFloat.Max + `"`
 			}
+			rule += `    // type: 'float'在值为0时验证不能通过`
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
 			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, rule)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
