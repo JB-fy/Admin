@@ -146,7 +146,7 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 			viewI18nField.name.Method = internal.ReturnTypeName
 			viewI18nField.name.DataTypeName = `'` + relIdObj.FieldName + `'`
 		}
-	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
 		viewI18nField.tip.Method = internal.ReturnTypeName
 		viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
@@ -233,9 +233,11 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
-			viewI18nField.tip.Method = internal.ReturnTypeName
-			viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
+		case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
+			if v.FieldTip != `` {
+				viewI18nField.tip.Method = internal.ReturnTypeName
+				viewI18nField.tip.DataTypeName = `'` + v.FieldTip + `'`
+			}
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewI18nField.status.Method = internal.ReturnTypeName
 			if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {

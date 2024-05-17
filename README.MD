@@ -101,7 +101,6 @@ npm run format
 			层级路径	命名：idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 				建议直接使用text，当level层级大时，不用考虑字符长度问题。
 				当level层级不大时，可使用varchar，但必须设置足够的字段长度，否则会丢失路径后面的部分字符。
-			排序		命名：sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 
 		常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
 			密码		命名：password,passwd后缀；		类型：char(32)；

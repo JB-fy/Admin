@@ -440,12 +440,15 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		}
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined ? param.` + dataFieldPath + ` = 0 : null`
-	case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />
+		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />`
+		if v.FieldTip != `` {
+			viewSaveField.formContent.DataTypeName += `
                     <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
+		}
 	case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		defaultVal := gconv.String(v.Default)
 		if defaultVal == `` {
@@ -720,7 +723,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'url', message: t('validation.url') },`)
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case internal.TypeNameSortSuffix, internal.TypeNameSort: // sort,num,number,weight,level,rank等后缀；	类型：int等类型； // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameSortSuffix: // sort,num,number,weight,level,rank等后缀；	类型：int等类型；
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName

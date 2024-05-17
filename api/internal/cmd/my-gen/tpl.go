@@ -53,11 +53,11 @@ type myGenTpl struct {
 		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
 		Pid         struct {                  //pid,level,idPath|id_path同时存在时，需特殊处理
-			IsCoexist bool   //是否同时存在pid,level,idPath|id_path
-			Pid       string //父级字段
-			Level     string //层级字段
-			IdPath    string //层级路径字段
-			Sort      string //排序字段
+			IsCoexist bool     //是否同时存在pid,level,idPath|id_path
+			Pid       string   //父级字段
+			Level     string   //层级字段
+			IdPath    string   //层级路径字段
+			Sort      []string //排序字段
 		}
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
 		ExtendTableOneList  []handleExtendMiddle   //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表主键同名的字段，且字段设为不递增主键或唯一索引
@@ -316,14 +316,12 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Pid.Pid = fieldTmp.FieldRaw
 			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`, `level`, `rank`}).Contains(fieldSuffix) { //sort,num,number,weight,level,rank等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
-				if fieldTmp.FieldRaw == `sort` { //sort，且pid,level,idPath|id_path,sort同时存在时（才）有效。该命名类型需做二次确定
-					fieldTmp.FieldTypeName = internal.TypeNameSort
-
-					tpl.Handle.Pid.Sort = fieldTmp.FieldRaw
-				} else if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
+				if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameLevel
 
 					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
+				} else if fieldSuffix == `sort` {
+					tpl.Handle.Pid.Sort = append(tpl.Handle.Pid.Sort, fieldTmp.FieldRaw)
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 				primaryKeyArr := []string{gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1) + `_id`}
@@ -386,10 +384,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
 		case internal.TypeNameLevel, internal.TypeNameIdPath: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；	// idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
-			if !tpl.Handle.Pid.IsCoexist {
-				fieldList[k].FieldTypeName = ``
-			}
-		case internal.TypeNameSort: // sort，且pid,level,idPath|id_path,sort同时存在时（才）有效；	类型：int等类型；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = internal.TypeNameSortSuffix
 			}
