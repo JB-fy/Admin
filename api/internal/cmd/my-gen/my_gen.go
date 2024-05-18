@@ -29,7 +29,7 @@ APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user 
 		扩展表各字段功能独立，故当存在除主表id字段外的其它id后缀字段时，这些id后缀字段在更新时，都可设为0，不会删除与主表id对应的记录。且扩展表记录一般只在主表做删除时，才会删除
 		中间表其它非id后缀字段，功能都是依赖于id后缀字段存在的，故当除主表id字段外的其它id后缀字段在更新时，如果都设为0，会删除与主表id对应的记录
 
-表字段名统一使用小驼峰或蛇形命名（建议：小驼峰）
+表字段名统一使用蛇形或小驼峰命名（建议：蛇形。mysql两者都支持；postgresql仅支持蛇形；）
 	尽量根据表名设置以下两个字段（作用1：常用于前端部分组件，如my-select或my-cascader等组件；作用2：用于关联表查询）
 		xxId主键字段。示例：good表命名goodId, good_category表命名categoryId
 			注意1：如果不存在xxId主键字段，默认为排除internal.ConfigIdAndLabelExcField过后的第一个字段
