@@ -16,19 +16,21 @@ type UserListReq struct {
 }
 
 type UserListFilter struct {
-	Id             *uint       `json:"id,omitempty" v:"min:1" dc:"ID"`
-	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|min:1" dc:"ID数组"`
-	ExcId          *uint       `json:"exc_id,omitempty" v:"min:1" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|min:1" dc:"排除ID数组"`
+	Id             *uint       `json:"id,omitempty" v:"between:1,16777215" dc:"ID"`
+	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,16777215" dc:"ID数组"`
+	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,16777215" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|between:1,16777215" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	UserId         *uint       `json:"user_id,omitempty" v:"min:1" dc:"用户ID"`
+	UserId         *uint       `json:"user_id,omitempty" v:"between:1,16777215" dc:"用户ID"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account        string      `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
+	OpenIdOfWx     string      `json:"open_id_of_wx,omitempty" v:"max-length:128" dc:"微信openId"`
+	UnionIdOfWx    string      `json:"union_id_of_wx,omitempty" v:"max-length:64" dc:"微信unionId"`
 	IdCardName     string      `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
 	IdCardNo       string      `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -65,7 +67,7 @@ type UserListItem struct {
 type UserInfoReq struct {
 	g.Meta `path:"/user/info" method:"post" tags:"平台后台/用户管理/用户" sm:"详情"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
-	Id     uint     `json:"id" v:"required|min:1" dc:"ID"`
+	Id     uint     `json:"id" v:"required|between:1,16777215" dc:"ID"`
 }
 
 type UserInfoRes struct {
@@ -97,7 +99,7 @@ type UserInfo struct {
 /*--------修改 开始--------*/
 type UserUpdateReq struct {
 	g.Meta `path:"/user/update" method:"post" tags:"平台后台/用户管理/用户" sm:"修改"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|min:1" dc:"ID数组"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,16777215" dc:"ID数组"`
 	/* Phone       *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
 	Account     *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password    *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`

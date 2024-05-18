@@ -316,7 +316,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNamePid
 
 				tpl.Handle.Pid.Pid = fieldTmp.FieldRaw
-				fieldTmp.FieldLimitInt.Min = `1`
+				// fieldTmp.FieldLimitInt.Min = `1`
 			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`}).Contains(fieldSuffix) { //sort,num,number,weight等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
 				if fieldSuffix == `sort` {

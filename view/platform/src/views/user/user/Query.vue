@@ -47,7 +47,7 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :controls="false" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="16777215" :controls="false" />
         </el-form-item>
         <el-form-item prop="phone">
             <el-input v-model="queryCommon.data.phone" :placeholder="t('user.user.name.phone')" maxlength="30" :clearable="true" />
@@ -63,6 +63,12 @@ const queryForm = reactive({
         </el-form-item>
         <el-form-item prop="birthday">
             <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
+        </el-form-item>
+        <el-form-item prop="open_id_of_wx">
+            <el-input v-model="queryCommon.data.open_id_of_wx" :placeholder="t('user.user.name.open_id_of_wx')" maxlength="128" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="union_id_of_wx">
+            <el-input v-model="queryCommon.data.union_id_of_wx" :placeholder="t('user.user.name.union_id_of_wx')" maxlength="64" :clearable="true" />
         </el-form-item>
         <el-form-item prop="id_card_name">
             <el-input v-model="queryCommon.data.id_card_name" :placeholder="t('user.user.name.id_card_name')" maxlength="30" :clearable="true" />

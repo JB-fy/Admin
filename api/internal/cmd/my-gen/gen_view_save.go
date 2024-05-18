@@ -610,7 +610,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveField.formContent.Method = internal.ReturnTypeName
 			if relIdObj.tpl.Handle.Pid.Pid != `` {
 				viewSaveField.rule.Method = internal.ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select')/* , defaultField: { type: 'array', defaultField: { type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') } } */ },`)
+				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select') },`)
 
 				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
 

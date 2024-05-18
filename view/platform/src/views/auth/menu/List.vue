@@ -40,6 +40,46 @@ const table = reactive({
             key: 'menu_name',
             align: 'center',
             width: 150,
+            cellRenderer: (props: any): any => {
+                if (!props.rowData?.editMenuName?.isEdit) {
+                    return [
+                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editMenuName = { isEdit: true, oldValue: props.rowData.menu_name })}>
+                            {props.rowData.menu_name}
+                        </div>,
+                    ]
+                }
+                let currentRef: any
+                return [
+                    <el-input
+                        ref={(el: any) => {
+                            el?.focus()
+                            currentRef = el
+                        }}
+                        v-model={props.rowData.menu_name}
+                        placeholder={t('auth.menu.name.menu_name')}
+                        maxlength={30}
+                        show-word-limit={true}
+                        onBlur={() => {
+                            props.rowData.editMenuName.isEdit = false
+                            if (props.rowData.menu_name == props.rowData.editMenuName.oldValue) {
+                                return
+                            }
+                            if (!props.rowData.menu_name) {
+                                props.rowData.menu_name = props.rowData.editMenuName.oldValue
+                                return
+                            }
+                            handleUpdate({ id_arr: [props.rowData.id], menu_name: props.rowData.menu_name }).catch(() => (props.rowData.menu_name = props.rowData.editMenuName.oldValue))
+                        }}
+                        onKeydown={(event: any) => {
+                            switch (event.keyCode) {
+                                case 13: //13：Enter键 27：Esc键 32：空格键
+                                    currentRef?.blur()
+                                    break
+                            }
+                        }}
+                    />,
+                ]
+            },
         },
         {
             dataKey: 'scene_name',
@@ -116,55 +156,45 @@ const table = reactive({
             width: 100,
             sortable: true,
             cellRenderer: (props: any): any => {
-                if (props.rowData.editSort) {
-                    let currentRef: any
-                    let currentVal = props.rowData.sort
+                if (!props.rowData?.editSort?.isEdit) {
                     return [
-                        <el-input-number
-                            ref={(el: any) => {
-                                currentRef = el
-                                el?.focus()
-                            }}
-                            model-value={currentVal}
-                            placeholder={t('auth.menu.tip.sort')}
-                            precision={0}
-                            min={0}
-                            max={100}
-                            step={1}
-                            step-strictly={true}
-                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；sort是0或100时，只一个按钮可点击
-                            controls-position="right"
-                            onChange={(val: number) => (currentVal = val)}
-                            onBlur={() => {
-                                props.rowData.editSort = false
-                                if ((currentVal || currentVal === 0) && currentVal != props.rowData.sort) {
-                                    handleUpdate({
-                                        id_arr: [props.rowData.id],
-                                        sort: currentVal,
-                                    })
-                                        .then((res) => {
-                                            props.rowData.sort = currentVal
-                                        })
-                                        .catch((error) => {})
-                                }
-                            }}
-                            onKeydown={(event: any) => {
-                                switch (event.keyCode) {
-                                    // case 27:    //Esc键：Escape
-                                    // case 32:    //空格键：" "
-                                    case 13: //Enter键：Enter
-                                        // props.rowData.editSort = false    //也会触发onBlur事件
-                                        currentRef?.blur()
-                                        break
-                                }
-                            }}
-                        />,
+                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editSort = { isEdit: true, oldValue: props.rowData.sort })}>
+                            {props.rowData.sort}
+                        </div>,
                     ]
                 }
+                let currentRef: any
                 return [
-                    <div class="inline-edit" onClick={() => (props.rowData.editSort = true)}>
-                        {props.rowData.sort}
-                    </div>,
+                    <el-input-number
+                        ref={(el: any) => {
+                            el?.focus()
+                            currentRef = el
+                        }}
+                        v-model={props.rowData.sort}
+                        placeholder={t('auth.menu.tip.sort')}
+                        precision={0}
+                        min={0}
+                        max={255}
+                        controls={false}
+                        onBlur={() => {
+                            props.rowData.editSort.isEdit = false
+                            if (props.rowData.sort == props.rowData.editSort.oldValue) {
+                                return
+                            }
+                            if (!(props.rowData.sort || props.rowData.sort === 0)) {
+                                props.rowData.sort = props.rowData.editSort.oldValue
+                                return
+                            }
+                            handleUpdate({ id_arr: [props.rowData.id], sort: props.rowData.sort }).catch(() => (props.rowData.sort = props.rowData.editSort.oldValue))
+                        }}
+                        onKeydown={(event: any) => {
+                            switch (event.keyCode) {
+                                case 13: //13：Enter键 27：Esc键 32：空格键
+                                    currentRef?.blur()
+                                    break
+                            }
+                        }}
+                    />,
                 ]
             },
         },
@@ -183,17 +213,8 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
+                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
-                        onChange={(val: number) => {
-                            handleUpdate({
-                                id_arr: [props.rowData.id],
-                                is_stop: val,
-                            })
-                                .then((res) => {
-                                    props.rowData.is_stop = val
-                                })
-                                .catch((error) => {})
-                        }}
                     />,
                 ]
             },

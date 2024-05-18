@@ -40,6 +40,46 @@ const table = reactive({
             key: 'role_name',
             align: 'center',
             width: 150,
+            cellRenderer: (props: any): any => {
+                if (!props.rowData?.editRoleName?.isEdit) {
+                    return [
+                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editRoleName = { isEdit: true, oldValue: props.rowData.role_name })}>
+                            {props.rowData.role_name}
+                        </div>,
+                    ]
+                }
+                let currentRef: any
+                return [
+                    <el-input
+                        ref={(el: any) => {
+                            el?.focus()
+                            currentRef = el
+                        }}
+                        v-model={props.rowData.role_name}
+                        placeholder={t('auth.role.name.role_name')}
+                        maxlength={30}
+                        show-word-limit={true}
+                        onBlur={() => {
+                            props.rowData.editRoleName.isEdit = false
+                            if (props.rowData.role_name == props.rowData.editRoleName.oldValue) {
+                                return
+                            }
+                            if (!props.rowData.role_name) {
+                                props.rowData.role_name = props.rowData.editRoleName.oldValue
+                                return
+                            }
+                            handleUpdate({ id_arr: [props.rowData.id], role_name: props.rowData.role_name }).catch(() => (props.rowData.role_name = props.rowData.editRoleName.oldValue))
+                        }}
+                        onKeydown={(event: any) => {
+                            switch (event.keyCode) {
+                                case 13: //13：Enter键 27：Esc键 32：空格键
+                                    currentRef?.blur()
+                                    break
+                            }
+                        }}
+                    />,
+                ]
+            },
         },
         {
             dataKey: 'scene_name',
@@ -70,17 +110,8 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
+                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
-                        onChange={(val: number) => {
-                            handleUpdate({
-                                id_arr: [props.rowData.id],
-                                is_stop: val,
-                            })
-                                .then((res) => {
-                                    props.rowData.is_stop = val
-                                })
-                                .catch((error) => {})
-                        }}
                     />,
                 ]
             },
