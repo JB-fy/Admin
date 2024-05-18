@@ -27,11 +27,17 @@ var (
 			FieldTypeName: TypeNameIsPrefix,
 			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
 		},
+		MyGenFieldArrOfTypeName{
+			FieldType:     TypeText,
+			FieldTypeName: TypeNameRemarkSuffix,
+			FieldArr:      garray.NewStrArray(),
+		},
 		TypeNameIsPrefix,
 	}
 )
 
 type MyGenFieldArrOfTypeName struct {
+	FieldType     MyGenFieldType
 	FieldTypeName MyGenFieldTypeName
 	FieldArr      *garray.StrArray
 }
