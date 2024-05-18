@@ -43,7 +43,7 @@ export const useAdminStore = defineStore('admin', {
                         url: 'https://goframe.org/#all-updates',
                         children: [],
                     },
-                    {
+                    /* {
                         i18n: {
                             title: {
                                 en: 'Hyperf',
@@ -52,6 +52,28 @@ export const useAdminStore = defineStore('admin', {
                         },
                         icon: 'autoicon-ep-chrome-filled',
                         url: 'https://www.hyperf.io/',
+                        children: [],
+                    }, */
+                    {
+                        i18n: {
+                            title: {
+                                en: 'Vue',
+                                'zh-cn': 'Vue',
+                            },
+                        },
+                        icon: 'autoicon-ep-chrome-filled',
+                        url: 'https://cn.vuejs.org/api/',
+                        children: [],
+                    },
+                    {
+                        i18n: {
+                            title: {
+                                en: 'Icon',
+                                'zh-cn': '图标',
+                            },
+                        },
+                        icon: 'autoicon-ep-help',
+                        url: 'https://github.com/antfu/unplugin-icons',
                         children: [],
                     },
                     {
@@ -74,28 +96,6 @@ export const useAdminStore = defineStore('admin', {
                         },
                         icon: 'vant-wechat-moments',
                         url: 'https://vant-contrib.gitee.io/vant/#/zh-CN',
-                        children: [],
-                    },
-                    {
-                        i18n: {
-                            title: {
-                                en: 'Vue',
-                                'zh-cn': 'Vue',
-                            },
-                        },
-                        icon: 'autoicon-ep-chrome-filled',
-                        url: 'https://cn.vuejs.org/api/',
-                        children: [],
-                    },
-                    {
-                        i18n: {
-                            title: {
-                                en: 'Icon',
-                                'zh-cn': '图标',
-                            },
-                        },
-                        icon: 'autoicon-ep-help',
-                        url: 'https://github.com/antfu/unplugin-icons',
                         children: [],
                     },
                 ],
