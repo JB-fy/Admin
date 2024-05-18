@@ -463,6 +463,49 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewListField{}
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
+		if option.IsUpdate {
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
+			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
+                    return [
+                        <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
+                            {props.rowData.` + v.FieldRaw + `}
+                        </div>,
+                    ]
+                }
+                let currentRef: any
+                return [
+                    <el-input
+                        ref={(el: any) => {
+                            el?.focus()
+                            currentRef = el
+                        }}
+                        v-model={props.rowData.` + v.FieldRaw + `}
+                        placeholder={t('` + i18nPath + `.name.` + v.FieldRaw + `')}
+                        maxlength={` + v.FieldLimitStr + `}
+                        show-word-limit={true}
+                        onBlur={() => {
+                            props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.isEdit = false
+                            if (props.rowData.` + v.FieldRaw + ` == props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue) {
+                                return
+                            }
+                            if (!props.rowData.` + v.FieldRaw + `) {
+                                props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue
+                                return
+                            }
+                            handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
+                        }}
+                        onKeydown={(event: any) => {
+                            switch (event.keyCode) {
+                                case 13: //13：Enter键 27：Esc键 32：空格键
+                                    currentRef?.blur()
+                                    break
+                            }
+                        }}
+                    />,
+                ]
+            }`
+		}
 	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
 	case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
 	case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
@@ -480,56 +523,50 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		viewListField.sortable.DataTypeName = `true`
 		if option.IsUpdate {
 			viewListField.cellRenderer.Method = internal.ReturnTypeName
+			attrOfAdd := `placeholder={t('` + i18nPath + `.name.` + v.FieldRaw + `')}`
+			if v.FieldTip != `` {
+				attrOfAdd = `placeholder={t('` + i18nPath + `.tip.` + v.FieldRaw + `')}`
+			}
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
-                if (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `) {
-                    let currentRef: any
-                    let currentVal = props.rowData.` + v.FieldRaw + `
+                if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
-                        <el-input-number
-                            ref={(el: any) => {
-                                currentRef = el
-                                el?.focus()
-                            }}
-                            model-value={currentVal}
-                            placeholder={t('` + i18nPath + `.tip.` + v.FieldRaw + `')}
-                            precision={0}
-                            min={` + v.FieldLimitInt.Min + `}
-                            max={` + v.FieldLimitInt.Max + `}
-                            step={1}
-                            step-strictly={true}
-                            controls={false} //控制按钮会导致诸多问题。如：焦点丢失；` + v.FieldRaw + `最小值或最大值时，只一个按钮可点击
-                            controls-position="right"
-                            onChange={(val: number) => (currentVal = val)}
-                            onBlur={() => {
-                                props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = false
-                                if ((currentVal || currentVal === 0) && currentVal != props.rowData.` + v.FieldRaw + `) {
-                                    handleUpdate({
-                                        ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id],
-                                        ` + v.FieldRaw + `: currentVal,
-                                    })
-                                        .then((res) => {
-                                            props.rowData.` + v.FieldRaw + ` = currentVal
-                                        })
-                                        .catch((error) => {})
-                                }
-                            }}
-                            onKeydown={(event: any) => {
-                                switch (event.keyCode) {
-                                    // case 27:    //Esc键：Escape
-                                    // case 32:    //空格键：" "
-                                    case 13: //Enter键：Enter
-                                        // props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = false    //也会触发onBlur事件
-                                        currentRef?.blur()
-                                        break
-                                }
-                            }}
-                        />,
+                        <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
+                            {props.rowData.` + v.FieldRaw + `}
+                        </div>,
                     ]
                 }
+                let currentRef: any
                 return [
-                    <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = true)}>
-                        {props.rowData.` + v.FieldRaw + `}
-                    </div>,
+                    <el-input-number
+                        ref={(el: any) => {
+                            el?.focus()
+                            currentRef = el
+                        }}
+                        v-model={props.rowData.` + v.FieldRaw + `}
+                        ` + attrOfAdd + `
+                        precision={0}
+                        min={` + v.FieldLimitInt.Min + `}
+                        max={` + v.FieldLimitInt.Max + `}
+                        controls={false}
+                        onBlur={() => {
+                            props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.isEdit = false
+                            if (props.rowData.` + v.FieldRaw + ` == props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue) {
+                                return
+                            }
+                            if (!(props.rowData.` + v.FieldRaw + ` || props.rowData.` + v.FieldRaw + ` === 0)) {
+                                props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue
+                                return
+                            }
+                            handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
+                        }}
+                        onKeydown={(event: any) => {
+                            switch (event.keyCode) {
+                                case 13: //13：Enter键 27：Esc键 32：空格键
+                                    currentRef?.blur()
+                                    break
+                            }
+                        }}
+                    />,
                 ]
             }`
 		}
@@ -544,16 +581,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
-			cellRendererStr = `onChange={(val: number) => {
-                            handleUpdate({
-                                ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id],
-                                ` + v.FieldRaw + `: val,
-                            })
-                                .then((res) => {
-                                    props.rowData.` + v.FieldRaw + ` = val
-                                })
-                                .catch((error) => {})
-                        }}`
+			cellRendererStr = `onChange={(val: number) => handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
 		}
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
@@ -565,8 +593,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                         ` + cellRendererStr + `
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]
             }`
