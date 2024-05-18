@@ -789,12 +789,12 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
-		apiField.saveRule.DataTypeName = append([]string{`distinct`}, apiField.saveRule.DataTypeName...)
+		// apiField.saveRule.DataTypeName = append([]string{`distinct`}, apiField.saveRule.GetData()...)
 		if apiField.createType.GetData() != `` {
-			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(apiField.saveRule.GetData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
+			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
 		}
 		if apiField.updateType.GetData() != `` {
-			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(apiField.saveRule.GetData(), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
+			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`列表"`+"`")
 		}
 		if apiField.resType.GetData() != `` {
 			api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.resType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"`+v.FieldDesc+`列表"`+"`")

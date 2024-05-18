@@ -468,7 +468,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
-                        <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
+                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
                             {props.rowData.` + v.FieldRaw + `}
                         </div>,
                     ]
@@ -530,7 +530,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
-                        <div class="inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
+                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
                             {props.rowData.` + v.FieldRaw + `}
                         </div>,
                     ]

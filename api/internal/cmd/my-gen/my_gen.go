@@ -1,5 +1,7 @@
 /*
-后台常用生成示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
+后台常用生成示例：
+	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/场景 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=1
+
 APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefixCommon= -removePrefixAlone= -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isResetLogic=0
 
 强烈建议搭配Git使用
