@@ -104,27 +104,27 @@ npm run format
 				当level层级不大时，可使用varchar，但必须设置足够的字段长度，否则会丢失路径后面的部分字符。
 
 		常用命名(字段含[_of_]时，会忽略[_of_]及其之后的部分)：
-			密码			命名：password,passwd后缀；								类型：char(32)；
+			密码			命名：password,passwd后缀；										类型：char(32)；
 			密码盐 			命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-			名称			命名：name,title后缀；									类型：varchar；
-			标识			命名：code后缀；										类型：varchar；
-			账号			命名：account后缀；										类型：varchar；
-			手机			命名：phone,mobile后缀；								类型：varchar；
-			邮箱			命名：email后缀；										类型：varchar；
-			链接			命名：url,link后缀；									类型：varchar；
-			IP				命名：IP后缀；											类型：varchar；
-			关联ID			命名：id后缀；											类型：int等类型；
-			排序|数量|权重	命名：sort,num,number,weight等后缀；					类型：int等类型；
-			编号|层级|等级	命名：no,level,rank等后缀；								类型：int等类型；
-			状态|类型		命名：status,type,method,pos,position,gender等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			是否			命名：is_前缀；											类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
-			开始时间		命名：start_前缀；										类型：datetime或date或timestamp或time；
-			结束时间		命名：end_前缀；										类型：datetime或date或timestamp或time；
-			(富)文本		命名：remark,desc,msg,message,intro,content后缀；		类型：varchar或text；	前端对应组件：varchar文本输入框，text富文本编辑器
+			名称			命名：name,title后缀；											类型：varchar；
+			标识			命名：code后缀；												类型：varchar；
+			账号			命名：account后缀；												类型：varchar；
+			手机			命名：phone,mobile后缀；										类型：varchar；
+			邮箱			命名：email后缀；												类型：varchar；
+			链接			命名：url,link后缀；											类型：varchar；
+			IP				命名：IP后缀；													类型：varchar；
+			关联ID			命名：id后缀；													类型：int等类型；
+			排序|数量|权重	命名：sort,num,number,weight等后缀；							类型：int等类型；
+			编号|层级|等级	命名：no,level,rank等后缀；										类型：int等类型；
+			状态|类型		命名：status,type,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			是否			命名：is_前缀；													类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			开始时间		命名：start_前缀；												类型：datetime或date或timestamp或time；
+			结束时间		命名：end_前缀；												类型：datetime或date或timestamp或time；
+			(富)文本		命名：remark,desc,msg,message,intro,content后缀；				类型：varchar或text；	前端对应组件：varchar文本输入框，text富文本编辑器
 			图片			命名：icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
-			视频			命名：video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text
-			文件			命名：file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
-			数组			命名：list,arr等后缀；									类型：json或text；
+			视频			命名：video,video_list,videoList,video_arr,videoArr等后缀；		类型：单视频varchar，多视频json或text
+			文件			命名：file,file_list,fileList,file_arr,fileArr等后缀；			类型：单文件varchar，多文件json或text
+			数组			命名：list,arr等后缀；											类型：json或text；
 ```
 
 2.使用./main myGen命令自动生成代码（参数参考api/internal/cmd/my-gen/my_gen.go内结构体myGenOption的字段注释）
