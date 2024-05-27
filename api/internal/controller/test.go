@@ -29,14 +29,14 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 				wg.Add(1)
 				go func(record gdb.Record) {
 					defer wg.Done()
-					fmt.Println(daoAuth.Action.Ctx(ctx).Where(`actionId`, record[`actionId`]).Value(`actionId`))
-					fmt.Println(daoAuth.Action.Ctx(ctx).Where(`actionId`, record[`actionId`]).Value(`actionName`))
+					fmt.Println(daoAuth.Action.Ctx(ctx).Where(daoAuth.Action.Columns().ActionId, record[daoAuth.Action.Columns().ActionId]).Value(daoAuth.Action.Columns().ActionId))
+					fmt.Println(daoAuth.Action.Ctx(ctx).Where(daoAuth.Action.Columns().ActionId, record[daoAuth.Action.Columns().ActionId]).Value(daoAuth.Action.Columns().ActionName))
 				}(record)
 			}
 			wg.Wait()
 			return
 		},
-	}).Limit(5).All() */
+	}).Limit(20).All() */
 
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
