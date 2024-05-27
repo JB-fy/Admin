@@ -140,7 +140,7 @@ func (daoThis *sceneDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
-			if err != nil {
+			if err != nil || len(result) == 0 {
 				return
 			}
 			for _, record := range result {
