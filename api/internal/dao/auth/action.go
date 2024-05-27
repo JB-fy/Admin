@@ -10,6 +10,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -171,10 +172,14 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
-			if err != nil {
+			if err != nil || len(result) == 0 {
 				return
 			}
-			for _, record := range result {
+
+			var wg sync.WaitGroup
+			wg.Add(len(result))
+			afterFieldHandleFunc := func(record gdb.Record) {
+				defer wg.Done()
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
 					case `scene_id_arr`:
@@ -191,6 +196,10 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 					}
 				} */
 			}
+			for _, record := range result {
+				go afterFieldHandleFunc(record)
+			}
+			wg.Wait()
 			return
 		},
 	}

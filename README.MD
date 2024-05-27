@@ -7,10 +7,10 @@
 </div>
 <div align=center>
 <img src="https://img.shields.io/badge/Golang-1.21-blue"/>
-<img src="https://img.shields.io/badge/GoFrame-2.7.0-lightBlue"/>
+<img src="https://img.shields.io/badge/GoFrame-2.7.1-lightBlue"/>
 <img src="https://img.shields.io/badge/Node-18.16.0-blue"/>
 <img src="https://img.shields.io/badge/Vue-3.2.38-brightgreen"/>
-<img src="https://img.shields.io/badge/Element Plus-2.7.1-green"/>
+<img src="https://img.shields.io/badge/Element Plus-2.6.3-green"/>
 </div>
 
 # 重要提示
