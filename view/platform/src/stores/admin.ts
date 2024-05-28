@@ -9,6 +9,7 @@ export const useAdminStore = defineStore('admin', {
             menuTree: [] as { i18n: { title: { [propName: string]: string } }; icon: string; url: string; children: { [propName: string]: any }[] }[], //菜单树。单个菜单格式：{ i18n: { title: {"语言标识":"标题",...} }, icon: 图标, url: 链接地址, children: [子集]}
             menuList: [] as { i18n: { title: { [propName: string]: string } }; icon: string; url: string; menuChain: { [propName: string]: any }[] }[], //菜单列表。单个菜单格式：{ i18n: { title: {"语言标识":"标题",...} }, icon: 图标, url: 链接地址, menuChain: [菜单链（包含自身）]}
             menuTabList: [] as { keepAlive: boolean; componentName: string; i18n: { title: { [propName: string]: string } }; icon: string; url: string; closable: boolean }[], //菜单标签列表
+            actionCodeArr: [] as string[], //操作权限标识数组
             //开发工具菜单。只在开发模式显示（即import.meta.env.DEV为true）
             menuTreeOfDev: {
                 i18n: {
@@ -332,6 +333,15 @@ export const useAdminStore = defineStore('admin', {
             const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/menu/tree')
             const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
             this.menuTree = handleMenuTree(tree)
+        },
+        /**
+         * 设置操作权限标识数组
+         */
+        async setActionCodeArr() {
+            const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/action/list')
+            this.actionCodeArr = res.data.list.map((item:any)=>{
+                return item.actionCode
+            })
         },
         /**
          * 退出登录

@@ -185,6 +185,7 @@ router.beforeEach(async (to: any) => {
         try {
             await adminStore.setInfo() //记录用户信息
             await adminStore.setMenuTree() //设置左侧菜单
+            await adminStore.setActionCodeArr() //设置操作权限标识数组
         } catch (error) {
             return false
         }
