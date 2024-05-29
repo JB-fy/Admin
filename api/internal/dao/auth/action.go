@@ -97,26 +97,34 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
-			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`=>场景id, `login_id`: 登录身份id}
+			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`: 场景id, `login_id`: 登录身份id}
 				val := gconv.Map(v)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
-				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
+				/* tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
-				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
+				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel)) */
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
 					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
 						continue
 					}
-					tableRole := Role.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRole+`.`+Role.Columns().IsStop, 0)
+					roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Fields(Role.Columns().RoleId).Filter(`self_role`, val).Array()
+					if len(roleIdArr) == 0 {
+						m = m.Where(`1 = 0`)
+						continue
+					}
+					/* // 不想联表RoleRelToAction时用
+					actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Array(RoleRelToAction.Columns().ActionId)
+					if len(roleIdArr) == 0 {
+						m = m.Where(`1 = 0`)
+						continue
+					}
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ActionId, actionIdArr) */
 					tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
+					m = m.Where(tableRoleRelToAction+`.`+RoleRelToAction.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))
-					m = m.Handler(daoThis.ParseJoin(tableRole, daoModel))
 
-					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
+					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
 				default:
 					m = m.Where(`1 = 0`)
 				}
@@ -390,12 +398,8 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
 		case ActionRelToScene.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+ActionRelToScene.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ActionId)
-		case Role.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Role.Columns().RoleId+` = `+RoleRelToAction.ParseDbTable(m.GetCtx())+`.`+RoleRelToAction.Columns().RoleId)
 		case RoleRelToAction.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ActionId)
-		case RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+RoleRelToAction.ParseDbTable(m.GetCtx())+`.`+RoleRelToAction.Columns().RoleId)
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().ActionId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ActionId)
 		}
