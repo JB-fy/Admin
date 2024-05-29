@@ -16,8 +16,6 @@ type ActionListRes struct {
 type ActionListItem struct {
 	Id         *uint   `json:"id,omitempty" dc:"ID"`
 	Label      *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	ActionId   *uint   `json:"action_id,omitempty" dc:"操作ID"`
-	ActionName *string `json:"action_name,omitempty" dc:"操作名称"`
 	ActionCode *string `json:"action_code,omitempty" dc:"操作标识"`
 }
 
