@@ -16,7 +16,7 @@ import Save from './Save.vue'`
 	}
 	tplView += `
 
-const { t, tm } = useI18n()
+const { t } = useI18n()
 const adminStore = useAdminStore()
 
 const authAction: { [propName: string]: boolean } = {

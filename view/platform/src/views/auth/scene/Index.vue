@@ -3,7 +3,7 @@ import List from './List.vue'
 import Query from './Query.vue'
 import Save from './Save.vue'
 
-const { t, tm } = useI18n()
+const { t } = useI18n()
 const adminStore = useAdminStore()
 
 const authAction: { [propName: string]: boolean } = {

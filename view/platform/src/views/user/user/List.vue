@@ -1,6 +1,8 @@
 <script setup lang="tsx">
 const { t, tm } = useI18n()
 
+const authAction = inject('authAction') as { [propName: string]: boolean }
+
 const table = reactive({
     columns: [
         {
@@ -154,6 +156,7 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
+                        disabled={!authAction.isUpdate}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -180,15 +183,20 @@ const table = reactive({
             title: t('common.name.action'),
             key: 'action',
             align: 'center',
-            width: 250,
+            width: 80 * ((authAction.isCreate ? 1 : 0) + (authAction.isUpdate ? 1 : 0) + (authAction.isDelete ? 1 : 0)),
             fixed: 'right',
+            hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
-                return [
-                    <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
-                        <autoicon-ep-edit />
-                        {t('common.edit')}
-                    </el-button>,
-                ]
+                let vNode: any = []
+                if (authAction.isUpdate) {
+                    vNode.push(
+                        <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                            <autoicon-ep-edit />
+                            {t('common.edit')}
+                        </el-button>
+                    )
+                }
+                return vNode
             },
         }, */
     ] as any,
