@@ -98,14 +98,14 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
 			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`: 场景id, `login_id`: 登录身份id}
-				val := gconv.Map(v)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
-				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
-				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
-				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
+				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
 					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
+						tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
+						m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
+						m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
 						continue
 					}
 					roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Fields(Role.Columns().RoleId).Filter(`self_role`, val).Array()
@@ -113,7 +113,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 						m = m.Where(`1 = 0`)
 						continue
 					}
-					/* // 方式一：联表查询（不推荐）
+					/* // 方式一：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
 					tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelToAction+`.`+RoleRelToAction.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))

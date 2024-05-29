@@ -104,11 +104,11 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
 			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]interface{}{`scene_code`: `场景标识`, `login_id`: 登录身份id}
-				val := gconv.Map(v)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
+				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
-					/* // 方式一：联表查询（不推荐）
+					/* // 方式一：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
 					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel)) */

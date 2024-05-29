@@ -97,12 +97,12 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`: 场景id, `login_id`: 登录身份id}
-				val := gconv.Map(v)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, val[`scene_id`])
+				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
 					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
+						m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, val[`scene_id`])
 						continue
 					}
 					roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Fields(Role.Columns().RoleId).Filter(`self_role`, val).Array()
@@ -110,7 +110,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 						m = m.Where(`1 = 0`)
 						continue
 					}
-					/* // 方式一：联表查询（不推荐）
+					/* // 方式一：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
 					tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelToMenu+`.`+RoleRelToMenu.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
