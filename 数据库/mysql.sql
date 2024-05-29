@@ -36,29 +36,29 @@ CREATE TABLE `auth_action`  (
 -- ----------------------------
 -- Records of auth_action
 -- ----------------------------
-INSERT INTO `auth_action` VALUES (1, '权限管理-场景-查看', 'authSceneLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (1, '权限管理-场景-查看', 'authSceneRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (2, '权限管理-场景-新增', 'authSceneCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (3, '权限管理-场景-编辑', 'authSceneUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (4, '权限管理-场景-删除', 'authSceneDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO `auth_action` VALUES (5, '权限管理-操作-查看', 'authActionLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (5, '权限管理-操作-查看', 'authActionRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (6, '权限管理-操作-新增', 'authActionCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (7, '权限管理-操作-编辑', 'authActionUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (8, '权限管理-操作-删除', 'authActionDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO `auth_action` VALUES (9, '权限管理-菜单-查看', 'authMenuLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (9, '权限管理-菜单-查看', 'authMenuRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (10, '权限管理-菜单-新增', 'authMenuCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (11, '权限管理-菜单-编辑', 'authMenuUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (12, '权限管理-菜单-删除', 'authMenuDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO `auth_action` VALUES (13, '权限管理-角色-查看', 'authRoleLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (13, '权限管理-角色-查看', 'authRoleRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (14, '权限管理-角色-新增', 'authRoleCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (15, '权限管理-角色-编辑', 'authRoleUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (16, '权限管理-角色-删除', 'authRoleDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO `auth_action` VALUES (17, '权限管理-平台管理员-查看', 'platformAdminLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (17, '权限管理-平台管理员-查看', 'platformAdminRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (18, '权限管理-平台管理员-新增', 'platformAdminCreate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (19, '权限管理-平台管理员-编辑', 'platformAdminUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (20, '权限管理-平台管理员-删除', 'platformAdminDelete', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (21, '平台配置-查看', 'platformConfigRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (22, '平台配置-保存', 'platformConfigSave', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
-INSERT INTO `auth_action` VALUES (23, '用户管理-用户-查看', 'userUserLook', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
+INSERT INTO `auth_action` VALUES (23, '用户管理-用户-查看', 'userUserRead', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 INSERT INTO `auth_action` VALUES (24, '用户管理-用户-编辑', 'userUserUpdate', '', 0, '2024-01-01 00:00:00', '2024-01-01 00:00:00');
 
 -- ----------------------------

@@ -38,7 +38,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authSceneLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authSceneRead`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}
@@ -75,7 +75,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `authSceneLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authSceneRead`)
 	if err != nil {
 		return
 	}

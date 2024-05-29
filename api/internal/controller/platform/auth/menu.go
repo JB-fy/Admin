@@ -38,7 +38,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuRead`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}
@@ -75,7 +75,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `authMenuLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authMenuRead`)
 	if err != nil {
 		return
 	}
@@ -176,7 +176,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuRead`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}

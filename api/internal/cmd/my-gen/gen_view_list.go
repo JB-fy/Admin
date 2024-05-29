@@ -99,13 +99,8 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 const { t, tm } = useI18n()`
 	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
-const adminStore = useAdminStore()
 
-const authAction: { [propName: string]: boolean } = {
-    isCreate: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create'),
-    isUpdate: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update'),
-    isDelete: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete'),
-}`
+const authAction = inject('authAction') as { [propName: string]: boolean }`
 	}
 	tplView += `
 

@@ -47,6 +47,11 @@ export default {
         ],
     },
     tip: {
+        notAuthActionRead: '您暂无查看权限，请联系管理员授权！',
+        notAuthActionCreate: '您暂无新增权限，请联系管理员授权！',
+        notAuthActionUpdate: '您暂无编辑权限，请联系管理员授权！',
+        notAuthActionDelete: '您暂无删除权限，请联系管理员授权！',
+
         notSet: '未设置',
         notFullScreen: '您的浏览器不支持全屏',
         pleaseSelect: '请选择',

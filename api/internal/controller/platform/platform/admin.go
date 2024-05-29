@@ -40,7 +40,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformAdminRead`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}
@@ -77,7 +77,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformAdminRead`)
 	if err != nil {
 		return
 	}

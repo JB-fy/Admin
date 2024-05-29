@@ -20,7 +20,7 @@ func NewConfig() *Config {
 // 获取
 func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGetReq) (res *apiPlatform.ConfigGetRes, err error) {
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `platformConfigLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `platformConfigRead`)
 	if err != nil {
 		return
 	}

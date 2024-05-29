@@ -1,12 +1,7 @@
 <script setup lang="tsx">
 const { t, tm } = useI18n()
-const adminStore = useAdminStore()
 
-const authAction: { [propName: string]: boolean } = {
-    isCreate: adminStore.IsAction('authSceneCreate'),
-    isUpdate: adminStore.IsAction('authSceneUpdate'),
-    isDelete: adminStore.IsAction('authSceneDelete'),
-}
+const authAction = inject('authAction') as { [propName: string]: boolean }
 
 const table = reactive({
     columns: [

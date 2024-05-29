@@ -108,7 +108,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 		if option.IsAuthAction {
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Look` + "`" + `)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Read` + "`" + `)
 	if !isAuth {
 		field = []string{` + gstr.Join(controller.noAuth, `, `) + `}
 	}
@@ -168,7 +168,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 		if option.IsAuthAction {
 			tplController += `
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Look` + "`" + `)
+	_, err = service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Read` + "`" + `)
 	if err != nil {
 		return
 	}
@@ -308,7 +308,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 		if option.IsAuthAction {
 			tplController += `
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Look` + "`" + `)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Read` + "`" + `)
 	if !isAuth {
 		field = []string{` + gstr.Join(controller.noAuth, `, `) + `}
 	}

@@ -16,7 +16,7 @@ func genAction(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	actionList := []map[string]interface{}{}
 	if option.IsList || option.IsInfo {
 		actionList = append(actionList, map[string]interface{}{
-			daoAuth.Action.Columns().ActionCode: gstr.CaseCamelLower(tpl.LogicStructName) + `Look`,
+			daoAuth.Action.Columns().ActionCode: gstr.CaseCamelLower(tpl.LogicStructName) + `Read`,
 			daoAuth.Action.Columns().ActionName: gstr.Replace(option.CommonName, `/`, `-`) + `-查看`,
 		})
 	}

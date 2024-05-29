@@ -38,7 +38,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authRoleLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authRoleRead`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}
@@ -75,7 +75,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `authRoleLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authRoleRead`)
 	if err != nil {
 		return
 	}

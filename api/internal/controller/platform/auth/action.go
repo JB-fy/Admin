@@ -38,7 +38,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authActionLook`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authActionRead`)
 	if !isAuth {
 		field = []string{`id`, `label`}
 	}
@@ -75,7 +75,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `authActionLook`)
+	_, err = service.AuthAction().CheckAuth(ctx, `authActionRead`)
 	if err != nil {
 		return
 	}
