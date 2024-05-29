@@ -110,18 +110,17 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 						m = m.Where(`1 = 0`)
 						continue
 					}
-					/* // 不想联表RoleRelToMenu时用
-					menuIdArr, _ := RoleRelToMenu.CtxDaoModel(m.GetCtx()).Filter(RoleRelToMenu.Columns().RoleId, roleIdArr).Array(RoleRelToMenu.Columns().MenuId)
-					if len(roleIdArr) == 0 {
-						m = m.Where(`1 = 0`)
-						continue
-					}
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().MenuId, menuIdArr) */
+					/* // 想联表RoleRelToMenu时用（不推荐）
 					tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelToMenu+`.`+RoleRelToMenu.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
-
-					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
+					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId) */
+					menuIdArr, _ := RoleRelToMenu.CtxDaoModel(m.GetCtx()).Filter(RoleRelToMenu.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToMenu.Columns().MenuId)
+					if len(menuIdArr) == 0 {
+						m = m.Where(`1 = 0`)
+						continue
+					}
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().MenuId, menuIdArr)
 				default:
 					m = m.Where(`1 = 0`)
 				}

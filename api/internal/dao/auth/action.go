@@ -100,9 +100,9 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`: 场景id, `login_id`: 登录身份id}
 				val := gconv.Map(v)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
-				/* tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
+				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
-				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel)) */
+				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
 					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
@@ -113,18 +113,17 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 						m = m.Where(`1 = 0`)
 						continue
 					}
-					/* // 不想联表RoleRelToAction时用
-					actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Array(RoleRelToAction.Columns().ActionId)
-					if len(roleIdArr) == 0 {
-						m = m.Where(`1 = 0`)
-						continue
-					}
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ActionId, actionIdArr) */
+					/* // 想联表RoleRelToAction时用（不推荐）
 					tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelToAction+`.`+RoleRelToAction.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))
-
-					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
+					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId) */
+					actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToAction.Columns().ActionId)
+					if len(actionIdArr) == 0 {
+						m = m.Where(`1 = 0`)
+						continue
+					}
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ActionId, actionIdArr)
 				default:
 					m = m.Where(`1 = 0`)
 				}
