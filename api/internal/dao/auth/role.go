@@ -113,7 +113,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel)) */
 					// 方式二：非联表查询
-					roleIdArr, _ := RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Distinct().Array(RoleRelOfPlatformAdmin.Columns().RoleId)
+					roleIdArr, _ := RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfPlatformAdmin.Columns().RoleId)
 					if len(roleIdArr) == 0 {
 						m = m.Where(`1 = 0`)
 						continue
