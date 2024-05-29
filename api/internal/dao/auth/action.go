@@ -97,12 +97,12 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
-			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `scene_id`: 场景id, `login_id`: 登录身份id}
+			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `login_id`: 登录身份id, `scene_id`: 场景id（平台超级管理员用，不用再做一次查询）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
-					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员，不再需要其它条件
+					if gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员
 						tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 						m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
 						m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
