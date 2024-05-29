@@ -13,19 +13,25 @@ const Website = defineAsyncComponent(() => import('./platform/Website.vue'))
 const App = defineAsyncComponent(() => import('./platform/App.vue'))
 
 const { t } = useI18n()
+const adminStore = useAdminStore()
+
+const authAction: { [propName: string]: boolean } = {
+    isRead: adminStore.IsAction('platformConfigRead'),
+    isSave: adminStore.IsAction('platformConfigSave'),
+}
+provide('authAction', authAction)
 </script>
 
 <template>
-    <el-container class="common-container">
-        <el-main>
-            <el-tabs type="border-card" tab-position="top">
-                <el-tab-pane :label="t('platform.config.platform.label.website')" :lazy="true">
-                    <website />
-                </el-tab-pane>
-                <el-tab-pane :label="t('platform.config.platform.label.app')" :lazy="true">
-                    <app />
-                </el-tab-pane>
-            </el-tabs>
-        </el-main>
-    </el-container>
+    <div v-if="!authAction.isRead" style="text-align: center; font-size: 60px; color: #f56c6c">{{ t('common.tip.notAuthActionRead') }}</div>
+    <template v-else>
+        <el-container class="common-container">
+            <el-main>
+                <el-tabs type="border-card" tab-position="top">
+                    <el-tab-pane :label="t('platform.config.platform.label.website')" :lazy="true"><website /></el-tab-pane>
+                    <el-tab-pane :label="t('platform.config.platform.label.app')" :lazy="true"><app /></el-tab-pane>
+                </el-tabs>
+            </el-main>
+        </el-container>
+    </template>
 </template>
