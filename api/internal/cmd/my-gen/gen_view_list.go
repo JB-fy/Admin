@@ -96,7 +96,18 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	viewList.Unique()
 
 	tplView := `<script setup lang="tsx">
-const { t, tm } = useI18n()
+const { t, tm } = useI18n()`
+	if option.IsCreate || option.IsUpdate || option.IsDelete {
+		tplView += `
+const adminStore = useAdminStore()
+
+const authAction: { [propName: string]: boolean } = {
+    isCreate: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create'),
+    isUpdate: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update'),
+    isDelete: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete'),
+}`
+	}
+	tplView += `
 
 const table = reactive({
     columns: [
@@ -142,33 +153,46 @@ const table = reactive({
             title: t('common.name.action'),
             key: 'action',
             align: 'center',
-            width: 250,
+            width: 80 * ((authAction.isCreate ? 1 : 0) + (authAction.isUpdate ? 1 : 0) + (authAction.isDelete ? 1 : 0)),
             fixed: 'right',
+            hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
-                return [`
+                let vNode: any = []`
 		if option.IsUpdate {
 			tplView += `
-                    <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
-                        <autoicon-ep-edit />
-                        {t('common.edit')}
-                    </el-button>,`
+                if (authAction.isUpdate) {
+                    vNode.push(
+                        <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                            <autoicon-ep-edit />
+                            {t('common.edit')}
+                        </el-button>
+                    )
+                }`
 		}
 		if option.IsDelete {
 			tplView += `
-                    <el-button type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
-                        <autoicon-ep-delete />
-                        {t('common.delete')}
-                    </el-button>,`
+                if (authAction.isDelete) {
+                    vNode.push(
+                        <el-button type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+                            <autoicon-ep-delete />
+                            {t('common.delete')}
+                        </el-button>
+                    )
+                }`
 		}
 		if option.IsCreate {
 			tplView += `
-                    <el-button type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
-                        <autoicon-ep-document-copy />
-                        {t('common.copy')}
-                    </el-button>,`
+                if (authAction.isCreate) {
+                    vNode.push(
+                        <el-button type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+                            <autoicon-ep-document-copy />
+                            {t('common.copy')}
+                        </el-button>
+                    )
+                }`
 		}
 		tplView += `
-                ]
+                return vNode
             },
         },`
 	}
@@ -317,11 +341,11 @@ defineExpose({
             <el-space :size="10" style="height: 100%; margin-left: 10px">`
 	if option.IsCreate {
 		tplView += `
-                <el-button type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }} </el-button>`
+                <el-button v-if="authAction.isCreate" type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }} </el-button>`
 	}
 	if option.IsDelete {
 		tplView += `
-                <el-button type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }} </el-button>`
+                <el-button v-if="authAction.isDelete" type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }} </el-button>`
 	}
 	tplView += `
             </el-space>
@@ -466,6 +490,9 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		if option.IsUpdate {
 			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!authAction.isUpdate) {
+                    return [<div class="el-table-v2__cell-text">{props.rowData.` + v.FieldRaw + `}</div>]
+                }
                 if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
                         <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
@@ -528,6 +555,9 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 				attrOfAdd = `placeholder={t('` + i18nPath + `.tip.` + v.FieldRaw + `')}`
 			}
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!authAction.isUpdate) {
+                    return [<div class="el-table-v2__cell-text">{props.rowData.` + v.FieldRaw + `}</div>]
+                }
                 if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
                         <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
@@ -581,7 +611,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
-			cellRendererStr = `onChange={(val: number) => handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
+			cellRendererStr = `disabled={!authAction.isUpdate}
+                        onChange={(val: number) => handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
 		}
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {

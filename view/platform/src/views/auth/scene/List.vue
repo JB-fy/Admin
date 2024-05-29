@@ -1,5 +1,12 @@
 <script setup lang="tsx">
 const { t, tm } = useI18n()
+const adminStore = useAdminStore()
+
+const authAction: { [propName: string]: boolean } = {
+    isCreate: adminStore.IsAction('authSceneCreate'),
+    isUpdate: adminStore.IsAction('authSceneUpdate'),
+    isDelete: adminStore.IsAction('authSceneDelete'),
+}
 
 const table = reactive({
     columns: [
@@ -41,6 +48,9 @@ const table = reactive({
             align: 'center',
             width: 150,
             cellRenderer: (props: any): any => {
+                if (!authAction.isUpdate) {
+                    return [<div class="el-table-v2__cell-text">{props.rowData.scene_name}</div>]
+                }
                 if (!props.rowData?.editSceneName?.isEdit) {
                     return [
                         <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editSceneName = { isEdit: true, oldValue: props.rowData.scene_name })}>
@@ -119,6 +129,7 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
+                        disabled={!authAction.isUpdate}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -145,23 +156,36 @@ const table = reactive({
             title: t('common.name.action'),
             key: 'action',
             align: 'center',
-            width: 250,
+            width: 80 * ((authAction.isCreate ? 1 : 0) + (authAction.isUpdate ? 1 : 0) + (authAction.isDelete ? 1 : 0)),
             fixed: 'right',
+            hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
-                return [
-                    <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
-                        <autoicon-ep-edit />
-                        {t('common.edit')}
-                    </el-button>,
-                    <el-button type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
-                        <autoicon-ep-delete />
-                        {t('common.delete')}
-                    </el-button>,
-                    <el-button type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
-                        <autoicon-ep-document-copy />
-                        {t('common.copy')}
-                    </el-button>,
-                ]
+                let vNode: any = []
+                if (authAction.isUpdate) {
+                    vNode.push(
+                        <el-button type="primary" size="small" onClick={() => handleEditCopy(props.rowData.id)}>
+                            <autoicon-ep-edit />
+                            {t('common.edit')}
+                        </el-button>
+                    )
+                }
+                if (authAction.isDelete) {
+                    vNode.push(
+                        <el-button type="danger" size="small" onClick={() => handleDelete(props.rowData.id)}>
+                            <autoicon-ep-delete />
+                            {t('common.delete')}
+                        </el-button>
+                    )
+                }
+                if (authAction.isCreate) {
+                    vNode.push(
+                        <el-button type="warning" size="small" onClick={() => handleEditCopy(props.rowData.id, 'copy')}>
+                            <autoicon-ep-document-copy />
+                            {t('common.copy')}
+                        </el-button>
+                    )
+                }
+                return vNode
             },
         },
     ] as any,
@@ -287,8 +311,8 @@ defineExpose({
     <el-row class="main-table-tool">
         <el-col :span="16">
             <el-space :size="10" style="height: 100%; margin-left: 10px">
-                <el-button type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }} </el-button>
-                <el-button type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }} </el-button>
+                <el-button v-if="authAction.isCreate" type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }} </el-button>
+                <el-button v-if="authAction.isDelete" type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }} </el-button>
             </el-space>
         </el-col>
         <el-col :span="8" style="text-align: right">

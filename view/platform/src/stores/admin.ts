@@ -339,9 +339,41 @@ export const useAdminStore = defineStore('admin', {
          */
         async setActionCodeArr() {
             const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/action/list')
-            this.actionCodeArr = res.data.list.map((item:any)=>{
-                return item.actionCode
+            this.actionCodeArr = res.data.list.map((item: any) => {
+                return item.action_code
             })
+        },
+        /**
+         * 判断是否有操作权限
+         */
+        IsAction(actionCode: string): boolean {
+            return this.actionCodeArr.indexOf(actionCode) == -1 ? false : true
+        },
+        /**
+         * 判断是否有操作权限（多个一起判断）
+         */
+        IsActionMany(actionCodeArr: string[], condition: string = 'and'): boolean {
+            if (actionCodeArr.length == 0) {
+                return false
+            }
+            switch (condition) {
+                case 'and':
+                    for (let i = 0; i < actionCodeArr.length; i++) {
+                        if (this.actionCodeArr.indexOf(actionCodeArr[i]) == -1) {
+                            return false
+                        }
+                    }
+                    return true
+                case 'or':
+                    for (let i = 0; i < actionCodeArr.length; i++) {
+                        if (this.actionCodeArr.indexOf(actionCodeArr[i]) != -1) {
+                            return true
+                        }
+                    }
+                    return false
+                default:
+                    return false
+            }
         },
         /**
          * 退出登录

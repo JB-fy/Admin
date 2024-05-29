@@ -1,13 +1,11 @@
 <script setup lang="tsx">
+const route: any = useRoute()
+const router = useRouter()
+const { t, tm } = useI18n()
 const keepAliveStore = useKeepAliveStore()
 const languageStore = useLanguageStore()
 const settingStore = useSettingStore()
 const adminStore = useAdminStore()
-
-const { t, tm } = useI18n()
-
-const route: any = useRoute()
-const router = useRouter()
 
 const leftMenuFold = () => {
     settingStore.leftMenuFold = !settingStore.leftMenuFold
