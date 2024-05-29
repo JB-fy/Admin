@@ -110,11 +110,12 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 						m = m.Where(`1 = 0`)
 						continue
 					}
-					/* // 想联表RoleRelToMenu时用（不推荐）
+					/* // 方式一：联表查询（不推荐）
 					tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelToMenu+`.`+RoleRelToMenu.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
 					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId) */
+					// 方式二：非联表查询
 					menuIdArr, _ := RoleRelToMenu.CtxDaoModel(m.GetCtx()).Filter(RoleRelToMenu.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToMenu.Columns().MenuId)
 					if len(menuIdArr) == 0 {
 						m = m.Where(`1 = 0`)

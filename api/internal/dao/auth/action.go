@@ -113,11 +113,12 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 						m = m.Where(`1 = 0`)
 						continue
 					}
-					/* // 想联表RoleRelToAction时用（不推荐）
+					/* // 方式一：联表查询（不推荐）
 					tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelToAction+`.`+RoleRelToAction.Columns().RoleId, roleIdArr)
 					m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))
 					m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId) */
+					// 方式二：非联表查询
 					actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToAction.Columns().ActionId)
 					if len(actionIdArr) == 0 {
 						m = m.Where(`1 = 0`)

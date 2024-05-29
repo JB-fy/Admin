@@ -104,13 +104,21 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
 			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]interface{}{`scene_code`: `场景标识`, `login_id`: 登录身份id}
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
+					/* // 方式一：联表查询（不推荐）
 					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel)) */
+					// 方式二：非联表查询
+					roleIdArr, _ := RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Distinct().Array(RoleRelOfPlatformAdmin.Columns().RoleId)
+					if len(roleIdArr) == 0 {
+						m = m.Where(`1 = 0`)
+						continue
+					}
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().RoleId, roleIdArr)
 				default:
 					m = m.Where(`1 = 0`)
 				}
