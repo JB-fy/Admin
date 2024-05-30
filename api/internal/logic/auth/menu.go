@@ -27,18 +27,22 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]interfac
 	daoThis := daoAuth.Menu
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
-	if _, ok := data[daoThis.Columns().Pid]; ok {
-		pid := gconv.Uint(data[daoThis.Columns().Pid])
-		if pid > 0 {
-			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, pid).One()
-			if pInfo.IsEmpty() {
-				err = utils.NewErrorCode(ctx, 29999997, ``)
-				return
-			}
-			if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
-				err = utils.NewErrorCode(ctx, 89999998, ``)
-				return
-			}
+	if _, ok := data[daoThis.Columns().SceneId]; ok && gconv.Uint(data[daoThis.Columns().SceneId]) > 0 {
+		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoThis.Columns().SceneId]).Count(); count == 0 {
+			err = utils.NewErrorCode(ctx, 29999998, ``)
+			return
+		}
+	}
+
+	if _, ok := data[daoThis.Columns().Pid]; ok && gconv.Uint(data[daoThis.Columns().Pid]) > 0 {
+		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, data[daoThis.Columns().Pid]).One()
+		if pInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.pid`)}})
+			return
+		}
+		if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
+			err = utils.NewErrorCode(ctx, 89999998, ``)
+			return
 		}
 	}
 
@@ -57,38 +61,38 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]interf
 		return
 	}
 
-	if _, ok := data[daoThis.Columns().Pid]; ok {
-		pid := gconv.Uint(data[daoThis.Columns().Pid])
-		if pid > 0 {
-			if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(pid) {
-				err = utils.NewErrorCode(ctx, 29999996, ``)
+	if _, ok := data[daoThis.Columns().SceneId]; ok && gconv.Uint(data[daoThis.Columns().SceneId]) > 0 {
+		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoThis.Columns().SceneId]).Count(); count == 0 {
+			err = utils.NewErrorCode(ctx, 29999998, ``)
+			return
+		}
+	}
+
+	if _, ok := data[daoThis.Columns().Pid]; ok && gconv.Uint(data[daoThis.Columns().Pid]) > 0 {
+		if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(gconv.Uint(data[daoThis.Columns().Pid])) {
+			err = utils.NewErrorCode(ctx, 29999996, ``)
+			return
+		}
+		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, data[daoThis.Columns().Pid]).One()
+		if pInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.pid`)}})
+			return
+		}
+		for _, id := range daoModelThis.IdArr {
+			if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
+				err = utils.NewErrorCode(ctx, 29999995, ``)
 				return
 			}
-			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, pid).One()
-			if pInfo.IsEmpty() {
-				err = utils.NewErrorCode(ctx, 29999997, ``)
+		}
+		if _, ok := data[daoThis.Columns().SceneId]; ok {
+			if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
+				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
-			for _, id := range daoModelThis.IdArr {
-				if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
-					err = utils.NewErrorCode(ctx, 29999995, ``)
-					return
-				}
-			}
-			if _, ok := data[daoThis.Columns().SceneId]; ok {
-				if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
-					err = utils.NewErrorCode(ctx, 89999998, ``)
-					return
-				}
-			} else {
-				count, _ := daoModelThis.CloneNew().Filters(g.Map{
-					`id`:                      daoModelThis.IdArr,
-					daoThis.Columns().SceneId: pInfo[daoThis.Columns().SceneId],
-				}).Count()
-				if count != len(daoModelThis.IdArr) {
-					err = utils.NewErrorCode(ctx, 89999998, ``)
-					return
-				}
+		} else {
+			if count, _ := daoModelThis.CloneNew().Filters(g.Map{daoThis.Columns().SceneId: pInfo[daoThis.Columns().SceneId], `id`: daoModelThis.IdArr}).Count(); count != len(daoModelThis.IdArr) {
+				err = utils.NewErrorCode(ctx, 89999998, ``)
+				return
 			}
 		}
 	}

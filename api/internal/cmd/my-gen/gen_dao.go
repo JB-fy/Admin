@@ -117,6 +117,12 @@ func genDao(tpl myGenTpl) {
 	tplDao := gfile.GetContents(saveFile)
 
 	dao := getDaoIdAndLabel(tpl)
+	for _, v := range tpl.FieldList {
+		if v.FieldTypeName == internal.TypeNameDeleted { //存在软删除字段时，HookDelete内的事件需改成Update
+			tplDao = gstr.Replace(tplDao, `Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {`, `Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {`, 1)
+			break
+		}
+	}
 	for _, v := range tpl.FieldListOfDefault {
 		dao.Add(getDaoField(tpl, v))
 	}

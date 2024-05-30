@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sAuthAction struct{}
@@ -24,6 +25,17 @@ func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]interf
 	daoThis := daoAuth.Action
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
+	if _, ok := data[`scene_id_arr`]; ok {
+		sceneIdArr := gconv.SliceUint(data[`scene_id_arr`])
+		sceneIdArrLen := len(sceneIdArr)
+		if sceneIdArrLen > 0 {
+			if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, sceneIdArr).Count(); count != sceneIdArrLen {
+				err = utils.NewErrorCode(ctx, 89999998, ``)
+				return
+			}
+		}
+	}
+
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
 }
@@ -37,6 +49,17 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]inte
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
+	}
+
+	if _, ok := data[`scene_id_arr`]; ok {
+		sceneIdArr := gconv.SliceUint(data[`scene_id_arr`])
+		sceneIdArrLen := len(sceneIdArr)
+		if sceneIdArrLen > 0 {
+			if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, sceneIdArr).Count(); count != sceneIdArrLen {
+				err = utils.NewErrorCode(ctx, 89999998, ``)
+				return
+			}
+		}
 	}
 
 	row, err = daoModelThis.HookUpdate(data).UpdateAndGetAffected()

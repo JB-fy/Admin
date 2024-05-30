@@ -1,0 +1,8 @@
+test: "测试" # 第一个字段不能带.号，否则整个文件配置都不会被读取到
+
+name.auth.scene: "场景"
+name.auth.action: "操作"
+name.auth.menu: "菜单"
+name.auth.role: "角色"
+
+name.pid: "父级"

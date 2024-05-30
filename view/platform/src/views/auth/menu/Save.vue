@@ -114,10 +114,14 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.menu_name" :placeholder="t('auth.menu.name.menu_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.scene_id')" prop="scene_id">
-                    <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+                    <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => (saveForm.data.pid = 0)" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.pid')" prop="pid">
-                    <my-cascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { exc_id_arr: saveForm.data.id_arr } } }" :props="{ checkStrictly: true, emitPath: false }" />
+                    <my-cascader
+                        v-model="saveForm.data.pid"
+                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.sceneId, exc_id_arr: saveForm.data.id_arr } } }"
+                        :props="{ checkStrictly: true, emitPath: false }"
+                    />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_icon')" prop="menu_icon">
                     <my-upload v-model="saveForm.data.menu_icon" accept="image/*" />

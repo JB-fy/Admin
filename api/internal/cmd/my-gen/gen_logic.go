@@ -46,14 +46,11 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 `
 	if tpl.Handle.Pid.Pid != `` {
 		tplLogic += `
-	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]; ok {
-		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `])
-		if pid > 0 {
-			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `, pid).One()
-			if pInfo.IsEmpty() {
-				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
-				return
-			}
+	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]; ok && gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]) > 0 {
+		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `, data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]).One()
+		if pInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`errValues`" + `: []any{g.I18n().T(ctx, ` + "`name.pid`" + `)}})
+			return
 		}
 	}
 `
@@ -76,29 +73,26 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 `
 	if tpl.Handle.Pid.Pid != `` {
 		tplLogic += `
-	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]; ok {
-		pid := gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `])
-		if pid > 0 {
-			if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(pid) {
-				err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
-				return
-			}
-			pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `, pid).One()
-			if pInfo.IsEmpty() {
-				err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `)
-				return
-			}`
+	if _, ok := data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]; ok && gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]) > 0 {
+		if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(gconv.Uint(data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `])) {
+			err = utils.NewErrorCode(ctx, 29999996, ` + "``" + `)
+			return
+		}
+		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `, data[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Pid) + `]).One()
+		if pInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`errValues`" + `: []any{g.I18n().T(ctx, ` + "`name.pid`" + `)}})
+			return
+		}`
 		if tpl.Handle.Pid.IsCoexist {
 			tplLogic += `
-			for _, id := range daoModelThis.IdArr {
-				if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String(), ` + "`-`" + `)).Contains(gconv.String(id)) {
-					err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
-					return
-				}
-			}`
+		for _, id := range daoModelThis.IdArr {
+			if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String(), ` + "`-`" + `)).Contains(gconv.String(id)) {
+				err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
+				return
+			}
+		}`
 		}
 		tplLogic += `
-		}
 	}
 `
 	}
