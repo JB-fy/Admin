@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"api/internal/utils"
 	"net/http"
 
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -20,28 +21,27 @@ func HandlerResponse(r *ghttp.Request) {
 	err := r.GetError()
 	if err != nil {
 		code := gerror.Code(err)
-		msg := err.Error()
 		switch code {
 		case gcode.CodeNil:
-			code = gcode.CodeInternalError
+			code = gcode.New(99999999, err.Error(), nil)
 		case gcode.CodeValidationFailed:
-			code = gcode.New(89999999, ``, nil)
+			code = gcode.New(89999999, err.Error(), nil)
 		case gcode.CodeDbOperationError:
-			match, _ := gregex.MatchString(`Error 1062.*: Duplicate.*for key '(?:[^\.]*\.)?([^']*)'$`, msg) //mysql
-			// match, _ := gregex.MatchString(`pq: duplicate key.*constraint "([^"]*)"$`, msg) //pgsql
+			match, _ := gregex.MatchString(`Error 1062.*: Duplicate.*for key '(?:[^\.]*\.)?([^']*)'$`, err.Error()) //mysql
+			// match, _ := gregex.MatchString(`pq: duplicate key.*constraint "([^"]*)"$`, err.Error()) //pgsql
 			if len(match) > 0 {
-				code = gcode.New(29991062, ``, nil)
-				msg = g.I18n().Tf(r.GetCtx(), `code.29991062`, match[1])
+				code = utils.NewCode(r.GetCtx(), 29991062, ``, g.Map{`errValues`: []any{match[1]}})
 			} else {
-				code = gcode.New(29999999, ``, nil)
-				if !g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() {
-					msg = g.I18n().T(r.GetCtx(), `code.29999999`)
+				if g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() {
+					code = utils.NewCode(r.GetCtx(), 29999999, err.Error())
+				} else {
+					code = utils.NewCode(r.GetCtx(), 29999999, ``)
 				}
 			}
 		}
 		r.Response.WriteJson(map[string]any{
 			`code`: code.Code(),
-			`msg`:  msg,
+			`msg`:  code.Message(),
 			`data`: code.Detail(),
 		})
 		return

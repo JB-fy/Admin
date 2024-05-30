@@ -18,26 +18,25 @@ import (
 )
 
 // 生成错误码
-func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]any) error {
+func NewCode(ctx context.Context, code int, msg string, data ...map[string]any) gcode.Code {
 	detail := map[string]any{}
 	if len(data) > 0 && data[0] != nil {
 		detail = data[0]
 	}
 	if msg == `` {
-		/* switch code {
-		case 30009999, 89999996:
-			msg = g.I18n().Tf(ctx, `code.`+gconv.String(code), gconv.SliceAny(detail[`errValues`])...)
-			delete(detail, `errValues`)
-		default:
-			msg = g.I18n().T(ctx, `code.`+gconv.String(code))
-		} */
 		msg = g.I18n().T(ctx, `code.`+gconv.String(code))
 		if _, ok := detail[`errValues`]; ok {
 			msg = fmt.Sprintf(msg, gconv.SliceAny(detail[`errValues`])...)
 			delete(detail, `errValues`)
 		}
 	}
-	return gerror.NewCode(gcode.New(code, ``, detail), msg)
+	return gcode.New(code, msg, detail)
+}
+
+// 生成错误码
+func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]any) error {
+	codeObj := NewCode(ctx, code, msg, data...)
+	return gerror.NewCode(codeObj /* , codeObj.Message() */)
 }
 
 // Http返回json
