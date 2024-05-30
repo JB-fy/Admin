@@ -34,8 +34,8 @@ type WxGzh struct {
 	AESKey         []byte
 }
 
-func NewWxGzh(ctx context.Context, configOpt ...map[string]interface{}) *WxGzh {
-	var config map[string]interface{}
+func NewWxGzh(ctx context.Context, configOpt ...map[string]any) *WxGzh {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
@@ -215,7 +215,7 @@ func (wxGzhThis *WxGzh) AesDecrypt(encrypt string) (msgByte []byte, err error) {
 }
 
 // 加密消息体
-func (wxGzhThis *WxGzh) EncryptMsg(fromUserName, toUserName, timestamp, msgType string, msg interface{}) (encrypt string, err error) {
+func (wxGzhThis *WxGzh) EncryptMsg(fromUserName, toUserName, timestamp, msgType string, msg any) (encrypt string, err error) {
 	type MsgOfCommon struct {
 		XMLName      xml.Name `xml:"xml"`
 		ToUserName   CDATAText

@@ -39,12 +39,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *adminDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *adminDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *adminDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *adminDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -53,7 +53,7 @@ func (daoThis *adminDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[str
 }
 
 // 解析分表
-func (daoThis *adminDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *adminDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -72,7 +72,7 @@ func (daoThis *adminDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
 }
 
 // 解析filter
-func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *adminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -117,7 +117,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]interface{}, daoModel *da
 }
 
 // 解析field
-func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -190,9 +190,9 @@ func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 }
 
 // 解析insert
-func (daoThis *adminDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *adminDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case daoThis.Columns().Phone:
@@ -243,9 +243,9 @@ func (daoThis *adminDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `role_id_arr`:
-					insertList := []map[string]interface{}{}
+					insertList := []map[string]any{}
 					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]interface{}{
+						insertList = append(insertList, map[string]any{
 							daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId: id,
 							daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:  item,
 						})
@@ -259,9 +259,9 @@ func (daoThis *adminDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 }
 
 // 解析update
-func (daoThis *adminDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *adminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Phone:

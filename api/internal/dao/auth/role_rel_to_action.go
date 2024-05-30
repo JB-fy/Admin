@@ -35,12 +35,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *roleRelToActionDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *roleRelToActionDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *roleRelToActionDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *roleRelToActionDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -49,7 +49,7 @@ func (daoThis *roleRelToActionDao) ParseDbGroup(ctx context.Context, dbGroupOpt 
 }
 
 // 解析分表
-func (daoThis *roleRelToActionDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *roleRelToActionDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -68,7 +68,7 @@ func (daoThis *roleRelToActionDao) ParseLabel(daoModel *daoIndex.DaoModel) strin
 }
 
 // 解析filter
-func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -89,7 +89,7 @@ func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]interface{}, da
 }
 
 // 解析field
-func (daoThis *roleRelToActionDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelToActionDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -152,9 +152,9 @@ func (daoThis *roleRelToActionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.H
 }
 
 // 解析insert
-func (daoThis *roleRelToActionDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelToActionDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			default:
@@ -193,9 +193,9 @@ func (daoThis *roleRelToActionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.H
 }
 
 // 解析update
-func (daoThis *roleRelToActionDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelToActionDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			default:

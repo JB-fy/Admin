@@ -24,22 +24,22 @@ type PushOfTx struct {
 	SecretKey string `json:"pushOfTxSecretKey"`
 }
 
-func NewPushOfTx(ctx context.Context, deviceType uint, configOpt ...map[string]interface{}) *PushOfTx {
-	var config map[string]interface{}
+func NewPushOfTx(ctx context.Context, deviceType uint, configOpt ...map[string]any) *PushOfTx {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
 		switch deviceType {
 		case 1: //IOS
 			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxIosAccessID`, `pushOfTxIosSecretKey`})
-			config = map[string]interface{}{
+			config = map[string]any{
 				`pushOfTxHost`:      configTmp[`pushOfTxHost`],
 				`pushOfTxAccessID`:  configTmp[`pushOfTxIosAccessID`],
 				`pushOfTxSecretKey`: configTmp[`pushOfTxIosSecretKey`],
 			}
 		case 2: //MacOS（暂时不做）
 			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxMacOSAccessID`, `pushOfTxMacOSSecretKey`})
-			config = map[string]interface{}{
+			config = map[string]any{
 				`pushOfTxHost`:      configTmp[`pushOfTxHost`],
 				`pushOfTxAccessID`:  configTmp[`pushOfTxMacOSAccessID`],
 				`pushOfTxSecretKey`: configTmp[`pushOfTxMacOSSecretKey`],
@@ -47,7 +47,7 @@ func NewPushOfTx(ctx context.Context, deviceType uint, configOpt ...map[string]i
 		// case 0: //安卓
 		default:
 			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxAndroidAccessID`, `pushOfTxAndroidSecretKey`})
-			config = map[string]interface{}{
+			config = map[string]any{
 				`pushOfTxHost`:      configTmp[`pushOfTxHost`],
 				`pushOfTxAccessID`:  configTmp[`pushOfTxAndroidAccessID`],
 				`pushOfTxSecretKey`: configTmp[`pushOfTxAndroidSecretKey`],

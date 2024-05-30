@@ -23,7 +23,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
-		filter = map[string]interface{}{}
+		filter = map[string]any{}
 	}
 
 	allowField := daoUser.User.ColumnArr().Slice()
@@ -71,7 +71,7 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 			field = allowField
 		}
 	}
-	filter := map[string]interface{}{`id`: req.Id}
+	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -104,7 +104,7 @@ func (controllerThis *User) Update(ctx context.Context, req *apiUser.UserUpdateR
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-	filter := map[string]interface{}{`id`: req.IdArr}
+	filter := map[string]any{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

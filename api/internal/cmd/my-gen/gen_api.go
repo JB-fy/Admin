@@ -45,7 +45,7 @@ func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType
 	}
 	if apiField.createType.GetData() != `` {
 		saveRuleArr := apiField.saveRule.GetData()
-		if apiField.isRequired && garray.NewFrom([]interface{}{internal.TableTypeDefault, internal.TableTypeExtendOne, internal.TableTypeMiddleOne}).Contains(tableType) {
+		if apiField.isRequired && garray.NewFrom([]any{internal.TableTypeDefault, internal.TableTypeExtendOne, internal.TableTypeMiddleOne}).Contains(tableType) {
 			saveRuleArr = append([]string{`required`}, saveRuleArr...)
 		}
 		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
@@ -591,11 +591,11 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		}
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		apiField.createType.Method = internal.ReturnTypeName
-		apiField.createType.DataTypeName = `*[]interface{}`
+		apiField.createType.DataTypeName = `*[]any`
 		apiField.updateType.Method = internal.ReturnTypeName
-		apiField.updateType.DataTypeName = `*[]interface{}`
+		apiField.updateType.DataTypeName = `*[]any`
 		apiField.resType.Method = internal.ReturnTypeName
-		apiField.resType.DataTypeName = `*[]interface{}`
+		apiField.resType.DataTypeName = `*[]any`
 
 		apiField.saveRule.Method = internal.ReturnTypeName
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `distinct`)

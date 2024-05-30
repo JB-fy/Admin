@@ -19,8 +19,8 @@ type VodOfAliyun struct {
 	RoleArn         string `json:"vodOfAliyunRoleArn"`
 }
 
-func NewVodOfAliyun(ctx context.Context, configOpt ...map[string]interface{}) *VodOfAliyun {
-	var config map[string]interface{}
+func NewVodOfAliyun(ctx context.Context, configOpt ...map[string]any) *VodOfAliyun {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
@@ -34,7 +34,7 @@ func NewVodOfAliyun(ctx context.Context, configOpt ...map[string]interface{}) *V
 }
 
 // 获取Sts Token
-func (uploadThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]any, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),

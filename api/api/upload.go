@@ -25,12 +25,12 @@ type UploadSignReq struct {
 }
 
 type UploadSignRes struct {
-	UploadUrl  string                 `json:"upload_url,omitempty" dc:"上传地址"`
-	UploadData map[string]interface{} `json:"upload_data,omitempty" dc:"上传数据"`
-	Host       string                 `json:"host,omitempty" dc:"站点域名（当上传无响应信息，前端组件用于与上传目录拼接形成文件访问地址）"`
-	Dir        string                 `json:"dir,omitempty" dc:"上传目录"`
-	Expire     uint                   `json:"expire,omitempty" dc:"过期时间"`
-	IsRes      uint                   `json:"is_res,omitempty" dc:"是否有响应信息。0否 1是"`
+	UploadUrl  string         `json:"upload_url,omitempty" dc:"上传地址"`
+	UploadData map[string]any `json:"upload_data,omitempty" dc:"上传数据"`
+	Host       string         `json:"host,omitempty" dc:"站点域名（当上传无响应信息，前端组件用于与上传目录拼接形成文件访问地址）"`
+	Dir        string         `json:"dir,omitempty" dc:"上传目录"`
+	Expire     uint           `json:"expire,omitempty" dc:"过期时间"`
+	IsRes      uint           `json:"is_res,omitempty" dc:"是否有响应信息。0否 1是"`
 }
 
 /*--------获取签名（H5直传用） 结束--------*/

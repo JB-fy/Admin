@@ -10,7 +10,7 @@ type VodParam struct {
 }
 
 type Vod interface {
-	Sts(param VodParam) (stsInfo map[string]interface{}, err error) // 获取Sts Token
+	Sts(param VodParam) (stsInfo map[string]any, err error) // 获取Sts Token
 }
 
 func CreateVodParam() (param VodParam) {

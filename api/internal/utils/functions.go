@@ -18,8 +18,8 @@ import (
 )
 
 // 生成错误码
-func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]interface{}) error {
-	detail := map[string]interface{}{}
+func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]any) error {
+	detail := map[string]any{}
 	if len(data) > 0 && data[0] != nil {
 		detail = data[0]
 	}
@@ -41,8 +41,8 @@ func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]
 }
 
 // Http返回json
-func HttpWriteJson(ctx context.Context, data map[string]interface{}, code int, msg string) {
-	resData := map[string]interface{}{
+func HttpWriteJson(ctx context.Context, data map[string]any, code int, msg string) {
+	resData := map[string]any{
 		`code`: code,
 		`msg`:  msg,
 		`data`: data,

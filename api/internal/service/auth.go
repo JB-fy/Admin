@@ -12,37 +12,37 @@ import (
 type (
 	IAuthAction interface {
 		// 新增
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
+		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 		// 判断操作权限
 		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
 	}
 	IAuthMenu interface {
 		// 新增
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
+		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 	}
 	IAuthRole interface {
 		// 新增
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
+		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 	}
 	IAuthScene interface {
 		// 新增
-		Create(ctx context.Context, data map[string]interface{}) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id int64, err error)
 		// 修改
-		Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error)
+		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
-		Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error)
+		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 	}
 )
 

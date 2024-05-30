@@ -22,8 +22,8 @@ type SmsOfAliyun struct {
 	TemplateCode    string `json:"smsOfAliyunTemplateCode"`
 }
 
-func NewSmsOfAliyun(ctx context.Context, configOpt ...map[string]interface{}) *SmsOfAliyun {
-	var config map[string]interface{}
+func NewSmsOfAliyun(ctx context.Context, configOpt ...map[string]any) *SmsOfAliyun {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {

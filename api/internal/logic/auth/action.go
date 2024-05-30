@@ -21,7 +21,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (id int64, err error) {
 	daoThis := daoAuth.Action
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -41,7 +41,7 @@ func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]interf
 }
 
 // 修改
-func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoThis := daoAuth.Action
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -67,7 +67,7 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]inte
 }
 
 // 删除
-func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoThis := daoAuth.Action
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -91,9 +91,9 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCode string) 
 		return
 	}
 
-	filter := map[string]interface{}{
+	filter := map[string]any{
 		daoAuth.Action.Columns().ActionCode: actionCode,
-		`self_action`: map[string]interface{}{
+		`self_action`: map[string]any{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`login_id`:   loginInfo[`login_id`],
 			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],

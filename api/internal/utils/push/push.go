@@ -7,9 +7,9 @@ import (
 
 /*
 //tx_tpns(腾讯移动推送）标签推送规则格式
-TagRules: []map[string]interface{}{
+TagRules: []map[string]any{
 	{
-		`tag_items`: []map[string]interface{}{
+		`tag_items`: []map[string]any{
 			{
 				`tags`:           []string{`aaaa`},
 				`is_not`:         false,
@@ -30,7 +30,7 @@ type PushParam struct {
 	Audience   uint     //推送目标：0-全部 1-token方式 2-tag方式
 	TokenList  []string //token列表
 	// TagList    []string //tag列表
-	TagRules      interface{}   //标签推送规则。这参数较为复杂，不同插件差别极大，格式参考上面示例
+	TagRules      any           //标签推送规则。这参数较为复杂，不同插件差别极大，格式参考上面示例
 	MessageType   uint          //消息类型：0通知消息 1透传消息
 	Title         string        //消息标题
 	Content       string        //消息内容
@@ -38,8 +38,8 @@ type PushParam struct {
 }
 
 type CustomContent struct {
-	Type string                 //类型
-	Data map[string]interface{} //数据
+	Type string         //类型
+	Data map[string]any //数据
 }
 
 type TagParam struct {

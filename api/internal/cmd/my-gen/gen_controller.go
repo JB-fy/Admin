@@ -82,7 +82,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
-		filter = map[string]interface{}{}
+		filter = map[string]any{}
 	}
 `
 		tplController += `
@@ -162,7 +162,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 			field = allowField
 		}
 	}
-	filter := map[string]interface{}{` + "`id`" + `: req.Id}
+	filter := map[string]any{` + "`id`" + `: req.Id}
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -231,7 +231,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
 		return
 	}
-	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
+	filter := map[string]any{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -256,7 +256,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 // 删除
 func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := map[string]interface{}{` + "`id`" + `: req.IdArr}
+	filter := map[string]any{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -283,7 +283,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
-		filter = map[string]interface{}{}
+		filter = map[string]any{}
 	}
 
 	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`

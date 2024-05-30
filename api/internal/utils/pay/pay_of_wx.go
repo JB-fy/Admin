@@ -30,8 +30,8 @@ type PayOfWx struct {
 	NotifyUrl  string `json:"payOfWxNotifyUrl"`
 }
 
-func NewPayOfWx(ctx context.Context, configOpt ...map[string]interface{}) *PayOfWx {
-	var config map[string]interface{}
+func NewPayOfWx(ctx context.Context, configOpt ...map[string]any) *PayOfWx {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {

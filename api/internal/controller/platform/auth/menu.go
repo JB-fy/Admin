@@ -23,7 +23,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
-		filter = map[string]interface{}{}
+		filter = map[string]any{}
 	}
 
 	allowField := daoAuth.Menu.ColumnArr().Slice()
@@ -71,7 +71,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 			field = allowField
 		}
 	}
-	filter := map[string]interface{}{`id`: req.Id}
+	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -125,7 +125,7 @@ func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateR
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-	filter := map[string]interface{}{`id`: req.IdArr}
+	filter := map[string]any{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -142,7 +142,7 @@ func (controllerThis *Menu) Update(ctx context.Context, req *apiAuth.MenuUpdateR
 // 删除
 func (controllerThis *Menu) Delete(ctx context.Context, req *apiAuth.MenuDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := map[string]interface{}{`id`: req.IdArr}
+	filter := map[string]any{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -161,7 +161,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
-		filter = map[string]interface{}{}
+		filter = map[string]any{}
 	}
 
 	allowField := daoAuth.Menu.ColumnArr().Slice()

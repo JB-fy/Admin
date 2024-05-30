@@ -22,7 +22,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]any) (id int64, err error) {
 	daoThis := daoAuth.Role
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -56,7 +56,7 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]interfac
 }
 
 // 修改
-func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoThis := daoAuth.Role
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -120,7 +120,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]interf
 }
 
 // 删除
-func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoThis := daoAuth.Role
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 

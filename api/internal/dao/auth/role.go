@@ -35,12 +35,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *roleDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *roleDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *roleDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *roleDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -49,7 +49,7 @@ func (daoThis *roleDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[stri
 }
 
 // 解析分表
-func (daoThis *roleDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *roleDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -68,7 +68,7 @@ func (daoThis *roleDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
 }
 
 // 解析filter
-func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -103,7 +103,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 			case Scene.Columns().SceneCode:
 				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
-			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]interface{}{`scene_code`: `场景标识`, `login_id`: 登录身份id}
+			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
@@ -135,7 +135,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 }
 
 // 解析field
-func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -232,9 +232,9 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析insert
-func (daoThis *roleDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case `action_id_arr`:
@@ -268,18 +268,18 @@ func (daoThis *roleDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `action_id_arr`:
-					insertList := []map[string]interface{}{}
+					insertList := []map[string]any{}
 					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]interface{}{
+						insertList = append(insertList, map[string]any{
 							RoleRelToAction.Columns().RoleId:   id,
 							RoleRelToAction.Columns().ActionId: item,
 						})
 					}
 					RoleRelToAction.CtxDaoModel(ctx).Data(insertList).Insert()
 				case `menu_id_arr`:
-					insertList := []map[string]interface{}{}
+					insertList := []map[string]any{}
 					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]interface{}{
+						insertList = append(insertList, map[string]any{
 							RoleRelToMenu.Columns().RoleId: id,
 							RoleRelToMenu.Columns().MenuId: item,
 						})
@@ -293,9 +293,9 @@ func (daoThis *roleDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析update
-func (daoThis *roleDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case `action_id_arr`:

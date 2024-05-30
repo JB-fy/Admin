@@ -39,7 +39,7 @@ func HandlerResponse(r *ghttp.Request) {
 				}
 			}
 		}
-		r.Response.WriteJson(map[string]interface{}{
+		r.Response.WriteJson(map[string]any{
 			`code`: code.Code(),
 			`msg`:  msg,
 			`data`: code.Detail(),
@@ -62,7 +62,7 @@ func HandlerResponse(r *ghttp.Request) {
 		return
 	}
 
-	r.Response.WriteJson(map[string]interface{}{
+	r.Response.WriteJson(map[string]any{
 		`code`: 0,
 		`msg`:  g.I18n().T(r.GetCtx(), `code.0`),
 		`data`: r.GetHandlerResponse(),

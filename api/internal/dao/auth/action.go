@@ -36,12 +36,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *actionDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *actionDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *actionDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *actionDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -50,7 +50,7 @@ func (daoThis *actionDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[st
 }
 
 // 解析分表
-func (daoThis *actionDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *actionDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -69,7 +69,7 @@ func (daoThis *actionDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
 }
 
 // 解析filter
-func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -97,7 +97,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
-			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]interface{}{`scene_code`: `场景标识`, `login_id`: 登录身份id, `scene_id`: 场景id（平台超级管理员用，不用再做一次查询）}
+			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id, `scene_id`: 场景id（平台超级管理员用，不用再做一次查询）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
@@ -141,7 +141,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]interface{}, daoModel *d
 }
 
 // 解析field
-func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -214,9 +214,9 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 }
 
 // 解析insert
-func (daoThis *actionDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *actionDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case `scene_id_arr`:
@@ -248,9 +248,9 @@ func (daoThis *actionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `scene_id_arr`:
-					insertList := []map[string]interface{}{}
+					insertList := []map[string]any{}
 					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]interface{}{
+						insertList = append(insertList, map[string]any{
 							ActionRelToScene.Columns().ActionId: id,
 							ActionRelToScene.Columns().SceneId:  item,
 						})
@@ -264,9 +264,9 @@ func (daoThis *actionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 }
 
 // 解析update
-func (daoThis *actionDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *actionDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case `scene_id_arr`:

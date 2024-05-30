@@ -38,12 +38,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *userDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *userDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *userDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *userDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -52,7 +52,7 @@ func (daoThis *userDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[stri
 }
 
 // 解析分表
-func (daoThis *userDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *userDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -71,7 +71,7 @@ func (daoThis *userDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
 }
 
 // 解析filter
-func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *userDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -114,7 +114,7 @@ func (daoThis *userDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 }
 
 // 解析field
-func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -181,9 +181,9 @@ func (daoThis *userDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析insert
-func (daoThis *userDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *userDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case daoThis.Columns().Phone:
@@ -251,9 +251,9 @@ func (daoThis *userDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析update
-func (daoThis *userDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *userDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Phone:

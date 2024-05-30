@@ -39,8 +39,8 @@ type UploadOfAliyunOss struct {
 	RoleArn         string `json:"uploadOfAliyunOssRoleArn"`
 }
 
-func NewUploadOfAliyunOss(ctx context.Context, configOpt ...map[string]interface{}) *UploadOfAliyunOss {
-	var config map[string]interface{}
+func NewUploadOfAliyunOss(ctx context.Context, configOpt ...map[string]any) *UploadOfAliyunOss {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
@@ -77,7 +77,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 	}
 
 	policyBase64 := uploadThis.CreatePolicyBase64(param)
-	uploadData := map[string]interface{}{
+	uploadData := map[string]any{
 		`OSSAccessKeyId`:        uploadThis.AccessKeyId,
 		`policy`:                string(policyBase64),
 		`signature`:             uploadThis.CreateSign(policyBase64),
@@ -99,8 +99,8 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *UploadOfAliyunOss) Config(param UploadParam) (config map[string]interface{}, err error) {
-	config = map[string]interface{}{
+func (uploadThis *UploadOfAliyunOss) Config(param UploadParam) (config map[string]any, err error) {
+	config = map[string]any{
 		`endpoint`: uploadThis.Host,
 		`bucket`:   uploadThis.Bucket,
 		`dir`:      param.Dir,
@@ -115,7 +115,7 @@ func (uploadThis *UploadOfAliyunOss) Config(param UploadParam) (config map[strin
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]any, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
@@ -231,9 +231,9 @@ func (uploadThis *UploadOfAliyunOss) CreateSign(policyBase64 string) (sign strin
 
 // 生成PolicyBase64（web前端直传用）
 func (uploadThis *UploadOfAliyunOss) CreatePolicyBase64(param UploadParam) (policyBase64 string) {
-	policyMap := map[string]interface{}{
+	policyMap := map[string]any{
 		`expiration`: uploadThis.GetGmtIso8601(param.Expire),
-		`conditions`: [][]interface{}{
+		`conditions`: [][]any{
 			{`content-length-range`, param.MinSize, param.MaxSize},
 			{`starts-with`, `$key`, param.Dir},
 		},
@@ -246,7 +246,7 @@ func (uploadThis *UploadOfAliyunOss) CreatePolicyBase64(param UploadParam) (poli
 
 // 生成回调字符串（web前端直传用）
 func (uploadThis *UploadOfAliyunOss) CreateCallbackStr(callback UploadOfAliyunOssCallback) string {
-	callbackParam := map[string]interface{}{
+	callbackParam := map[string]any{
 		`callbackUrl`:      callback.Url,
 		`callbackBody`:     callback.Body,
 		`callbackBodyType`: callback.BodyType,

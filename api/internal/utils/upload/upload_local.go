@@ -31,8 +31,8 @@ type UploadOfLocal struct {
 	FileUrlPrefix string `json:"uploadOfLocalFileUrlPrefix"`
 }
 
-func NewUploadOfLocal(ctx context.Context, configOpt ...map[string]interface{}) *UploadOfLocal {
-	var config map[string]interface{}
+func NewUploadOfLocal(ctx context.Context, configOpt ...map[string]any) *UploadOfLocal {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
@@ -59,7 +59,7 @@ func (uploadThis *UploadOfLocal) Upload(r *ghttp.Request) (notifyInfo NotifyInfo
 		err = errors.New(`签名过期`)
 		return
 	}
-	signData := map[string]interface{}{
+	signData := map[string]any{
 		`dir`:      dir,
 		`expire`:   expire,
 		`min_size`: minSize,
@@ -142,7 +142,7 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err
 		IsRes:     1,
 	}
 
-	uploadData := map[string]interface{}{
+	uploadData := map[string]any{
 		`dir`:      param.Dir,
 		`expire`:   param.Expire,
 		`min_size`: param.MinSize,
@@ -156,12 +156,12 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *UploadOfLocal) Config(param UploadParam) (config map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Config(param UploadParam) (config map[string]any, err error) {
 	return
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *UploadOfLocal) Sts(param UploadParam) (stsInfo map[string]interface{}, err error) {
+func (uploadThis *UploadOfLocal) Sts(param UploadParam) (stsInfo map[string]any, err error) {
 	return
 }
 
@@ -171,7 +171,7 @@ func (uploadThis *UploadOfLocal) Notify(r *ghttp.Request) (notifyInfo NotifyInfo
 }
 
 // 生成签名
-func (uploadThis *UploadOfLocal) CreateSign(data map[string]interface{}) (sign string) {
+func (uploadThis *UploadOfLocal) CreateSign(data map[string]any) (sign string) {
 	keyArr := []string{}
 	for k := range data {
 		keyArr = append(keyArr, k)

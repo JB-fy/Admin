@@ -18,8 +18,8 @@ type OneClickOfWx struct {
 	Secret string `json:"oneClickOfWxSecret"`
 }
 
-func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]interface{}) *OneClickOfWx {
-	var config map[string]interface{}
+func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]any) *OneClickOfWx {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {

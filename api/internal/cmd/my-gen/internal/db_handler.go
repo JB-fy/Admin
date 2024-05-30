@@ -28,12 +28,12 @@ type MyGenDbHandler interface {
 }
 
 type MyGenField struct {
-	FieldRaw     string      // 字段（原始）
-	FieldTypeRaw string      // 字段类型（原始）
-	IsNull       bool        // 字段是否可为NULL
-	Default      interface{} // 默认值
-	Comment      string      // 注释（原始）。
-	IsAutoInc    bool        // 是否自增
+	FieldRaw     string // 字段（原始）
+	FieldTypeRaw string // 字段类型（原始）
+	IsNull       bool   // 字段是否可为NULL
+	Default      any    // 默认值
+	Comment      string // 注释（原始）。
+	IsAutoInc    bool   // 是否自增
 }
 
 type MyGenKey struct {

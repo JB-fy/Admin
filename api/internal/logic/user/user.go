@@ -18,7 +18,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *sUserUser) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sUserUser) Create(ctx context.Context, data map[string]any) (id int64, err error) {
 	daoThis := daoUser.User
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -27,7 +27,7 @@ func (logicThis *sUserUser) Create(ctx context.Context, data map[string]interfac
 }
 
 // 修改
-func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoThis := daoUser.User
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -42,7 +42,7 @@ func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]interf
 }
 
 // 删除
-func (logicThis *sUserUser) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sUserUser) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoThis := daoUser.User
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 

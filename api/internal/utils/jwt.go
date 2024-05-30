@@ -16,7 +16,7 @@ type JWT struct {
 	SignMethod *jwt.SigningMethodHMAC
 }
 
-func NewJWT(ctx context.Context, config map[string]interface{}) *JWT {
+func NewJWT(ctx context.Context, config map[string]any) *JWT {
 	jwtObj := JWT{
 		Ctx: ctx,
 	}
@@ -52,7 +52,7 @@ func (jwtThis *JWT) CreateToken(claims CustomClaims) (tokenString string, err er
 
 // 解析 token
 func (jwtThis *JWT) ParseToken(tokenString string) (claims *CustomClaims, err error) {
-	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (any, error) {
 		return jwtThis.SignKey, nil
 	})
 	claims, ok := token.Claims.(*CustomClaims)

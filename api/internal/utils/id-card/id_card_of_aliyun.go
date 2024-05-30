@@ -18,8 +18,8 @@ type IdCardOfAliyun struct {
 	Appcode string `json:"idCardOfAliyunAppcode"`
 }
 
-func NewIdCardOfAliyun(ctx context.Context, configOpt ...map[string]interface{}) *IdCardOfAliyun {
-	var config map[string]interface{}
+func NewIdCardOfAliyun(ctx context.Context, configOpt ...map[string]any) *IdCardOfAliyun {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {

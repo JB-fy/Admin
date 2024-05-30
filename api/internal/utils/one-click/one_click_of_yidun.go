@@ -16,8 +16,8 @@ type OneClickOfYidun struct {
 	BusinessId string `json:"oneClickOfYidunBusinessId"`
 }
 
-func NewOneClickOfYidun(ctx context.Context, configOpt ...map[string]interface{}) *OneClickOfYidun {
-	var config map[string]interface{}
+func NewOneClickOfYidun(ctx context.Context, configOpt ...map[string]any) *OneClickOfYidun {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {

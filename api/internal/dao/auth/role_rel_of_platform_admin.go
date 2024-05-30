@@ -35,12 +35,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *roleRelOfPlatformAdminDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *roleRelOfPlatformAdminDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *roleRelOfPlatformAdminDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *roleRelOfPlatformAdminDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -49,7 +49,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseDbGroup(ctx context.Context, dbGr
 }
 
 // 解析分表
-func (daoThis *roleRelOfPlatformAdminDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *roleRelOfPlatformAdminDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -68,7 +68,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseLabel(daoModel *daoIndex.DaoModel
 }
 
 // 解析filter
-func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -89,7 +89,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseFilter(filter map[string]interfac
 }
 
 // 解析field
-func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -152,9 +152,9 @@ func (daoThis *roleRelOfPlatformAdminDao) HookSelect(daoModel *daoIndex.DaoModel
 }
 
 // 解析insert
-func (daoThis *roleRelOfPlatformAdminDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelOfPlatformAdminDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			default:
@@ -193,9 +193,9 @@ func (daoThis *roleRelOfPlatformAdminDao) HookInsert(daoModel *daoIndex.DaoModel
 }
 
 // 解析update
-func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			default:

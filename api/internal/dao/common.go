@@ -13,13 +13,13 @@ import (
 )
 
 // 更新时，判断是否空数据更新（HookUpdate中用于判断in.Data）
-func IsEmptyDataOfUpdate(ctx context.Context, dbGroup string, data interface{}) (isEmptyData bool) {
+func IsEmptyDataOfUpdate(ctx context.Context, dbGroup string, data any) (isEmptyData bool) {
 	switch v := data.(type) {
 	case string:
 		if v == `` || gstr.Pos(v, `,`) == 0 {
 			isEmptyData = true
 		}
-	case map[string]interface{}:
+	case map[string]any:
 		switch len(v) {
 		case 0:
 			isEmptyData = true
@@ -43,7 +43,7 @@ func IsEmptyDataOfUpdate(ctx context.Context, dbGroup string, data interface{}) 
 }
 
 // 保存关联表（一对多）。关联表除主表关联id外，只剩1个有用字段
-func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, valField string, id interface{}, valArr []string /* []interface{} */) {
+func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, valField string, id any, valArr []string /* []any */) {
 	// valArrOfOldTmp, _ := relDao.CtxDaoModel(ctx).Filter(idField, id).Array(valField)
 	// valArrOfOld := gconv.SliceAny(valArrOfOldTmp)
 	valArrOfOld, _ := relDao.CtxDaoModel(ctx).Filter(idField, id).ArrayStr(valField)
@@ -52,9 +52,9 @@ func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, va
 	// insertValArr := gset.NewFrom(valArr).Diff(gset.NewFrom(valArrOfOld)).Slice()
 	insertValArr := gset.NewStrSetFrom(valArr).Diff(gset.NewStrSetFrom(valArrOfOld)).Slice()
 	if len(insertValArr) > 0 {
-		insertList := []map[string]interface{}{}
+		insertList := []map[string]any{}
 		for _, v := range insertValArr {
-			insertList = append(insertList, map[string]interface{}{
+			insertList = append(insertList, map[string]any{
 				idField:  id,
 				valField: v,
 			})
@@ -75,12 +75,12 @@ func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, va
 }
 
 // 保存关联表（一对多），有顺序要求时使用。关联表除主表关联id外，只剩1个有用字段
-func SaveArrRelManyWithSort(ctx context.Context, relDao DaoInterface, idField string, valField string, idArr []interface{}, valArr []interface{}) {
+func SaveArrRelManyWithSort(ctx context.Context, relDao DaoInterface, idField string, valField string, idArr []any, valArr []any) {
 	relDao.CtxDaoModel(ctx).Filter(idField, idArr).Delete()
-	insertList := []map[string]interface{}{}
+	insertList := []map[string]any{}
 	for _, id := range idArr {
 		for _, v := range valArr {
-			insertList = append(insertList, map[string]interface{}{
+			insertList = append(insertList, map[string]any{
 				idField:  id,
 				valField: v,
 			})
@@ -90,7 +90,7 @@ func SaveArrRelManyWithSort(ctx context.Context, relDao DaoInterface, idField st
 }
 
 // 保存关联表（一对多）。关联表除主表关联id外，至少还剩2个有用字段
-func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, idSuffixFieldArr []string, id interface{}, valList []map[string]interface{}) {
+func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, idSuffixFieldArr []string, id any, valList []map[string]any) {
 	if len(valList) == 0 {
 		relDao.CtxDaoModel(ctx).GetModel().Where(idField, id).Delete()
 		return
@@ -111,12 +111,12 @@ func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, i
 }
 
 // 保存关联表（一对多），有顺序要求时使用。关联表除主表关联id外，至少还剩2个有用字段
-func SaveListRelManyWithSort(ctx context.Context, relDao DaoInterface, idField string, idArr []interface{}, valList []map[string]interface{}) {
+func SaveListRelManyWithSort(ctx context.Context, relDao DaoInterface, idField string, idArr []any, valList []map[string]any) {
 	relDao.CtxDaoModel(ctx).Filter(idField, idArr).Delete()
 	if len(valList) == 0 {
 		return
 	}
-	insertList := []map[string]interface{}{}
+	insertList := []map[string]any{}
 	for _, id := range idArr {
 		for _, v := range valList {
 			insertItem := gjson.New(gjson.MustEncodeString(v)).Map()

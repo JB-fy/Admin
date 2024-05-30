@@ -40,7 +40,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]any) (id int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 `
@@ -61,7 +61,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 }
 
 // 修改
-func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -102,7 +102,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 }
 
 // 删除
-func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoThis := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 

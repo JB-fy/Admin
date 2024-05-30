@@ -199,7 +199,7 @@ func genDao(tpl myGenTpl) {
 
 	// 解析insert
 	if len(dao.insertParseBefore) > 0 {
-		insertParseBeforePoint := `insertData := map[string]interface{}{}`
+		insertParseBeforePoint := `insertData := map[string]any{}`
 		tplDao = gstr.Replace(tplDao, insertParseBeforePoint, gstr.Join(append(dao.insertParseBefore, ``), `
 		`)+insertParseBeforePoint, 1)
 	}
@@ -545,21 +545,21 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v).One()
-					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]interface{}{
+					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]any{
 						`+"`"+pIdPathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String(),
 						`+"`"+pLevelStr+"`"+`:   pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`].Uint(),
 					}
 				} else {
-					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]interface{}{
+					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]any{
 						`+"`"+pIdPathStr+"`"+`: `+"`0`"+`,
 						`+"`"+pLevelStr+"`"+`:   0,
 					}
 				}`)
 
 			daoField.insertHook.Method = internal.ReturnTypeName
-			daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+selfUpdateStr+"`"+`: //更新自身的ID路径和层级。参数：map[string]interface{}{`+"`"+pIdPathStr+"`"+`: `+"`父级ID路径`"+`, `+"`"+pLevelStr+"`"+`: `+"`父级层级`"+`}
-					val := v.(map[string]interface{})
-					daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, id).HookUpdate(map[string]interface{}{
+			daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+selfUpdateStr+"`"+`: //更新自身的ID路径和层级。参数：map[string]any{`+"`"+pIdPathStr+"`"+`: `+"`父级ID路径`"+`, `+"`"+pLevelStr+"`"+`: `+"`父级层级`"+`}
+					val := v.(map[string]any)
+					daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, id).HookUpdate(map[string]any{
 						`+daoPath+`.Columns().IdPath: gconv.String(val[`+"`"+pIdPathStr+"`"+`]) + `+"`-`"+` + gconv.String(id),
 						`+daoPath+`.Columns().Level:  gconv.Uint(val[`+"`"+pLevelStr+"`"+`]) + 1,
 					}).Update()`)
@@ -584,11 +584,11 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`] = gdb.Raw(`+"`CONCAT('`"+` + pIdPath + `+"`-', `"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+` + `+"`)`"+`)
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`] = pLevel + 1
 				//更新所有子孙级的ID路径和层级
-				`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]interface{}{}
+				`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]any{}
 				oldList, _ := daoModel.CloneNew().Filter(`+"`id`"+`, daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`].Uint() {
-						`+gstr.CaseCamelLower(childUpdateStr)+` = append(`+gstr.CaseCamelLower(childUpdateStr)+`, map[string]interface{}{
+						`+gstr.CaseCamelLower(childUpdateStr)+` = append(`+gstr.CaseCamelLower(childUpdateStr)+`, map[string]any{
 							`+"`"+pIdPathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`],
 							`+"`"+pIdPathOfNewStr+"`"+`: pIdPath + `+"`-`"+` + oldInfo[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`].String(),
 							`+"`"+pLevelOldStr+"`"+`:  oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`],
@@ -599,12 +599,12 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				if len(`+gstr.CaseCamelLower(childUpdateStr)+`) > 0 {
 					daoModel.AfterUpdate[`+"`"+childUpdateStr+"`"+`] = `+gstr.CaseCamelLower(childUpdateStr)+`
 				}
-			case `+"`"+childIdPathStr+"`"+`: //更新所有子孙级的ID路径。参数：map[string]interface{}{`+"`"+pIdPathOfOldStr+"`"+`: `+"`父级ID路径（旧）`"+`, `+"`"+pIdPathOfNewStr+"`"+`: `+"`父级ID路径（新）`"+`}
+			case `+"`"+childIdPathStr+"`"+`: //更新所有子孙级的ID路径。参数：map[string]any{`+"`"+pIdPathOfOldStr+"`"+`: `+"`父级ID路径（旧）`"+`, `+"`"+pIdPathOfNewStr+"`"+`: `+"`父级ID路径（新）`"+`}
 				val := gconv.Map(v)
 				pIdPathOfOld := gconv.String(val[`+"`"+pIdPathOfOldStr+"`"+`])
 				pIdPathOfNew := gconv.String(val[`+"`"+pIdPathOfNewStr+"`"+`])
 				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`] = gdb.Raw(`+"`REPLACE(`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+` + `+"`, '`"+` + pIdPathOfOld + `+"`', '`"+` + pIdPathOfNew + `+"`')`"+`)
-			case `+"`"+childLevelStr+"`"+`: //更新所有子孙级的层级。参数：map[string]interface{}{`+"`"+pLevelOldStr+"`"+`: `+"`父级层级（旧）`"+`, `+"`"+pLevelNewStr+"`"+`: `+"`父级层级（新）`"+`}
+			case `+"`"+childLevelStr+"`"+`: //更新所有子孙级的层级。参数：map[string]any{`+"`"+pLevelOldStr+"`"+`: `+"`父级层级（旧）`"+`, `+"`"+pLevelNewStr+"`"+`: `+"`父级层级（新）`"+`}
 				val := gconv.Map(v)
 				pLevelOfOld := gconv.Uint(val[`+"`"+pLevelOldStr+"`"+`])
 				pLevelOfNew := gconv.Uint(val[`+"`"+pLevelNewStr+"`"+`])
@@ -614,8 +614,8 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				}`)
 
 			daoField.updateHookAfter.Method = internal.ReturnTypeName
-			daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+childUpdateStr+"`"+`: //修改pid时，更新所有子孙级的ID路径和层级。参数：[]map[string]interface{}{`+"`"+pIdPathOfOldStr+"`"+`: `+"`父级ID路径（旧）`"+`, `+"`"+pIdPathOfNewStr+"`"+`: `+"`父级ID路径（新）`"+`, `+"`"+pLevelOldStr+"`"+`: `+"`父级层级（旧）`"+`, `+"`"+pLevelNewStr+"`"+`: `+"`父级层级（新）`"+`}
-					val := v.([]map[string]interface{})
+			daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+childUpdateStr+"`"+`: //修改pid时，更新所有子孙级的ID路径和层级。参数：[]map[string]any{`+"`"+pIdPathOfOldStr+"`"+`: `+"`父级ID路径（旧）`"+`, `+"`"+pIdPathOfNewStr+"`"+`: `+"`父级ID路径（新）`"+`, `+"`"+pLevelOldStr+"`"+`: `+"`父级层级（旧）`"+`, `+"`"+pLevelNewStr+"`"+`: `+"`父级层级（新）`"+`}
+					val := v.([]map[string]any)
 					for _, v1 := range val {
 						daoModel.CloneNew().Filter(`+"`"+pIdPathOfOldStr+"`"+`, v1[`+"`"+pIdPathOfOldStr+"`"+`]).HookUpdate(g.Map{
 							`+"`"+childIdPathStr+"`"+`: g.Map{
@@ -775,9 +775,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				if garray.NewStrArrayFrom([]string{`+"``, `0`, `[]`, `{}`"+`}).Contains(gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
 					continue
 				}
-				insertData, ok := daoModel.AfterInsert[`+"`"+tplEM.FieldVar+"`"+`].(map[string]interface{})
+				insertData, ok := daoModel.AfterInsert[`+"`"+tplEM.FieldVar+"`"+`].(map[string]any)
 				if !ok {
-					insertData = map[string]interface{}{}
+					insertData = map[string]any{}
 				}
 				insertData[k] = v
 				daoModel.AfterInsert[`+"`"+tplEM.FieldVar+"`"+`] = insertData`)
@@ -786,7 +786,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 	switch tplEM.TableType {
 	case internal.TableTypeExtendOne:
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-					insertData, _ := v.(map[string]interface{})
+					insertData, _ := v.(map[string]any)
 					`+insertHookStr)
 	case internal.TableTypeMiddleOne:
 		insertHookIdSuffixArr := []string{}
@@ -796,7 +796,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			insertHookIdSuffixIfArr = append(insertHookIdSuffixIfArr, `!ok`+v.FieldCaseCamel)
 		}
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-					insertData, _ := v.(map[string]interface{})
+					insertData, _ := v.(map[string]any)
 					`+gstr.Join(append(insertHookIdSuffixArr, ``), `
 					`)+`if `+gstr.Join(insertHookIdSuffixIfArr, ` && `)+` { //多ID时，全部ID都不存在（都等于0已在ParseInsert解析时已过滤，故存在就肯定不等于0）不插入。可根据自己业务修改
 						continue
@@ -805,9 +805,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 	}
 
 	dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
-				updateData, ok := daoModel.AfterUpdate[`+"`"+tplEM.FieldVar+"`"+`].(map[string]interface{})
+				updateData, ok := daoModel.AfterUpdate[`+"`"+tplEM.FieldVar+"`"+`].(map[string]any)
 				if !ok {
-					updateData = map[string]interface{}{}
+					updateData = map[string]any{}
 				}
 				updateData[k] = v
 				daoModel.AfterUpdate[`+"`"+tplEM.FieldVar+"`"+`] = updateData`)
@@ -820,7 +820,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 	switch tplEM.TableType {
 	case internal.TableTypeExtendOne:
 		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
-					updateData, _ := v.(map[string]interface{})
+					updateData, _ := v.(map[string]any)
 					`+updateHookBeforeStr)
 	case internal.TableTypeMiddleOne:
 		updateHookBeforeIdSuffixArr := []string{}
@@ -830,7 +830,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			updateHookBeforeIdSuffixIfArr = append(updateHookBeforeIdSuffixIfArr, `(ok`+v.FieldCaseCamel+` && gconv.Uint(`+gstr.CaseCamelLower(v.FieldRaw)+`) == 0)`)
 		}
 		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
-					updateData, _ := v.(map[string]interface{})
+					updateData, _ := v.(map[string]any)
 					`+gstr.Join(append(updateHookBeforeIdSuffixArr, ``), `
 					`)+`if `+gstr.Join(updateHookBeforeIdSuffixIfArr, ` && `)+` { //多ID时，全部ID存在且等于0就删除。可根据自己业务修改
 						for _, id := range daoModel.IdArr {
@@ -1036,9 +1036,9 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
 						record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-					insertList := []map[string]interface{}{}
+					insertList := []map[string]any{}
 					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]interface{}{
+						insertList = append(insertList, map[string]any{
 							`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`: id,
 							`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`: item,
 						})
@@ -1055,7 +1055,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
 						record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-					insertList := []map[string]interface{}{}
+					insertList := []map[string]any{}
 					for _, item := range gconv.SliceMap(v) {
 						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
 						insertItem[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id

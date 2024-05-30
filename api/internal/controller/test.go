@@ -122,10 +122,10 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	var wg sync.WaitGroup
 	var mx sync.Mutex
 	total := 0
-	listRaw := []map[string]interface{}{}
+	listRaw := []map[string]any{}
 	for k, v := range listRaw {
 		wg.Add(1)
-		go func(ctx context.Context, key int, value map[string]interface{}) {
+		go func(ctx context.Context, key int, value map[string]any) {
 			defer wg.Done()
 			mp.Store(key, value)
 
@@ -135,9 +135,9 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 		}(ctx, k, v)
 	}
 	wg.Wait()
-	listResult := []map[string]interface{}{}
-	mp.Range(func(key, value interface{}) bool {
-		listResult = append(listResult, value.(map[string]interface{}))
+	listResult := []map[string]any{}
+	mp.Range(func(key, value any) bool {
+		listResult = append(listResult, value.(map[string]any))
 		return true
 	}) */
 
@@ -150,8 +150,8 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	// err = utils.NewErrorCode(ctx, 99999999, ``)
-	/* utils.HttpWriteJson(ctx, map[string]interface{}{
-		`info`: map[string]interface{}{},
+	/* utils.HttpWriteJson(ctx, map[string]any{
+		`info`: map[string]any{},
 	}, 0, ``) */
 	res = &api.TestRes{}
 	/* info, _ := g.DB().Model(`auth_scene`).Ctx(ctx).One()
@@ -168,11 +168,11 @@ func (c *Test) Test1(r *ghttp.Request) {
 	} */
 
 	// r.SetError(utils.NewErrorCode(r.GetCtx(), 99999999, ``))
-	r.Response.WriteJson(map[string]interface{}{
+	r.Response.WriteJson(map[string]any{
 		`code`: 0,
 		`msg`:  g.I18n().T(r.GetCtx(), `code.0`),
-		`data`: map[string]interface{}{
-			`list`: []map[string]interface{}{},
+		`data`: map[string]any{
+			`list`: []map[string]any{},
 		},
 	})
 }

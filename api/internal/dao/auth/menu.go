@@ -37,12 +37,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *menuDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *daoIndex.DaoModel {
+func (daoThis *menuDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *menuDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string {
+func (daoThis *menuDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -51,7 +51,7 @@ func (daoThis *menuDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[stri
 }
 
 // 解析分表
-func (daoThis *menuDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string {
+func (daoThis *menuDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -70,7 +70,7 @@ func (daoThis *menuDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
 }
 
 // 解析filter
-func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -96,7 +96,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]interface{}{`scene_code`: `场景标识`, `login_id`: 登录身份id, `scene_id`: 场景id（平台超级管理员用，不用再做一次查询）}
+			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id, `scene_id`: 场景id（平台超级管理员用，不用再做一次查询）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				switch gconv.String(val[`scene_code`]) {
@@ -138,7 +138,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]interface{}, daoModel *dao
 }
 
 // 解析field
-func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -208,7 +208,7 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
 						record[`i18n`] = extraDataJson.Get(`i18n`)
 						if record[`i18n`] == nil {
-							record[`i18n`] = gvar.New(map[string]interface{}{`title`: map[string]interface{}{`zh-cn`: record[daoThis.Columns().MenuName]}})
+							record[`i18n`] = gvar.New(map[string]any{`title`: map[string]any{`zh-cn`: record[daoThis.Columns().MenuName]}})
 						}
 					default:
 						record[v] = gvar.New(nil)
@@ -231,24 +231,24 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析insert
-func (daoThis *menuDao) ParseInsert(insert map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *menuDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		if _, ok := insert[daoThis.Columns().Pid]; !ok {
 			insert[daoThis.Columns().Pid] = 0
 		}
-		insertData := map[string]interface{}{}
+		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
 					pInfo, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, v).One()
-					daoModel.AfterInsert[`self_update`] = map[string]interface{}{
+					daoModel.AfterInsert[`self_update`] = map[string]any{
 						`p_id_path`: pInfo[daoThis.Columns().IdPath].String(),
 						`p_level`:   pInfo[daoThis.Columns().Level].Uint(),
 					}
 				} else {
-					daoModel.AfterInsert[`self_update`] = map[string]interface{}{
+					daoModel.AfterInsert[`self_update`] = map[string]any{
 						`p_id_path`: `0`,
 						`p_level`:   0,
 					}
@@ -284,9 +284,9 @@ func (daoThis *menuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			for k, v := range daoModel.AfterInsert {
 				switch k {
-				case `self_update`: //更新自身的ID路径和层级。参数：map[string]interface{}{`p_id_path`: `父级ID路径`, `p_level`: `父级层级`}
-					val := v.(map[string]interface{})
-					daoModel.CloneNew().Filter(daoThis.Columns().MenuId, id).HookUpdate(map[string]interface{}{
+				case `self_update`: //更新自身的ID路径和层级。参数：map[string]any{`p_id_path`: `父级ID路径`, `p_level`: `父级层级`}
+					val := v.(map[string]any)
+					daoModel.CloneNew().Filter(daoThis.Columns().MenuId, id).HookUpdate(map[string]any{
 						daoThis.Columns().IdPath: gconv.String(val[`p_id_path`]) + `-` + gconv.String(id),
 						daoThis.Columns().Level:  gconv.Uint(val[`p_level`]) + 1,
 					}).Update()
@@ -298,9 +298,9 @@ func (daoThis *menuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析update
-func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]interface{}{}
+		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Pid:
@@ -315,11 +315,11 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				updateData[daoThis.Columns().IdPath] = gdb.Raw(`CONCAT('` + pIdPath + `-', ` + daoThis.Columns().MenuId + `)`)
 				updateData[daoThis.Columns().Level] = pLevel + 1
 				//更新所有子孙级的ID路径和层级
-				childUpdateList := []map[string]interface{}{}
+				childUpdateList := []map[string]any{}
 				oldList, _ := daoModel.CloneNew().Filter(`id`, daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
 					if gconv.Uint(v) != oldInfo[daoThis.Columns().Pid].Uint() {
-						childUpdateList = append(childUpdateList, map[string]interface{}{
+						childUpdateList = append(childUpdateList, map[string]any{
 							`p_id_path_of_old`: oldInfo[daoThis.Columns().IdPath],
 							`p_id_path_of_new`: pIdPath + `-` + oldInfo[daoThis.Columns().MenuId].String(),
 							`p_level_of_old`:   oldInfo[daoThis.Columns().Level],
@@ -330,12 +330,12 @@ func (daoThis *menuDao) ParseUpdate(update map[string]interface{}, daoModel *dao
 				if len(childUpdateList) > 0 {
 					daoModel.AfterUpdate[`child_update_list`] = childUpdateList
 				}
-			case `child_id_path`: //更新所有子孙级的ID路径。参数：map[string]interface{}{`p_id_path_of_old`: `父级ID路径（旧）`, `p_id_path_of_new`: `父级ID路径（新）`}
+			case `child_id_path`: //更新所有子孙级的ID路径。参数：map[string]any{`p_id_path_of_old`: `父级ID路径（旧）`, `p_id_path_of_new`: `父级ID路径（新）`}
 				val := gconv.Map(v)
 				pIdPathOfOld := gconv.String(val[`p_id_path_of_old`])
 				pIdPathOfNew := gconv.String(val[`p_id_path_of_new`])
 				updateData[daoThis.Columns().IdPath] = gdb.Raw(`REPLACE(` + daoThis.Columns().IdPath + `, '` + pIdPathOfOld + `', '` + pIdPathOfNew + `')`)
-			case `child_level`: //更新所有子孙级的层级。参数：map[string]interface{}{`p_level_of_old`: `父级层级（旧）`, `p_level_of_new`: `父级层级（新）`}
+			case `child_level`: //更新所有子孙级的层级。参数：map[string]any{`p_level_of_old`: `父级层级（旧）`, `p_level_of_new`: `父级层级（新）`}
 				val := gconv.Map(v)
 				pLevelOfOld := gconv.Uint(val[`p_level_of_old`])
 				pLevelOfNew := gconv.Uint(val[`p_level_of_new`])
@@ -380,8 +380,8 @@ func (daoThis *menuDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
-				case `child_update_list`: //修改pid时，更新所有子孙级的ID路径和层级。参数：[]map[string]interface{}{`p_id_path_of_old`: `父级ID路径（旧）`, `p_id_path_of_new`: `父级ID路径（新）`, `p_level_of_old`: `父级层级（旧）`, `p_level_of_new`: `父级层级（新）`}
-					val := v.([]map[string]interface{})
+				case `child_update_list`: //修改pid时，更新所有子孙级的ID路径和层级。参数：[]map[string]any{`p_id_path_of_old`: `父级ID路径（旧）`, `p_id_path_of_new`: `父级ID路径（新）`, `p_level_of_old`: `父级层级（旧）`, `p_level_of_new`: `父级层级（新）`}
+					val := v.([]map[string]any)
 					for _, v1 := range val {
 						daoModel.CloneNew().Filter(`p_id_path_of_old`, v1[`p_id_path_of_old`]).HookUpdate(g.Map{
 							`child_id_path`: g.Map{

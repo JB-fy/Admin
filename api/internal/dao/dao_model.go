@@ -14,19 +14,19 @@ import (
 
 // 定义接口
 type DaoInterface interface {
-	CtxDaoModel(ctx context.Context, dbOpt ...map[string]interface{}) *DaoModel
-	ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]interface{}) string
-	ParseDbTable(ctx context.Context, dbTableOpt ...map[string]interface{}) string
+	CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *DaoModel
+	ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string
+	ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string
 	ParseId(daoModel *DaoModel) string
 	ParseLabel(daoModel *DaoModel) string
-	ParseInsert(insert map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
+	ParseInsert(insert map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	HookInsert(daoModel *DaoModel) gdb.HookHandler
-	ParseUpdate(update map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
+	ParseUpdate(update map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	HookUpdate(daoModel *DaoModel) gdb.HookHandler
 	HookDelete(daoModel *DaoModel) gdb.HookHandler
-	ParseField(field []string, fieldWithParam map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
+	ParseField(field []string, fieldWithParam map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	HookSelect(daoModel *DaoModel) gdb.HookHandler
-	ParseFilter(filter map[string]interface{}, daoModel *DaoModel) gdb.ModelHandler
+	ParseFilter(filter map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	ParseGroup(group []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseOrder(order []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseJoin(joinTable string, daoModel *DaoModel) gdb.ModelHandler
@@ -40,23 +40,23 @@ type DaoModel struct {
 	DbGroup             string      // 分库情况下，解析后所确定的库
 	DbTable             string      // 分表情况下，解析后所确定的表
 	IdArr               []*gvar.Var // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即在各种sql条件设置完后）
-	AfterInsert         map[string]interface{}
-	AfterUpdate         map[string]interface{}
+	AfterInsert         map[string]any
+	AfterUpdate         map[string]any
 	AfterField          *gset.StrSet
-	AfterFieldWithParam map[string]interface{}
+	AfterFieldWithParam map[string]any
 	JoinTableSet        *gset.StrSet
 }
 
 // 注意：dbOpt存在时，dbOpt[0]解析DbTable，dbOpt[1]索引参数解析DbGroup
-func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]interface{}) *DaoModel {
+func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]any) *DaoModel {
 	daoModelObj := DaoModel{
 		Ctx:                 ctx,
 		dao:                 dao,
 		IdArr:               []*gvar.Var{},
-		AfterInsert:         map[string]interface{}{},
-		AfterUpdate:         map[string]interface{}{},
+		AfterInsert:         map[string]any{},
+		AfterUpdate:         map[string]any{},
 		AfterField:          gset.NewStrSet(),
-		AfterFieldWithParam: map[string]interface{}{},
+		AfterFieldWithParam: map[string]any{},
 		JoinTableSet:        gset.NewStrSet(),
 	}
 	switch len(dbOpt) {
@@ -85,7 +85,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]inte
 //		/* // daoModelThis.GetCore().ClearCache(daoModelThis.Ctx, daoModelThis.DbTable)
 //		cache := daoModelThis.GetDB().GetCache()
 //		keyArr := cache.MustKeyStrings(daoModelThis.Ctx)
-//		keyArrOfRemove := []interface{}{}
+//		keyArrOfRemove := []any{}
 //		for _, key := range keyArr {
 //			if gstr.Pos(key, "SelectCache:#`"+daoModelThis.DbTable+"`#") == 0 {
 //				keyArrOfRemove = append(keyArrOfRemove, key)
@@ -105,10 +105,10 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 		DbGroup:             daoModelThis.DbGroup,
 		DbTable:             daoModelThis.DbTable,
 		IdArr:               []*gvar.Var{},
-		AfterInsert:         map[string]interface{}{},
-		AfterUpdate:         map[string]interface{}{},
+		AfterInsert:         map[string]any{},
+		AfterUpdate:         map[string]any{},
 		AfterField:          gset.NewStrSet(),
-		AfterFieldWithParam: map[string]interface{}{},
+		AfterFieldWithParam: map[string]any{},
 		JoinTableSet:        gset.NewStrSet(),
 	}
 	daoModelObj.model = daoModelObj.NewModel()
@@ -182,12 +182,12 @@ func (daoModelThis *DaoModel) InfoPri() (gdb.Record, error) {
 /*--------业务可能用到的方法 结束--------*/
 
 /*--------简化对dao方法的调用 开始--------*/
-func (daoModelThis *DaoModel) HookInsert(data map[string]interface{}) *DaoModel {
+func (daoModelThis *DaoModel) HookInsert(data map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseInsert(data, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) HookUpdate(data map[string]interface{}) *DaoModel {
+func (daoModelThis *DaoModel) HookUpdate(data map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseUpdate(data, daoModelThis))
 	if len(daoModelThis.AfterUpdate) > 0 {
 		daoModelThis.Hook(daoModelThis.dao.HookUpdate(daoModelThis))
@@ -201,15 +201,15 @@ func (daoModelThis *DaoModel) HookDelete() *DaoModel {
 }
 
 func (daoModelThis *DaoModel) Fields(field ...string) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]interface{}{}, daoModelThis))
+	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]any{}, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) FieldWithParam(key string, val interface{}) *DaoModel {
-	return daoModelThis.FieldsWithParam(map[string]interface{}{key: val})
+func (daoModelThis *DaoModel) FieldWithParam(key string, val any) *DaoModel {
+	return daoModelThis.FieldsWithParam(map[string]any{key: val})
 }
 
-func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]interface{}) *DaoModel {
+func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseField([]string{}, fieldWithParam, daoModelThis))
 	return daoModelThis
 }
@@ -221,11 +221,11 @@ func (daoModelThis *DaoModel) HookSelect() *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Filter(key string, val interface{}) *DaoModel {
-	return daoModelThis.Filters(map[string]interface{}{key: val})
+func (daoModelThis *DaoModel) Filter(key string, val any) *DaoModel {
+	return daoModelThis.Filters(map[string]any{key: val})
 }
 
-func (daoModelThis *DaoModel) Filters(filter map[string]interface{}) *DaoModel {
+func (daoModelThis *DaoModel) Filters(filter map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseFilter(filter, daoModelThis))
 	return daoModelThis
 }
@@ -317,12 +317,12 @@ func (daoModelThis *DaoModel) Hook(hook gdb.HookHandler) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Data(data ...interface{}) *DaoModel {
+func (daoModelThis *DaoModel) Data(data ...any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.Data(data...)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) OnConflict(onConflict ...interface{}) *DaoModel {
+func (daoModelThis *DaoModel) OnConflict(onConflict ...any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.OnConflict(onConflict...)
 	return daoModelThis
 }
@@ -380,40 +380,40 @@ func (daoModelThis *DaoModel) Limit(limit ...int) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Save(data ...interface{}) (result sql.Result, err error) {
+func (daoModelThis *DaoModel) Save(data ...any) (result sql.Result, err error) {
 	return daoModelThis.model.Save(data...)
 }
 
-func (daoModelThis *DaoModel) Replace(data ...interface{}) (result sql.Result, err error) {
+func (daoModelThis *DaoModel) Replace(data ...any) (result sql.Result, err error) {
 	return daoModelThis.model.Replace(data...)
 }
 
-func (daoModelThis *DaoModel) Insert(data ...interface{}) (result sql.Result, err error) {
+func (daoModelThis *DaoModel) Insert(data ...any) (result sql.Result, err error) {
 	return daoModelThis.model.Insert(data...)
 }
 
-func (daoModelThis *DaoModel) InsertAndGetId(data ...interface{}) (lastInsertId int64, err error) {
+func (daoModelThis *DaoModel) InsertAndGetId(data ...any) (lastInsertId int64, err error) {
 	return daoModelThis.model.InsertAndGetId(data...)
 }
 
-func (daoModelThis *DaoModel) InsertIgnore(data ...interface{}) (result sql.Result, err error) {
+func (daoModelThis *DaoModel) InsertIgnore(data ...any) (result sql.Result, err error) {
 	return daoModelThis.model.InsertIgnore(data...)
 }
 
-func (daoModelThis *DaoModel) Update(dataAndWhere ...interface{}) (result sql.Result, err error) {
+func (daoModelThis *DaoModel) Update(dataAndWhere ...any) (result sql.Result, err error) {
 	return daoModelThis.model.Update(dataAndWhere...)
 }
 
-func (daoModelThis *DaoModel) UpdateAndGetAffected(dataAndWhere ...interface{}) (affected int64, err error) {
+func (daoModelThis *DaoModel) UpdateAndGetAffected(dataAndWhere ...any) (affected int64, err error) {
 	return daoModelThis.model.UpdateAndGetAffected(dataAndWhere...)
 }
 
-func (daoModelThis *DaoModel) Increment(column string, amount interface{}) (sql.Result, error) {
+func (daoModelThis *DaoModel) Increment(column string, amount any) (sql.Result, error) {
 	return daoModelThis.model.Increment(column, amount)
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) IncrementAndGetAffected(column string, amount interface{}) (int64, error) {
+func (daoModelThis *DaoModel) IncrementAndGetAffected(column string, amount any) (int64, error) {
 	result, err := daoModelThis.model.Increment(column, amount)
 	if err != nil {
 		return 0, err
@@ -421,12 +421,12 @@ func (daoModelThis *DaoModel) IncrementAndGetAffected(column string, amount inte
 	return result.RowsAffected()
 }
 
-func (daoModelThis *DaoModel) Decrement(column string, amount interface{}) (sql.Result, error) {
+func (daoModelThis *DaoModel) Decrement(column string, amount any) (sql.Result, error) {
 	return daoModelThis.model.Decrement(column, amount)
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) DecrementAndGetAffected(column string, amount interface{}) (int64, error) {
+func (daoModelThis *DaoModel) DecrementAndGetAffected(column string, amount any) (int64, error) {
 	result, err := daoModelThis.model.Decrement(column, amount)
 	if err != nil {
 		return 0, err
@@ -434,12 +434,12 @@ func (daoModelThis *DaoModel) DecrementAndGetAffected(column string, amount inte
 	return result.RowsAffected()
 }
 
-func (daoModelThis *DaoModel) Delete(where ...interface{}) (result sql.Result, err error) {
+func (daoModelThis *DaoModel) Delete(where ...any) (result sql.Result, err error) {
 	return daoModelThis.model.Delete(where...)
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) DeleteAndGetAffected(where ...interface{}) (affected int64, err error) {
+func (daoModelThis *DaoModel) DeleteAndGetAffected(where ...any) (affected int64, err error) {
 	result, err := daoModelThis.Delete(where...)
 	if err != nil {
 		return 0, err
@@ -451,15 +451,15 @@ func (daoModelThis *DaoModel) Chunk(size int, handler gdb.ChunkHandler) {
 	daoModelThis.model.Chunk(size, handler)
 }
 
-func (daoModelThis *DaoModel) Scan(pointer interface{}, where ...interface{}) error {
+func (daoModelThis *DaoModel) Scan(pointer any, where ...any) error {
 	return daoModelThis.model.Scan(pointer, where...)
 }
 
-func (daoModelThis *DaoModel) ScanAndCount(pointer interface{}, totalCount *int, useFieldForCount bool) (err error) {
+func (daoModelThis *DaoModel) ScanAndCount(pointer any, totalCount *int, useFieldForCount bool) (err error) {
 	return daoModelThis.model.ScanAndCount(pointer, totalCount, useFieldForCount)
 }
 
-func (daoModelThis *DaoModel) ScanList(structSlicePointer interface{}, bindToAttrName string, relationAttrNameAndFields ...string) (err error) {
+func (daoModelThis *DaoModel) ScanList(structSlicePointer any, bindToAttrName string, relationAttrNameAndFields ...string) (err error) {
 	return daoModelThis.model.ScanList(structSlicePointer, bindToAttrName, relationAttrNameAndFields...)
 }
 
@@ -471,16 +471,16 @@ func (daoModelThis *DaoModel) AllAndCount(useFieldForCount bool) (result gdb.Res
 	return daoModelThis.model.AllAndCount(useFieldForCount)
 }
 
-func (daoModelThis *DaoModel) One(where ...interface{}) (gdb.Record, error) {
+func (daoModelThis *DaoModel) One(where ...any) (gdb.Record, error) {
 	return daoModelThis.model.One(where...)
 }
 
-func (daoModelThis *DaoModel) Array(fieldsAndWhere ...interface{}) ([]gdb.Value, error) {
+func (daoModelThis *DaoModel) Array(fieldsAndWhere ...any) ([]gdb.Value, error) {
 	return daoModelThis.model.Array(fieldsAndWhere...)
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...interface{}) ([]string, error) {
+func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...any) ([]string, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
@@ -489,7 +489,7 @@ func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...interface{}) ([]string,
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...interface{}) ([]uint, error) {
+func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
@@ -498,7 +498,7 @@ func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...interface{}) ([]uint, 
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...interface{}) ([]int, error) {
+func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
@@ -570,12 +570,12 @@ func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Va
 	return result, nil
 }
 
-func (daoModelThis *DaoModel) Value(fieldsAndWhere ...interface{}) (gdb.Value, error) {
+func (daoModelThis *DaoModel) Value(fieldsAndWhere ...any) (gdb.Value, error) {
 	return daoModelThis.model.Value(fieldsAndWhere...)
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...interface{}) (string, error) {
+func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...any) (string, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return ``, err
@@ -584,7 +584,7 @@ func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...interface{}) (string, e
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...interface{}) (uint, error) {
+func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...any) (uint, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return 0, err
@@ -593,7 +593,7 @@ func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...interface{}) (uint, er
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...interface{}) (int, error) {
+func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...any) (int, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return 0, err
@@ -602,7 +602,7 @@ func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...interface{}) (int, erro
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...interface{}) (int64, error) {
+func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...any) (int64, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return 0, err
@@ -614,7 +614,7 @@ func (daoModelThis *DaoModel) HasField(field string) (bool, error) {
 	return daoModelThis.model.HasField(field)
 }
 
-func (daoModelThis *DaoModel) Count(where ...interface{}) (int, error) {
+func (daoModelThis *DaoModel) Count(where ...any) (int, error) {
 	return daoModelThis.model.Count(where...)
 }
 

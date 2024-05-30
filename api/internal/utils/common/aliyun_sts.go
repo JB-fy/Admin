@@ -11,7 +11,7 @@ import (
 )
 
 // 生成Sts Token
-func CreateStsToken(ctx context.Context, config *openapi.Config, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]interface{}, err error) {
+func CreateStsToken(ctx context.Context, config *openapi.Config, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]any, err error) {
 	/* config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
@@ -43,7 +43,7 @@ func CreateStsToken(ctx context.Context, config *openapi.Config, assumeRoleReque
 			err = errors.New(`Sts Token响应错误`)
 			return err
 		}
-		stsInfo = map[string]interface{}{
+		stsInfo = map[string]any{
 			`StatusCode`:      *result.StatusCode,
 			`RequestId`:       *result.Body.RequestId,
 			`AccessKeyId`:     *result.Body.Credentials.AccessKeyId,

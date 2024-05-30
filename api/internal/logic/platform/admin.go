@@ -22,7 +22,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]interface{}) (id int64, err error) {
+func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]any) (id int64, err error) {
 	daoThis := daoPlatform.Admin
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -45,7 +45,7 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]int
 }
 
 // 修改
-func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (row int64, err error) {
+func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoThis := daoPlatform.Admin
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 
@@ -73,7 +73,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]i
 }
 
 // 删除
-func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]interface{}) (row int64, err error) {
+func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoThis := daoPlatform.Admin
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 

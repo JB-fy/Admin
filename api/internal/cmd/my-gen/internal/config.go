@@ -9,7 +9,7 @@ const ( //配置
 
 var (
 	// 当Id和Label找不到符合条件的字段时，排除这些字段后，默认剩余字段中的第一个和第二个
-	ConfigIdAndLabelExcField = []interface{}{
+	ConfigIdAndLabelExcField = []any{
 		TypeNameCreated,
 		TypeNameUpdated,
 		TypeNameDeleted,
@@ -19,7 +19,7 @@ var (
 		},
 	}
 	// 从上往下，将对应的字段放最后显示
-	ConfigAfterField = []interface{}{
+	ConfigAfterField = []any{
 		TypeNameCreated,
 		TypeNameUpdated,
 		TypeNameDeleted,

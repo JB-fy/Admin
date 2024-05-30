@@ -19,8 +19,8 @@ type PayOfAli struct {
 	OpAppId    string `json:"payOfAliOpAppId"`
 }
 
-func NewPayOfAli(ctx context.Context, configOpt ...map[string]interface{}) *PayOfAli {
-	var config map[string]interface{}
+func NewPayOfAli(ctx context.Context, configOpt ...map[string]any) *PayOfAli {
+	var config map[string]any
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {

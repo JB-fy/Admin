@@ -25,7 +25,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
-		filter = map[string]interface{}{}
+		filter = map[string]any{}
 	}
 
 	allowField := daoPlatform.Admin.ColumnArr().Slice()
@@ -73,7 +73,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 			field = allowField
 		}
 	}
-	filter := map[string]interface{}{`id`: req.Id}
+	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -133,7 +133,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 		return
 	}
 
-	filter := map[string]interface{}{`id`: req.IdArr}
+	filter := map[string]any{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -155,7 +155,7 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminD
 		return
 	}
 
-	filter := map[string]interface{}{`id`: req.IdArr}
+	filter := map[string]any{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

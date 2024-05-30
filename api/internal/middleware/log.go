@@ -15,7 +15,7 @@ func Log(r *ghttp.Request) {
 
 	endTime := gtime.Now().UnixMicro()
 	runTime := (float64(endTime) - float64(startTime)) / 1000
-	data := map[string]interface{}{
+	data := map[string]any{
 		`url`:        r.GetUrl(),
 		`header`:     r.Header,
 		`req_data`:   r.GetMap(),

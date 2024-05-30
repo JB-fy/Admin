@@ -36,11 +36,11 @@ fmt.Printf("%#v\n", pageInfo) */
 /*--------时间相关 开始--------*/
 
 /*--------json 开始--------*/
-// var rawData map[string]interface{}{
+// var rawData map[string]any{
 // 	"a":"a"
 // }
 // rawDataJson, _ := json.Marshal(rawData)
-// var orgData map[string]interface{}
+// var orgData map[string]any
 // json.Unmarshal(rawDataJson, &orgData)
 /*--------json 开始--------*/
 
@@ -67,18 +67,18 @@ fmt.Printf("%#v\n", pageInfo) */
 // err = validate.Struct(xxStruct)
 // err = validate.Var(map[string]string{"aaaa": "aaaa", "bbbb": "", "": "cccc"}, "required,dive,keys,required,endkeys,required")
 // var errs map[string]error
-// errs = validate.ValidateMap(map[string]interface{}{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]interface{}{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
+// errs = validate.ValidateMap(map[string]any{"aaaa": "aaaa", "bbbb": "", "cccc": ""}, map[string]any{"aaaa": "required", "bbbb": "required,gt=10", "cccc": "required"})
 /*--------验证器 结束--------*/
 
 /*--------gorm 开始--------*/
 /*
-var info map[string]interface{}
+var info map[string]any
 db.Table(`table`).Where(`id`, id).Select(`name`, `age`).Take(&info)
 
-var list []map[string]interface{}
+var list []map[string]any
 db.Table(`table`).Joins(`left join table1 on table1.user_id=table.id`).Find(&list)
 
-var list []interface{}
+var list []any
 db.Table(`table`).Where(`id`, v).Pluck(`id`, &list)
 
 var sum int
@@ -91,9 +91,9 @@ db.Table(`table`).Where(`man_num > current_num`).Order(`current_num desc`).Pluck
 xxxx := Xxxx{Name: `xxxx`}
 db.Create(&xxxx) // model创建可通过xxxx.ID获取主键
 
-db.Table(`table`).Create(map[string]interface{}{`id`:id})	//map创建不会返回主键
+db.Table(`table`).Create(map[string]any{`id`:id})	//map创建不会返回主键
 
-db.Table(`table`).Updates(map[string]interface{}{`price`: gorm.Expr(`price + ?`, 1)})
+db.Table(`table`).Updates(map[string]any{`price`: gorm.Expr(`price + ?`, 1)})
 
 db.Where(`id`, id).Delete(&game.TabPromoteSettlement{})
 
