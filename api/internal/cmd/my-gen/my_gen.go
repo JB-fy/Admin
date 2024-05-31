@@ -120,7 +120,7 @@ type myGenOption struct {
 	/*
 		是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
 			1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改
-			2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码
+			2、表新增或删除了对logic层生成代码有影响的字段。目前只有命名为pid和id后缀的字段有影响，这些字段会生成逻辑验证代码
 	*/
 	IsResetLogic bool       `json:"isResetLogic"`
 	SceneInfo    gdb.Record //场景信息

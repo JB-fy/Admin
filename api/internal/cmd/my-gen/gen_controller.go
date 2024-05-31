@@ -389,12 +389,9 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
-			daoPath := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-			importDaoStr := `dao` + relIdObj.tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + relIdObj.tpl.ModuleDirCaseKebab + `"`
-			if !garray.NewStrArrayFrom(controller.importDao).Contains(importDaoStr) {
-				controller.importDao = append(controller.importDao, importDaoStr)
-			}
-			fieldTmp := daoPath + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])
+			controller.importDao = append(controller.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
+			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
+			fieldTmp := daoPathRel + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])
 			if relIdObj.Suffix != `` {
 				fieldTmp += "+`" + relIdObj.Suffix + "`"
 			}
