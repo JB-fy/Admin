@@ -431,7 +431,7 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 		}
 	}
 	for _, v := range tplEM.FieldList {
-		controller.Merge(getControllerField(tplEM.tpl, v))
+		controller.Merge(getControllerField(tpl, v))
 	}
 	return
 }
