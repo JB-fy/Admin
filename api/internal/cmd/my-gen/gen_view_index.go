@@ -14,24 +14,46 @@ import Query from './Query.vue'`
 		tplView += `
 import Save from './Save.vue'`
 	}
+
 	tplView += `
 
-const { t } = useI18n()
-const adminStore = useAdminStore()
-
-const authAction: { [propName: string]: boolean } = {
-    isRead: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Read'),`
-	if option.IsCreate {
+const { t } = useI18n()`
+	if option.IsAuthAction {
 		tplView += `
-    isCreate: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create'),`
+const adminStore = useAdminStore()`
+	}
+	tplView += `
+
+const authAction: { [propName: string]: boolean } = {`
+	isReadStr := `true`
+	if option.IsAuthAction {
+		isReadStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Read')`
+	}
+	tplView += `
+    isRead: ` + isReadStr + `,`
+	if option.IsCreate {
+		isCreateStr := `true`
+		if option.IsAuthAction {
+			isCreateStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create')`
+		}
+		tplView += `
+    isCreate: ` + isCreateStr + `,`
 	}
 	if option.IsUpdate {
+		isUpdateStr := `true`
+		if option.IsAuthAction {
+			isUpdateStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update')`
+		}
 		tplView += `
-    isUpdate: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update'),`
+    isUpdate: ` + isUpdateStr + `,`
 	}
 	if option.IsDelete {
+		isDeleteStr := `true`
+		if option.IsAuthAction {
+			isDeleteStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete')`
+		}
 		tplView += `
-    isDelete: adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete'),`
+    isDelete: ` + isDeleteStr + `,`
 	}
 	tplView += `
 }

@@ -1,4 +1,7 @@
 /*
+只生成模型：
+	./main myGen -sceneCode=platform -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -commonName=随便写 -isList=0 -isCount=0 -isInfo=0 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=0 -isAuthAction=0 -isView=0 -isResetLogic=0
+
 后台常用生成示例：
 	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/场景 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
 	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/操作 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
