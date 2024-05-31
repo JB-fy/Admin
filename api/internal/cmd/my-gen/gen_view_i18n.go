@@ -46,7 +46,7 @@ func (viewI18nThis *myGenViewI18n) Unique() {
 	// viewI18nThis.tip = garray.NewStrArrayFrom(viewI18nThis.tip).Unique().Slice()
 }
 
-// 视图模板Query生成
+// 视图模板I18n生成
 func genViewI18n(option myGenOption, tpl myGenTpl) {
 	viewI18n := myGenViewI18n{}
 	for _, v := range tpl.FieldListOfDefault {

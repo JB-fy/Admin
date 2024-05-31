@@ -30,7 +30,7 @@ func HandlerResponse(r *ghttp.Request) {
 			match, _ := gregex.MatchString(`Error 1062.*: Duplicate.*for key '(?:[^\.]*\.)?([^']*)'$`, err.Error()) //mysql
 			// match, _ := gregex.MatchString(`pq: duplicate key.*constraint "([^"]*)"$`, err.Error()) //pgsql
 			if len(match) > 0 {
-				code = utils.NewCode(r.GetCtx(), 29991062, ``, g.Map{`errValues`: []any{match[1]}})
+				code = utils.NewCode(r.GetCtx(), 29991062, ``, g.Map{`i18nValues`: []any{match[1]}})
 			} else {
 				if g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() {
 					code = utils.NewCode(r.GetCtx(), 29999999, err.Error())

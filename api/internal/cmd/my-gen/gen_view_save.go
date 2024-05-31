@@ -123,7 +123,7 @@ func (viewSaveThis *myGenViewSave) CreateForm() (form []string) {
 	return
 }
 
-// 视图模板Query生成
+// 视图模板Save生成
 func genViewSave(option myGenOption, tpl myGenTpl) {
 	if !(option.IsCreate || option.IsUpdate) {
 		return

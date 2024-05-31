@@ -54,15 +54,15 @@ func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]any) 
 		return
 	}
 	if count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
-		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.menu`)}})
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.menu`)}})
 		return
 	}
 	if count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filter(daoAuth.ActionRelToScene.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
-		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.action`)}})
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.action`)}})
 		return
 	}
 	if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filter(daoAuth.Role.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
-		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.role`)}})
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.role`)}})
 		return
 	}
 

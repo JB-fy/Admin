@@ -29,14 +29,14 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]any) (id
 	if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
 		menuIdArr := gconv.SliceUint(data[`menu_id_arr`])
 		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{daoAuth.Menu.Columns().MenuId: menuIdArr, daoAuth.Menu.Columns().SceneId: data[`scene_id`]}).Count(); count != len(menuIdArr) {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
 			return
 		}
 	}
 	if _, ok := data[`action_id_arr`]; ok && len(gconv.SliceUint(data[`action_id_arr`])) > 0 {
 		actionIdArr := gconv.SliceUint(data[`action_id_arr`])
 		if count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: data[`scene_id`]}).Count(); count != len(actionIdArr) {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
 			return
 		}
 	}
@@ -70,7 +70,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 			filterTmp[daoAuth.Menu.Columns().SceneId] = sceneIdArr[0]
 		}
 		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(filterTmp).Count(); count != len(menuIdArr) {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
 			return
 		}
 	}
@@ -81,7 +81,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 		if _, ok := data[`scene_id`]; ok {
 			filterTmp[daoAuth.ActionRelToScene.Columns().SceneId] = data[`scene_id`]
 			if count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(filterTmp).Count(); count != len(actionIdArr) {
-				err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
+				err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
 				return
 			}
 		} else {

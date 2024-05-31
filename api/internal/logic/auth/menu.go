@@ -37,7 +37,7 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id
 	if _, ok := data[daoThis.Columns().Pid]; ok && gconv.Uint(data[daoThis.Columns().Pid]) > 0 {
 		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, data[daoThis.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.pid`)}})
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return
 		}
 		if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
@@ -75,7 +75,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 		}
 		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, data[daoThis.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`errValues`: []any{g.I18n().T(ctx, `name.pid`)}})
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return
 		}
 		for _, id := range daoModelThis.IdArr {

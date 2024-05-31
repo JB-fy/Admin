@@ -25,9 +25,9 @@ func NewCode(ctx context.Context, code int, msg string, data ...map[string]any) 
 	}
 	if msg == `` {
 		msg = g.I18n().T(ctx, `code.`+gconv.String(code))
-		if _, ok := detail[`errValues`]; ok {
-			msg = fmt.Sprintf(msg, gconv.SliceAny(detail[`errValues`])...)
-			delete(detail, `errValues`)
+		if _, ok := detail[`i18nValues`]; ok {
+			msg = fmt.Sprintf(msg, gconv.SliceAny(detail[`i18nValues`])...)
+			delete(detail, `i18nValues`)
 		}
 	}
 	return gcode.New(code, msg, detail)

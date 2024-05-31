@@ -10,8 +10,8 @@ import (
 )
 
 type myGenLogic struct {
-	importDao []string
-
+	importDao         []string
+	i18n              myGenI18n
 	verifyData        []string
 	verifyDataFunc    string
 	verifyDataFuncRun string
@@ -22,17 +22,21 @@ type myGenLogic struct {
 
 type myGenLogicField struct {
 	importDao     []string
+	i18nField     myGenI18nField
 	verifyDataStr string
 }
 
 func (logicThis *myGenLogic) Add(logicField myGenLogicField) {
 	logicThis.importDao = append(logicThis.importDao, logicField.importDao...)
+	logicThis.i18n.Add(logicField.i18nField)
 	if logicField.verifyDataStr != `` {
 		logicThis.verifyData = append(logicThis.verifyData, logicField.verifyDataStr)
 	}
 }
+
 func (logicThis *myGenLogic) Merge(logicOther myGenLogic) {
 	logicThis.importDao = append(logicThis.importDao, logicOther.importDao...)
+	logicThis.i18n.Merge(logicOther.i18n)
 	logicThis.verifyData = append(logicThis.verifyData, logicOther.verifyData...)
 	logicThis.create = append(logicThis.create, logicOther.create...)
 	logicThis.update = append(logicThis.update, logicOther.update...)
@@ -41,6 +45,7 @@ func (logicThis *myGenLogic) Merge(logicOther myGenLogic) {
 
 func (logicThis *myGenLogic) Unique() {
 	logicThis.importDao = garray.NewStrArrayFrom(logicThis.importDao).Unique().Slice()
+	logicThis.i18n.Unique()
 }
 
 // logic生成
@@ -68,10 +73,14 @@ func genLogic(option myGenOption, tpl myGenTpl) {
 		logic.Merge(getLogicExtendMiddleMany(v))
 	}
 	if tpl.Handle.Pid.Pid != `` {
+		i18nField := myGenI18nField{
+			item: [2]string{`name.pid`, `父级`},
+		}
+		logic.i18n.Add(i18nField)
 		logic.create = append(logic.create, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) > 0 {
 		pInfo, _ := daoModelThis.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`errValues`"+`: []any{g.I18n().T(ctx, `+"`name.pid`"+`)}})
+			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
 			return
 		}
 	}`)
@@ -93,7 +102,7 @@ func genLogic(option myGenOption, tpl myGenTpl) {
 		}
 		pInfo, _ := daoModelThis.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`errValues`"+`: []any{g.I18n().T(ctx, `+"`name.pid`"+`)}})
+			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
 			return
 		}`+updateAddStr+`
 	}`)
@@ -189,6 +198,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
 	internal.Command(`service生成`, true, ``, `gf`, `gen`, `service`)
+	genI18n(logic.i18n)
 }
 
 func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
@@ -199,10 +209,13 @@ func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` {
 			logicField.importDao = append(logicField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
+			logicField.i18nField = myGenI18nField{
+				item: [2]string{`name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel), relIdObj.FieldName},
+			}
 			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 			logicField.verifyDataStr = `if _, ok := data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]; ok && gconv.Uint(data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]) > 0 {
 		if count, _ := ` + daoPathRel + `.CtxDaoModel(ctx).Filter(` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `, data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]).Count(); count == 0 {
-			err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
+			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`i18nValues`" + `: []any{g.I18n().T(ctx, ` + "`" + logicField.i18nField.item[0] + "`" + `)}})
 			return
 		}
 	}`
@@ -222,26 +235,68 @@ func getLogicExtendMiddleOne(tplEM handleExtendMiddle) (logic myGenLogic) {
 }
 
 func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
+	tpl := tplEM.tpl
 	if len(tplEM.FieldList) == 1 {
-		tpl := tplEM.tpl
-
 		v := tplEM.FieldList[0]
 		switch v.FieldTypeName {
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			if relIdObj.tpl.Table != `` {
-				logicField := myGenLogicField{}
-				logicField.importDao = append(logicField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
+				logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
+				i18nField := myGenI18nField{
+					item: [2]string{`name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel), relIdObj.FieldName},
+				}
+				logic.i18n.Add(i18nField)
 				daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-				logicField.verifyDataStr = `if _, ok := data[` + "`" + tplEM.FieldVar + "`" + `]; ok && len(gconv.SliceUint(data[` + "`" + tplEM.FieldVar + "`" + `])) > 0 {
-		` + gstr.CaseCamelLower(tplEM.FieldVar) + ` := gconv.SliceUint(data[` + "`" + tplEM.FieldVar + "`" + `])
-		if count, _ := ` + daoPathRel + `.CtxDaoModel(ctx).Filter(` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `, ` + gstr.CaseCamelLower(tplEM.FieldVar) + `).Count(); count != len(` + gstr.CaseCamelLower(tplEM.FieldVar) + `) {
-			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`errValues`" + `: []any{g.I18n().T(ctx, ` + "`name." + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel) + "`" + `)}})
+				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(gconv.SliceUint(data[`+"`"+tplEM.FieldVar+"`"+`])) > 0 {
+		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := gconv.SliceUint(data[`+"`"+tplEM.FieldVar+"`"+`])
+		if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel+`, `+gstr.CaseCamelLower(tplEM.FieldVar)+`).Count(); count != len(`+gstr.CaseCamelLower(tplEM.FieldVar)+`) {
+			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
 			return
 		}
-	}`
-				logic.Add(logicField)
+	}`)
 			}
+		}
+	} else {
+		verifyDataArr := struct {
+			part1 []string
+			part2 []string
+			part3 []string
+		}{}
+		for _, v := range tplEM.FieldList {
+			switch v.FieldTypeName {
+			case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+				if relIdObj.tpl.Table != `` {
+					logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
+					i18nField := myGenI18nField{
+						item: [2]string{`name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel), relIdObj.FieldName},
+					}
+					logic.i18n.Add(i18nField)
+					daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
+					fieldCaseCamelLower := gstr.CaseCamelLower(v.FieldCaseCamel)
+					verifyDataArr.part1 = append(verifyDataArr.part1, fieldCaseCamelLower+`Arr := []uint{}`)
+					verifyDataArr.part2 = append(verifyDataArr.part2, `if `+fieldCaseCamelLower+` := gconv.Uint(item[`+daoPathRel+`.Columns().`+v.FieldCaseCamel+`]); `+fieldCaseCamelLower+` > 0 {
+						`+fieldCaseCamelLower+`Arr = append(`+fieldCaseCamelLower+`Arr, `+fieldCaseCamelLower+`)
+			}`)
+					verifyDataArr.part3 = append(verifyDataArr.part3, `if len(`+fieldCaseCamelLower+`Arr) > 0 {
+			if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+v.FieldCaseCamel+`, `+fieldCaseCamelLower+`Arr).Count(); count != len(`+fieldCaseCamelLower+`Arr) {
+				err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+				return
+			}
+		}`)
+				}
+			}
+		}
+
+		if len(verifyDataArr.part1) > 0 {
+			logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(gconv.SliceMap(data[`+"`"+tplEM.FieldVar+"`"+`])) > 0 {`+gstr.Join(append([]string{``}, verifyDataArr.part1...), `
+		`)+`
+		for _, item := range gconv.SliceMap(data[`+"`"+tplEM.FieldVar+"`"+`]) {`+gstr.Join(append([]string{``}, verifyDataArr.part2...), `
+			`)+`
+		}`+gstr.Join(append([]string{``}, verifyDataArr.part3...), `
+		`)+`
+	}`)
 		}
 	}
 	return
