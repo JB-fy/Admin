@@ -8,6 +8,10 @@ const ( //配置
 )
 
 var (
+	ConfigFieldNameArrCreated = []string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`} //创建时间字段命名（大驼峰比对）
+	ConfigFieldNameArrUpdated = []string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`} //更新时间字段命名（大驼峰比对）
+	ConfigFieldNameArrDeleted = []string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`} //软删除字段命名（大驼峰比对）
+
 	// 当Id和Label找不到符合条件的字段时，排除这些字段后，默认剩余字段中的第一个和第二个
 	ConfigIdAndLabelExcField = []any{
 		TypeNameCreated,

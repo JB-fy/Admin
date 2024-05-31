@@ -228,11 +228,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldPrefix := fieldSplitArr[0]
 		fieldSuffix := fieldSplitArr[len(fieldSplitArr)-1]
 
-		if garray.NewStrArrayFrom([]string{`DeletedAt`, `DeleteAt`, `DeletedTime`, `DeleteTime`}).Contains(fieldTmp.FieldCaseCamel) {
+		if garray.NewStrArrayFrom(internal.ConfigFieldNameArrDeleted).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameDeleted
-		} else if garray.NewStrArrayFrom([]string{`UpdatedAt`, `UpdateAt`, `UpdatedTime`, `UpdateTime`}).Contains(fieldTmp.FieldCaseCamel) {
+		} else if garray.NewStrArrayFrom(internal.ConfigFieldNameArrUpdated).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameUpdated
-		} else if garray.NewStrArrayFrom([]string{`CreatedAt`, `CreateAt`, `CreatedTime`, `CreateTime`}).Contains(fieldTmp.FieldCaseCamel) {
+		} else if garray.NewStrArrayFrom(internal.ConfigFieldNameArrCreated).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameCreated
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
 			fieldTmp.FieldTypeName = internal.TypeNameIdPath
