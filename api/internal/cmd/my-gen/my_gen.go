@@ -131,8 +131,9 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
 	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true)
 
-	genDao(tpl)           // dao模板生成
-	genLogic(option, tpl) // logic模板生成
+	genDao(tpl)                   // dao模板生成
+	i18n := genLogic(option, tpl) // logic模板生成
+	genI18n(i18n)                 // i18n生成
 
 	if option.IsApi {
 		genApi(option, tpl)         // api模板生成

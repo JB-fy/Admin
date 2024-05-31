@@ -49,7 +49,7 @@ func (logicThis *myGenLogic) Unique() {
 }
 
 // logic生成
-func genLogic(option myGenOption, tpl myGenTpl) {
+func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
 	if !option.IsResetLogic && gfile.IsFile(saveFile) {
 		return
@@ -198,7 +198,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
 	internal.Command(`service生成`, true, ``, `gf`, `gen`, `service`)
-	genI18n(logic.i18n)
+	return
 }
 
 func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
