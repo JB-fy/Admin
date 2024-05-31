@@ -23,10 +23,10 @@ type SceneDao struct {
 
 // SceneColumns defines and stores column names for table auth_scene.
 type SceneColumns struct {
-	SceneId     string // 场景ID
 	CreatedAt   string // 创建时间
 	UpdatedAt   string // 更新时间
 	IsStop      string // 停用：0否 1是
+	SceneId     string // 场景ID
 	SceneName   string // 名称
 	SceneCode   string // 标识
 	SceneConfig string // 配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
@@ -35,10 +35,10 @@ type SceneColumns struct {
 
 // sceneColumns holds the columns for table auth_scene.
 var sceneColumns = SceneColumns{
-	SceneId:     "scene_id",
 	CreatedAt:   "created_at",
 	UpdatedAt:   "updated_at",
 	IsStop:      "is_stop",
+	SceneId:     "scene_id",
 	SceneName:   "scene_name",
 	SceneCode:   "scene_code",
 	SceneConfig: "scene_config",
