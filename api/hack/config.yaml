@@ -23,7 +23,7 @@ gfcli:
       #   tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
       #   tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
       #   tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-      #   overwriteDao: false
+      #   overwriteDao: true
       # - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
       #   group: "default"
       #   removePrefix: "platform_"
@@ -33,4 +33,4 @@ gfcli:
       #   tables: "platform_config,platform_server"
       #   tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
       #   tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
-      #   overwriteDao: false
+      #   overwriteDao: true
