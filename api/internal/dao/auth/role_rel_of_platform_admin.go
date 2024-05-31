@@ -243,7 +243,7 @@ func (daoThis *roleRelOfPlatformAdminDao) HookUpdate(daoModel *daoIndex.DaoModel
 // hook delete
 func (daoThis *roleRelOfPlatformAdminDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
-		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) {
+		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) { //有软删除字段时需改成Update事件
 			result, err = in.Next(ctx)
 			if err != nil {
 				return

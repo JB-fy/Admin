@@ -21,8 +21,7 @@ func init() {
 
 // 新增
 func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]any) (id int64, err error) {
-	daoThis := daoAuth.Scene
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoAuth.Scene.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
@@ -30,8 +29,7 @@ func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]any) (i
 
 // 修改
 func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
-	daoThis := daoAuth.Scene
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoAuth.Scene.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
@@ -45,8 +43,7 @@ func (logicThis *sAuthScene) Update(ctx context.Context, filter map[string]any, 
 
 // 删除
 func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
-	daoThis := daoAuth.Scene
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoAuth.Scene.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {

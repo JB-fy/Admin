@@ -20,11 +20,8 @@ func init() {
 	service.RegisterAuthAction(NewAuthAction())
 }
 
-// 新增
-func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (id int64, err error) {
-	daoThis := daoAuth.Action
-	daoModelThis := daoThis.CtxDaoModel(ctx)
-
+// 验证数据（create和update共用）
+func (logicThis *sAuthAction) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[`scene_id_arr`]; ok && len(gconv.SliceUint(data[`scene_id_arr`])) > 0 {
 		sceneIdArr := gconv.SliceUint(data[`scene_id_arr`])
 		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, sceneIdArr).Count(); count != len(sceneIdArr) {
@@ -32,6 +29,15 @@ func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (
 			return
 		}
 	}
+	return
+}
+
+// 新增
+func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+	if err = logicThis.verifyData(ctx, data); err != nil {
+		return
+	}
+	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
@@ -39,21 +45,15 @@ func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (
 
 // 修改
 func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
-	daoThis := daoAuth.Action
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	if err = logicThis.verifyData(ctx, data); err != nil {
+		return
+	}
+	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
-	}
-
-	if _, ok := data[`scene_id_arr`]; ok && len(gconv.SliceUint(data[`scene_id_arr`])) > 0 {
-		sceneIdArr := gconv.SliceUint(data[`scene_id_arr`])
-		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, sceneIdArr).Count(); count != len(sceneIdArr) {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
-			return
-		}
 	}
 
 	row, err = daoModelThis.HookUpdate(data).UpdateAndGetAffected()
@@ -62,8 +62,7 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]any,
 
 // 删除
 func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
-	daoThis := daoAuth.Action
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {

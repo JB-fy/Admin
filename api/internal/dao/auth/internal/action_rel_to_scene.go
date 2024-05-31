@@ -23,18 +23,18 @@ type ActionRelToSceneDao struct {
 
 // ActionRelToSceneColumns defines and stores column names for table auth_action_rel_to_scene.
 type ActionRelToSceneColumns struct {
+	CreatedAt string // 创建时间
+	UpdatedAt string // 更新时间
 	ActionId  string // 操作ID
 	SceneId   string // 场景ID
-	UpdatedAt string // 更新时间
-	CreatedAt string // 创建时间
 }
 
 // actionRelToSceneColumns holds the columns for table auth_action_rel_to_scene.
 var actionRelToSceneColumns = ActionRelToSceneColumns{
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
 	ActionId:  "action_id",
 	SceneId:   "scene_id",
-	UpdatedAt: "updated_at",
-	CreatedAt: "created_at",
 }
 
 // NewActionRelToSceneDao creates and returns a new DAO object for table data access.

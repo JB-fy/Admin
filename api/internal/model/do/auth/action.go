@@ -13,10 +13,10 @@ import (
 type Action struct {
 	g.Meta     `orm:"table:auth_action, do:true"`
 	ActionId   interface{} // 操作ID
+	CreatedAt  *gtime.Time // 创建时间
+	UpdatedAt  *gtime.Time // 更新时间
+	IsStop     interface{} // 停用：0否 1是
 	ActionName interface{} // 名称
 	ActionCode interface{} // 标识
 	Remark     interface{} // 备注
-	IsStop     interface{} // 停用：0否 1是
-	UpdatedAt  *gtime.Time // 更新时间
-	CreatedAt  *gtime.Time // 创建时间
 }

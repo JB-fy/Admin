@@ -24,23 +24,23 @@ type ActionDao struct {
 // ActionColumns defines and stores column names for table auth_action.
 type ActionColumns struct {
 	ActionId   string // 操作ID
+	CreatedAt  string // 创建时间
+	UpdatedAt  string // 更新时间
+	IsStop     string // 停用：0否 1是
 	ActionName string // 名称
 	ActionCode string // 标识
 	Remark     string // 备注
-	IsStop     string // 停用：0否 1是
-	UpdatedAt  string // 更新时间
-	CreatedAt  string // 创建时间
 }
 
 // actionColumns holds the columns for table auth_action.
 var actionColumns = ActionColumns{
 	ActionId:   "action_id",
+	CreatedAt:  "created_at",
+	UpdatedAt:  "updated_at",
+	IsStop:     "is_stop",
 	ActionName: "action_name",
 	ActionCode: "action_code",
 	Remark:     "remark",
-	IsStop:     "is_stop",
-	UpdatedAt:  "updated_at",
-	CreatedAt:  "created_at",
 }
 
 // NewActionDao creates and returns a new DAO object for table data access.
