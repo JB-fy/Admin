@@ -54,7 +54,7 @@ const saveForm = reactive({
                 },
             },
         ],
-        sort: [{ type: 'integer', trigger: 'change', min: 0, max: 100, message: t('validation.between.number', { min: 0, max: 100 }) }],
+        sort: [{ type: 'integer', trigger: 'change', min: 0, max: 255, message: t('validation.between.number', { min: 0, max: 255 }) }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
@@ -134,7 +134,7 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.extra_data" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.sort')" prop="sort">
-                    <el-input-number v-model="saveForm.data.sort" :precision="0" :min="0" :max="100" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="50" />
+                    <el-input-number v-model="saveForm.data.sort" :precision="0" :min="0" :max="255" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="100" />
                     <el-alert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.is_stop')" prop="is_stop">

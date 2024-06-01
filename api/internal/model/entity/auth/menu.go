@@ -10,6 +10,9 @@ import (
 
 // Menu is the golang structure for table menu.
 type Menu struct {
+	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
+	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
+	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
 	MenuId    uint        `json:"menuId"    orm:"menu_id"    ` // 菜单ID
 	MenuName  string      `json:"menuName"  orm:"menu_name"  ` // 名称
 	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 场景ID
@@ -20,7 +23,4 @@ type Menu struct {
 	MenuUrl   string      `json:"menuUrl"   orm:"menu_url"   ` // 链接
 	ExtraData string      `json:"extraData" orm:"extra_data" ` // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      uint        `json:"sort"      orm:"sort"       ` // 排序值。从小到大排序，默认50，范围0-100
-	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
-	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
-	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
 }

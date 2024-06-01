@@ -23,6 +23,9 @@ type MenuDao struct {
 
 // MenuColumns defines and stores column names for table auth_menu.
 type MenuColumns struct {
+	CreatedAt string // 创建时间
+	UpdatedAt string // 更新时间
+	IsStop    string // 停用：0否 1是
 	MenuId    string // 菜单ID
 	MenuName  string // 名称
 	SceneId   string // 场景ID
@@ -33,13 +36,13 @@ type MenuColumns struct {
 	MenuUrl   string // 链接
 	ExtraData string // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      string // 排序值。从小到大排序，默认50，范围0-100
-	IsStop    string // 停用：0否 1是
-	UpdatedAt string // 更新时间
-	CreatedAt string // 创建时间
 }
 
 // menuColumns holds the columns for table auth_menu.
 var menuColumns = MenuColumns{
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
+	IsStop:    "is_stop",
 	MenuId:    "menu_id",
 	MenuName:  "menu_name",
 	SceneId:   "scene_id",
@@ -50,9 +53,6 @@ var menuColumns = MenuColumns{
 	MenuUrl:   "menu_url",
 	ExtraData: "extra_data",
 	Sort:      "sort",
-	IsStop:    "is_stop",
-	UpdatedAt: "updated_at",
-	CreatedAt: "created_at",
 }
 
 // NewMenuDao creates and returns a new DAO object for table data access.

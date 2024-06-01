@@ -22,25 +22,31 @@ func init() {
 	service.RegisterAuthMenu(NewAuthMenu())
 }
 
-// 新增
-func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id int64, err error) {
-	daoThis := daoAuth.Menu
-	daoModelThis := daoThis.CtxDaoModel(ctx)
-
-	if _, ok := data[daoThis.Columns().SceneId]; ok && gconv.Uint(data[daoThis.Columns().SceneId]) > 0 {
-		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoThis.Columns().SceneId]).Count(); count == 0 {
-			err = utils.NewErrorCode(ctx, 29999998, ``)
+// 验证数据（create和update共用）
+func (logicThis *sAuthMenu) verifyData(ctx context.Context, data map[string]any) (err error) {
+	if _, ok := data[daoAuth.Menu.Columns().SceneId]; ok && gconv.Uint(data[daoAuth.Menu.Columns().SceneId]) > 0 {
+		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoAuth.Menu.Columns().SceneId]).Count(); count == 0 {
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
 			return
 		}
 	}
+	return
+}
 
-	if _, ok := data[daoThis.Columns().Pid]; ok && gconv.Uint(data[daoThis.Columns().Pid]) > 0 {
-		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, data[daoThis.Columns().Pid]).One()
+// 新增
+func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+	if err = logicThis.verifyData(ctx, data); err != nil {
+		return
+	}
+	daoModelThis := daoAuth.Menu.CtxDaoModel(ctx)
+
+	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) > 0 {
+		pInfo, _ := daoModelThis.CloneNew().Filter(daoAuth.Menu.Columns().MenuId, data[daoAuth.Menu.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return
 		}
-		if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
+		if pInfo[daoAuth.Menu.Columns().SceneId].Uint() != gconv.Uint(data[daoAuth.Menu.Columns().SceneId]) {
 			err = utils.NewErrorCode(ctx, 89999998, ``)
 			return
 		}
@@ -52,8 +58,10 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id
 
 // 修改
 func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
-	daoThis := daoAuth.Menu
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	if err = logicThis.verifyData(ctx, data); err != nil {
+		return
+	}
+	daoModelThis := daoAuth.Menu.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
@@ -61,36 +69,29 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 		return
 	}
 
-	if _, ok := data[daoThis.Columns().SceneId]; ok && gconv.Uint(data[daoThis.Columns().SceneId]) > 0 {
-		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoThis.Columns().SceneId]).Count(); count == 0 {
-			err = utils.NewErrorCode(ctx, 29999998, ``)
-			return
-		}
-	}
-
-	if _, ok := data[daoThis.Columns().Pid]; ok && gconv.Uint(data[daoThis.Columns().Pid]) > 0 {
-		if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(gconv.Uint(data[daoThis.Columns().Pid])) {
+	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) > 0 {
+		if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(gconv.Uint(data[daoAuth.Menu.Columns().Pid])) {
 			err = utils.NewErrorCode(ctx, 29999996, ``)
 			return
 		}
-		pInfo, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().MenuId, data[daoThis.Columns().Pid]).One()
+		pInfo, _ := daoModelThis.CloneNew().Filter(daoAuth.Menu.Columns().MenuId, data[daoAuth.Menu.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return
 		}
 		for _, id := range daoModelThis.IdArr {
-			if garray.NewStrArrayFrom(gstr.Split(pInfo[daoThis.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
+			if garray.NewStrArrayFrom(gstr.Split(pInfo[daoAuth.Menu.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
 				err = utils.NewErrorCode(ctx, 29999995, ``)
 				return
 			}
 		}
-		if _, ok := data[daoThis.Columns().SceneId]; ok {
-			if pInfo[daoThis.Columns().SceneId].Uint() != gconv.Uint(data[daoThis.Columns().SceneId]) {
+		if _, ok := data[daoAuth.Menu.Columns().SceneId]; ok {
+			if pInfo[daoAuth.Menu.Columns().SceneId].Uint() != gconv.Uint(data[daoAuth.Menu.Columns().SceneId]) {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
 		} else {
-			if count, _ := daoModelThis.CloneNew().Filters(g.Map{daoThis.Columns().SceneId: pInfo[daoThis.Columns().SceneId], `id`: daoModelThis.IdArr}).Count(); count != len(daoModelThis.IdArr) {
+			if count, _ := daoModelThis.CloneNew().Filters(g.Map{daoAuth.Menu.Columns().SceneId: pInfo[daoAuth.Menu.Columns().SceneId], `id`: daoModelThis.IdArr}).Count(); count != len(daoModelThis.IdArr) {
 				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
@@ -103,8 +104,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 
 // 删除
 func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
-	daoThis := daoAuth.Menu
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoAuth.Menu.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
@@ -112,8 +112,7 @@ func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]any) (
 		return
 	}
 
-	count, _ := daoModelThis.CloneNew().Filter(daoThis.Columns().Pid, daoModelThis.IdArr).Count()
-	if count > 0 {
+	if count, _ := daoModelThis.CloneNew().Filter(daoAuth.Menu.Columns().Pid, daoModelThis.IdArr).Count(); count > 0 {
 		err = utils.NewErrorCode(ctx, 29999994, ``)
 		return
 	}
