@@ -23,20 +23,20 @@ func HandlerResponse(r *ghttp.Request) {
 		code := gerror.Code(err)
 		switch code {
 		case gcode.CodeNil:
-			code = gcode.New(99999999, err.Error(), nil)
+			code = utils.NewCode(r.GetCtx(), 99999999, err.Error())
 		case gcode.CodeValidationFailed:
-			code = gcode.New(89999999, err.Error(), nil)
+			code = utils.NewCode(r.GetCtx(), 89999999, err.Error())
 		case gcode.CodeDbOperationError:
 			match, _ := gregex.MatchString(`Error 1062.*: Duplicate.*for key '(?:[^\.]*\.)?([^']*)'$`, err.Error()) //mysql
 			// match, _ := gregex.MatchString(`pq: duplicate key.*constraint "([^"]*)"$`, err.Error()) //pgsql
 			if len(match) > 0 {
 				code = utils.NewCode(r.GetCtx(), 29991062, ``, g.Map{`i18nValues`: []any{match[1]}})
 			} else {
-				if g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() {
-					code = utils.NewCode(r.GetCtx(), 29999999, err.Error())
-				} else {
-					code = utils.NewCode(r.GetCtx(), 29999999, ``)
+				msg := ``
+				if g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() { //开发环境抛出sql错误语句
+					msg = err.Error()
 				}
+				code = utils.NewCode(r.GetCtx(), 29999999, msg)
 			}
 		}
 		r.Response.WriteJson(map[string]any{
