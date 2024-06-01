@@ -23,18 +23,18 @@ type RoleRelOfPlatformAdminDao struct {
 
 // RoleRelOfPlatformAdminColumns defines and stores column names for table auth_role_rel_of_platform_admin.
 type RoleRelOfPlatformAdminColumns struct {
-	RoleId    string // 角色ID
-	AdminId   string // 管理员ID
-	UpdatedAt string // 更新时间
 	CreatedAt string // 创建时间
+	UpdatedAt string // 更新时间
+	AdminId   string // 管理员ID
+	RoleId    string // 角色ID
 }
 
 // roleRelOfPlatformAdminColumns holds the columns for table auth_role_rel_of_platform_admin.
 var roleRelOfPlatformAdminColumns = RoleRelOfPlatformAdminColumns{
-	RoleId:    "role_id",
-	AdminId:   "admin_id",
-	UpdatedAt: "updated_at",
 	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
+	AdminId:   "admin_id",
+	RoleId:    "role_id",
 }
 
 // NewRoleRelOfPlatformAdminDao creates and returns a new DAO object for table data access.

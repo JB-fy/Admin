@@ -23,6 +23,9 @@ type UserDao struct {
 
 // UserColumns defines and stores column names for table user_user.
 type UserColumns struct {
+	CreatedAt   string // 创建时间
+	UpdatedAt   string // 更新时间
+	IsStop      string // 停用：0否 1是
 	UserId      string // 用户ID
 	Phone       string // 手机
 	Account     string // 账号
@@ -37,13 +40,13 @@ type UserColumns struct {
 	UnionIdOfWx string // 微信unionId
 	IdCardName  string // 身份证姓名
 	IdCardNo    string // 身份证号码
-	IsStop      string // 停用：0否 1是
-	UpdatedAt   string // 更新时间
-	CreatedAt   string // 创建时间
 }
 
 // userColumns holds the columns for table user_user.
 var userColumns = UserColumns{
+	CreatedAt:   "created_at",
+	UpdatedAt:   "updated_at",
+	IsStop:      "is_stop",
 	UserId:      "user_id",
 	Phone:       "phone",
 	Account:     "account",
@@ -58,9 +61,6 @@ var userColumns = UserColumns{
 	UnionIdOfWx: "union_id_of_wx",
 	IdCardName:  "id_card_name",
 	IdCardNo:    "id_card_no",
-	IsStop:      "is_stop",
-	UpdatedAt:   "updated_at",
-	CreatedAt:   "created_at",
 }
 
 // NewUserDao creates and returns a new DAO object for table data access.

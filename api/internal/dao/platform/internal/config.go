@@ -23,18 +23,18 @@ type ConfigDao struct {
 
 // ConfigColumns defines and stores column names for table platform_config.
 type ConfigColumns struct {
+	CreatedAt   string // 创建时间
+	UpdatedAt   string // 更新时间
 	ConfigKey   string // 配置Key
 	ConfigValue string // 配置值
-	UpdatedAt   string // 更新时间
-	CreatedAt   string // 创建时间
 }
 
 // configColumns holds the columns for table platform_config.
 var configColumns = ConfigColumns{
+	CreatedAt:   "created_at",
+	UpdatedAt:   "updated_at",
 	ConfigKey:   "config_key",
 	ConfigValue: "config_value",
-	UpdatedAt:   "updated_at",
-	CreatedAt:   "created_at",
 }
 
 // NewConfigDao creates and returns a new DAO object for table data access.

@@ -120,7 +120,9 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 		logic.verifyDataFunc = `
 
 // 验证数据（create和update共用）
-func (logicThis *s` + tpl.LogicStructName + `) verifyData(ctx context.Context, data map[string]any) (err error) {` + gstr.Join(append([]string{``}, logic.verifyData...), `
+func (logicThis *s` + tpl.LogicStructName + `) verifyData(ctx context.Context, data map[string]any) (err error) {
+	` + gstr.Join(logic.verifyData, `
+
 	`) + `
 	return
 }`
@@ -142,6 +144,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )

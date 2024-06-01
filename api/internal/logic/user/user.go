@@ -19,8 +19,7 @@ func init() {
 
 // 新增
 func (logicThis *sUserUser) Create(ctx context.Context, data map[string]any) (id int64, err error) {
-	daoThis := daoUser.User
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoUser.User.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
@@ -28,8 +27,7 @@ func (logicThis *sUserUser) Create(ctx context.Context, data map[string]any) (id
 
 // 修改
 func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
-	daoThis := daoUser.User
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoUser.User.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
@@ -43,8 +41,7 @@ func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]any, d
 
 // 删除
 func (logicThis *sUserUser) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
-	daoThis := daoUser.User
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoUser.User.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {

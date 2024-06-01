@@ -21,19 +21,25 @@ func init() {
 	service.RegisterPlatformAdmin(NewPlatformAdmin())
 }
 
-// 新增
-func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]any) (id int64, err error) {
-	daoThis := daoPlatform.Admin
-	daoModelThis := daoThis.CtxDaoModel(ctx)
-
+// 验证数据（create和update共用）
+func (logicThis *sPlatformAdmin) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[`role_id_arr`]; ok && len(gconv.SliceUint(data[`role_id_arr`])) > 0 {
 		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
 		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneId)
-		if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filters(g.Map{daoAuth.Role.Columns().RoleId: roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}).Count(); count != len(roleIdArr) {
+		if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filter(daoAuth.Role.Columns().RoleId, roleIdArr).Filter(daoAuth.Role.Columns().SceneId, sceneId).Count(); count != len(roleIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`)}})
 			return
 		}
 	}
+	return
+}
+
+// 新增
+func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+	if err = logicThis.verifyData(ctx, data); err != nil {
+		return
+	}
+	daoModelThis := daoPlatform.Admin.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
@@ -41,22 +47,15 @@ func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]any
 
 // 修改
 func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
-	daoThis := daoPlatform.Admin
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	if err = logicThis.verifyData(ctx, data); err != nil {
+		return
+	}
+	daoModelThis := daoPlatform.Admin.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
-	}
-
-	if _, ok := data[`role_id_arr`]; ok && len(gconv.SliceUint(data[`role_id_arr`])) > 0 {
-		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
-		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneId)
-		if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filters(g.Map{daoAuth.Role.Columns().RoleId: roleIdArr, daoAuth.Role.Columns().SceneId: sceneId}).Count(); count != len(roleIdArr) {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`)}})
-			return
-		}
 	}
 
 	row, err = daoModelThis.HookUpdate(data).UpdateAndGetAffected()
@@ -65,8 +64,7 @@ func (logicThis *sPlatformAdmin) Update(ctx context.Context, filter map[string]a
 
 // 删除
 func (logicThis *sPlatformAdmin) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
-	daoThis := daoPlatform.Admin
-	daoModelThis := daoThis.CtxDaoModel(ctx)
+	daoModelThis := daoPlatform.Admin.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {

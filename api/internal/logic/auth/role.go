@@ -29,14 +29,16 @@ func (logicThis *sAuthRole) verifyData(ctx context.Context, data map[string]any)
 			return
 		}
 	}
+
 	/* if _, ok := data[`action_id_arr`]; ok && len(gconv.SliceUint(data[`action_id_arr`])) > 0 {
 		actionIdArr := gconv.SliceUint(data[`action_id_arr`])
 		if count, _ := daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionId, actionIdArr).Count(); count != len(actionIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
 			return
 		}
-	}
-	if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
+	} */
+
+	/* if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
 		menuIdArr := gconv.SliceUint(data[`menu_id_arr`])
 		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.Columns().MenuId, menuIdArr).Count(); count != len(menuIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
