@@ -470,10 +470,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 	if len(tpl.Handle.Id.List) == 0 || len(tpl.Handle.LabelList) == 0 {
 		idAndLabelfieldList := []myGenField{}
-		for _, v := range tpl.FieldList {
+		for _, v := range fieldList {
 			isFind := false
-			for _, afterField := range internal.ConfigIdAndLabelExcField {
-				switch val := afterField.(type) {
+			for _, idAndLabelExcField := range internal.ConfigIdAndLabelExcField {
+				switch val := idAndLabelExcField.(type) {
 				case internal.MyGenFieldTypeName:
 					if val == v.FieldTypeName {
 						isFind = true
