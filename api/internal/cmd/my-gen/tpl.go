@@ -126,6 +126,7 @@ type handleOtherRel struct {
 	tplOfTop myGenTpl
 	tpl      myGenTpl
 	RelId    string //关联字段（tpl中的字段名）
+	daoPath  string
 }
 
 // 创建模板参数
@@ -989,6 +990,10 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 					tplOfTop: tpl,
 					tpl:      otherRelTpl,
 					RelId:    field.FieldRaw,
+					daoPath:  otherRelTpl.TableCaseCamel,
+				}
+				if handleOtherRelObj.tpl.ModuleDirCaseKebab != handleOtherRelObj.tplOfTop.ModuleDirCaseKebab {
+					handleOtherRelObj.daoPath = `dao` + handleOtherRelObj.tpl.ModuleDirCaseCamel + `.` + handleOtherRelObj.tpl.TableCaseCamel
 				}
 				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
 				break

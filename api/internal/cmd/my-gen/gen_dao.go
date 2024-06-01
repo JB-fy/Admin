@@ -28,7 +28,8 @@ type myGenDao struct {
 	updateHookBefore  []string
 	updateHookAfter   []string
 
-	deleteHook []string
+	deleteHook     []string
+	deleteHookConc []string
 
 	groupParse []string
 
@@ -86,6 +87,7 @@ func (daoThis *myGenDao) Merge(daoOther myGenDao) {
 	daoThis.updateHookBefore = append(daoThis.updateHookBefore, daoOther.updateHookBefore...)
 	daoThis.updateHookAfter = append(daoThis.updateHookAfter, daoOther.updateHookAfter...)
 	daoThis.deleteHook = append(daoThis.deleteHook, daoOther.deleteHook...)
+	daoThis.deleteHookConc = append(daoThis.deleteHookConc, daoOther.deleteHookConc...)
 	daoThis.groupParse = append(daoThis.groupParse, daoOther.groupParse...)
 	daoThis.orderParse = append(daoThis.orderParse, daoOther.orderParse...)
 	daoThis.joinParse = append(daoThis.joinParse, daoOther.joinParse...)
@@ -130,6 +132,9 @@ func genDao(tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableManyList {
 		v.tpl.gfGenDao(false)
 		dao.Merge(getDaoExtendMiddleMany(v))
+	}
+	for _, v := range tpl.Handle.OtherRelTableList {
+		dao.Merge(getDaoOtherRel(v))
 	}
 	dao.Unique()
 
@@ -262,20 +267,30 @@ func genDao(tpl myGenTpl) {
 	}
 
 	// 解析delete
-	if len(dao.deleteHook) > 0 {
+	if len(dao.deleteHook) > 0 || len(dao.deleteHookConc) > 0 {
 		deleteHookPoint := `/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */
 
 			return`
-		tplDao = gstr.Replace(tplDao, deleteHookPoint, `row, _ := result.RowsAffected()
+		deleteHookPointReplace := deleteHookPoint
+		if len(dao.deleteHook) > 0 {
+			deleteHookPointReplace = `row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			}
 
-			`+gstr.Join(append(dao.deleteHook, ``), `
-			`)+`return`, 1)
+			` + gstr.Join(append(dao.deleteHook, ``), `
+			`) + `return`
+		}
+		if len(dao.deleteHookConc) > 0 {
+			deleteHookPointReplace = gstr.Replace(deleteHookPointReplace, `
+			return`, gstr.Join(append([]string{``, `/* // 解决并发问题情形1（并发环境无法保证不产生脏数据的）。更多可参考：api/internal/dao/auth/scene.go中HookDelete内的注释`}, dao.deleteHookConc...), `
+			`)+` */
+			return`, 1)
+		}
+		tplDao = gstr.Replace(tplDao, deleteHookPoint, deleteHookPointReplace, 1)
 	}
 
 	// 解析order
@@ -1192,6 +1207,14 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	for _, daoField := range daoFieldList {
 		dao.Add(daoField)
 	}
+	return
+}
+
+func getDaoOtherRel(tplOR handleOtherRel) (dao myGenDao) {
+	if tplOR.tpl.ModuleDirCaseKebab != tplOR.tplOfTop.ModuleDirCaseKebab {
+		dao.importDao = append(dao.importDao, `dao`+tplOR.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tplOR.tpl.ModuleDirCaseKebab+`"`)
+	}
+	dao.deleteHookConc = append(dao.deleteHookConc, tplOR.daoPath+`.CtxDaoModel(ctx).Filter(`+tplOR.daoPath+`.Columns().`+gstr.CaseCamel(tplOR.RelId)+`, daoModel.IdArr).Delete()`)
 	return
 }
 
