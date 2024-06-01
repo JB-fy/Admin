@@ -286,7 +286,7 @@ func genDao(tpl myGenTpl) {
 		}
 		if len(dao.deleteHookConc) > 0 {
 			deleteHookPointReplace = gstr.Replace(deleteHookPointReplace, `
-			return`, gstr.Join(append([]string{``, `/* // 解决并发问题情形1（并发环境无法保证不产生脏数据的）。更多可参考：api/internal/dao/auth/scene.go中HookDelete内的注释`}, dao.deleteHookConc...), `
+			return`, gstr.Join(append([]string{``, `/* // 解决并发问题情形1（并发环境无法保证不产生脏数据的）。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete内的注释`}, dao.deleteHookConc...), `
 			`)+` */
 			return`, 1)
 		}

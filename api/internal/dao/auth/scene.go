@@ -287,7 +287,7 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				1、请求A和请求B都使用事务，且读取场景表时，设置排它锁（缺点：工作量大【所有关联场景的表，在新增修改时都得开事务】；容易忘记使用事务；使用事务影响效率；）
 				2、菜单表做外键约束（不推荐）
 			*/
-			/* // 解决并发问题情形1（并发环境无法保证不产生脏数据的）。更多可参考：api/internal/dao/auth/scene.go中HookDelete内的注释
+			/* // 解决并发问题情形1（并发环境无法保证不产生脏数据的）。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete内的注释
 			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
 			Menu.CtxDaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
 			Role.CtxDaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete() */
