@@ -18,10 +18,10 @@ const adminStore = useAdminStore()
 const authAction: { [propName: string]: boolean } = {
     isRead: adminStore.IsAction('platformConfigRead'),
     isSave: adminStore.IsAction('platformConfigSave'),
-    isWebsiteRead: adminStore.IsAction('platformConfigWebsiteRead'),
-    isWebsiteSave: adminStore.IsAction('platformConfigWebsiteSave'),
-    isAppRead: adminStore.IsAction('platformConfigAppRead'),
-    isAppSave: adminStore.IsAction('platformConfigAppSave'),
+    isWebsiteRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigWebsiteRead'], 'or'),
+    isWebsiteSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigWebsiteSave'], 'or'),
+    isAppRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigAppRead'], 'or'),
+    isAppSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigAppSave'], 'or'),
 }
 provide('authAction', authAction)
 </script>
@@ -32,10 +32,10 @@ provide('authAction', authAction)
         <el-container class="common-container">
             <el-main>
                 <el-tabs type="border-card" tab-position="top">
-                    <el-tab-pane v-if="authAction.isRead || authAction.isWebsiteRead" :label="t('platform.config.platform.label.website')" :lazy="true">
+                    <el-tab-pane v-if="authAction.isWebsiteRead" :label="t('platform.config.platform.label.website')" :lazy="true">
                         <website />
                     </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isAppRead" :label="t('platform.config.platform.label.app')" :lazy="true">
+                    <el-tab-pane v-if="authAction.isAppRead" :label="t('platform.config.platform.label.app')" :lazy="true">
                         <app />
                     </el-tab-pane>
                 </el-tabs>

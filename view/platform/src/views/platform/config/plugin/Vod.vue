@@ -85,7 +85,7 @@ saveForm.initData()
         </template>
 
         <el-form-item>
-            <el-button v-if="authAction.isSave || authAction.isVodSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button v-if="authAction.isVodSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
             <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
         </el-form-item>
     </el-form>

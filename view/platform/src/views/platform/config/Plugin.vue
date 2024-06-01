@@ -14,22 +14,22 @@ const adminStore = useAdminStore()
 const authAction: { [propName: string]: boolean } = {
     isRead: adminStore.IsAction('platformConfigRead'),
     isSave: adminStore.IsAction('platformConfigSave'),
-    isUploadRead: adminStore.IsAction('platformConfigUploadRead'),
-    isUploadSave: adminStore.IsAction('platformConfigUploadSave'),
-    isPayRead: adminStore.IsAction('platformConfigPayRead'),
-    isPaySave: adminStore.IsAction('platformConfigPaySave'),
-    isSmsRead: adminStore.IsAction('platformConfigSmsRead'),
-    isSmsSave: adminStore.IsAction('platformConfigSmsSave'),
-    isIdCardRead: adminStore.IsAction('platformConfigIdCardRead'),
-    isIdCardSave: adminStore.IsAction('platformConfigIdCardSave'),
-    isOneClickRead: adminStore.IsAction('platformConfigOneClickRead'),
-    isOneClickSave: adminStore.IsAction('platformConfigOneClickSave'),
-    isPushRead: adminStore.IsAction('platformConfigPushRead'),
-    isPushSave: adminStore.IsAction('platformConfigPushSave'),
-    isVodRead: adminStore.IsAction('platformConfigVodRead'),
-    isVodSave: adminStore.IsAction('platformConfigVodSave'),
-    isWxRead: adminStore.IsAction('platformConfigWxRead'),
-    isWxSave: adminStore.IsAction('platformConfigWxSave'),
+    isUploadRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigUploadRead'], `or`),
+    isUploadSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigUploadSave'], 'or'),
+    isPayRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigPayRead'], `or`),
+    isPaySave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigPaySave'], 'or'),
+    isSmsRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigSmsRead'], `or`),
+    isSmsSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigSmsSave'], 'or'),
+    isIdCardRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigIdCardRead'], `or`),
+    isIdCardSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigIdCardSave'], 'or'),
+    isOneClickRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigOneClickRead'], `or`),
+    isOneClickSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigOneClickSave'], 'or'),
+    isPushRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigPushRead'], `or`),
+    isPushSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigPushSave'], 'or'),
+    isVodRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigVodRead'], `or`),
+    isVodSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigVodSave'], 'or'),
+    isWxRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigWxRead'], `or`),
+    isWxSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigWxSave'], 'or'),
 }
 provide('authAction', authAction)
 </script>
@@ -45,14 +45,14 @@ provide('authAction', authAction)
         <el-container class="common-container">
             <el-main>
                 <el-tabs type="border-card" tab-position="top">
-                    <el-tab-pane v-if="authAction.isRead || authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')" :lazy="true"><upload /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isPayRead" :label="t('platform.config.plugin.label.pay')" :lazy="true"><pay /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')" :lazy="true"><sms /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')" :lazy="true"><id-card /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isOneClickRead" :label="t('platform.config.plugin.label.oneClick')" :lazy="true"><one-click /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isPushRead" :label="t('platform.config.plugin.label.push')" :lazy="true"><push /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isVodRead" :label="t('platform.config.plugin.label.vod')" :lazy="true"><vod /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isRead || authAction.isWxRead" :label="t('platform.config.plugin.label.wx')" :lazy="true"><wx /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')" :lazy="true"><upload /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isPayRead" :label="t('platform.config.plugin.label.pay')" :lazy="true"><pay /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')" :lazy="true"><sms /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')" :lazy="true"><id-card /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isOneClickRead" :label="t('platform.config.plugin.label.oneClick')" :lazy="true"><one-click /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isPushRead" :label="t('platform.config.plugin.label.push')" :lazy="true"><push /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isVodRead" :label="t('platform.config.plugin.label.vod')" :lazy="true"><vod /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isWxRead" :label="t('platform.config.plugin.label.wx')" :lazy="true"><wx /></el-tab-pane>
                 </el-tabs>
             </el-main>
         </el-container>

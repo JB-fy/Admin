@@ -99,7 +99,7 @@ saveForm.initData()
             <my-editor v-model="saveForm.data.privacyAgreement" />
         </el-form-item>
         <el-form-item>
-            <el-button v-if="authAction.isSave || authAction.isWebsiteSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+            <el-button v-if="authAction.isWebsiteSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
             <el-button type="info" @click="saveForm.reset"> <autoicon-ep-circle-close />{{ t('common.reset') }} </el-button>
         </el-form-item>
     </el-form>

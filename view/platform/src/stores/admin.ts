@@ -359,14 +359,14 @@ export const useAdminStore = defineStore('admin', {
             switch (condition) {
                 case 'and':
                     for (let i = 0; i < actionCodeArr.length; i++) {
-                        if (this.actionCodeArr.indexOf(actionCodeArr[i]) == -1) {
+                        if (!this.IsAction(actionCodeArr[i])) {
                             return false
                         }
                     }
                     return true
                 case 'or':
                     for (let i = 0; i < actionCodeArr.length; i++) {
-                        if (this.actionCodeArr.indexOf(actionCodeArr[i]) != -1) {
+                        if (this.IsAction(actionCodeArr[i])) {
                             return true
                         }
                     }
