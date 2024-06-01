@@ -52,7 +52,7 @@ npm run build
 npm run format
 ```
 
-## 代码自动生成流程（强烈建议搭配Git使用）
+## 代码自动生成流程（注意：强烈建议搭配Git使用）
 
 1.新建数据库表（建表规范如下）。如：auth_test
 ```
@@ -129,7 +129,7 @@ npm run format
 
 2.使用./main myGen命令自动生成代码（参数参考api/internal/cmd/my-gen/my_gen.go内结构体myGenOption的字段注释）
 - 未带参数执行，则需根据提示输入全部参数。示例：./main myGen
-- 带全部参数执行，只会提示搭配Git使用。示例：./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_test -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/测试 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
+- 带全部参数执行，只会提示搭配Git使用。示例：./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
 
 ## 常见错误处理
 

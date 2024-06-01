@@ -1,19 +1,18 @@
 /*
 只生成模型：
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -commonName=随便写 -isList=0 -isCount=0 -isInfo=0 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=0 -isAuthAction=0 -isView=0 -isResetLogic=0
+	./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
 
 后台常用生成示例：
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/场景 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/操作 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_menu -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/菜单 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -commonName=权限管理/角色 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=platform_admin -removePrefixCommon= -removePrefixAlone=platform_ -commonName=权限管理/平台管理员 -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
-	./main myGen -sceneCode=platform -dbGroup=default -dbTable=user_user -removePrefixCommon= -removePrefixAlone=user_ -commonName=用户管理/用户 -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0 -isApi=1 -isAuthAction=1 -isView=1 -isResetLogic=0
+	./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+	./main myGen -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/操作 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+	./main myGen -dbGroup=default -dbTable=auth_menu -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/菜单 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+	./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+	./main myGen -dbGroup=default -dbTable=platform_admin -removePrefixCommon= -removePrefixAlone=platform_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/平台管理员  -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+	./main myGen -dbGroup=default -dbTable=user_user -removePrefixCommon= -removePrefixAlone=user_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=用户管理/用户 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0
 
-APP常用生成示例：./main myGen -sceneCode=app -dbGroup=xxxx -dbTable=user -removePrefixCommon= -removePrefixAlone= -commonName=用户 -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0 -isApi=1 -isAuthAction=0 -isView=0 -isResetLogic=0
+APP常用生成示例：./main myGen -dbGroup=default -dbTable=user_user -removePrefixCommon= -removePrefixAlone=user_ -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
 
-强烈建议搭配Git使用
-
+注意：强烈建议搭配Git使用
 表名统一使用蛇形命名。不同功能表按以下表规则命名
 	主表：正常命名即可。参考以下示例
 		platform_admin
@@ -105,21 +104,11 @@ import (
 
 // 命令参数解析后的数据
 type myGenOption struct {
-	SceneCode          string `json:"sceneCode"`          //场景标识，必须在数据库表auth_scene已存在。示例：platform
 	DbGroup            string `json:"dbGroup"`            //db分组。示例：default
 	DbTable            string `json:"dbTable"`            //db表。示例：auth_test
 	RemovePrefixCommon string `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
 	RemovePrefixAlone  string `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
-	CommonName         string `json:"commonName"`         //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
-	IsList             bool   `json:"isList" `            //是否生成列表接口(0和no为false，1和yes为true)
-	IsCount            bool   `json:"isCount" `           //列表接口是否返回总数
-	IsInfo             bool   `json:"isInfo" `            //是否生成详情接口
-	IsCreate           bool   `json:"isCreate"`           //是否生成创建接口
-	IsUpdate           bool   `json:"isUpdate"`           //是否生成更新接口
-	IsDelete           bool   `json:"isDelete"`           //是否生成删除接口
 	IsApi              bool   `json:"isApi"`              //是否生成后端接口文件
-	IsAuthAction       bool   `json:"isAuthAction"`       //是否判断操作权限，如是，则同时会生成操作权限
-	IsView             bool   `json:"isView"`             //是否生成前端视图文件
 	/*
 		是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
 			1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改
@@ -129,6 +118,16 @@ type myGenOption struct {
 				删除或新增id后缀字段时，删除方法内会生成验证代码（验证id是否正被其它表使用，是否可以删除）
 	*/
 	IsResetLogic bool       `json:"isResetLogic"`
+	IsAuthAction bool       `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
+	CommonName   string     `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
+	IsView       bool       `json:"isView"`       //是否生成前端视图文件
+	SceneCode    string     `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	IsList       bool       `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
+	IsCount      bool       `json:"isCount" `     //列表接口是否返回总数
+	IsInfo       bool       `json:"isInfo" `      //是否生成详情接口
+	IsCreate     bool       `json:"isCreate"`     //是否生成创建接口
+	IsUpdate     bool       `json:"isUpdate"`     //是否生成更新接口
+	IsDelete     bool       `json:"isDelete"`     //是否生成删除接口
 	SceneInfo    gdb.Record //场景信息
 }
 
@@ -137,15 +136,15 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
 	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true)
 
-	genDao(tpl)                   // dao模板生成
-	i18n := genLogic(option, tpl) // logic模板生成
-	genI18n(i18n)                 // i18n生成
+	genDao(tpl) // dao模板生成
 
 	if option.IsApi {
-		genApi(option, tpl)         // api模板生成
-		genController(option, tpl)  // controller模板生成
-		genRouter(option, tpl)      // 后端路由生成
-		genAction(ctx, option, tpl) // 操作权限生成
+		genApi(option, tpl)           // api模板生成
+		genController(option, tpl)    // controller模板生成
+		i18n := genLogic(option, tpl) // logic模板生成
+		genI18n(i18n)                 // i18n生成
+		genRouter(option, tpl)        // 后端路由生成
+		genAction(ctx, option, tpl)   // 操作权限生成
 	}
 
 	if option.IsView {
@@ -173,19 +172,6 @@ func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption)
 		color.HiYellowString(`    Git库已创建或忽略风险，请按`)+color.HiGreenString(`[Enter]`)+color.HiYellowString(`继续执行`)+"\n",
 	)
 
-	// 场景标识
-	if option.SceneCode == `` {
-		option.SceneCode = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
-	}
-	for {
-		if option.SceneCode != `` {
-			option.SceneInfo, _ = daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
-			if !option.SceneInfo.IsEmpty() {
-				break
-			}
-		}
-		option.SceneCode = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
-	}
 	// db分组
 	if option.DbGroup == `` {
 		option.DbGroup = gcmd.Scan(color.BlueString(`> 请输入db分组，默认(default)：`))
@@ -236,126 +222,6 @@ func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption)
 		}
 		option.RemovePrefixAlone = gcmd.Scan(color.RedString(`    要删除的独有前缀不存在，请重新输入，默认(空)：`))
 	}
-	// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
-	for {
-		if option.CommonName != `` {
-			break
-		}
-		option.CommonName = gcmd.Scan(color.BlueString(`> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用：`))
-	}
-noAllRestart:
-	// 是否生成列表接口
-	isList, ok := optionMap[`isList`]
-	if !ok {
-		isList = gcmd.Scan(color.BlueString(`> 是否生成列表接口，默认(yes)：`))
-	}
-isListEnd:
-	for {
-		switch isList {
-		case ``, `1`, `yes`:
-			option.IsList = true
-			break isListEnd
-		case `0`, `no`:
-			option.IsList = false
-			break isListEnd
-		default:
-			isList = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成列表接口，默认(yes)：`))
-		}
-	}
-	// 列表接口是否返回总数
-	isCount, ok := optionMap[`isCount`]
-	if !ok {
-		isCount = gcmd.Scan(color.BlueString(`> 列表接口是否返回总数，默认(yes)：`))
-	}
-isCountEnd:
-	for {
-		switch isCount {
-		case ``, `1`, `yes`:
-			option.IsCount = true
-			break isCountEnd
-		case `0`, `no`:
-			option.IsCount = false
-			break isCountEnd
-		default:
-			isCount = gcmd.Scan(color.RedString(`    输入错误，请重新输入，列表接口是否返回总数，默认(yes)：`))
-		}
-	}
-	// 是否生成详情接口
-	isInfo, ok := optionMap[`isInfo`]
-	if !ok {
-		isInfo = gcmd.Scan(color.BlueString(`> 是否生成详情接口，默认(yes)：`))
-	}
-isInfoEnd:
-	for {
-		switch isInfo {
-		case ``, `1`, `yes`:
-			option.IsInfo = true
-			break isInfoEnd
-		case `0`, `no`:
-			option.IsInfo = false
-			break isInfoEnd
-		default:
-			isInfo = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成详情接口，默认(yes)：`))
-		}
-	}
-	// 是否生成创建接口
-	isCreate, ok := optionMap[`isCreate`]
-	if !ok {
-		isCreate = gcmd.Scan(color.BlueString(`> 是否生成创建接口，默认(yes)：`))
-	}
-isCreateEnd:
-	for {
-		switch isCreate {
-		case ``, `1`, `yes`:
-			option.IsCreate = true
-			break isCreateEnd
-		case `0`, `no`:
-			option.IsCreate = false
-			break isCreateEnd
-		default:
-			isCreate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成创建接口，默认(yes)：`))
-		}
-	}
-	// 是否生成更新接口
-	isUpdate, ok := optionMap[`isUpdate`]
-	if !ok {
-		isUpdate = gcmd.Scan(color.BlueString(`> 是否生成更新接口，默认(yes)：`))
-	}
-isUpdateEnd:
-	for {
-		switch isUpdate {
-		case ``, `1`, `yes`:
-			option.IsUpdate = true
-			break isUpdateEnd
-		case `0`, `no`:
-			option.IsUpdate = false
-			break isUpdateEnd
-		default:
-			isUpdate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成更新接口，默认(yes)：`))
-		}
-	}
-	// 是否生成删除接口
-	isDelete, ok := optionMap[`isDelete`]
-	if !ok {
-		isDelete = gcmd.Scan(color.BlueString(`> 是否生成删除接口，默认(yes)：`))
-	}
-isDeleteEnd:
-	for {
-		switch isDelete {
-		case ``, `1`, `yes`:
-			option.IsDelete = true
-			break isDeleteEnd
-		case `0`, `no`:
-			option.IsDelete = false
-			break isDeleteEnd
-		default:
-			isDelete = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成删除接口，默认(yes)：`))
-		}
-	}
-	if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
-		fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
-		goto noAllRestart
-	}
 	// 是否生成后端接口文件
 	isApi, ok := optionMap[`isApi`]
 	if !ok {
@@ -375,6 +241,33 @@ isApiEnd:
 		}
 	}
 	if option.IsApi {
+		/*
+			是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
+				1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改
+				2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码
+		*/
+		isResetLogic, ok := optionMap[`isResetLogic`]
+		if !ok {
+			isResetLogic = gcmd.Scan(
+				color.HiYellowString(`提示：是否重置logic层，一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：`)+"\n",
+				color.HiYellowString(`    1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改`)+"\n",
+				color.HiYellowString(`    2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码`)+"\n",
+				color.BlueString(`> 是否重置logic层，默认(no)：`),
+			)
+		}
+	isResetLogicEnd:
+		for {
+			switch isResetLogic {
+			case `1`, `yes`:
+				option.IsResetLogic = true
+				break isResetLogicEnd
+			case ``, `0`, `no`:
+				option.IsResetLogic = false
+				break isResetLogicEnd
+			default:
+				isResetLogic = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否重置logic层，默认(no)：`))
+			}
+		}
 		// 是否判断操作权限，如是，则同时会生成操作权限
 		isAuthAction, ok := optionMap[`isAuthAction`]
 		if !ok {
@@ -392,6 +285,13 @@ isApiEnd:
 			default:
 				isAuthAction = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否判断操作权限，如是，则同时会生成操作权限，默认(yes)：`))
 			}
+		}
+		// 公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：场景
+		for {
+			if option.CommonName != `` {
+				break
+			}
+			option.CommonName = gcmd.Scan(color.BlueString(`> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用：`))
 		}
 	}
 	// 是否生成前端视图文件
@@ -412,31 +312,133 @@ isViewEnd:
 			isView = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成前端视图文件，默认(yes)：`))
 		}
 	}
-	/*
-		是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
-			1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改
-			2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码
-	*/
-	isResetLogic, ok := optionMap[`isResetLogic`]
-	if !ok {
-		isResetLogic = gcmd.Scan(
-			color.HiYellowString(`提示：是否重置logic层，一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：`)+"\n",
-			color.HiYellowString(`    1、logic层生成模板发生重大变化，即对gen_logic.go中生成的模板代码做修改`)+"\n",
-			color.HiYellowString(`    2、表新增或删除了对logic层生成代码有影响的字段。目前有影响的字段只有命名为pid的字段，该字段会生成逻辑验证代码`)+"\n",
-			color.BlueString(`> 是否重置logic层，默认(no)：`),
-		)
-	}
-isResetLogicEnd:
-	for {
-		switch isResetLogic {
-		case `1`, `yes`:
-			option.IsResetLogic = true
-			break isResetLogicEnd
-		case ``, `0`, `no`:
-			option.IsResetLogic = false
-			break isResetLogicEnd
-		default:
-			isResetLogic = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否重置logic层，默认(no)：`))
+	if option.IsApi || option.IsView {
+		// 场景标识
+		if option.SceneCode == `` {
+			option.SceneCode = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
+		}
+		for {
+			if option.SceneCode != `` {
+				option.SceneInfo, _ = daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
+				if !option.SceneInfo.IsEmpty() {
+					break
+				}
+			}
+			option.SceneCode = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
+		}
+
+	noAllRestart:
+		// 是否生成列表接口
+		isList, ok := optionMap[`isList`]
+		if !ok {
+			isList = gcmd.Scan(color.BlueString(`> 是否生成列表接口，默认(yes)：`))
+		}
+	isListEnd:
+		for {
+			switch isList {
+			case ``, `1`, `yes`:
+				option.IsList = true
+				break isListEnd
+			case `0`, `no`:
+				option.IsList = false
+				break isListEnd
+			default:
+				isList = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成列表接口，默认(yes)：`))
+			}
+		}
+		// 列表接口是否返回总数
+		isCount, ok := optionMap[`isCount`]
+		if !ok {
+			isCount = gcmd.Scan(color.BlueString(`> 列表接口是否返回总数，默认(yes)：`))
+		}
+	isCountEnd:
+		for {
+			switch isCount {
+			case ``, `1`, `yes`:
+				option.IsCount = true
+				break isCountEnd
+			case `0`, `no`:
+				option.IsCount = false
+				break isCountEnd
+			default:
+				isCount = gcmd.Scan(color.RedString(`    输入错误，请重新输入，列表接口是否返回总数，默认(yes)：`))
+			}
+		}
+		// 是否生成详情接口
+		isInfo, ok := optionMap[`isInfo`]
+		if !ok {
+			isInfo = gcmd.Scan(color.BlueString(`> 是否生成详情接口，默认(yes)：`))
+		}
+	isInfoEnd:
+		for {
+			switch isInfo {
+			case ``, `1`, `yes`:
+				option.IsInfo = true
+				break isInfoEnd
+			case `0`, `no`:
+				option.IsInfo = false
+				break isInfoEnd
+			default:
+				isInfo = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成详情接口，默认(yes)：`))
+			}
+		}
+		// 是否生成创建接口
+		isCreate, ok := optionMap[`isCreate`]
+		if !ok {
+			isCreate = gcmd.Scan(color.BlueString(`> 是否生成创建接口，默认(yes)：`))
+		}
+	isCreateEnd:
+		for {
+			switch isCreate {
+			case ``, `1`, `yes`:
+				option.IsCreate = true
+				break isCreateEnd
+			case `0`, `no`:
+				option.IsCreate = false
+				break isCreateEnd
+			default:
+				isCreate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成创建接口，默认(yes)：`))
+			}
+		}
+		// 是否生成更新接口
+		isUpdate, ok := optionMap[`isUpdate`]
+		if !ok {
+			isUpdate = gcmd.Scan(color.BlueString(`> 是否生成更新接口，默认(yes)：`))
+		}
+	isUpdateEnd:
+		for {
+			switch isUpdate {
+			case ``, `1`, `yes`:
+				option.IsUpdate = true
+				break isUpdateEnd
+			case `0`, `no`:
+				option.IsUpdate = false
+				break isUpdateEnd
+			default:
+				isUpdate = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成更新接口，默认(yes)：`))
+			}
+		}
+		// 是否生成删除接口
+		isDelete, ok := optionMap[`isDelete`]
+		if !ok {
+			isDelete = gcmd.Scan(color.BlueString(`> 是否生成删除接口，默认(yes)：`))
+		}
+	isDeleteEnd:
+		for {
+			switch isDelete {
+			case ``, `1`, `yes`:
+				option.IsDelete = true
+				break isDeleteEnd
+			case `0`, `no`:
+				option.IsDelete = false
+				break isDeleteEnd
+			default:
+				isDelete = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否生成删除接口，默认(yes)：`))
+			}
+		}
+		if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
+			fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
+			goto noAllRestart
 		}
 	}
 	return
