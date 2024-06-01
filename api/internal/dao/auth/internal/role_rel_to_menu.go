@@ -23,18 +23,18 @@ type RoleRelToMenuDao struct {
 
 // RoleRelToMenuColumns defines and stores column names for table auth_role_rel_to_menu.
 type RoleRelToMenuColumns struct {
+	CreatedAt string // 创建时间
+	UpdatedAt string // 更新时间
 	RoleId    string // 角色ID
 	MenuId    string // 菜单ID
-	UpdatedAt string // 更新时间
-	CreatedAt string // 创建时间
 }
 
 // roleRelToMenuColumns holds the columns for table auth_role_rel_to_menu.
 var roleRelToMenuColumns = RoleRelToMenuColumns{
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
 	RoleId:    "role_id",
 	MenuId:    "menu_id",
-	UpdatedAt: "updated_at",
-	CreatedAt: "created_at",
 }
 
 // NewRoleRelToMenuDao creates and returns a new DAO object for table data access.

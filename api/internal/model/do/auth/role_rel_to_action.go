@@ -12,8 +12,8 @@ import (
 // RoleRelToAction is the golang structure of table auth_role_rel_to_action for DAO operations like Where/Data.
 type RoleRelToAction struct {
 	g.Meta    `orm:"table:auth_role_rel_to_action, do:true"`
+	CreatedAt *gtime.Time // 创建时间
+	UpdatedAt *gtime.Time // 更新时间
 	RoleId    interface{} // 角色ID
 	ActionId  interface{} // 操作ID
-	UpdatedAt *gtime.Time // 更新时间
-	CreatedAt *gtime.Time // 创建时间
 }

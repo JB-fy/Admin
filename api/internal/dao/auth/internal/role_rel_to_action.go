@@ -23,18 +23,18 @@ type RoleRelToActionDao struct {
 
 // RoleRelToActionColumns defines and stores column names for table auth_role_rel_to_action.
 type RoleRelToActionColumns struct {
+	CreatedAt string // 创建时间
+	UpdatedAt string // 更新时间
 	RoleId    string // 角色ID
 	ActionId  string // 操作ID
-	UpdatedAt string // 更新时间
-	CreatedAt string // 创建时间
 }
 
 // roleRelToActionColumns holds the columns for table auth_role_rel_to_action.
 var roleRelToActionColumns = RoleRelToActionColumns{
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
 	RoleId:    "role_id",
 	ActionId:  "action_id",
-	UpdatedAt: "updated_at",
-	CreatedAt: "created_at",
 }
 
 // NewRoleRelToActionDao creates and returns a new DAO object for table data access.
