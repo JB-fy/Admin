@@ -202,6 +202,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 	gfile.PutContents(saveFile, tplLogic)
 	utils.GoFileFmt(saveFile)
 	internal.Command(`service生成`, true, ``, `gf`, `gen`, `service`)
+	i18n = logic.i18n
 	return
 }
 
@@ -321,6 +322,12 @@ func getLogicOtherRel(tplOR handleOtherRel) (logic myGenLogic) {
 	logic.i18n.Add(i18nFieldTop)
 	i18nField := myGenI18nField{
 		item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tpl.TableCaseCamel), getFieldName(tplOR.tpl.Handle.Id.List[0].FieldName)},
+	}
+	// 有可能是中间表（一对多），是联合主键。所以需要排除tplOR.RelId
+	if len(tplOR.tpl.Handle.Id.List) > 1 && tplOR.tpl.Handle.Id.List[0].FieldRaw == tplOR.RelId {
+		i18nField = myGenI18nField{
+			item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tpl.TableCaseCamel), getFieldName(tplOR.tpl.Handle.Id.List[1].FieldName)},
+		}
 	}
 	logic.i18n.Add(i18nField)
 
