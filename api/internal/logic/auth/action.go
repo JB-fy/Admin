@@ -70,6 +70,11 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 		return
 	}
 
+	if count, _ := daoAuth.RoleRelToAction.CtxDaoModel(ctx).Filter(daoAuth.RoleRelToAction.Columns().ActionId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`), count, g.I18n().T(ctx, `name.auth.roleRelToAction`)}})
+		return
+	}
+
 	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }

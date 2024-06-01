@@ -8,7 +8,7 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        sort: 50,
+        sort: 100,
         ...saveCommon.data,
         scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
         pid: saveCommon.data.pid ? saveCommon.data.pid : undefined,

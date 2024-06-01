@@ -415,6 +415,8 @@ func (daoThis *menuDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			} */
 
+			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
+			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().MenuId, daoModel.IdArr).Delete() */
 			return
 		},
 	}
@@ -451,7 +453,7 @@ func (daoThis *menuDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().MenuId, 1))
 			case `tree`:
 				m = m.OrderAsc(daoModel.DbTable + `.` + daoThis.Columns().Pid)
-				m = m.OrderAsc(daoModel.DbTable + `.` + daoThis.Columns().Sort)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().Sort)
 				m = m.OrderAsc(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 			case daoThis.Columns().Level:
 				m = m.Order(daoModel.DbTable + `.` + v)

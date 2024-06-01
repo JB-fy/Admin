@@ -48,7 +48,7 @@ type MenuListItem struct {
 	MenuIcon  *string     `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string     `json:"menu_url,omitempty" dc:"链接"`
 	ExtraData *string     `json:"extra_data,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从小到大排序，默认50，范围0-100"`
+	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序，范围0~255"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
@@ -81,7 +81,7 @@ type MenuInfo struct {
 	MenuIcon  *string     `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string     `json:"menu_url,omitempty" dc:"链接"`
 	ExtraData *string     `json:"extra_data,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从小到大排序，默认50，范围0-100"`
+	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序，范围0~255"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
@@ -98,7 +98,7 @@ type MenuCreateReq struct {
 	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extra_data,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort      *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从小到大排序，默认50，范围0-100"`
+	Sort      *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序，范围0~255"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -114,7 +114,7 @@ type MenuUpdateReq struct {
 	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extra_data,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort      *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从小到大排序，默认50，范围0-100"`
+	Sort      *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序，范围0~255"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -151,7 +151,7 @@ type MenuTreeItem struct {
 	MenuIcon  *string        `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string        `json:"menu_url,omitempty" dc:"链接"`
 	ExtraData *string        `json:"extra_data,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort      *uint          `json:"sort,omitempty" dc:"排序值。从小到大排序，默认50，范围0-100"`
+	Sort      *uint          `json:"sort,omitempty" dc:"排序值。从大到小排序，范围0~255"`
 	IsStop    *uint          `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time    `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time    `json:"created_at,omitempty" dc:"创建时间"` */

@@ -522,7 +522,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				m = m.OrderAsc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
 		for _, sort := range tpl.Handle.Pid.Sort {
 			orderParseStr += `
-				m = m.OrderAsc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(sort) + `)`
+				m = m.OrderDesc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(sort) + `)`
 		}
 		orderParseStr += `
 				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + ` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `)`

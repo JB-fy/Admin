@@ -117,6 +117,11 @@ func (logicThis *sAuthMenu) Delete(ctx context.Context, filter map[string]any) (
 		return
 	}
 
+	if count, _ := daoAuth.RoleRelToMenu.CtxDaoModel(ctx).Filter(daoAuth.RoleRelToMenu.Columns().MenuId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`), count, g.I18n().T(ctx, `name.auth.roleRelToMenu`)}})
+		return
+	}
+
 	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }
