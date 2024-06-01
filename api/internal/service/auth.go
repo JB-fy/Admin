@@ -18,7 +18,7 @@ type (
 		// 删除
 		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 		// 判断操作权限
-		CheckAuth(ctx context.Context, actionCode string) (isAuth bool, err error)
+		CheckAuth(ctx context.Context, actionCodeArr ...string) (isAuth bool, err error)
 	}
 	IAuthMenu interface {
 		// 新增

@@ -7,7 +7,7 @@ export default {
         oneClick: '一键登录',
         push: '推送',
         vod: '视频点播',
-        wx: '微信相关',
+        wx: '微信',
 
         payOfAli: '支付宝',
         payOfWx: '微信',
