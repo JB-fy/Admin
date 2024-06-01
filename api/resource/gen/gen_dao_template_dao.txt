@@ -248,10 +248,12 @@ func (daoThis *{TplTableNameCamelLowerCase}Dao) HookDelete(daoModel *daoIndex.Da
 			if err != nil {
 				return
 			}
+
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */
+
 			return
 		},
 	}

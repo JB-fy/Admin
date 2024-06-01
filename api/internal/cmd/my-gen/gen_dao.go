@@ -267,6 +267,7 @@ func genDao(tpl myGenTpl) {
 			if row == 0 {
 				return
 			} */
+
 			return`
 		tplDao = gstr.Replace(tplDao, deleteHookPoint, `row, _ := result.RowsAffected()
 			if row == 0 {

@@ -248,10 +248,12 @@ func (daoThis *actionRelToSceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.
 			if err != nil {
 				return
 			}
+
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */
+
 			return
 		},
 	}

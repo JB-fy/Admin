@@ -248,10 +248,12 @@ func (daoThis *roleRelOfPlatformAdminDao) HookDelete(daoModel *daoIndex.DaoModel
 			if err != nil {
 				return
 			}
+
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */
+
 			return
 		},
 	}

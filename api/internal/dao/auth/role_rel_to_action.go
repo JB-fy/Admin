@@ -248,10 +248,12 @@ func (daoThis *roleRelToActionDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.H
 			if err != nil {
 				return
 			}
+
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
 			} */
+
 			return
 		},
 	}

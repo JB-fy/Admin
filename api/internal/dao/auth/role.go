@@ -369,6 +369,7 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			if err != nil {
 				return
 			}
+
 			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
