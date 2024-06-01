@@ -22,5 +22,5 @@ type Menu struct {
 	MenuIcon  string      `json:"menuIcon"  orm:"menu_icon"  ` // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
 	MenuUrl   string      `json:"menuUrl"   orm:"menu_url"   ` // 链接
 	ExtraData string      `json:"extraData" orm:"extra_data" ` // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
-	Sort      uint        `json:"sort"      orm:"sort"       ` // 排序值。从小到大排序，默认50，范围0-100
+	Sort      uint        `json:"sort"      orm:"sort"       ` // 排序值。从大到小排序，范围0~255
 }

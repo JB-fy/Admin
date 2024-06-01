@@ -23,6 +23,9 @@ type AdminDao struct {
 
 // AdminColumns defines and stores column names for table platform_admin.
 type AdminColumns struct {
+	CreatedAt string // 创建时间
+	UpdatedAt string // 更新时间
+	IsStop    string // 停用：0否 1是
 	AdminId   string // 管理员ID
 	Phone     string // 手机
 	Account   string // 账号
@@ -30,13 +33,13 @@ type AdminColumns struct {
 	Salt      string // 密码盐
 	Nickname  string // 昵称
 	Avatar    string // 头像
-	IsStop    string // 停用：0否 1是
-	UpdatedAt string // 更新时间
-	CreatedAt string // 创建时间
 }
 
 // adminColumns holds the columns for table platform_admin.
 var adminColumns = AdminColumns{
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
+	IsStop:    "is_stop",
 	AdminId:   "admin_id",
 	Phone:     "phone",
 	Account:   "account",
@@ -44,9 +47,6 @@ var adminColumns = AdminColumns{
 	Salt:      "salt",
 	Nickname:  "nickname",
 	Avatar:    "avatar",
-	IsStop:    "is_stop",
-	UpdatedAt: "updated_at",
-	CreatedAt: "created_at",
 }
 
 // NewAdminDao creates and returns a new DAO object for table data access.

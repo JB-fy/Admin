@@ -60,18 +60,6 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 	for _, v := range tpl.FieldList {
 		logic.Add(getLogicField(tpl, v))
 	}
-	for _, v := range tpl.Handle.ExtendTableOneList {
-		logic.Merge(getLogicExtendMiddleOne(v))
-	}
-	for _, v := range tpl.Handle.MiddleTableOneList {
-		logic.Merge(getLogicExtendMiddleOne(v))
-	}
-	for _, v := range tpl.Handle.ExtendTableManyList {
-		logic.Merge(getLogicExtendMiddleMany(v))
-	}
-	for _, v := range tpl.Handle.MiddleTableManyList {
-		logic.Merge(getLogicExtendMiddleMany(v))
-	}
 	if tpl.Handle.Pid.Pid != `` {
 		i18nField := myGenI18nField{
 			item: [2]string{`name.pid`, `父级`},
@@ -112,6 +100,22 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 		return
 	}`)
 	}
+	for _, v := range tpl.Handle.ExtendTableOneList {
+		logic.Merge(getLogicExtendMiddleOne(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableOneList {
+		logic.Merge(getLogicExtendMiddleOne(v))
+	}
+	for _, v := range tpl.Handle.ExtendTableManyList {
+		logic.Merge(getLogicExtendMiddleMany(v))
+	}
+	for _, v := range tpl.Handle.MiddleTableManyList {
+		logic.Merge(getLogicExtendMiddleMany(v))
+	}
+	for _, v := range tpl.Handle.OtherRelTableList {
+		logic.Merge(getLogicOtherRel(v))
+	}
+
 	if len(logic.verifyData) > 0 {
 		logic.verifyDataFunc = `
 
@@ -299,5 +303,31 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 	}`)
 		}
 	}
+	return
+}
+
+func getLogicOtherRel(tplOR handleOtherRel) (logic myGenLogic) {
+	logic.importDao = append(logic.importDao, `dao`+tplOR.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tplOR.tpl.ModuleDirCaseKebab+`"`)
+
+	getFieldName := func(fieldName string) string {
+		if gstr.ToUpper(gstr.SubStr(fieldName, -2)) == `ID` {
+			fieldName = gstr.SubStr(fieldName, 0, -2)
+		}
+		return fieldName
+	}
+	i18nFieldTop := myGenI18nField{
+		item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tplOfTop.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tplOfTop.TableCaseCamel), getFieldName(tplOR.tplOfTop.Handle.Id.List[0].FieldName)},
+	}
+	logic.i18n.Add(i18nFieldTop)
+	i18nField := myGenI18nField{
+		item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tpl.TableCaseCamel), getFieldName(tplOR.tpl.Handle.Id.List[0].FieldName)},
+	}
+	logic.i18n.Add(i18nField)
+
+	daoPath := `dao` + tplOR.tpl.ModuleDirCaseCamel + `.` + tplOR.tpl.TableCaseCamel
+	logic.delete = append(logic.delete, `if count, _ := `+daoPath+`.CtxDaoModel(ctx).Filter(`+daoPath+`.Columns().`+gstr.CaseCamel(tplOR.RelId)+`, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nFieldTop.item[0]+"`"+`), count, g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+		return
+	}`)
 	return
 }
