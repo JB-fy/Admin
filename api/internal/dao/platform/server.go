@@ -10,12 +10,12 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"reflect"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // internalServerDao is internal type for wrapping internal DAO implements.
@@ -59,12 +59,12 @@ func (daoThis *serverDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[st
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
 func (daoThis *serverDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(0).String()
+	return daoModel.DbTable + `.` + daoThis.Columns().ServerId
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *serverDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(1).String()
+	return daoModel.DbTable + `.` + daoThis.Columns().NetworkIp
 }
 
 // 解析filter
@@ -76,6 +76,20 @@ func (daoThis *serverDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
+			case `id`, `id_arr`:
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ServerId, v)
+			case `exc_id`, `exc_id_arr`:
+				if gvar.New(v).IsSlice() {
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().ServerId, v)
+				} else {
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().ServerId, v)
+				}
+			case `label`:
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().NetworkIp, `%`+gconv.String(v)+`%`)
+			case `time_range_start`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `time_range_end`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -98,6 +112,10 @@ func (daoThis *serverDao) ParseField(field []string, fieldWithParam map[string]a
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
+			case `id`:
+				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
+			case `label`:
+				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -264,6 +282,8 @@ func (daoThis *serverDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
+			case `id`:
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ServerId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -284,6 +304,8 @@ func (daoThis *serverDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 			kArr := gstr.Split(v, `,`)
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
+			case `id`:
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ServerId, 1))
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -307,6 +329,8 @@ func (daoThis *serverDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
+		default:
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().ServerId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ServerId)
 		}
 		return m
 	}

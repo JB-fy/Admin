@@ -10,13 +10,13 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"reflect"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // internalConfigDao is internal type for wrapping internal DAO implements.
@@ -60,12 +60,12 @@ func (daoThis *configDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[st
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
 func (daoThis *configDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(0).String()
+	return daoModel.DbTable + `.` + daoThis.Columns().ConfigKey
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *configDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(1).String()
+	return daoModel.DbTable + `.` + daoThis.Columns().ConfigValue
 }
 
 // 解析filter
@@ -77,6 +77,20 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
+			case `id`, `id_arr`:
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, v)
+			case `exc_id`, `exc_id_arr`:
+				if gvar.New(v).IsSlice() {
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, v)
+				} else {
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, v)
+				}
+			case `label`:
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ConfigValue, `%`+gconv.String(v)+`%`)
+			case `time_range_start`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `time_range_end`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -99,6 +113,10 @@ func (daoThis *configDao) ParseField(field []string, fieldWithParam map[string]a
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
+			case `id`:
+				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
+			case `label`:
+				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -158,6 +176,8 @@ func (daoThis *configDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
+			case `id`:
+				insertData[daoThis.Columns().ConfigKey] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -199,6 +219,8 @@ func (daoThis *configDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
+			case `id`:
+				updateData[daoThis.Columns().ConfigKey] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					updateData[k] = v
@@ -265,6 +287,8 @@ func (daoThis *configDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
+			case `id`:
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ConfigKey)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -285,6 +309,8 @@ func (daoThis *configDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 			kArr := gstr.Split(v, `,`)
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
+			case `id`:
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ConfigKey, 1))
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -308,6 +334,8 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
+		default:
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().ConfigKey+` = `+daoModel.DbTable+`.`+daoThis.Columns().ConfigKey)
 		}
 		return m
 	}
