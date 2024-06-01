@@ -277,17 +277,17 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			/* 并发环境无法保证不产生脏数据
 			举例：
 				请求A：删除场景->删除前验证关联菜单是否存在->删除
-				请求B：新增或修改菜单->新增前验证关联场景是否存在->新增
+				请求B：新增修改菜单->新增修改前验证关联场景是否存在->新增修改
 			两个请求的步骤2在并发时可能都验证成功，此时就存在以下两种情形：
-				情形1：请求B先新增，请求A后删除，会导致菜单表插入一条脏数据
-					解决方法：做删除后置处理，以下代码就是
-				情形2：请求A先删除，请求B后新增，会导致菜单表插入一条脏数据
-					解决方法：菜单表做触发器，插入前判断场景是否被删除（程序中的判断不能解决并发问题，但数据库层面可以解决）
+				情形1：请求B先新增修改，请求A后删除，会导致菜单表有一条脏数据
+					解决方法：做删除后置处理
+				情形2：请求A先删除，请求B后新增修改，会导致菜单表有一条脏数据
+					解决方法：菜单表做触发器，新增修改前判断场景是否被删除（程序中的判断不能解决并发问题，但数据库层面可以解决）
 			通用解决方法（对情形1和情形2都有效）：
 				1、请求A和请求B都使用事务，且读取场景表时，设置排它锁（缺点：工作量大【所有关联场景的表，在新增修改时都得开事务】；容易忘记使用事务；使用事务影响效率；）
 				2、菜单表做外键约束（不推荐）
 			*/
-			/* // 解决并发问题情形1（并发环境无法保证不产生脏数据的）。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete内的注释
+			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
 			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
 			Menu.CtxDaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
 			Role.CtxDaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete() */
