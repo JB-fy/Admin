@@ -7,10 +7,10 @@ export default {
 </script> -->
 <!--直接批量导入组件 结束-->
 <script setup lang="tsx">
-//import WebsiteConfig from './platform/WebsiteConfig.vue'
+//import WebsiteConfig from './app/WebsiteConfig.vue'
 //下面方式引入好处：组件会被打包成单独一个文件
-const Website = defineAsyncComponent(() => import('./platform/Website.vue'))
-const App = defineAsyncComponent(() => import('./platform/App.vue'))
+const Website = defineAsyncComponent(() => import('./app/Website.vue'))
+const App = defineAsyncComponent(() => import('./app/App.vue'))
 
 const { t } = useI18n()
 const adminStore = useAdminStore()

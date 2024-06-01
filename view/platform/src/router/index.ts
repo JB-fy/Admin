@@ -96,10 +96,10 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/admin' },
             },
             {
-                path: '/platform/config/platform',
+                path: '/platform/config/app',
                 component: async () => {
-                    const component = await import('@/views/platform/config/Platform.vue')
-                    component.default.name = '/platform/config/platform'
+                    const component = await import('@/views/platform/config/App.vue')
+                    component.default.name = '/platform/config/app'
                     return component
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/platform' },
