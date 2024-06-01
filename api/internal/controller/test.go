@@ -149,7 +149,8 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/*--------常用协程示例 结束--------*/
 
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
-	// err = utils.NewErrorCode(ctx, 99999999, ``)	//也可写成err = errors.New(``)，在api/internal/middleware/handler_response.go中统一处理成99999999错误码
+	// err = utils.NewErrorCode(ctx, 99999999, ``)
+	// err = errors.New(``)	//与上面返回结果一样。在api/internal/middleware/handler_response.go中会统一处理成99999999错误码
 	/* utils.HttpWriteJson(ctx, map[string]any{
 		`info`: map[string]any{},
 	}, 0, ``) */

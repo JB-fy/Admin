@@ -2,9 +2,9 @@ package controller
 
 import (
 	"api/api"
-	"api/internal/utils"
 	"api/internal/utils/wx"
 	"context"
+	"errors"
 
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -25,7 +25,7 @@ func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq
 
 	if wxGzhObj.Sign(timestamp, nonce) != signature {
 		g.Log().Error(ctx, `签名错误`)
-		err = utils.NewErrorCode(ctx, 99999999, `签名错误`)
+		err = errors.New(`签名错误`)
 		return
 	}
 	//接入验证：GET请求
@@ -43,12 +43,12 @@ func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq
 	// encrypt := r.Get(`Encrypt`).String() //body是xml时，框架已经做了解析。故也可以直接取
 	if encryptType != `aes` {
 		g.Log().Error(ctx, `请设置消息加解密方式：安全模式`)
-		err = utils.NewErrorCode(ctx, 99999999, `请设置消息加解密方式：安全模式`)
+		err = errors.New(`请设置消息加解密方式：安全模式`)
 		return
 	}
 	if wxGzhObj.MsgSign(timestamp, nonce, encrypt) != msgSignature {
 		g.Log().Error(ctx, `消息签名错误`)
-		err = utils.NewErrorCode(ctx, 99999999, `消息签名错误`)
+		err = errors.New(`消息签名错误`)
 		return
 	}
 	msgByte, err := wxGzhObj.AesDecrypt(encrypt)
