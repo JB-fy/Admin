@@ -32,44 +32,23 @@ const authAction: { [propName: string]: boolean } = {
     isWxSave: isSave || adminStore.IsAction('platformConfigWxSave'),
 }
 provide('authAction', authAction)
+const notReadAll = !(authAction.isUploadRead || authAction.isPayRead || authAction.isSmsRead || authAction.isIdCardRead || authAction.isOneClickRead || authAction.isPushRead || authAction.isVodRead || authAction.isWxRead)
 </script>
 
 <template>
-    <div v-if="!(authAction.isUploadRead || authAction.isPayRead || authAction.isSmsRead || authAction.isIdCardRead || authAction.isOneClickRead || authAction.isPushRead || authAction.isVodRead || authAction.isWxRead)"
-        style="text-align: center; font-size: 60px; color: #f56c6c">
-        {{ t('common.tip.notAuthActionRead') }}
-    </div>
+    <div v-if="notReadAll" style="text-align: center; font-size: 60px; color: #f56c6c">{{ t('common.tip.notAuthActionRead') }}</div>
     <template v-else>
         <el-container class="common-container">
             <el-main>
                 <el-tabs type="border-card" tab-position="top">
-                    <el-tab-pane v-if="authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')"
-                        :lazy="true">
-                        <upload />
-                    </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isPayRead" :label="t('platform.config.plugin.label.pay')"
-                        :lazy="true">
-                        <pay />
-                    </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')"
-                        :lazy="true">
-                        <sms />
-                    </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')"
-                        :lazy="true"><id-card /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isOneClickRead" :label="t('platform.config.plugin.label.oneClick')"
-                        :lazy="true"><one-click /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isPushRead" :label="t('platform.config.plugin.label.push')"
-                        :lazy="true">
-                        <push />
-                    </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isVodRead" :label="t('platform.config.plugin.label.vod')"
-                        :lazy="true">
-                        <vod />
-                    </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isWxRead" :label="t('platform.config.plugin.label.wx')" :lazy="true">
-                        <wx />
-                    </el-tab-pane>
+                    <el-tab-pane v-if="authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')" :lazy="true"><upload /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isPayRead" :label="t('platform.config.plugin.label.pay')" :lazy="true"><pay /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')" :lazy="true"><sms /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')" :lazy="true"><id-card /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isOneClickRead" :label="t('platform.config.plugin.label.oneClick')" :lazy="true"><one-click /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isPushRead" :label="t('platform.config.plugin.label.push')" :lazy="true"><push /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isVodRead" :label="t('platform.config.plugin.label.vod')" :lazy="true"><vod /></el-tab-pane>
+                    <el-tab-pane v-if="authAction.isWxRead" :label="t('platform.config.plugin.label.wx')" :lazy="true"><wx /></el-tab-pane>
                 </el-tabs>
             </el-main>
         </el-container>
