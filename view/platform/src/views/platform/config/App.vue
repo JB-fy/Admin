@@ -15,27 +15,30 @@ const App = defineAsyncComponent(() => import('./app/App.vue'))
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
+const isRead = adminStore.IsAction('platformConfigRead')
+const isSave = adminStore.IsAction('platformConfigSave')
 const authAction: { [propName: string]: boolean } = {
-    isRead: adminStore.IsAction('platformConfigRead'),
-    isSave: adminStore.IsAction('platformConfigSave'),
-    isWebsiteRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigWebsiteRead'], 'or'),
-    isWebsiteSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigWebsiteSave'], 'or'),
-    isAppRead: adminStore.IsActionMany(['platformConfigRead', 'platformConfigAppRead'], 'or'),
-    isAppSave: adminStore.IsActionMany(['platformConfigSave', 'platformConfigAppSave'], 'or'),
+    isWebsiteRead: isRead || adminStore.IsAction('platformConfigWebsiteRead'),
+    isWebsiteSave: isSave || adminStore.IsAction('platformConfigWebsiteSave'),
+    isAppRead: isRead || adminStore.IsAction('platformConfigAppRead'),
+    isAppSave: isSave || adminStore.IsAction('platformConfigAppSave'),
 }
 provide('authAction', authAction)
 </script>
 
 <template>
-    <div v-if="!(authAction.isRead || authAction.isWebsiteRead || authAction.isAppRead)" style="text-align: center; font-size: 60px; color: #f56c6c">{{ t('common.tip.notAuthActionRead') }}</div>
+    <div v-if="!(authAction.isWebsiteRead || authAction.isAppRead)"
+        style="text-align: center; font-size: 60px; color: #f56c6c">{{ t('common.tip.notAuthActionRead') }}</div>
     <template v-else>
         <el-container class="common-container">
             <el-main>
                 <el-tabs type="border-card" tab-position="top">
-                    <el-tab-pane v-if="authAction.isWebsiteRead" :label="t('platform.config.platform.label.website')" :lazy="true">
+                    <el-tab-pane v-if="authAction.isWebsiteRead" :label="t('platform.config.platform.label.website')"
+                        :lazy="true">
                         <website />
                     </el-tab-pane>
-                    <el-tab-pane v-if="authAction.isAppRead" :label="t('platform.config.platform.label.app')" :lazy="true">
+                    <el-tab-pane v-if="authAction.isAppRead" :label="t('platform.config.platform.label.app')"
+                        :lazy="true">
                         <app />
                     </el-tab-pane>
                 </el-tabs>
