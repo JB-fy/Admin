@@ -308,7 +308,11 @@ func (daoThis *roleDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				}
 			}
 		}
-		m = m.Data(updateData)
+		if len(updateData) > 0 {
+			m = m.Data(updateData)
+		} else if len(daoModel.AfterUpdate) > 0 {
+			daoModel.IsOnlyAfterUpdate = true
+		}
 		return m
 	}
 }
@@ -317,7 +321,7 @@ func (daoThis *roleDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 func (daoThis *roleDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
-			if daoIndex.IsEmptyDataOfUpdate(ctx, daoModel.DbGroup, in.Data) {
+			if daoModel.IsOnlyAfterUpdate {
 				result = driver.RowsAffected(0)
 			} else {
 				result, err = in.Next(ctx)
