@@ -9,38 +9,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/gutil"
 )
-
-// 更新时，判断是否空数据更新（HookUpdate中用于判断in.Data）
-func IsEmptyDataOfUpdate(ctx context.Context, dbGroup string, data any) (isEmptyData bool) {
-	switch v := data.(type) {
-	case string:
-		if v == `` || gstr.Pos(v, `,`) == 0 {
-			isEmptyData = true
-		}
-	case map[string]any:
-		switch len(v) {
-		case 0:
-			isEmptyData = true
-		case 1:
-			dbConfig := g.DB(dbGroup).GetConfig()
-			if !dbConfig.TimeMaintainDisabled {
-				updatedFieldNames := []string{`updated_at`, `update_at`}
-				if dbConfig.UpdatedAt != `` {
-					updatedFieldNames = []string{dbConfig.UpdatedAt}
-				}
-				for _, updatedField := range updatedFieldNames {
-					if gutil.MapContainsPossibleKey(v, updatedField) {
-						isEmptyData = true
-						break
-					}
-				}
-			}
-		}
-	}
-	return
-}
 
 // 保存关联表（一对多）。关联表除主表关联id外，只剩1个有用字段
 func SaveArrRelMany(ctx context.Context, relDao DaoInterface, idField string, valField string, id any, valArr []string /* []any */) {

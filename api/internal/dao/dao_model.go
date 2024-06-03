@@ -42,6 +42,7 @@ type DaoModel struct {
 	IdArr               []*gvar.Var // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即在各种sql条件设置完后）
 	AfterInsert         map[string]any
 	AfterUpdate         map[string]any
+	IsOnlyAfterUpdate   bool // 更新时，用于判断是否只做后置更新
 	AfterField          *gset.StrSet
 	AfterFieldWithParam map[string]any
 	JoinTableSet        *gset.StrSet
