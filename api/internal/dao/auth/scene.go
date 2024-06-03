@@ -224,10 +224,12 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 				}
 			}
 		}
-		if len(updateData) > 0 {
-			m = m.Data(updateData)
-		} else if len(daoModel.AfterUpdate) > 0 {
-			daoModel.IsOnlyAfterUpdate = true
+		m = m.Data(updateData)
+		if len(daoModel.AfterUpdate) > 0 {
+			m = m.Hook(daoThis.HookUpdate(daoModel))
+			if len(updateData) == 0 {
+				daoModel.IsOnlyAfterUpdate = true
+			}
 		}
 		return m
 	}

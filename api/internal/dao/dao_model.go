@@ -190,9 +190,6 @@ func (daoModelThis *DaoModel) HookInsert(data map[string]any) *DaoModel {
 
 func (daoModelThis *DaoModel) HookUpdate(data map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseUpdate(data, daoModelThis))
-	if len(daoModelThis.AfterUpdate) > 0 {
-		daoModelThis.Hook(daoModelThis.dao.HookUpdate(daoModelThis))
-	}
 	return daoModelThis
 }
 
