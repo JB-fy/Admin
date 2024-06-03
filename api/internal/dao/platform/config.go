@@ -131,6 +131,9 @@ func (daoThis *configDao) ParseField(field []string, fieldWithParam map[string]a
 				daoModel.AfterFieldWithParam[k] = v
 			}
 		}
+		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+			m = m.Hook(daoThis.HookSelect(daoModel))
+		}
 		return m
 	}
 }

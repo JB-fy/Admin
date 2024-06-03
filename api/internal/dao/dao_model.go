@@ -198,6 +198,13 @@ func (daoModelThis *DaoModel) HookDelete() *DaoModel {
 	return daoModelThis
 }
 
+/* func (daoModelThis *DaoModel) HookSelect() *DaoModel {
+	if daoModelThis.AfterField.Size() > 0 || len(daoModelThis.AfterFieldWithParam) > 0 {
+		daoModelThis.Hook(daoModelThis.dao.HookSelect(daoModelThis))
+	}
+	return daoModelThis
+} */
+
 func (daoModelThis *DaoModel) Fields(field ...string) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]any{}, daoModelThis))
 	return daoModelThis
@@ -209,13 +216,6 @@ func (daoModelThis *DaoModel) FieldWithParam(key string, val any) *DaoModel {
 
 func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseField([]string{}, fieldWithParam, daoModelThis))
-	return daoModelThis
-}
-
-func (daoModelThis *DaoModel) HookSelect() *DaoModel {
-	if daoModelThis.AfterField.Size() > 0 || len(daoModelThis.AfterFieldWithParam) > 0 {
-		daoModelThis.Hook(daoModelThis.dao.HookSelect(daoModelThis))
-	}
 	return daoModelThis
 }
 
@@ -506,7 +506,7 @@ func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 
 // 封装常用方法
 func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).All()
 	if err != nil {
 		return nil, err
 	}
@@ -522,7 +522,7 @@ func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb
 
 // 封装常用方法
 func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, error) {
-	list, err := daoModelThis.Fields(field, key).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).All()
 	if err != nil {
 		return nil, err
 	}
@@ -538,7 +538,7 @@ func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, er
 
 // 封装常用方法
 func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).All()
 	if err != nil {
 		return nil, err
 	}
@@ -554,7 +554,7 @@ func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.
 
 // 封装常用方法
 func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).HookSelect().All()
+	list, err := daoModelThis.Fields(field, key).All()
 	if err != nil {
 		return nil, err
 	}

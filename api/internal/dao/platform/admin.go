@@ -147,6 +147,9 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 				daoModel.AfterFieldWithParam[k] = v
 			}
 		}
+		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+			m = m.Hook(daoThis.HookSelect(daoModel))
+		}
 		return m
 	}
 }

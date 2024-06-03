@@ -112,6 +112,9 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseField(field []string, fieldWithPa
 				daoModel.AfterFieldWithParam[k] = v
 			}
 		}
+		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+			m = m.Hook(daoThis.HookSelect(daoModel))
+		}
 		return m
 	}
 }

@@ -178,6 +178,9 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				daoModel.AfterFieldWithParam[k] = v
 			}
 		}
+		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+			m = m.Hook(daoThis.HookSelect(daoModel))
+		}
 		return m
 	}
 }
