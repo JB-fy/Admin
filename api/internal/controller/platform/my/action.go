@@ -26,7 +26,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 		},
 	}
-	list, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().ListPri()
+	list, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()
 	if err != nil {
 		return
 	}

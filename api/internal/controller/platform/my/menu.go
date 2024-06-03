@@ -28,7 +28,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 		},
 	}
-	list, err := daoAuth.Menu.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().ListPri()
+	list, err := daoAuth.Menu.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()
 	if err != nil {
 		return
 	}

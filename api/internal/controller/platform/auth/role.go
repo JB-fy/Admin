@@ -49,7 +49,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	if err != nil {
 		return
 	}
-	list, err := daoModelThis.Fields(field...).HookSelect().Order(req.Sort).Page(req.Page, req.Limit).ListPri()
+	list, err := daoModelThis.Fields(field...).Order(req.Sort).Page(req.Page, req.Limit).ListPri()
 	if err != nil {
 		return
 	}
@@ -81,7 +81,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoAuth.Role.CtxDaoModel(ctx).Filters(filter).Fields(field...).HookSelect().InfoPri()
+	info, err := daoAuth.Role.CtxDaoModel(ctx).Filters(filter).Fields(field...).InfoPri()
 	if err != nil {
 		return
 	}

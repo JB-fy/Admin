@@ -57,7 +57,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 		id, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookInsert(g.Map{`Xxxx`: `xxxx`}).InsertAndGetId()                             //新增
 		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookUpdate(g.Map{`Xxxx`: `xxxx`}).SetIdArr().UpdateAndGetAffected()           //修改
 		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).Filters(g.Map{`Xxxx`: `xxxx`}).SetIdArr().HookDelete().DeleteAndGetAffected() //删除
-		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`Xxxx`, `xxxx`).Field(`xxxx`).HookSelect().All()                   //查询
+		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`Xxxx`, `xxxx`).Field(`xxxx`).All()                   //查询
 		// _, err = tx.Model(xxxxTxxxDaoModel.DbTable).Data(g.Map{`Xxxx`: `xxxx`}).Update()                                             // 不建议用
 		return
 	}) */
