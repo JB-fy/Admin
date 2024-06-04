@@ -116,7 +116,7 @@ type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, a
 	`)
 	if option.IsList && tpl.Handle.Pid.Pid != `` {
 		tplApi += `
-	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`"
+	Children []` + tpl.TableCaseCamel + `Info ` + "`" + `json:"children" dc:"子级列表"` + "`"
 	}
 	tplApi += `
 }
