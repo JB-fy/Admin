@@ -9,7 +9,7 @@ import (
 type AdminListReq struct {
 	g.Meta `path:"/admin/list" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"列表"`
 	Filter AdminListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
 	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
 	Page   int             `json:"page" v:"min:1" default:"1" dc:"页码"`
 	Limit  int             `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
@@ -55,7 +55,7 @@ type AdminListItem struct {
 /*--------详情 开始--------*/
 type AdminInfoReq struct {
 	g.Meta `path:"/admin/info" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
 	Id     uint     `json:"id" v:"required|between:1,16777215" dc:"ID"`
 }
 

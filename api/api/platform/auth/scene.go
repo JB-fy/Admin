@@ -5,11 +5,25 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
+// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
+type SceneInfo struct {
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	SceneName   *string     `json:"scene_name,omitempty" dc:"名称"`
+	SceneCode   *string     `json:"scene_code,omitempty" dc:"标识"`
+	SceneConfig *string     `json:"scene_config,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	Remark      *string     `json:"remark,omitempty" dc:"备注"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+}
+
 /*--------列表 开始--------*/
 type SceneListReq struct {
 	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/权限管理/场景" sm:"列表"`
 	Filter SceneListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
 	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
 	Page   int             `json:"page" v:"min:1" default:"1" dc:"页码"`
 	Limit  int             `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
@@ -30,21 +44,8 @@ type SceneListFilter struct {
 }
 
 type SceneListRes struct {
-	Count int             `json:"count" dc:"总数"`
-	List  []SceneListItem `json:"list" dc:"列表"`
-}
-
-type SceneListItem struct {
-	Id          *uint       `json:"id,omitempty" dc:"ID"`
-	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
-	SceneName   *string     `json:"scene_name,omitempty" dc:"名称"`
-	SceneCode   *string     `json:"scene_code,omitempty" dc:"标识"`
-	SceneConfig *string     `json:"scene_config,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
-	Remark      *string     `json:"remark,omitempty" dc:"备注"`
-	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	Count int         `json:"count" dc:"总数"`
+	List  []SceneInfo `json:"list" dc:"列表"`
 }
 
 /*--------列表 结束--------*/
@@ -52,25 +53,12 @@ type SceneListItem struct {
 /*--------详情 开始--------*/
 type SceneInfoReq struct {
 	g.Meta `path:"/scene/info" method:"post" tags:"平台后台/权限管理/场景" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回全部字段。注意：如前端页面所需字段较少，建议传指定字段，可大幅减轻服务器及数据库压力"`
+	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
 	Id     uint     `json:"id" v:"required|between:1,16777215" dc:"ID"`
 }
 
 type SceneInfoRes struct {
 	Info SceneInfo `json:"info" dc:"详情"`
-}
-
-type SceneInfo struct {
-	Id          *uint       `json:"id,omitempty" dc:"ID"`
-	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
-	SceneName   *string     `json:"scene_name,omitempty" dc:"名称"`
-	SceneCode   *string     `json:"scene_code,omitempty" dc:"标识"`
-	SceneConfig *string     `json:"scene_config,omitempty" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
-	Remark      *string     `json:"remark,omitempty" dc:"备注"`
-	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/

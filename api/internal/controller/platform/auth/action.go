@@ -12,10 +12,23 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Action struct{}
+type Action struct {
+	defaultFieldOfList []string
+	defaultFieldOfInfo []string
+	allowField         []string
+	noAuthField        []string
+}
 
 func NewAction() *Action {
-	return &Action{}
+	field := daoAuth.Action.ColumnArr().Slice()
+	defaultFieldOfList := []string{`id`, `label`}
+	defaultFieldOfInfo := []string{`id`, `label`, `scene_id_arr`}
+	return &Action{
+		defaultFieldOfList: append(field, defaultFieldOfList...),
+		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		noAuthField:        []string{`id`, `label`},
+	}
 }
 
 // 列表
@@ -26,21 +39,19 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 		filter = map[string]any{}
 	}
 
-	allowField := daoAuth.Action.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
+	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfList
 	}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authActionRead`)
 	if !isAuth {
-		field = []string{`id`, `label`}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 
@@ -54,7 +65,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 		return
 	}
 
-	res = &apiAuth.ActionListRes{Count: count, List: []apiAuth.ActionListItem{}}
+	res = &apiAuth.ActionListRes{Count: count, List: []apiAuth.ActionInfo{}}
 	list.Structs(&res.List)
 	return
 }
@@ -62,15 +73,14 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 // 详情
 func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoReq) (res *apiAuth.ActionInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Action.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, `scene_id_arr`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfInfo
+	}
+
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 

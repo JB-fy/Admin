@@ -12,10 +12,23 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Scene struct{}
+type Scene struct {
+	defaultFieldOfList []string
+	defaultFieldOfInfo []string
+	allowField         []string
+	noAuthField        []string
+}
 
 func NewScene() *Scene {
-	return &Scene{}
+	field := daoAuth.Scene.ColumnArr().Slice()
+	defaultFieldOfList := []string{`id`, `label`}
+	defaultFieldOfInfo := []string{`id`, `label`}
+	return &Scene{
+		defaultFieldOfList: append(field, defaultFieldOfList...),
+		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		noAuthField:        []string{`id`, `label`},
+	}
 }
 
 // 列表
@@ -26,21 +39,19 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 		filter = map[string]any{}
 	}
 
-	allowField := daoAuth.Scene.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
+	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfList
 	}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authSceneRead`)
 	if !isAuth {
-		field = []string{`id`, `label`}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 
@@ -54,7 +65,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 		return
 	}
 
-	res = &apiAuth.SceneListRes{Count: count, List: []apiAuth.SceneListItem{}}
+	res = &apiAuth.SceneListRes{Count: count, List: []apiAuth.SceneInfo{}}
 	list.Structs(&res.List)
 	return
 }
@@ -62,15 +73,14 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 // 详情
 func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq) (res *apiAuth.SceneInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Scene.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfInfo
+	}
+
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 
