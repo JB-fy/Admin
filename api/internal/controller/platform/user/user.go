@@ -12,10 +12,23 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type User struct{}
+type User struct {
+	defaultFieldOfList []string
+	defaultFieldOfInfo []string
+	allowField         []string
+	noAuthField        []string
+}
 
 func NewUser() *User {
-	return &User{}
+	field := daoUser.User.ColumnArr().Slice()
+	defaultFieldOfList := []string{`id`, `label`}
+	defaultFieldOfInfo := []string{`id`, `label`}
+	return &User{
+		defaultFieldOfList: append(field, defaultFieldOfList...),
+		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		noAuthField:        []string{`id`, `label`},
+	}
 }
 
 // 列表
@@ -26,21 +39,19 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 		filter = map[string]any{}
 	}
 
-	allowField := daoUser.User.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
+	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfList
 	}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `userUserRead`)
 	if !isAuth {
-		field = []string{`id`, `label`}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 
@@ -54,7 +65,7 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 		return
 	}
 
-	res = &apiUser.UserListRes{Count: count, List: []apiUser.UserListItem{}}
+	res = &apiUser.UserListRes{Count: count, List: []apiUser.UserInfo{}}
 	list.Structs(&res.List)
 	return
 }
@@ -62,15 +73,14 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 // 详情
 func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) (res *apiUser.UserInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoUser.User.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfInfo
+	}
+
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 

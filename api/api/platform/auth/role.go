@@ -5,6 +5,23 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
+// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
+type RoleInfo struct {
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
+	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
+	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	TableId     *uint       `json:"table_id,omitempty" dc:"关联ID。0表示平台创建，其它值根据sceneId对应不同表"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	ActionIdArr []uint      `json:"action_id_arr,omitempty" dc:"操作ID列表"`
+	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID列表"`
+	SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
+	TableName   *string     `json:"table_name,omitempty" dc:"关联"`
+}
+
 /*--------列表 开始--------*/
 type RoleListReq struct {
 	g.Meta `path:"/role/list" method:"post" tags:"平台后台/权限管理/角色" sm:"列表"`
@@ -34,24 +51,8 @@ type RoleListFilter struct {
 }
 
 type RoleListRes struct {
-	Count int            `json:"count" dc:"总数"`
-	List  []RoleListItem `json:"list" dc:"列表"`
-}
-
-type RoleListItem struct {
-	Id          *uint       `json:"id,omitempty" dc:"ID"`
-	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
-	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
-	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
-	TableId     *uint       `json:"table_id,omitempty" dc:"关联ID。0表示平台创建，其它值根据sceneId对应不同表"`
-	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	ActionIdArr []uint      `json:"action_id_arr,omitempty" dc:"操作ID列表"`
-	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID列表"`
-	SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
-	TableName   *string     `json:"table_name,omitempty" dc:"关联"`
+	Count int        `json:"count" dc:"总数"`
+	List  []RoleInfo `json:"list" dc:"列表"`
 }
 
 /*--------列表 结束--------*/
@@ -65,20 +66,6 @@ type RoleInfoReq struct {
 
 type RoleInfoRes struct {
 	Info RoleInfo `json:"info" dc:"详情"`
-}
-
-type RoleInfo struct {
-	Id          *uint       `json:"id,omitempty" dc:"ID"`
-	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
-	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
-	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
-	TableId     *uint       `json:"table_id,omitempty" dc:"关联ID。0表示平台创建，其它值根据sceneId对应不同表"`
-	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	ActionIdArr []uint      `json:"action_id_arr,omitempty" dc:"操作ID列表"`
-	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID列表"`
 }
 
 /*--------详情 结束--------*/

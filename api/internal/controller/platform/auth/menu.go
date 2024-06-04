@@ -12,10 +12,26 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Menu struct{}
+type Menu struct {
+	defaultFieldOfList []string
+	defaultFieldOfInfo []string
+	defaultFieldOfTree []string
+	allowField         []string
+	noAuthField        []string
+}
 
 func NewMenu() *Menu {
-	return &Menu{}
+	field := daoAuth.Menu.ColumnArr().Slice()
+	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`}
+	defaultFieldOfInfo := []string{`id`, `label`}
+	defaultFieldOfTree := []string{`id`, `label`}
+	return &Menu{
+		defaultFieldOfList: append(field, defaultFieldOfList...),
+		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
+		defaultFieldOfTree: append(field, defaultFieldOfTree...),
+		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Merge(gset.NewStrSetFrom(defaultFieldOfTree)).Slice()...),
+		noAuthField:        []string{`id`, `label`},
+	}
 }
 
 // 列表
@@ -26,21 +42,19 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 		filter = map[string]any{}
 	}
 
-	allowField := daoAuth.Menu.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
+	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfList
 	}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuRead`)
 	if !isAuth {
-		field = []string{`id`, `label`}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 
@@ -54,7 +68,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 		return
 	}
 
-	res = &apiAuth.MenuListRes{Count: count, List: []apiAuth.MenuListItem{}}
+	res = &apiAuth.MenuListRes{Count: count, List: []apiAuth.MenuInfo{}}
 	list.Structs(&res.List)
 	return
 }
@@ -62,15 +76,14 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 // 详情
 func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) (res *apiAuth.MenuInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Menu.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfInfo
+	}
+
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 
@@ -164,25 +177,22 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiAuth.MenuTreeReq) 
 		filter = map[string]any{}
 	}
 
-	allowField := daoAuth.Menu.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfTree
+	}
+	field = append(field, `tree`)
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authMenuRead`)
 	if !isAuth {
-		field = []string{`id`, `label`}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
-
-	field = append(field, `tree`)
 
 	list, err := daoAuth.Menu.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()
 	if err != nil {

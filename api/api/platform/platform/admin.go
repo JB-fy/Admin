@@ -5,6 +5,21 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
+// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
+type AdminInfo struct {
+	Id        *uint       `json:"id,omitempty" dc:"ID"`
+	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
+	Phone     *string     `json:"phone,omitempty" dc:"手机"`
+	Account   *string     `json:"account,omitempty" dc:"账号"`
+	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
+	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
+	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
+}
+
 /*--------列表 开始--------*/
 type AdminListReq struct {
 	g.Meta `path:"/admin/list" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"列表"`
@@ -32,22 +47,8 @@ type AdminListFilter struct {
 }
 
 type AdminListRes struct {
-	Count int             `json:"count" dc:"总数"`
-	List  []AdminListItem `json:"list" dc:"列表"`
-}
-
-type AdminListItem struct {
-	Id        *uint       `json:"id,omitempty" dc:"ID"`
-	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
-	Phone     *string     `json:"phone,omitempty" dc:"手机"`
-	Account   *string     `json:"account,omitempty" dc:"账号"`
-	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
-	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
+	Count int         `json:"count" dc:"总数"`
+	List  []AdminInfo `json:"list" dc:"列表"`
 }
 
 /*--------列表 结束--------*/
@@ -61,20 +62,6 @@ type AdminInfoReq struct {
 
 type AdminInfoRes struct {
 	Info AdminInfo `json:"info" dc:"详情"`
-}
-
-type AdminInfo struct {
-	Id        *uint       `json:"id,omitempty" dc:"ID"`
-	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
-	Phone     *string     `json:"phone,omitempty" dc:"手机"`
-	Account   *string     `json:"account,omitempty" dc:"账号"`
-	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
-	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
 }
 
 /*--------详情 结束--------*/

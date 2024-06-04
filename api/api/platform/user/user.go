@@ -5,6 +5,27 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
+// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
+type UserInfo struct {
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	UserId      *uint       `json:"user_id,omitempty" dc:"用户ID"`
+	Phone       *string     `json:"phone,omitempty" dc:"手机"`
+	Account     *string     `json:"account,omitempty" dc:"账号"`
+	Nickname    *string     `json:"nickname,omitempty" dc:"昵称"`
+	Avatar      *string     `json:"avatar,omitempty" dc:"头像"`
+	Gender      *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
+	Birthday    *string     `json:"birthday,omitempty" dc:"生日"`
+	Address     *string     `json:"address,omitempty" dc:"详细地址"`
+	OpenIdOfWx  *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
+	UnionIdOfWx *string     `json:"union_id_of_wx,omitempty" dc:"微信unionId"`
+	IdCardName  *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
+	IdCardNo    *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
+	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+}
+
 /*--------列表 开始--------*/
 type UserListReq struct {
 	g.Meta `path:"/user/list" method:"post" tags:"平台后台/用户管理/用户" sm:"列表"`
@@ -37,28 +58,8 @@ type UserListFilter struct {
 }
 
 type UserListRes struct {
-	Count int            `json:"count" dc:"总数"`
-	List  []UserListItem `json:"list" dc:"列表"`
-}
-
-type UserListItem struct {
-	Id          *uint       `json:"id,omitempty" dc:"ID"`
-	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	UserId      *uint       `json:"user_id,omitempty" dc:"用户ID"`
-	Phone       *string     `json:"phone,omitempty" dc:"手机"`
-	Account     *string     `json:"account,omitempty" dc:"账号"`
-	Nickname    *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar      *string     `json:"avatar,omitempty" dc:"头像"`
-	Gender      *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
-	Birthday    *string     `json:"birthday,omitempty" dc:"生日"`
-	Address     *string     `json:"address,omitempty" dc:"详细地址"`
-	OpenIdOfWx  *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
-	UnionIdOfWx *string     `json:"union_id_of_wx,omitempty" dc:"微信unionId"`
-	IdCardName  *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
-	IdCardNo    *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
-	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	Count int        `json:"count" dc:"总数"`
+	List  []UserInfo `json:"list" dc:"列表"`
 }
 
 /*--------列表 结束--------*/
@@ -72,26 +73,6 @@ type UserInfoReq struct {
 
 type UserInfoRes struct {
 	Info UserInfo `json:"info" dc:"详情"`
-}
-
-type UserInfo struct {
-	Id          *uint       `json:"id,omitempty" dc:"ID"`
-	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	UserId      *uint       `json:"user_id,omitempty" dc:"用户ID"`
-	Phone       *string     `json:"phone,omitempty" dc:"手机"`
-	Account     *string     `json:"account,omitempty" dc:"账号"`
-	Nickname    *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar      *string     `json:"avatar,omitempty" dc:"头像"`
-	Gender      *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
-	Birthday    *string     `json:"birthday,omitempty" dc:"生日"`
-	Address     *string     `json:"address,omitempty" dc:"详细地址"`
-	OpenIdOfWx  *string     `json:"open_id_of_wx,omitempty" dc:"微信openId"`
-	UnionIdOfWx *string     `json:"union_id_of_wx,omitempty" dc:"微信unionId"`
-	IdCardName  *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
-	IdCardNo    *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
-	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------详情 结束--------*/

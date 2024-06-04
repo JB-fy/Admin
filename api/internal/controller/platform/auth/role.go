@@ -12,10 +12,23 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Role struct{}
+type Role struct {
+	defaultFieldOfList []string
+	defaultFieldOfInfo []string
+	allowField         []string
+	noAuthField        []string
+}
 
 func NewRole() *Role {
-	return &Role{}
+	field := daoAuth.Role.ColumnArr().Slice()
+	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `table_name`}
+	defaultFieldOfInfo := []string{`id`, `label`, `action_id_arr`, `menu_id_arr`}
+	return &Role{
+		defaultFieldOfList: append(field, defaultFieldOfList...),
+		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		noAuthField:        []string{`id`, `label`},
+	}
 }
 
 // 列表
@@ -26,21 +39,19 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 		filter = map[string]any{}
 	}
 
-	allowField := daoAuth.Role.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, daoAuth.Scene.Columns().SceneName, `table_name`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
+	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfList
 	}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `authRoleRead`)
 	if !isAuth {
-		field = []string{`id`, `label`}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 
@@ -54,7 +65,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 		return
 	}
 
-	res = &apiAuth.RoleListRes{Count: count, List: []apiAuth.RoleListItem{}}
+	res = &apiAuth.RoleListRes{Count: count, List: []apiAuth.RoleInfo{}}
 	list.Structs(&res.List)
 	return
 }
@@ -62,15 +73,14 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 // 详情
 func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) (res *apiAuth.RoleInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := daoAuth.Role.ColumnArr().Slice()
-	allowField = append(allowField, `id`, `label`, `action_id_arr`, `menu_id_arr`)
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfInfo
+	}
+
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 
