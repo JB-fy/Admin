@@ -110,6 +110,17 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
+// 共用详情。list,info,tree等接口返回时用，但返回字段可能有差异，可根据需要在controller对应的defaultField中补充所需字段
+type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, api.res...), `
+	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
+	`)
+	if option.IsList && tpl.Handle.Pid.Pid != `` {
+		tplApi += `
+	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`"
+	}
+	tplApi += `
+}
+
 `
 	if option.IsList {
 		tplApi += `
@@ -134,12 +145,7 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
 		}
 		tplApi += `
-	List  []` + tpl.TableCaseCamel + `ListItem ` + "`" + `json:"list" dc:"列表"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `ListItem struct {` + gstr.Join(append([]string{``}, api.res...), `
-	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
-	`) + `
+	List  []` + tpl.TableCaseCamel + `Info ` + "`" + `json:"list" dc:"列表"` + "`" + `
 }
 
 /*--------列表 结束--------*/
@@ -156,10 +162,6 @@ type ` + tpl.TableCaseCamel + `InfoReq struct {
 
 type ` + tpl.TableCaseCamel + `InfoRes struct {
 	Info ` + tpl.TableCaseCamel + `Info ` + "`" + `json:"info" dc:"详情"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, api.res...), `
-	`) + `
 }
 
 /*--------详情 结束--------*/
@@ -211,12 +213,7 @@ type ` + tpl.TableCaseCamel + `TreeReq struct {
 }
 
 type ` + tpl.TableCaseCamel + `TreeRes struct {
-	Tree []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
-}
-
-type ` + tpl.TableCaseCamel + `TreeItem struct {` + gstr.Join(append([]string{``}, api.res...), `
-	`) + `
-	Children []` + tpl.TableCaseCamel + `TreeItem ` + "`" + `json:"children" dc:"子级列表"` + "`" + `
+	Tree []` + tpl.TableCaseCamel + `Info ` + "`" + `json:"tree" dc:"列表（树状）"` + "`" + `
 }
 
 /*--------列表（树状） 结束--------*/

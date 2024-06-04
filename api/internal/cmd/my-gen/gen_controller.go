@@ -15,7 +15,7 @@ type myGenController struct {
 	info      []string
 	tree      []string
 	noAuth    []string
-	// diff      []string // 可以不要。数据返回时，会根据API文件中的结构体做过滤
+	diff      []string // 可以不要。数据返回时，会根据API文件中的结构体做过滤
 }
 
 func (controllerThis *myGenController) Merge(controllerOther myGenController) {
@@ -54,6 +54,58 @@ func genController(option myGenOption, tpl myGenTpl) {
 	}
 	controller.Unique()
 
+	type defaultField struct {
+		part1 []string
+		part2 []string
+		part3 []string
+		part4 []string
+	}
+	defaultFieldObj := defaultField{}
+	if option.IsList {
+		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfList []string`)
+		defaultFieldObj.part2 = append(defaultFieldObj.part2, `defaultFieldOfList := []string{`+gstr.Join(controller.list, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfList: append(field, defaultFieldOfList...),`)
+		defaultFieldObj.part4 = append(defaultFieldObj.part4, `defaultFieldOfList`)
+	}
+	if option.IsInfo {
+		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfInfo []string`)
+		defaultFieldObj.part2 = append(defaultFieldObj.part2, `defaultFieldOfInfo := []string{`+gstr.Join(controller.info, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfInfo: append(field, defaultFieldOfInfo...),`)
+		defaultFieldObj.part4 = append(defaultFieldObj.part4, `defaultFieldOfInfo`)
+	}
+	if option.IsList && tpl.Handle.Pid.Pid != `` {
+		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfTree []string`)
+		defaultFieldObj.part2 = append(defaultFieldObj.part2, `defaultFieldOfTree := []string{`+gstr.Join(controller.tree, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfTree: append(field, defaultFieldOfTree...),`)
+		defaultFieldObj.part4 = append(defaultFieldObj.part4, `defaultFieldOfTree`)
+	}
+	if option.IsList || option.IsInfo {
+		defaultFieldObj.part1 = append(defaultFieldObj.part1, `allowField         []string`)
+		if len(controller.diff) > 0 {
+			defaultFieldObj.part2 = append([]string{`field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`}, defaultFieldObj.part2...)
+		}
+		defaultFieldObj.part2 = append([]string{`field := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`}, defaultFieldObj.part2...)
+		part3Str := `allowField:         append(field, `
+		if len(defaultFieldObj.part4) == 1 {
+			part3Str += defaultFieldObj.part4[0]
+		} else {
+			for k, v := range defaultFieldObj.part4 {
+				if k == 0 {
+					part3Str += `gset.NewStrSetFrom(` + v + `)`
+				} else {
+					part3Str += `.Merge(gset.NewStrSetFrom(` + v + `))`
+				}
+			}
+			part3Str += `.Slice()`
+		}
+		part3Str += `...),`
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, part3Str)
+	}
+	if option.IsList && option.IsAuthAction {
+		defaultFieldObj.part1 = append(defaultFieldObj.part1, `noAuthField        []string`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `notAuthField:       []string{`+gstr.Join(controller.noAuth, `, `)+`}`)
+	}
+
 	tplController := `package controller
 
 import (
@@ -68,13 +120,32 @@ import (
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/util/gconv"
 )
+`
+	if option.IsList || option.IsInfo {
+		tplController += `
+type ` + tpl.TableCaseCamel + ` struct {
+	` + gstr.Join(defaultFieldObj.part1, `
+	`) + `
+}
 
+func New` + tpl.TableCaseCamel + `() *` + tpl.TableCaseCamel + ` {
+	` + gstr.Join(defaultFieldObj.part2, `
+	`) + `
+	return &` + tpl.TableCaseCamel + `{
+		` + gstr.Join(defaultFieldObj.part3, `
+		`) + `
+	}
+}
+`
+	} else {
+		tplController += `
 type ` + tpl.TableCaseCamel + ` struct{}
 
 func New` + tpl.TableCaseCamel + `() *` + tpl.TableCaseCamel + ` {
 	return &` + tpl.TableCaseCamel + `{}
 }
 `
+	}
 	if option.IsList {
 		tplController += `
 // 列表
@@ -84,24 +155,13 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	if filter == nil {
 		filter = map[string]any{}
 	}
-`
-		tplController += `
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`
-		if len(controller.list) > 0 {
-			tplController += `
-	allowField = append(allowField` + gstr.Join(append([]string{``}, controller.list...), `, `) + `)`
-		}
-		/* if len(controller.diff) > 0 {
-			tplController += `
-		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`
-		} */
-		tplController += `
-	field := allowField
+
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
+	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfList
 	}
 	/**--------参数处理 结束--------**/
 `
@@ -110,7 +170,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Read` + "`" + `)
 	if !isAuth {
-		field = []string{` + gstr.Join(controller.noAuth, `, `) + `}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 `
@@ -134,7 +194,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 		if option.IsCount {
 			tplController += `Count: count, `
 		}
-		tplController += `List: []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `ListItem{}}
+		tplController += `List: []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `Info{}}
 	list.Structs(&res.List)
 	return
 }
@@ -145,23 +205,14 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 // 详情
 func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoReq) (res *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`
-		if len(controller.info) > 0 {
-			tplController += `
-	allowField = append(allowField` + gstr.Join(append([]string{``}, controller.info...), `, `) + `)`
-		}
-		/* if len(controller.diff) > 0 {
-			tplController += `
-		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`
-		} */
-		tplController += `
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfInfo
+	}
+
 	filter := map[string]any{` + "`id`" + `: req.Id}
 	/**--------参数处理 结束--------**/
 `
@@ -286,23 +337,14 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 		filter = map[string]any{}
 	}
 
-	allowField := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`
-		if len(controller.tree) > 0 {
-			tplController += `
-	allowField = append(allowField` + gstr.Join(append([]string{``}, controller.tree...), `, `) + `)`
-		}
-		/* if len(controller.diff) > 0 {
-			tplController += `
-		allowField = gset.NewStrSetFrom(allowField).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`
-		} */
-		tplController += `
-	field := allowField
+	var field []string
 	if len(req.Field) > 0 {
-		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(allowField)).Slice()
-		if len(field) == 0 {
-			field = allowField
-		}
+		field = gset.NewStrSetFrom(req.Field).Intersect(gset.NewStrSetFrom(controllerThis.allowField)).Slice()
 	}
+	if len(field) == 0 {
+		field = controllerThis.defaultFieldOfTree
+	}
+	field = append(field, ` + "`tree`" + `)
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -310,14 +352,12 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, ` + "`" + gstr.CaseCamelLower(tpl.LogicStructName) + `Read` + "`" + `)
 	if !isAuth {
-		field = []string{` + gstr.Join(controller.noAuth, `, `) + `}
+		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 `
 		}
 		tplController += `
-	field = append(field, ` + "`tree`" + `)
-
 	list, err := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()
 	if err != nil {
 		return
@@ -376,9 +416,9 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
-		// controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+		controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
-		// controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
+		controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
 	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
 	case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
