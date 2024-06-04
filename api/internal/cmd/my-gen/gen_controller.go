@@ -24,6 +24,7 @@ func (controllerThis *myGenController) Merge(controllerOther myGenController) {
 	controllerThis.info = append(controllerThis.info, controllerOther.info...)
 	controllerThis.tree = append(controllerThis.tree, controllerOther.tree...)
 	controllerThis.noAuth = append(controllerThis.noAuth, controllerOther.noAuth...)
+	controllerThis.diff = append(controllerThis.diff, controllerOther.diff...)
 }
 
 func (controllerThis *myGenController) Unique() {
@@ -32,6 +33,7 @@ func (controllerThis *myGenController) Unique() {
 	// controllerThis.info = garray.NewStrArrayFrom(controllerThis.info).Unique().Slice()
 	// controllerThis.tree = garray.NewStrArrayFrom(controllerThis.tree).Unique().Slice()
 	// controllerThis.noAuth = garray.NewStrArrayFrom(controllerThis.noAuth).Unique().Slice()
+	// controllerThis.diff = garray.NewStrArrayFrom(controllerThis.diff).Unique().Slice()
 }
 
 // controller生成
