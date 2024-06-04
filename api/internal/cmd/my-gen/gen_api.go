@@ -110,7 +110,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// 共用详情。list,info,tree等接口返回时用，但返回字段可能有差异，可根据需要在controller对应的defaultField中补充所需字段
+// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, api.res...), `
 	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
 	`)

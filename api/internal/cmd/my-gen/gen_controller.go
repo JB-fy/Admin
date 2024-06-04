@@ -103,7 +103,7 @@ func genController(option myGenOption, tpl myGenTpl) {
 	}
 	if option.IsList && option.IsAuthAction {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `noAuthField        []string`)
-		defaultFieldObj.part3 = append(defaultFieldObj.part3, `notAuthField:       []string{`+gstr.Join(controller.noAuth, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `noAuthField:        []string{{`+gstr.Join(controller.noAuth, `, `)+`},`)
 	}
 
 	tplController := `package controller
