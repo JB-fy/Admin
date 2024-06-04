@@ -23,6 +23,7 @@ type Admin struct {
 
 func NewAdmin() *Admin {
 	field := daoPlatform.Admin.ColumnArr().Slice()
+	field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{daoPlatform.Admin.Columns().Password, daoPlatform.Admin.Columns().Salt})).Slice() //移除敏感字段
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`, `role_id_arr`}
 	return &Admin{

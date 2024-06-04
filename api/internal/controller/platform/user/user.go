@@ -21,6 +21,7 @@ type User struct {
 
 func NewUser() *User {
 	field := daoUser.User.ColumnArr().Slice()
+	field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{daoUser.User.Columns().Password, daoUser.User.Columns().Salt})).Slice() //移除敏感字段
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &User{
