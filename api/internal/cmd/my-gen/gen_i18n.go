@@ -38,7 +38,7 @@ func (i18nThis *myGenI18n) Unique() {
 
 // 自动生成I18n
 func genI18n(i18n myGenI18n) {
-	saveFile := gfile.SelfDir() + `/resource/i18n/zh-cn/name.yaml`
+	saveFile := gfile.SelfDir() + `/manifest/i18n/zh-cn/name.yaml`
 	tplI18n := gfile.GetContents(saveFile)
 
 	i18nAppend := []string{}

@@ -6,7 +6,7 @@ timerServerNetworkIp: "" # 对应的外网IP服务器将开启定时器（线上
 superPlatformAdminId: 1 # 指定平台超级管理员ID
 
 i18n:
-  path: "resource/i18n"
+  path: "manifest/i18n"
   language: "zh-cn"
 
 logger:

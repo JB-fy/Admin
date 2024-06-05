@@ -572,8 +572,8 @@ func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 		`--doPath`, `model/do/` + myGenTplThis.ModuleDirCaseKebab,
 		`--entityPath`, `model/entity/` + myGenTplThis.ModuleDirCaseKebab,
 		`--tables`, myGenTplThis.Table,
-		`--tplDaoIndexPath`, `resource/gen/gen_dao_template_dao.txt`,
-		`--tplDaoInternalPath`, `resource/gen/gen_dao_template_dao_internal.txt`,
+		`--tplDaoIndexPath`, `manifest/gen/gen_dao_template_dao.txt`,
+		`--tplDaoInternalPath`, `manifest/gen/gen_dao_template_dao_internal.txt`,
 	}
 	if isOverwriteDao {
 		commandArg = append(commandArg, `--overwriteDao=true`)

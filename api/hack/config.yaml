@@ -5,7 +5,8 @@ gfcli:
     # arch: all # 编译架构，多个以,号分隔，all编译全部。386,amd64,arm
     # system: all # 编译平台，多个以,号分隔，all编译全部。linux,darwin,windows
     # output: "../" # 默认文件名main，也可写成../xxxx指定文件名
-    packSrc: "manifest,resource" # 需要打包资源目录
+    # packSrc: "manifest/gen,manifest/i18n,resource" # 需要打包资源目录
+    packSrc: "manifest" # 需要打包资源目录
   gen:
     # pbentity:
     #   - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
@@ -13,7 +14,7 @@ gfcli:
     dao:
       # 只需配置不使用my_gen全自动代码生成的表（如：中间表和关联表）使用，且使用后必须全部注释掉。否则会影响其它使用my_gen全自动代码生成的主表
       # 中间表和关联表，也可以直接使用以下命令生成
-      # gf gen dao --link "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" --group "default" --removePrefix "xxxx_" --daoPath "dao/xxxx" --doPath "model/entity/xxxx" --entityPath "model/entity/xxxx" --tables "xxxx_table1,xxxx_table2,..." --tplDaoIndexPath "resource/gen/gen_dao_template_dao.txt" --tplDaoInternalPath "resource/gen/gen_dao_template_dao_internal.txt" --overwriteDao=true
+      # gf gen dao --link "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin" --group "default" --removePrefix "xxxx_" --daoPath "dao/xxxx" --doPath "model/entity/xxxx" --entityPath "model/entity/xxxx" --tables "xxxx_table1,xxxx_table2,..." --tplDaoIndexPath "manifest/gen/gen_dao_template_dao.txt" --tplDaoInternalPath "manifest/gen/gen_dao_template_dao_internal.txt" --overwriteDao=true
       # - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
       #   group: "default"
       #   removePrefix: "auth_"
@@ -21,8 +22,8 @@ gfcli:
       #   doPath: "model/do/auth"
       #   entityPath: "model/entity/auth"
       #   tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
-      #   tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
-      #   tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
+      #   tplDaoIndexPath: "manifest/gen/gen_dao_template_dao.txt"
+      #   tplDaoInternalPath: "manifest/gen/gen_dao_template_dao_internal.txt"
       #   overwriteDao: true
       # - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
       #   group: "default"
@@ -31,6 +32,6 @@ gfcli:
       #   doPath: "model/do/platform"
       #   entityPath: "model/entity/platform"
       #   tables: "platform_config,platform_server"
-      #   tplDaoIndexPath: "resource/gen/gen_dao_template_dao.txt"
-      #   tplDaoInternalPath: "resource/gen/gen_dao_template_dao_internal.txt"
+      #   tplDaoIndexPath: "manifest/gen/gen_dao_template_dao.txt"
+      #   tplDaoInternalPath: "manifest/gen/gen_dao_template_dao_internal.txt"
       #   overwriteDao: true
