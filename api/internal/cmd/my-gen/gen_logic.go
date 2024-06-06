@@ -62,13 +62,14 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 	}
 	if tpl.Handle.Pid.Pid != `` {
 		i18nField := myGenI18nField{
-			item: [2]string{`name.pid`, `父级`},
+			key: `name.pid`,
+			val: `父级`,
 		}
 		logic.i18n.Add(i18nField)
 		logic.create = append(logic.create, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) > 0 {
 		pInfo, _ := daoModelThis.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
 		}
 	}`)
@@ -90,7 +91,7 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 		}
 		pInfo, _ := daoModelThis.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
 		}`+updateAddStr+`
 	}`)
@@ -218,12 +219,13 @@ func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
 		if relIdObj.tpl.Table != `` {
 			logicField.importDao = append(logicField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 			logicField.i18nField = myGenI18nField{
-				item: [2]string{`name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel), relIdObj.FieldName},
+				key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),
+				val: relIdObj.FieldName,
 			}
 			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 			logicField.verifyDataStr = `if _, ok := data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]; ok && gconv.Uint(data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]) > 0 {
 		if count, _ := ` + daoPathRel + `.CtxDaoModel(ctx).Filter(` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `, data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]).Count(); count == 0 {
-			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`i18nValues`" + `: []any{g.I18n().T(ctx, ` + "`" + logicField.i18nField.item[0] + "`" + `)}})
+			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`i18nValues`" + `: []any{g.I18n().T(ctx, ` + "`" + logicField.i18nField.key + "`" + `)}})
 			return
 		}
 	}`
@@ -252,14 +254,15 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 			if relIdObj.tpl.Table != `` {
 				logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 				i18nField := myGenI18nField{
-					item: [2]string{`name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel), relIdObj.FieldName},
+					key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),
+					val: relIdObj.FieldName,
 				}
 				logic.i18n.Add(i18nField)
 				daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(gconv.SliceUint(data[`+"`"+tplEM.FieldVar+"`"+`])) > 0 {
 		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := gconv.SliceUint(data[`+"`"+tplEM.FieldVar+"`"+`])
 		if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel+`, `+gstr.CaseCamelLower(tplEM.FieldVar)+`).Count(); count != len(`+gstr.CaseCamelLower(tplEM.FieldVar)+`) {
-			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
 		}
 	}`)
@@ -278,7 +281,8 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 				if relIdObj.tpl.Table != `` {
 					logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 					i18nField := myGenI18nField{
-						item: [2]string{`name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel), relIdObj.FieldName},
+						key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),
+						val: relIdObj.FieldName,
 					}
 					logic.i18n.Add(i18nField)
 					daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
@@ -289,7 +293,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 			}`)
 					verifyDataArr.part3 = append(verifyDataArr.part3, `if len(`+fieldCaseCamelLower+`Arr) > 0 {
 			if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+v.FieldCaseCamel+`, `+fieldCaseCamelLower+`Arr).Count(); count != len(`+fieldCaseCamelLower+`Arr) {
-				err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+				err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 				return
 			}
 		}`)
@@ -320,23 +324,23 @@ func getLogicOtherRel(tplOR handleOtherRel) (logic myGenLogic) {
 		return fieldName
 	}
 	i18nFieldTop := myGenI18nField{
-		item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tplOfTop.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tplOfTop.TableCaseCamel), getFieldName(tplOR.tplOfTop.Handle.Id.List[0].FieldName)},
+		key: `name.` + gstr.CaseCamelLower(tplOR.tplOfTop.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tplOfTop.TableCaseCamel),
+		val: getFieldName(tplOR.tplOfTop.Handle.Id.List[0].FieldName),
 	}
 	logic.i18n.Add(i18nFieldTop)
 	i18nField := myGenI18nField{
-		item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tpl.TableCaseCamel), getFieldName(tplOR.tpl.Handle.Id.List[0].FieldName)},
+		key: `name.` + gstr.CaseCamelLower(tplOR.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tpl.TableCaseCamel),
+		val: getFieldName(tplOR.tpl.Handle.Id.List[0].FieldName),
 	}
 	// 有可能是中间表（一对多），是联合主键。所以需要排除tplOR.RelId
 	if len(tplOR.tpl.Handle.Id.List) > 1 && tplOR.tpl.Handle.Id.List[0].FieldRaw == tplOR.RelId {
-		i18nField = myGenI18nField{
-			item: [2]string{`name.` + gstr.CaseCamelLower(tplOR.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(tplOR.tpl.TableCaseCamel), getFieldName(tplOR.tpl.Handle.Id.List[1].FieldName)},
-		}
+		i18nField.val = getFieldName(tplOR.tpl.Handle.Id.List[1].FieldName)
 	}
 	logic.i18n.Add(i18nField)
 
 	daoPath := `dao` + tplOR.tpl.ModuleDirCaseCamel + `.` + tplOR.tpl.TableCaseCamel
 	logic.delete = append(logic.delete, `if count, _ := `+daoPath+`.CtxDaoModel(ctx).Filter(`+daoPath+`.Columns().`+gstr.CaseCamel(tplOR.RelId)+`, daoModelThis.IdArr).Count(); count > 0 {
-		err = utils.NewErrorCode(ctx, 30009999, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nFieldTop.item[0]+"`"+`), count, g.I18n().T(ctx, `+"`"+i18nField.item[0]+"`"+`)}})
+		err = utils.NewErrorCode(ctx, 30009999, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nFieldTop.key+"`"+`), count, g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 		return
 	}`)
 	return

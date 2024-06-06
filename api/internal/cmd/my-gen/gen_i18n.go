@@ -7,16 +7,17 @@ import (
 )
 
 type myGenI18n struct {
-	list [][2]string
+	list []myGenI18nField
 }
 
 type myGenI18nField struct {
-	item [2]string
+	key string
+	val string
 }
 
 func (i18nThis *myGenI18n) Add(i18nField myGenI18nField) {
-	if i18nField.item[0] != `` {
-		i18nThis.list = append(i18nThis.list, i18nField.item)
+	if i18nField.key != `` {
+		i18nThis.list = append(i18nThis.list, i18nField)
 	}
 }
 
@@ -26,10 +27,10 @@ func (i18nThis *myGenI18n) Merge(i18nOther myGenI18n) {
 
 func (i18nThis *myGenI18n) Unique() {
 	keyArr := garray.NewStrArray()
-	listTmp := [][2]string{}
+	listTmp := []myGenI18nField{}
 	for _, v := range i18nThis.list {
-		if !keyArr.Contains(v[0]) {
-			keyArr.Append(v[0])
+		if !keyArr.Contains(v.key) {
+			keyArr.Append(v.key)
 			listTmp = append(listTmp, v)
 		}
 	}
@@ -42,9 +43,9 @@ func genI18n(i18n myGenI18n) {
 	tplI18n := gfile.GetContents(saveFile)
 
 	i18nAppend := []string{}
-	for _, item := range i18n.list {
-		if gstr.Pos(tplI18n, item[0]) == -1 {
-			i18nAppend = append(i18nAppend, item[0]+`: "`+item[1]+`"`)
+	for _, v := range i18n.list {
+		if gstr.Pos(tplI18n, v.key) == -1 {
+			i18nAppend = append(i18nAppend, v.key+`: "`+v.val+`"`)
 		}
 	}
 
