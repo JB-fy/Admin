@@ -92,6 +92,7 @@ const (
 	TypeNameEmailSuffix    MyGenFieldTypeName = `命名：email后缀；	类型：varchar；`
 	TypeNameUrlSuffix      MyGenFieldTypeName = `命名：url,link后缀；	类型：varchar；`
 	TypeNameIpSuffix       MyGenFieldTypeName = `命名：IP后缀；	类型：varchar；`
+	TypeNameColorSuffix    MyGenFieldTypeName = `命名：color后缀；	类型：varchar；`
 	TypeNameIdSuffix       MyGenFieldTypeName = `命名：id后缀；	类型：int等类型；`
 	TypeNameSortSuffix     MyGenFieldTypeName = `命名：sort,num,number,weight等后缀；	类型：int等类型；`
 	TypeNameNoSuffix       MyGenFieldTypeName = `命名：level,rank,no等后缀；	类型：int等类型；`

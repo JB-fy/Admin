@@ -70,6 +70,7 @@ APP常用生成示例：./main myGen -dbGroup=default -dbTable=user_user -remove
 			邮箱			命名：email后缀；												类型：varchar；
 			链接			命名：url,link后缀；											类型：varchar；
 			IP				命名：IP后缀；													类型：varchar；
+			颜色			命名：color后缀；												类型：varchar；
 			关联ID			命名：id后缀；													类型：int等类型；
 			排序|数量|权重	命名：sort,num,number,weight等后缀；							类型：int等类型；
 			编号|层级|等级	命名：no,level,rank等后缀；										类型：int等类型；

@@ -687,6 +687,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 	case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		daoField.filterParse.Method = internal.ReturnTypeName
@@ -918,6 +919,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			daoField.filterParse.Method = internal.ReturnTypeName
@@ -1154,6 +1156,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			daoField.filterParse.Method = internal.ReturnTypeName
 		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；

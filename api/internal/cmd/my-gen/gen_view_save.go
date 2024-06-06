@@ -419,6 +419,11 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.Method = internal.ReturnUnion
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'url', trigger: 'blur', message: t('validation.url') },`)
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
+		viewSaveField.formContent.Method = internal.ReturnTypeName
+		viewSaveField.formContent.DataTypeName = `<el-color-picker v-model="saveForm.data.` + dataFieldPath + `" :show-alpha="true" />`
+		viewSaveField.paramHandle.Method = internal.ReturnTypeName
+		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined ? param.` + dataFieldPath + ` = '' : null`
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
@@ -735,12 +740,15 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.Method = internal.ReturnUnion
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'url', message: t('validation.url') },`)
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
+			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
+			viewSaveFieldTmp.formContent.DataTypeName = `<el-color-picker :show-alpha="true" />` */
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
-			viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" /* :step-strictly="true" controls-position="right" */ />`
+			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
+			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" />` */
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)

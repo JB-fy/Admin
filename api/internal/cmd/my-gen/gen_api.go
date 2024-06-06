@@ -528,6 +528,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `ip`)
 		apiField.saveRule.Method = internal.ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `ip`)
+	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		apiField.filterType.Method = internal.ReturnType
 
@@ -761,6 +762,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 			apiField.saveRule.Method = internal.ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `ip`)
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）

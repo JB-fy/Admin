@@ -286,6 +286,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNameUrlSuffix
 			} else if garray.NewStrArrayFrom([]string{`ip`}).Contains(fieldSuffix) { //IP后缀
 				fieldTmp.FieldTypeName = internal.TypeNameIpSuffix
+			} else if garray.NewStrArrayFrom([]string{`color`}).Contains(fieldSuffix) { //color后缀
+				fieldTmp.FieldTypeName = internal.TypeNameColorSuffix
 			}
 		} else if fieldTmp.FieldType == internal.TypeChar { //char类型
 			if garray.NewStrArrayFrom([]string{`password`, `passwd`}).Contains(fieldSuffix) && fieldTmp.FieldLimitStr == `32` { //password,passwd后缀

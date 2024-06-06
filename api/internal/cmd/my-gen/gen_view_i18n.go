@@ -140,6 +140,7 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 	case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
@@ -231,6 +232,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 		case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 			if v.FieldTip != `` {

@@ -234,6 +234,8 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 	case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
+		return myGenViewQueryField{}
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))

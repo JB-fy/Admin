@@ -534,6 +534,28 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
 	case internal.TypeNameUrlSuffix: // url,link后缀；	类型：varchar；
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
+		viewListField.width.Method = internal.ReturnTypeName
+		viewListField.width.DataTypeName = `100`
+		cellRendererStr := `disabled={true}`
+		if option.IsUpdate {
+			cellRendererStr = `disabled={!authAction.isUpdate}
+                        onChange={(val: string) => {
+                            if (val != props.rowData.color) {
+                                handleUpdate({  ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: val ? val : '' }).then(() => (props.rowData.` + v.FieldRaw + ` = val))
+                            }
+                        }}`
+		}
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
+		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                return [
+                    <el-color-picker
+                        model-value={props.rowData.` + v.FieldRaw + `}
+                        show-alpha={true}
+                        ` + cellRendererStr + `
+                    />,
+                ]
+            }`
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
@@ -604,6 +626,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
 	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+		viewListField.width.Method = internal.ReturnTypeName
+		viewListField.width.DataTypeName = `100`
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
 			cellRendererStr = `disabled={!authAction.isUpdate}
@@ -800,6 +824,7 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     </el-scrollbar>,
                 ]
             }`
+			// case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 		}
 		if isReturn {
 			viewList.Add(viewListField)
