@@ -123,18 +123,7 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
-                if (!props.rowData.menu_icon) {
-                    return
-                }
-                const imageList = [props.rowData.menu_icon]
-                return [
-                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {imageList.map((item) => {
-                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
-                        })}
-                    </el-scrollbar>,
-                ]
+                return <my-icon-dynamic icon={props.rowData.menu_icon} size="18px" />
             },
         },
         {

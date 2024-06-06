@@ -70,10 +70,11 @@ const table = reactive({
                 const imageList = [props.rowData.avatar]
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {imageList.map((item) => {
-                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {imageList.map((item) => {
+                                return <el-image src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
                     </el-scrollbar>,
                 ]
             },
