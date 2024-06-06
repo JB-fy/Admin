@@ -711,6 +711,34 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     </el-scrollbar>,
                 ]
             }`
+	case internal.TypeNameAudioSuffix: // audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：单音频varchar，多音频json或text
+		viewListField.hidden.Method = internal.ReturnEmpty
+		cellRendererStr := `
+                const audioList = [props.rowData.` + v.FieldRaw + `]`
+		if v.FieldType != internal.TypeVarchar {
+			cellRendererStr = `
+                let audioList: string[]
+                if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
+                    audioList = props.rowData.` + v.FieldRaw + `
+                } else {
+                    audioList = JSON.parse(props.rowData.` + v.FieldRaw + `)
+                }`
+		}
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
+		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
+                    return
+                }` + cellRendererStr + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {audioList.map((item) => {
+                                return <audio preload="none" controls={true} src={item} style="width:170px; height: 25px;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            }`
 	case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		viewListField.hidden.Method = internal.ReturnEmpty
@@ -843,6 +871,28 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                         <el-space direction="vertical" style="margin: 5px 10px;">
                             {videoList.map((item) => {
                                 return <video preload="none" controls={true} src={item} style="width: 100%;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            }`
+		case internal.TypeNameAudioSuffix: // audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：单音频varchar，多音频json或text
+			if v.FieldType != internal.TypeVarchar {
+				return myGenViewList{}
+			}
+			isReturn = true
+			viewListField.hidden.Method = internal.ReturnEmpty
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
+			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + tplEM.FieldVar + `) {
+                    return
+                }
+                let videoList: string[] = props.rowData.` + tplEM.FieldVar + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {audioList.map((item) => {
+                                return <audio preload="none" controls={true} src={item} style="width:170px; height: 25px;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
                             })}
                         </el-space>
                     </el-scrollbar>,

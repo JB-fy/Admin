@@ -265,6 +265,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameImageSuffix
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameVideoSuffix
+		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`audio`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `AudioList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `AudioArr`) { //audio,audio_list,audioList,audio_arr,audioArr等后缀
+			fieldTmp.FieldTypeName = internal.TypeNameAudioSuffix
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`file`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `FileList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `FileArr`) { //file,file_list,fileList,file_arr,fileArr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameFileSuffix
 		} else if garray.NewIntArrayFrom([]int{internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`list`, `arr`}).Contains(fieldSuffix) { //list,arr等后缀
