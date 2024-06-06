@@ -733,7 +733,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         <el-space direction="vertical" style="margin: 5px 10px;">
                             {audioList.map((item) => {
-                                return <audio preload="none" controls={true} src={item} style="width:170px; height: 25px;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                                return <audio preload="none" controls={true} src={item} style="height: 30px;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
                             })}
                         </el-space>
                     </el-scrollbar>,
@@ -892,7 +892,7 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         <el-space direction="vertical" style="margin: 5px 10px;">
                             {audioList.map((item) => {
-                                return <audio preload="none" controls={true} src={item} style="width:170px; height: 25px;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                                return <audio preload="none" controls={true} src={item} style="height: 30px;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
                             })}
                         </el-space>
                     </el-scrollbar>,
