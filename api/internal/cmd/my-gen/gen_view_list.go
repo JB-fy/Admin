@@ -400,6 +400,7 @@ defineExpose({
 	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
 	gfile.PutContents(saveFile, tplView)
 }
+
 func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
 	viewListField.dataKey.Method = internal.ReturnType
 	viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
@@ -673,10 +674,11 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 }` + cellRendererStr + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {imageList.map((item) => {
-                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {imageList.map((item) => {
+                                return <el-image src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
                     </el-scrollbar>
                 ]
             }`
@@ -701,10 +703,11 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 }` + cellRendererStr + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {videoList.map((item) => {
-                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <video style="width: 120px; height: 80px;" preload="none" controls={true} src={item} />
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {videoList.map((item) => {
+                                return <video preload="none" controls={true} src={item} style="width: 100%;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
                     </el-scrollbar>,
                 ]
             }`
@@ -725,13 +728,11 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 let tagType = tm('config.const.tagType') as string[]
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {arrList.map((item, index) => {
-                            return [
-                                <el-tag style="margin: auto 5px 5px auto;" type={tagType[index % tagType.length]}>
-                                    {item}
-                                </el-tag>,
-                            ]
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {arrList.map((item, index) => {
+                                return <el-tag type={tagType[index % tagType.length]}>{item}</el-tag>
+                            })}
+                        </el-space>
                     </el-scrollbar>,
                 ]
             }`
@@ -775,6 +776,27 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
 		viewListField.width.DataType = `150`
 		/*--------部分命名类型直接处理后返回 开始--------*/
 		switch v.FieldTypeName {
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
+			isReturn = true
+			viewListField.width.Method = internal.ReturnTypeName
+			viewListField.width.DataTypeName = `100`
+			viewListField.hidden.Method = internal.ReturnEmpty
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
+			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + tplEM.FieldVar + `) {
+                    return
+                }
+                let arrList: string[] = props.rowData.` + tplEM.FieldVar + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {arrList.map((item, index) => {
+                                return <el-color-picker model-value={item} show-alpha={true} disabled={true} />
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            }`
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			return myGenViewList{}
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
@@ -795,10 +817,11 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                 let imageList: string[] = props.rowData.` + tplEM.FieldVar + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {imageList.map((item) => {
-                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <el-image style="width: 45px;" src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} />
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {imageList.map((item) => {
+                                return <el-image src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
                     </el-scrollbar>
                 ]
             }`
@@ -817,10 +840,11 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                 let videoList: string[] = props.rowData.` + tplEM.FieldVar + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {videoList.map((item) => {
-                            //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            return <video style="width: 120px; height: 80px;" preload="none" controls={true} src={item} />
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {videoList.map((item) => {
+                                return <video preload="none" controls={true} src={item} style="width: 100%;" /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
                     </el-scrollbar>,
                 ]
             }`
@@ -841,13 +865,11 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                 let tagType = tm('config.const.tagType') as string[]
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        {arrList.map((item, index) => {
-                            return [
-                                <el-tag style="margin: auto 5px 5px auto;" type={tagType[index % tagType.length]}>
-                                    {item}
-                                </el-tag>,
-                            ]
-                        })}
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {arrList.map((item, index) => {
+                                return <el-tag type={tagType[index % tagType.length]}>{item}</el-tag>
+                            })}
+                        </el-space>
                     </el-scrollbar>,
                 ]
             }`

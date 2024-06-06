@@ -596,6 +596,27 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		/*--------部分命名类型直接处理后返回 开始--------*/
 		isReturn := false
 		switch v.FieldTypeName {
+		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
+			isReturn = true
+
+			viewSaveField.dataInitAfter.Method = internal.ReturnTypeName
+			viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + tplEM.FieldVar + ` ? saveCommon.data.` + tplEM.FieldVar + ` : undefined`
+			viewSaveField.rule.Method = internal.ReturnTypeName
+			rule := []string{`{ required: true, message: t('validation.required') },`}
+			if v.FieldType == internal.TypeVarchar {
+				rule = append(rule, `{ type: 'string', max: `+v.FieldLimitStr+`, message: t('validation.max.string', { max: `+v.FieldLimitStr+` }) },`)
+			} else {
+				rule = append(rule, `{ type: 'string', len: `+v.FieldLimitStr+`, message: t('validation.size.string', { size: `+v.FieldLimitStr+` }) },`)
+			}
+			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.array'), defaultField: [`+gstr.Join(append([]string{``}, rule...), `
+					`)+`] },	// 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })`)
+			viewSaveField.formContent.Method = internal.ReturnTypeName
+			viewSaveField.formContent.DataTypeName = `<el-space :size="10">
+                        <el-color-picker v-for="(item, index) in saveForm.data.` + tplEM.FieldVar + `" :key="index" v-model="saveForm.data.` + tplEM.FieldVar + `[index]" :show-alpha="true" @change="(val) => (val ? null : saveForm.data.` + tplEM.FieldVar + `.splice(index, 1))" />
+                        <el-button v-if="saveForm.data.` + tplEM.FieldVar + `.length == 0 || saveForm.data.` + tplEM.FieldVar + `[saveForm.data.` + tplEM.FieldVar + `.length - 1]" type="primary" size="small" @click="saveForm.data.` + tplEM.FieldVar + `.push('')">
+                            <autoicon-ep-plus />{{ t('common.add') }}
+                        </el-button>
+                    </el-space>`
 		case internal.TypeNameStatusSuffix: // status,type,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			isReturn = true
 
@@ -741,8 +762,6 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'url', message: t('validation.url') },`)
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
-			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.formContent.DataTypeName = `<el-color-picker :show-alpha="true" />` */
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
