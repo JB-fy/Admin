@@ -90,9 +90,9 @@ const smsCountdown = reactive({
     },
     sendSms: async () => {
         try {
-            smsCountdown.isShow = true
-            await request(t('config.VITE_HTTP_API_PREFIX') + '/sms/send', { use_scene: 4, phone: saveForm.data.phone })
             smsCountdown.value = Date.now() + 5 * 60 * 1000
+            smsCountdown.isShow = true
+            await request(t('config.VITE_HTTP_API_PREFIX') + '/sms/send', { use_scene: 4, phone: saveForm.data.phone }, true)
         } catch (error) {
             smsCountdown.isShow = false
         }
