@@ -87,14 +87,15 @@ const smsCountdown = reactive({
     value: 0,
     finish: () => {
         smsCountdown.isShow = false
+        smsCountdown.value = 0
     },
     sendSms: async () => {
         try {
-            smsCountdown.value = Date.now() + 5 * 60 * 1000
             smsCountdown.isShow = true
             await request(t('config.VITE_HTTP_API_PREFIX') + '/sms/send', { use_scene: 4, phone: saveForm.data.phone }, true)
+            smsCountdown.value = Date.now() + 5 * 1000
         } catch (error) {
-            smsCountdown.isShow = false
+            smsCountdown.finish()
         }
     },
 })
@@ -133,7 +134,7 @@ const smsCountdown = reactive({
                 <el-form-item v-if="saveForm.data.phone" :label="t('profile.name.sms_code_to_phone')" prop="sms_code_to_phone">
                     <el-input v-model="saveForm.data.sms_code_to_phone" :placeholder="t('profile.name.sms_code_to_phone')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px">
                         <template #append>
-                            <el-countdown v-if="smsCountdown.isShow" :value="smsCountdown.value" @finish="smsCountdown.finish" format="mm:ss" value-style="color: #909399;" />
+                            <el-countdown v-if="smsCountdown.isShow && smsCountdown.value > 0" :value="smsCountdown.value" @finish="smsCountdown.finish" format="mm:ss" value-style="color: #909399;" />
                             <el-button v-else :loading="smsCountdown.isShow" @click="smsCountdown.sendSms">{{ t('profile.send_sms_code') }}</el-button>
                         </template>
                     </el-input>
