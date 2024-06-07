@@ -122,9 +122,9 @@ const smsCountdown = reactive({
                     <el-input v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('profile.name.repeat_password')" prop="repeat_password">
+                <el-form-item v-if="saveForm.data.password" :label="t('profile.name.repeat_password')" prop="repeat_password">
                     <el-input v-model="saveForm.data.repeat_password" :placeholder="t('profile.name.repeat_password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert :title="t('profile.tip.repeat_password')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item v-if="saveForm.data.account || saveForm.data.phone || saveForm.data.password" :label="t('profile.name.password_to_check')" prop="password_to_check">
                     <el-input v-model="saveForm.data.password_to_check" :placeholder="t('profile.name.password_to_check')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
