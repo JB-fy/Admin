@@ -54,6 +54,7 @@ const saveForm = reactive({
                 message: t('validation.new_password_diff_old_password'),
             },
         ],
+        sms_code_to_phone: [{ required: computed((): boolean => (saveForm.data.phone ? true : false)), message: t('profile.tip.sms_code_to_phone') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -78,6 +79,23 @@ const saveForm = reactive({
             } catch (error) {}
             saveForm.loading = false
         })
+    },
+})
+
+const smsCountdown = reactive({
+    isShow: false,
+    value: 0,
+    finish: () => {
+        smsCountdown.isShow = false
+    },
+    sendSms: async () => {
+        try {
+            smsCountdown.isShow = true
+            await request(t('config.VITE_HTTP_API_PREFIX') + '/sms/send', { use_scene: 4, phone: saveForm.data.phone })
+            smsCountdown.value = Date.now() + 5 * 60 * 1000
+        } catch (error) {
+            smsCountdown.isShow = false
+        }
     },
 })
 </script>
@@ -108,9 +126,18 @@ const saveForm = reactive({
                     <el-input v-model="saveForm.data.repeat_password" :placeholder="t('profile.name.repeat_password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('profile.name.password_to_check')" prop="password_to_check">
+                <el-form-item v-if="saveForm.data.account || saveForm.data.phone || saveForm.data.password" :label="t('profile.name.password_to_check')" prop="password_to_check">
                     <el-input v-model="saveForm.data.password_to_check" :placeholder="t('profile.name.password_to_check')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('profile.tip.password_to_check')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item v-if="saveForm.data.phone" :label="t('profile.name.sms_code_to_phone')" prop="sms_code_to_phone">
+                    <el-input v-model="saveForm.data.sms_code_to_phone" :placeholder="t('profile.name.sms_code_to_phone')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px">
+                        <template #append>
+                            <el-countdown v-if="smsCountdown.isShow" :value="smsCountdown.value" @finish="smsCountdown.finish" format="mm:ss" value-style="color: #909399;" />
+                            <el-button v-else :loading="smsCountdown.isShow" @click="smsCountdown.sendSms">{{ t('profile.send_sms_code') }}</el-button>
+                        </template>
+                    </el-input>
+                    <el-alert :title="t('profile.tip.sms_code_to_phone')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>

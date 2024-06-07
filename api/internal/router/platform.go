@@ -23,6 +23,15 @@ func InitRouterPlatform(s *ghttp.Server) {
 			})
 		})
 
+		// 无需验证登录身份（但存在token时，会做解析，且忽视错误）
+		group.Group(``, func(group *ghttp.RouterGroup) {
+			group.Middleware(middleware.SceneLoginOfPlatform(false))
+
+			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerCurrent.NewSms())
+			})
+		})
+
 		// 需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfPlatform(true))
