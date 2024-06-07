@@ -32,8 +32,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	if err != nil {
 		return
 	}
-	menuColumns := daoAuth.Menu.Columns()
-	tree := utils.Tree(list.List(), 0, menuColumns.MenuId, menuColumns.Pid)
+	tree := utils.Tree(list.List(), 0, daoAuth.Menu.Columns().MenuId, daoAuth.Menu.Columns().Pid)
 
 	res = &apiMy.MenuTreeRes{}
 	gconv.Structs(tree, &res.Tree)

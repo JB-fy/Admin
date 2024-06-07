@@ -39,14 +39,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 
-	userColumns := daoUser.User.Columns()
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	for k, v := range data {
 		switch k {
 		/* case `account`: //前端太懒，可能把个人信息全部传回来，导致account有值，故不能用required-with:Account直接验证
-		if gconv.String(v) != loginInfo[userColumns.Account].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
+		if gconv.String(v) != loginInfo[daoUser.User.Columns().Account].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
 			err = utils.NewErrorCode(ctx, 89999999, ``)
 			return
 		} */
@@ -56,13 +55,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 		case `password_to_check`:
-			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[userColumns.Salt].String()) != loginInfo[userColumns.Password].String() {
+			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[daoUser.User.Columns().Salt].String()) != loginInfo[daoUser.User.Columns().Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
 			delete(data, k)
 		case `sms_code_to_password`:
-			phone := loginInfo[userColumns.Phone].String()
+			phone := loginInfo[daoUser.User.Columns().Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
@@ -75,7 +74,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `sms_code_to_bind_phone`:
-			if loginInfo[userColumns.Phone].String() != `` {
+			if loginInfo[daoUser.User.Columns().Phone].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990005, ``)
 				return
 			}
@@ -88,7 +87,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `sms_code_to_unbing_phone`:
-			phone := loginInfo[userColumns.Phone].String()
+			phone := loginInfo[daoUser.User.Columns().Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
@@ -100,9 +99,9 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-			data[userColumns.Phone] = nil
+			data[daoUser.User.Columns().Phone] = nil
 		case `id_card_no`:
-			if loginInfo[userColumns.IdCardNo].String() != `` {
+			if loginInfo[daoUser.User.Columns().IdCardNo].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990009, ``)
 				return
 			}
@@ -113,13 +112,13 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			if idCardInfo.Gender != 0 {
-				data[userColumns.Gender] = idCardInfo.Gender
+				data[daoUser.User.Columns().Gender] = idCardInfo.Gender
 			}
 			if idCardInfo.Address != `` {
-				data[userColumns.Address] = idCardInfo.Address
+				data[daoUser.User.Columns().Address] = idCardInfo.Address
 			}
 			if idCardInfo.Birthday != `` {
-				data[userColumns.Birthday] = idCardInfo.Birthday
+				data[daoUser.User.Columns().Birthday] = idCardInfo.Birthday
 			}
 		}
 	}

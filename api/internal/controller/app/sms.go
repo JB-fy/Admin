@@ -21,21 +21,20 @@ func NewSms() *Sms {
 
 // 发送短信
 func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq) (res *api.CommonNoDataRes, err error) {
-	userColumns := daoUser.User.Columns()
 	phone := req.Phone
 	switch req.UseScene {
 	case 0, 2: //登录，密码找回
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(userColumns.Phone, phone).One()
+		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, phone).One()
 		if info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[userColumns.IsStop].Uint() == 1 {
+		if info[daoUser.User.Columns().IsStop].Uint() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}
 	case 1: //注册
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(userColumns.Phone, phone).One()
+		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -46,7 +45,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		phone = loginInfo[userColumns.Phone].String()
+		phone = loginInfo[daoUser.User.Columns().Phone].String()
 		if phone != `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
@@ -57,11 +56,11 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		if loginInfo[userColumns.Phone].String() != `` {
+		if loginInfo[daoUser.User.Columns().Phone].String() != `` {
 			err = utils.NewErrorCode(ctx, 39990005, ``)
 			return
 		}
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(userColumns.Phone, phone).One()
+		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990006, ``)
 			return
@@ -72,7 +71,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		phone = loginInfo[userColumns.Phone].String()
+		phone = loginInfo[daoUser.User.Columns().Phone].String()
 		if phone == `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
