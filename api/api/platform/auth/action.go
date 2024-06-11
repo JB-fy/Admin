@@ -19,17 +19,7 @@ type ActionInfo struct {
 	SceneIdArr []uint      `json:"scene_id_arr,omitempty" dc:"场景ID列表"`
 }
 
-/*--------列表 开始--------*/
-type ActionListReq struct {
-	g.Meta `path:"/action/list" method:"post" tags:"平台后台/权限管理/操作" sm:"列表"`
-	Filter ActionListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string         `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string           `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int              `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int              `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
-}
-
-type ActionListFilter struct {
+type ActionFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -42,6 +32,16 @@ type ActionListFilter struct {
 	ActionCode     string      `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
+}
+
+/*--------列表 开始--------*/
+type ActionListReq struct {
+	g.Meta `path:"/action/list" method:"post" tags:"平台后台/权限管理/操作" sm:"列表"`
+	Filter ActionFilter `json:"filter" dc:"过滤条件"`
+	Field  []string     `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
+	Sort   string       `json:"sort" default:"id DESC" dc:"排序"`
+	Page   int          `json:"page" v:"min:1" default:"1" dc:"页码"`
+	Limit  int          `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type ActionListRes struct {

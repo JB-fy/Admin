@@ -19,17 +19,7 @@ type SceneInfo struct {
 	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
-/*--------列表 开始--------*/
-type SceneListReq struct {
-	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/权限管理/场景" sm:"列表"`
-	Filter SceneListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int             `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int             `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
-}
-
-type SceneListFilter struct {
+type SceneFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -41,6 +31,16 @@ type SceneListFilter struct {
 	SceneName      string      `json:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneCode      string      `json:"scene_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
+/*--------列表 开始--------*/
+type SceneListReq struct {
+	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/权限管理/场景" sm:"列表"`
+	Filter SceneFilter `json:"filter" dc:"过滤条件"`
+	Field  []string    `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
+	Sort   string      `json:"sort" default:"id DESC" dc:"排序"`
+	Page   int         `json:"page" v:"min:1" default:"1" dc:"页码"`
+	Limit  int         `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type SceneListRes struct {

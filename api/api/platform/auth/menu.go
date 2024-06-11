@@ -27,17 +27,7 @@ type MenuInfo struct {
 	Children  []MenuInfo  `json:"children" dc:"子级列表"`
 }
 
-/*--------列表 开始--------*/
-type MenuListReq struct {
-	g.Meta `path:"/menu/list" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表"`
-	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string       `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string         `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int            `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int            `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
-}
-
-type MenuListFilter struct {
+type MenuFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -51,6 +41,16 @@ type MenuListFilter struct {
 	Pid            *uint       `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
 	Level          *uint       `json:"level,omitempty" v:"between:1,255" dc:"层级"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
+/*--------列表 开始--------*/
+type MenuListReq struct {
+	g.Meta `path:"/menu/list" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表"`
+	Filter MenuFilter `json:"filter" dc:"过滤条件"`
+	Field  []string   `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
+	Sort   string     `json:"sort" default:"id DESC" dc:"排序"`
+	Page   int        `json:"page" v:"min:1" default:"1" dc:"页码"`
+	Limit  int        `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type MenuListRes struct {
@@ -115,8 +115,8 @@ type MenuDeleteReq struct {
 /*--------列表（树状） 开始--------*/
 type MenuTreeReq struct {
 	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表（树状）"`
-	Field  []string       `json:"field" v:"foreach|min-length:1"`
-	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
+	Field  []string   `json:"field" v:"foreach|min-length:1"`
+	Filter MenuFilter `json:"filter" dc:"过滤条件"`
 }
 
 type MenuTreeRes struct {

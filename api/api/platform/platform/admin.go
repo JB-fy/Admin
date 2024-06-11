@@ -20,17 +20,7 @@ type AdminInfo struct {
 	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
 }
 
-/*--------列表 开始--------*/
-type AdminListReq struct {
-	g.Meta `path:"/admin/list" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"列表"`
-	Filter AdminListFilter `json:"filter" dc:"过滤条件"`
-	Field  []string        `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string          `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int             `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int             `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
-}
-
-type AdminListFilter struct {
+type AdminFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -44,6 +34,16 @@ type AdminListFilter struct {
 	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
+}
+
+/*--------列表 开始--------*/
+type AdminListReq struct {
+	g.Meta `path:"/admin/list" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"列表"`
+	Filter AdminFilter `json:"filter" dc:"过滤条件"`
+	Field  []string    `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
+	Sort   string      `json:"sort" default:"id DESC" dc:"排序"`
+	Page   int         `json:"page" v:"min:1" default:"1" dc:"页码"`
+	Limit  int         `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type AdminListRes struct {
