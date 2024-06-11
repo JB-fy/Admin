@@ -126,7 +126,7 @@ func (dbHandler mysql) GetFieldLimitStr(ctx context.Context, field MyGenField, g
 
 func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, group, table string) (fieldLimitInt MyGenFieldLimitInt) {
 	fieldLimitInt.Size = 4
-	if gstr.Pos(field.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
+	if gstr.Pos(field.FieldTypeRaw, `tinyint`) != -1 || gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 || gstr.Pos(field.FieldTypeRaw, `mediumint`) != -1 {
 		fieldLimitInt.Size = 2
 	} else if gstr.Pos(field.FieldTypeRaw, `bigint`) != -1 {
 		fieldLimitInt.Size = 8
@@ -140,20 +140,27 @@ func (dbHandler mysql) GetFieldLimitInt(ctx context.Context, field MyGenField, g
 				fieldLimitInt.Min = `0`
 				fieldLimitInt.Max = `255`
 			}
-		} else {
+		} else if gstr.Pos(field.FieldTypeRaw, `smallint`) != -1 {
 			fieldLimitInt.Min = `-32768`
 			fieldLimitInt.Max = `32767`
 			if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
 				fieldLimitInt.Min = `0`
 				fieldLimitInt.Max = `65535`
 			}
+		} else {
+			fieldLimitInt.Min = `-8388608`
+			fieldLimitInt.Max = `8388607`
+			if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
+				fieldLimitInt.Min = `0`
+				fieldLimitInt.Max = `16777215`
+			}
 		}
 	case 4:
-		fieldLimitInt.Min = `-8388608`
-		fieldLimitInt.Max = `8388607`
+		fieldLimitInt.Min = `-2147483648`
+		fieldLimitInt.Max = `2147483647`
 		if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {
 			fieldLimitInt.Min = `0`
-			fieldLimitInt.Max = `16777215`
+			fieldLimitInt.Max = `4294967295`
 		}
 	case 8:
 		fieldLimitInt.Min = `-9223372036854775808`

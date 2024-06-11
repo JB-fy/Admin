@@ -150,8 +150,8 @@ func (dbHandler pgsql) GetFieldLimitInt(ctx context.Context, field MyGenField, g
 		fieldLimitInt.Max = `32767`
 	case `int4`:
 		fieldLimitInt.Size = 4
-		fieldLimitInt.Min = `-8388608`
-		fieldLimitInt.Max = `8388607`
+		fieldLimitInt.Min = `-2147483648`
+		fieldLimitInt.Max = `2147483647`
 	case `int8`:
 		fieldLimitInt.Size = 8
 		fieldLimitInt.Min = `-9223372036854775808`
