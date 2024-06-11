@@ -22,7 +22,7 @@ func NewLogin() *Login {
 
 // 获取密码盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
 		return
 	}
@@ -50,7 +50,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
 		return
 	}
