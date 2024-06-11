@@ -30,18 +30,18 @@ type ActionListReq struct {
 }
 
 type ActionListFilter struct {
-	Id             *uint       `json:"id,omitempty" v:"between:1,16777215" dc:"ID"`
-	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,16777215" dc:"ID数组"`
-	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,16777215" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|between:1,16777215" dc:"排除ID数组"`
+	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
+	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
+	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,16777215" dc:"操作ID"`
+	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,4294967295" dc:"操作ID"`
 	ActionName     string      `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode     string      `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,16777215" dc:"场景ID"`
+	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
 }
 
 type ActionListRes struct {
@@ -55,7 +55,7 @@ type ActionListRes struct {
 type ActionInfoReq struct {
 	g.Meta `path:"/action/info" method:"post" tags:"平台后台/权限管理/操作" sm:"详情"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,16777215" dc:"ID"`
+	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
 type ActionInfoRes struct {
@@ -71,7 +71,7 @@ type ActionCreateReq struct {
 	ActionCode *string `json:"action_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|between:1,16777215" dc:"场景ID列表"`
+	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"场景ID列表"`
 }
 
 /*--------新增 结束--------*/
@@ -79,12 +79,12 @@ type ActionCreateReq struct {
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
 	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
-	IdArr      []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,16777215" dc:"ID数组"`
+	IdArr      []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ActionName *string `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode *string `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"distinct|foreach|between:1,16777215" dc:"场景ID列表"`
+	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"场景ID列表"`
 }
 
 /*--------修改 结束--------*/
@@ -92,7 +92,7 @@ type ActionUpdateReq struct {
 /*--------删除 开始--------*/
 type ActionDeleteReq struct {
 	g.Meta `path:"/action/del" method:"post" tags:"平台后台/权限管理/操作" sm:"删除"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,16777215" dc:"ID数组"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

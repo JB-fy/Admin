@@ -20,9 +20,9 @@ const saveForm = reactive({
         ],
         scene_id: [
             // { required: true, message: t('validation.required') },
-            { type: 'integer', trigger: 'change', min: 1, max: 16777215, message: t('validation.select') },
+            { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ],
-        pid: [{ type: 'integer', trigger: 'change', min: 0, max: 16777215, message: t('validation.select') }],
+        pid: [{ type: 'integer', trigger: 'change', min: 0, max: 4294967295, message: t('validation.select') }],
         menu_icon: [
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
             // { type: 'url', trigger: 'change', message: t('validation.upload') },

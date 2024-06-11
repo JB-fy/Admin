@@ -19,14 +19,14 @@ const saveForm = reactive({
         ],
         scene_id: [
             { required: true, message: t('validation.required') },
-            { type: 'integer', trigger: 'change', min: 1, max: 16777215, message: t('validation.select') },
+            { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ],
         /* table_id: [
             // { required: true, message: t('validation.required') },
-            { type: 'integer', trigger: 'change', min: 1, max: 16777215, message: t('validation.select') },
+            { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ], */
         action_id_arr: [
-            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 16777215, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
+            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 4294967295, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
         menu_id_arr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
