@@ -34,8 +34,8 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
-        wx_open_id: [{ type: 'string', trigger: 'blur', max: 128, message: t('validation.max.string', { max: 128 }) }],
-        wx_union_id: [{ type: 'string', trigger: 'blur', max: 64, message: t('validation.max.string', { max: 64 }) }],
+        wx_openid: [{ type: 'string', trigger: 'blur', max: 128, message: t('validation.max.string', { max: 128 }) }],
+        wx_unionid: [{ type: 'string', trigger: 'blur', max: 64, message: t('validation.max.string', { max: 64 }) }],
         password: [
             { required: computed((): boolean => (saveForm.data.id_arr?.length ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
@@ -130,12 +130,12 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.account" :placeholder="t('users.users.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('users.users.name.wx_open_id')" prop="wx_open_id">
-                    <el-input v-model="saveForm.data.wx_open_id" :placeholder="t('users.users.name.wx_open_id')" maxlength="128" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                <el-form-item :label="t('users.users.name.wx_openid')" prop="wx_openid">
+                    <el-input v-model="saveForm.data.wx_openid" :placeholder="t('users.users.name.wx_openid')" maxlength="128" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('users.users.name.wx_union_id')" prop="wx_union_id">
-                    <el-input v-model="saveForm.data.wx_union_id" :placeholder="t('users.users.name.wx_union_id')" maxlength="64" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                <el-form-item :label="t('users.users.name.wx_unionid')" prop="wx_unionid">
+                    <el-input v-model="saveForm.data.wx_unionid" :placeholder="t('users.users.name.wx_unionid')" maxlength="64" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('users.users.name.password')" prop="password">

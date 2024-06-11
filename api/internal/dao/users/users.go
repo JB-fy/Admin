@@ -213,12 +213,12 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				insertData[k] = v
-			case daoThis.Columns().WxOpenId:
+			case daoThis.Columns().WxOpenid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
 				insertData[k] = v
-			case daoThis.Columns().WxUnionId:
+			case daoThis.Columns().WxUnionid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -291,12 +291,12 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				updateData[k] = v
-			case daoThis.Columns().WxOpenId:
+			case daoThis.Columns().WxOpenid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
 				updateData[k] = v
-			case daoThis.Columns().WxUnionId:
+			case daoThis.Columns().WxUnionid:
 				if gconv.String(v) == `` {
 					v = nil
 				}

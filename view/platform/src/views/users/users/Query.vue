@@ -67,11 +67,11 @@ const queryForm = reactive({
         <el-form-item prop="account">
             <el-input v-model="queryCommon.data.account" :placeholder="t('users.users.name.account')" maxlength="20" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="wx_open_id">
-            <el-input v-model="queryCommon.data.wx_open_id" :placeholder="t('users.users.name.wx_open_id')" maxlength="128" :clearable="true" />
+        <el-form-item prop="wx_openid">
+            <el-input v-model="queryCommon.data.wx_openid" :placeholder="t('users.users.name.wx_openid')" maxlength="128" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="wx_union_id">
-            <el-input v-model="queryCommon.data.wx_union_id" :placeholder="t('users.users.name.wx_union_id')" maxlength="64" :clearable="true" />
+        <el-form-item prop="wx_unionid">
+            <el-input v-model="queryCommon.data.wx_unionid" :placeholder="t('users.users.name.wx_unionid')" maxlength="64" :clearable="true" />
         </el-form-item>
         <el-form-item prop="id_card_no">
             <el-input v-model="queryCommon.data.id_card_no" :placeholder="t('users.users.name.id_card_no')" maxlength="30" :clearable="true" />

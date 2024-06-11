@@ -118,17 +118,17 @@ const table = reactive({
             width: 150,
         },
         {
-            dataKey: 'wx_open_id',
-            title: t('users.users.name.wx_open_id'),
-            key: 'wx_open_id',
+            dataKey: 'wx_openid',
+            title: t('users.users.name.wx_openid'),
+            key: 'wx_openid',
             align: 'center',
             width: 200,
             hidden: true,
         },
         {
-            dataKey: 'wx_union_id',
-            title: t('users.users.name.wx_union_id'),
-            key: 'wx_union_id',
+            dataKey: 'wx_unionid',
+            title: t('users.users.name.wx_unionid'),
+            key: 'wx_unionid',
             align: 'center',
             width: 150,
         },
@@ -145,7 +145,7 @@ const table = reactive({
             key: 'id_card_name',
             align: 'center',
             width: 150,
-            cellRenderer: (props: any): any => {
+            /* cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
                     return [<div class="el-table-v2__cell-text">{props.rowData.id_card_name}</div>]
                 }
@@ -187,7 +187,7 @@ const table = reactive({
                         }}
                     />,
                 ]
-            },
+            }, */
         },
         {
             dataKey: 'id_card_gender',

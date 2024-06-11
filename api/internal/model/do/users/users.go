@@ -24,6 +24,6 @@ type Users struct {
 	Phone     interface{} // 手机
 	Email     interface{} // 邮箱
 	Account   interface{} // 账号
-	WxOpenId  interface{} // 微信openId
-	WxUnionId interface{} // 微信unionId
+	WxOpenid  interface{} // 微信openid
+	WxUnionid interface{} // 微信unionid
 }

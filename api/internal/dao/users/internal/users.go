@@ -35,8 +35,8 @@ type UsersColumns struct {
 	Phone     string // 手机
 	Email     string // 邮箱
 	Account   string // 账号
-	WxOpenId  string // 微信openId
-	WxUnionId string // 微信unionId
+	WxOpenid  string // 微信openid
+	WxUnionid string // 微信unionid
 }
 
 // usersColumns holds the columns for table users.
@@ -53,8 +53,8 @@ var usersColumns = UsersColumns{
 	Phone:     "phone",
 	Email:     "email",
 	Account:   "account",
-	WxOpenId:  "wx_open_id",
-	WxUnionId: "wx_union_id",
+	WxOpenid:  "wx_openid",
+	WxUnionid: "wx_unionid",
 }
 
 // NewUsersDao creates and returns a new DAO object for table data access.
