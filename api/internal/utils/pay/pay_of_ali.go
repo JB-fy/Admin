@@ -99,7 +99,7 @@ func (payThis *PayOfAli) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 			NotifyURL:   payThis.NotifyUrl,
 		},
 		// BuyerId:     ``, //买家支付宝用户ID（未来将被废弃）。BuyerId和BuyerOpenId二选一
-		BuyerOpenId: payData.OpenId,  //买家支付宝用户OpenId（推荐）。BuyerId和BuyerOpenId二选一
+		BuyerOpenId: payData.Openid,  //买家支付宝用户OpenId（推荐）。BuyerId和BuyerOpenId二选一
 		OpAppId:     payThis.OpAppId, //小程序应用ID
 	}
 

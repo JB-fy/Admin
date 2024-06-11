@@ -20,7 +20,7 @@ type PayData struct {
 	Desc      string  //描述
 	ReturnUrl string  //同步回调地址。需要时传
 	ClientIp  string  //客户端IP。需要时传
-	OpenId    string  //用户openId。JSAPI支付必传
+	Openid    string  //用户openid。JSAPI支付必传
 	// Device    Device  //设备类型。需要时传。 unknown未知 android安卓 ios苹果
 }
 

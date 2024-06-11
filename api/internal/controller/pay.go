@@ -105,7 +105,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	case 2: //H5支付(支付宝)
 		payInfo, err = pay.NewPay(ctx, `payOfAli`).H5(payData)
 	/* case 3: //JSAPI支付(支付宝)
-	payData.OpenId = ``
+	payData.Openid = ``
 	payInfo, err = pay.NewPay(ctx, `payOfAli`).Jsapi(payData) */
 	case 11: //APP支付(微信)
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).App(payData)
@@ -113,7 +113,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		payData.ClientIp = g.RequestFromCtx(ctx).GetClientIp()
 		payInfo, err = pay.NewPay(ctx, `payOfWx`).H5(payData)
 	/* case 13: //JSAPI支付(微信)
-	payData.OpenId = ``
+	payData.Openid = ``
 	payInfo, err = pay.NewPay(ctx, `payOfWx`).Jsapi(payData) */
 	default:
 		err = utils.NewErrorCode(ctx, 30010000, ``)

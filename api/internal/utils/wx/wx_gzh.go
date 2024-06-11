@@ -325,8 +325,8 @@ func (wxGzhThis *WxGzh) AccessToken() (accessToken WxGzhAccessToken, err error) 
 }
 
 type WxGzhUserInfo struct {
-	UnionId        string `json:"unionid"`         //用户统一标识（全局唯一）。公众号绑定到微信开放平台账号后，才会出现该字段（注意：还需要用户关注公众号。微信文档未说明这点）
-	OpenId         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
+	Unionid        string `json:"unionid"`         //用户统一标识（全局唯一）。公众号绑定到微信开放平台账号后，才会出现该字段（注意：还需要用户关注公众号。微信文档未说明这点）
+	Openid         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	Subscribe      int    `json:"subscribe"`       //关注公众号：0否 1是
 	SubscribeTime  int    `json:"subscribe_time"`  //关注时间戳
 	SubscribeScene string `json:"subscribe_scene"` //关注的渠道来源，ADD_SCENE_SEARCH 公众号搜索，ADD_SCENE_ACCOUNT_MIGRATION 公众号迁移，ADD_SCENE_PROFILE_CARD 名片分享，ADD_SCENE_QR_CODE 扫描二维码，ADD_SCENE_PROFILE_LINK	图文页内名称点击，ADD_SCENE_PROFILE_ITEM 图文页右上角菜单，ADD_SCENE_PAID 支付后关注，ADD_SCENE_WECHAT_ADVERTISEMENT 微信广告，ADD_SCENE_REPRINT 他人转载，ADD_SCENE_LIVESTREAM 视频号直播，ADD_SCENE_CHANNELS 视频号，ADD_SCENE_WXA 小程序关注，ADD_SCENE_OTHERS 其他
@@ -339,10 +339,10 @@ type WxGzhUserInfo struct {
 }
 
 // 获取用户基本信息
-func (wxGzhThis *WxGzh) UserInfo(accessToken, openId string) (userInfo WxGzhUserInfo, err error) {
+func (wxGzhThis *WxGzh) UserInfo(accessToken, openid string) (userInfo WxGzhUserInfo, err error) {
 	res, err := g.Client().Get(wxGzhThis.Ctx, wxGzhThis.Host+`/cgi-bin/user/info`, g.Map{
 		`access_token`: accessToken,
-		`openid`:       openId,
+		`openid`:       openid,
 		`lang`:         `zh_CN`,
 	})
 	if err != nil {
@@ -364,16 +364,16 @@ type WxGzhUserGet struct {
 	Total uint `json:"total"` //关注该公众账号的总用户数
 	Count uint `json:"count"` //拉取的OPENID个数，最大值为10000
 	Data  struct {
-		OpenId []string `json:"openid"`
+		Openid []string `json:"openid"`
 	} `json:"data"` //列表数据，OPENID的列表
-	NextOpenId string `json:"next_openid"` //拉取列表的最后一个用户的OPENID
+	NextOpenid string `json:"next_openid"` //拉取列表的最后一个用户的OPENID
 }
 
 // 获取用户列表
-func (wxGzhThis *WxGzh) UserGet(accessToken, nextOpenId string) (userGet WxGzhUserGet, err error) {
+func (wxGzhThis *WxGzh) UserGet(accessToken, nextOpenid string) (userGet WxGzhUserGet, err error) {
 	res, err := g.Client().Get(wxGzhThis.Ctx, wxGzhThis.Host+`/cgi-bin/user/get`, g.Map{
 		`access_token`: accessToken,
-		`next_openid`:  nextOpenId,
+		`next_openid`:  nextOpenid,
 	})
 	if err != nil {
 		return

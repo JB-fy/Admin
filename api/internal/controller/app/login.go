@@ -205,18 +205,18 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			err = errTmp
 			return
 		}
-		filter[daoUsers.Users.Columns().WxOpenId] = accessToken.OpenId
-		saveData[daoUsers.Users.Columns().WxOpenId] = accessToken.OpenId
-		if accessToken.UnionId != `` {
-			saveData[daoUsers.Users.Columns().WxUnionId] = accessToken.UnionId
+		filter[daoUsers.Users.Columns().WxOpenid] = accessToken.Openid
+		saveData[daoUsers.Users.Columns().WxOpenid] = accessToken.Openid
+		if accessToken.Unionid != `` {
+			saveData[daoUsers.Users.Columns().WxUnionid] = accessToken.Unionid
 		}
 		if garray.NewStrArrayFrom([]string{`snsapi_userinfo`, `snsapi_login`}).Contains(accessToken.Scope) {
-			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(accessToken.OpenId, accessToken.AccessToken)
+			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(accessToken.Openid, accessToken.AccessToken)
 			if errTmp != nil {
 				err = errTmp
 				return
 			}
-			saveData[daoUsers.Users.Columns().WxUnionId] = userInfo.UnionId
+			saveData[daoUsers.Users.Columns().WxUnionid] = userInfo.Unionid
 			saveData[daoUsers.Users.Columns().Nickname] = userInfo.Nickname
 			saveData[daoUsers.Users.Columns().Gender] = userInfo.Gender
 			saveData[daoUsers.Users.Columns().Avatar] = userInfo.Avatar

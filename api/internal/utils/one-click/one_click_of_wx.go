@@ -33,8 +33,8 @@ func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]any) *OneClick
 }
 
 type AccessTokenOfWx struct {
-	UnionId        string `json:"unionid"`         //用户统一标识（全局唯一），只有当scope为"snsapi_userinfo"时返回
-	OpenId         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
+	Unionid        string `json:"unionid"`         //用户统一标识（全局唯一），只有当scope为"snsapi_userinfo"时返回
+	Openid         string `json:"openid"`          //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	AccessToken    string `json:"access_token"`    //网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
 	ExpiresIn      int    `json:"expires_in"`      //access_token 接口调用凭证超时时间，单位（秒）
 	RefreshToken   string `json:"refresh_token"`   //用户刷新access_token
@@ -43,8 +43,8 @@ type AccessTokenOfWx struct {
 }
 
 type UserInfoOfWx struct {
-	UnionId   string `json:"unionid"`    //用户统一标识（全局唯一）
-	OpenId    string `json:"openid"`     //用户唯一标识（相对于公众号、开放平台下的应用唯一）
+	Unionid   string `json:"unionid"`    //用户统一标识（全局唯一）
+	Openid    string `json:"openid"`     //用户唯一标识（相对于公众号、开放平台下的应用唯一）
 	Nickname  string `json:"nickname"`   //昵称
 	Gender    int    `json:"sex"`        //性别：0未知 1男 2女
 	Avatar    string `json:"headimgurl"` //头像。最后一个数值代表正方形头像大小，有0、46、64、96、132数值可选，0代表640*640正方形头像
@@ -55,7 +55,7 @@ type UserInfoOfWx struct {
 }
 
 type RefreshTokenOfWx struct {
-	OpenId      string
+	Openid      string
 	AccessToken string //授权Token
 	ExpireTime  int    //超时时间。单位：秒
 }
@@ -100,10 +100,10 @@ func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTo
 }
 
 // 拉取用户信息(需scope为 snsapi_userinfo)
-func (oneClickThis *OneClickOfWx) UserInfo(openId, accessToken string) (userInfo UserInfoOfWx, err error) {
+func (oneClickThis *OneClickOfWx) UserInfo(openid, accessToken string) (userInfo UserInfoOfWx, err error) {
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/userinfo`, g.Map{
 		`access_token`: accessToken,
-		`openid`:       openId,
+		`openid`:       openid,
 		`lang`:         `zh_CN`,
 	})
 	if err != nil {
@@ -144,10 +144,10 @@ func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken
 }
 
 // 授权验证（需要时用）
-func (oneClickThis *OneClickOfWx) Auth(openId, accessToken string) (err error) {
+func (oneClickThis *OneClickOfWx) Auth(openid, accessToken string) (err error) {
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/auth`, g.Map{
 		`access_token`: accessToken,
-		`openid`:       openId,
+		`openid`:       openid,
 		`lang`:         `zh_CN`,
 	})
 	if err != nil {

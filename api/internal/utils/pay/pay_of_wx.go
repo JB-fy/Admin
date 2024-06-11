@@ -165,7 +165,7 @@ func (payThis *PayOfWx) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 				Total: core.Int64(gconv.Int64(payData.Amount * 100)),
 			},
 			Payer: &jsapi.Payer{
-				Openid: core.String(payData.OpenId),
+				Openid: core.String(payData.Openid),
 			},
 		},
 	)
