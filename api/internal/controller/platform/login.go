@@ -10,6 +10,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
 )
 
@@ -21,6 +22,11 @@ func NewLogin() *Login {
 
 // 获取密码盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
+		err = utils.NewErrorCode(ctx, 89990000, ``)
+		return
+	}
+
 	info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
@@ -44,6 +50,11 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
+		err = utils.NewErrorCode(ctx, 89990000, ``)
+		return
+	}
+
 	info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)

@@ -12,12 +12,17 @@ const saveForm = reactive({
         ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
+        nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
+        avatar: [
+            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
+        ],
         phone: [
             {
                 required: computed((): boolean => (saveForm.data.account ? false : true)),
                 message: t('validation.required'),
             },
-            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
         account: [
@@ -25,17 +30,12 @@ const saveForm = reactive({
                 required: computed((): boolean => (saveForm.data.phone ? false : true)),
                 message: t('validation.required'),
             },
-            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
             { required: computed((): boolean => (saveForm.data.id_arr?.length ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
-        ],
-        nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
-        avatar: [
-            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         role_id_arr: [
             { required: true, message: t('validation.required') },
@@ -95,23 +95,23 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <el-form-item :label="t('platform.admin.name.phone')" prop="phone">
-                    <el-input v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
-                <el-form-item :label="t('platform.admin.name.account')" prop="account">
-                    <el-input v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
-                <el-form-item :label="t('platform.admin.name.password')" prop="password">
-                    <el-input v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.id_arr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
                 <el-form-item :label="t('platform.admin.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('platform.admin.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.avatar')" prop="avatar">
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" />
+                </el-form-item>
+                <el-form-item :label="t('platform.admin.name.phone')" prop="phone">
+                    <el-input v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('platform.admin.name.account')" prop="account">
+                    <el-input v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('platform.admin.name.password')" prop="password">
+                    <el-input v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                    <el-alert v-if="saveForm.data.id_arr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->

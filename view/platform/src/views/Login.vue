@@ -9,7 +9,7 @@ const loginForm = reactive({
     rules: {
         login_name: [
             { required: true, message: t('validation.required') },
-            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
         ],
         password: [
             { required: true, message: t('validation.required') },

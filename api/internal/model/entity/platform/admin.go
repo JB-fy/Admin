@@ -14,10 +14,10 @@ type Admin struct {
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
 	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
 	AdminId   uint        `json:"adminId"   orm:"admin_id"   ` // 管理员ID
+	Nickname  string      `json:"nickname"  orm:"nickname"   ` // 昵称
+	Avatar    string      `json:"avatar"    orm:"avatar"     ` // 头像
 	Phone     string      `json:"phone"     orm:"phone"      ` // 手机
 	Account   string      `json:"account"   orm:"account"    ` // 账号
 	Password  string      `json:"password"  orm:"password"   ` // 密码。md5保存
 	Salt      string      `json:"salt"      orm:"salt"       ` // 密码盐
-	Nickname  string      `json:"nickname"  orm:"nickname"   ` // 昵称
-	Avatar    string      `json:"avatar"    orm:"avatar"     ` // 头像
 }

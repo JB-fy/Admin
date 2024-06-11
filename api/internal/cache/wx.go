@@ -16,7 +16,7 @@ type WxGzhAccessToken struct {
 }
 
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-// loginName 账号/手机
+// appId 微信公众号AppId
 func NewWxGzhAccessToken(ctx context.Context, appId string) *WxGzhAccessToken {
 	//可在这里写分库逻辑
 	redis := g.Redis()

@@ -16,10 +16,10 @@ type Admin struct {
 	UpdatedAt *gtime.Time // 更新时间
 	IsStop    interface{} // 停用：0否 1是
 	AdminId   interface{} // 管理员ID
+	Nickname  interface{} // 昵称
+	Avatar    interface{} // 头像
 	Phone     interface{} // 手机
 	Account   interface{} // 账号
 	Password  interface{} // 密码。md5保存
 	Salt      interface{} // 密码盐
-	Nickname  interface{} // 昵称
-	Avatar    interface{} // 头像
 }

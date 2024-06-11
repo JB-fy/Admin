@@ -37,20 +37,6 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'phone',
-            title: t('platform.admin.name.phone'),
-            key: 'phone',
-            align: 'center',
-            width: 150,
-        },
-        {
-            dataKey: 'account',
-            title: t('platform.admin.name.account'),
-            key: 'account',
-            align: 'center',
-            width: 150,
-        },
-        {
             dataKey: 'nickname',
             title: t('platform.admin.name.nickname'),
             key: 'nickname',
@@ -78,6 +64,20 @@ const table = reactive({
                     </el-scrollbar>,
                 ]
             },
+        },
+        {
+            dataKey: 'phone',
+            title: t('platform.admin.name.phone'),
+            key: 'phone',
+            align: 'center',
+            width: 150,
+        },
+        {
+            dataKey: 'account',
+            title: t('platform.admin.name.account'),
+            key: 'account',
+            align: 'center',
+            width: 150,
         },
         {
             dataKey: 'is_stop',
