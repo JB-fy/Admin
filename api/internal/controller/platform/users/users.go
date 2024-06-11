@@ -2,8 +2,8 @@ package controller
 
 import (
 	"api/api"
-	apiUser "api/api/platform/user"
-	daoUser "api/internal/dao/user"
+	apiUsers "api/api/platform/users"
+	daoUsers "api/internal/dao/users"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -12,19 +12,18 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type User struct {
+type Users struct {
 	defaultFieldOfList []string
 	defaultFieldOfInfo []string
 	allowField         []string
 	noAuthField        []string
 }
 
-func NewUser() *User {
-	field := daoUser.User.ColumnArr().Slice()
-	field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{daoUser.User.Columns().Password, daoUser.User.Columns().Salt})).Slice() //移除敏感字段
-	defaultFieldOfList := []string{`id`, `label`}
-	defaultFieldOfInfo := []string{`id`, `label`}
-	return &User{
+func NewUsers() *Users {
+	field := daoUsers.Users.ColumnArr().Slice()
+	defaultFieldOfList := []string{`id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
+	defaultFieldOfInfo := []string{`id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
+	return &Users{
 		defaultFieldOfList: append(field, defaultFieldOfList...),
 		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
 		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
@@ -33,7 +32,7 @@ func NewUser() *User {
 }
 
 // 列表
-func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) (res *apiUser.UserListRes, err error) {
+func (controllerThis *Users) List(ctx context.Context, req *apiUsers.UsersListReq) (res *apiUsers.UsersListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
@@ -50,13 +49,13 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `userUserRead`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `usersRead`)
 	if !isAuth {
 		field = controllerThis.noAuthField
 	}
 	/**--------权限验证 结束--------**/
 
-	daoModelThis := daoUser.User.CtxDaoModel(ctx).Filters(filter)
+	daoModelThis := daoUsers.Users.CtxDaoModel(ctx).Filters(filter)
 	count, err := daoModelThis.CountPri()
 	if err != nil {
 		return
@@ -66,13 +65,13 @@ func (controllerThis *User) List(ctx context.Context, req *apiUser.UserListReq) 
 		return
 	}
 
-	res = &apiUser.UserListRes{Count: count, List: []apiUser.UserInfo{}}
+	res = &apiUsers.UsersListRes{Count: count, List: []apiUsers.UsersInfo{}}
 	list.Structs(&res.List)
 	return
 }
 
 // 详情
-func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) (res *apiUser.UserInfoRes, err error) {
+func (controllerThis *Users) Info(ctx context.Context, req *apiUsers.UsersInfoReq) (res *apiUsers.UsersInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	var field []string
 	if len(req.Field) > 0 {
@@ -86,13 +85,13 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `userUserRead`)
+	_, err = service.AuthAction().CheckAuth(ctx, `usersRead`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	info, err := daoUser.User.CtxDaoModel(ctx).Filters(filter).Fields(field...).InfoPri()
+	info, err := daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Fields(field...).InfoPri()
 	if err != nil {
 		return
 	}
@@ -101,13 +100,13 @@ func (controllerThis *User) Info(ctx context.Context, req *apiUser.UserInfoReq) 
 		return
 	}
 
-	res = &apiUser.UserInfoRes{}
+	res = &apiUsers.UsersInfoRes{}
 	info.Struct(&res.Info)
 	return
 }
 
 // 修改
-func (controllerThis *User) Update(ctx context.Context, req *apiUser.UserUpdateReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Users) Update(ctx context.Context, req *apiUsers.UsersUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	delete(data, `id_arr`)
@@ -119,12 +118,12 @@ func (controllerThis *User) Update(ctx context.Context, req *apiUser.UserUpdateR
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `userUserUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `usersUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.UserUser().Update(ctx, filter, data)
+	_, err = service.Users().Update(ctx, filter, data)
 	return
 }

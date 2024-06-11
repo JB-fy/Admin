@@ -5,7 +5,7 @@ import (
 	apiCurrent "api/api/app"
 	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
-	daoUser "api/internal/dao/user"
+	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	"api/internal/utils/sms"
 	"context"
@@ -24,17 +24,17 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 	phone := req.Phone
 	switch req.UseScene {
 	case 0, 2: //登录，密码找回
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, phone).One()
+		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, phone).One()
 		if info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[daoUser.User.Columns().IsStop].Uint() == 1 {
+		if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}
 	case 1: //注册
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, phone).One()
+		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
@@ -45,7 +45,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		phone = loginInfo[daoUser.User.Columns().Phone].String()
+		phone = loginInfo[daoUsers.Users.Columns().Phone].String()
 		if phone != `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
@@ -56,11 +56,11 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		if loginInfo[daoUser.User.Columns().Phone].String() != `` {
+		if loginInfo[daoUsers.Users.Columns().Phone].String() != `` {
 			err = utils.NewErrorCode(ctx, 39990005, ``)
 			return
 		}
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, phone).One()
+		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990006, ``)
 			return
@@ -71,7 +71,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		phone = loginInfo[daoUser.User.Columns().Phone].String()
+		phone = loginInfo[daoUsers.Users.Columns().Phone].String()
 		if phone == `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return

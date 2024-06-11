@@ -10,7 +10,7 @@ import (
 )
 
 type (
-	IUserUser interface {
+	IUsers interface {
 		// 新增
 		Create(ctx context.Context, data map[string]any) (id int64, err error)
 		// 修改
@@ -21,16 +21,16 @@ type (
 )
 
 var (
-	localUserUser IUserUser
+	localUsers IUsers
 )
 
-func UserUser() IUserUser {
-	if localUserUser == nil {
-		panic("implement not found for interface IUserUser, forgot register?")
+func Users() IUsers {
+	if localUsers == nil {
+		panic("implement not found for interface IUsers, forgot register?")
 	}
-	return localUserUser
+	return localUsers
 }
 
-func RegisterUserUser(i IUserUser) {
-	localUserUser = i
+func RegisterUsers(i IUsers) {
+	localUsers = i
 }

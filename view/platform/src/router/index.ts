@@ -114,13 +114,13 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/plugin' },
             },
             {
-                path: '/user/user',
+                path: '/users/users',
                 component: async () => {
-                    const component = await import('@/views/user/user/Index.vue')
-                    component.default.name = '/user/user'
+                    const component = await import('@/views/users/users/Index.vue')
+                    component.default.name = '/users/users'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/user/user' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/users/users' },
             },
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {

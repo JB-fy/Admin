@@ -5,13 +5,14 @@ import (
 	apiMy "api/api/app/my"
 	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
-	daoUser "api/internal/dao/user"
+	daoUsers "api/internal/dao/users"
 	"api/internal/service"
 	"api/internal/utils"
 	id_card "api/internal/utils/id-card"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -42,10 +43,17 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	var isGetPrivacy bool
+	var privacyInfo gdb.Record
+	initPrivacyInfo := func() {
+		if !isGetPrivacy {
+			privacyInfo, _ = daoUsers.Privacy.CtxDaoModel(ctx).Fields(daoUsers.Privacy.Columns().Password, daoUsers.Privacy.Columns().Salt).Filter(daoUsers.Privacy.Columns().UserId, loginInfo[`login_id`]).One()
+		}
+	}
 	for k, v := range data {
 		switch k {
 		/* case `account`: //前端太懒，可能把个人信息全部传回来，导致account有值，故不能用required-with:Account直接验证
-		if gconv.String(v) != loginInfo[daoUser.User.Columns().Account].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
+		if gconv.String(v) != loginInfo[daoUsers.Users.Columns().Account].String() && g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil {
 			err = utils.NewErrorCode(ctx, 89999999, ``)
 			return
 		} */
@@ -55,13 +63,18 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 		case `password_to_check`:
-			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[daoUser.User.Columns().Salt].String()) != loginInfo[daoUser.User.Columns().Password].String() {
+			initPrivacyInfo()
+			if privacyInfo[daoUsers.Privacy.Columns().Password].String() == `` {
+				err = utils.NewErrorCode(ctx, 39990010, ``)
+				return
+			}
+			if gmd5.MustEncrypt(gconv.String(v)+privacyInfo[daoUsers.Privacy.Columns().Salt].String()) != privacyInfo[daoUsers.Privacy.Columns().Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
 			delete(data, k)
 		case `sms_code_to_password`:
-			phone := loginInfo[daoUser.User.Columns().Phone].String()
+			phone := loginInfo[daoUsers.Users.Columns().Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
@@ -74,7 +87,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `sms_code_to_bind_phone`:
-			if loginInfo[daoUser.User.Columns().Phone].String() != `` {
+			if loginInfo[daoUsers.Users.Columns().Phone].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990005, ``)
 				return
 			}
@@ -87,7 +100,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `sms_code_to_unbing_phone`:
-			phone := loginInfo[daoUser.User.Columns().Phone].String()
+			phone := loginInfo[daoUsers.Users.Columns().Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39990007, ``)
 				return
@@ -99,9 +112,10 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-			data[daoUser.User.Columns().Phone] = nil
+			data[daoUsers.Users.Columns().Phone] = nil
 		case `id_card_no`:
-			if loginInfo[daoUser.User.Columns().IdCardNo].String() != `` {
+			initPrivacyInfo()
+			if privacyInfo[daoUsers.Privacy.Columns().IdCardNo].String() != `` {
 				err = utils.NewErrorCode(ctx, 39990009, ``)
 				return
 			}
@@ -112,13 +126,22 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			if idCardInfo.Gender != 0 {
-				data[daoUser.User.Columns().Gender] = idCardInfo.Gender
+				data[daoUsers.Privacy.Columns().IdCardGender] = idCardInfo.Gender
+				if loginInfo[daoUsers.Users.Columns().Gender].Uint() == 0 {
+					data[daoUsers.Users.Columns().Gender] = idCardInfo.Gender
+				}
 			}
 			if idCardInfo.Address != `` {
-				data[daoUser.User.Columns().Address] = idCardInfo.Address
+				data[daoUsers.Privacy.Columns().IdCardAddress] = idCardInfo.Address
+				if loginInfo[daoUsers.Users.Columns().Address].String() == `` {
+					data[daoUsers.Users.Columns().Address] = idCardInfo.Address
+				}
 			}
 			if idCardInfo.Birthday != `` {
-				data[daoUser.User.Columns().Birthday] = idCardInfo.Birthday
+				data[daoUsers.Privacy.Columns().IdCardBirthday] = idCardInfo.Birthday
+				if loginInfo[daoUsers.Users.Columns().Birthday].String() == `` {
+					data[daoUsers.Users.Columns().Birthday] = idCardInfo.Birthday
+				}
 			}
 		}
 	}
@@ -126,6 +149,6 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	filter := map[string]any{`id`: loginInfo[`login_id`]}
 	/**--------参数处理 结束--------**/
 
-	_, err = service.UserUser().Update(ctx, filter, data)
+	_, err = service.Users().Update(ctx, filter, data)
 	return
 }

@@ -6,7 +6,7 @@ package dao
 
 import (
 	daoIndex "api/internal/dao"
-	"api/internal/dao/user/internal"
+	"api/internal/dao/users/internal"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -15,35 +15,34 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-// internalUserDao is internal type for wrapping internal DAO implements.
-type internalUserDao = *internal.UserDao
+// internalPrivacyDao is internal type for wrapping internal DAO implements.
+type internalPrivacyDao = *internal.PrivacyDao
 
-// userDao is the data access object for table user_user.
+// privacyDao is the data access object for table users_privacy.
 // You can define custom methods on it to extend its functionality as you wish.
-type userDao struct {
-	internalUserDao
+type privacyDao struct {
+	internalPrivacyDao
 }
 
 var (
-	// User is globally public accessible object for table user_user operations.
-	User = userDao{
-		internal.NewUserDao(),
+	// Privacy is globally public accessible object for table users_privacy operations.
+	Privacy = privacyDao{
+		internal.NewPrivacyDao(),
 	}
 )
 
 // 获取daoModel
-func (daoThis *userDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
+func (daoThis *privacyDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *userDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
+func (daoThis *privacyDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -52,7 +51,7 @@ func (daoThis *userDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[stri
 }
 
 // 解析分表
-func (daoThis *userDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
+func (daoThis *privacyDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -61,17 +60,17 @@ func (daoThis *userDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[stri
 }
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
-func (daoThis *userDao) ParseId(daoModel *daoIndex.DaoModel) string {
+func (daoThis *privacyDao) ParseId(daoModel *daoIndex.DaoModel) string {
 	return daoModel.DbTable + `.` + daoThis.Columns().UserId
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
-func (daoThis *userDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return `COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, ''))`
+func (daoThis *privacyDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + daoThis.Columns().Password
 }
 
 // 解析filter
-func (daoThis *userDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -88,19 +87,13 @@ func (daoThis *userDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().UserId, v)
 				}
 			case `label`:
-				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Password, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().IdCardName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `login_name`:
-				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
-				} else {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Account, v)
-				}
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -114,7 +107,7 @@ func (daoThis *userDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 }
 
 // 解析field
-func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -149,7 +142,7 @@ func (daoThis *userDao) ParseField(field []string, fieldWithParam map[string]any
 }
 
 // hook select
-func (daoThis *userDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *privacyDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -184,21 +177,13 @@ func (daoThis *userDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析insert
-func (daoThis *userDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
-			case daoThis.Columns().Phone:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				insertData[k] = v
-			case daoThis.Columns().Account:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				insertData[k] = v
+			case `id`:
+				insertData[daoThis.Columns().UserId] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -208,16 +193,6 @@ func (daoThis *userDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Da
 				insertData[daoThis.Columns().Salt] = salt
 				password = gmd5.MustEncrypt(password + salt)
 				insertData[k] = password
-			case daoThis.Columns().OpenIdOfWx:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				insertData[k] = v
-			case daoThis.Columns().UnionIdOfWx:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				insertData[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -233,7 +208,7 @@ func (daoThis *userDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Da
 }
 
 // hook insert
-func (daoThis *userDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *privacyDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -254,21 +229,13 @@ func (daoThis *userDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析update
-func (daoThis *userDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
-			case daoThis.Columns().Phone:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				updateData[k] = v
-			case daoThis.Columns().Account:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				updateData[k] = v
+			case `id`:
+				updateData[daoThis.Columns().UserId] = v
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {
@@ -278,16 +245,6 @@ func (daoThis *userDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				updateData[daoThis.Columns().Salt] = salt
 				password = gmd5.MustEncrypt(password + salt)
 				updateData[k] = password
-			case daoThis.Columns().OpenIdOfWx:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				updateData[k] = v
-			case daoThis.Columns().UnionIdOfWx:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				updateData[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					updateData[k] = v
@@ -306,7 +263,7 @@ func (daoThis *userDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 }
 
 // hook update
-func (daoThis *userDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *privacyDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			if daoModel.IsOnlyAfterUpdate {
@@ -337,7 +294,7 @@ func (daoThis *userDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // hook delete
-func (daoThis *userDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *privacyDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) { //有软删除字段时需改成Update事件
 			result, err = in.Next(ctx)
@@ -356,7 +313,7 @@ func (daoThis *userDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 }
 
 // 解析group
-func (daoThis *userDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
@@ -375,7 +332,7 @@ func (daoThis *userDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) 
 }
 
 // 解析order
-func (daoThis *userDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
@@ -384,7 +341,7 @@ func (daoThis *userDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 			switch k {
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UserId, 1))
-			case daoThis.Columns().Birthday:
+			case daoThis.Columns().IdCardBirthday:
 				m = m.Order(daoModel.DbTable + `.` + v)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
@@ -400,7 +357,7 @@ func (daoThis *userDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 }
 
 // 解析join
-func (daoThis *userDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *privacyDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		if daoModel.JoinTableSet.Contains(joinTable) {
 			return m

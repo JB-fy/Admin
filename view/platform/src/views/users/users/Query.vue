@@ -49,35 +49,44 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :controls="false" />
         </el-form-item>
-        <el-form-item prop="phone">
-            <el-input v-model="queryCommon.data.phone" :placeholder="t('user.user.name.phone')" maxlength="30" :clearable="true" />
-        </el-form-item>
-        <el-form-item prop="account">
-            <el-input v-model="queryCommon.data.account" :placeholder="t('user.user.name.account')" maxlength="30" :clearable="true" />
-        </el-form-item>
         <el-form-item prop="nickname">
-            <el-input v-model="queryCommon.data.nickname" :placeholder="t('user.user.name.nickname')" maxlength="30" :clearable="true" />
+            <el-input v-model="queryCommon.data.nickname" :placeholder="t('users.users.name.nickname')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="gender">
-            <el-select-v2 v-model="queryCommon.data.gender" :options="tm('user.user.status.gender')" :placeholder="t('user.user.name.gender')" :clearable="true" style="width: 100px" />
+            <el-select-v2 v-model="queryCommon.data.gender" :options="tm('users.users.status.gender')" :placeholder="t('users.users.name.gender')" :clearable="true" style="width: 100px" />
         </el-form-item>
         <el-form-item prop="birthday">
-            <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('user.user.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
+            <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('users.users.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
         </el-form-item>
-        <el-form-item prop="open_id_of_wx">
-            <el-input v-model="queryCommon.data.open_id_of_wx" :placeholder="t('user.user.name.open_id_of_wx')" maxlength="128" :clearable="true" />
+        <el-form-item prop="phone">
+            <el-input v-model="queryCommon.data.phone" :placeholder="t('users.users.name.phone')" maxlength="20" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="union_id_of_wx">
-            <el-input v-model="queryCommon.data.union_id_of_wx" :placeholder="t('user.user.name.union_id_of_wx')" maxlength="64" :clearable="true" />
+        <el-form-item prop="email">
+            <el-input v-model="queryCommon.data.email" :placeholder="t('users.users.name.email')" maxlength="60" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="id_card_name">
-            <el-input v-model="queryCommon.data.id_card_name" :placeholder="t('user.user.name.id_card_name')" maxlength="30" :clearable="true" />
+        <el-form-item prop="account">
+            <el-input v-model="queryCommon.data.account" :placeholder="t('users.users.name.account')" maxlength="20" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="wx_open_id">
+            <el-input v-model="queryCommon.data.wx_open_id" :placeholder="t('users.users.name.wx_open_id')" maxlength="128" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="wx_union_id">
+            <el-input v-model="queryCommon.data.wx_union_id" :placeholder="t('users.users.name.wx_union_id')" maxlength="64" :clearable="true" />
         </el-form-item>
         <el-form-item prop="id_card_no">
-            <el-input v-model="queryCommon.data.id_card_no" :placeholder="t('user.user.name.id_card_no')" maxlength="30" :clearable="true" />
+            <el-input v-model="queryCommon.data.id_card_no" :placeholder="t('users.users.name.id_card_no')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="id_card_name">
+            <el-input v-model="queryCommon.data.id_card_name" :placeholder="t('users.users.name.id_card_name')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="id_card_gender">
+            <el-select-v2 v-model="queryCommon.data.id_card_gender" :options="tm('users.users.status.id_card_gender')" :placeholder="t('users.users.name.id_card_gender')" :clearable="true" style="width: 128px" />
+        </el-form-item>
+        <el-form-item prop="id_card_birthday">
+            <el-date-picker v-model="queryCommon.data.id_card_birthday" type="date" :placeholder="t('users.users.name.id_card_birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
         </el-form-item>
         <el-form-item prop="is_stop">
-            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('user.user.name.is_stop')" :clearable="true" style="width: 86px" />
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('users.users.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="time_range">
             <el-date-picker

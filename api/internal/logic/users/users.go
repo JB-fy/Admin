@@ -1,33 +1,33 @@
 package logic
 
 import (
-	daoUser "api/internal/dao/user"
+	daoUsers "api/internal/dao/users"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
 )
 
-type sUserUser struct{}
+type sUsers struct{}
 
-func NewUserUser() *sUserUser {
-	return &sUserUser{}
+func NewUsers() *sUsers {
+	return &sUsers{}
 }
 
 func init() {
-	service.RegisterUserUser(NewUserUser())
+	service.RegisterUsers(NewUsers())
 }
 
 // 新增
-func (logicThis *sUserUser) Create(ctx context.Context, data map[string]any) (id int64, err error) {
-	daoModelThis := daoUser.User.CtxDaoModel(ctx)
+func (logicThis *sUsers) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+	daoModelThis := daoUsers.Users.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
 	return
 }
 
 // 修改
-func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
-	daoModelThis := daoUser.User.CtxDaoModel(ctx)
+func (logicThis *sUsers) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
+	daoModelThis := daoUsers.Users.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
@@ -40,8 +40,8 @@ func (logicThis *sUserUser) Update(ctx context.Context, filter map[string]any, d
 }
 
 // 删除
-func (logicThis *sUserUser) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
-	daoModelThis := daoUser.User.CtxDaoModel(ctx)
+func (logicThis *sUsers) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
+	daoModelThis := daoUsers.Users.CtxDaoModel(ctx)
 
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {

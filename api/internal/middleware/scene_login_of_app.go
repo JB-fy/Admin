@@ -2,7 +2,7 @@ package middleware
 
 import (
 	daoAuth "api/internal/dao/auth"
-	daoUser "api/internal/dao/user"
+	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -50,7 +50,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		/**--------限制多地登录，多设备登录等情况下用（前置条件：登录时做过token缓存） 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoUser.User.CtxDaoModel(r.GetCtx()).Filter(daoUser.User.Columns().UserId, claims.LoginId).One()
+		info, _ := daoUsers.Users.CtxDaoModel(r.GetCtx()).Filter(daoUsers.Users.Columns().UserId, claims.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))
@@ -59,7 +59,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[daoUser.User.Columns().IsStop].Uint() == 1 {
+		if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994004, ``))
 			} else {

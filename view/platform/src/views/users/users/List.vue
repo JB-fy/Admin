@@ -37,29 +37,15 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'phone',
-            title: t('user.user.name.phone'),
-            key: 'phone',
-            align: 'center',
-            width: 150,
-        },
-        {
-            dataKey: 'account',
-            title: t('user.user.name.account'),
-            key: 'account',
-            align: 'center',
-            width: 150,
-        },
-        {
             dataKey: 'nickname',
-            title: t('user.user.name.nickname'),
+            title: t('users.users.name.nickname'),
             key: 'nickname',
             align: 'center',
             width: 150,
         },
         {
             dataKey: 'avatar',
-            title: t('user.user.name.avatar'),
+            title: t('users.users.name.avatar'),
             key: 'avatar',
             align: 'center',
             width: 100,
@@ -81,13 +67,13 @@ const table = reactive({
         },
         {
             dataKey: 'gender',
-            title: t('user.user.name.gender'),
+            title: t('users.users.name.gender'),
             key: 'gender',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('user.user.status.gender') as { value: any; label: string }[]
+                let obj = tm('users.users.status.gender') as { value: any; label: string }[]
                 let index = obj.findIndex((item) => {
                     return item.value == props.rowData.gender
                 })
@@ -96,7 +82,7 @@ const table = reactive({
         },
         {
             dataKey: 'birthday',
-            title: t('user.user.name.birthday'),
+            title: t('users.users.name.birthday'),
             key: 'birthday',
             align: 'center',
             width: 100,
@@ -104,47 +90,139 @@ const table = reactive({
         },
         {
             dataKey: 'address',
-            title: t('user.user.name.address'),
+            title: t('users.users.name.address'),
             key: 'address',
-            align: 'center',
-            width: 150,
-            hidden: true,
-        },
-        {
-            dataKey: 'open_id_of_wx',
-            title: t('user.user.name.open_id_of_wx'),
-            key: 'open_id_of_wx',
             align: 'center',
             width: 200,
             hidden: true,
         },
         {
-            dataKey: 'union_id_of_wx',
-            title: t('user.user.name.union_id_of_wx'),
-            key: 'union_id_of_wx',
+            dataKey: 'phone',
+            title: t('users.users.name.phone'),
+            key: 'phone',
             align: 'center',
             width: 150,
+        },
+        {
+            dataKey: 'email',
+            title: t('users.users.name.email'),
+            key: 'email',
+            align: 'center',
+            width: 150,
+        },
+        {
+            dataKey: 'account',
+            title: t('users.users.name.account'),
+            key: 'account',
+            align: 'center',
+            width: 150,
+        },
+        {
+            dataKey: 'wx_open_id',
+            title: t('users.users.name.wx_open_id'),
+            key: 'wx_open_id',
+            align: 'center',
+            width: 200,
             hidden: true,
         },
         {
-            dataKey: 'id_card_name',
-            title: t('user.user.name.id_card_name'),
-            key: 'id_card_name',
+            dataKey: 'wx_union_id',
+            title: t('users.users.name.wx_union_id'),
+            key: 'wx_union_id',
             align: 'center',
             width: 150,
-            hidden: true,
         },
         {
             dataKey: 'id_card_no',
-            title: t('user.user.name.id_card_no'),
+            title: t('users.users.name.id_card_no'),
             key: 'id_card_no',
             align: 'center',
             width: 150,
+        },
+        {
+            dataKey: 'id_card_name',
+            title: t('users.users.name.id_card_name'),
+            key: 'id_card_name',
+            align: 'center',
+            width: 150,
+            cellRenderer: (props: any): any => {
+                if (!authAction.isUpdate) {
+                    return [<div class="el-table-v2__cell-text">{props.rowData.id_card_name}</div>]
+                }
+                if (!props.rowData?.editIdCardName?.isEdit) {
+                    return [
+                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editIdCardName = { isEdit: true, oldValue: props.rowData.id_card_name })}>
+                            {props.rowData.id_card_name}
+                        </div>,
+                    ]
+                }
+                let currentRef: any
+                return [
+                    <el-input
+                        ref={(el: any) => {
+                            el?.focus()
+                            currentRef = el
+                        }}
+                        v-model={props.rowData.id_card_name}
+                        placeholder={t('users.users.name.id_card_name')}
+                        maxlength={30}
+                        show-word-limit={true}
+                        onBlur={() => {
+                            props.rowData.editIdCardName.isEdit = false
+                            if (props.rowData.id_card_name == props.rowData.editIdCardName.oldValue) {
+                                return
+                            }
+                            if (!props.rowData.id_card_name) {
+                                props.rowData.id_card_name = props.rowData.editIdCardName.oldValue
+                                return
+                            }
+                            handleUpdate({ id_arr: [props.rowData.id], id_card_name: props.rowData.id_card_name }).catch(() => (props.rowData.id_card_name = props.rowData.editIdCardName.oldValue))
+                        }}
+                        onKeydown={(event: any) => {
+                            switch (event.keyCode) {
+                                case 13: //13：Enter键 27：Esc键 32：空格键
+                                    currentRef?.blur()
+                                    break
+                            }
+                        }}
+                    />,
+                ]
+            },
+        },
+        {
+            dataKey: 'id_card_gender',
+            title: t('users.users.name.id_card_gender'),
+            key: 'id_card_gender',
+            align: 'center',
+            width: 100,
+            cellRenderer: (props: any): any => {
+                let tagType = tm('config.const.tagType') as string[]
+                let obj = tm('users.users.status.id_card_gender') as { value: any; label: string }[]
+                let index = obj.findIndex((item) => {
+                    return item.value == props.rowData.id_card_gender
+                })
+                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
+            },
+        },
+        {
+            dataKey: 'id_card_birthday',
+            title: t('users.users.name.id_card_birthday'),
+            key: 'id_card_birthday',
+            align: 'center',
+            width: 100,
+            sortable: true,
+        },
+        {
+            dataKey: 'id_card_address',
+            title: t('users.users.name.id_card_address'),
+            key: 'id_card_address',
+            align: 'center',
+            width: 200,
             hidden: true,
         },
         {
             dataKey: 'is_stop',
-            title: t('user.user.name.is_stop'),
+            title: t('users.users.name.is_stop'),
             key: 'is_stop',
             align: 'center',
             width: 100,
@@ -214,7 +292,7 @@ const table = reactive({
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/info', { id: id })
+    request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/info', { id: id })
         .then((res) => {
             saveCommon.data = { ...res.data.info }
             switch (type) {
@@ -234,7 +312,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
 }
 //更新
 const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
-    await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/update', param, true)
+    await request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/update', param, true)
 }
 
 //分页
@@ -268,7 +346,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param)
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/list', param)
         table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
     } catch (error) {}
@@ -289,7 +367,7 @@ defineExpose({
         </el-col>
         <el-col :span="8" style="text-align: right">
             <el-space :size="10" style="height: 100%">
-                <my-export-button i18nPrefix="user.user" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/user/user/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <my-export-button i18nPrefix="users.users" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/users/users/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <el-dropdown max-height="300" :hide-on-click="false">
                     <el-button type="info" :circle="true">
                         <autoicon-ep-hide />

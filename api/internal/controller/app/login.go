@@ -5,7 +5,7 @@ import (
 	apiCurrent "api/api/app"
 	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
-	daoUser "api/internal/dao/user"
+	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	one_click "api/internal/utils/one-click"
 	"context"
@@ -29,16 +29,21 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
+	info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[daoUser.User.Columns().IsStop].Uint() == 1 {
+	if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
 
+	saltStatic, _ := daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Salt)
+	if saltStatic == `` {
+		err = utils.NewErrorCode(ctx, 39990010, ``)
+		return
+	}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	saltDynamic := grand.S(8)
@@ -46,7 +51,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	if err != nil {
 		return
 	}
-	res = &api.CommonSaltRes{SaltStatic: info[daoUser.User.Columns().Salt].String(), SaltDynamic: saltDynamic}
+	res = &api.CommonSaltRes{SaltStatic: saltStatic, SaltDynamic: saltDynamic}
 	return
 }
 
@@ -57,12 +62,12 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	info, _ := daoUser.User.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
+	info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(`login_name`, req.LoginName).One()
 	if info.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if info[daoUser.User.Columns().IsStop].Uint() == 1 {
+	if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
 		err = utils.NewErrorCode(ctx, 39990002, ``)
 		return
 	}
@@ -70,13 +75,18 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	if req.Password != `` { //密码
+		password, _ := daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Password)
+		if password == `` {
+			err = utils.NewErrorCode(ctx, 39990010, ``)
+			return
+		}
 		salt, _ := cache.NewSalt(ctx, sceneCode, req.LoginName).Get()
-		if salt == `` || gmd5.MustEncrypt(info[daoUser.User.Columns().Password].String()+salt) != req.Password {
+		if salt == `` || gmd5.MustEncrypt(password+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
 		}
 	} else if req.SmsCode != `` { //短信验证码
-		phone := info[daoUser.User.Columns().Phone].String()
+		phone := info[daoUsers.Users.Columns().Phone].String()
 		if phone == `` {
 			err = utils.NewErrorCode(ctx, 39990007, ``)
 			return
@@ -89,7 +99,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		}
 	}
 
-	claims := utils.CustomClaims{LoginId: info[daoUser.User.Columns().UserId].Uint()}
+	claims := utils.CustomClaims{LoginId: info[daoUsers.Users.Columns().UserId].Uint()}
 	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
 	token, err := jwt.CreateToken(claims)
 	if err != nil {
@@ -105,16 +115,16 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
 	data := g.Map{}
 	if req.Account != `` {
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Account, req.Account).One()
+		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Account, req.Account).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
-		data[daoUser.User.Columns().Account] = req.Account
-		data[daoUser.User.Columns().Nickname] = req.Account
+		data[daoUsers.Users.Columns().Account] = req.Account
+		data[daoUsers.Users.Columns().Nickname] = req.Account
 	}
 	if req.Password != `` {
-		data[daoUser.User.Columns().Password] = req.Password
+		data[daoUsers.Privacy.Columns().Password] = req.Password
 	}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
@@ -125,16 +135,16 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 
-		info, _ := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, req.Phone).One()
+		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, req.Phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
-		data[daoUser.User.Columns().Phone] = req.Phone
-		data[daoUser.User.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
+		data[daoUsers.Users.Columns().Phone] = req.Phone
+		data[daoUsers.Users.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 
-	userId, err := daoUser.User.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	userId, err := daoUsers.Users.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
 	if err != nil {
 		return
 	}
@@ -161,12 +171,13 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		return
 	}
 
-	row, err := daoUser.User.CtxDaoModel(ctx).Filter(daoUser.User.Columns().Phone, req.Phone).HookUpdate(g.Map{daoUser.User.Columns().Password: req.Password}).UpdateAndGetAffected()
-	if err != nil {
+	daoModelUsers := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, req.Phone).SetIdArr()
+	if len(daoModelUsers.IdArr) == 0 {
+		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	if row == 0 {
-		err = utils.NewErrorCode(ctx, 39990000, ``)
+	_, err = daoModelUsers.HookUpdate(g.Map{daoUsers.Privacy.Columns().Password: req.Password}).Update()
+	if err != nil {
 		return
 	}
 	return
@@ -194,10 +205,10 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			err = errTmp
 			return
 		}
-		filter[daoUser.User.Columns().OpenIdOfWx] = accessToken.OpenId
-		saveData[daoUser.User.Columns().OpenIdOfWx] = accessToken.OpenId
+		filter[daoUsers.Users.Columns().WxOpenId] = accessToken.OpenId
+		saveData[daoUsers.Users.Columns().WxOpenId] = accessToken.OpenId
 		if accessToken.UnionId != `` {
-			saveData[daoUser.User.Columns().UnionIdOfWx] = accessToken.UnionId
+			saveData[daoUsers.Users.Columns().WxUnionId] = accessToken.UnionId
 		}
 		if garray.NewStrArrayFrom([]string{`snsapi_userinfo`, `snsapi_login`}).Contains(accessToken.Scope) {
 			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(accessToken.OpenId, accessToken.AccessToken)
@@ -205,10 +216,10 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 				err = errTmp
 				return
 			}
-			saveData[daoUser.User.Columns().UnionIdOfWx] = userInfo.UnionId
-			saveData[daoUser.User.Columns().Nickname] = userInfo.Nickname
-			saveData[daoUser.User.Columns().Gender] = userInfo.Gender
-			saveData[daoUser.User.Columns().Avatar] = userInfo.Avatar
+			saveData[daoUsers.Users.Columns().WxUnionId] = userInfo.UnionId
+			saveData[daoUsers.Users.Columns().Nickname] = userInfo.Nickname
+			saveData[daoUsers.Users.Columns().Gender] = userInfo.Gender
+			saveData[daoUsers.Users.Columns().Avatar] = userInfo.Avatar
 		}
 	case `oneClickOfYidun`: //易盾
 		phone, errTmp := one_click.NewOneClickOfYidun(ctx).Check(req.TokenOfYidun, req.AccessTokenOfYidun)
@@ -216,21 +227,21 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			err = errTmp
 			return
 		}
-		filter[daoUser.User.Columns().Phone] = phone
-		saveData[daoUser.User.Columns().Phone] = phone
+		filter[daoUsers.Users.Columns().Phone] = phone
+		saveData[daoUsers.Users.Columns().Phone] = phone
 	}
 
-	userId, _ := daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.Columns().UserId)
+	userId, _ := daoUsers.Users.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUsers.Users.Columns().UserId)
 	if userId == 0 {
-		userIdTmp, errTmp := daoUser.User.CtxDaoModel(ctx).HookInsert(saveData).InsertAndGetId()
+		userIdTmp, errTmp := daoUsers.Users.CtxDaoModel(ctx).HookInsert(saveData).InsertAndGetId()
 		if errTmp != nil { //报错就是并发引起的唯一索引冲突，故再做一次查询
-			userId, _ = daoUser.User.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUser.User.Columns().UserId)
-			// daoUser.User.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
+			userId, _ = daoUsers.Users.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUsers.Users.Columns().UserId)
+			// daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
 		} else {
 			userId = uint(userIdTmp)
 		}
 	} /*  else {
-		daoUser.User.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
+		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
 	} */
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)

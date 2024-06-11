@@ -6,7 +6,7 @@ import (
 	controllerAuth "api/internal/controller/platform/auth"
 	controllerMy "api/internal/controller/platform/my"
 	controllerPlatform "api/internal/controller/platform/platform"
-	controllerUser "api/internal/controller/platform/user"
+	controllerUsers "api/internal/controller/platform/users"
 	"api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -59,8 +59,8 @@ func InitRouterPlatform(s *ghttp.Server) {
 				group.Bind(controllerPlatform.NewConfig())
 			})
 
-			group.Group(`/user`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerUser.NewUser())
+			group.Group(`/users`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerUsers.NewUsers())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/

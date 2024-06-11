@@ -15,16 +15,15 @@ type ProfileInfoRes struct {
 }
 
 type ProfileInfo struct {
-	UserId     uint   `json:"userId" dc:"用户ID"`
-	Phone      string `json:"phone" dc:"手机"`
-	Account    string `json:"account" dc:"账号"`
-	Nickname   string `json:"nickname" dc:"昵称"`
-	Avatar     string `json:"avatar" dc:"头像"`
-	Gender     uint   `json:"gender" dc:"性别：0未设置 1男 2女"`
-	Birthday   string `json:"birthday" dc:"生日"`
-	Address    string `json:"address" dc:"详细地址"`
-	IdCardName string `json:"id_card_name" dc:"身份证姓名"`
-	IdCardNo   string `json:"id_card_no" dc:"身份证号码"`
+	UserId   uint   `json:"userId" dc:"用户ID"`
+	Nickname string `json:"nickname" dc:"昵称"`
+	Avatar   string `json:"avatar" dc:"头像"`
+	Gender   uint   `json:"gender" dc:"性别：0未设置 1男 2女"`
+	Birthday string `json:"birthday" dc:"生日"`
+	Address  string `json:"address" dc:"详细地址"`
+	Phone    string `json:"phone" dc:"手机"`
+	Email    string `json:"email" dc:"邮箱"`
+	Account  string `json:"account" dc:"账号"`
 }
 
 /*--------个人信息 结束--------*/
@@ -32,13 +31,14 @@ type ProfileInfo struct {
 /*--------修改个人信息 开始--------*/
 type ProfileUpdateReq struct {
 	g.Meta               `path:"/profile/update" method:"post" tags:"APP/我的" sm:"修改个人信息"`
-	Phone                *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Account              *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Nickname             *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar               *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Gender               *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday             *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	Address              *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
+	Phone                *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Email                *string     `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
+	Account              *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	IdCardName           *string     `json:"id_card_name,omitempty" v:"required-with:IdCardNo|max-length:30" dc:"身份证姓名"`
 	IdCardNo             *string     `json:"id_card_no,omitempty" v:"required-with:IdCardName|max-length:30" dc:"身份证号码"`
 	Password             *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
