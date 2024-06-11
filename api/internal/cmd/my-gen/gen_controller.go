@@ -457,24 +457,29 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 	tpl := tplEM.tpl
 	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
 	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
-	switch tplEM.TableType {
-	case internal.TableTypeExtendOne:
-		for _, v := range tplEM.FieldList {
-			field := daoPath + `.Columns().` + v.FieldCaseCamel
-			controller.list = append(controller.list, field)
-			controller.info = append(controller.info, field)
-			controller.tree = append(controller.tree, field)
-		}
-	case internal.TableTypeMiddleOne:
-		for _, v := range append(tplEM.FieldListOfIdSuffix, tplEM.FieldListOfOther...) {
-			field := daoPath + `.Columns().` + v.FieldCaseCamel
-			controller.list = append(controller.list, field)
-			controller.info = append(controller.info, field)
-			controller.tree = append(controller.tree, field)
+	controllerAppend := func(field []myGenField) {
+		for _, v := range field {
+			switch v.FieldTypeName {
+			case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
+			case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
+			default:
+				field := daoPath + `.Columns().` + v.FieldCaseCamel
+				controller.list = append(controller.list, field)
+				controller.info = append(controller.info, field)
+				controller.tree = append(controller.tree, field)
+			}
 		}
 	}
+	switch tplEM.TableType {
+	case internal.TableTypeExtendOne:
+		controllerAppend(tplEM.FieldList)
+	case internal.TableTypeMiddleOne:
+		controllerAppend(append(tplEM.FieldListOfIdSuffix, tplEM.FieldListOfOther...))
+	}
 	for _, v := range tplEM.FieldList {
-		controller.Merge(getControllerField(tpl, v))
+		controllerField := getControllerField(tpl, v)
+		controllerField.diff = []string{}
+		controller.Merge(controllerField)
 	}
 	return
 }
