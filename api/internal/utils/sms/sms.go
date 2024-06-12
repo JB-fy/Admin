@@ -6,8 +6,8 @@ import (
 )
 
 type Sms interface {
-	Send(phone string, code string) (err error)
-	SendSms(phoneArr []string, templateParam string) (err error)
+	SendCode(phone string, code string) (err error)
+	SendSms(phoneArr []string, message string, paramOpt ...any) (err error)
 }
 
 func NewSms(ctx context.Context, smsTypeOpt ...string) Sms {

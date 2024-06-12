@@ -36,12 +36,17 @@ func NewSmsOfAliyun(ctx context.Context, configOpt ...map[string]any) *SmsOfAliy
 	return &smsOfAliyunObj
 }
 
-func (smsThis *SmsOfAliyun) Send(phone string, code string) (err error) {
-	err = smsThis.SendSms([]string{phone}, `{"code": "`+code+`"}`)
+func (smsThis *SmsOfAliyun) SendCode(phone string, code string) (err error) {
+	err = smsThis.SendSms([]string{phone}, `{"code": "`+code+`"}`, smsThis.SignName, smsThis.TemplateCode)
 	return
 }
 
-func (smsThis *SmsOfAliyun) SendSms(phoneArr []string, templateParam string) (err error) {
+func (smsThis *SmsOfAliyun) SendSms(phoneArr []string, message string, paramOpt ...any) (err error) {
+	if len(paramOpt) < 2 {
+		err = errors.New(`缺少签名和模板参数`)
+		return
+	}
+
 	client, err := smsThis.CreateClient()
 	if err != nil {
 		return
@@ -49,10 +54,9 @@ func (smsThis *SmsOfAliyun) SendSms(phoneArr []string, templateParam string) (er
 
 	sendSmsRequest := &dysmsapi20170525.SendSmsRequest{
 		PhoneNumbers:  tea.String(strings.Join(phoneArr, `,`)),
-		SignName:      tea.String(smsThis.SignName),
-		TemplateCode:  tea.String(smsThis.TemplateCode),
-		TemplateParam: tea.String(templateParam),
-		// TemplateParam: tea.String(`{"code": "1234"}`),
+		SignName:      tea.String(gconv.String(paramOpt[0])),
+		TemplateCode:  tea.String(gconv.String(paramOpt[1])),
+		TemplateParam: tea.String(message),
 	}
 
 	tryErr := func() (_e error) {

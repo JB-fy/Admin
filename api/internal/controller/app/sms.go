@@ -81,7 +81,7 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	smsCode := grand.Digits(4)
-	err = sms.NewSms(ctx).Send(phone, smsCode)
+	err = sms.NewSms(ctx).SendCode(phone, smsCode)
 	if err != nil {
 		return
 	}
