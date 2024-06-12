@@ -47,11 +47,6 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 		case `sms_code_to_phone`:
-			/* if loginInfo[daoPlatform.Admin.Columns().Phone].String() != `` {
-				err = utils.NewErrorCode(ctx, 39990005, ``)
-				return
-			} */
-
 			phone := gconv.String(data[`phone`])
 			sceneInfo := utils.GetCtxSceneInfo(ctx)
 			sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()

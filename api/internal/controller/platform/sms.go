@@ -29,10 +29,6 @@ func (controllerThis *Sms) Send(ctx context.Context, req *apiCurrent.SmsSendReq)
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		/* if loginInfo[daoPlatform.Admin.Columns().Phone].String() != `` {
-			err = utils.NewErrorCode(ctx, 39990005, ``)
-			return
-		} */
 		info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Phone, phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990006, ``)
