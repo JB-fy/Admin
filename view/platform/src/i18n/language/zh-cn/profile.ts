@@ -1,6 +1,5 @@
 export default {
-    send_sms_code: '发送短信',
-    send_email_code: '发送邮件',
+    send_code: '发送验证码',
     name: {
         nickname: '昵称',
         avatar: '头像',

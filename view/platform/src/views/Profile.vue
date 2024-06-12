@@ -68,8 +68,9 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.account || delete param.account
             param.phone || delete param.phone
+            param.email || delete param.email
+            param.account || delete param.account
             param.password ? (param.password = md5(param.password)) : delete param.password
             delete param.repeat_password
             param.password_to_check ? (param.password_to_check = md5(param.password_to_check)) : delete param.password_to_check
@@ -97,7 +98,7 @@ const smsCountdown = reactive({
     send: async () => {
         try {
             smsCountdown.isShow = true
-            await request(t('config.VITE_HTTP_API_PREFIX') + '/sms/send', { use_scene: 4, phone: saveForm.data.phone }, true)
+            await request(t('config.VITE_HTTP_API_PREFIX') + '/code/send', { scene: 4, to: saveForm.data.phone }, true)
             smsCountdown.value = Date.now() + 5 * 60 * 1000
         } catch (error) {
             smsCountdown.finish()
@@ -115,7 +116,7 @@ const emailCountdown = reactive({
     send: async () => {
         try {
             emailCountdown.isShow = true
-            await request(t('config.VITE_HTTP_API_PREFIX') + '/email/send', { use_scene: 4, email: saveForm.data.email }, true)
+            await request(t('config.VITE_HTTP_API_PREFIX') + '/code/send', { scene: 14, to: saveForm.data.email }, true)
             emailCountdown.value = Date.now() + 5 * 60 * 1000
         } catch (error) {
             emailCountdown.finish()
@@ -162,7 +163,7 @@ const emailCountdown = reactive({
                     <el-input v-model="saveForm.data.sms_code_to_bind_phone" :placeholder="t('profile.name.sms_code_to_bind_phone')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px">
                         <template #append>
                             <el-countdown v-if="smsCountdown.isShow && smsCountdown.value > 0" :value="smsCountdown.value" @finish="smsCountdown.finish" format="mm:ss" value-style="color: #909399;" />
-                            <el-button v-else :loading="smsCountdown.isShow" @click="smsCountdown.send">{{ t('profile.send_sms_code') }}</el-button>
+                            <el-button v-else :loading="smsCountdown.isShow" @click="smsCountdown.send">{{ t('profile.send_code') }}</el-button>
                         </template>
                     </el-input>
                     <el-alert :title="t('profile.tip.sms_code_to_bind_phone')" type="info" :show-icon="true" :closable="false" />
@@ -171,7 +172,7 @@ const emailCountdown = reactive({
                     <el-input v-model="saveForm.data.email_code_to_bind_email" :placeholder="t('profile.name.email_code_to_bind_email')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px">
                         <template #append>
                             <el-countdown v-if="emailCountdown.isShow && emailCountdown.value > 0" :value="emailCountdown.value" @finish="emailCountdown.finish" format="mm:ss" value-style="color: #909399;" />
-                            <el-button v-else :loading="emailCountdown.isShow" @click="emailCountdown.send">{{ t('profile.send_email_code') }}</el-button>
+                            <el-button v-else :loading="emailCountdown.isShow" @click="emailCountdown.send">{{ t('profile.send_code') }}</el-button>
                         </template>
                     </el-input>
                     <el-alert :title="t('profile.tip.email_code_to_bind_email')" type="info" :show-icon="true" :closable="false" />
