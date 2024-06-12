@@ -91,7 +91,7 @@ saveForm.initData()
         </el-form-item>
         <el-form-item :label="t('platform.config.plugin.name.emailCodeTemplate')" prop="emailCodeTemplate">
             <el-alert :title="t('platform.config.plugin.tip.emailCodeTemplate')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
-                    <el-input v-model="saveForm.data.emailCodeTemplate" type="textarea" :autosize="{ minRows: 3 }" />
+            <el-input v-model="saveForm.data.emailCodeTemplate" type="textarea" :autosize="{ minRows: 3 }" />
         </el-form-item>
         <el-form-item>
             <el-button v-if="authAction.isSmsSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>

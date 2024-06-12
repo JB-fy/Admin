@@ -116,7 +116,7 @@ export default {
         payOfAliOpAppId: 'JSAPI支付需设置',
 
         emailOfCommonPassword: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
-        emailCodeTemplate:'需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
+        emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
 
         idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 
