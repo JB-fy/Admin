@@ -18,6 +18,7 @@ type ProfileInfo struct {
 	Nickname string `json:"nickname" dc:"昵称"`
 	Avatar   string `json:"avatar" dc:"头像"`
 	Phone    string `json:"phone" dc:"手机"`
+	Email    string `json:"email" dc:"邮箱"`
 	Account  string `json:"account" dc:"账号"`
 }
 
@@ -32,7 +33,7 @@ type ProfileUpdateReq struct {
 	Email                *string `json:"email,omitempty" v:"email" dc:"邮箱"`
 	Account              *string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password             *string `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
-	PasswordToCheck      *string `json:"password_to_check,omitempty" v:"required-with:Account,Phone,Password|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号，手机，密码时必填"`
+	PasswordToCheck      *string `json:"password_to_check,omitempty" v:"required-with:Phone,Email,Account,Password|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改手机，邮箱，账号，密码时必填"`
 	SmsCodeToBindPhone   *string `json:"sms_code_to_bind_phone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。修改手机时必填"`
 	EmailCodeToBindEmail *string `json:"email_code_to_bind_email,omitempty" v:"required-with:Email|size:4" dc:"邮箱验证码。修改邮箱时必填"`
 }

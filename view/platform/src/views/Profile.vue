@@ -45,7 +45,7 @@ const saveForm = reactive({
             },
         ],
         password_to_check: [
-            { required: computed((): boolean => (saveForm.data.account || saveForm.data.phone || saveForm.data.password ? true : false)), message: t('profile.tip.password_to_check') },
+            { required: computed((): boolean => (saveForm.data.phone || saveForm.data.email || saveForm.data.account || saveForm.data.password ? true : false)), message: t('profile.tip.password_to_check') },
             { type: 'string', trigger: 'blur', min: 6, max: 30, message: t('validation.between.string', { min: 6, max: 30 }) },
             {
                 trigger: 'blur',
@@ -154,7 +154,7 @@ const emailCountdown = reactive({
                     <el-input v-model="saveForm.data.repeat_password" :placeholder="t('profile.name.repeat_password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('profile.tip.repeat_password')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item v-if="saveForm.data.account || saveForm.data.phone || saveForm.data.password" :label="t('profile.name.password_to_check')" prop="password_to_check">
+                <el-form-item v-if="saveForm.data.phone || saveForm.data.email || saveForm.data.account || saveForm.data.password" :label="t('profile.name.password_to_check')" prop="password_to_check">
                     <el-input v-model="saveForm.data.password_to_check" :placeholder="t('profile.name.password_to_check')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert :title="t('profile.tip.password_to_check')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
