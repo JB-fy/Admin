@@ -46,12 +46,22 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 			delete(data, k)
-		case `sms_code_to_phone`:
+		case `sms_code_to_bind_phone`:
 			phone := gconv.String(data[`phone`])
 			sceneInfo := utils.GetCtxSceneInfo(ctx)
 			sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 4).Get() //使用场景：4绑定手机
 			if smsCode == `` || smsCode != gconv.String(v) {
+				err = utils.NewErrorCode(ctx, 39990008, ``)
+				return
+			}
+			delete(data, k)
+		case `email_code_to_bind_email`:
+			email := gconv.String(data[`email`])
+			sceneInfo := utils.GetCtxSceneInfo(ctx)
+			sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+			emailCode, _ := cache.NewEmail(ctx, sceneCode, email, 4).Get() //使用场景：4绑定邮箱
+			if emailCode == `` || emailCode != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
 			}
