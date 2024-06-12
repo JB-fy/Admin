@@ -18,7 +18,7 @@ import (
 )
 */
 
-/* import (
+import (
 	"api/internal/dao"
 	"api/internal/dao/users/internal"
 )
@@ -36,4 +36,4 @@ var (
 
 func RegisterUsers(d DaoUsers) {
 	Users = d
-} */
+}
