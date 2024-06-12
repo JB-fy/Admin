@@ -16,8 +16,9 @@ type LoginSaltReq struct {
 type LoginLoginReq struct {
 	g.Meta    `path:"/login" method:"post" tags:"APP/登录" sm:"登录"`
 	LoginName string `json:"login_name" v:"required|max-length:20" dc:"手机/邮箱/账号"`
-	Password  string `json:"password" v:"required-without:SmsCode|size:32" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态密码盐)+动态密码盐)"`
-	SmsCode   string `json:"sms_code" v:"required-without:Password|size:4" dc:"短信验证码"`
+	Password  string `json:"password" v:"required-without-all:SmsCode,EmailCode|size:32" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态密码盐)+动态密码盐)"`
+	SmsCode   string `json:"sms_code" v:"required-without-all:EmailCode,Password|size:4" dc:"短信验证码"`
+	EmailCode string `json:"email_code" v:"required-without-all:SmsCode,Password|size:4" dc:"邮箱验证码"`
 }
 
 /*--------登录 结束--------*/

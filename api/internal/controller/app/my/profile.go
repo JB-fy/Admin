@@ -47,6 +47,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	var privacyInfo gdb.Record
 	initPrivacyInfo := func() {
 		if !isGetPrivacy {
+			isGetPrivacy = true
 			privacyInfo, _ = daoUsers.Privacy.CtxDaoModel(ctx).Fields(daoUsers.Privacy.Columns().Password, daoUsers.Privacy.Columns().Salt).Filter(daoUsers.Privacy.Columns().UserId, loginInfo[`login_id`]).One()
 		}
 	}
@@ -58,7 +59,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			return
 		} */
 		case `password`:
-			if g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil && g.Validator().Rules(`required`).Data(req.SmsCodeToPassword).Run(ctx) != nil {
+			if g.Validator().Rules(`required`).Data(req.PasswordToCheck).Run(ctx) != nil && g.Validator().Rules(`required`).Data(req.SmsCodeToPassword).Run(ctx) != nil && g.Validator().Rules(`required`).Data(req.EmailCodeToPassword).Run(ctx) != nil {
 				err = utils.NewErrorCode(ctx, 89999999, ``)
 				return
 			}
@@ -113,6 +114,46 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 			delete(data, k)
 			data[daoUsers.Users.Columns().Phone] = nil
+		case `email_code_to_password`:
+			email := loginInfo[daoUsers.Users.Columns().Email].String()
+			if email == `` {
+				err = utils.NewErrorCode(ctx, 39991013, ``)
+				return
+			}
+
+			code, _ := cache.NewCode(ctx, sceneCode, email, 13).Get() //场景：13密码修改(邮箱)
+			if code == `` || code != gconv.String(v) {
+				err = utils.NewErrorCode(ctx, 39991999, ``)
+				return
+			}
+			delete(data, k)
+		case `email_code_to_bind_email`:
+			if loginInfo[daoUsers.Users.Columns().Email].String() != `` {
+				err = utils.NewErrorCode(ctx, 39991011, ``)
+				return
+			}
+
+			email := gconv.String(data[`email`])
+			code, _ := cache.NewCode(ctx, sceneCode, email, 14).Get() //场景：14绑定(邮箱)
+			if code == `` || code != gconv.String(v) {
+				err = utils.NewErrorCode(ctx, 39991999, ``)
+				return
+			}
+			delete(data, k)
+		case `email_code_to_unbing_email`:
+			email := loginInfo[daoUsers.Users.Columns().Email].String()
+			if email == `` {
+				err = utils.NewErrorCode(ctx, 39991013, ``)
+				return
+			}
+
+			code, _ := cache.NewCode(ctx, sceneCode, email, 15).Get() //场景：15解绑(邮箱)
+			if code == `` || code != gconv.String(v) {
+				err = utils.NewErrorCode(ctx, 39991999, ``)
+				return
+			}
+			delete(data, k)
+			data[daoUsers.Users.Columns().Email] = nil
 		case `id_card_no`:
 			initPrivacyInfo()
 			if privacyInfo[daoUsers.Privacy.Columns().IdCardNo].String() != `` {

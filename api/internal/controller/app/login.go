@@ -114,9 +114,19 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39991003, ``)
 			return
 		}
-
 		code, _ := cache.NewCode(ctx, sceneCode, phone, 0).Get() //场景：0登录(手机)
 		if code == `` || code != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+	} else if req.EmailCode != `` { //邮箱验证码
+		email := info[daoUsers.Users.Columns().Email].String()
+		if email == `` {
+			err = utils.NewErrorCode(ctx, 39991013, ``)
+			return
+		}
+		code, _ := cache.NewCode(ctx, sceneCode, email, 0).Get() //场景：10登录(邮箱)
+		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
