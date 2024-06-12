@@ -6,16 +6,18 @@ import (
 	"crypto/tls"
 	"net/smtp"
 
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type EmailOfCommon struct {
-	Ctx       context.Context
-	SmtpHost  string `json:"emailOfCommonSmtpHost"`
-	SmtpPort  string `json:"emailOfCommonSmtpPort"`
-	FromEmail string `json:"emailOfCommonFromEmail"`
-	Password  string `json:"emailOfCommonPassword"` //注意：这里是QQ的授权码，不是密码
+	Ctx          context.Context
+	SmtpHost     string `json:"emailOfCommonSmtpHost"`
+	SmtpPort     string `json:"emailOfCommonSmtpPort"`
+	FromEmail    string `json:"emailOfCommonFromEmail"`
+	Password     string `json:"emailOfCommonPassword"` //QQ邮箱需注意：填QQ邮箱的授权码，而不是密码
+	CodeSubject  string `json:"emailCodeSubject"`
+	CodeTemplate string `json:"emailCodeTemplate"`
 }
 
 func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOfCommon {
@@ -23,14 +25,8 @@ func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOf
 	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
 		config = configOpt[0]
 	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`emailOfCommonSmtpHost`, `emailOfCommonSmtpPort`, `emailOfCommonFromEmail`, `emailOfCommonPassword`})
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`emailOfCommonSmtpHost`, `emailOfCommonSmtpPort`, `emailOfCommonFromEmail`, `emailOfCommonPassword`, `emailCodeSubject`, `emailCodeTemplate`})
 		config = configTmp.Map()
-	}
-	config = g.Map{
-		`emailOfCommonSmtpHost`:  `smtp.qq.com`,
-		`emailOfCommonSmtpPort`:  `465`,
-		`emailOfCommonFromEmail`: `274456806@qq.com`,
-		`emailOfCommonPassword`:  `nsiuuffaemvpbjei`,
 	}
 
 	emailOfCommonObj := EmailOfCommon{Ctx: ctx}
@@ -39,15 +35,13 @@ func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOf
 }
 
 func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {
-	message := `From: ` + emailThis.FromEmail + "\r\n" +
-		`To: ` + toEmail + "\r\n" +
-		`Subject: 您的邮箱验证码` + "\r\n\r\n" +
-		`验证码：` + code + `
-说明：
-1. 请在验证码输入框中输入上面的验证码，以完成您的邮箱验证。
-2. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。
-3. 出于安全考虑，请不要将此验证码分享给任何人。` + "\r\n"
-	err = emailThis.SendEmail([]string{toEmail}, message)
+	messageArr := []string{
+		`From: ` + emailThis.FromEmail,
+		`To: ` + toEmail,
+		`Subject: ` + emailThis.CodeSubject,
+		gstr.Replace(emailThis.CodeTemplate, `{code}`, code),
+	}
+	err = emailThis.SendEmail([]string{toEmail}, gstr.Join(messageArr, "\r\n"))
 	return
 }
 

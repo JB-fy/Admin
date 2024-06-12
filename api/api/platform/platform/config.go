@@ -69,6 +69,14 @@ type Config struct {
 	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" dc:"阿里云SMS-签名"`
 	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" dc:"阿里云SMS-模板标识"`
 
+	EmailType              *string `json:"emailType,omitempty" dc:"邮箱方式"`
+	EmailOfCommonSmtpHost  *string `json:"emailOfCommonSmtpHost,omitempty" dc:"通用-SmtpHost"`
+	EmailOfCommonSmtpPort  *string `json:"emailOfCommonSmtpPort,omitempty" dc:"通用-SmtpPort"`
+	EmailOfCommonFromEmail *string `json:"emailOfCommonFromEmail,omitempty" dc:"通用-邮箱"`
+	EmailOfCommonPassword  *string `json:"emailOfCommonPassword,omitempty" dc:"通用-密码"`
+	EmailCodeSubject       *string `json:"emailCodeSubject,omitempty" dc:"验证码邮件标题"`
+	EmailCodeTemplate      *string `json:"emailCodeTemplate,omitempty" dc:"验证码邮件内容"`
+
 	IdCardType            *string `json:"idCardType,omitempty" dc:"实名认证方式"`
 	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" dc:"阿里云IdCard-域名"`
 	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" dc:"阿里云IdCard-请求路径"`
@@ -162,6 +170,14 @@ type ConfigSaveReq struct {
 	SmsOfAliyunEndpoint        *string `json:"smsOfAliyunEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
 	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
 	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
+
+	EmailType              *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
+	EmailOfCommonSmtpHost  *string `json:"emailOfCommonSmtpHost,omitempty" v:"" dc:"通用-SmtpHost"`
+	EmailOfCommonSmtpPort  *string `json:"emailOfCommonSmtpPort,omitempty" v:"" dc:"通用-SmtpPort"`
+	EmailOfCommonFromEmail *string `json:"emailOfCommonFromEmail,omitempty" v:"email" dc:"通用-邮箱"`
+	EmailOfCommonPassword  *string `json:"emailOfCommonPassword,omitempty" v:"" dc:"通用-密码"`
+	EmailCodeSubject       *string `json:"emailCodeSubject,omitempty" v:"" dc:"验证码标题"`
+	EmailCodeTemplate      *string `json:"emailCodeTemplate,omitempty" v:"" dc:"验证码模板"`
 
 	IdCardType            *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
 	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`

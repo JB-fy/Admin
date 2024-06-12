@@ -3,6 +3,7 @@ export default {
         upload: '上传',
         pay: '支付',
         sms: '短信',
+        email: '邮箱',
         idCard: '实名认证',
         oneClick: '一键登录',
         push: '推送',
@@ -51,6 +52,14 @@ export default {
         smsOfAliyunSignName: '阿里云SMS-签名',
         smsOfAliyunTemplateCode: '阿里云SMS-模板标识',
 
+        emailType: '邮箱方式',
+        emailOfCommonSmtpHost: '通用-SmtpHost',
+        emailOfCommonSmtpPort: '通用-SmtpPort',
+        emailOfCommonFromEmail: '通用-邮箱',
+        emailOfCommonPassword: '通用-密码',
+        emailCodeSubject: '验证码标题',
+        emailCodeTemplate: '验证码模板',
+
         idCardType: '实名认证方式',
         idCardOfAliyunHost: '阿里云IdCard-域名',
         idCardOfAliyunPath: '阿里云IdCard-请求路径',
@@ -91,6 +100,7 @@ export default {
             { value: `uploadOfAliyunOss`, label: '阿里云' },
         ],
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
+        emailType: [{ value: `emailOfCommon`, label: '通用' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
         pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
@@ -104,6 +114,8 @@ export default {
         uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
 
         payOfAliOpAppId: 'JSAPI支付需设置',
+
+        emailCodeTemplate:'需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
 
         idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
 

@@ -46,7 +46,7 @@ const saveForm = reactive({
         ],
         password_to_check: [
             { required: computed((): boolean => (saveForm.data.phone || saveForm.data.email || saveForm.data.account || saveForm.data.password ? true : false)), message: t('profile.tip.password_to_check') },
-            { type: 'string', trigger: 'blur', min: 6, max: 30, message: t('validation.between.string', { min: 6, max: 30 }) },
+            { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 trigger: 'blur',
                 validator: (rule: any, value: any, callback: any) => {
@@ -58,8 +58,14 @@ const saveForm = reactive({
                 message: t('validation.new_password_diff_old_password'),
             },
         ],
-        sms_code_to_bind_phone: [{ required: computed((): boolean => (saveForm.data.phone ? true : false)), message: t('profile.tip.sms_code_to_bind_phone') }],
-        email_code_to_bind_email: [{ required: computed((): boolean => (saveForm.data.email ? true : false)), message: t('profile.tip.email_code_to_bind_email') }],
+        sms_code_to_bind_phone: [
+            { required: computed((): boolean => (saveForm.data.phone ? true : false)), message: t('profile.tip.sms_code_to_bind_phone') },
+            { type: 'string', len: 4, message: t('validation.size.string', { size: 4 }) },
+        ],
+        email_code_to_bind_email: [
+            { required: computed((): boolean => (saveForm.data.email ? true : false)), message: t('profile.tip.email_code_to_bind_email') },
+            { type: 'string', len: 4, message: t('validation.size.string', { size: 4 }) },
+        ],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -160,7 +166,7 @@ const emailCountdown = reactive({
                     <el-alert :title="t('profile.tip.password_to_check')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item v-if="saveForm.data.phone" :label="t('profile.name.sms_code_to_bind_phone')" prop="sms_code_to_bind_phone">
-                    <el-input v-model="saveForm.data.sms_code_to_bind_phone" :placeholder="t('profile.name.sms_code_to_bind_phone')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px">
+                    <el-input v-model="saveForm.data.sms_code_to_bind_phone" :placeholder="t('profile.name.sms_code_to_bind_phone')" minlength="4" maxlength="4" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template #append>
                             <el-countdown v-if="smsCountdown.isShow && smsCountdown.value > 0" :value="smsCountdown.value" @finish="smsCountdown.finish" format="mm:ss" value-style="color: #909399;" />
                             <el-button v-else :loading="smsCountdown.isShow" @click="smsCountdown.send">{{ t('profile.send_code') }}</el-button>
@@ -169,7 +175,7 @@ const emailCountdown = reactive({
                     <el-alert :title="t('profile.tip.sms_code_to_bind_phone')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item v-if="saveForm.data.email" :label="t('profile.name.email_code_to_bind_email')" prop="email_code_to_bind_email">
-                    <el-input v-model="saveForm.data.email_code_to_bind_email" :placeholder="t('profile.name.email_code_to_bind_email')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px">
+                    <el-input v-model="saveForm.data.email_code_to_bind_email" :placeholder="t('profile.name.email_code_to_bind_email')" minlength="4" maxlength="4" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template #append>
                             <el-countdown v-if="emailCountdown.isShow && emailCountdown.value > 0" :value="emailCountdown.value" @finish="emailCountdown.finish" format="mm:ss" value-style="color: #909399;" />
                             <el-button v-else :loading="emailCountdown.isShow" @click="emailCountdown.send">{{ t('profile.send_code') }}</el-button>
