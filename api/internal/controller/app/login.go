@@ -52,7 +52,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 
 	saltStatic, _ := daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Salt)
 	if saltStatic == `` {
-		err = utils.NewErrorCode(ctx, 39990010, ``)
+		err = utils.NewErrorCode(ctx, 39990004, ``)
 		return
 	}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
@@ -99,7 +99,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	if req.Password != `` { //密码
 		password, _ := daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Password)
 		if password == `` {
-			err = utils.NewErrorCode(ctx, 39990010, ``)
+			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
 		salt, _ := cache.NewSalt(ctx, sceneCode, req.LoginName).Get()
@@ -110,13 +110,13 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	} else if req.SmsCode != `` { //短信验证码
 		phone := info[daoUsers.Users.Columns().Phone].String()
 		if phone == `` {
-			err = utils.NewErrorCode(ctx, 39990007, ``)
+			err = utils.NewErrorCode(ctx, 39991003, ``)
 			return
 		}
 
 		code, _ := cache.NewCode(ctx, sceneCode, phone, 0).Get() //场景：0登录(手机)
 		if code == `` || code != req.SmsCode {
-			err = utils.NewErrorCode(ctx, 39990008, ``)
+			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
 	}
@@ -141,7 +141,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	if req.Phone != `` {
 		code, _ := cache.NewCode(ctx, sceneCode, req.Phone, 1).Get() //场景：1注册(手机)
 		if code == `` || code != req.SmsCode {
-			err = utils.NewErrorCode(ctx, 39990008, ``)
+			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
 
@@ -189,7 +189,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	code, _ := cache.NewCode(ctx, sceneCode, req.Phone, 2).Get() //场景：2密码找回(手机)
 	if code == `` || code != req.SmsCode {
-		err = utils.NewErrorCode(ctx, 39990008, ``)
+		err = utils.NewErrorCode(ctx, 39991999, ``)
 		return
 	}
 

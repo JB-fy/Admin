@@ -65,7 +65,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		case `password_to_check`:
 			initPrivacyInfo()
 			if privacyInfo[daoUsers.Privacy.Columns().Password].String() == `` {
-				err = utils.NewErrorCode(ctx, 39990010, ``)
+				err = utils.NewErrorCode(ctx, 39990004, ``)
 				return
 			}
 			if gmd5.MustEncrypt(gconv.String(v)+privacyInfo[daoUsers.Privacy.Columns().Salt].String()) != privacyInfo[daoUsers.Privacy.Columns().Password].String() {
@@ -76,39 +76,39 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		case `sms_code_to_password`:
 			phone := loginInfo[daoUsers.Users.Columns().Phone].String()
 			if phone == `` {
-				err = utils.NewErrorCode(ctx, 39990007, ``)
+				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
 
 			code, _ := cache.NewCode(ctx, sceneCode, phone, 3).Get() //场景：3密码修改(手机)
 			if code == `` || code != gconv.String(v) {
-				err = utils.NewErrorCode(ctx, 39990008, ``)
+				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
 			delete(data, k)
 		case `sms_code_to_bind_phone`:
 			if loginInfo[daoUsers.Users.Columns().Phone].String() != `` {
-				err = utils.NewErrorCode(ctx, 39990005, ``)
+				err = utils.NewErrorCode(ctx, 39991001, ``)
 				return
 			}
 
 			phone := gconv.String(data[`phone`])
 			code, _ := cache.NewCode(ctx, sceneCode, phone, 4).Get() //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
-				err = utils.NewErrorCode(ctx, 39990008, ``)
+				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
 			delete(data, k)
 		case `sms_code_to_unbing_phone`:
 			phone := loginInfo[daoUsers.Users.Columns().Phone].String()
 			if phone == `` {
-				err = utils.NewErrorCode(ctx, 39990007, ``)
+				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
 
 			code, _ := cache.NewCode(ctx, sceneCode, phone, 5).Get() //场景：5解绑(手机)
 			if code == `` || code != gconv.String(v) {
-				err = utils.NewErrorCode(ctx, 39990008, ``)
+				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
 			delete(data, k)
@@ -116,7 +116,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		case `id_card_no`:
 			initPrivacyInfo()
 			if privacyInfo[daoUsers.Privacy.Columns().IdCardNo].String() != `` {
-				err = utils.NewErrorCode(ctx, 39990009, ``)
+				err = utils.NewErrorCode(ctx, 39992000, ``)
 				return
 			}
 
