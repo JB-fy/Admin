@@ -31,18 +31,19 @@ type LoginRegisterReq struct {
 	Account   string `json:"account,omitempty" v:"required-without-all:Phone,Email|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	SmsCode   string `json:"sms_code" v:"required-with:Phone|size:4" dc:"短信验证码"`
 	EmailCode string `json:"email_code" v:"required-with:Email|size:4" dc:"邮箱验证码"`
-	Password  string `json:"password" v:"required|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
-	// Password string `json:"password" v:"required-with:Account|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
+	Password  string `json:"password" v:"required-with:Account|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
 }
 
 /*--------注册 结束--------*/
 
 /*--------密码找回 开始--------*/
 type LoginPasswordRecoveryReq struct {
-	g.Meta   `path:"/password-recovery" method:"post" tags:"APP/登录" sm:"密码找回"`
-	Phone    string `json:"phone,omitempty" v:"required|max-length:20|phone" dc:"手机"`
-	SmsCode  string `json:"sms_code" v:"required|size:4" dc:"短信验证码"`
-	Password string `json:"password" v:"required|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
+	g.Meta    `path:"/password-recovery" method:"post" tags:"APP/登录" sm:"密码找回"`
+	Phone     string `json:"phone,omitempty" v:"required-without:Email|max-length:20|phone" dc:"手机"`
+	Email     string `json:"email,omitempty" v:"required-without:Phone|max-length:60|email" dc:"邮箱"`
+	SmsCode   string `json:"sms_code" v:"required-with:Phone|size:4" dc:"短信验证码"`
+	EmailCode string `json:"email_code" v:"required-with:Email|size:4" dc:"邮箱验证码"`
+	Password  string `json:"password" v:"required|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
 }
 
 /*--------密码找回 结束--------*/

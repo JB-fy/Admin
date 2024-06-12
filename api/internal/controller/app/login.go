@@ -125,7 +125,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39991013, ``)
 			return
 		}
-		code, _ := cache.NewCode(ctx, sceneCode, email, 0).Get() //场景：10登录(邮箱)
+		code, _ := cache.NewCode(ctx, sceneCode, email, 10).Get() //场景：10登录(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -213,13 +213,24 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-	code, _ := cache.NewCode(ctx, sceneCode, req.Phone, 2).Get() //场景：2密码找回(手机)
-	if code == `` || code != req.SmsCode {
-		err = utils.NewErrorCode(ctx, 39991999, ``)
-		return
+	filter := g.Map{}
+	if req.Phone != `` {
+		code, _ := cache.NewCode(ctx, sceneCode, req.Phone, 2).Get() //场景：2密码找回(手机)
+		if code == `` || code != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+		filter[daoUsers.Users.Columns().Phone] = req.Phone
+	} else if req.Email != `` {
+		code, _ := cache.NewCode(ctx, sceneCode, req.Email, 12).Get() //场景：12密码找回(邮箱)
+		if code == `` || code != req.EmailCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+		filter[daoUsers.Users.Columns().Email] = req.Email
 	}
 
-	daoModelUsers := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, req.Phone).SetIdArr()
+	daoModelUsers := daoUsers.Users.CtxDaoModel(ctx).Filters(filter).SetIdArr()
 	if len(daoModelUsers.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
