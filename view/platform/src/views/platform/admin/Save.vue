@@ -19,15 +19,23 @@ const saveForm = reactive({
         ],
         phone: [
             {
-                required: computed((): boolean => (saveForm.data.account ? false : true)),
+                required: computed((): boolean => (saveForm.data.email || saveForm.data.account ? false : true)),
                 message: t('validation.required'),
             },
             { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
+        email: [
+            {
+                required: computed((): boolean => (saveForm.data.phone || saveForm.data.account ? false : true)),
+                message: t('validation.required'),
+            },
+            { type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) },
+            { type: 'email', trigger: 'blur', message: t('validation.email') },
+        ],
         account: [
             {
-                required: computed((): boolean => (saveForm.data.phone ? false : true)),
+                required: computed((): boolean => (saveForm.data.phone || saveForm.data.email ? false : true)),
                 message: t('validation.required'),
             },
             { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
@@ -103,6 +111,10 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.phone')" prop="phone">
                     <el-input v-model="saveForm.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('platform.admin.name.email')" prop="email">
+                    <el-input v-model="saveForm.data.email" :placeholder="t('platform.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('platform.admin.name.account')" prop="account">

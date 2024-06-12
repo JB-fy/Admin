@@ -103,6 +103,8 @@ func (daoThis *usersDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 			case `login_name`:
 				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
+				} else if g.Validator().Rules(`required|email`).Data(v).Run(m.GetCtx()) == nil {
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Email, v)
 				} else {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Account, v)
 				}

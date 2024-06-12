@@ -30,6 +30,7 @@ type AdminColumns struct {
 	Nickname  string // 昵称
 	Avatar    string // 头像
 	Phone     string // 手机
+	Email     string // 邮箱
 	Account   string // 账号
 	Password  string // 密码。md5保存
 	Salt      string // 密码盐
@@ -44,6 +45,7 @@ var adminColumns = AdminColumns{
 	Nickname:  "nickname",
 	Avatar:    "avatar",
 	Phone:     "phone",
+	Email:     "email",
 	Account:   "account",
 	Password:  "password",
 	Salt:      "salt",

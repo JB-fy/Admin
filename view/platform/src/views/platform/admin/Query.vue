@@ -55,6 +55,9 @@ const queryForm = reactive({
         <el-form-item prop="phone">
             <el-input v-model="queryCommon.data.phone" :placeholder="t('platform.admin.name.phone')" maxlength="20" :clearable="true" />
         </el-form-item>
+        <el-form-item prop="email">
+            <el-input v-model="queryCommon.data.email" :placeholder="t('platform.admin.name.email')" maxlength="60" :clearable="true" />
+        </el-form-item>
         <el-form-item prop="account">
             <el-input v-model="queryCommon.data.account" :placeholder="t('platform.admin.name.account')" maxlength="20" :clearable="true" />
         </el-form-item>

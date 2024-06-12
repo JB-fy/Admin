@@ -30,6 +30,10 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerCurrent.NewSms())
 			})
+
+			group.Group(`/email`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerCurrent.NewEmail())
+			})
 		})
 
 		// 需验证登录身份

@@ -39,10 +39,18 @@ func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOf
 }
 
 func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {
-	message := "To: " + toEmail + "\r\n" +
-		"Subject: " + code + "\r\n" +
-		"\r\n" +
-		"This is the body of the email sent from QQ Mail using Go.\r\n"
+	message := `To: ` + toEmail + "\r\n" +
+		`Subject: 您的邮箱验证码` + "\r\n\r\n" +
+		`亲爱的用户:  
+
+为了验证您的邮箱地址，我们生成了一个验证码。以下是您的验证码信息：
+
+验证码：` + code + `
+
+说明：
+1. 请在验证码输入框中输入上面的验证码，以完成您的邮箱验证。
+2. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。
+3. 出于安全考虑，请不要将此验证码分享给任何人。` + "\r\n"
 	err = emailThis.SendEmail([]string{toEmail}, message)
 	return
 }
@@ -91,8 +99,5 @@ func (emailThis *EmailOfCommon) SendEmail(toEmailArr []string, message string) (
 		return
 	}
 	err = w.Close()
-	if err != nil {
-		return
-	}
 	return
 }

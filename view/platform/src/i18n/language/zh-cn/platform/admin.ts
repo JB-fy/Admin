@@ -3,6 +3,7 @@ export default {
         nickname: '昵称',
         avatar: '头像',
         phone: '手机',
+        email: '邮箱',
         account: '账号',
         password: '密码',
         is_stop: '停用',

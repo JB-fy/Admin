@@ -13,6 +13,7 @@ type AdminInfo struct {
 	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
 	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
 	Phone     *string     `json:"phone,omitempty" dc:"手机"`
+	Email     *string     `json:"email,omitempty" dc:"邮箱"`
 	Account   *string     `json:"account,omitempty" dc:"账号"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
@@ -31,6 +32,7 @@ type AdminFilter struct {
 	AdminId        *uint       `json:"admin_id,omitempty" v:"between:1,4294967295" dc:"管理员ID"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email          string      `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
@@ -71,8 +73,9 @@ type AdminCreateReq struct {
 	g.Meta    `path:"/admin/create" method:"post" tags:"平台后台/权限管理/平台管理员" sm:"新增"`
 	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Phone     *string `json:"phone,omitempty" v:"required-without:Account|max-length:20|phone" dc:"手机"`
-	Account   *string `json:"account,omitempty" v:"required-without:Phone|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Phone     *string `json:"phone,omitempty" v:"required-without-all:Email,Account|max-length:20|phone" dc:"手机"`
+	Email     *string `json:"email,omitempty" v:"required-without-all:Phone,Account|max-length:60|email" dc:"邮箱"`
+	Account   *string `json:"account,omitempty" v:"required-without-all:Phone,Email|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID列表"`
@@ -87,6 +90,7 @@ type AdminUpdateReq struct {
 	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Phone     *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email     *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account   *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`

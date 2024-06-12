@@ -19,6 +19,7 @@ type Admin struct {
 	Nickname  interface{} // 昵称
 	Avatar    interface{} // 头像
 	Phone     interface{} // 手机
+	Email     interface{} // 邮箱
 	Account   interface{} // 账号
 	Password  interface{} // 密码。md5保存
 	Salt      interface{} // 密码盐

@@ -22,7 +22,18 @@ func NewLogin() *Login {
 
 // 获取密码盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
+	/* var info gdb.Record
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) == nil {
+		info, _ = daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Phone, req.LoginName).One()
+	} else if g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) == nil {
+		info, _ = daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Email, req.LoginName).One()
+	} else if g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) == nil {
+		info, _ = daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Account, req.LoginName).One()
+	} else {
+		err = utils.NewErrorCode(ctx, 89990000, ``)
+		return
+	} */
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
 		return
 	}
@@ -50,7 +61,18 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
+	/* var info gdb.Record
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) == nil {
+		info, _ = daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Phone, req.LoginName).One()
+	} else if g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) == nil {
+		info, _ = daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Email, req.LoginName).One()
+	} else if g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) == nil {
+		info, _ = daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Account, req.LoginName).One()
+	} else {
+		err = utils.NewErrorCode(ctx, 89990000, ``)
+		return
+	} */
+	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) != nil && g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) != nil {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
 		return
 	}

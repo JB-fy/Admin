@@ -68,7 +68,7 @@ func (daoThis *adminDao) ParseId(daoModel *daoIndex.DaoModel) string {
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *adminDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return `COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, ''))`
+	return `COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Email + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, ''))`
 }
 
 // 解析filter
@@ -89,7 +89,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().AdminId, v)
 				}
 			case `label`:
-				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
+				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Email, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
@@ -101,6 +101,8 @@ func (daoThis *adminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 			case `login_name`:
 				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
+				} else if g.Validator().Rules(`required|email`).Data(v).Run(m.GetCtx()) == nil {
+					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Email, v)
 				} else {
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Account, v)
 				}
@@ -203,6 +205,11 @@ func (daoThis *adminDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				insertData[k] = v
+			case daoThis.Columns().Email:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				insertData[k] = v
 			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
@@ -268,6 +275,11 @@ func (daoThis *adminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Phone:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				updateData[k] = v
+			case daoThis.Columns().Email:
 				if gconv.String(v) == `` {
 					v = nil
 				}

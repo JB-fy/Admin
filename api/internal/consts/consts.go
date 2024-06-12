@@ -1,8 +1,9 @@
 package consts
 
 var (
-	CacheSaltFormat  = `salt_%s_%s`   //密码盐缓存key。参数：场景标识，账号/手机
+	CacheSaltFormat  = `salt_%s_%s`   //密码盐缓存key。参数：场景标识，账号/手机/邮箱
 	CacheSmsFormat   = `sms_%s_%s_%d` //短信缓存key。参数：场景标识，手机，使用场景
+	CacheEmailFormat = `sms_%s_%s_%d` //邮件缓存key。参数：场景标识，邮箱，使用场景
 	CacheTokenFormat = `token_%s_%d`  //登录后的token缓存key。参数：场景标识，用户ID
 
 	ConstCtxSceneInfoName = `sceneInfo`

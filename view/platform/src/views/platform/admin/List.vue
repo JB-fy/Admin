@@ -73,6 +73,13 @@ const table = reactive({
             width: 150,
         },
         {
+            dataKey: 'email',
+            title: t('platform.admin.name.email'),
+            key: 'email',
+            align: 'center',
+            width: 150,
+        },
+        {
             dataKey: 'account',
             title: t('platform.admin.name.account'),
             key: 'account',
