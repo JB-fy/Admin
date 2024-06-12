@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 01/06/2024 18:13:37
+ Date: 12/06/2024 17:44:53
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `auth_action`  (
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`action_id`) USING BTREE,
   UNIQUE INDEX `action_code`(`action_code` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 47 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action
@@ -78,8 +78,10 @@ INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 40, '插件配置-视频点播-保存', 'platformConfigVodSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 41, '插件配置-微信-查看', 'platformConfigWxRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 42, '插件配置-微信-查看', 'platformConfigWxSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 43, '用户管理-用户-查看', 'userUserRead', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 44, '用户管理-用户-编辑', 'userUserUpdate', '');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-06-12 17:27:57', 0, 43, '插件配置-邮箱-查看', 'platformConfigEmailRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-06-12 17:27:56', 0, 44, '插件配置-邮箱-保存', 'platformConfigEmailSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
+INSERT INTO `auth_action` VALUES ('2024-06-12 17:26:09', '2024-06-12 17:27:33', 0, 45, '用户管理-用户-查看', 'usersRead', '');
+INSERT INTO `auth_action` VALUES ('2024-06-12 17:26:09', '2024-06-12 17:27:35', 0, 46, '用户管理-用户-编辑', 'usersUpdate', '');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -142,6 +144,8 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 42, 1);
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 43, 1);
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 44, 1);
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 45, 1);
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-06-12 17:28:29', '2024-06-12 17:28:30', 46, 1);
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -181,7 +185,7 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 10, '应用配置', 1, 9, 3, '0-8-9-10', '', '/platform/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '插件配置', 1, 9, 3, '0-8-9-11', '', '/platform/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '用户管理', 1, 0, 1, '0-12', 'vant-friends', '', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 100);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '用户', 1, 12, 2, '0-12-13', 'vant-user-o', '/user/user', '{\"i18n\": {\"title\": {\"en\": \"User\", \"zh-cn\": \"用户\"}}}', 100);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '用户', 1, 12, 2, '0-12-13', 'vant-user-o', '/users/users', '{\"i18n\": {\"title\": {\"en\": \"Users\", \"zh-cn\": \"用户\"}}}', 100);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -290,21 +294,23 @@ CREATE TABLE `platform_admin`  (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `admin_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `phone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '手机',
-  `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
-  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '昵称',
   `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '头像',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '手机',
+  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   PRIMARY KEY (`admin_id`) USING BTREE,
   UNIQUE INDEX `account`(`account` ASC) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE
+  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
+  UNIQUE INDEX `email`(`email` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB', '超级管理员', 'http://JB.Admin.com/common/20240106/1704522339892_31917913.png');
+INSERT INTO `platform_admin` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '超级管理员', 'http://JB.Admin.com/common/20240106/1704522339892_31917913.png', NULL, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
 
 -- ----------------------------
 -- Table structure for platform_config
@@ -321,6 +327,13 @@ CREATE TABLE `platform_config`  (
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailCodeSubject', '您的验证码');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailCodeTemplate', '验证码：{code}\n说明：\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\n2. 出于安全考虑，请不要将此验证码分享给任何人。');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommonFromEmail', 'xxxx@qq.com');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommonPassword', 'xxxxxx');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommonSmtpHost', 'smtp.qq.com');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommonSmtpPort', '465');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailType', 'emailOfCommon');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyunAppcode', 'appcode');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyunHost', 'http://idcard.market.alicloudapi.com');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyunPath', '/lianzhuo/idcard');
@@ -387,36 +400,56 @@ CREATE TABLE `platform_server`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for user_user
+-- Table structure for users
 -- ----------------------------
-DROP TABLE IF EXISTS `user_user`;
-CREATE TABLE `user_user`  (
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `user_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `phone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机',
-  `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
-  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
   `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '头像',
   `gender` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '性别：0未设置 1男 2女',
   `birthday` date NULL DEFAULT NULL COMMENT '生日',
-  `address` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '详细地址',
-  `open_id_of_wx` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信openId',
-  `union_id_of_wx` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信unionId',
-  `id_card_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证姓名',
-  `id_card_no` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `address` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '地址',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机',
+  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
+  `wx_openid` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信openid',
+  `wx_unionid` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信unionid',
   PRIMARY KEY (`user_id`) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `account`(`account` ASC) USING BTREE,
-  UNIQUE INDEX `open_id_of_wx`(`open_id_of_wx` ASC) USING BTREE,
-  UNIQUE INDEX `union_id_of_wx`(`union_id_of_wx` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
+  UNIQUE INDEX `email`(`email` ASC) USING BTREE,
+  UNIQUE INDEX `wx_openid`(`wx_openid` ASC) USING BTREE,
+  UNIQUE INDEX `wx_unionid`(`wx_unionid` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表（postgresql中user是关键字，使用需要加双引号。程序中考虑与mysql通用，故命名成users）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of user_user
+-- Records of users
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for users_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS `users_privacy`;
+CREATE TABLE `users_privacy`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `user_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
+  `id_card_no` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `id_card_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证姓名',
+  `id_card_gender` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '身份证性别：0未设置 1男 2女',
+  `id_card_birthday` date NULL DEFAULT NULL COMMENT '身份证生日',
+  `id_card_address` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证地址',
+  PRIMARY KEY (`user_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户隐私表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of users_privacy
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
