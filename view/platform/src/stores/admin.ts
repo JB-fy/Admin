@@ -270,7 +270,7 @@ export const useAdminStore = defineStore('admin', {
         },
         /**
          * 登录
-         * @param {*} loginName 账号/手机
+         * @param {*} loginName 手机/邮箱/账号
          * @param {*} password  密码
          * @returns
          */

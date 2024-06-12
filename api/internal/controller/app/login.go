@@ -13,6 +13,7 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/grand"
 )
 
@@ -152,6 +153,21 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		}
 		data[daoUsers.Users.Columns().Phone] = req.Phone
 		data[daoUsers.Users.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
+	}
+	if req.Email != `` {
+		code, _ := cache.NewCode(ctx, sceneCode, req.Email, 11).Get() //场景：11注册(邮箱)
+		if code == `` || code != req.EmailCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+
+		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Email, req.Email).One()
+		if !info.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39991010, ``)
+			return
+		}
+		data[daoUsers.Users.Columns().Email] = req.Email
+		data[daoUsers.Users.Columns().Nickname] = gstr.Split(req.Email, `@`)[0]
 	}
 	if req.Account != `` {
 		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Account, req.Account).One()
