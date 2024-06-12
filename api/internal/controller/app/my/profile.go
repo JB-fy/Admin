@@ -80,8 +80,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 3).Get() //使用场景：3密码修改
-			if smsCode == `` || smsCode != gconv.String(v) {
+			code, _ := cache.NewCode(ctx, sceneCode, phone, 3).Get() //场景：3密码修改(手机)
+			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
 			}
@@ -93,8 +93,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 
 			phone := gconv.String(data[`phone`])
-			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 4).Get() //使用场景：4绑定手机
-			if smsCode == `` || smsCode != gconv.String(v) {
+			code, _ := cache.NewCode(ctx, sceneCode, phone, 4).Get() //场景：4绑定(手机)
+			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
 			}
@@ -106,8 +106,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			smsCode, _ := cache.NewSms(ctx, sceneCode, phone, 5).Get() //使用场景：5解绑手机
-			if smsCode == `` || smsCode != gconv.String(v) {
+			code, _ := cache.NewCode(ctx, sceneCode, phone, 5).Get() //场景：5解绑(手机)
+			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39990008, ``)
 				return
 			}

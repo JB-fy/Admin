@@ -25,8 +25,8 @@ func InitRouterApp(s *ghttp.Server) {
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.SceneLoginOfApp(false))
 
-			group.Group(`/sms`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerCurrent.NewSms())
+			group.Group(`/code`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerCurrent.NewCode())
 			})
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
