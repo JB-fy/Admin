@@ -81,7 +81,8 @@ saveForm.initData()
                 <el-input v-model="saveForm.data.emailOfCommonFromEmail" :placeholder="t('platform.config.plugin.name.emailOfCommonFromEmail')" :clearable="true" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.emailOfCommonPassword')" prop="emailOfCommonPassword">
-                <el-input v-model="saveForm.data.emailOfCommonPassword" :placeholder="t('platform.config.plugin.name.emailOfCommonPassword')" :clearable="true" />
+                <el-input v-model="saveForm.data.emailOfCommonPassword" :placeholder="t('platform.config.plugin.name.emailOfCommonPassword')" :clearable="true" style="max-width: 500px" />
+                <el-alert :title="t('platform.config.plugin.tip.emailOfCommonPassword')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
 
