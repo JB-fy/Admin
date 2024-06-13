@@ -295,12 +295,12 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 		userIdTmp, errTmp := daoUsers.Users.CtxDaoModel(ctx).HookInsert(saveData).InsertAndGetId()
 		if errTmp != nil { //报错就是并发引起的唯一索引冲突，故再做一次查询
 			userId, _ = daoUsers.Users.CtxDaoModel(ctx).Filters(filter).ValueUint(daoUsers.Users.Columns().UserId)
-			// daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
+			// daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动
 		} else {
 			userId = uint(userIdTmp)
 		}
 	} /*  else {
-		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动而改动
+		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData)	//一般情况下系统用户昵称，性别等字段不会随微信变动
 	} */
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)

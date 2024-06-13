@@ -952,6 +952,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				}
 				middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
 			}
+			break
 		}
 	}
 	return
