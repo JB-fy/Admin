@@ -14,6 +14,6 @@ type Config struct {
 	g.Meta      `orm:"table:platform_config, do:true"`
 	CreatedAt   *gtime.Time // 创建时间
 	UpdatedAt   *gtime.Time // 更新时间
-	ConfigKey   interface{} // 配置Key
+	ConfigKey   interface{} // 配置键
 	ConfigValue interface{} // 配置值
 }

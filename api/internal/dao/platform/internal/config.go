@@ -25,7 +25,7 @@ type ConfigDao struct {
 type ConfigColumns struct {
 	CreatedAt   string // 创建时间
 	UpdatedAt   string // 更新时间
-	ConfigKey   string // 配置Key
+	ConfigKey   string // 配置键
 	ConfigValue string // 配置值
 }
 

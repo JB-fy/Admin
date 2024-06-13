@@ -7,7 +7,7 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        //此处必须列出全部需要设置的配置Key，用于向服务器获取对应的配置值
+        //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
         uploadType: 'uploadOfLocal',
         uploadOfLocalUrl: '',
         uploadOfLocalSignKey: '',
