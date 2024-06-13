@@ -25,6 +25,7 @@ type ServerDao struct {
 type ServerColumns struct {
 	CreatedAt string // 创建时间
 	UpdatedAt string // 更新时间
+	IsStop    string // 停用：0否 1是
 	ServerId  string // 服务器ID
 	NetworkIp string // 公网IP
 	LocalIp   string // 内网IP
@@ -34,6 +35,7 @@ type ServerColumns struct {
 var serverColumns = ServerColumns{
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	IsStop:    "is_stop",
 	ServerId:  "server_id",
 	NetworkIp: "network_ip",
 	LocalIp:   "local_ip",

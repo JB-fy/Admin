@@ -14,6 +14,7 @@ type Server struct {
 	g.Meta    `orm:"table:platform_server, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
+	IsStop    interface{} // 停用：0否 1是
 	ServerId  interface{} // 服务器ID
 	NetworkIp interface{} // 公网IP
 	LocalIp   interface{} // 内网IP
