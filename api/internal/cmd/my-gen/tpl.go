@@ -769,6 +769,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range extendTpl.KeyList {
+			if key.IsAutoInc {
+				continue
+			}
 			if len(key.FieldArr) != 1 {
 				continue
 			}
@@ -838,6 +841,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
 			}
+			break
 		}
 	}
 	return
@@ -893,6 +897,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 
 		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range middleTpl.KeyList {
+			if key.IsAutoInc {
+				continue
+			}
 			if !key.IsUnique { // 必须唯一
 				continue
 			}
@@ -989,37 +996,41 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 
 		otherRelTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, field := range otherRelTpl.FieldList {
-			if myGenTplThis.IsSamePrimary(tpl, field.FieldCaseSnakeRemove) {
-				isOtherRel := true
-				fmt.Println(color.HiYellowString(`其它关联表（不含扩展表和中间表），需手动确认`))
-				isOtherRelStr := gcmd.Scan(color.BlueString(`> 表(` + otherRelTpl.Table + `)疑似为关联表，请确认？默认(yes)：`))
-			isOtherRelEnd:
-				for {
-					switch isOtherRelStr {
-					case ``, `1`, `yes`:
-						isOtherRel = true
-						break isOtherRelEnd
-					case `0`, `no`:
-						isOtherRel = false
-						break isOtherRelEnd
-					default:
-						isOtherRelStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + otherRelTpl.Table + `)疑似为关联表，请确认？默认(yes)：`))
-					}
-				}
-				if isOtherRel {
-					handleOtherRelObj := handleOtherRel{
-						tplOfTop: tpl,
-						tpl:      otherRelTpl,
-						RelId:    field.FieldRaw,
-						daoPath:  otherRelTpl.TableCaseCamel,
-					}
-					if handleOtherRelObj.tpl.ModuleDirCaseKebab != handleOtherRelObj.tplOfTop.ModuleDirCaseKebab {
-						handleOtherRelObj.daoPath = `dao` + handleOtherRelObj.tpl.ModuleDirCaseCamel + `.` + handleOtherRelObj.tpl.TableCaseCamel
-					}
-					otherRelTableList = append(otherRelTableList, handleOtherRelObj)
-				}
-				break
+			if field.IsAutoInc {
+				continue
 			}
+			if !myGenTplThis.IsSamePrimary(tpl, field.FieldCaseSnakeRemove) {
+				continue
+			}
+			isOtherRel := true
+			fmt.Println(color.HiYellowString(`其它关联表（不含扩展表和中间表），需手动确认`))
+			isOtherRelStr := gcmd.Scan(color.BlueString(`> 表(` + otherRelTpl.Table + `)疑似为关联表，请确认？默认(yes)：`))
+		isOtherRelEnd:
+			for {
+				switch isOtherRelStr {
+				case ``, `1`, `yes`:
+					isOtherRel = true
+					break isOtherRelEnd
+				case `0`, `no`:
+					isOtherRel = false
+					break isOtherRelEnd
+				default:
+					isOtherRelStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + otherRelTpl.Table + `)疑似为关联表，请确认？默认(yes)：`))
+				}
+			}
+			if isOtherRel {
+				handleOtherRelObj := handleOtherRel{
+					tplOfTop: tpl,
+					tpl:      otherRelTpl,
+					RelId:    field.FieldRaw,
+					daoPath:  otherRelTpl.TableCaseCamel,
+				}
+				if handleOtherRelObj.tpl.ModuleDirCaseKebab != handleOtherRelObj.tplOfTop.ModuleDirCaseKebab {
+					handleOtherRelObj.daoPath = `dao` + handleOtherRelObj.tpl.ModuleDirCaseCamel + `.` + handleOtherRelObj.tpl.TableCaseCamel
+				}
+				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
+			}
+			break
 		}
 	}
 	return
