@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 12/06/2024 17:44:53
+ Date: 13/06/2024 11:36:48
 */
 
 SET NAMES utf8mb4;
@@ -145,7 +145,7 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 43, 1);
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 44, 1);
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 45, 1);
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-06-12 17:28:29', '2024-06-12 17:28:30', 46, 1);
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 46, 1);
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -164,7 +164,7 @@ CREATE TABLE `auth_menu`  (
   `menu_icon` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}',
   `menu_url` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '链接',
   `extra_data` json NULL COMMENT '额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}',
-  `sort` tinyint UNSIGNED NOT NULL DEFAULT 100 COMMENT '排序值。从大到小排序，范围0~255',
+  `sort` tinyint UNSIGNED NOT NULL DEFAULT 100 COMMENT '排序值。从大到小排序',
   PRIMARY KEY (`menu_id`) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE
@@ -218,8 +218,8 @@ CREATE TABLE `auth_role_rel_of_platform_admin`  (
   `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
   `role_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '角色ID',
   PRIMARY KEY (`admin_id`, `role_id`) USING BTREE,
-  INDEX `role_id`(`role_id` ASC) USING BTREE,
-  INDEX `admin_id`(`admin_id` ASC) USING BTREE
+  INDEX `admin_id`(`admin_id` ASC) USING BTREE,
+  INDEX `role_id`(`role_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色，系统管理员关联表（系统管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -302,9 +302,9 @@ CREATE TABLE `platform_admin`  (
   `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
   `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   PRIMARY KEY (`admin_id`) USING BTREE,
-  UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
-  UNIQUE INDEX `email`(`email` ASC) USING BTREE
+  UNIQUE INDEX `email`(`email` ASC) USING BTREE,
+  UNIQUE INDEX `account`(`account` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -319,7 +319,7 @@ DROP TABLE IF EXISTS `platform_config`;
 CREATE TABLE `platform_config`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `config_key` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '配置Key',
+  `config_key` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '配置键',
   `config_value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '配置值',
   PRIMARY KEY (`config_key`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
@@ -388,6 +388,7 @@ DROP TABLE IF EXISTS `platform_server`;
 CREATE TABLE `platform_server`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `server_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '服务器ID',
   `network_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '公网IP',
   `local_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '内网IP',
@@ -419,9 +420,9 @@ CREATE TABLE `users`  (
   `wx_openid` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信openid',
   `wx_unionid` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信unionid',
   PRIMARY KEY (`user_id`) USING BTREE,
-  UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `email`(`email` ASC) USING BTREE,
+  UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   UNIQUE INDEX `wx_openid`(`wx_openid` ASC) USING BTREE,
   UNIQUE INDEX `wx_unionid`(`wx_unionid` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表（postgresql中user是关键字，使用需要加双引号。程序中考虑与mysql通用，故命名成users）' ROW_FORMAT = DYNAMIC;
