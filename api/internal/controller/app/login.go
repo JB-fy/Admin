@@ -299,7 +299,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			userId = uint(userIdTmp)
 		}
 	} /* else {
-		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData) //一般情况下用户昵称，性别等字段不会随第三方变动
+		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData) //一般情况下用户昵称，性别等字段不会每次登录都随第三方变动
 	} */
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
