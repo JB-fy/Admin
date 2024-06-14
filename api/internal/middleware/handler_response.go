@@ -14,13 +14,27 @@ import (
 func HandlerResponse(r *ghttp.Request) {
 	r.Middleware.Next()
 
-	if r.Response.BufferLength() > 0 {
-		return
-	}
-
 	err := r.GetError()
-	if err != nil {
-		code := gerror.Code(err)
+	var code gcode.Code
+	if err == nil {
+		if r.Response.BufferLength() > 0 {
+			return
+		}
+		if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
+			return
+			/* switch r.Response.Status {
+			case http.StatusNotFound:
+				code = gcode.CodeNotFound
+			case http.StatusForbidden:
+				code = gcode.CodeNotAuthorized
+			default:
+				code = utils.NewCode(r.GetCtx(), 19999997, http.StatusText(r.Response.Status), r.GetHandlerResponse())
+			} */
+		} else {
+			code = utils.NewCode(r.GetCtx(), 0, ``, r.GetHandlerResponse())
+		}
+	} else {
+		code = gerror.Code(err)
 		switch code {
 		case gcode.CodeNil:
 			code = utils.NewCode(r.GetCtx(), 99999999, err.Error())
@@ -38,33 +52,16 @@ func HandlerResponse(r *ghttp.Request) {
 				}
 				code = utils.NewCode(r.GetCtx(), 29999999, msg)
 			}
+		case gcode.CodeInternalPanic:
+			r.Response.WriteHeader(http.StatusOK)
+			r.Response.ClearBuffer()
+			code = utils.NewCode(r.GetCtx(), 19999998, err.Error())
 		}
-		r.Response.WriteJson(map[string]any{
-			`code`: code.Code(),
-			`msg`:  code.Message(),
-			`data`: code.Detail(),
-		})
-		return
-	}
-
-	if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
-		/* msg := http.StatusText(r.Response.Status)
-		code := gcode.CodeUnknown
-		switch r.Response.Status {
-		case http.StatusNotFound:
-			code = gcode.CodeNotFound
-		case http.StatusForbidden:
-			code = gcode.CodeNotAuthorized
-		}
-		err = gerror.NewCode(code, msg)
-		r.SetError(err) */
-		r.Response.WriteStatus(r.Response.Status)
-		return
 	}
 
 	r.Response.WriteJson(map[string]any{
-		`code`: 0,
-		`msg`:  g.I18n().T(r.GetCtx(), `code.0`),
-		`data`: r.GetHandlerResponse(),
+		`code`: code.Code(),
+		`msg`:  code.Message(),
+		`data`: code.Detail(),
 	})
 }

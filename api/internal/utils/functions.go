@@ -18,24 +18,26 @@ import (
 )
 
 // 生成错误码
-func NewCode(ctx context.Context, code int, msg string, data ...map[string]any) gcode.Code {
-	detail := map[string]any{}
-	if len(data) > 0 && data[0] != nil {
-		detail = data[0]
+func NewCode(ctx context.Context, code int, msg string, dataOpt ...any) gcode.Code {
+	var data any
+	if len(dataOpt) > 0 && dataOpt[0] != nil {
+		data = dataOpt[0]
 	}
 	if msg == `` {
 		msg = g.I18n().T(ctx, `code.`+gconv.String(code))
-		if _, ok := detail[`i18nValues`]; ok {
-			msg = fmt.Sprintf(msg, gconv.SliceAny(detail[`i18nValues`])...)
-			delete(detail, `i18nValues`)
+		if dataTmp, ok := data.(map[string]any); ok {
+			if _, ok := dataTmp[`i18nValues`]; ok {
+				msg = fmt.Sprintf(msg, gconv.SliceAny(dataTmp[`i18nValues`])...)
+				delete(dataTmp, `i18nValues`)
+			}
 		}
 	}
-	return gcode.New(code, msg, detail)
+	return gcode.New(code, msg, data)
 }
 
-// 生成错误码
-func NewErrorCode(ctx context.Context, code int, msg string, data ...map[string]any) error {
-	codeObj := NewCode(ctx, code, msg, data...)
+// 生成错误
+func NewErrorCode(ctx context.Context, code int, msg string, dataOpt ...any) error {
+	codeObj := NewCode(ctx, code, msg, dataOpt...)
 	return gerror.NewCode(codeObj /* , codeObj.Message() */)
 }
 
