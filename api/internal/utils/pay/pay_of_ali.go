@@ -28,9 +28,12 @@ func NewPayOfAli(ctx context.Context, configOpt ...map[string]any) *PayOfAli {
 		config = configTmp.Map()
 	}
 
-	payOfAliObj := PayOfAli{Ctx: ctx}
-	gconv.Struct(config, &payOfAliObj)
-	return &payOfAliObj
+	payObj := PayOfAli{Ctx: ctx}
+	gconv.Struct(config, &payObj)
+	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` || payObj.OpAppId == `` {
+		panic(`缺少插件配置：支付-支付宝`)
+	}
+	return &payObj
 }
 
 func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {

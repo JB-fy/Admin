@@ -27,9 +27,12 @@ func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]any) *OneClick
 		config = configTmp.Map()
 	}
 
-	obj := OneClickOfWx{Ctx: ctx}
-	gconv.Struct(config, &obj)
-	return &obj
+	oneClickObj := OneClickOfWx{Ctx: ctx}
+	gconv.Struct(config, &oneClickObj)
+	if oneClickObj.Host == `` || oneClickObj.AppId == `` || oneClickObj.Secret == `` {
+		panic(`缺少插件配置：一键登录-微信`)
+	}
+	return &oneClickObj
 }
 
 type AccessTokenOfWx struct {

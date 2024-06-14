@@ -48,9 +48,12 @@ func NewUploadOfAliyunOss(ctx context.Context, configOpt ...map[string]any) *Upl
 		config = configTmp.Map()
 	}
 
-	uploadOfAliyunOssObj := UploadOfAliyunOss{Ctx: ctx}
-	gconv.Struct(config, &uploadOfAliyunOssObj)
-	return &uploadOfAliyunOssObj
+	uploadObj := UploadOfAliyunOss{Ctx: ctx}
+	gconv.Struct(config, &uploadObj)
+	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {
+		panic(`缺少插件配置：上传-阿里云`)
+	}
+	return &uploadObj
 }
 
 type UploadOfAliyunOssCallback struct {

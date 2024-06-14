@@ -39,9 +39,12 @@ func NewPayOfWx(ctx context.Context, configOpt ...map[string]any) *PayOfWx {
 		config = configTmp.Map()
 	}
 
-	payOfWxObj := PayOfWx{Ctx: ctx}
-	gconv.Struct(config, &payOfWxObj)
-	return &payOfWxObj
+	payObj := PayOfWx{Ctx: ctx}
+	gconv.Struct(config, &payObj)
+	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {
+		panic(`缺少插件配置：支付-微信`)
+	}
+	return &payObj
 }
 
 func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {

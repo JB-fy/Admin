@@ -27,9 +27,12 @@ func NewIdCardOfAliyun(ctx context.Context, configOpt ...map[string]any) *IdCard
 		config = configTmp.Map()
 	}
 
-	idCardOfAliyunObj := IdCardOfAliyun{Ctx: ctx}
-	gconv.Struct(config, &idCardOfAliyunObj)
-	return &idCardOfAliyunObj
+	idCardObj := IdCardOfAliyun{Ctx: ctx}
+	gconv.Struct(config, &idCardObj)
+	if idCardObj.Host == `` || idCardObj.Path == `` || idCardObj.Appcode == `` {
+		panic(`缺少插件配置：实名认证-阿里云`)
+	}
+	return &idCardObj
 }
 
 func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {

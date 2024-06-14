@@ -28,9 +28,12 @@ func NewVodOfAliyun(ctx context.Context, configOpt ...map[string]any) *VodOfAliy
 		config = configTmp.Map()
 	}
 
-	vodOfAliyunObj := VodOfAliyun{Ctx: ctx}
-	gconv.Struct(config, &vodOfAliyunObj)
-	return &vodOfAliyunObj
+	vodObj := VodOfAliyun{Ctx: ctx}
+	gconv.Struct(config, &vodObj)
+	if vodObj.AccessKeyId == `` || vodObj.AccessKeySecret == `` || vodObj.Endpoint == `` || vodObj.RoleArn == `` {
+		panic(`缺少插件配置：视频点播-阿里云`)
+	}
+	return &vodObj
 }
 
 // 获取Sts Token

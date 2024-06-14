@@ -4,6 +4,7 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
 	"crypto/tls"
+	"errors"
 	"net/smtp"
 
 	"github.com/gogf/gf/v2/text/gstr"
@@ -29,12 +30,22 @@ func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOf
 		config = configTmp.Map()
 	}
 
-	emailOfCommonObj := EmailOfCommon{Ctx: ctx}
-	gconv.Struct(config, &emailOfCommonObj)
-	return &emailOfCommonObj
+	emailObj := EmailOfCommon{Ctx: ctx}
+	gconv.Struct(config, &emailObj)
+	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {
+		panic(`缺少插件配置：邮箱-通用`)
+	}
+	/* if emailObj.CodeSubject == `` || emailObj.CodeTemplate == `` {
+		panic(`缺少插件配置：邮箱-验证码模板`)
+	} */
+	return &emailObj
 }
 
 func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {
+	if emailThis.CodeSubject != `` || emailThis.CodeTemplate == `` {
+		err = errors.New(`缺少插件配置：邮箱-验证码模板`)
+		return
+	}
 	messageArr := []string{
 		`From: ` + emailThis.FromEmail,
 		`To: ` + toEmail,

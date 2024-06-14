@@ -40,9 +40,12 @@ func NewUploadOfLocal(ctx context.Context, configOpt ...map[string]any) *UploadO
 		config = configTmp.Map()
 	}
 
-	uploadOfLocalObj := UploadOfLocal{Ctx: ctx}
-	gconv.Struct(config, &uploadOfLocalObj)
-	return &uploadOfLocalObj
+	uploadObj := UploadOfLocal{Ctx: ctx}
+	gconv.Struct(config, &uploadObj)
+	if uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {
+		panic(`缺少插件配置：上传-本地`)
+	}
+	return &uploadObj
 }
 
 // 本地上传

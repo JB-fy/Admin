@@ -31,12 +31,22 @@ func NewSmsOfAliyun(ctx context.Context, configOpt ...map[string]any) *SmsOfAliy
 		config = configTmp.Map()
 	}
 
-	smsOfAliyunObj := SmsOfAliyun{Ctx: ctx}
-	gconv.Struct(config, &smsOfAliyunObj)
-	return &smsOfAliyunObj
+	smsObj := SmsOfAliyun{Ctx: ctx}
+	gconv.Struct(config, &smsObj)
+	if smsObj.AccessKeyId == `` || smsObj.AccessKeySecret == `` || smsObj.Endpoint == `` {
+		panic(`缺少插件配置：短信-阿里云`)
+	}
+	/* if smsObj.SignName == `` || smsObj.TemplateCode == `` {
+		panic(`缺少插件配置：短信-阿里云短信模板`)
+	} */
+	return &smsObj
 }
 
 func (smsThis *SmsOfAliyun) SendCode(phone string, code string) (err error) {
+	if smsThis.SignName == `` || smsThis.TemplateCode == `` {
+		err = errors.New(`缺少插件配置：短信-阿里云短信模板`)
+		return
+	}
 	err = smsThis.SendSms([]string{phone}, `{"code": "`+code+`"}`, smsThis.SignName, smsThis.TemplateCode)
 	return
 }

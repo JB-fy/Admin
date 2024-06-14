@@ -55,9 +55,12 @@ func NewPushOfTx(ctx context.Context, deviceType uint, configOpt ...map[string]a
 		}
 	}
 
-	pushOfTxObj := PushOfTx{Ctx: ctx}
-	gconv.Struct(config, &pushOfTxObj)
-	return &pushOfTxObj
+	pushObj := PushOfTx{Ctx: ctx}
+	gconv.Struct(config, &pushObj)
+	if pushObj.Host == `` || pushObj.AccessID == 0 || pushObj.SecretKey == `` {
+		panic(`缺少插件配置：推送-腾讯移动推送`)
+	}
+	return &pushObj
 }
 
 func (pushThis *PushOfTx) Push(param PushParam) (err error) {
