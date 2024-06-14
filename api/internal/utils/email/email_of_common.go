@@ -42,7 +42,7 @@ func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOf
 }
 
 func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {
-	if emailThis.CodeSubject != `` || emailThis.CodeTemplate == `` {
+	if emailThis.CodeSubject == `` || emailThis.CodeTemplate == `` {
 		err = errors.New(`缺少插件配置：邮箱-验证码模板`)
 		return
 	}
