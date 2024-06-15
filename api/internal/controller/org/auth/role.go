@@ -86,6 +86,9 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 
 	filter := map[string]any{`id`: req.Id}
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	filter[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -113,6 +116,9 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	data[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -140,6 +146,9 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 		return
 	}
 	filter := map[string]any{`id`: req.IdArr}
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	filter[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -157,6 +166,9 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]any{`id`: req.IdArr}
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	filter[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
