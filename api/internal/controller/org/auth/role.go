@@ -4,6 +4,7 @@ import (
 	"api/api"
 	apiAuth "api/api/org/auth"
 	daoAuth "api/internal/dao/auth"
+	daoOrg "api/internal/dao/org"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -46,6 +47,9 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfList
 	}
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	filter[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int() //只能显示机构自己创建的角色
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
