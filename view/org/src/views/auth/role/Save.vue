@@ -9,22 +9,22 @@ const saveForm = reactive({
     loading: false,
     data: {
         ...saveCommon.data,
-        scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
-        table_id: saveCommon.data.table_id ? saveCommon.data.table_id : undefined,
+        // scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
+        // table_id: saveCommon.data.table_id ? saveCommon.data.table_id : undefined,
     } as { [propName: string]: any },
     rules: {
         role_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
-        scene_id: [
+        /* scene_id: [
             // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ],
         table_id: [
             // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
-        ],
+        ], */
         action_id_arr: [
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 4294967295, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
@@ -38,8 +38,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.scene_id === undefined ? (param.scene_id = 0) : null
-            param.table_id === undefined ? (param.table_id = 0) : null
+            // param.scene_id === undefined ? (param.scene_id = 0) : null
+            // param.table_id === undefined ? (param.table_id = 0) : null
             if (param.menu_id_arr === undefined) {
                 param.menu_id_arr = []
             } else {
@@ -99,19 +99,19 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('auth.role.name.role_name')" prop="role_name">
                     <el-input v-model="saveForm.data.role_name" :placeholder="t('auth.role.name.role_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('auth.role.name.scene_id')" prop="scene_id">
+                <!-- <el-form-item :label="t('auth.role.name.scene_id')" prop="scene_id">
                     <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.role.name.table_id')" prop="table_id">
                     <my-select v-model="saveForm.data.table_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="t('auth.role.name.action_id_arr')" prop="action_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
-                    <my-select v-model="saveForm.data.action_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list' }" :multiple="true" />
-                    <!-- <my-transfer v-model="saveForm.data.action_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list' }" /> -->
+                    <!-- <my-select v-model="saveForm.data.action_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/my/action/list' }" :multiple="true" /> -->
+                    <my-transfer v-model="saveForm.data.action_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/my/action/list' }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.role.name.menu_id_arr')" prop="menu_id_arr">
-                    <my-cascader v-model="saveForm.data.menu_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }" :isPanel="true" :props="{ multiple: true }" />
+                    <my-cascader v-model="saveForm.data.menu_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/my/menu/tree' }" :isPanel="true" :props="{ multiple: true }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.role.name.is_stop')" prop="is_stop">
                     <el-switch
