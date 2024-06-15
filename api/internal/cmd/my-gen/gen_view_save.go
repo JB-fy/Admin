@@ -245,7 +245,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 	/*--------根据字段数据类型处理（注意：这里的代码改动对字段命名类型处理有影响） 开始--------*/
 	switch v.FieldType {
 	case internal.TypeInt, internal.TypeIntU: // `int等类型`	// `int等类型（unsigned）`
-		defaultVal := gconv.String(v.Default)
+		defaultVal := gconv.String(gconv.Int(v.Default))
 		if defaultVal != `0` {
 			viewSaveField.dataInitBefore.Method = internal.ReturnType
 			viewSaveField.dataInitBefore.DataType = defaultVal
