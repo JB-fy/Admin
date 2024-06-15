@@ -1,4 +1,6 @@
-//common.ts：基于当前框架的封装函数。functions.ts：基于原生js的封装函数
+/* common.ts与functions.ts的区别：
+common.ts：基于当前框架封装的常用函数（与框架耦合）
+functions.ts：基于原生js封装的常用函数（不与框架耦合） */
 
 /**
  * 获取浏览器当前语言

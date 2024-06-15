@@ -1,3 +1,7 @@
+/* common.ts与functions.ts的区别：
+common.ts：基于当前框架封装的常用函数（与框架耦合）
+functions.ts：基于原生js封装的常用函数（不与框架耦合） */
+
 /*--------使用方式 开始--------*/
 /* request(t('config.VITE_HTTP_API_PREFIX') + '/index/index', data).then((res) => {
     console.log(res)
