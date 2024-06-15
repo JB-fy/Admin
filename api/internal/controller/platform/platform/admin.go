@@ -8,7 +8,6 @@ import (
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -49,6 +48,8 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfList
 	}
+
+	filter[`exc_id`] = g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() //平台超级管理员不显示，也不能修改和删除
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -85,6 +86,8 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	}
 
 	filter := map[string]any{`id`: req.Id}
+
+	filter[`exc_id`] = g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() //平台超级管理员不显示，也不能修改和删除
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -139,12 +142,9 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 		return
 	}
 
-	if garray.NewFrom(gconv.SliceAny(req.IdArr)).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint()) { //不能修改平台超级管理员
-		err = utils.NewErrorCode(ctx, 30000000, ``)
-		return
-	}
-
 	filter := map[string]any{`id`: req.IdArr}
+
+	filter[`exc_id`] = g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() //平台超级管理员不显示，也不能修改和删除
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -161,12 +161,9 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 // 删除
 func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	if garray.NewFrom(gconv.SliceAny(req.IdArr)).Contains(g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint()) { //不能删除平台超级管理员
-		err = utils.NewErrorCode(ctx, 30000001, ``)
-		return
-	}
-
 	filter := map[string]any{`id`: req.IdArr}
+
+	filter[`exc_id`] = g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() //平台超级管理员不显示，也不能修改和删除
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
