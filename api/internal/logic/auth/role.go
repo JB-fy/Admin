@@ -142,6 +142,11 @@ func (logicThis *sAuthRole) Delete(ctx context.Context, filter map[string]any) (
 		return
 	}
 
+	if count, _ := daoAuth.RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfOrgAdmin.Columns().RoleId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`), count, g.I18n().T(ctx, `name.auth.roleRelOfOrgAdmin`)}})
+		return
+	}
+
 	if count, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId, daoModelThis.IdArr).Count(); count > 0 {
 		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`), count, g.I18n().T(ctx, `name.auth.roleRelOfPlatformAdmin`)}})
 		return

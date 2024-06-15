@@ -106,22 +106,30 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
+				var roleIdArr []*gvar.Var
 				switch gconv.String(val[`scene_code`]) {
 				case `platform`:
-					/* // 方式一：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
+					// 方式1：非联表查询
+					roleIdArr, _ = RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfPlatformAdmin.Columns().RoleId)
+					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
 					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
 					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel)) */
-					// 方式二：非联表查询
-					roleIdArr, _ := RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfPlatformAdmin.Columns().RoleId)
-					if len(roleIdArr) == 0 {
-						m = m.Where(`1 = 0`)
-						continue
-					}
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().RoleId, roleIdArr)
-				default:
-					m = m.Where(`1 = 0`)
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
+					continue */
+				case `org`:
+					// 方式1：非联表查询
+					roleIdArr, _ = RoleRelOfOrgAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfOrgAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfOrgAdmin.Columns().RoleId)
+					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
+					tableRoleRelOfOrgAdmin := RoleRelOfOrgAdmin.ParseDbTable(m.GetCtx())
+					m = m.Where(tableRoleRelOfOrgAdmin+`.`+RoleRelOfOrgAdmin.Columns().AdminId, val[`login_id`])
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfOrgAdmin, daoModel))
+					continue */
 				}
+				if len(roleIdArr) == 0 {
+					m = m.Where(`1 = 0`)
+					continue
+				}
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().RoleId, roleIdArr)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -387,6 +395,7 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
 			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
+			RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(RoleRelOfOrgAdmin.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr).Delete() */
 			return
 		},
@@ -453,6 +462,8 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToMenu.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		case RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
+		case RoleRelOfOrgAdmin.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfOrgAdmin.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		}

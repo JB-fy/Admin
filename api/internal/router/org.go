@@ -3,6 +3,7 @@ package router
 import (
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/org"
+	controllerAuth "api/internal/controller/org/auth"
 	controllerMy "api/internal/controller/org/my"
 	"api/internal/middleware"
 
@@ -42,6 +43,10 @@ func InitRouterOrg(s *ghttp.Server) {
 				group.Bind(controllerMy.NewProfile())
 				group.Bind(controllerMy.NewMenu())
 				group.Bind(controllerMy.NewAction())
+			})
+
+			group.Group(`/auth`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerAuth.NewRole())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
