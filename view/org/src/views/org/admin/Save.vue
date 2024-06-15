@@ -10,13 +10,13 @@ const saveForm = reactive({
     loading: false,
     data: {
         ...saveCommon.data,
-        org_id: saveCommon.data.org_id ? saveCommon.data.org_id : undefined,
+        // org_id: saveCommon.data.org_id ? saveCommon.data.org_id : undefined,
     } as { [propName: string]: any },
     rules: {
-        org_id: [
+        /* org_id: [
             // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
-        ],
+        ], */
         nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         avatar: [
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
@@ -41,7 +41,7 @@ const saveForm = reactive({
         role_id_arr: [
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 4294967295, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
-        is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        // is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
@@ -51,7 +51,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.org_id === undefined ? (param.org_id = 0) : null
+            // param.org_id === undefined ? (param.org_id = 0) : null
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
                 if (param?.id_arr?.length > 0) {
@@ -97,9 +97,9 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <el-form-item :label="t('org.admin.name.org_id')" prop="org_id">
+                <!-- <el-form-item :label="t('org.admin.name.org_id')" prop="org_id">
                     <my-select v-model="saveForm.data.org_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="t('org.admin.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('org.admin.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
@@ -121,10 +121,10 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
-                    <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" :multiple="true" />
-                    <!-- <my-transfer v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" /> -->
+                    <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" :multiple="true" /> -->
+                    <my-transfer v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" />
                 </el-form-item>
-                <el-form-item :label="t('org.admin.name.is_super')" prop="is_super">
+                <!-- <el-form-item :label="t('org.admin.name.is_super')" prop="is_super">
                     <el-switch
                         v-model="saveForm.data.is_super"
                         :active-value="1"
@@ -134,7 +134,7 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="t('org.admin.name.is_stop')" prop="is_stop">
                     <el-switch
                         v-model="saveForm.data.is_stop"

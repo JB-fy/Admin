@@ -49,7 +49,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int() //只能显示机构自己创建的角色
+	filter[daoAuth.Role.Columns().TableId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
