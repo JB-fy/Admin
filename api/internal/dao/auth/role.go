@@ -157,7 +157,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
-			case Scene.Columns().SceneName, Scene.Columns().SceneCode:
+			case Scene.Columns().SceneName:
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
