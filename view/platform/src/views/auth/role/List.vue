@@ -94,7 +94,7 @@ const table = reactive({
             width: 150,
         },
         {
-            dataKey: 'rel_id',
+            dataKey: 'rel_name',
             title: t('auth.role.name.rel_id'),
             key: 'rel_id',
             align: 'center',

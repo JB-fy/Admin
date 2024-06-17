@@ -21,7 +21,7 @@ type Role struct {
 
 func NewRole() *Role {
 	field := daoAuth.Role.ColumnArr().Slice()
-	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `rel_name`}
+	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName}
 	defaultFieldOfInfo := []string{`id`, `label`, `action_id_arr`, `menu_id_arr`}
 	return &Role{
 		defaultFieldOfList: append(field, defaultFieldOfList...),
@@ -38,7 +38,6 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	if filter == nil {
 		filter = map[string]any{}
 	}
-	filter[daoAuth.Role.Columns().RelId] = 0
 
 	var field []string
 	if len(req.Field) > 0 {
@@ -83,7 +82,6 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 
 	filter := map[string]any{`id`: req.Id}
-	filter[daoAuth.Role.Columns().RelId] = 0
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -138,7 +136,6 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 		return
 	}
 	filter := map[string]any{`id`: req.IdArr}
-	filter[daoAuth.Role.Columns().RelId] = 0
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -156,7 +153,6 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]any{`id`: req.IdArr}
-	filter[daoAuth.Role.Columns().RelId] = 0
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
