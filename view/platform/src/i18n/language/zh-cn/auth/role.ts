@@ -1,4 +1,5 @@
 export default {
+    platform: '平台',
     name: {
         role_name: '名称',
         scene_id: '场景',
