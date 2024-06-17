@@ -15,7 +15,6 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -100,14 +99,6 @@ func (daoThis *usersDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 				tablePrivacy := Privacy.ParseDbTable(m.GetCtx())
 				m = m.WhereLike(tablePrivacy+`.`+k, `%`+gconv.String(v)+`%`)
 				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
-			case `login_name`:
-				if g.Validator().Rules(`required|phone`).Data(v).Run(m.GetCtx()) == nil {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Phone, v)
-				} else if g.Validator().Rules(`required|email`).Data(v).Run(m.GetCtx()) == nil {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Email, v)
-				} else {
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().Account, v)
-				}
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)

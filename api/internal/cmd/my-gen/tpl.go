@@ -29,8 +29,9 @@ type myGenTpl struct {
 	TableCaseKebab     string                   //表名（横线，已去除前缀）
 	KeyList            []internal.MyGenKey      //索引列表
 	FieldList          []myGenField             //字段列表
-	FieldListOfDefault []myGenField             //除FieldListOfAfter外，表的其它字段数组。
-	FieldListOfAfter   []myGenField             //最后处理的字段数组。且需按该数组顺序处理
+	FieldListOfDefault []myGenField             //除FieldListOfAfter1和FieldListOfAfter2外，表的其它字段数组。
+	FieldListOfAfter1  []myGenField             //最后处理的字段数组（在中间表或扩展表之前处理）
+	FieldListOfAfter2  []myGenField             //最后处理的字段数组（在中间表或扩展表之后处理）
 	ModuleDirCaseCamel string                   //模块目录（大驼峰，/会被去除）
 	ModuleDirCaseKebab string                   //模块目录（横线，/会被保留）
 	LogicStructName    string                   //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
@@ -477,17 +478,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		for _, v := range fieldList {
 			isFind := false
 			for _, idAndLabelExcField := range internal.ConfigIdAndLabelExcField {
-				switch val := idAndLabelExcField.(type) {
-				case internal.MyGenFieldTypeName:
-					if val == v.FieldTypeName {
-						isFind = true
-					}
-				case internal.MyGenFieldArrOfTypeName:
-					if (val.FieldType == 0 || val.FieldType == v.FieldType) &&
-						(val.FieldTypeName == `` || val.FieldTypeName == v.FieldTypeName) &&
-						(val.FieldArr.IsEmpty() || val.FieldArr.Contains(v.FieldRaw)) {
-						isFind = true
-					}
+				if tpl.IsFindField(v, idAndLabelExcField) {
+					isFind = true
+					break
 				}
 			}
 			if !isFind {
@@ -535,23 +528,19 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.FieldList = fieldList
 
 	afterFieldArr := garray.NewStrArray()
-	for _, afterField := range internal.ConfigAfterField {
+	for _, afterField := range internal.ConfigAfterField1 {
 		for _, v := range tpl.FieldList {
-			isFind := false
-			switch val := afterField.(type) {
-			case internal.MyGenFieldTypeName:
-				if val == v.FieldTypeName {
-					isFind = true
-				}
-			case internal.MyGenFieldArrOfTypeName:
-				if (val.FieldType == 0 || val.FieldType == v.FieldType) &&
-					(val.FieldTypeName == `` || val.FieldTypeName == v.FieldTypeName) &&
-					(val.FieldArr.IsEmpty() || val.FieldArr.Contains(v.FieldRaw)) {
-					isFind = true
-				}
+			if tpl.IsFindField(v, afterField) && !afterFieldArr.Contains(v.FieldRaw) {
+				tpl.FieldListOfAfter1 = append(tpl.FieldListOfAfter1, v)
+				afterFieldArr.Append(v.FieldRaw)
+				break
 			}
-			if isFind && !afterFieldArr.Contains(v.FieldRaw) {
-				tpl.FieldListOfAfter = append([]myGenField{v}, tpl.FieldListOfAfter...)
+		}
+	}
+	for _, afterField := range internal.ConfigAfterField2 {
+		for _, v := range tpl.FieldList {
+			if tpl.IsFindField(v, afterField) && !afterFieldArr.Contains(v.FieldRaw) {
+				tpl.FieldListOfAfter2 = append(tpl.FieldListOfAfter2, v)
 				afterFieldArr.Append(v.FieldRaw)
 				break
 			}
@@ -583,6 +572,23 @@ func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 		commandArg = append(commandArg, `--overwriteDao=true`)
 	}
 	internal.Command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
+}
+
+// 判断字段是否与查找字段匹配
+func (myGenTplThis *myGenTpl) IsFindField(field myGenField, find any) (isFind bool) {
+	switch val := find.(type) {
+	case internal.MyGenFieldTypeName:
+		if val == field.FieldTypeName {
+			isFind = true
+		}
+	case internal.MyGenFieldArrOfTypeName:
+		if (val.FieldType == 0 || val.FieldType == field.FieldType) &&
+			(val.FieldTypeName == `` || val.FieldTypeName == field.FieldTypeName) &&
+			(val.FieldArr.IsEmpty() || val.FieldArr.Contains(field.FieldRaw)) {
+			isFind = true
+		}
+	}
+	return
 }
 
 // 判断字段是否与表主键一致
@@ -723,7 +729,7 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 	if extendMiddleTpl.Handle.Id.IsPrimary && len(extendMiddleTpl.Handle.Id.List) == 1 && extendMiddleTpl.Handle.Id.List[0].FieldRaw != relId {
 		fieldArrOfIgnore = append(fieldArrOfIgnore, extendMiddleTpl.Handle.Id.List[0].FieldRaw)
 	}
-	for _, v := range extendMiddleTpl.FieldList {
+	for _, v := range append(extendMiddleTpl.FieldListOfDefault, append(extendMiddleTpl.FieldListOfAfter1, extendMiddleTpl.FieldListOfAfter2...)...) {
 		if garray.NewStrArrayFrom(fieldArrOfIgnore).Contains(v.FieldRaw) || garray.NewStrArrayFrom([]string{internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated}).Contains(v.FieldTypeName) {
 			continue
 		}

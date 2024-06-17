@@ -132,6 +132,9 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfDefault {
 		viewSave.Add(getViewSaveField(tpl, v, v.FieldRaw, tpl.I18nPath, v.FieldRaw), v.FieldRaw, tpl.I18nPath, v.FieldRaw, internal.TableTypeDefault, ``)
 	}
+	for _, v := range tpl.FieldListOfAfter1 {
+		viewSave.Add(getViewSaveField(tpl, v, v.FieldRaw, tpl.I18nPath, v.FieldRaw), v.FieldRaw, tpl.I18nPath, v.FieldRaw, internal.TableTypeDefault, ``)
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewSave.Merge(getViewSaveExtendMiddleOne(v))
 	}
@@ -144,7 +147,7 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableManyList {
 		viewSave.Merge(getViewSaveExtendMiddleMany(v))
 	}
-	for _, v := range tpl.FieldListOfAfter {
+	for _, v := range tpl.FieldListOfAfter2 {
 		viewSave.Add(getViewSaveField(tpl, v, v.FieldRaw, tpl.I18nPath, v.FieldRaw), v.FieldRaw, tpl.I18nPath, v.FieldRaw, internal.TableTypeDefault, ``)
 	}
 	viewSave.Unique()

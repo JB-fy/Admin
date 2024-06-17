@@ -78,6 +78,9 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfDefault {
 		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
 	}
+	for _, v := range tpl.FieldListOfAfter1 {
+		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewList.Merge(getViewListExtendMiddleOne(option, v))
 	}
@@ -90,7 +93,7 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableManyList {
 		viewList.Merge(getViewListExtendMiddleMany(option, v))
 	}
-	for _, v := range tpl.FieldListOfAfter {
+	for _, v := range tpl.FieldListOfAfter2 {
 		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
 	}
 	viewList.Unique()

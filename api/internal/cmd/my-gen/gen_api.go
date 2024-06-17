@@ -86,7 +86,10 @@ func genApi(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfDefault {
 		api.Add(getApiField(tpl, v), v, internal.TableTypeDefault)
 	}
-	for _, v := range tpl.FieldListOfAfter {
+	for _, v := range tpl.FieldListOfAfter1 {
+		api.Add(getApiField(tpl, v), v, internal.TableTypeDefault)
+	}
+	for _, v := range tpl.FieldListOfAfter2 {
 		api.Add(getApiField(tpl, v), v, internal.TableTypeDefault)
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {

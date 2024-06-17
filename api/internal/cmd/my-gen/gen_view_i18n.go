@@ -52,7 +52,10 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfDefault {
 		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
 	}
-	for _, v := range tpl.FieldListOfAfter {
+	for _, v := range tpl.FieldListOfAfter1 {
+		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
+	}
+	for _, v := range tpl.FieldListOfAfter2 {
 		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {

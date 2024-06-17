@@ -22,21 +22,24 @@ var (
 			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
 		},
 	}
-	// 从上往下，将对应的字段放最后显示
-	ConfigAfterField = []any{
-		TypeNameCreated,
-		TypeNameUpdated,
-		TypeNameDeleted,
-		MyGenFieldArrOfTypeName{
-			FieldTypeName: TypeNameIsPrefix,
-			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
-		},
+	// 最后处理的字段（在中间表或扩展表之前处理）
+	ConfigAfterField1 = []any{
+		TypeNameIsPrefix,
 		MyGenFieldArrOfTypeName{
 			FieldType:     TypeText,
 			FieldTypeName: TypeNameRemarkSuffix,
 			FieldArr:      garray.NewStrArray(),
 		},
-		TypeNameIsPrefix,
+	}
+	// 最后处理的字段（在中间表或扩展表之后处理）
+	ConfigAfterField2 = []any{
+		MyGenFieldArrOfTypeName{
+			FieldTypeName: TypeNameIsPrefix,
+			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
+		},
+		TypeNameDeleted,
+		TypeNameUpdated,
+		TypeNameCreated,
 	}
 )
 

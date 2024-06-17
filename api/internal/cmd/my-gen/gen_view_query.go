@@ -46,6 +46,9 @@ func genViewQuery(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfDefault {
 		viewQuery.Add(getViewQueryField(tpl, v, tpl.I18nPath, v.FieldRaw))
 	}
+	for _, v := range tpl.FieldListOfAfter1 {
+		viewQuery.Add(getViewQueryField(tpl, v, tpl.I18nPath, v.FieldRaw))
+	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewQuery.Merge(getViewQueryExtendMiddleOne(v))
 	}
@@ -58,7 +61,7 @@ func genViewQuery(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableManyList {
 		viewQuery.Merge(getViewQueryExtendMiddleMany(v))
 	}
-	for _, v := range tpl.FieldListOfAfter {
+	for _, v := range tpl.FieldListOfAfter2 {
 		viewQuery.Add(getViewQueryField(tpl, v, tpl.I18nPath, v.FieldRaw))
 	}
 	viewQuery.Unique()

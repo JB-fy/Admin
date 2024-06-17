@@ -114,7 +114,10 @@ func genDao(tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfDefault {
 		dao.Add(getDaoField(tpl, v))
 	}
-	for _, v := range tpl.FieldListOfAfter {
+	for _, v := range tpl.FieldListOfAfter1 {
+		dao.Add(getDaoField(tpl, v))
+	}
+	for _, v := range tpl.FieldListOfAfter2 {
 		dao.Add(getDaoField(tpl, v))
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
