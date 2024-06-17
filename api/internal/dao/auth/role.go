@@ -218,7 +218,7 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 					case `rel_name`:
 						relName := ``
 						if record[daoThis.Columns().RelId].Uint() == 0 {
-							relName = `平台创建`
+							relName = `平台`
 						} else {
 							switch record[Scene.Columns().SceneCode].String() {
 							// case `platform`:	// 平台都是0

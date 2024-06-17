@@ -17,16 +17,12 @@ import (
 	"api/internal/dao/org/internal"
 )
 
-type (
-	DaoOrg interface {
-		dao.DaoInterface
-		Columns() *internal.OrgColumns
-	}
-)
+type DaoOrg interface {
+	dao.DaoInterface
+	Columns() *internal.OrgColumns
+}
 
-var (
-	Org DaoOrg
-)
+var Org DaoOrg
 
 func RegisterOrg(d DaoOrg) {
 	Org = d

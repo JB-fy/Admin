@@ -17,16 +17,12 @@ import (
 	"api/internal/dao/users/internal"
 )
 
-type (
-	DaoUsers interface {
-		dao.DaoInterface
-		Columns() *internal.UsersColumns
-	}
-)
+type DaoUsers interface {
+	dao.DaoInterface
+	Columns() *internal.UsersColumns
+}
 
-var (
-	Users DaoUsers
-)
+var Users DaoUsers
 
 func RegisterUsers(d DaoUsers) {
 	Users = d
