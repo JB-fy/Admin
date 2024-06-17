@@ -117,9 +117,6 @@ func genDao(tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfAfter1 {
 		dao.Add(getDaoField(tpl, v))
 	}
-	for _, v := range tpl.FieldListOfAfter2 {
-		dao.Add(getDaoField(tpl, v))
-	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		genDao(v.tpl)
 		dao.Merge(getDaoExtendMiddleOne(v))
@@ -135,6 +132,9 @@ func genDao(tpl myGenTpl) {
 	for _, v := range tpl.Handle.MiddleTableManyList {
 		v.tpl.gfGenDao(false)
 		dao.Merge(getDaoExtendMiddleMany(v))
+	}
+	for _, v := range tpl.FieldListOfAfter2 {
+		dao.Add(getDaoField(tpl, v))
 	}
 	for _, v := range tpl.Handle.OtherRelTableList {
 		dao.Merge(getDaoOtherRel(v))

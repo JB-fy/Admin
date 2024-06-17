@@ -55,9 +55,6 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 	for _, v := range tpl.FieldListOfAfter1 {
 		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
 	}
-	for _, v := range tpl.FieldListOfAfter2 {
-		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
-	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
 		viewI18n.Merge(getViewI18nExtendMiddleOne(v))
 	}
@@ -69,6 +66,9 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 	}
 	for _, v := range tpl.Handle.MiddleTableManyList {
 		viewI18n.Merge(getViewI18nExtendMiddleMany(v))
+	}
+	for _, v := range tpl.FieldListOfAfter2 {
+		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
 	}
 	viewI18n.Unique()
 
