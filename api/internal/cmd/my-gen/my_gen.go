@@ -1,25 +1,4 @@
 /*
-只生成模型：
-	./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
-
-平台后台生成示例：
-	./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	./main myGen -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/操作 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	./main myGen -dbGroup=default -dbTable=auth_menu -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/菜单 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	./main myGen -dbGroup=default -dbTable=platform_admin -removePrefixCommon= -removePrefixAlone=platform_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/平台管理员 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-
-	./main myGen -dbGroup=default -dbTable=org -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=机构管理/机构 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	./main myGen -dbGroup=default -dbTable=org_admin -removePrefixCommon= -removePrefixAlone=org_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/机构管理员 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-
-	./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=用户管理/用户 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0
-
-机构后台生成示例：
-	./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	./main myGen -dbGroup=default -dbTable=org_admin -removePrefixCommon= -removePrefixAlone=org_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/机构管理员 -isView=1 -sceneCode=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-
-APP常用生成示例：./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
-
 注意：强烈建议搭配Git使用
 表名统一使用蛇形命名。不同功能表按以下表规则命名
 	主表：正常命名即可。参考以下示例
