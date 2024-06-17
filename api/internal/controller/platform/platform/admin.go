@@ -112,7 +112,6 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	data[daoPlatform.Admin.Columns().IsSuper] = 0 //超级管理员不允许创建
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

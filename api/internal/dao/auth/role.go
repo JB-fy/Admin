@@ -100,36 +100,6 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case Scene.Columns().SceneCode:
-				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
-			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id}
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
-				val := gconv.Map(v)
-				var roleIdArr []*gvar.Var
-				switch gconv.String(val[`scene_code`]) {
-				case `platform`:
-					// 方式1：非联表查询
-					roleIdArr, _ = RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfPlatformAdmin.Columns().RoleId)
-					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
-					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
-					continue */
-				case `org`:
-					// 方式1：非联表查询
-					roleIdArr, _ = RoleRelOfOrgAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfOrgAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfOrgAdmin.Columns().RoleId)
-					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
-					tableRoleRelOfOrgAdmin := RoleRelOfOrgAdmin.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRoleRelOfOrgAdmin+`.`+RoleRelOfOrgAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfOrgAdmin, daoModel))
-					continue */
-				}
-				if len(roleIdArr) == 0 {
-					m = m.Where(`1 = 0`)
-					continue
-				}
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().RoleId, roleIdArr)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -165,12 +135,6 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				daoModel.AfterField.Add(v)
 			case `menu_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
-				daoModel.AfterField.Add(v)
-			case `rel_name`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RelId)
-				tableScene := Scene.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableScene + `.` + Scene.Columns().SceneCode)
-				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
 				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
@@ -214,14 +178,6 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 					case `menu_id_arr`:
 						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
 						record[v] = gvar.New(menuIdArr)
-					case `rel_name`:
-						if record[daoThis.Columns().RelId].Uint() == 0 {
-							record[v] = gvar.New(`平台`)
-							continue
-						}
-						switch record[Scene.Columns().SceneCode].String() {
-						case `platform`:
-						}
 					default:
 						record[v] = gvar.New(nil)
 					}
@@ -460,10 +416,6 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToAction.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		case RoleRelToMenu.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelToMenu.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
-		case RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfPlatformAdmin.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
-		case RoleRelOfOrgAdmin.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+RoleRelOfOrgAdmin.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().RoleId+` = `+daoModel.DbTable+`.`+daoThis.Columns().RoleId)
 		}
