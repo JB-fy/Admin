@@ -89,14 +89,14 @@ func (daoThis *adminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 				}
 			case `label`:
 				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Email, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
-			case `time_range_start`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `time_range_end`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case daoAuth.RoleRelOfOrgAdmin.Columns().RoleId:
 				tableAuthRoleRelOfOrgAdmin := daoAuth.RoleRelOfOrgAdmin.ParseDbTable(m.GetCtx())
 				m = m.Where(tableAuthRoleRelOfOrgAdmin+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableAuthRoleRelOfOrgAdmin, daoModel))
+			case `time_range_start`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `time_range_end`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)

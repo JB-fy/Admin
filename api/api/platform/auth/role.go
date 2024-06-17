@@ -33,7 +33,7 @@ type RoleFilter struct {
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
 	RoleName       string      `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
-	RelId          *uint       `json:"rel_id,omitempty" v:"between:1,4294967295" dc:"关联ID。0表示平台创建，其它值根据sceneId对应不同表"`
+	RelId          *uint       `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据sceneId对应不同表"`
 	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,4294967295" dc:"操作ID"`
 	MenuId         *uint       `json:"menu_id,omitempty" v:"between:1,4294967295" dc:"菜单ID"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`

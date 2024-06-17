@@ -17,10 +17,10 @@ type AdminInfo struct {
 	Email     *string     `json:"email,omitempty" dc:"邮箱"`
 	Account   *string     `json:"account,omitempty" dc:"账号"`
 	IsSuper   *uint       `json:"is_super,omitempty" dc:"超管：0否 1是"`
+	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID列表"`
 	OrgName   *string     `json:"org_name,omitempty" dc:"机构"`
 }
 
@@ -38,8 +38,8 @@ type AdminFilter struct {
 	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
 	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	IsSuper        *uint       `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
-	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------列表 开始--------*/
@@ -83,8 +83,8 @@ type AdminCreateReq struct {
 	Account   *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID列表"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID列表"`
 }
 
 /*--------新增 结束--------*/
@@ -101,8 +101,8 @@ type AdminUpdateReq struct {
 	Account   *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
-	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID列表"`
+	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
