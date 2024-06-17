@@ -27,6 +27,7 @@ type AdminColumns struct {
 	UpdatedAt string // 更新时间
 	IsStop    string // 停用：0否 1是
 	AdminId   string // 管理员ID
+	IsSuper   string // 超管：0否 1是
 	Nickname  string // 昵称
 	Avatar    string // 头像
 	Phone     string // 手机
@@ -42,6 +43,7 @@ var adminColumns = AdminColumns{
 	UpdatedAt: "updated_at",
 	IsStop:    "is_stop",
 	AdminId:   "admin_id",
+	IsSuper:   "is_super",
 	Nickname:  "nickname",
 	Avatar:    "avatar",
 	Phone:     "phone",

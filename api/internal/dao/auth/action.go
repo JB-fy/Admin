@@ -14,7 +14,6 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -97,10 +96,10 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
-			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id, `scene_id`: 场景id（平台超级管理员用，不用再做一次查询）}
+			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）, `scene_id`: 场景id（平台超级管理员用）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
-				if gconv.String(val[`scene_code`]) == `platform` && gconv.Uint(val[`login_id`]) == g.Cfg().MustGet(m.GetCtx(), `superPlatformAdminId`).Uint() { //平台超级管理员
+				if gconv.String(val[`scene_code`]) == `platform` && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
 					tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 					m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
 					m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))

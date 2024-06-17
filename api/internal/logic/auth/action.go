@@ -2,6 +2,7 @@ package logic
 
 import (
 	daoAuth "api/internal/dao/auth"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -83,8 +84,7 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCodeArr ...string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	//平台超级管理员，无权限限制
-	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[`login_id`].Uint() == g.Cfg().MustGet(ctx, `superPlatformAdminId`).Uint() {
+	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint() == 1 { //平台超级管理员，无权限限制
 		isAuth = true
 		return
 	}
@@ -99,11 +99,10 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCodeArr ...st
 		`self_action`: map[string]any{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`login_id`:   loginInfo[`login_id`],
-			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 		},
 	}
 	count, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Count()
-	if count == 0 {
+	if count != len(actionCodeArr) {
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return
 	}

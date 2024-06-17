@@ -25,7 +25,6 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 		`self_menu`: map[string]any{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`login_id`:   loginInfo[`login_id`],
-			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 		},
 	}
 	list, err := daoAuth.Menu.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()

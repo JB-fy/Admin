@@ -3,6 +3,7 @@ package controller
 import (
 	apiMy "api/api/platform/my"
 	daoAuth "api/internal/dao/auth"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
 	"context"
 
@@ -25,6 +26,7 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 		`self_menu`: map[string]any{
 			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
 			`login_id`:   loginInfo[`login_id`],
+			`is_super`:   loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint(),
 			`scene_id`:   sceneInfo[daoAuth.Scene.Columns().SceneId],
 		},
 	}

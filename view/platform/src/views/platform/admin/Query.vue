@@ -61,6 +61,9 @@ const queryForm = reactive({
         <el-form-item prop="account">
             <el-input v-model="queryCommon.data.account" :placeholder="t('platform.admin.name.account')" maxlength="20" :clearable="true" />
         </el-form-item>
+        <!-- <el-form-item prop="is_super">
+            <el-select-v2 v-model="queryCommon.data.is_super" :options="tm('common.status.whether')" :placeholder="t('platform.admin.name.is_super')" :clearable="true" style="width: 86px" />
+        </el-form-item> -->
         <el-form-item prop="role_id">
             <my-select v-model="queryCommon.data.role_id" :placeholder="t('platform.admin.name.role_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" />
         </el-form-item>

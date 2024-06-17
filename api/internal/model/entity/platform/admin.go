@@ -14,6 +14,7 @@ type Admin struct {
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
 	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
 	AdminId   uint        `json:"adminId"   orm:"admin_id"   ` // 管理员ID
+	IsSuper   uint        `json:"isSuper"   orm:"is_super"   ` // 超管：0否 1是
 	Nickname  string      `json:"nickname"  orm:"nickname"   ` // 昵称
 	Avatar    string      `json:"avatar"    orm:"avatar"     ` // 头像
 	Phone     string      `json:"phone"     orm:"phone"      ` // 手机
