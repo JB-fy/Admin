@@ -88,10 +88,6 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().RoleName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case `time_range_start`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `time_range_end`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case RoleRelToAction.Columns().ActionId:
 				tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
 				m = m.Where(tableRoleRelToAction+`.`+k, v)
@@ -100,6 +96,10 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
 				m = m.Where(tableRoleRelToMenu+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
+			case `time_range_start`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `time_range_end`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case Scene.Columns().SceneCode:
 				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
@@ -166,8 +166,8 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 			case `menu_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
 				daoModel.AfterField.Add(v)
-			case `table_name`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().TableId)
+			case `rel_name`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RelId)
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + Scene.Columns().SceneCode)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
@@ -214,8 +214,8 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 					case `menu_id_arr`:
 						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
 						record[v] = gvar.New(menuIdArr)
-					case `table_name`:
-						if record[daoThis.Columns().TableId].Uint() == 0 {
+					case `rel_name`:
+						if record[daoThis.Columns().RelId].Uint() == 0 {
 							record[v] = gvar.New(`平台`)
 							continue
 						}

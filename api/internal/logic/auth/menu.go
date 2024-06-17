@@ -46,10 +46,6 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return
 		}
-		if pInfo[daoAuth.Menu.Columns().SceneId].Uint() != gconv.Uint(data[daoAuth.Menu.Columns().SceneId]) {
-			err = utils.NewErrorCode(ctx, 89999998, ``)
-			return
-		}
 	}
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
@@ -82,17 +78,6 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 		for _, id := range daoModelThis.IdArr {
 			if garray.NewStrArrayFrom(gstr.Split(pInfo[daoAuth.Menu.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
 				err = utils.NewErrorCode(ctx, 29999995, ``)
-				return
-			}
-		}
-		if _, ok := data[daoAuth.Menu.Columns().SceneId]; ok {
-			if pInfo[daoAuth.Menu.Columns().SceneId].Uint() != gconv.Uint(data[daoAuth.Menu.Columns().SceneId]) {
-				err = utils.NewErrorCode(ctx, 89999998, ``)
-				return
-			}
-		} else {
-			if count, _ := daoModelThis.CloneNew().Filters(g.Map{daoAuth.Menu.Columns().SceneId: pInfo[daoAuth.Menu.Columns().SceneId], `id`: daoModelThis.IdArr}).Count(); count != len(daoModelThis.IdArr) {
-				err = utils.NewErrorCode(ctx, 89999998, ``)
 				return
 			}
 		}

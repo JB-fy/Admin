@@ -88,14 +88,14 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().ActionName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case `time_range_start`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `time_range_end`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case ActionRelToScene.Columns().SceneId:
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)
 				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
+			case `time_range_start`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `time_range_end`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）, `scene_id`: 场景id（平台超级管理员用）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)

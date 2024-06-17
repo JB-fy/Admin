@@ -29,7 +29,7 @@ type RoleColumns struct {
 	RoleId    string // 角色ID
 	RoleName  string // 名称
 	SceneId   string // 场景ID
-	TableId   string // 关联ID。0表示平台创建，其它值根据sceneId对应不同表
+	RelId     string // 关联ID。0表示平台创建，其它值根据sceneId对应不同表
 }
 
 // roleColumns holds the columns for table auth_role.
@@ -40,7 +40,7 @@ var roleColumns = RoleColumns{
 	RoleId:    "role_id",
 	RoleName:  "role_name",
 	SceneId:   "scene_id",
-	TableId:   "table_id",
+	RelId:     "rel_id",
 }
 
 // NewRoleDao creates and returns a new DAO object for table data access.

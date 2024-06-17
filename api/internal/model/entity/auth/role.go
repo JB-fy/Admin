@@ -16,5 +16,5 @@ type Role struct {
 	RoleId    uint        `json:"roleId"    orm:"role_id"    ` // 角色ID
 	RoleName  string      `json:"roleName"  orm:"role_name"  ` // 名称
 	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 场景ID
-	TableId   uint        `json:"tableId"   orm:"table_id"   ` // 关联ID。0表示平台创建，其它值根据sceneId对应不同表
+	RelId     uint        `json:"relId"     orm:"rel_id"     ` // 关联ID。0表示平台创建，其它值根据sceneId对应不同表
 }

@@ -13,10 +13,10 @@ type ActionInfo struct {
 	ActionName *string     `json:"action_name,omitempty" dc:"名称"`
 	ActionCode *string     `json:"action_code,omitempty" dc:"标识"`
 	Remark     *string     `json:"remark,omitempty" dc:"备注"`
+	SceneIdArr []uint      `json:"scene_id_arr,omitempty" dc:"场景ID列表"`
 	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	SceneIdArr []uint      `json:"scene_id_arr,omitempty" dc:"场景ID列表"`
 }
 
 type ActionFilter struct {
@@ -30,8 +30,8 @@ type ActionFilter struct {
 	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,4294967295" dc:"操作ID"`
 	ActionName     string      `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode     string      `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------列表 开始--------*/
@@ -70,8 +70,8 @@ type ActionCreateReq struct {
 	ActionName *string `json:"action_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	ActionCode *string `json:"action_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"场景ID列表"`
+	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -83,8 +83,8 @@ type ActionUpdateReq struct {
 	ActionName *string `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode *string `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"场景ID列表"`
+	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
