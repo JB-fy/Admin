@@ -528,19 +528,19 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.FieldList = fieldList
 
 	afterFieldArr := garray.NewStrArray()
-	for _, afterField := range internal.ConfigAfterField1 {
+	for _, afterField := range internal.ConfigAfterField2 {
 		for _, v := range tpl.FieldList {
 			if tpl.IsFindField(v, afterField) && !afterFieldArr.Contains(v.FieldRaw) {
-				tpl.FieldListOfAfter1 = append(tpl.FieldListOfAfter1, v)
+				tpl.FieldListOfAfter2 = append(tpl.FieldListOfAfter2, v)
 				afterFieldArr.Append(v.FieldRaw)
 				break
 			}
 		}
 	}
-	for _, afterField := range internal.ConfigAfterField2 {
+	for _, afterField := range internal.ConfigAfterField1 {
 		for _, v := range tpl.FieldList {
 			if tpl.IsFindField(v, afterField) && !afterFieldArr.Contains(v.FieldRaw) {
-				tpl.FieldListOfAfter2 = append(tpl.FieldListOfAfter2, v)
+				tpl.FieldListOfAfter1 = append(tpl.FieldListOfAfter1, v)
 				afterFieldArr.Append(v.FieldRaw)
 				break
 			}
