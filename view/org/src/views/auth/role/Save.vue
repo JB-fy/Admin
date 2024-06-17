@@ -10,7 +10,7 @@ const saveForm = reactive({
     data: {
         ...saveCommon.data,
         // scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
-        // table_id: saveCommon.data.table_id ? saveCommon.data.table_id : undefined,
+        // rel_id: saveCommon.data.rel_id ? saveCommon.data.rel_id : undefined,
     } as { [propName: string]: any },
     rules: {
         role_name: [
@@ -21,7 +21,7 @@ const saveForm = reactive({
             // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ],
-        table_id: [
+        rel_id: [
             // { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ], */
@@ -39,7 +39,7 @@ const saveForm = reactive({
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
             // param.scene_id === undefined ? (param.scene_id = 0) : null
-            // param.table_id === undefined ? (param.table_id = 0) : null
+            // param.rel_id === undefined ? (param.rel_id = 0) : null
             if (param.menu_id_arr === undefined) {
                 param.menu_id_arr = []
             } else {
@@ -102,8 +102,8 @@ const saveDrawer = reactive({
                 <!-- <el-form-item :label="t('auth.role.name.scene_id')" prop="scene_id">
                     <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
                 </el-form-item>
-                <el-form-item :label="t('auth.role.name.table_id')" prop="table_id">
-                    <my-select v-model="saveForm.data.table_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/table/list' }" />
+                <el-form-item :label="t('auth.role.name.rel_id')" prop="rel_id">
+                    <my-select v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" />
                 </el-form-item> -->
                 <el-form-item :label="t('auth.role.name.action_id_arr')" prop="action_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
