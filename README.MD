@@ -156,7 +156,7 @@ APP常用生成示例：
 
 ## 常见错误处理
 
-1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/allow.go)解决
+1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/users.go)解决
 
 ## 微信交流群
 | 微信 |

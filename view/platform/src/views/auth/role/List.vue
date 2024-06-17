@@ -43,7 +43,7 @@ const table = reactive({
             align: 'center',
             width: 150,
             cellRenderer: (props: any): any => {
-                if (!authAction.isUpdate) {
+                if (!authAction.isUpdate || props.rowData.rel_id > 0) {
                     return [<div class="el-table-v2__cell-text">{props.rowData.role_name}</div>]
                 }
                 if (!props.rowData?.editRoleName?.isEdit) {
@@ -115,7 +115,7 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
+                        disabled={!authAction.isUpdate || props.rowData.rel_id > 0}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -146,6 +146,9 @@ const table = reactive({
             fixed: 'right',
             hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
+                if (props.rowData.rel_id > 0) {
+                    return
+                }
                 let vNode: any = []
                 if (authAction.isUpdate) {
                     vNode.push(

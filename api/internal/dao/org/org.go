@@ -6,6 +6,7 @@ package dao
 
 import (
 	daoIndex "api/internal/dao"
+	"api/internal/dao/org/allow"
 	"api/internal/dao/org/internal"
 	"context"
 	"database/sql"
@@ -17,6 +18,10 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
+
+func init() {
+	allow.RegisterOrg(&Org)
+}
 
 // internalOrgDao is internal type for wrapping internal DAO implements.
 type internalOrgDao = *internal.OrgDao

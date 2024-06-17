@@ -7,6 +7,7 @@ package dao
 import (
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
+	daoOrg "api/internal/dao/org/allow"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -156,7 +157,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
-			case Scene.Columns().SceneName:
+			case Scene.Columns().SceneName, Scene.Columns().SceneCode:
 				tableScene := Scene.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableScene + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
@@ -215,13 +216,17 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
 						record[v] = gvar.New(menuIdArr)
 					case `rel_name`:
+						relName := ``
 						if record[daoThis.Columns().RelId].Uint() == 0 {
-							record[v] = gvar.New(`平台`)
-							continue
+							relName = `平台创建`
+						} else {
+							switch record[Scene.Columns().SceneCode].String() {
+							// case `platform`:	// 平台都是0
+							case `org`:
+								relName, _ = daoOrg.Org.CtxDaoModel(ctx).Filter(daoOrg.Org.Columns().OrgId, record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
+							}
 						}
-						switch record[Scene.Columns().SceneCode].String() {
-						case `platform`:
-						}
+						record[v] = gvar.New(relName)
 					default:
 						record[v] = gvar.New(nil)
 					}
