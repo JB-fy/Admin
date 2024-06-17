@@ -124,7 +124,8 @@ const saveDrawer = reactive({
                     />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_icon')" prop="menu_icon">
-                    <my-upload v-model="saveForm.data.menu_icon" accept="image/*" />
+                    <el-input v-model="saveForm.data.menu_icon" :placeholder="t('auth.menu.name.menu_icon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('auth.menu.tip.menu_icon')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_url')" prop="menu_url">
                     <el-input v-model="saveForm.data.menu_url" :placeholder="t('auth.menu.name.menu_url')" maxlength="120" :show-word-limit="true" :clearable="true" />
