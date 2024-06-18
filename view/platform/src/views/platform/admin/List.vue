@@ -24,6 +24,9 @@ const table = reactive({
                             indeterminate={someChecked && !allChecked}
                             onChange={(val: boolean) => {
                                 table.data.forEach((item: any) => {
+                                    if(item.is_super == 1){
+                                        return
+                                    }
                                     item.checked = val
                                 })
                             }}
@@ -33,7 +36,7 @@ const table = reactive({
                 ]
             },
             cellRenderer: (props: any): any => {
-                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
+                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked} disabled={props.rowData.is_super == 1} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
             },
         },
         {

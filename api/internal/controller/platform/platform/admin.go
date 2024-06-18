@@ -138,7 +138,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 	}
 	filter := map[string]any{`id`: req.IdArr}
 
-	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //超级管理员不允许修改
+	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //不允许修改平台超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -156,7 +156,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]any{`id`: req.IdArr}
-	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //超级管理员不允许删除
+	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //不允许删除平台超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

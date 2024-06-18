@@ -74,15 +74,15 @@ type AdminInfoRes struct {
 
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
-	g.Meta    `path:"/admin/create" method:"post" tags:"平台后台/权限管理/机构管理员" sm:"新增"`
-	OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
-	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Phone     *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Email     *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account   *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
-	IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	g.Meta   `path:"/admin/create" method:"post" tags:"平台后台/权限管理/机构管理员" sm:"新增"`
+	OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
+	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
+	Phone    *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email    *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
+	Account  *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Password *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
+	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID列表"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
@@ -91,16 +91,16 @@ type AdminCreateReq struct {
 
 /*--------修改 开始--------*/
 type AdminUpdateReq struct {
-	g.Meta    `path:"/admin/update" method:"post" tags:"平台后台/权限管理/机构管理员" sm:"修改"`
-	IdArr     []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
-	Nickname  *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Avatar    *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Phone     *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Email     *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account   *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
-	IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	g.Meta   `path:"/admin/update" method:"post" tags:"平台后台/权限管理/机构管理员" sm:"修改"`
+	IdArr    []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
+	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
+	Phone    *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email    *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
+	Account  *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Password *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
+	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID列表"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }

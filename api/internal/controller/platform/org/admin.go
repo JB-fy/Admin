@@ -110,6 +110,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data[daoOrg.Admin.Columns().IsSuper] = 1 //只允许创建机构超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -137,6 +138,8 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 		return
 	}
 	filter := map[string]any{`id`: req.IdArr}
+
+	filter[daoOrg.Admin.Columns().IsSuper] = 1 //只允许修改机构超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -154,6 +157,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 func (controllerThis *Admin) Delete(ctx context.Context, req *apiOrg.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := map[string]any{`id`: req.IdArr}
+	filter[daoOrg.Admin.Columns().IsSuper] = 1 //只允许删除机构超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
