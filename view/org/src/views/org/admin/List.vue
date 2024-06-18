@@ -24,6 +24,9 @@ const table = reactive({
                             indeterminate={someChecked && !allChecked}
                             onChange={(val: boolean) => {
                                 table.data.forEach((item: any) => {
+                                    if (item.is_super == 1) {
+                                        return
+                                    }
                                     item.checked = val
                                 })
                             }}
@@ -33,16 +36,16 @@ const table = reactive({
                 ]
             },
             cellRenderer: (props: any): any => {
-                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
+                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked} disabled={props.rowData.is_super == 1} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
             },
         },
-        {
+        /* {
             dataKey: 'org_name',
             title: t('org.admin.name.org_id'),
             key: 'org_id',
             align: 'center',
             width: 150,
-        },
+        }, */
         {
             dataKey: 'nickname',
             title: t('org.admin.name.nickname'),
@@ -108,7 +111,7 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
+                        disabled={true}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_super: val }).then(() => (props.rowData.is_super = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -130,7 +133,7 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
+                        disabled={!authAction.isUpdate || props.rowData.is_super == 1}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -161,6 +164,9 @@ const table = reactive({
             fixed: 'right',
             hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
+                if (props.rowData.is_super == 1) {
+                    return
+                }
                 let vNode: any = []
                 if (authAction.isUpdate) {
                     vNode.push(

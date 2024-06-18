@@ -20,6 +20,7 @@ type ProfileInfo struct {
 	Phone    string `json:"phone" dc:"手机"`
 	Email    string `json:"email" dc:"邮箱"`
 	Account  string `json:"account" dc:"账号"`
+	IsSuper  uint   `json:"is_super" dc:"超管：0否 1是"`
 }
 
 /*--------个人信息 结束--------*/

@@ -49,8 +49,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiOrg.AdminListReq)
 	}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
-	filter[daoOrg.Admin.Columns().IsSuper] = 0 //机构超级管理员不显示，也不能修改和删除
+	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -88,8 +87,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
-	filter[daoOrg.Admin.Columns().IsSuper] = 0 //机构超级管理员不显示，也不能修改和删除
+	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -119,8 +117,8 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	data[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
-	data[daoOrg.Admin.Columns().IsSuper] = 0 //只能是普通管理员
+	data[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	data[daoOrg.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -150,8 +148,8 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 	filter := map[string]any{`id`: req.IdArr}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
-	filter[daoOrg.Admin.Columns().IsSuper] = 0 //机构超级管理员不显示，也不能修改和删除
+	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	filter[daoOrg.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -171,8 +169,8 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiOrg.AdminDelete
 	filter := map[string]any{`id`: req.IdArr}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId].Int()
-	filter[daoOrg.Admin.Columns().IsSuper] = 0 //机构超级管理员不显示，也不能修改和删除
+	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	filter[daoOrg.Admin.Columns().IsSuper] = 0 //不允许删除机构超级管理员
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

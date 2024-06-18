@@ -15,11 +15,13 @@ type ProfileInfoRes struct {
 
 type ProfileInfo struct {
 	AdminId  uint   `json:"admin_id" dc:"管理员ID"`
+	OrgId    uint   `json:"org_id" dc:"机构ID"`
 	Nickname string `json:"nickname" dc:"昵称"`
 	Avatar   string `json:"avatar" dc:"头像"`
 	Phone    string `json:"phone" dc:"手机"`
 	Email    string `json:"email" dc:"邮箱"`
 	Account  string `json:"account" dc:"账号"`
+	IsSuper  uint   `json:"is_super" dc:"超管：0否 1是"`
 }
 
 /*--------个人信息 结束--------*/
