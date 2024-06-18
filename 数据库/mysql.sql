@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 18/06/2024 15:16:34
+ Date: 18/06/2024 17:35:46
 */
 
 SET NAMES utf8mb4;
@@ -371,10 +371,10 @@ CREATE TABLE `org_admin`  (
   `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
   `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   PRIMARY KEY (`admin_id`) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC, `org_id` ASC) USING BTREE,
-  UNIQUE INDEX `email`(`email` ASC, `org_id` ASC) USING BTREE,
-  UNIQUE INDEX `account`(`account` ASC, `org_id` ASC) USING BTREE,
-  INDEX `org_id`(`org_id` ASC) USING BTREE
+  INDEX `org_id`(`org_id` ASC) USING BTREE,
+  UNIQUE INDEX `org_id_2`(`org_id` ASC, `phone` ASC) USING BTREE,
+  UNIQUE INDEX `org_id_3`(`org_id` ASC, `email` ASC) USING BTREE,
+  UNIQUE INDEX `org_id_4`(`org_id` ASC, `account` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '机构管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
