@@ -653,10 +653,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                 param.` + tplEM.FieldVar + `.forEach((item: any) => {
                     ` + gstr.CaseCamelLower(tplEM.FieldVar) + ` = ` + gstr.CaseCamelLower(tplEM.FieldVar) + `.concat(item)
                 })
-                //param.` + tplEM.FieldVar + ` = [...new Set(` + gstr.CaseCamelLower(tplEM.FieldVar) + `)]
-                param.` + tplEM.FieldVar + ` = ` + gstr.CaseCamelLower(tplEM.FieldVar) + `.filter((item: any, index: any) => {
-                    return ` + gstr.CaseCamelLower(tplEM.FieldVar) + `.indexOf(item) === index
-                })
+                param.` + tplEM.FieldVar + ` = [...new Set(` + gstr.CaseCamelLower(tplEM.FieldVar) + `)]
             }`
 			} else {
 				viewSaveField.rule.Method = internal.ReturnTypeName
