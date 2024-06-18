@@ -77,7 +77,7 @@ type MenuInfoRes struct {
 type MenuCreateReq struct {
 	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"新增"`
 	MenuName  *string `json:"menu_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	SceneId   *uint   `json:"scene_id,omitempty" v:"between:0,4294967295" dc:"场景ID"`
+	SceneId   *uint   `json:"scene_id,omitempty" v:"required|between:1,4294967295" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
 	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
@@ -93,7 +93,7 @@ type MenuUpdateReq struct {
 	g.Meta    `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"修改"`
 	IdArr     []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	MenuName  *string `json:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
-	SceneId   *uint   `json:"scene_id,omitempty" v:"between:0,4294967295" dc:"场景ID"`
+	SceneId   *uint   `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
 	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
