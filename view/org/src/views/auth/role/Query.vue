@@ -52,17 +52,17 @@ const queryForm = reactive({
         <el-form-item prop="role_name">
             <el-input v-model="queryCommon.data.role_name" :placeholder="t('auth.role.name.role_name')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="scene_id">
+        <!-- <el-form-item prop="scene_id">
             <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.role.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
         </el-form-item>
         <el-form-item prop="rel_id">
             <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="action_id">
-            <my-select v-model="queryCommon.data.action_id" :placeholder="t('auth.role.name.action_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list' }" />
+            <my-select v-model="queryCommon.data.action_id" :placeholder="t('auth.role.name.action_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/my/action/list' }" />
         </el-form-item>
         <el-form-item prop="menu_id">
-            <my-cascader v-model="queryCommon.data.menu_id" :placeholder="t('auth.role.name.menu_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }" :props="{ emitPath: false }" />
+            <my-cascader v-model="queryCommon.data.menu_id" :placeholder="t('auth.role.name.menu_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/my/menu/tree' }" :props="{ emitPath: false }" />
         </el-form-item>
         <el-form-item prop="is_stop">
             <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('auth.role.name.is_stop')" :clearable="true" style="width: 86px" />

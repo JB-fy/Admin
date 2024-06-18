@@ -47,10 +47,7 @@ const saveForm = reactive({
                 param.menu_id_arr.forEach((item: any) => {
                     menuIdArr = menuIdArr.concat(item)
                 })
-                //param.menu_id_arr = [...new Set(menuIdArr)]
-                param.menu_id_arr = menuIdArr.filter((item: any, index: any) => {
-                    return menuIdArr.indexOf(item) === index
-                })
+                param.menu_id_arr = [...new Set(menuIdArr)]
             }
             try {
                 if (param?.id_arr?.length > 0) {

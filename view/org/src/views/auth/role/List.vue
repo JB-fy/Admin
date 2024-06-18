@@ -86,7 +86,7 @@ const table = reactive({
                 ]
             },
         },
-        {
+        /* {
             dataKey: 'scene_name',
             title: t('auth.role.name.scene_id'),
             key: 'scene_id',
@@ -99,7 +99,7 @@ const table = reactive({
             key: 'rel_id',
             align: 'center',
             width: 150,
-        },
+        }, */
         {
             dataKey: 'is_stop',
             title: t('auth.role.name.is_stop'),
