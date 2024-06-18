@@ -86,7 +86,7 @@ const table = reactive({
             align: 'center',
             width: 150,
         },
-        /* {
+        {
             dataKey: 'is_super',
             title: t('platform.admin.name.is_super'),
             key: 'is_super',
@@ -101,13 +101,13 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
+                        disabled={true}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_super: val }).then(() => (props.rowData.is_super = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]
             },
-        }, */
+        },
         {
             dataKey: 'is_stop',
             title: t('platform.admin.name.is_stop'),
@@ -123,7 +123,7 @@ const table = reactive({
                         inline-prompt={true}
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
+                        disabled={!authAction.isUpdate || props.rowData.is_super == 1}
                         onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -154,6 +154,9 @@ const table = reactive({
             fixed: 'right',
             hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
+                if (props.rowData.is_super == 1) {
+                    return
+                }
                 let vNode: any = []
                 if (authAction.isUpdate) {
                     vNode.push(

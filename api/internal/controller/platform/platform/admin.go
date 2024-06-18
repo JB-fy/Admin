@@ -39,7 +39,6 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiPlatform.AdminLis
 	if filter == nil {
 		filter = map[string]any{}
 	}
-	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //超级管理员不显示
 
 	var field []string
 	if len(req.Field) > 0 {
@@ -84,7 +83,6 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiPlatform.AdminInf
 	}
 
 	filter := map[string]any{`id`: req.Id}
-	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //超级管理员不允许显示
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -138,8 +136,8 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-
 	filter := map[string]any{`id`: req.IdArr}
+
 	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //超级管理员不允许修改
 	/**--------参数处理 结束--------**/
 
