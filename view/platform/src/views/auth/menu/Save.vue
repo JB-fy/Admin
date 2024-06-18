@@ -42,7 +42,7 @@ const saveForm = reactive({
 						// { type: 'integer', min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
 					],
                 }, */
-                transform(value: any) {
+                transform: (value: any) => {
                     if (value === '' || value === null || value === undefined) {
                         return undefined
                     }
