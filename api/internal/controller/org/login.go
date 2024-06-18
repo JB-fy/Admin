@@ -11,6 +11,7 @@ import (
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
 )
 
@@ -48,7 +49,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	saltDynamic := grand.S(8)
-	err = cache.NewSalt(ctx, sceneCode, req.LoginName).Set(saltDynamic, 5)
+	err = cache.NewSalt(ctx, sceneCode, gconv.String(req.OrgId)+`_`+req.LoginName).Set(saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -83,7 +84,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-	salt, _ := cache.NewSalt(ctx, sceneCode, req.LoginName).Get()
+	salt, _ := cache.NewSalt(ctx, sceneCode, gconv.String(req.OrgId)+`_`+req.LoginName).Get()
 	if salt == `` || gmd5.MustEncrypt(info[daoOrg.Admin.Columns().Password].String()+salt) != req.Password {
 		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return
