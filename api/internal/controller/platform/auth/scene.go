@@ -80,7 +80,6 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfInfo
 	}
-
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 

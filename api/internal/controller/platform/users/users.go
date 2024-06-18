@@ -80,7 +80,6 @@ func (controllerThis *Users) Info(ctx context.Context, req *apiUsers.UsersInfoRe
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfInfo
 	}
-
 	filter := map[string]any{`id`: req.Id}
 	/**--------参数处理 结束--------**/
 

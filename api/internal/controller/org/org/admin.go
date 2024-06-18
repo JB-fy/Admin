@@ -85,7 +85,6 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfInfo
 	}
-
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)

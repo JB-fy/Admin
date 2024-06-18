@@ -84,7 +84,6 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfInfo
 	}
-
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
