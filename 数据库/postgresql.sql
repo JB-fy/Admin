@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 13/06/2024 11:37:42
+ Date: 18/06/2024 15:18:35
 */
 
 
@@ -54,6 +54,28 @@ CACHE 1;
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."auth_scene_scene_id_seq";
 CREATE SEQUENCE "public"."auth_scene_scene_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for org_admin_admin_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."org_admin_admin_id_seq";
+CREATE SEQUENCE "public"."org_admin_admin_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for org_org_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."org_org_id_seq";
+CREATE SEQUENCE "public"."org_org_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -165,6 +187,14 @@ INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 44, '插件配置-邮箱-保存', 'platformConfigEmailSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 45, '用户管理-用户-查看', 'usersRead', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 46, '用户管理-用户-编辑', 'usersUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 47, '机构管理-机构-查看', 'orgRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 48, '机构管理-机构-新增', 'orgCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 49, '机构管理-机构-编辑', 'orgUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 50, '机构管理-机构-删除', 'orgDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 51, '权限管理-机构管理员-查看', 'orgAdminRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 52, '权限管理-机构管理员-新增', 'orgAdminCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 53, '权限管理-机构管理员-编辑', 'orgAdminUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 54, '权限管理-机构管理员-删除', 'orgAdminDelete', '');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -199,9 +229,13 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 11, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 12, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 13, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 13, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 14, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 14, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 15, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 15, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 16, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 16, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 17, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 18, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 19, 1);
@@ -232,6 +266,18 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 44, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 45, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 46, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 47, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 48, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 49, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 50, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 51, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 51, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 52, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 52, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 53, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 53, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 54, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 54, 2);
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -284,6 +330,13 @@ INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:0
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '插件配置', 1, 9, 3, '0-8-9-11', '', '/platform/config/plugin', '{"i18n": {"title": {"en": "Plugin Config", "zh-cn": "插件配置"}}}', 100);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '用户管理', 1, 0, 1, '0-12', 'vant-friends', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '用户', 1, 12, 2, '0-12-13', 'vant-user-o', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '机构管理', 1, 0, 1, '0-14', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "", "zh-cn": "机构管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '机构', 1, 14, 2, '0-14-15', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '机构管理员', 1, 2, 2, '0-2-16', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, '主页', 2, 0, 1, '0-17', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '权限管理', 2, 0, 1, '0-18', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "", "zh-cn": "权限管理"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '角色', 2, 18, 2, '0-18-19', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '管理员', 2, 18, 2, '0-18-20', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -296,7 +349,7 @@ CREATE TABLE "public"."auth_role" (
   "role_id" int4 NOT NULL DEFAULT nextval('auth_role_role_id_seq'::regclass),
   "role_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_id" int4 NOT NULL DEFAULT 0,
-  "table_id" int4 NOT NULL DEFAULT 0
+  "rel_id" int4 NOT NULL DEFAULT 0
 )
 ;
 COMMENT ON COLUMN "public"."auth_role"."created_at" IS '创建时间';
@@ -305,11 +358,32 @@ COMMENT ON COLUMN "public"."auth_role"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."auth_role"."role_id" IS '角色ID';
 COMMENT ON COLUMN "public"."auth_role"."role_name" IS '名称';
 COMMENT ON COLUMN "public"."auth_role"."scene_id" IS '场景ID';
-COMMENT ON COLUMN "public"."auth_role"."table_id" IS '关联ID。0表示平台创建，其它值根据sceneId对应不同表';
+COMMENT ON COLUMN "public"."auth_role"."rel_id" IS '关联ID。0表示平台创建，其它值根据sceneId对应不同表';
 COMMENT ON TABLE "public"."auth_role" IS '权限角色表';
 
 -- ----------------------------
 -- Records of auth_role
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for auth_role_rel_of_org_admin
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."auth_role_rel_of_org_admin";
+CREATE TABLE "public"."auth_role_rel_of_org_admin" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "admin_id" int4 NOT NULL,
+  "role_id" int4 NOT NULL
+)
+;
+COMMENT ON COLUMN "public"."auth_role_rel_of_org_admin"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."auth_role_rel_of_org_admin"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."auth_role_rel_of_org_admin"."admin_id" IS '管理员ID';
+COMMENT ON COLUMN "public"."auth_role_rel_of_org_admin"."role_id" IS '角色ID';
+COMMENT ON TABLE "public"."auth_role_rel_of_org_admin" IS '机构管理员，权限角色关联表（机构管理员包含哪些角色）';
+
+-- ----------------------------
+-- Records of auth_role_rel_of_org_admin
 -- ----------------------------
 
 -- ----------------------------
@@ -327,7 +401,7 @@ COMMENT ON COLUMN "public"."auth_role_rel_of_platform_admin"."created_at" IS '�
 COMMENT ON COLUMN "public"."auth_role_rel_of_platform_admin"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."auth_role_rel_of_platform_admin"."admin_id" IS '管理员ID';
 COMMENT ON COLUMN "public"."auth_role_rel_of_platform_admin"."role_id" IS '角色ID';
-COMMENT ON TABLE "public"."auth_role_rel_of_platform_admin" IS '权限角色，系统管理员关联表（系统管理员包含哪些角色）';
+COMMENT ON TABLE "public"."auth_role_rel_of_platform_admin" IS '平台管理员，权限角色关联表（平台管理员包含哪些角色）';
 
 -- ----------------------------
 -- Records of auth_role_rel_of_platform_admin
@@ -404,7 +478,70 @@ COMMENT ON TABLE "public"."auth_scene" IS '权限场景表';
 -- Records of auth_scene
 -- ----------------------------
 INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '平台后台', 'platform', '{"signKey": "www.admin.com_platform", "signType": "HS256", "expireTime": 14400}', '');
-INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, 'APP', 'app', '{"signKey": "www.admin.com_app", "signType": "HS256", "expireTime": 604800}', '');
+INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '机构后台', 'org', '{"signKey": "www.admin.com_org", "signType": "HS256", "expireTime": 14400}', '');
+INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, 'APP', 'app', '{"signKey": "www.admin.com_app", "signType": "HS256", "expireTime": 604800}', '');
+
+-- ----------------------------
+-- Table structure for org
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."org";
+CREATE TABLE "public"."org" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "is_stop" int2 NOT NULL DEFAULT 0,
+  "org_id" int4 NOT NULL DEFAULT nextval('org_org_id_seq'::regclass),
+  "org_name" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
+)
+;
+COMMENT ON COLUMN "public"."org"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."org"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."org"."is_stop" IS '停用：0否 1是';
+COMMENT ON COLUMN "public"."org"."org_id" IS '机构ID';
+COMMENT ON COLUMN "public"."org"."org_name" IS '机构名称';
+COMMENT ON TABLE "public"."org" IS '机构表';
+
+-- ----------------------------
+-- Records of org
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for org_admin
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."org_admin";
+CREATE TABLE "public"."org_admin" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "is_stop" int2 NOT NULL DEFAULT 0,
+  "admin_id" int4 NOT NULL DEFAULT nextval('org_admin_admin_id_seq'::regclass),
+  "org_id" int4 NOT NULL DEFAULT 0,
+  "is_super" int2 NOT NULL DEFAULT 0,
+  "nickname" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "phone" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "email" varchar(60) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "account" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
+  "salt" char(8) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar
+)
+;
+COMMENT ON COLUMN "public"."org_admin"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."org_admin"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."org_admin"."is_stop" IS '停用：0否 1是';
+COMMENT ON COLUMN "public"."org_admin"."admin_id" IS '管理员ID';
+COMMENT ON COLUMN "public"."org_admin"."org_id" IS '机构ID';
+COMMENT ON COLUMN "public"."org_admin"."is_super" IS '超管：0否 1是';
+COMMENT ON COLUMN "public"."org_admin"."nickname" IS '昵称';
+COMMENT ON COLUMN "public"."org_admin"."avatar" IS '头像';
+COMMENT ON COLUMN "public"."org_admin"."phone" IS '手机';
+COMMENT ON COLUMN "public"."org_admin"."email" IS '邮箱';
+COMMENT ON COLUMN "public"."org_admin"."account" IS '账号';
+COMMENT ON COLUMN "public"."org_admin"."password" IS '密码。md5保存';
+COMMENT ON COLUMN "public"."org_admin"."salt" IS '密码盐';
+COMMENT ON TABLE "public"."org_admin" IS '机构管理员表';
+
+-- ----------------------------
+-- Records of org_admin
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for platform_admin
@@ -415,6 +552,7 @@ CREATE TABLE "public"."platform_admin" (
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "is_stop" int2 NOT NULL DEFAULT 0,
   "admin_id" int4 NOT NULL DEFAULT nextval('platform_admin_admin_id_seq'::regclass),
+  "is_super" int2 NOT NULL DEFAULT 0,
   "nickname" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "phone" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
@@ -428,6 +566,7 @@ COMMENT ON COLUMN "public"."platform_admin"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."platform_admin"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."platform_admin"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."platform_admin"."admin_id" IS '管理员ID';
+COMMENT ON COLUMN "public"."platform_admin"."is_super" IS '超管：0否 1是';
 COMMENT ON COLUMN "public"."platform_admin"."nickname" IS '昵称';
 COMMENT ON COLUMN "public"."platform_admin"."avatar" IS '头像';
 COMMENT ON COLUMN "public"."platform_admin"."phone" IS '手机';
@@ -440,7 +579,7 @@ COMMENT ON TABLE "public"."platform_admin" IS '平台管理员表';
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO "public"."platform_admin" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '超级管理员', 'http://JB.Admin.com/common/20240106/1704522339892_31917913.png', NULL, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
+INSERT INTO "public"."platform_admin" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 1, '超级管理员', 'http://JB.Admin.com/common/20240106/1704522339892_31917913.png', NULL, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
 
 -- ----------------------------
 -- Table structure for platform_config
@@ -651,6 +790,20 @@ SELECT setval('"public"."auth_scene_scene_id_seq"', 1, false);
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
+ALTER SEQUENCE "public"."org_admin_admin_id_seq"
+OWNED BY "public"."org_admin"."admin_id";
+SELECT setval('"public"."org_admin_admin_id_seq"', 1, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."org_org_id_seq"
+OWNED BY "public"."org"."org_id";
+SELECT setval('"public"."org_org_id_seq"', 1, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
 ALTER SEQUENCE "public"."platform_admin_admin_id_seq"
 OWNED BY "public"."platform_admin"."admin_id";
 SELECT setval('"public"."platform_admin_admin_id_seq"', 1, false);
@@ -714,17 +867,32 @@ ALTER TABLE "public"."auth_menu" ADD CONSTRAINT "auth_menu_pkey" PRIMARY KEY ("m
 -- ----------------------------
 -- Indexes structure for table auth_role
 -- ----------------------------
+CREATE INDEX "auth_role_rel_id_idx" ON "public"."auth_role" USING btree (
+  "rel_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
 CREATE INDEX "auth_role_scene_id_idx" ON "public"."auth_role" USING btree (
   "scene_id" "pg_catalog"."int4_ops" ASC NULLS LAST
-);
-CREATE INDEX "auth_role_table_id_idx" ON "public"."auth_role" USING btree (
-  "table_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
 
 -- ----------------------------
 -- Primary Key structure for table auth_role
 -- ----------------------------
 ALTER TABLE "public"."auth_role" ADD CONSTRAINT "auth_role_pkey" PRIMARY KEY ("role_id");
+
+-- ----------------------------
+-- Indexes structure for table auth_role_rel_of_org_admin
+-- ----------------------------
+CREATE INDEX "auth_role_rel_of_org_admin_admin_id_idx" ON "public"."auth_role_rel_of_org_admin" USING btree (
+  "admin_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE INDEX "auth_role_rel_of_org_admin_role_id_idx" ON "public"."auth_role_rel_of_org_admin" USING btree (
+  "role_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+
+-- ----------------------------
+-- Primary Key structure for table auth_role_rel_of_org_admin
+-- ----------------------------
+ALTER TABLE "public"."auth_role_rel_of_org_admin" ADD CONSTRAINT "auth_role_rel_of_org_admin_pkey" PRIMARY KEY ("admin_id", "role_id");
 
 -- ----------------------------
 -- Indexes structure for table auth_role_rel_of_platform_admin
@@ -782,6 +950,32 @@ CREATE UNIQUE INDEX "auth_scene_scene_code_idx" ON "public"."auth_scene" USING b
 -- Primary Key structure for table auth_scene
 -- ----------------------------
 ALTER TABLE "public"."auth_scene" ADD CONSTRAINT "auth_scene_pkey" PRIMARY KEY ("scene_id");
+
+-- ----------------------------
+-- Primary Key structure for table org
+-- ----------------------------
+ALTER TABLE "public"."org" ADD CONSTRAINT "org_pkey" PRIMARY KEY ("org_id");
+
+-- ----------------------------
+-- Indexes structure for table org_admin
+-- ----------------------------
+CREATE UNIQUE INDEX "org_admin_account_idx" ON "public"."org_admin" USING btree (
+  "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE UNIQUE INDEX "org_admin_email_idx" ON "public"."org_admin" USING btree (
+  "email" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE INDEX "org_admin_org_id_idx" ON "public"."org_admin" USING btree (
+  "org_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE UNIQUE INDEX "org_admin_phone_idx" ON "public"."org_admin" USING btree (
+  "phone" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+
+-- ----------------------------
+-- Primary Key structure for table org_admin
+-- ----------------------------
+ALTER TABLE "public"."org_admin" ADD CONSTRAINT "org_admin_pkey" PRIMARY KEY ("admin_id");
 
 -- ----------------------------
 -- Indexes structure for table platform_admin

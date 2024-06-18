@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 17/06/2024 18:30:42
+ Date: 18/06/2024 15:16:34
 */
 
 SET NAMES utf8mb4;
@@ -213,10 +213,10 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '机构管理', 1, 0, 1, '0-14', 'autoicon-ep-office-building', '', '{\"i18n\": {\"title\": {\"en\": \"\", \"zh-cn\": \"机构管理\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '机构', 1, 14, 2, '0-14-15', 'autoicon-ep-school', '/org/org', '{\"i18n\": {\"title\": {\"en\": \"Org\", \"zh-cn\": \"机构\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '机构管理员', 1, 2, 2, '0-2-16', 'vant-manager-o', '/org/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"机构管理员\"}}}', 100);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, '权限管理', 2, 0, 1, '0-17', 'autoicon-ep-menu', '', '{\"i18n\": {\"title\": {\"en\": \"\", \"zh-cn\": \"权限管理\"}}}', 10);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '角色', 2, 0, 2, '0-17-18', 'autoicon-ep-view', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 40);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '主页', 2, 0, 1, '0-19', 'autoicon-ep-home-filled', '/', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 255);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '机构管理员', 2, 0, 1, '0-20', 'autoicon-ep-link', '/org/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"机构管理员\"}}}', 100);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, '主页', 2, 0, 1, '0-17', 'autoicon-ep-home-filled', '/', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 255);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '权限管理', 2, 0, 1, '0-18', 'autoicon-ep-menu', '', '{\"i18n\": {\"title\": {\"en\": \"\", \"zh-cn\": \"权限管理\"}}}', 10);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '角色', 2, 18, 2, '0-18-19', 'autoicon-ep-view', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 40);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '管理员', 2, 18, 2, '0-18-20', 'vant-manager-o', '/org/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"管理员\"}}}', 100);
 
 -- ----------------------------
 -- Table structure for auth_role
